@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
+            timestampString = "565222089.8004251"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
+            landmarkName = "testExample()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Data Model/ProjectConfig.swift"
+            timestampString = "565222089.8005151"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
+            landmarkName = "Populate(data:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static OptimizelyCoreTests.ProjectConfig.Populate(data: __C.NSData) -&gt; OptimizelyCoreTests.ProjectConfig"
+                  moduleName = "OptimizelyCoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/ProjectConfig.swift"
+                  timestampString = "565222091.065896"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "465">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static OptimizelyCore.ProjectConfig.Populate(data: __C.NSData) -&gt; OptimizelyCore.ProjectConfig"
+                  moduleName = "OptimizelyCore"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/ProjectConfig.swift"
+                  timestampString = "565222091.184673"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "465">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Data Model/ProjectConfig.swift"
+            timestampString = "565222089.800576"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "Populate(dictionary:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizelyCoreTests.ProjectConfig.Populate(dictionary: __C.NSDictionary) -&gt; ()"
+                  moduleName = "OptimizelyCoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/ProjectConfig.swift"
+                  timestampString = "565222091.070956"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "37">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizelyCore.ProjectConfig.Populate(dictionary: __C.NSDictionary) -&gt; ()"
+                  moduleName = "OptimizelyCore"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/ProjectConfig.swift"
+                  timestampString = "565222091.189587"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "37">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Data Model/ProjectConfig.swift"
+            timestampString = "565222089.800631"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "Populate(data:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static OptimizelyCoreTests.ProjectConfig.Populate(data: __C.NSData) -&gt; OptimizelyCoreTests.ProjectConfig"
+                  moduleName = "OptimizelyCoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/ProjectConfig.swift"
+                  timestampString = "565222091.075935"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "41">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static OptimizelyCore.ProjectConfig.Populate(data: __C.NSData) -&gt; OptimizelyCore.ProjectConfig"
+                  moduleName = "OptimizelyCore"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/ProjectConfig.swift"
+                  timestampString = "565222091.194664"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "41">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
+            timestampString = "565222089.800681"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "26"
+            endingLineNumber = "26"
+            landmarkName = "testExample()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
+            timestampString = "565222089.800729"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "testExample2()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

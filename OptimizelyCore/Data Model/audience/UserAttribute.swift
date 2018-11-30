@@ -8,7 +8,7 @@
 
 import Foundation
 
-class UserAttribute : Condition, Codable {
+class UserAttribute : Codable {
     var name:String = ""
     var type:String = ""
     var match:String? = ""

@@ -11,7 +11,7 @@ import Foundation
 class Audience : Codable {
     var id:String = ""
     var name:String = ""
-    var conditions:Condition? = OrCondition(conditions: nil)
+    var conditions:ConditionHolder?
     
     enum codingKeys : String, CodingKey {
         case id
@@ -34,13 +34,13 @@ class Audience : Codable {
         }
         if let value = try container?.decode(String.self, forKey: .conditions) {
             let data = value.data(using: .utf8)
-            if let holders = try? JSONDecoder().decode([ConditionHolder].self, from: data!) {
-                conditions = ConditionHolder.Convert(holders: holders)
+            if let holders = try? JSONDecoder().decode(ConditionHolder.self, from: data!) {
+                conditions = holders
             }
             
         }
         else if var value = try container?.nestedUnkeyedContainer(forKey: .conditions) {
-            conditions = try AndCondition.parseConditions(from: &value)
+            conditions = try? value.decode(ConditionHolder.self)
         }
         
     }
@@ -53,23 +53,4 @@ class Audience : Codable {
         //try container.encode(conditions, forKey: .conditions)
     }
 
-    
-    func Populate(dictionary:NSDictionary) {
-        
-        id = dictionary["id"] as! String
-        name = dictionary["name"] as! String
-        conditions = try! AndCondition.Populate(from: dictionary["conditions"] as! NSArray)
-    }
-    
-    class func PopulateArray(array:NSArray) -> [Audience]
-    {
-        var result:[Audience] = []
-        for item in array
-        {
-            let newItem = Audience()
-            newItem.Populate(dictionary: item as! NSDictionary)
-            result.append(newItem)
-        }
-        return result
-    }
 }

@@ -29,7 +29,7 @@ enum ConditionHolder : Codable {
             }
         }
         
-        throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode ConditionHolder"))
+        throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
     }
     
     func encode(to encoder: Encoder) throws {
@@ -44,23 +44,5 @@ enum ConditionHolder : Codable {
             var container = encoder.unkeyedContainer()
             try? container.encode(holder)
         }
-    }
-    
-    static func Convert(holders:[ConditionHolder]) -> Condition? {
-        func convertArray(conditionHolder:[ConditionHolder]) -> [Any] {
-            let arr = conditionHolder.map { (holder) -> Any in
-                switch holder {
-                case .string(let op):
-                    return op
-                case .userAttribute(let userAttr):
-                    return userAttr
-                case .array(let arr):
-                    return convertArray(conditionHolder: arr)
-                }
-            }
-            return arr
-        }
-        
-        return try? OrCondition.Populate(from: convertArray(conditionHolder: holders) as NSArray)
     }
 }

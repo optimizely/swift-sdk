@@ -13,7 +13,6 @@
 		0B7CB0EB21ADF4E6007B77E5 /* TrafficAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0EA21ADF4E6007B77E5 /* TrafficAllocation.swift */; };
 		0B7CB0ED21ADF6A2007B77E5 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0EC21ADF6A2007B77E5 /* Variable.swift */; };
 		0B7CB0EF21ADF6C1007B77E5 /* Variation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0EE21ADF6C1007B77E5 /* Variation.swift */; };
-		0B7CB0F121ADF742007B77E5 /* ForcedVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F021ADF742007B77E5 /* ForcedVariation.swift */; };
 		0B7CB0F321ADF784007B77E5 /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F221ADF784007B77E5 /* Experiment.swift */; };
 		0B7CB0F521ADFE27007B77E5 /* Rollout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F421ADFE27007B77E5 /* Rollout.swift */; };
 		0B7CB0F721ADFEBD007B77E5 /* FeatureVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F621ADFEBD007B77E5 /* FeatureVariable.swift */; };
@@ -28,7 +27,6 @@
 		0B7CB10721AE0EBF007B77E5 /* TrafficAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0EA21ADF4E6007B77E5 /* TrafficAllocation.swift */; };
 		0B7CB10821AE0EC3007B77E5 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0EC21ADF6A2007B77E5 /* Variable.swift */; };
 		0B7CB10921AE0EC7007B77E5 /* Variation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0EE21ADF6C1007B77E5 /* Variation.swift */; };
-		0B7CB10A21AE0ED2007B77E5 /* ForcedVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F021ADF742007B77E5 /* ForcedVariation.swift */; };
 		0B7CB10B21AE0ED2007B77E5 /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F221ADF784007B77E5 /* Experiment.swift */; };
 		0B7CB10C21AE0ED2007B77E5 /* Rollout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F421ADFE27007B77E5 /* Rollout.swift */; };
 		0B7CB10D21AE0ED2007B77E5 /* FeatureVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F621ADFEBD007B77E5 /* FeatureVariable.swift */; };
@@ -64,7 +62,6 @@
 		0B7CB0EA21ADF4E6007B77E5 /* TrafficAllocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrafficAllocation.swift; sourceTree = "<group>"; };
 		0B7CB0EC21ADF6A2007B77E5 /* Variable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
 		0B7CB0EE21ADF6C1007B77E5 /* Variation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variation.swift; sourceTree = "<group>"; };
-		0B7CB0F021ADF742007B77E5 /* ForcedVariation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForcedVariation.swift; sourceTree = "<group>"; };
 		0B7CB0F221ADF784007B77E5 /* Experiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiment.swift; sourceTree = "<group>"; };
 		0B7CB0F421ADFE27007B77E5 /* Rollout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rollout.swift; sourceTree = "<group>"; };
 		0B7CB0F621ADFEBD007B77E5 /* FeatureVariable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureVariable.swift; sourceTree = "<group>"; };
@@ -143,7 +140,6 @@
 				0B7CB0EA21ADF4E6007B77E5 /* TrafficAllocation.swift */,
 				0B7CB0EC21ADF6A2007B77E5 /* Variable.swift */,
 				0B7CB0EE21ADF6C1007B77E5 /* Variation.swift */,
-				0B7CB0F021ADF742007B77E5 /* ForcedVariation.swift */,
 				0B7CB0F221ADF784007B77E5 /* Experiment.swift */,
 				0B7CB0F421ADFE27007B77E5 /* Rollout.swift */,
 				0B7CB0F621ADFEBD007B77E5 /* FeatureVariable.swift */,
@@ -286,7 +282,6 @@
 				0B7CB0FF21AE03A0007B77E5 /* Group.swift in Sources */,
 				0B7CB0F321ADF784007B77E5 /* Experiment.swift in Sources */,
 				0B7CB0FB21ADFFFB007B77E5 /* Event.swift in Sources */,
-				0B7CB0F121ADF742007B77E5 /* ForcedVariation.swift in Sources */,
 				0B7CB0FD21AE0058007B77E5 /* ProjectConfig.swift in Sources */,
 				0B7CB11D21B0BBE1007B77E5 /* ConditionHolder.swift in Sources */,
 				0B7CB11921AF753D007B77E5 /* UserAttribute.swift in Sources */,
@@ -317,7 +312,6 @@
 				0B7CB10F21AE0ED2007B77E5 /* Event.swift in Sources */,
 				0B7CB10621AE0EBB007B77E5 /* Audience.swift in Sources */,
 				0B7CB11021AE0ED8007B77E5 /* Group.swift in Sources */,
-				0B7CB10A21AE0ED2007B77E5 /* ForcedVariation.swift in Sources */,
 				0B7CB10B21AE0ED2007B77E5 /* Experiment.swift in Sources */,
 				0B7CB10D21AE0ED2007B77E5 /* FeatureVariable.swift in Sources */,
 				0B7CB10521AE0D18007B77E5 /* ProjectConfig.swift in Sources */,

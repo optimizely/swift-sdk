@@ -15,16 +15,16 @@ enum ConditionHolder : Codable {
     
     init(from decoder: Decoder) throws {
         if let container = try? decoder.singleValueContainer() {
+            if let value = try? container.decode([ConditionHolder].self) {
+                self = .array(value)
+                return
+            }
             if let value = try? container.decode(String.self) {
                 self = .string(value)
                 return
             }
             if let value = try? container.decode(UserAttribute.self) {
                 self = .userAttribute(value)
-                return
-            }
-            if let value = try? container.decode([ConditionHolder].self) {
-                self = .array(value)
                 return
             }
         }

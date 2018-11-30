@@ -32,15 +32,22 @@ class Audience : Codable {
         if let value = try container?.decode(String.self, forKey: .name) {
             name = value
         }
-        if let value = try container?.decode(String.self, forKey: .conditions) {
-            let data = value.data(using: .utf8)
+        if let value = try? container?.decode(String.self, forKey: .conditions) {
+            let data = value?.data(using: .utf8)
             if let holders = try? JSONDecoder().decode(ConditionHolder.self, from: data!) {
                 conditions = holders
             }
             
         }
-        else if var value = try container?.nestedUnkeyedContainer(forKey: .conditions) {
-            conditions = try? value.decode(ConditionHolder.self)
+        else if var value = try? container?.nestedUnkeyedContainer(forKey: .conditions) {
+            guard var value = value else { return }
+            var conditionList = [ConditionHolder]()
+            while !value.isAtEnd {
+                if let condition = try? value.decode(ConditionHolder.self) {
+                    conditionList.append(condition)
+                }
+            }
+            conditions = ConditionHolder.array(conditionList)
         }
         
     }

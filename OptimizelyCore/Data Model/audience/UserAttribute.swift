@@ -12,7 +12,7 @@ class UserAttribute : Codable {
     var name:String = ""
     var type:String = ""
     var match:String? = ""
-    var value: Any = String()
+    var value:Any? = String()
     
     enum codedKeys : String, CodingKey {
         case name

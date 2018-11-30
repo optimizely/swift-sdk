@@ -10,7 +10,7 @@ import Foundation
 
 class FeatureVariable : Codable
 {
-    var defaultValue:String = ""
+    var defaultValue:String? = ""
     var type:String = ""
     var id:String = ""
     var key:String = ""

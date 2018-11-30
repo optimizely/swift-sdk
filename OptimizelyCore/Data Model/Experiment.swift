@@ -16,6 +16,7 @@ class Experiment : Codable
     var layerId:String = ""
     var trafficAllocation:[TrafficAllocation] = []
     var audienceIds:[String] = []
+    var audienceConditions:ConditionHolder?
     var variations:[Variation] = []
     var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
 }

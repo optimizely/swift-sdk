@@ -60,6 +60,8 @@ extension Condition {
             } else if obj is Dictionary<String, Any> {
                 let userAttribute = UserAttribute()
                 userAttribute.Populate(dictionary: obj as! NSDictionary)
+            } else if obj is UserAttribute {
+                conditions.append(obj as! Condition)
             } else if obj is Array<Any> {
                 let nested = try? Self.Populate(from: obj as! NSArray)
                 if let nested = nested {

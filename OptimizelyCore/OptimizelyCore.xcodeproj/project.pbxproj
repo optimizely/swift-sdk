@@ -40,6 +40,8 @@
 		0B7CB11921AF753D007B77E5 /* UserAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11821AF753D007B77E5 /* UserAttribute.swift */; };
 		0B7CB11A21B089A7007B77E5 /* Condition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11621AF1BAF007B77E5 /* Condition.swift */; };
 		0B7CB11B21B08A0B007B77E5 /* UserAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11821AF753D007B77E5 /* UserAttribute.swift */; };
+		0B7CB11D21B0BBE1007B77E5 /* ConditionHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */; };
+		0B7CB11E21B0CEBD007B77E5 /* ConditionHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +76,7 @@
 		0B7CB10321AE053A007B77E5 /* Audience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audience.swift; sourceTree = "<group>"; };
 		0B7CB11621AF1BAF007B77E5 /* Condition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Condition.swift; sourceTree = "<group>"; };
 		0B7CB11821AF753D007B77E5 /* UserAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAttribute.swift; sourceTree = "<group>"; };
+		0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionHolder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +162,7 @@
 				0B7CB10321AE053A007B77E5 /* Audience.swift */,
 				0B7CB11621AF1BAF007B77E5 /* Condition.swift */,
 				0B7CB11821AF753D007B77E5 /* UserAttribute.swift */,
+				0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */,
 			);
 			path = audience;
 			sourceTree = "<group>";
@@ -284,6 +288,7 @@
 				0B7CB0FB21ADFFFB007B77E5 /* Event.swift in Sources */,
 				0B7CB0F121ADF742007B77E5 /* ForcedVariation.swift in Sources */,
 				0B7CB0FD21AE0058007B77E5 /* ProjectConfig.swift in Sources */,
+				0B7CB11D21B0BBE1007B77E5 /* ConditionHolder.swift in Sources */,
 				0B7CB11921AF753D007B77E5 /* UserAttribute.swift in Sources */,
 				0B7CB0F921ADFF0F007B77E5 /* FeatureFlag.swift in Sources */,
 				0B7CB10421AE053A007B77E5 /* Audience.swift in Sources */,
@@ -302,6 +307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B7CB0D121AC5FE2007B77E5 /* OptimizelyCoreTests.swift in Sources */,
+				0B7CB11E21B0CEBD007B77E5 /* ConditionHolder.swift in Sources */,
 				0B7CB11B21B08A0B007B77E5 /* UserAttribute.swift in Sources */,
 				0B7CB10E21AE0ED2007B77E5 /* FeatureFlag.swift in Sources */,
 				0B7CB10921AE0EC7007B77E5 /* Variation.swift in Sources */,

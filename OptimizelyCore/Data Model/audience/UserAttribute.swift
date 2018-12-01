@@ -81,7 +81,7 @@ class UserAttribute : Codable {
         value = dictionary["value"] as Any
     }
     
-    func evaluate(config: ProjectConfig, attributes: Dictionary<String, String>) -> Bool? {
+    func evaluate(config: ProjectConfig, attributes: Dictionary<String, Any>) -> Bool? {
         return true
     }
     

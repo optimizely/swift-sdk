@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565296679.29009"
+            timestampString = "565321465.489941"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "28"
@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565296679.290741"
+            timestampString = "565321465.490278"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "26"
@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565296679.291422"
+            timestampString = "565321465.490504"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "35"
@@ -58,7 +58,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565296679.291957"
+            timestampString = "565296904.479637"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "38"
@@ -106,7 +106,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565296679.292111"
+            timestampString = "565296904.4798419"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "36"
@@ -150,11 +150,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565296679.29224"
+            timestampString = "565321465.490779"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "38"
@@ -216,7 +216,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/ConditionHolder.swift"
-            timestampString = "565296679.29284"
+            timestampString = "565321465.491012"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "31"
@@ -232,11 +232,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565296679.29292"
+            timestampString = "565321465.491057"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
             landmarkName = "testExample3()"
             landmarkType = "7">
          </BreakpointContent>
@@ -248,7 +248,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565296679.293306"
+            timestampString = "565296904.481706"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "27"
@@ -296,7 +296,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565296679.29338"
+            timestampString = "565296904.481932"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "35"
@@ -344,7 +344,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/ConditionHolder.swift"
-            timestampString = "565296679.293449"
+            timestampString = "565321465.491331"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "17"
@@ -392,7 +392,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565296691.660892"
+            timestampString = "565296904.482344"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "47"
@@ -440,7 +440,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565296694.276768"
+            timestampString = "565296904.482462"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "50"
@@ -477,6 +477,118 @@
                   startingLineNumber = "50"
                   endingLineNumber = "50"
                   offsetFromSymbolStart = "4759">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
+            timestampString = "565321465.491405"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "testExample3()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Data Model/audience/ConditionHolder.swift"
+            timestampString = "565321465.491667"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "evaluate(projectConfig:attributes:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizelyCoreTests.ConditionHolder.evaluate(projectConfig: OptimizelyCoreTests.ProjectConfig, attributes: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Swift.Optional&lt;Swift.Bool&gt;"
+                  moduleName = "OptimizelyCoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/audience/ConditionHolder.swift"
+                  timestampString = "565321278.098925"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "50"
+                  endingLineNumber = "50"
+                  offsetFromSymbolStart = "98">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizelyCore.ConditionHolder.evaluate(projectConfig: OptimizelyCore.ProjectConfig, attributes: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Swift.Optional&lt;Swift.Bool&gt;"
+                  moduleName = "OptimizelyCore"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/audience/ConditionHolder.swift"
+                  timestampString = "565321278.175125"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "50"
+                  endingLineNumber = "50"
+                  offsetFromSymbolStart = "98">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Data Model/audience/ConditionHolder.swift"
+            timestampString = "565321465.491724"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "evaluate(config:attributes:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(extension in OptimizelyCoreTests):Swift.Array&lt;A where A == OptimizelyCoreTests.ConditionHolder&gt;.evaluate(config: OptimizelyCoreTests.ProjectConfig, attributes: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Swift.Optional&lt;Swift.Bool&gt;"
+                  moduleName = "OptimizelyCoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/audience/ConditionHolder.swift"
+                  timestampString = "565321278.102306"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "147">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(extension in OptimizelyCore):Swift.Array&lt;A where A == OptimizelyCore.ConditionHolder&gt;.evaluate(config: OptimizelyCore.ProjectConfig, attributes: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Swift.Optional&lt;Swift.Bool&gt;"
+                  moduleName = "OptimizelyCore"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/Data%20Model/audience/ConditionHolder.swift"
+                  timestampString = "565321278.1776969"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "147">
                </Location>
             </Locations>
          </BreakpointContent>

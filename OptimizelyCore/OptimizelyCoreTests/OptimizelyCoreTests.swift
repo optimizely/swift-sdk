@@ -45,6 +45,10 @@ class OptimizelyCoreTests: XCTestCase {
         let data: Data? = json.data(using: .utf8)
         let config = try! JSONDecoder().decode(ProjectConfig.self, from: data!)
         
+        for audience in config.typedAudiences ?? [] {
+            // all user attributes equate to true at this point.  so, all conditions should pass.
+            XCTAssertTrue(audience.conditions?.evaluate(projectConfig: config, attributes: ["integerKey":1]) ?? false)
+        }
         XCTAssertNotNil(config)
         
     }

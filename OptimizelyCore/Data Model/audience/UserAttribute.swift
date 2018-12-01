@@ -73,17 +73,94 @@ class UserAttribute : Codable {
         }
     }
     
-    func Populate(dictionary:NSDictionary) {
-        
-        name = dictionary["name"] as! String
-        type = dictionary["type"] as! String
-        match = dictionary["match"] as? String
-        value = dictionary["value"] as Any
-    }
-    
     func evaluate(config: ProjectConfig, attributes: Dictionary<String, Any>) -> Bool? {
-        return true
+        let attributeValue = attributes[name]
+        
+        func convertToDouble(v:Any?) -> Double? {
+            if v is Int {
+                return Double(v as! Int)
+            }
+            if v is Double {
+                return (v as! Double)
+            }
+            
+            return nil
+        }
+
+        func exactMatch<T:Equatable>(value:T) -> Bool? {
+            if let value = convertToDouble(v: value), let attributeValue = convertToDouble(v: attributeValue) {
+                return attributeValue == value
+            }
+ 
+            let attrValue = attributeValue as? T
+            
+            if let attrValue = attrValue {
+                return value == attrValue
+            }
+            return nil
+         }
+        
+        func greaterThan() -> Bool? {
+            if let value = convertToDouble(v: value), let attributeValue = convertToDouble(v: attributeValue) {
+                return attributeValue > value
+            }
+ 
+            return nil
+        }
+        
+        func lessThan() -> Bool? {
+            if let value = convertToDouble(v: value), let attrValue = convertToDouble(v: attributeValue) {
+                return attrValue < value
+            }
+            return nil
+        }
+        
+        func exists() -> Bool? {
+            if let _ = attributeValue {
+                return true
+            }
+            return false
+        }
+        
+        func substring() -> Bool? {
+            if let value = value as? String, let attributeValue = attributeValue as? String {
+                return attributeValue.contains(value)
+            }
+            return nil
+        }
+        
+        func matcher<T:Equatable>(value:T) -> Bool? {
+            switch match {
+            case "substring":
+                return substring()
+            case "exists":
+                return exists()
+            case "exact":
+                return exactMatch(value: value)
+            case "lt":
+                return lessThan()
+            case "gt":
+                return greaterThan()
+            default:
+                return exactMatch(value: value)
+            }
+
+        }
+
+        if value is String {
+            return matcher(value: value as! String)
+        }
+        else if value is Double {
+            return matcher(value: value as! Double)
+        }
+        else if value is Int {
+            return matcher(value: value as! Int)
+        }
+        else if value is Bool {
+            return matcher(value: value as! Bool)
+        }
+
+        return nil
     }
-    
     
 }

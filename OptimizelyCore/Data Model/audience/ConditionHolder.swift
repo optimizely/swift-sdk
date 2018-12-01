@@ -81,8 +81,7 @@ extension String {
 
 extension Array where Element == ConditionHolder {
     func evaluate(config: ProjectConfig, attributes: Dictionary<String,Any>) -> Bool? {
-        var operand:String?
-        
+
         for i in 0..<self.count {
             let condition = self[i]
             switch condition {
@@ -97,7 +96,6 @@ extension Array where Element == ConditionHolder {
                     else if let audience = config.audiences.filter({$0.id == op}).first {
                         return audience.conditions?.evaluate(projectConfig: config, attributes: attributes)
                     }
-
                 }
             case .array(let conditions):
                 return conditions.evaluate(config: config, attributes: attributes)

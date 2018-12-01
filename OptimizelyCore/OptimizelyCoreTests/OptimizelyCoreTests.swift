@@ -46,8 +46,21 @@ class OptimizelyCoreTests: XCTestCase {
         let config = try! JSONDecoder().decode(ProjectConfig.self, from: data!)
         
         for audience in config.typedAudiences ?? [] {
+            var attr = ["integerKey":1, "doubleKey": 99.0, "booleanKey": true, "nationality":"English"] as [String : Any]
             // all user attributes equate to true at this point.  so, all conditions should pass.
-            XCTAssertTrue(audience.conditions?.evaluate(projectConfig: config, attributes: ["integerKey":1]) ?? false)
+            if audience.name == "INT" {
+               attr["integerKey"] = 2
+            }
+            if ["Gryffindors","Slytherins"].contains(where: { $0 == audience.name }) {
+                if "Gryffindors" == audience.name {
+                    attr["house"] = "Gryffindor"
+                }
+                else {
+                    attr["house"] = "Slytherin"
+                }
+            }
+            
+            XCTAssertTrue(audience.conditions?.evaluate(projectConfig: config, attributes: attr) ?? false)
         }
         XCTAssertNotNil(config)
         

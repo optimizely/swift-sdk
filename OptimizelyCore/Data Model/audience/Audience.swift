@@ -39,7 +39,7 @@ class Audience : Codable {
             }
             
         }
-        else if var value = try? container?.nestedUnkeyedContainer(forKey: .conditions) {
+        else if let value = try? container?.nestedUnkeyedContainer(forKey: .conditions) {
             guard var value = value else { return }
             var conditionList = [ConditionHolder]()
             while !value.isAtEnd {

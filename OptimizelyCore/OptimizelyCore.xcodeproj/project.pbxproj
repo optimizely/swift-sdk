@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B124BBA21B32996001BE0FA /* Optimizely.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BB921B32996001BE0FA /* Optimizely.swift */; };
 		0B7CB0CC21AC5FE2007B77E5 /* OptimizelyCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B7CB0C221AC5FE2007B77E5 /* OptimizelyCore.framework */; };
 		0B7CB0D121AC5FE2007B77E5 /* OptimizelyCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0D021AC5FE2007B77E5 /* OptimizelyCoreTests.swift */; };
 		0B7CB0D321AC5FE2007B77E5 /* OptimizelyCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B7CB0C521AC5FE2007B77E5 /* OptimizelyCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -51,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0B124BB921B32996001BE0FA /* Optimizely.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optimizely.swift; sourceTree = "<group>"; };
 		0B7CB0C221AC5FE2007B77E5 /* OptimizelyCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OptimizelyCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B7CB0C521AC5FE2007B77E5 /* OptimizelyCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptimizelyCore.h; sourceTree = "<group>"; };
 		0B7CB0C621AC5FE2007B77E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -92,9 +94,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0B124BB821B32973001BE0FA /* protocols */ = {
+			isa = PBXGroup;
+			children = (
+				0B124BB921B32996001BE0FA /* Optimizely.swift */,
+			);
+			path = protocols;
+			sourceTree = "<group>";
+		};
 		0B7CB0B821AC5FE2007B77E5 = {
 			isa = PBXGroup;
 			children = (
+				0B124BB821B32973001BE0FA /* protocols */,
 				0B7CB11221AE329B007B77E5 /* extensions */,
 				0B7CB0E921ADF261007B77E5 /* Data Model */,
 				0B7CB0C421AC5FE2007B77E5 /* OptimizelyCore */,
@@ -286,6 +297,7 @@
 				0B7CB10121AE042E007B77E5 /* Attribute.swift in Sources */,
 				0B7CB0F721ADFEBD007B77E5 /* FeatureVariable.swift in Sources */,
 				0B7CB0EB21ADF4E6007B77E5 /* TrafficAllocation.swift in Sources */,
+				0B124BBA21B32996001BE0FA /* Optimizely.swift in Sources */,
 				0B7CB0EF21ADF6C1007B77E5 /* Variation.swift in Sources */,
 				0B7CB0ED21ADF6A2007B77E5 /* Variable.swift in Sources */,
 				0B7CB0F521ADFE27007B77E5 /* Rollout.swift in Sources */,

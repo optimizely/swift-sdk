@@ -91,10 +91,8 @@ class UserAttribute : Codable {
             if let value = convertToDouble(v: value), let attributeValue = convertToDouble(v: attributeValue) {
                 return attributeValue == value
             }
- 
-            let attrValue = attributeValue as? T
             
-            if let attrValue = attrValue {
+            if let attrValue = attributeValue as? T {
                 return value == attrValue
             }
             return nil

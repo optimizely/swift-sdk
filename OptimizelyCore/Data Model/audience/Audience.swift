@@ -57,7 +57,7 @@ class Audience : Codable {
         var container = encoder.container(keyedBy: codingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
-        //try container.encode(conditions, forKey: .conditions)
+        try container.encode(conditions, forKey: .conditions)
     }
 
 }

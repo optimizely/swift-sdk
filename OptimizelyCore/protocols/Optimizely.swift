@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018, Optimizely, Inc. and contributors                   *
+ * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -18,12 +18,12 @@ import Foundation
 
 protocol Optimizely {
     
-    var bucketer:Any? { get }
-    var decisionService:Any? { get }
-    var config:Any? { get }
-    var errorHandler:Any? { get }
-    var eventBuilder:Any? { get }
-    var eventDispatcher:Any? { get }
+    var bucketer:Bucketer? { get }
+    var decisionService:DecisionService? { get }
+    var config:ProjectConfig? { get }
+    var errorHandler:ErrorHandler? { get }
+    var eventDispatcher:EventDispatcher? { get }
+    var datafileHandler:Any? { get }
     var logger:Any? { get }
     var userProfileService:Any? { get }
     var notificationCenter:Any? { get }

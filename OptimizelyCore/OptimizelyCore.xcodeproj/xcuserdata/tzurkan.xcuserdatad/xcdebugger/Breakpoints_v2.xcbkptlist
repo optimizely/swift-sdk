@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565550329.35974"
+            timestampString = "565566132.3530329"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "28"
@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565550329.3598551"
+            timestampString = "565566132.3531851"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "26"
@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565550329.359971"
+            timestampString = "565566132.353287"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "35"
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565550329.360081"
+            timestampString = "565566132.354158"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "init(from:)"
             landmarkType = "7">
             <Locations>
@@ -106,11 +106,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565550329.360433"
+            timestampString = "565566132.354234"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
             landmarkName = "init(from:)"
             landmarkType = "7">
             <Locations>
@@ -154,7 +154,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565550329.360705"
+            timestampString = "565566132.354295"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "38"
@@ -216,11 +216,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/ConditionHolder.swift"
-            timestampString = "565550329.360822"
+            timestampString = "565566132.35445"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
             landmarkName = "init(from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -232,7 +232,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OptimizelyCoreTests/OptimizelyCoreTests.swift"
-            timestampString = "565550329.360873"
+            timestampString = "565566132.354519"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "65"
@@ -248,13 +248,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565550329.360965"
+            timestampString = "565566132.35463"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "27"
-            endingLineNumber = "27"
-            landmarkName = "init(from:)"
-            landmarkType = "7">
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "codingKeys"
+            landmarkType = "13">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -296,11 +296,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565550329.361204"
+            timestampString = "565566132.354682"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
             landmarkName = "init(from:)"
             landmarkType = "7">
             <Locations>
@@ -344,13 +344,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/ConditionHolder.swift"
-            timestampString = "565550329.36141"
+            timestampString = "565566132.354733"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "17"
-            endingLineNumber = "17"
-            landmarkName = "init(from:)"
-            landmarkType = "7">
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "unknown"
+            landmarkType = "0">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -392,11 +392,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565550329.361456"
+            timestampString = "565566132.354789"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
             landmarkName = "init(from:)"
             landmarkType = "7">
             <Locations>
@@ -440,11 +440,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/Audience.swift"
-            timestampString = "565550329.36168"
+            timestampString = "565566132.354838"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
             landmarkName = "init(from:)"
             landmarkType = "7">
             <Locations>
@@ -488,12 +488,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/ConditionHolder.swift"
-            timestampString = "565550329.361975"
+            timestampString = "565566132.3548861"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
-            landmarkName = "evaluate(projectConfig:attributes:)"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "encode(to:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -536,12 +536,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Data Model/audience/UserAttribute.swift"
-            timestampString = "565550329.362138"
+            timestampString = "565566132.354946"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
-            landmarkName = "evaluate(config:attributes:)"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
+            landmarkName = "encode(to:)"
             landmarkType = "7">
             <Locations>
                <Location

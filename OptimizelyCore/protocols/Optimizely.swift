@@ -23,10 +23,10 @@ protocol Optimizely {
     var config:ProjectConfig? { get }
     var errorHandler:ErrorHandler? { get }
     var eventDispatcher:EventDispatcher? { get }
-    var datafileHandler:Any? { get }
-    var logger:Any? { get }
-    var userProfileService:Any? { get }
-    var notificationCenter:Any? { get }
+    var datafileHandler:DatafileHandler? { get }
+    var logger:Logger? { get }
+    var userProfileService:UserProfileService? { get }
+    var notificationCenter:NotificationCenter? { get }
 /**
  * Use the activate method to start an experiment.
  *

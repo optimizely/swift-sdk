@@ -20,6 +20,12 @@
 		0B61624121B6EC3F000D7A28 /* UserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* UserProfileService.swift */; };
 		0B61624321B6EDCC000D7A28 /* NotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* NotificationCenter.swift */; };
 		0B61624521B6F1B6000D7A28 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* Logger.swift */; };
+		0B61624821B70D0F000D7A28 /* DefaultBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624721B70D0F000D7A28 /* DefaultBucketer.swift */; };
+		0B61624A21B7292E000D7A28 /* BucketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624921B7292E000D7A28 /* BucketTests.swift */; };
+		0B61624B21B72995000D7A28 /* DefaultBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624721B70D0F000D7A28 /* DefaultBucketer.swift */; };
+		0B61624C21B72999000D7A28 /* MurmurHash3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBE21B5C024001BE0FA /* MurmurHash3.swift */; };
+		0B61624D21B7299D000D7A28 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BCA21B5DF39001BE0FA /* Result.swift */; };
+		0B61624E21B729A2000D7A28 /* Bucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* Bucketer.swift */; };
 		0B7CB0CC21AC5FE2007B77E5 /* OptimizelyCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B7CB0C221AC5FE2007B77E5 /* OptimizelyCore.framework */; };
 		0B7CB0D121AC5FE2007B77E5 /* OptimizelyCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0D021AC5FE2007B77E5 /* OptimizelyCoreTests.swift */; };
 		0B7CB0D321AC5FE2007B77E5 /* OptimizelyCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B7CB0C521AC5FE2007B77E5 /* OptimizelyCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -77,6 +83,8 @@
 		0B61624021B6EC3F000D7A28 /* UserProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileService.swift; sourceTree = "<group>"; };
 		0B61624221B6EDCC000D7A28 /* NotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenter.swift; sourceTree = "<group>"; };
 		0B61624421B6F1B6000D7A28 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		0B61624721B70D0F000D7A28 /* DefaultBucketer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultBucketer.swift; sourceTree = "<group>"; };
+		0B61624921B7292E000D7A28 /* BucketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketTests.swift; sourceTree = "<group>"; };
 		0B7CB0C221AC5FE2007B77E5 /* OptimizelyCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OptimizelyCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B7CB0C521AC5FE2007B77E5 /* OptimizelyCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptimizelyCore.h; sourceTree = "<group>"; };
 		0B7CB0C621AC5FE2007B77E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -152,9 +160,18 @@
 			path = dispatchEvents;
 			sourceTree = "<group>";
 		};
+		0B61624621B70CE7000D7A28 /* implementation */ = {
+			isa = PBXGroup;
+			children = (
+				0B61624721B70D0F000D7A28 /* DefaultBucketer.swift */,
+			);
+			path = implementation;
+			sourceTree = "<group>";
+		};
 		0B7CB0B821AC5FE2007B77E5 = {
 			isa = PBXGroup;
 			children = (
+				0B61624621B70CE7000D7A28 /* implementation */,
 				0B124BBD21B5C00A001BE0FA /* utils */,
 				0B124BB821B32973001BE0FA /* protocols */,
 				0B7CB11221AE329B007B77E5 /* extensions */,
@@ -188,6 +205,7 @@
 			children = (
 				0B7CB0D021AC5FE2007B77E5 /* OptimizelyCoreTests.swift */,
 				0B7CB0D221AC5FE2007B77E5 /* Info.plist */,
+				0B61624921B7292E000D7A28 /* BucketTests.swift */,
 			);
 			path = OptimizelyCoreTests;
 			sourceTree = "<group>";
@@ -340,6 +358,7 @@
 			files = (
 				0B7CB0FF21AE03A0007B77E5 /* Group.swift in Sources */,
 				0B61624121B6EC3F000D7A28 /* UserProfileService.swift in Sources */,
+				0B61624821B70D0F000D7A28 /* DefaultBucketer.swift in Sources */,
 				0B7CB0F321ADF784007B77E5 /* Experiment.swift in Sources */,
 				0B124BC321B5D88D001BE0FA /* ErrorHandler.swift in Sources */,
 				0B61624521B6F1B6000D7A28 /* Logger.swift in Sources */,
@@ -374,19 +393,24 @@
 			files = (
 				0B7CB0D121AC5FE2007B77E5 /* OptimizelyCoreTests.swift in Sources */,
 				0B7CB11E21B0CEBD007B77E5 /* ConditionHolder.swift in Sources */,
+				0B61624D21B7299D000D7A28 /* Result.swift in Sources */,
 				0B7CB11B21B08A0B007B77E5 /* UserAttribute.swift in Sources */,
 				0B7CB10E21AE0ED2007B77E5 /* FeatureFlag.swift in Sources */,
+				0B61624B21B72995000D7A28 /* DefaultBucketer.swift in Sources */,
 				0B7CB10921AE0EC7007B77E5 /* Variation.swift in Sources */,
 				0B7CB10C21AE0ED2007B77E5 /* Rollout.swift in Sources */,
 				0B7CB11121AE0EDC007B77E5 /* Attribute.swift in Sources */,
 				0B7CB10F21AE0ED2007B77E5 /* Event.swift in Sources */,
+				0B61624E21B729A2000D7A28 /* Bucketer.swift in Sources */,
 				0B7CB10621AE0EBB007B77E5 /* Audience.swift in Sources */,
 				0B7CB11021AE0ED8007B77E5 /* Group.swift in Sources */,
 				0B7CB10B21AE0ED2007B77E5 /* Experiment.swift in Sources */,
 				0B7CB10D21AE0ED2007B77E5 /* FeatureVariable.swift in Sources */,
 				0B7CB10521AE0D18007B77E5 /* ProjectConfig.swift in Sources */,
+				0B61624A21B7292E000D7A28 /* BucketTests.swift in Sources */,
 				0B7CB10721AE0EBF007B77E5 /* TrafficAllocation.swift in Sources */,
 				0B7CB10821AE0EC3007B77E5 /* Variable.swift in Sources */,
+				0B61624C21B72999000D7A28 /* MurmurHash3.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

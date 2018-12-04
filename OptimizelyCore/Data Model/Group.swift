@@ -20,8 +20,13 @@
 import Foundation
 
 class Group : Codable {
+    enum Policy : String, Codable {
+        case random
+        case overlapping
+    }
+    
     var id:String = ""
-    var policy:String = ""
+    var policy:Policy = Policy.random
     var trafficAllocation:[TrafficAllocation] = []
     var experiments:[Experiment] = []
 }

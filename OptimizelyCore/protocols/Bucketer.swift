@@ -26,18 +26,26 @@ protocol Bucketer {
 
     /**
      * Bucket experiment based on bucket value and traffic allocations.
-     * @param group representing OPTLYGroup from which experiment belongs to.
+     * @param group representing Group from which experiment belongs to.
      * @param bucketingId Id to be used for bucketing the user.
-     * @return experiment which represent OPTLYExperiment.
+     * @return experiment which represent Experiment.
      */
-    func bucketToExperiment(group:Group, bucketingId:String)
+    func bucketToExperiment(group:Group, bucketingId:String) -> Experiment?
     
+    /**
+     * Bucket a bucketingId into an experiment.
+     * @param experiment The experiment in which to bucket the bucketingId.
+     * @param bucketingId The ID to bucket. This must be a non-null, non-empty string.
+     * @return The variation the bucketingId was bucketed into.
+     */
+    func bucketExperiment(experiment:Experiment, bucketingId:String) -> Variation?
+
     /**
      * Hash the bucketing ID and map it to the range [0, 10000).
      * @param bucketingId The ID for which to generate the hash and bucket values.
      * @return A value in the range [0, 10000).
      */
-    func generateBucketValue(bucketingId:String)
+    func generateBucketValue(bucketingId:String) -> Int
     
     /**
      * Generate an ID to be used in Murmur3 hash based on the provided User ID and the ID of the entity the user is bucketed into.
@@ -45,6 +53,6 @@ protocol Bucketer {
      * @param entityId The ID of the entity the user is being bucketed into. ex: OPTLYExperiment.experimentId.
      * @return The string to be used in the Murmur3 hash for bucketing.
      */
-    func makeHashIdFromBucketingId(bucketingId:String, entityId:String)
+    func makeHashIdFromBucketingId(bucketingId:String, entityId:String) -> String
 
 }

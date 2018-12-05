@@ -577,5 +577,85 @@
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "implementation/DefaultDecisionService.swift"
+            timestampString = "565736358.840346"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
+            landmarkName = "getVariationForFeature(featureFlag:userId:attributes:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizelyCoreTests.DefaultDecisionService.getVariationForFeature(featureFlag: OptimizelyCoreTests.FeatureFlag, userId: Swift.String, attributes: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Swift.Optional&lt;OptimizelyCoreTests.Variation&gt;"
+                  moduleName = "OptimizelyCoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/implementation/DefaultDecisionService.swift"
+                  timestampString = "565736361.206966"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "360">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizelyCore.DefaultDecisionService.getVariationForFeature(featureFlag: OptimizelyCore.FeatureFlag, userId: Swift.String, attributes: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Swift.Optional&lt;OptimizelyCore.Variation&gt;"
+                  moduleName = "OptimizelyCore"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/implementation/DefaultDecisionService.swift"
+                  timestampString = "565736361.471715"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "360">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "protocols/DecisionService.swift"
+            timestampString = "565736358.840422"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "22"
+            endingLineNumber = "22"
+            landmarkName = "DecisionService"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OptimizelyCoreTests/DecisionServiceTest.swift"
+            timestampString = "565736358.840481"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "testExample()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

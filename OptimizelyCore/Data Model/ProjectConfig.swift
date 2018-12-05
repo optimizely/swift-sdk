@@ -33,6 +33,28 @@ class ProjectConfig : Codable
     var accountId:String = ""
     var events:[Event]? = []
     var revision:String = ""
+    // transient
+    var whitelistUsers:Dictionary<String,Dictionary<String,String>> = Dictionary<String,Dictionary<String,String>>()
+    
+    private enum CodingKeys: String, CodingKey {
+        case version
+        case rollouts
+        case typedAudiences
+        case anonymizeIP
+        case projectId
+        case variables
+        case featureFlags
+        case experiments
+        case audiences
+        case groups
+        case attributes
+        case botFiltering
+        case accountId
+        case events
+        case revision
+        // transient
+        // case whitelistUsers
+    }
 
     class func DateFromString(dateString:String) -> NSDate
     {
@@ -41,5 +63,24 @@ class ProjectConfig : Codable
         dateFormatter.locale = enUSPosixLocale as Locale
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         return dateFormatter.date(from: dateString)! as NSDate
+    }
+}
+
+extension ProjectConfig {
+    func whitelistUser(userId:String, experimentId:String, variationId:String) {
+        if var dic = whitelistUsers[userId] {
+            dic[experimentId] = variationId
+        }
+        else {
+            var dic = Dictionary<String,String>()
+            dic[experimentId] = variationId
+            whitelistUsers[userId] = dic
+        }
+    }
+    func getWhitelistedVariationId(userId:String, experimentId:String) -> String? {
+        if var dic = whitelistUsers[userId] {
+            return dic[experimentId]
+        }
+        return nil
     }
 }

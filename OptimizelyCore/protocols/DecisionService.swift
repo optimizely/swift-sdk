@@ -25,7 +25,7 @@ protocol DecisionService {
      * @param bucketer The bucketer.
      * @return An instance of the decision service.
      */
-    static func createInstance(config:ProjectConfig, bucketer:Bucketer) -> DecisionService
+    static func createInstance(config:ProjectConfig, bucketer:Bucketer, userProfileService:UserProfileService) -> DecisionService?
     
     /**
      * Gets a variation based on the following rules (evaluated in sequential order):
@@ -45,7 +45,7 @@ protocol DecisionService {
      * @param experiment The experiment in which to bucket the user.
      * @return The variation assigned to the specified user ID for an experiment.
      */
-    func getVariation(userId:String, experiment:Experiment, attributes:Dictionary<String, Any>) -> Variation
+    func getVariation(userId:String, experiment:Experiment, attributes:Dictionary<String, Any>) -> Variation?
     
     /**
      * Get a variation the user is bucketed into for the given FeatureFlag
@@ -54,6 +54,6 @@ protocol DecisionService {
      * @param attributes User attributes
      * @return The variation assigned to the specified user ID for a feature flag.
      */
-    func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>)
+    func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> Variation?
 
 }

@@ -19,9 +19,18 @@ import Foundation
 
 class Experiment : Codable
 {
+    
+    enum Status: String, Codable {
+        case Running
+        case Launched
+        case Paused
+        case Not_started = "Not started"
+        case Archived
+    }
+    
     var id:String = ""
     var key:String = ""
-    var status:String = ""
+    var status:Status = Status.Not_started
     var layerId:String = ""
     var trafficAllocation:[TrafficAllocation] = []
     var audienceIds:[String] = []

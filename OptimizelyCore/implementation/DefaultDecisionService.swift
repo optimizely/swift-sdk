@@ -46,7 +46,7 @@ class DefaultDecisionService : DecisionService {
         }
         
         // ---- check if a valid variation is stored in the user profile ----
-        if let userDict = userProfileService.lookup(userId: userId), let dict = userDict[experimentId] as? Dictionary<String, Any>, let variationId = dict["variation_id"] as? String, let variation = experiment.variations.filter({$0.id == variationId}).first {
+        if let variationId = userProfileService.variationId(userId: userId, experimentId: experimentId), let variation = experiment.variations.filter({$0.id == variationId}).first {
             return variation
         }
         
@@ -60,8 +60,9 @@ class DefaultDecisionService : DecisionService {
             // bucket user into a variation
             bucketedVariation = bucketer.bucketExperiment(experiment: experiment, bucketingId:bucketingId)
             
-            if let _ = bucketedVariation {
+            if let bucketedVariation = bucketedVariation {
                 // save to user profile
+                userProfileService.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
             }
         }
         

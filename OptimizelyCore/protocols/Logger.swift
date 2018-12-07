@@ -14,6 +14,7 @@ import Foundation
  */
 
 enum OptimizelyLogLevel : Int {
+    
     /// If the filter level is set to OptimizelyLogLevelOff, all log messages will be suppressed.
     case OptimizelyLogLevelOff = 0
     /// Any error that is causing a crash of the application.
@@ -37,19 +38,27 @@ enum OptimizelyLogLevel : Int {
  */
 protocol Logger {
 
-/// The log level the Logger is initialized with.
-var logLevel:OptimizelyLogLevel { get }
+    /// The log level the Logger is initialized with.
+    static var logLevel:OptimizelyLogLevel { get set }
 
-/**
- * Initialize a new Optimizely Logger instance.
- */
-static func createInstance(logLevel:OptimizelyLogLevel)
+    /**
+     * Initialize a new Optimizely Logger instance.
+     */
+    static func createInstance(logLevel:OptimizelyLogLevel) -> Logger?
 
-/**
- Log a message at a certain level.
- @param message The message to log.
- @param level The priority level of the log.
- */
-func logMessage(message:String, level:OptimizelyLogLevel)
+    /**
+     Log a message at a certain level.
+     @param message The message to log.
+     @param level The priority level of the log.
+     */
+    func log(level: OptimizelyLogLevel, message: String)
 
+}
+
+extension Logger {
+    static var logLevelNames:[String] {
+        get {
+            return ["OFF", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "VERBOSE", "ALL"]
+        }
+    }
 }

@@ -15,6 +15,7 @@ class DefaultBucketer : Bucketer {
     var MAX_HASH_VALUE:UInt64?
     
     private var config:ProjectConfig
+    private var logger = DefaultLogger.createInstance(logLevel: OptimizelyLogLevel.OptimizelyLogLevelInfo)
     
     internal required init(config:ProjectConfig) {
         self.config = config
@@ -32,6 +33,7 @@ class DefaultBucketer : Bucketer {
         
         if group.trafficAllocation.count == 0 {
             // log error if there are no traffic allocation values
+            logger?.log(level: .OptimizelyLogLevelError, message: String(format:"Group %@ has no traffic allocation", group.id))
             return nil;
         }
         
@@ -46,12 +48,15 @@ class DefaultBucketer : Bucketer {
                 }
                 else {
                     // log problem with experiment id
+                    logger?.log(level: .OptimizelyLogLevelError, message: String(format:"Experiment Id %@ for experiment not in datafile", experimentId))
                 }
                 return experiment;
             }
         }
         
         // log error if invalid bucketing id
+        logger?.log(level: .OptimizelyLogLevelError, message: String(format:"Bucketing value %@ not in traffic allocation", bucketValue))
+
         return nil
     }
     
@@ -78,6 +83,8 @@ class DefaultBucketer : Bucketer {
         }
         else {
             // log message if the user is mutually excluded
+            logger?.log(level: .OptimizelyLogLevelError, message: String(format:"User not bucketed into variation. Mutually excluded via group %@", group?.id ?? "unknown"))
+
             return nil;
         }
     }
@@ -88,6 +95,8 @@ class DefaultBucketer : Bucketer {
         
         if experiment.trafficAllocation.count == 0 {
             // log error if there are no traffic allocation values
+            logger?.log(level: .OptimizelyLogLevelError, message: String(format:"Experiment %@ has no traffic allocation", experiment.key))
+
             return nil
         }
         
@@ -97,19 +106,23 @@ class DefaultBucketer : Bucketer {
                 let variationId = trafficAllocation.entityId;
                 let variation = experiment.variations.filter({$0.id == variationId }).first
                 // propagate errors and logs for unknown variation
-                if let _ = variation {
+                if let variation = variation {
                    // log we got a variation
+                    logger?.log(level: .OptimizelyLogLevelInfo, message: String(format:"Got variation %@ for experiment %@", variation.key, experiment.key))
+
                 }
                 else {
                     // log error
-                    
+                    logger?.log(level: .OptimizelyLogLevelError, message: String(format:"Not bucketed into variation experiment %@", experiment.key))
+
                 }
                 return variation;
             }
         }
         
         // log error if invalid bucketing id
-        
+        logger?.log(level: .OptimizelyLogLevelError, message: String(format:"Invalid bucketing value for experiment %@", experiment.key))
+
         return nil;
 
     }

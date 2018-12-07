@@ -72,7 +72,7 @@ class DefaultUserProfileService : UserProfileService {
     var profiles = Dictionary<String, Dictionary<String,Any>>()
     
     init() {
-        profiles = UserDefaults.standard.dictionary(forKey: DefaultUserProfileService.storageName) as! [String : Dictionary<String, Any>]
+        profiles = UserDefaults.standard.dictionary(forKey: DefaultUserProfileService.storageName) as? [String : Dictionary<String, Any>] ?? Dictionary<String, Dictionary<String,Any>>()
     }
     static func createInstance() -> UserProfileService {
         return DefaultUserProfileService()

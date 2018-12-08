@@ -16,6 +16,12 @@
 
 import Foundation
 
+struct IntializeError : Error {
+    
+}
+
+typealias OptimizelyInitCompletionHandler = (Result<Optimizely, IntializeError>) -> Void
+
 protocol Optimizely {
     
     var bucketer:Bucketer? { get }
@@ -27,6 +33,7 @@ protocol Optimizely {
     var logger:Logger? { get }
     var userProfileService:UserProfileService? { get }
     var notificationCenter:NotificationCenter? { get }
+    
 /**
  * Use the activate method to start an experiment.
  *
@@ -41,7 +48,7 @@ protocol Optimizely {
  * @param userId The user ID to be used for bucketing.
  * @return The variation the user was bucketed into. This value can be nil.
  */
-    func activate(experimentKey:String, userId:String) -> Variation;
+    func activate(experimentKey:String, userId:String) -> Variation?
 
 /**
  * Try to activate an experiment based on the experiment key and user ID with user attributes.
@@ -50,7 +57,7 @@ protocol Optimizely {
  * @param attributes A map of attribute names to current user attribute values.
  * @return The variation the user was bucketed into. This value can be nil.
  */
-    func activate(experimentKey:String, userId:String, attributes:Dictionary<String, Any?>) -> Variation;
+    func activate(experimentKey:String, userId:String, attributes:Dictionary<String, Any>?) -> Variation?
 /**
  * Use the getVariation method if activate has been called and the current variation assignment
  * is needed for a given experiment and user.
@@ -63,7 +70,7 @@ protocol Optimizely {
  * @param userId The user ID to be used for bucketing.
  * @return The variation the user was bucketed into. This value can be nil.
  */
-    func variation(experimentKey:String, userId:String) -> Variation;
+    func variation(experimentKey:String, userId:String) -> Variation?
 
 /**
  * Get variation for experiment and user ID with user attributes.
@@ -72,7 +79,7 @@ protocol Optimizely {
  * @param attributes A map of attribute names to current user attribute values.
  * @return The variation the user was bucketed into. This value can be nil.
  */
-    func variation(experimentKey:String, userId:String, attributes:Dictionary<String, Any?>) -> Variation;
+    func variation(experimentKey:String, userId:String, attributes:Dictionary<String, Any>?) -> Variation?
 /**
  * Use the setForcedVariation method to force an experimentKey-userId
  * pair into a specific variation for QA purposes.
@@ -90,7 +97,7 @@ protocol Optimizely {
  * @param userId The user ID to be used for bucketing.
  * @return forced variation if it exists, otherwise return nil.
  */
-    func getForcedVariation(experimentKey:String, userId:String) -> Variation
+    func getForcedVariation(experimentKey:String, userId:String) -> Variation?
 
 /**
  * Set forced variation for experiment and user ID to variationKey.
@@ -110,7 +117,7 @@ protocol Optimizely {
  * @param attributes The user's attributes.
  * @return YES if feature is enabled, false otherwise.
  */
-    func isFeatureEnabled(featureKeyy:String, userId:String, attributes:Dictionary<String,Any>) -> Bool
+    func isFeatureEnabled(featureKeyy:String, userId:String, attributes:Dictionary<String,Any>?) -> Bool
 
 /**
  * Gets boolean feature variable value.
@@ -120,7 +127,7 @@ protocol Optimizely {
  * @param attributes The user's attributes.
  * @return BOOL feature variable value.
  */
-    func getFeatureVariableBoolean(featureKey:String, variableKey:String, userId:String, attributes:Dictionary<String, Any>) -> Bool?
+    func getFeatureVariableBoolean(featureKey:String, variableKey:String, userId:String, attributes:Dictionary<String, Any>?) -> Bool?
 
 /**
  * Gets double feature variable value.
@@ -130,7 +137,7 @@ protocol Optimizely {
  * @param attributes The user's attributes.
  * @return double feature variable value of type double.
  */
-    func getFeatureVariableDouble(featureKey:String, variableKey:String, userId:String, attributes:Dictionary<String, Any>) -> Double?
+    func getFeatureVariableDouble(featureKey:String, variableKey:String, userId:String, attributes:Dictionary<String, Any>?) -> Double?
 
 /**
  * Gets integer feature variable value.
@@ -140,7 +147,7 @@ protocol Optimizely {
  * @param attributes The user's attributes.
  * @return int feature variable value of type integer.
  */
-    func getFeatureVariableInteger(featureKey:String, variableKey:String, userId:String, attributes:Dictionary<String, Any>) -> Int?
+    func getFeatureVariableInteger(featureKey:String, variableKey:String, userId:String, attributes:Dictionary<String, Any>?) -> Int?
 
 /**
  * Gets string feature variable value.
@@ -150,7 +157,7 @@ protocol Optimizely {
  * @param attributes The user's attributes.
  * @return NSString feature variable value of type string.
  */
-    func getFeatureVariableString(featureKey:String, variableKey:String, userId:String, attributes:Dictionary<String, Any>) -> String?
+    func getFeatureVariableString(featureKey:String, variableKey:String, userId:String, attributes:Dictionary<String, Any>?) -> String?
 
 /**
  * Get array of features that are enabled for the user.
@@ -158,7 +165,7 @@ protocol Optimizely {
  * @param attributes The user's attributes.
  * @return NSArray<NSString> Array of feature keys that are enabled for the user.
  */
-    func getEnabledFeatures(userId:String, attributes:Dictionary<String,Any>) -> Array<String>
+    func getEnabledFeatures(userId:String, attributes:Dictionary<String,Any>?) -> Array<String>
 
 /**
  * Track an event
@@ -173,7 +180,7 @@ protocol Optimizely {
  * @param userId The user ID associated with the event to track
  * @param attributes A map of attribute names to current user attribute values.
  */
-    func track(eventKey:String, userId:String, attributes:Dictionary<String,Any>)
+    func track(eventKey:String, userId:String, attributes:Dictionary<String,Any>?)
 
 /**
  * Track an event
@@ -181,7 +188,7 @@ protocol Optimizely {
  * @param userId The user ID associated with the event to track
  * @param eventTags A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean)
  */
-    func track(eventKey:String, userId:String, eventTags:Dictionary<String,Any>)
+    func track(eventKey:String, userId:String, eventTags:Dictionary<String,Any>?)
 
 /**
  * Track an event
@@ -190,6 +197,6 @@ protocol Optimizely {
  * @param attributes A map of attribute names to current user attribute values
  * @param eventTags A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean)
  */
-    func track(eventKey:String, userId:String, attributes:Dictionary<String,Any>, eventTags:Dictionary<String,Any>)
+    func track(eventKey:String, userId:String, attributes:Dictionary<String,Any>?, eventTags:Dictionary<String,Any>?)
 }
 

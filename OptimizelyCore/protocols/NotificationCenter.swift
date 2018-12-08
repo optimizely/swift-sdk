@@ -14,7 +14,7 @@ enum NotificationType {
     case Track
 }
 
-typealias ActivateListener = (_ experiment:Experiment, _ userId:String, _ attributes:Dictionary<String,Any>, _ variation:Variation, _ event:BatchtEvent) -> Void
+typealias ActivateListener = (_ experiment:Experiment, _ userId:String, _ attributes:Dictionary<String,Any>, _ variation:Variation, _ event:Dictionary<String,Any>) -> Void
 
 typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>, _ eventTags:Dictionary<String, Any>) -> Void
 

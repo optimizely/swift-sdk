@@ -584,11 +584,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "implementation/DefaultDecisionService.swift"
-            timestampString = "565944088.486426"
+            timestampString = "566414324.3911819"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
             landmarkName = "getVariationForFeature(featureFlag:userId:attributes:)"
             landmarkType = "7">
             <Locations>
@@ -655,6 +655,70 @@
             endingLineNumber = "31"
             landmarkName = "testExample()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OptimizelyCoreTests/OptimizelyManagerTests.swift"
+            timestampString = "566414324.391893"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
+            landmarkName = "testExample()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "implementation/DefaultDecisionService.swift"
+            timestampString = "566414324.3943779"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "isInExperiment(experiment:userId:attributes:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizelyCoreTests.DefaultDecisionService.isInExperiment(experiment: OptimizelyCoreTests.Experiment, userId: Swift.String, attributes: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Swift.Optional&lt;Swift.Bool&gt;"
+                  moduleName = "OptimizelyCoreTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/implementation/DefaultDecisionService.swift"
+                  timestampString = "566414369.564266"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "74"
+                  endingLineNumber = "74"
+                  offsetFromSymbolStart = "73">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "OptimizelyCore.DefaultDecisionService.isInExperiment(experiment: OptimizelyCore.Experiment, userId: Swift.String, attributes: Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; Swift.Optional&lt;Swift.Bool&gt;"
+                  moduleName = "OptimizelyCore"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tzurkan/Development/swift-sdk/OptimizelyCore/implementation/DefaultDecisionService.swift"
+                  timestampString = "566414370.392293"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "74"
+                  endingLineNumber = "74"
+                  offsetFromSymbolStart = "73">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

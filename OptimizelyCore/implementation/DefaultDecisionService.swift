@@ -74,7 +74,7 @@ class DefaultDecisionService : DecisionService {
         if let _ = experiment.audienceConditions {
             return experiment.audienceConditions?.evaluate(projectConfig: config, attributes: attributes)
         }
-        else {
+        else if experiment.audienceIds.count > 0 {
             var holder = [ConditionHolder]()
             holder.append(ConditionHolder.string("or"))
             for audienceId in experiment.audienceIds {
@@ -82,6 +82,8 @@ class DefaultDecisionService : DecisionService {
             }
             return holder.evaluate(config: config, attributes: attributes)
         }
+        
+        return true
     }
     
     func getExperimentInGroup(group:Group, bucketingId:String) -> Experiment? {

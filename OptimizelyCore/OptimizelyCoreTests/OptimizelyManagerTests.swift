@@ -26,6 +26,10 @@ class OptimizelyManagerTests: XCTestCase {
         if let optimizely = optimizely?.initialize(datafile:json) {
             let variation = optimizely.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
             XCTAssertNotNil(variation, "no variation found")
+            
+            let basicVariation = optimizely.activate(experimentKey: "basic_experiment", userId: "userId")
+            
+            XCTAssertNotNil(basicVariation, "no variation found")
         }
     }
 

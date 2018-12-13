@@ -79,6 +79,11 @@
 		0B7CB11B21B08A0B007B77E5 /* UserAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11821AF753D007B77E5 /* UserAttribute.swift */; };
 		0B7CB11D21B0BBE1007B77E5 /* ConditionHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */; };
 		0B7CB11E21B0CEBD007B77E5 /* ConditionHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */; };
+		0B807B1121C2DD4E0090DDC8 /* BatchEventBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */; };
+		0B807B1221C2DDD50090DDC8 /* BatchEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623A21B60167000D7A28 /* BatchEvent.swift */; };
+		0B807B1421C302C80090DDC8 /* BatchEventBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */; };
+		0B807B1621C312390090DDC8 /* DefaultEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */; };
+		0B807B1721C316380090DDC8 /* DefaultEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,6 +140,8 @@
 		0B7CB10321AE053A007B77E5 /* Audience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audience.swift; sourceTree = "<group>"; };
 		0B7CB11821AF753D007B77E5 /* UserAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAttribute.swift; sourceTree = "<group>"; };
 		0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionHolder.swift; sourceTree = "<group>"; };
+		0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchEventBuilder.swift; sourceTree = "<group>"; };
+		0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultEventDispatcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,11 +202,13 @@
 		0B61624621B70CE7000D7A28 /* implementation */ = {
 			isa = PBXGroup;
 			children = (
+				0B807B1321C2FB770090DDC8 /* events */,
 				0B61624721B70D0F000D7A28 /* DefaultBucketer.swift */,
 				0B61624F21B72DCB000D7A28 /* DefaultDecisionService.swift */,
 				0B61625921B870C6000D7A28 /* DefaultUserProfileService.swift */,
 				0B61625E21B8C3A9000D7A28 /* DefaultLogger.swift */,
 				0B61630C21BB273B000D7A28 /* OptimizelyManager.swift */,
+				0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */,
 			);
 			path = implementation;
 			sourceTree = "<group>";
@@ -283,6 +292,14 @@
 			children = (
 			);
 			path = extensions;
+			sourceTree = "<group>";
+		};
+		0B807B1321C2FB770090DDC8 /* events */ = {
+			isa = PBXGroup;
+			children = (
+				0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */,
+			);
+			path = events;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -411,6 +428,7 @@
 				0B61623F21B6055F000D7A28 /* DatafileHandler.swift in Sources */,
 				0B7CB11D21B0BBE1007B77E5 /* ConditionHolder.swift in Sources */,
 				0B7CB11921AF753D007B77E5 /* UserAttribute.swift in Sources */,
+				0B807B1621C312390090DDC8 /* DefaultEventDispatcher.swift in Sources */,
 				0B124BBF21B5C024001BE0FA /* MurmurHash3.swift in Sources */,
 				0B124BCB21B5DF39001BE0FA /* Result.swift in Sources */,
 				0B61630D21BB273B000D7A28 /* OptimizelyManager.swift in Sources */,
@@ -424,6 +442,7 @@
 				0B124BC721B5DD44001BE0FA /* EventForDispatch.swift in Sources */,
 				0B7CB0EF21ADF6C1007B77E5 /* Variation.swift in Sources */,
 				0B7CB0ED21ADF6A2007B77E5 /* Variable.swift in Sources */,
+				0B807B1121C2DD4E0090DDC8 /* BatchEventBuilder.swift in Sources */,
 				0B124BC121B5D60B001BE0FA /* DecisionService.swift in Sources */,
 				0B61624321B6EDCC000D7A28 /* NotificationCenter.swift in Sources */,
 				0B124BBC21B5BC45001BE0FA /* Bucketer.swift in Sources */,
@@ -452,7 +471,9 @@
 				0B7CB11121AE0EDC007B77E5 /* Attribute.swift in Sources */,
 				0B61631621BB9D8C000D7A28 /* DatafileHandler.swift in Sources */,
 				0B7CB10F21AE0ED2007B77E5 /* Event.swift in Sources */,
+				0B807B1721C316380090DDC8 /* DefaultEventDispatcher.swift in Sources */,
 				0B61624E21B729A2000D7A28 /* Bucketer.swift in Sources */,
+				0B807B1221C2DDD50090DDC8 /* BatchEvent.swift in Sources */,
 				0B61631121BB9AB9000D7A28 /* OptimizelyManagerTests.swift in Sources */,
 				0B61631321BB9D7D000D7A28 /* Optimizely.swift in Sources */,
 				0B7CB10621AE0EBB007B77E5 /* Audience.swift in Sources */,
@@ -465,6 +486,7 @@
 				0B61630A21BB2193000D7A28 /* DefaultLogger.swift in Sources */,
 				0B7CB10521AE0D18007B77E5 /* ProjectConfig.swift in Sources */,
 				0B61624A21B7292E000D7A28 /* BucketTests.swift in Sources */,
+				0B807B1421C302C80090DDC8 /* BatchEventBuilder.swift in Sources */,
 				0B61631521BB9D89000D7A28 /* EventDispatcher.swift in Sources */,
 				0B7CB10721AE0EBF007B77E5 /* TrafficAllocation.swift in Sources */,
 				0B7CB10821AE0EC3007B77E5 /* Variable.swift in Sources */,

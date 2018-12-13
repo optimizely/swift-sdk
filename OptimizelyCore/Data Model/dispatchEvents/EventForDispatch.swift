@@ -9,6 +9,17 @@
 import Foundation
 
 class EventForDispatch {
-    var url:URL?
-    var body:String?
+    static let eventEndpoint = "https://logx.optimizely.com/v1/events"
+    
+    let url:URL?
+    let body:Data?
+    
+    convenience init(body:Data) {
+        self.init(url: URL(string:EventForDispatch.eventEndpoint)!, body: body)
+    }
+    
+    init(url:URL, body:Data) {
+        self.url = url
+        self.body = body
+    }
 }

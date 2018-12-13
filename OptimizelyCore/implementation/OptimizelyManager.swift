@@ -30,23 +30,15 @@ class OptimizelyManager : Optimizely {
     internal var notificationCenter: NotificationCenter?
     
     internal init(bucketer:Bucketer?, decisionService:DecisionService?, errorHandler:ErrorHandler?, eventDispatcher:EventDispatcher?, datafileHandler:DatafileHandler?, logger:Logger?, userProfileService:UserProfileService?, notificationCenter:NotificationCenter?) {
-        var b = bucketer
-        var ds = decisionService
-        var eh = errorHandler
-        var ed = eventDispatcher
-        var dh = datafileHandler
-        var l = logger
-        var ups = userProfileService
-        var n = notificationCenter
+        self.bucketer = bucketer
+        self.decisionService = decisionService
+        self.errorHandler = errorHandler
+        self.eventDispatcher = eventDispatcher  ?? DefaultEventDispatcher.createInstance()
+        self.datafileHandler = datafileHandler
+        self.logger = logger
+        self.userProfileService = userProfileService
+        self.notificationCenter = notificationCenter
         
-        self.bucketer = b
-        self.decisionService = ds
-        self.errorHandler = eh
-        self.eventDispatcher = ed
-        self.datafileHandler = dh
-        self.logger = l
-        self.userProfileService = ups
-        self.notificationCenter = n
     }
 
     func initialize(data:Data) -> Optimizely? {
@@ -84,7 +76,17 @@ class OptimizelyManager : Optimizely {
     
     func activate(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
         if isValid {
-            return variation(experimentKey: experimentKey, userId: userId, attributes: attributes)
+            if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
+                let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
+                
+                if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
+                    eventDispatcher?.dispatchEvent(event: EventForDispatch(body: body), completionHandler: { (result) -> (Void) in
+                        
+                    })
+                }
+                
+                return variation
+            }
         }
         
         return nil
@@ -122,10 +124,19 @@ class OptimizelyManager : Optimizely {
     }
     
     func isFeatureEnabled(featureKeyy: String, userId: String, attributes: Dictionary<String, Any>?) -> Bool {
-        if let featureFlag = config?.featureFlags?.filter({$0.key == featureKeyy}).first ,let variation = decisionService?.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:]), variation.featureEnabled == true {
-            return true
+        guard let featureFlag = config?.featureFlags?.filter({$0.key == featureKeyy}).first  else {
+            return false
         }
         
+        if let pair = decisionService?.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:]), let experiment = pair.experiment, let variation = pair.variation {
+            if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
+                eventDispatcher?.dispatchEvent(event: EventForDispatch(body: body), completionHandler: { (result) -> (Void) in
+                    
+                })
+            }
+            
+            return pair.variation?.featureEnabled ?? false
+        }
         return false
     }
     
@@ -192,19 +203,13 @@ class OptimizelyManager : Optimizely {
     }
     
     func track(eventKey: String, userId: String, attributes: Dictionary<String, Any>?, eventTags: Dictionary<String, Any>?) {
-        if let experimentIds = config?.events?.filter({$0.key == eventKey}).first?.experimentIds {
-            let experiments = experimentIds.map { (id) -> Experiment? in
-                config?.experiments.filter({$0.id == id}).first
-            }
-            var trackExperiments = [String:String]()
-            for experiment in experiments where experiment != nil && experiment?.status == Experiment.Status.Running {
-                if let variation = decisionService?.getVariation(userId: userId, experiment: experiment!, attributes: attributes ?? [String:Any]()) {
-                    trackExperiments[experiment!.id] = variation.id
-                }
-            }
-            
-            // create batch event.
+        if let event = BatchEventBuilder.createConversionEvent(config:config!, decisionService:decisionService!, eventKey:eventKey, userId:userId, attributes:attributes, eventTags:eventTags) {
+            let eventForDispatch = EventForDispatch(body:event)
+            eventDispatcher?.dispatchEvent(event: eventForDispatch, completionHandler: { (result) -> (Void) in
+                
+            })
         }
+        
     }
     
     class Builder {

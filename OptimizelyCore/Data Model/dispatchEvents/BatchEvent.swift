@@ -8,9 +8,7 @@
 
 import Foundation
 
-import Foundation
-
-struct BatchtEvent: Codable {
+struct BatchEvent: Codable {
     let revision, accountID, clientVersion: String
     let visitors: [Visitor]
     let projectID, clientName: String
@@ -38,8 +36,72 @@ struct Visitor: Codable {
     }
 }
 
+enum AttributeValue : Codable {
+    case string(String)
+    case int(Int)
+    case double(Double)
+    case bool(Bool)
+    
+    init?(value:Any?) {
+        if value is String {
+            self = .string(value as! String)
+        }
+        if value is Int {
+            self = .int(value as! Int)
+        }
+        if value is Double {
+            self = .double(value as! Double)
+        }
+        if value is Bool {
+            self = .bool(value as! Bool)
+        }
+        
+        return nil
+    }
+    
+    init(from decoder: Decoder) throws {
+        if let container = try? decoder.singleValueContainer() {
+            if let value = try? container.decode(Double.self) {
+                self = .double(value)
+                return
+            }
+            if let value = try? container.decode(String.self) {
+                self = .string(value)
+                return
+            }
+            if let value = try? container.decode(Int.self) {
+                self = .int(value)
+                return
+            }
+            if let value = try? container.decode(Bool.self) {
+                self = .bool(value)
+                return
+            }
+        }
+        
+        throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode event batch attribute value"))
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        switch self {
+        case .string(let str):
+            var container = encoder.singleValueContainer()
+            try? container.encode(str)
+        case .double(let double):
+            var container = encoder.singleValueContainer()
+            try? container.encode(double)
+        case .int(let int):
+            var container = encoder.singleValueContainer()
+            try? container.encode(int)
+        case .bool(let bool):
+            var container = encoder.singleValueContainer()
+            try? container.encode(bool)
+        }
+    }
+}
+
 struct EventAttribute: Codable {
-    let value: Bool
+    let value: AttributeValue
     let key: String
     let shouldIndex: Bool
     let type, entityID: String
@@ -66,8 +128,13 @@ struct Decision: Codable {
 }
 
 struct DispatchEvent: Codable {
-    let timestamp: Int
+    static let activateEventKey = "campaign_activated"
+    let timestamp: Int64
+    // entityID is the layer id for impression events.
     let key, entityID, uuid: String
+    let tags:Dictionary<String,AttributeValue>? = [:]
+    let value:AttributeValue? = .double(0.0)
+    let revenue:AttributeValue? = .double(0.0)
     
     enum CodingKeys: String, CodingKey {
         case timestamp, key

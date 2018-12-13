@@ -95,7 +95,7 @@ class DefaultDecisionService : DecisionService {
         return experiment;
     }
     
-    func getVariationForFeature(featureFlag: FeatureFlag, userId: String, attributes: Dictionary<String, Any>) -> Variation? {
+     func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
         //Evaluate in this order:
         
         //1. Attempt to check if the feature is in a mutex group.
@@ -112,14 +112,14 @@ class DefaultDecisionService : DecisionService {
         //2. Attempt to bucket user into rollout using the feature flag.
         // Check if the feature flag has rollout and the user is bucketed into one of it's rules
         if let variation = getVariationForFeatureRollout(featureFlag: featureFlag, userId:userId, attributes:attributes) {
-            return variation
+            return (nil, variation)
         }
         
         return nil;
 
     }
     
-    func getVariationForFeatureGroup(featureFlag:FeatureFlag, groupId:String, userId:String,                attributes:Dictionary<String, Any>) -> Variation? {
+    func getVariationForFeatureGroup(featureFlag:FeatureFlag, groupId:String, userId:String,                attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
         
         let bucketing_id = getBucketingId(userId:userId, attributes:attributes)
         if let group = config.groups.filter({$0.id == groupId}).first {
@@ -128,7 +128,7 @@ class DefaultDecisionService : DecisionService {
                 featureFlag.experimentIds.contains(experiment.id),
                 let variation = getVariation(userId:userId, experiment:experiment, attributes:attributes) {
                   // log
-                    return variation
+                    return (experiment,variation)
             }
         }
         else {
@@ -140,7 +140,7 @@ class DefaultDecisionService : DecisionService {
     
     func getVariationForFeatureExperiment(featureFlag:FeatureFlag,
                                           userId:String,
-                                          attributes:Dictionary<String,Any>) -> Variation? {
+                                          attributes:Dictionary<String,Any>) -> (experiment:Experiment?, variation:Variation?)? {
         
         let experimentIds = featureFlag.experimentIds;
         // Check if there are any experiment IDs inside feature flag
@@ -148,7 +148,7 @@ class DefaultDecisionService : DecisionService {
         for experimentId in experimentIds {
             if let experiment = config.experiments.filter({$0.id == experimentId }).first {
                 let variation = getVariation(userId: userId, experiment: experiment, attributes: attributes)
-                return variation;
+                return (experiment,variation)
             }
         }
         return nil;

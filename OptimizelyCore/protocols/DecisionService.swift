@@ -54,6 +54,6 @@ protocol DecisionService {
      * @param attributes User attributes
      * @return The variation assigned to the specified user ID for a feature flag.
      */
-    func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> Variation?
-
+    func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)?
+    
 }

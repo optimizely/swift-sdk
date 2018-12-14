@@ -16,7 +16,7 @@
 
 import Foundation
 
-class TrafficAllocation : Codable
+public class TrafficAllocation : Codable
 {
     var entityId:String = ""
     var endOfRange:Int = 0

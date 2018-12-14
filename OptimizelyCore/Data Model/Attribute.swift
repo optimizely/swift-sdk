@@ -18,7 +18,7 @@
 
 import Foundation
 
-class Attribute : Codable {
+public class Attribute : Codable {
     var id:String = ""
     var key:String = ""
     var segmentId:String? = ""

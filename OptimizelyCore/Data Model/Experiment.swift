@@ -17,7 +17,7 @@
 
 import Foundation
 
-class Experiment : Codable
+public class Experiment : Codable
 {
     
     enum Status: String, Codable {

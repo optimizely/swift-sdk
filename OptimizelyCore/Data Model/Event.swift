@@ -19,7 +19,7 @@
 
 import Foundation
 
-class Event : Codable
+public class Event : Codable
 {
     var experimentIds:[String] = []
     var id:String = ""

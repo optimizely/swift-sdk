@@ -19,7 +19,7 @@
 
 import Foundation
 
-class Rollout : Codable
+public class Rollout : Codable
 {
     var experiments:[Experiment] = []
     var id:String = ""

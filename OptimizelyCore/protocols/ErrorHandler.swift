@@ -17,7 +17,7 @@
 
 import Foundation
 
-protocol ErrorHandler {
+public protocol ErrorHandler {
     
     static func createInstance() -> ErrorHandler
 

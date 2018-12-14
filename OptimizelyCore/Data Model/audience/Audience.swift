@@ -16,7 +16,7 @@
 
 import Foundation
 
-class Audience : Codable {
+public class Audience : Codable {
     var id:String = ""
     var name:String = ""
     var conditions:ConditionHolder?
@@ -31,7 +31,7 @@ class Audience : Codable {
         
     }
     
-    required init(from decoder: Decoder) throws {
+    required public init(from decoder: Decoder) throws {
         let container = try? decoder.container(keyedBy: codingKeys.self)
         
         if let value = try container?.decode(String.self, forKey: .id) {
@@ -60,7 +60,7 @@ class Audience : Codable {
         
     }
     
-    func encode(to encoder: Encoder) throws
+    public func encode(to encoder: Encoder) throws
     {
         var container = encoder.container(keyedBy: codingKeys.self)
         try container.encode(id, forKey: .id)

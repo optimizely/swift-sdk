@@ -16,7 +16,7 @@
 
 import Foundation
 
-class UserAttribute : Codable {
+public class UserAttribute : Codable {
     var name:String = ""
     var type:String = ""
     var match:String? = ""
@@ -33,7 +33,7 @@ class UserAttribute : Codable {
         
     }
     
-    required init(from decoder:Decoder) throws {
+    required public init(from decoder:Decoder) throws {
         guard let container = try? decoder.container(keyedBy: codedKeys.self) else {
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: ""))
         }
@@ -61,7 +61,7 @@ class UserAttribute : Codable {
         }
     }
     
-    func encode(to encoder: Encoder) throws
+    public func encode(to encoder: Encoder) throws
     {
         var container = encoder.container(keyedBy: codedKeys.self)
         try container.encode(name, forKey: .name)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EventForDispatch {
+public class EventForDispatch {
     static let eventEndpoint = "https://logx.optimizely.com/v1/events"
     
     let url:URL?

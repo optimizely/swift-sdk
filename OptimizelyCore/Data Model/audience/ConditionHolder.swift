@@ -16,12 +16,12 @@
 
 import Foundation
 
-enum ConditionHolder : Codable {
+public enum ConditionHolder : Codable {
     case string(String)
     case userAttribute(UserAttribute)
     case array([ConditionHolder])
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         if let container = try? decoder.singleValueContainer() {
             if let value = try? container.decode([ConditionHolder].self) {
                 self = .array(value)
@@ -40,7 +40,7 @@ enum ConditionHolder : Codable {
         throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         switch self {
         case .string(let op):
             var container = encoder.singleValueContainer()

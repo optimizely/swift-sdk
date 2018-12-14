@@ -16,7 +16,7 @@
 
 import Foundation
 
-protocol Bucketer {
+public protocol Bucketer {
     /**
      * Initialize the default bucketer with the project config.
      * @param config The project config that the bucketer will use for reference.

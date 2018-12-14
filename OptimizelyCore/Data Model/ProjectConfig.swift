@@ -16,7 +16,7 @@
 
 import Foundation
 
-class ProjectConfig : Codable
+public class ProjectConfig : Codable
 {
     var version:String = ""
     var rollouts:[Rollout]? = []

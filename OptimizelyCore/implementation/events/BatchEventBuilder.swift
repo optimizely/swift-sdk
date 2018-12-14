@@ -9,6 +9,7 @@
 import Foundation
 
 class BatchEventBuilder {
+    static private var logger = DefaultLogger.createInstance(logLevel: OptimizelyLogLevel.OptimizelyLogLevelInfo)
     static func createImpressionEvent(config:ProjectConfig, decisionService:DecisionService, experiment:Experiment, varionation:Variation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
         var decisions = [Decision]()
         
@@ -34,7 +35,7 @@ class BatchEventBuilder {
                     }
                 }
                 else {
-                    DefaultLogger.createInstance(logLevel: OptimizelyLogLevel.OptimizelyLogLevelAll)?.log(level: .OptimizelyLogLevelDebug, message: String(format:"Attribute %s skipped.  Not in datafile. ", attr))
+                    logger?.log(level: .OptimizelyLogLevelDebug, message: "Attribute " + attr + "skipped")
                 }
             }
         }
@@ -84,7 +85,7 @@ class BatchEventBuilder {
                     }
                 }
                 else {
-                    DefaultLogger.createInstance(logLevel: OptimizelyLogLevel.OptimizelyLogLevelAll)?.log(level: .OptimizelyLogLevelDebug, message: String(format:"Attribute %s skipped.  Not in datafile. ", attr))
+                    logger?.log(level: .OptimizelyLogLevelDebug, message: String(format:"Attribute %s skipped.  Not in datafile. ", attr))
                 }
             }
         }

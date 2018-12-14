@@ -133,8 +133,8 @@ struct DispatchEvent: Codable {
     // entityID is the layer id for impression events.
     let key, entityID, uuid: String
     let tags:Dictionary<String,AttributeValue>? = [:]
-    let value:AttributeValue? = .double(0.0)
-    let revenue:AttributeValue? = .double(0.0)
+    let value:AttributeValue? = nil
+    let revenue:AttributeValue? = nil
     
     enum CodingKeys: String, CodingKey {
         case timestamp, key

@@ -21,7 +21,7 @@
 
 import Foundation
 
-class FeatureVariable : Codable
+public class FeatureVariable : Codable
 {
     var defaultValue:String? = ""
     var type:String = ""

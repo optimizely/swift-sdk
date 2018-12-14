@@ -62,7 +62,7 @@
 
 import Foundation
 
-protocol UserProfileService {
+public protocol UserProfileService {
     
     static func createInstance() -> UserProfileService
 

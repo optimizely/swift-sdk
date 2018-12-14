@@ -21,7 +21,7 @@
 
 import Foundation
 
-class FeatureFlag : Codable
+public class FeatureFlag : Codable
 {
     var experimentIds:[String] = []
     var rolloutId:String?

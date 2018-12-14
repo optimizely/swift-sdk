@@ -19,7 +19,7 @@
 
 import Foundation
 
-class Group : Codable {
+public class Group : Codable {
     enum Policy : String, Codable {
         case random
         case overlapping

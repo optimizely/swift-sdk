@@ -22,7 +22,7 @@ struct IntializeError : Error {
 
 typealias OptimizelyInitCompletionHandler = (Result<Optimizely, IntializeError>) -> Void
 
-protocol Optimizely {
+public protocol Optimizely {
     
     var bucketer:Bucketer? { get }
     var decisionService:DecisionService? { get }

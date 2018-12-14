@@ -13,7 +13,7 @@ import Foundation
  * Normally, when messages are logged with priority levels greater than the filter level, they will be suppressed.
  */
 
-enum OptimizelyLogLevel : Int {
+public enum OptimizelyLogLevel : Int {
     
     /// If the filter level is set to OptimizelyLogLevelOff, all log messages will be suppressed.
     case OptimizelyLogLevelOff = 0
@@ -36,7 +36,7 @@ enum OptimizelyLogLevel : Int {
 /**
  * Any logger must implement these following methods.
  */
-protocol Logger {
+public protocol Logger {
 
     /// The log level the Logger is initialized with.
     static var logLevel:OptimizelyLogLevel { get set }

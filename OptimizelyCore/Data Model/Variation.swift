@@ -20,7 +20,7 @@
 
 import Foundation
 
-class Variation : Codable
+public class Variation : Codable
 {
     var variables:[Variable]? = []
     var id:String = ""

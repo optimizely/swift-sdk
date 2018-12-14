@@ -9,16 +9,16 @@
 import Foundation
 
 /// Enum representing notification types.
-enum NotificationType {
+public enum NotificationType {
     case Activate
     case Track
 }
 
-typealias ActivateListener = (_ experiment:Experiment, _ userId:String, _ attributes:Dictionary<String,Any>, _ variation:Variation, _ event:Dictionary<String,Any>) -> Void
+public typealias ActivateListener = (_ experiment:Experiment, _ userId:String, _ attributes:Dictionary<String,Any>, _ variation:Variation, _ event:Dictionary<String,Any>) -> Void
 
-typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>, _ eventTags:Dictionary<String, Any>) -> Void
+public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>, _ eventTags:Dictionary<String, Any>) -> Void
 
-protocol NotificationCenter {
+public protocol NotificationCenter {
 
 // Notification Id represeting id of notification.
     var notificationId:Int? { get set }

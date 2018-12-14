@@ -8,11 +8,11 @@
 
 import Foundation
 
-typealias DispatchCompletionHandler = (Result<Event, EventDispatchError>?)->(Void)
-class EventDispatchError : Error {
+public typealias DispatchCompletionHandler = (Result<Event, EventDispatchError>?)->(Void)
+public class EventDispatchError : Error {
 }
 
-protocol EventDispatcher {
+public protocol EventDispatcher {
     static func createInstance() -> EventDispatcher?
     // Not sure the completion handler will actually be called on complete.
     func dispatchEvent(event:EventForDispatch, completionHandler: @escaping DispatchCompletionHandler)

@@ -17,7 +17,7 @@
 
 import Foundation
 
-protocol DecisionService {
+public protocol DecisionService {
     /**
      * Initializer for the Decision Service.
      *

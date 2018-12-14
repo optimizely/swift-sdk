@@ -8,13 +8,13 @@
 
 import Foundation
 
-struct DatafileDownloadError : Error {
+public struct DatafileDownloadError : Error {
     
 }
 
-typealias DatafileDownloadCompletionHandler = (Result<String,DatafileDownloadError>) -> Void
+public typealias DatafileDownloadCompletionHandler = (Result<String,DatafileDownloadError>) -> Void
 
-protocol DatafileHandler {
+public protocol DatafileHandler {
     /**
      * Synchronous call to download the datafile.
      *

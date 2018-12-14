@@ -9,15 +9,14 @@
 import Foundation
 
 class DefaultEventDispatcher : EventDispatcher {
-    let dispatchQueue = DispatchQueue(label: "OPTLYEventDispatcherQueue")
+    let logger = DefaultLogger.createInstance(logLevel: .OptimizelyLogLevelDebug)
     static func createInstance() -> EventDispatcher? {
         return DefaultEventDispatcher()
     }
     
     func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
-        dispatchQueue.async {
-            self.sendEvent(event: event, completionHandler: completionHandler)
-        }
+        
+        self.sendEvent(event: event, completionHandler: completionHandler)
     }
     
     func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
@@ -28,10 +27,14 @@ class DefaultEventDispatcher : EventDispatcher {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = event.body
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        session.dataTask(with: request) { (data, response, error) in
-            
+        let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
+            self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
         }
+        
+        task.resume()
+        
     }
     
 }

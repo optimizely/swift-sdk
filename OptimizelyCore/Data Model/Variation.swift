@@ -22,8 +22,8 @@ import Foundation
 
 public class Variation : Codable
 {
-    var variables:[Variable]? = []
-    var id:String = ""
-    var key:String = ""
-    var featureEnabled:Bool? = false
+    public var variables:[Variable]? = []
+    public var id:String = ""
+    public var key:String = ""
+    public var featureEnabled:Bool? = false
 }

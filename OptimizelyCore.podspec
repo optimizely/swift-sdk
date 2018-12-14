@@ -12,6 +12,7 @@ Pod::Spec.new do |s|
     :tag => "v"+s.version.to_s
   }
   s.source_files            = "OptimizelyCore/**/*.{swift}"
+  s.exclude_files           = "OptimizelyCore/OptimizelyCoreTests/**/*.{swift}"
   s.public_header_files     = "OptimizelyCore"
   s.framework               = "Foundation"
   s.requires_arc            = true

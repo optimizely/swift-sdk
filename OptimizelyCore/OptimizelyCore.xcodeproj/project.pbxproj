@@ -84,6 +84,8 @@
 		0B807B1421C302C80090DDC8 /* BatchEventBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */; };
 		0B807B1621C312390090DDC8 /* DefaultEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */; };
 		0B807B1721C316380090DDC8 /* DefaultEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */; };
+		0B807B1C21C44E000090DDC8 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
+		0B807B1D21C4793A0090DDC8 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -142,6 +144,7 @@
 		0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionHolder.swift; sourceTree = "<group>"; };
 		0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchEventBuilder.swift; sourceTree = "<group>"; };
 		0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultEventDispatcher.swift; sourceTree = "<group>"; };
+		0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDatafileHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,6 +212,7 @@
 				0B61625E21B8C3A9000D7A28 /* DefaultLogger.swift */,
 				0B61630C21BB273B000D7A28 /* OptimizelyManager.swift */,
 				0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */,
+				0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */,
 			);
 			path = implementation;
 			sourceTree = "<group>";
@@ -428,6 +432,7 @@
 				0B61623F21B6055F000D7A28 /* DatafileHandler.swift in Sources */,
 				0B7CB11D21B0BBE1007B77E5 /* ConditionHolder.swift in Sources */,
 				0B7CB11921AF753D007B77E5 /* UserAttribute.swift in Sources */,
+				0B807B1C21C44E000090DDC8 /* DefaultDatafileHandler.swift in Sources */,
 				0B807B1621C312390090DDC8 /* DefaultEventDispatcher.swift in Sources */,
 				0B124BBF21B5C024001BE0FA /* MurmurHash3.swift in Sources */,
 				0B124BCB21B5DF39001BE0FA /* Result.swift in Sources */,
@@ -458,6 +463,7 @@
 				0B61625821B8706F000D7A28 /* UserProfileService.swift in Sources */,
 				0B61631721BB9D93000D7A28 /* NotificationCenter.swift in Sources */,
 				0B61625521B86FC2000D7A28 /* DefaultDecisionService.swift in Sources */,
+				0B807B1D21C4793A0090DDC8 /* DefaultDatafileHandler.swift in Sources */,
 				0B7CB11E21B0CEBD007B77E5 /* ConditionHolder.swift in Sources */,
 				0B61624D21B7299D000D7A28 /* Result.swift in Sources */,
 				0B61625621B87052000D7A28 /* DecisionService.swift in Sources */,

@@ -60,8 +60,30 @@ public class OptimizelyManager : Optimizely {
         return nil
     }
     
-    func initialize(sdkKey:String, completetionHandler:OptimizelyInitCompletionHandler) {
+    public func initialize(sdkKey:String, completetionHandler:@escaping OptimizelyInitCompletionHandler) {
+        if let _ = datafileHandler {
+            
+        }
+        else {
+            datafileHandler = DefaultDatafileHandler.createInstance()
+        }
         
+        datafileHandler?.downloadDatafile(sdkKey: sdkKey, completionHandler: { (result) in
+            switch result {
+            case .failure(let err):
+                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: err.description)
+                completetionHandler(Result.failure(IntializeError(description: err.description)))
+            case .success(let datafile):
+                let optimizely = self.initialize(datafile: datafile)
+                if let optimizely = optimizely {
+                    completetionHandler(Result.success(optimizely))
+                }
+                else {
+                    completetionHandler(Result.failure(IntializeError(description: "Problem initializing")))
+                }
+                
+            }
+        })
     }
     
 

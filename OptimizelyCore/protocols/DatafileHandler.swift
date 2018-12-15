@@ -9,7 +9,11 @@
 import Foundation
 
 public struct DatafileDownloadError : Error {
+    var description:String
     
+    init(description:String) {
+        self.description = description
+    }
 }
 
 public typealias DatafileDownloadCompletionHandler = (Result<String,DatafileDownloadError>) -> Void
@@ -31,7 +35,7 @@ public protocol DatafileHandler {
      * @param datafileConfig DatafileConfig for the datafile to get
      * @param completionHhandler  listener to call when datafile download complete
      */
-    func downloadDatafile(sdkKey:String, completionHandler:DatafileDownloadCompletionHandler)
+    func downloadDatafile(sdkKey:String, completionHandler:@escaping DatafileDownloadCompletionHandler)
     
     /**
      * Start background updates to the project datafile .

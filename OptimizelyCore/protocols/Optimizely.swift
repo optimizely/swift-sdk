@@ -16,11 +16,15 @@
 
 import Foundation
 
-struct IntializeError : Error {
+public struct IntializeError : Error {
+    let desciption:String
     
+    init(description:String) {
+        self.desciption = description
+    }
 }
 
-typealias OptimizelyInitCompletionHandler = (Result<Optimizely, IntializeError>) -> Void
+public typealias OptimizelyInitCompletionHandler = (Result<Optimizely, IntializeError>) -> Void
 
 public protocol Optimizely {
     

@@ -128,17 +128,34 @@ struct Decision: Codable {
 }
 
 struct DispatchEvent: Codable {
+    static let revenueKey = "revenue"
+    static let valueKey = "value"
     static let activateEventKey = "campaign_activated"
     let timestamp: Int64
     // entityID is the layer id for impression events.
     let key, entityID, uuid: String
-    let tags:Dictionary<String,AttributeValue>? = [:]
-    let value:AttributeValue? = nil
-    let revenue:AttributeValue? = nil
+    var tags:Dictionary<String,AttributeValue>? = [:]
+    var value:AttributeValue? = nil
+    var revenue:AttributeValue? = nil
     
     enum CodingKeys: String, CodingKey {
         case timestamp, key
         case entityID = "entity_id"
         case uuid
     }
+    
+    init(timestamp:Int64, key:String, entityID:String, uuid:String, tags:Dictionary<String,AttributeValue>?, value:AttributeValue?, revenue:AttributeValue?) {
+        self.timestamp = timestamp
+        self.key = key
+        self.entityID = entityID
+        self.uuid = uuid
+        self.tags = tags
+        self.value = value
+        self.revenue = revenue
+    }
+    
+    init(timestamp:Int64, key:String, entityID:String, uuid:String) {
+        self.init(timestamp: timestamp, key: key, entityID: entityID, uuid: uuid, tags: [:], value: nil, revenue: nil)
+    }
+
 }

@@ -70,7 +70,18 @@ class BatchEventBuilder {
         let early = Date.timeIntervalBetween1970AndReferenceDate * 1000
         let after = Date.timeIntervalSinceReferenceDate * 1000
         let fullNumber:Int64 = Int64(early + after)
-        let dispatchEvent = DispatchEvent(timestamp: fullNumber, key: event.key, entityID: event.id, uuid: UUID().uuidString)
+        let tags = eventTags?.mapValues({AttributeValue(value:$0)}).filter({$0.value != nil}) as? Dictionary<String, AttributeValue>
+        var value:AttributeValue?
+        var revenue:AttributeValue?
+        
+        if let val = eventTags?[DispatchEvent.valueKey], let v = AttributeValue(value: val) {
+            value = v
+        }
+        if let rev = eventTags?[DispatchEvent.revenueKey], let r = AttributeValue(value: rev) {
+            revenue = r
+        }
+        
+        let dispatchEvent = DispatchEvent(timestamp: fullNumber, key: event.key, entityID: event.id, uuid: UUID().uuidString, tags: tags, value:value, revenue:revenue)
         
         let snapShot = Snapshot(decisions: decisions, events: [dispatchEvent])
         

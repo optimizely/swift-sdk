@@ -24,21 +24,8 @@ class BatchEventBuilder {
         let dispatchEvent = DispatchEvent(timestamp: fullNumber, key: DispatchEvent.activateEventKey, entityID: experiment.layerId, uuid: UUID().uuidString)
         let snapShot = Snapshot(decisions: decisions, events: [dispatchEvent])
         
-        var eventAttributes = [EventAttribute]()
+        let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
-        if let attributes = attributes {
-            for attr in attributes.keys {
-                if let attributeId = config.attributes.filter({$0.key == attr}).first?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
-                    if let eventValue = AttributeValue(value:attributes[attr]) {
-                        let eventAttribute = EventAttribute(value: eventValue, key: attr, shouldIndex: true, type: "custom_attribute", entityID: attributeId)
-                        eventAttributes.append(eventAttribute)
-                    }
-                }
-                else {
-                    logger?.log(level: .OptimizelyLogLevelDebug, message: "Attribute " + attr + " skipped")
-                }
-            }
-        }
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
         let batchEvent = BatchEvent(revision: config.revision, accountID: config.accountId, clientVersion: "1.0", visitors: [visitor], projectID: config.projectId, clientName: "swift-sdk", anonymizeIP: config.anonymizeIP ?? false)
         
@@ -85,21 +72,8 @@ class BatchEventBuilder {
         
         let snapShot = Snapshot(decisions: decisions, events: [dispatchEvent])
         
-        var eventAttributes = [EventAttribute]()
+        let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
-        if let attributes = attributes {
-            for attr in attributes.keys {
-                if let eventAttribute = config.attributes.filter({$0.key == attr}).first {
-                    if let eventValue = AttributeValue(value:attributes[attr]) {
-                        let eventAttribute = EventAttribute(value: eventValue, key: attr, shouldIndex: true, type: "custom_attribute", entityID: eventAttribute.id)
-                        eventAttributes.append(eventAttribute)
-                    }
-                }
-                else {
-                    logger?.log(level: .OptimizelyLogLevelDebug, message: String(format:"Attribute %s skipped.  Not in datafile. ", attr))
-                }
-            }
-        }
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
         let batchEvent = BatchEvent(revision: config.revision, accountID: config.accountId, clientVersion: "1.0", visitors: [visitor], projectID: config.projectId, clientName: "swift-sdk", anonymizeIP: config.anonymizeIP ?? false)
         
@@ -108,6 +82,25 @@ class BatchEventBuilder {
         }
 
         return nil
+    }
+    
+    static func getEventAttributes(config:ProjectConfig, attributes:Dictionary<String,Any>?)-> [EventAttribute] {
+        var eventAttributes = [EventAttribute]()
+        
+        if let attributes = attributes {
+            for attr in attributes.keys {
+                if let attributeId = config.attributes.filter({$0.key == attr}).first?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
+                    if let eventValue = AttributeValue(value:attributes[attr]) {
+                        let eventAttribute = EventAttribute(value: eventValue, key: attr, shouldIndex: true, type: "custom_attribute", entityID: attributeId)
+                        eventAttributes.append(eventAttribute)
+                    }
+                }
+                else {
+                    logger?.log(level: .OptimizelyLogLevelDebug, message: "Attribute " + attr + " skipped. Not in datafile.")
+                }
+            }
+        }
+        return eventAttributes
     }
 
 }

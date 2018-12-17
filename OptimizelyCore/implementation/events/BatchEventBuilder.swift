@@ -28,14 +28,14 @@ class BatchEventBuilder {
         
         if let attributes = attributes {
             for attr in attributes.keys {
-                if let eventAttribute = config.attributes.filter({$0.key == attr}).first {
+                if let attributeId = config.attributes.filter({$0.key == attr}).first?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
                     if let eventValue = AttributeValue(value:attributes[attr]) {
-                        let eventAttribute = EventAttribute(value: eventValue, key: attr, shouldIndex: true, type: "custom_attribute", entityID: eventAttribute.id)
+                        let eventAttribute = EventAttribute(value: eventValue, key: attr, shouldIndex: true, type: "custom_attribute", entityID: attributeId)
                         eventAttributes.append(eventAttribute)
                     }
                 }
                 else {
-                    logger?.log(level: .OptimizelyLogLevelDebug, message: "Attribute " + attr + "skipped")
+                    logger?.log(level: .OptimizelyLogLevelDebug, message: "Attribute " + attr + " skipped")
                 }
             }
         }

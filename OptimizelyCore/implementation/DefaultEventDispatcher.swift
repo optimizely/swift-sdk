@@ -30,6 +30,9 @@ class DefaultEventDispatcher : EventDispatcher {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
+            if let body = event.body {
+                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: String(data: body, encoding: .utf8) ?? "trouble parsing event body")
+            }
             self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
         }
         

@@ -22,8 +22,8 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 #### Cocoapod 
 1. Add the following lines to the _Podfile_:<pre>
     ```use_frameworks!```
-    ```pod 'OptimizelyCore', :git => 'https://github.com/optimizely/swift-sdk.git', :branch => 'master'```
-  ```pod 'OptimizelyCore', :path => '~/Development/swift-sdk'```
+    ```pod 'OptimizelySDK', :git => 'https://github.com/optimizely/swift-sdk.git', :branch => 'master'```
+  ```pod 'OptimizelySDK', :path => '~/Development/swift-sdk'```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -40,14 +40,14 @@ github "optimizely/swift-sdk" "master"
 2. Run the following command:<pre>```carthage update```</pre>
 
 3. Link the frameworks to your project. Go to your project target's **Link Binary With Libraries** and drag over the following from the _Carthage/Build/\<platform\>_ folder: <pre> 
-      OptimizelyCore.framework
+      OptimizelySDK.framework
 
 4. To ensure that proper bitcode-related files and dSYMs are copied when archiving your app, you will need to install a Carthage build script:
       - Add a new **Run Script** phase in your target's **Build Phase**.</br>
       - In the script area include:<pre>
       ```/usr/local/bin/carthage copy-frameworks```</pre> 
       - Add the frameworks to the **Input Files** list:<pre>
-            ```$(SRCROOT)/Carthage/Build/<platform>/OptimizelyCore.framework```
+            ```$(SRCROOT)/Carthage/Build/<platform>/OptimizelySDK.framework```
             </pre>
 
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage

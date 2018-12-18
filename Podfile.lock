@@ -1,0 +1,89 @@
+PODS:
+  - Amplitude-iOS (4.4.0)
+  - FirebaseAnalytics (3.9.0):
+    - FirebaseCore (~> 3.6)
+    - FirebaseInstanceID (~> 1.0)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+  - FirebaseCore (3.6.0):
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+  - FirebaseInstanceID (1.0.10):
+    - FirebaseCore (~> 3.6)
+  - Google/Analytics (3.1.0):
+    - Google/Core
+    - GoogleAnalytics (~> 3.12)
+  - Google/Core (3.1.0):
+    - FirebaseAnalytics (~> 3.2)
+  - GoogleAnalytics (3.17.0)
+  - GoogleToolboxForMac/Defines (2.2.0)
+  - "GoogleToolboxForMac/NSData+zlib (2.2.0)":
+    - GoogleToolboxForMac/Defines (= 2.2.0)
+  - Localytics (5.4.0)
+  - Mixpanel-swift (2.5.5):
+    - Mixpanel-swift/Complete (= 2.5.5)
+  - Mixpanel-swift/Complete (2.5.5)
+  - OptimizelySDKCore (2.1.4)
+  - OptimizelySDKDatafileManager (2.1.4):
+    - OptimizelySDKShared (= 2.1.4)
+  - OptimizelySDKEventDispatcher (2.1.4):
+    - OptimizelySDKShared (= 2.1.4)
+  - OptimizelySDKiOS (2.1.4):
+    - OptimizelySDKDatafileManager (= 2.1.4)
+    - OptimizelySDKEventDispatcher (= 2.1.4)
+    - OptimizelySDKUserProfileService (= 2.1.4)
+  - OptimizelySDKShared (2.1.4):
+    - OptimizelySDKCore (= 2.1.4)
+  - OptimizelySDKTVOS (2.1.4):
+    - OptimizelySDKDatafileManager (= 2.1.4)
+    - OptimizelySDKEventDispatcher (= 2.1.4)
+    - OptimizelySDKUserProfileService (= 2.1.4)
+  - OptimizelySDKUserProfileService (2.1.4):
+    - OptimizelySDKShared (= 2.1.4)
+
+DEPENDENCIES:
+  - Amplitude-iOS
+  - Google/Analytics
+  - Localytics
+  - Mixpanel-swift
+  - OptimizelySDKiOS (= 2.1.4)
+  - OptimizelySDKTVOS (= 2.1.4)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Amplitude-iOS
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseInstanceID
+    - Google
+    - GoogleAnalytics
+    - GoogleToolboxForMac
+    - Localytics
+    - Mixpanel-swift
+    - OptimizelySDKCore
+    - OptimizelySDKDatafileManager
+    - OptimizelySDKEventDispatcher
+    - OptimizelySDKiOS
+    - OptimizelySDKShared
+    - OptimizelySDKTVOS
+    - OptimizelySDKUserProfileService
+
+SPEC CHECKSUMS:
+  Amplitude-iOS: 3e9a5f8aeadc885801c78f24b80efa25ff457ca4
+  FirebaseAnalytics: e5fe8486efc01bec33f6bf82e2fa9fce4b124052
+  FirebaseCore: 9691ee2ade70c098d7cf92440f4303f16d83ca75
+  FirebaseInstanceID: b9eedd6846fb5e1f0f7279e1deaa7a7e4cf8392e
+  Google: 98da4b1a60ed0beb80a290387a28333406a1eb90
+  GoogleAnalytics: f42cc53a87a51fe94334821868d9c8481ff47a7b
+  GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
+  Localytics: 578987f2f1d5cbc66719255b88c590430e5680dd
+  Mixpanel-swift: 92fd02942ef4bf5a1bd0630a88223a417b8c8b39
+  OptimizelySDKCore: 17e6cee67f720ab09128e97b2b983b89cd50c145
+  OptimizelySDKDatafileManager: 3b00a6ef6f89cb7455e4092316b1679d456b5efc
+  OptimizelySDKEventDispatcher: 4d6059fcbf97ae5182b13d5af50a2bc55ca7638d
+  OptimizelySDKiOS: 409e22b1ec22cd5f5f288acdcedfc2d034c016b2
+  OptimizelySDKShared: d3c2afca439279220f61a5b5de52f49c61b43f4d
+  OptimizelySDKTVOS: c9760a1852138449ee11f8c5ea1b6e7a71c4cb88
+  OptimizelySDKUserProfileService: 657f338f74963885a619ad7ef1d43f9059362d82
+
+PODFILE CHECKSUM: adedca0f02d221542e471a8ed89b1642d0012701
+
+COCOAPODS: 1.5.3

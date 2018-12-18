@@ -9,21 +9,28 @@
 import Foundation
 
 /// Enum representing notification types.
-public enum NotificationType {
-    case Activate
+public enum NotificationType : Int {
+    case Activate = 1
     case Track
 }
 
-public typealias ActivateListener = (_ experiment:Experiment, _ userId:String, _ attributes:Dictionary<String,Any>, _ variation:Variation, _ event:Dictionary<String,Any>) -> Void
+public typealias GenericListener = (Any...) -> Void
 
-public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>, _ eventTags:Dictionary<String, Any>) -> Void
+public typealias ActivateListener = (_ experiment:Experiment, _ userId:String, _ attributes:Dictionary<String,Any>?, _ variation:Variation) -> Void
+
+public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>?, _ eventTags:Dictionary<String, Any>?) -> Void
 
 public protocol NotificationCenter {
 
+    static func createInstance() -> NotificationCenter?
+
 // Notification Id represeting id of notification.
-    var notificationId:Int? { get set }
+    var notificationId:Int { get set }
 
-
+/**
+ * Add a generic notificaiton that can be
+ */
+func addGenericNotificationListener(notificationType:Int, listener: @escaping GenericListener)
 
 /**
  * Add an activate notification listener to the notification center.
@@ -31,7 +38,7 @@ public protocol NotificationCenter {
  * @param activateListener - Notification to add.
  * @return the notification id used to remove the notification. It is greater than 0 on success.
  */
-func addActivateNotificationListener(activateListener:ActivateListener)
+func addActivateNotificationListener(activateListener:@escaping ActivateListener)
 
 /**
  * Add a track notification listener to the notification center.
@@ -39,7 +46,7 @@ func addActivateNotificationListener(activateListener:ActivateListener)
  * @param trackListener - Notification to add.
  * @return the notification id used to remove the notification. It is greater than 0 on success.
  */
-func addTracNotificationListener(trackListener:TrackListener)
+func addTracNotificationListener(trackListener:@escaping TrackListener)
 
 /**
  * Remove the notification listener based on the notificationId passed back from addNotification.
@@ -65,7 +72,7 @@ func clearAllNotificationListeners()
  * @param type type of OPTLYNotificationType to fire.
  * @param args The arg list changes depending on the type of notification sent.
  */
-func sendNotifications(type:NotificationType, args:Array<Any?>)
+func sendNotifications(type:Int, args:Array<Any?>)
     
 }
 

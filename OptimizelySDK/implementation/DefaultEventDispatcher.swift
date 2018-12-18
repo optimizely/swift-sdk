@@ -31,9 +31,17 @@ class DefaultEventDispatcher : EventDispatcher {
         
         let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
             if let body = event.body {
-                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: String(data: body, encoding: .utf8) ?? "trouble parsing event body")
+                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: "Event Sent")
+                completionHandler(Result.success(body))
             }
             self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
+            
+            if let error = error {
+                completionHandler(Result.failure(EventDispatchError(description: error.localizedDescription)))
+            }
+            else {
+                
+            }
         }
         
         task.resume()

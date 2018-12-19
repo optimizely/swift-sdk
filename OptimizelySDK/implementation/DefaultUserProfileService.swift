@@ -63,7 +63,7 @@ import Foundation
 //    };
 //}
 
-class DefaultUserProfileService : UserProfileService {
+public class DefaultUserProfileService : UserProfileService {
     static let variationId = "variation_id"
     static let userId = "user_id"
     static let experimentMap = "experiment_bucket_map"
@@ -74,15 +74,15 @@ class DefaultUserProfileService : UserProfileService {
     init() {
         profiles = UserDefaults.standard.dictionary(forKey: DefaultUserProfileService.storageName) as? [String : Dictionary<String, Any>] ?? Dictionary<String, Dictionary<String,Any>>()
     }
-    static func createInstance() -> UserProfileService {
+    public static func createInstance() -> UserProfileService {
         return DefaultUserProfileService()
     }
     
-    func lookup(userId: String) -> Dictionary<String, Any>? {
+    public func lookup(userId: String) -> Dictionary<String, Any>? {
         return profiles[userId]
     }
 
-    func variationId(userId: String, experimentId:String) -> String? {
+    public func variationId(userId: String, experimentId:String) -> String? {
         if let profile =  profiles[userId] as? Dictionary<String,Dictionary<String,Any>> {
             if let experimentMap = profile[DefaultUserProfileService.experimentMap] as? Dictionary<String,String> {
                 return experimentMap[experimentId]
@@ -92,7 +92,7 @@ class DefaultUserProfileService : UserProfileService {
         return nil
     }
 
-    func save(userProfile: Dictionary<String, Any>) {
+    public func save(userProfile: Dictionary<String, Any>) {
         profiles = userProfile as! [String : Dictionary<String, Any>]
         let defaults = UserDefaults.standard
         defaults.setPersistentDomain(profiles, forName: DefaultUserProfileService.storageName)
@@ -100,7 +100,7 @@ class DefaultUserProfileService : UserProfileService {
         
     }
     
-    func saveProfile(userId:String, experimentId:String, variationId:String) {
+    public func saveProfile(userId:String, experimentId:String, variationId:String) {
         if var profile =  profiles[userId] {
             if var experimentMap = profile[DefaultUserProfileService.experimentMap] as? Dictionary<String,String> {
                 experimentMap[experimentId] = variationId

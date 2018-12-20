@@ -8,9 +8,9 @@
 
 import Foundation
 
-class DefaultLogger : Logger {
+public class DefaultLogger : Logger {
     private static var _logLevel:OptimizelyLogLevel?
-    static var logLevel: OptimizelyLogLevel {
+    public static var logLevel: OptimizelyLogLevel {
         get {
             return _logLevel ?? .OptimizelyLogLevelAll
         }
@@ -25,11 +25,11 @@ class DefaultLogger : Logger {
         DefaultLogger.logLevel = level
     }
     
-    static func createInstance(logLevel: OptimizelyLogLevel) -> Logger? {
+    public static func createInstance(logLevel: OptimizelyLogLevel) -> Logger? {
         return DefaultLogger(level:logLevel)
     }
     
-    func log(level: OptimizelyLogLevel, message: String) {
+    public func log(level: OptimizelyLogLevel, message: String) {
         if level.rawValue > DefaultLogger.logLevel.rawValue {
             return
         }

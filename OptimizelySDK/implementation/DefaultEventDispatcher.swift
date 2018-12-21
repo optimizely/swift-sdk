@@ -8,17 +8,17 @@
 
 import Foundation
 
-class DefaultEventDispatcher : EventDispatcher {
+public class DefaultEventDispatcher : EventDispatcher {
     let logger = DefaultLogger.createInstance(logLevel: .OptimizelyLogLevelDebug)
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     let dataStore = DataStoreEvents()
     let notify = DispatchGroup()
     
-    static func createInstance() -> EventDispatcher? {
+    public static func createInstance() -> EventDispatcher? {
         return DefaultEventDispatcher()
     }
     
-    func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    public func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         
         dataStore.save(item: event)
         
@@ -37,6 +37,9 @@ class DefaultEventDispatcher : EventDispatcher {
                         if let removedItem:EventForDispatch = self.dataStore.removeFirstItem() {
                             if removedItem != event {
                                 self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Removed event different from sent event")
+                            }
+                            else {
+                                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: "Successfully sent event " + event.body.debugDescription)
                             }
                         }
                         else {

@@ -21,6 +21,8 @@
 		0B5ADA2821CC64620049BC2C /* DataStoreEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2721CC64620049BC2C /* DataStoreEvents.swift */; };
 		0B5ADA2B21CC739E0049BC2C /* EventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2A21CC739E0049BC2C /* EventForDispatch+extension.swift */; };
 		0B5ADA2C21CC94B70049BC2C /* DataStoreEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2721CC64620049BC2C /* DataStoreEvents.swift */; };
+		0B5ADA2D21CD5B400049BC2C /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStore.swift */; };
+		0B5ADA2E21CD5B510049BC2C /* EventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2A21CC739E0049BC2C /* EventForDispatch+extension.swift */; };
 		0B61623B21B60167000D7A28 /* BatchEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623A21B60167000D7A28 /* BatchEvent.swift */; };
 		0B61623F21B6055F000D7A28 /* DatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* DatafileHandler.swift */; };
 		0B61624121B6EC3F000D7A28 /* UserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* UserProfileService.swift */; };
@@ -489,6 +491,7 @@
 				0B7CB11B21B08A0B007B77E5 /* UserAttribute.swift in Sources */,
 				0B7CB10E21AE0ED2007B77E5 /* FeatureFlag.swift in Sources */,
 				0B61624B21B72995000D7A28 /* DefaultBucketer.swift in Sources */,
+				0B5ADA2E21CD5B510049BC2C /* EventForDispatch+extension.swift in Sources */,
 				0B7CB10921AE0EC7007B77E5 /* Variation.swift in Sources */,
 				0B7CB10C21AE0ED2007B77E5 /* Rollout.swift in Sources */,
 				0B61631221BB9BC4000D7A28 /* OptimizelyManager.swift in Sources */,
@@ -505,6 +508,7 @@
 				0B61625421B86EC7000D7A28 /* DecisionServiceTest.swift in Sources */,
 				0B61625B21B8727E000D7A28 /* DefaultUserProfileService.swift in Sources */,
 				0B61631421BB9D85000D7A28 /* ErrorHandler.swift in Sources */,
+				0B5ADA2D21CD5B400049BC2C /* DataStore.swift in Sources */,
 				0B7CB11021AE0ED8007B77E5 /* Group.swift in Sources */,
 				0B7CB10B21AE0ED2007B77E5 /* Experiment.swift in Sources */,
 				0B7CB10D21AE0ED2007B77E5 /* FeatureVariable.swift in Sources */,

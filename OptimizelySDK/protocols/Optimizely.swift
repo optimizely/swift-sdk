@@ -111,7 +111,7 @@ public protocol Optimizely {
  * This value can be nil, in which case, the forced variation is cleared.
  * @return YES if there were no errors, otherwise return NO.
  */
-    func setForcedVariation(experimentKey:String, userId:String, variationKey:String) -> Bool
+    func setForcedVariation(experimentKey:String, userId:String, variationKey:String?) -> Bool
 
 /**
  * Determine whether a feature is enabled.
@@ -121,7 +121,7 @@ public protocol Optimizely {
  * @param attributes The user's attributes.
  * @return YES if feature is enabled, false otherwise.
  */
-    func isFeatureEnabled(featureKeyy:String, userId:String, attributes:Dictionary<String,Any>?) -> Bool
+    func isFeatureEnabled(featureKey:String, userId:String, attributes:Dictionary<String,Any>?) -> Bool
 
 /**
  * Gets boolean feature variable value.

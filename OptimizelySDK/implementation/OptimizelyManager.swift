@@ -102,7 +102,8 @@ public class OptimizelyManager : Optimizely {
                 let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
                 
                 if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
-                    eventDispatcher?.dispatchEvent(event: EventForDispatch(body: body), completionHandler: { (result) -> (Void) in
+                    let event = EventForDispatch(body: body)
+                    eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
                         guard let result = result else {
                             return
                         }
@@ -110,7 +111,7 @@ public class OptimizelyManager : Optimizely {
                         case .failure(let error):
                             self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
                         case .success( _):
-                            self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation])
+                            self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
                         }
                     })
                 }
@@ -172,7 +173,8 @@ public class OptimizelyManager : Optimizely {
         
         if let pair = decisionService?.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:]), let experiment = pair.experiment, let variation = pair.variation {
             if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
-                eventDispatcher?.dispatchEvent(event: EventForDispatch(body: body), completionHandler:{ (result) -> (Void) in
+                let event = EventForDispatch(body: body)
+                eventDispatcher?.dispatchEvent(event: event, completionHandler:{ (result) -> (Void) in
                     guard let result = result else {
                         return
                     }
@@ -180,7 +182,7 @@ public class OptimizelyManager : Optimizely {
                     case .failure(let error):
                         self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
                     case .success( _):
-                        self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation])
+                        self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any,"body":event.body as Any]])
                     }
 
                 })
@@ -264,7 +266,7 @@ public class OptimizelyManager : Optimizely {
                 case .failure(let error):
                     self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
                 case .success( _):
-                    self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags])
+                    self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
                 }
 
             })

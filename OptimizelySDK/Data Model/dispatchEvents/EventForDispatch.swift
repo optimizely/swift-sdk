@@ -14,10 +14,6 @@ public class EventForDispatch : Equatable {
     public let url:URL?
     public let body:Data?
     
-    static func createInstance(url:URL, body:Data) -> EventForDispatch {
-        return EventForDispatch(url:url, body:body)
-    }
-    
     convenience init(body:Data) {
         self.init(url: URL(string:EventForDispatch.eventEndpoint)!, body: body)
     }

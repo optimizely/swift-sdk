@@ -21,7 +21,7 @@ public class DefaultLogger : Logger {
         }
     }
     
-    private init(level:OptimizelyLogLevel) {
+    public init(level:OptimizelyLogLevel) {
         DefaultLogger.logLevel = level
     }
     

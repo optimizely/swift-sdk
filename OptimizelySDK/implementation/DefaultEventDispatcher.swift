@@ -9,7 +9,7 @@
 import Foundation
 
 public class DefaultEventDispatcher : EventDispatcher {
-    let logger = DefaultLogger.createInstance(logLevel: .OptimizelyLogLevelDebug)
+    let logger = DefaultLogger(level: .OptimizelyLogLevelDebug)
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     let dataStore = DataStoreEvents()
     let notify = DispatchGroup()
@@ -32,18 +32,18 @@ public class DefaultEventDispatcher : EventDispatcher {
                     
                     switch result {
                     case .failure(let error):
-                        self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: error.localizedDescription)
+                        self.logger.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: error.localizedDescription)
                     case .success(_):
                         if let removedItem:EventForDispatch = self.dataStore.removeFirstItem() {
                             if removedItem != event {
-                                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Removed event different from sent event")
+                                self.logger.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Removed event different from sent event")
                             }
                             else {
-                                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: "Successfully sent event " + event.body.debugDescription)
+                                self.logger.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: "Successfully sent event " + event.body.debugDescription)
                             }
                         }
                         else {
-                            self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Removed event nil for sent item")
+                            self.logger.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Removed event nil for sent item")
                         }
                     }
                     self.notify.leave()
@@ -63,9 +63,9 @@ public class DefaultEventDispatcher : EventDispatcher {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
-            self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: "Event Sent")
+            self.logger.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: "Event Sent")
                 completionHandler(Result.success(event.body))
-            self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
+            self.logger.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
             
             if let error = error {
                 completionHandler(Result.failure(EventDispatchError(description: error.localizedDescription)))

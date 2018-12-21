@@ -143,18 +143,30 @@ public class OptimizelyManager : Optimizely {
         return nil
     }
     
-    public func setForcedVariation(experimentKey: String, userId: String, variationKey: String) -> Bool {
-        if var dict = config?.whitelistUsers[userId] {
-            dict[experimentKey] = variationKey
+    public func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) -> Bool {
+        if config?.experiments.filter({$0.key == experimentKey}).first == nil {
+            return false
+        }
+        if let _variationKey = variationKey {
+            if _variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces) == "" {
+                return false
+            }
+            
+            if var dict = config?.whitelistUsers[userId] {
+                dict[experimentKey] = variationKey
+            }
+            else {
+                config?.whitelistUsers[userId] = [experimentKey:_variationKey]
+            }
         }
         else {
-            config?.whitelistUsers[userId] = [experimentKey:variationKey]
+            config?.whitelistUsers[userId]?.removeValue(forKey: experimentKey)
         }
         return true
     }
     
-    public func isFeatureEnabled(featureKeyy: String, userId: String, attributes: Dictionary<String, Any>?) -> Bool {
-        guard let featureFlag = config?.featureFlags?.filter({$0.key == featureKeyy}).first  else {
+    public func isFeatureEnabled(featureKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Bool {
+        guard let featureFlag = config?.featureFlags?.filter({$0.key == featureKey}).first  else {
             return false
         }
         
@@ -226,7 +238,7 @@ public class OptimizelyManager : Optimizely {
     }
     
     public func getEnabledFeatures(userId: String, attributes: Dictionary<String, Any>?) -> Array<String> {
-        return config?.featureFlags?.filter({ isFeatureEnabled(featureKeyy: $0.key, userId: userId, attributes: attributes)}).map({$0.key}) ?? []
+        return config?.featureFlags?.filter({ isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)}).map({$0.key}) ?? []
     }
 
     public func track(eventKey: String, userId: String) {

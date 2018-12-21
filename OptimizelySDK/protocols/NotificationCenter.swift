@@ -16,9 +16,9 @@ public enum NotificationType : Int {
 
 public typealias GenericListener = (Any...) -> Void
 
-public typealias ActivateListener = (_ experiment:Experiment, _ userId:String, _ attributes:Dictionary<String,Any>?, _ variation:Variation) -> Void
+public typealias ActivateListener = (_ experiment:Experiment, _ userId:String, _ attributes:Dictionary<String,Any>?, _ variation:Variation, _ event:Dictionary<String, Any>) -> Void
 
-public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>?, _ eventTags:Dictionary<String, Any>?) -> Void
+public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>?, _ eventTags:Dictionary<String, Any>?, _ event:Dictionary<String, Any>) -> Void
 
 public protocol NotificationCenter {
 
@@ -46,7 +46,7 @@ func addActivateNotificationListener(activateListener:@escaping ActivateListener
  * @param trackListener - Notification to add.
  * @return the notification id used to remove the notification. It is greater than 0 on success.
  */
-func addTracNotificationListener(trackListener:@escaping TrackListener)
+func addTrackNotificationListener(trackListener:@escaping TrackListener)
 
 /**
  * Remove the notification listener based on the notificationId passed back from addNotification.

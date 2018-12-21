@@ -125,6 +125,4 @@ public class DefaultUserProfileService : UserProfileService {
         }
         
     }
-    
-    
 }

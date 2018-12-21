@@ -28,13 +28,13 @@ public class Experiment : Codable
         case Archived
     }
     
-    var id:String = ""
-    var key:String = ""
+    public var id:String = ""
+    public var key:String = ""
     var status:Status = Status.Not_started
-    var layerId:String = ""
-    var trafficAllocation:[TrafficAllocation] = []
-    var audienceIds:[String] = []
-    var audienceConditions:ConditionHolder?
-    var variations:[Variation] = []
-    var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
+    public var layerId:String = ""
+    public var trafficAllocation:[TrafficAllocation] = []
+    public var audienceIds:[String] = []
+    public var audienceConditions:ConditionHolder?
+    public var variations:[Variation] = []
+    public var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
 }

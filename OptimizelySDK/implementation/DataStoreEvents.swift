@@ -19,7 +19,7 @@ public class DataStoreEvents : DataStore  {
     
     public func save(item:EventForDispatch) {
         DataStoreEvents.lock.async {
-            let data = ["url": item.url?.absoluteString ?? "", "body":item.body ?? Data()] as [String : Any]
+            guard let data = try? JSONEncoder().encode(item) else { return }
             if var queue = UserDefaults.standard.array(forKey: DataStoreEvents.eventQueue) {
                 queue.append(data)
                 UserDefaults.standard.set(queue, forKey: DataStoreEvents.eventQueue)
@@ -37,10 +37,8 @@ public class DataStoreEvents : DataStore  {
         
         DataStoreEvents.lock.sync {
             if let queue = UserDefaults.standard.array(forKey: DataStoreEvents.eventQueue) {
-                if let data = queue.first as? Dictionary<String,Any> {
-                    if let urlString = data["url"] as? String, let body = data["body"] as? Data, let url = URL(string:urlString) {
-                            item = EventForDispatch(url: url, body: body)
-                    }
+                if let data = queue.first as? Data {
+                    item = try? JSONDecoder().decode(EventForDispatch.self, from: data)
                 }
             }
         }
@@ -52,10 +50,8 @@ public class DataStoreEvents : DataStore  {
         var item:EventForDispatch?
         DataStoreEvents.lock.sync {
             if let queue = UserDefaults.standard.array(forKey: DataStoreEvents.eventQueue) {
-                if let data = queue.last as? Dictionary<String,Any> {
-                    if let urlString = data["url"] as? String, let body = data["body"] as? Data, let url = URL(string:urlString) {
-                        item = EventForDispatch(url: url, body: body)
-                    }
+                if let data = queue.last as? Data {
+                    item = try? JSONDecoder().decode(EventForDispatch.self, from: data)
                 }
             }
         }
@@ -68,10 +64,8 @@ public class DataStoreEvents : DataStore  {
         
         DataStoreEvents.lock.sync {
             if var queue = UserDefaults.standard.array(forKey: DataStoreEvents.eventQueue) {
-                if let data = queue.first as? Dictionary<String,Any> {
-                    if let urlString = data["url"] as? String, let body = data["body"] as? Data, let url = URL(string:urlString) {
-                        item = EventForDispatch(url: url, body: body)
-                    }
+                if let data = queue.first as? Data {
+                    item = try? JSONDecoder().decode(EventForDispatch.self, from: data)
                     if queue.count > 0 {
                             queue.remove(at: 0)
                             UserDefaults.standard.set(queue, forKey: DataStoreEvents.eventQueue)
@@ -87,10 +81,8 @@ public class DataStoreEvents : DataStore  {
         var item:EventForDispatch?
         DataStoreEvents.lock.sync {
             if var queue = UserDefaults.standard.array(forKey: DataStoreEvents.eventQueue) {
-                if let data = queue.first as? Dictionary<String,Any> {
-                    if let urlString = data["url"] as? String, let body = data["body"] as? Data, let url = URL(string:urlString) {
-                        item = EventForDispatch(url: url, body: body)
-                    }
+                if let data = queue.first as? Data {
+                    item = try? JSONDecoder().decode(EventForDispatch.self, from: data)
                     if queue.count > 0 {
                         queue.removeLast()
                         UserDefaults.standard.set(queue, forKey: DataStoreEvents.eventQueue)

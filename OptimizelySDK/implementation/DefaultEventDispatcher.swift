@@ -25,7 +25,7 @@ public class DefaultEventDispatcher : EventDispatcher {
         dispatcher.async {
             while let event:EventForDispatch = self.dataStore.getFirstItem() {
                 self.notify.enter()
-                self.sendEvent(event: event, completionHandler: { (result) -> (Void) in
+                self.sendEvent(event: event) { (result) -> (Void) in
                     guard let result = result else {
                         return
                     }
@@ -47,7 +47,7 @@ public class DefaultEventDispatcher : EventDispatcher {
                         }
                     }
                     self.notify.leave()
-                })
+                }
                 self.notify.wait()
             }
         }

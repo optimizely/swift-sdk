@@ -102,7 +102,8 @@ public class OptimizelyManager : Optimizely {
                 let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
                 
                 if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
-                    eventDispatcher?.dispatchEvent(event: EventForDispatch(body: body), completionHandler: { (result) -> (Void) in
+                    let event = EventForDispatch(body: body)
+                    eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
                         guard let result = result else {
                             return
                         }
@@ -110,7 +111,7 @@ public class OptimizelyManager : Optimizely {
                         case .failure(let error):
                             self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
                         case .success( _):
-                            self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation])
+                            self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
                         }
                     })
                 }
@@ -143,24 +144,37 @@ public class OptimizelyManager : Optimizely {
         return nil
     }
     
-    public func setForcedVariation(experimentKey: String, userId: String, variationKey: String) -> Bool {
-        if var dict = config?.whitelistUsers[userId] {
-            dict[experimentKey] = variationKey
+    public func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) -> Bool {
+        if config?.experiments.filter({$0.key == experimentKey}).first == nil {
+            return false
+        }
+        if let _variationKey = variationKey {
+            if _variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces) == "" {
+                return false
+            }
+            
+            if var dict = config?.whitelistUsers[userId] {
+                dict[experimentKey] = variationKey
+            }
+            else {
+                config?.whitelistUsers[userId] = [experimentKey:_variationKey]
+            }
         }
         else {
-            config?.whitelistUsers[userId] = [experimentKey:variationKey]
+            config?.whitelistUsers[userId]?.removeValue(forKey: experimentKey)
         }
         return true
     }
     
-    public func isFeatureEnabled(featureKeyy: String, userId: String, attributes: Dictionary<String, Any>?) -> Bool {
-        guard let featureFlag = config?.featureFlags?.filter({$0.key == featureKeyy}).first  else {
+    public func isFeatureEnabled(featureKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Bool {
+        guard let featureFlag = config?.featureFlags?.filter({$0.key == featureKey}).first  else {
             return false
         }
         
         if let pair = decisionService?.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:]), let experiment = pair.experiment, let variation = pair.variation {
             if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
-                eventDispatcher?.dispatchEvent(event: EventForDispatch(body: body), completionHandler:{ (result) -> (Void) in
+                let event = EventForDispatch(body: body)
+                eventDispatcher?.dispatchEvent(event: event, completionHandler:{ (result) -> (Void) in
                     guard let result = result else {
                         return
                     }
@@ -168,7 +182,7 @@ public class OptimizelyManager : Optimizely {
                     case .failure(let error):
                         self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
                     case .success( _):
-                        self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation])
+                        self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any,"body":event.body as Any]])
                     }
 
                 })
@@ -226,7 +240,7 @@ public class OptimizelyManager : Optimizely {
     }
     
     public func getEnabledFeatures(userId: String, attributes: Dictionary<String, Any>?) -> Array<String> {
-        return config?.featureFlags?.filter({ isFeatureEnabled(featureKeyy: $0.key, userId: userId, attributes: attributes)}).map({$0.key}) ?? []
+        return config?.featureFlags?.filter({ isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)}).map({$0.key}) ?? []
     }
 
     public func track(eventKey: String, userId: String) {
@@ -252,7 +266,7 @@ public class OptimizelyManager : Optimizely {
                 case .failure(let error):
                     self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
                 case .success( _):
-                    self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags])
+                    self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
                 }
 
             })

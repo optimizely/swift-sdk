@@ -8,13 +8,13 @@
 
 import Foundation
 
-class DefaultEventDispatcher : EventDispatcher {
+public class DefaultEventDispatcher : EventDispatcher {
     let logger = DefaultLogger.createInstance(logLevel: .OptimizelyLogLevelDebug)
-    static func createInstance() -> EventDispatcher? {
+    public static func createInstance() -> EventDispatcher? {
         return DefaultEventDispatcher()
     }
     
-    func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    public func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         
         self.sendEvent(event: event, completionHandler: completionHandler)
     }

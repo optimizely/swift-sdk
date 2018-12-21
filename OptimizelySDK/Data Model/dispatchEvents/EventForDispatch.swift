@@ -11,8 +11,8 @@ import Foundation
 public class EventForDispatch {
     static let eventEndpoint = "https://logx.optimizely.com/v1/events"
     
-    let url:URL?
-    let body:Data?
+    public let url:URL?
+    public let body:Data?
     
     convenience init(body:Data) {
         self.init(url: URL(string:EventForDispatch.eventEndpoint)!, body: body)

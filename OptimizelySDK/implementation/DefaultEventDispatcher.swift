@@ -10,13 +10,45 @@ import Foundation
 
 class DefaultEventDispatcher : EventDispatcher {
     let logger = DefaultLogger.createInstance(logLevel: .OptimizelyLogLevelDebug)
+    let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
+    let dataStore = DataStoreEvents()
+    let notify = DispatchGroup()
+    
     static func createInstance() -> EventDispatcher? {
         return DefaultEventDispatcher()
     }
     
     func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         
-        self.sendEvent(event: event, completionHandler: completionHandler)
+        dataStore.save(item: event)
+        
+        dispatcher.async {
+            while let event:EventForDispatch = self.dataStore.getFirstItem() {
+                self.notify.enter()
+                self.sendEvent(event: event, completionHandler: { (result) -> (Void) in
+                    guard let result = result else {
+                        return
+                    }
+                    
+                    switch result {
+                    case .failure(let error):
+                        self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: error.localizedDescription)
+                    case .success(_):
+                        if let removedItem:EventForDispatch = self.dataStore.removeFirstItem() {
+                            if removedItem != event {
+                                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Removed event different from sent event")
+                            }
+                        }
+                        else {
+                            self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Removed event nil for sent item")
+                        }
+                    }
+                    self.notify.leave()
+                })
+                self.notify.wait()
+            }
+        }
+        
     }
     
     func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {

@@ -104,9 +104,6 @@ public class OptimizelyManager : Optimizely {
                 if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
                     let event = EventForDispatch(body: body)
                     eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
-                        guard let result = result else {
-                            return
-                        }
                         switch result {
                         case .failure(let error):
                             self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
@@ -175,9 +172,6 @@ public class OptimizelyManager : Optimizely {
             if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
                 let event = EventForDispatch(body: body)
                 eventDispatcher?.dispatchEvent(event: event, completionHandler:{ (result) -> (Void) in
-                    guard let result = result else {
-                        return
-                    }
                     switch result {
                     case .failure(let error):
                         self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
@@ -259,9 +253,6 @@ public class OptimizelyManager : Optimizely {
         if let event = BatchEventBuilder.createConversionEvent(config:config!, decisionService:decisionService!, eventKey:eventKey, userId:userId, attributes:attributes, eventTags:eventTags) {
             let eventForDispatch = EventForDispatch(body:event)
             eventDispatcher?.dispatchEvent(event: eventForDispatch, completionHandler: { (result) -> (Void) in
-                guard let result = result else {
-                    return
-                }
                 switch result {
                 case .failure(let error):
                     self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)

@@ -26,9 +26,6 @@ public class DefaultEventDispatcher : EventDispatcher {
             while let event:EventForDispatch = self.dataStore.getFirstItem() {
                 self.notify.enter()
                 self.sendEvent(event: event) { (result) -> (Void) in
-                    guard let result = result else {
-                        return
-                    }
                     
                     switch result {
                     case .failure(let error):

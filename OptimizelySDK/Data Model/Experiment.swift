@@ -37,4 +37,47 @@ public class Experiment : Codable
     public var audienceConditions:ConditionHolder?
     public var variations:[Variation] = []
     public var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
+    private var _variationIdToVariationMap:[String:Variation]?
+    var variationIdToVariationMap:[String:Variation] {
+        if (_variationIdToVariationMap == nil) {
+            _variationIdToVariationMap = [String:Variation]()
+            _variationIdToVariationMap = self.generateVariationIdMapFromVariationsArray(variations: variations)
+        }
+        return _variationIdToVariationMap!
+    }
+    private var _variationKeyToVariationMap:[String:Variation]?
+    var variationKeyToVariationMap:[String:Variation] {
+        if (_variationKeyToVariationMap == nil) {
+            _variationKeyToVariationMap = [String:Variation]()
+            _variationKeyToVariationMap = self.generateVariationKeyMapFromVariationsArray(variations: variations)
+        }
+        return _variationKeyToVariationMap!
+    }
+}
+
+extension Experiment {
+    func getVariationForVariationId(variationId: String) -> Variation? {
+        return self.variationIdToVariationMap[variationId]
+    }
+    func getVariationForVariationKey(variationKey: String) -> Variation? {
+        return self.variationKeyToVariationMap[variationKey]
+    }
+}
+
+//MARK:- Map generation methods
+extension Experiment {
+    func generateVariationIdMapFromVariationsArray(variations: [Variation]) -> [String:Variation] {
+        var dict:[String:Variation] = [String:Variation]()
+        for variation in variations {
+            dict[variation.id] = variation
+        }
+        return dict
+    }
+    func generateVariationKeyMapFromVariationsArray(variations: [Variation]) -> [String:Variation] {
+        var dict:[String:Variation] = [String:Variation]()
+        for variation in variations {
+            dict[variation.key] = variation
+        }
+        return dict
+    }
 }

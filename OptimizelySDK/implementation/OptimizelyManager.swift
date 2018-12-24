@@ -129,24 +129,32 @@ public class OptimizelyManager : Optimizely {
     }
     
     public func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) -> Bool {
-        if config?.experiments.filter({$0.key == experimentKey}).first == nil {
+        // Return true if there were no errors, else return false
+        // Check if experiment exists and experimentId is non-empty
+        guard let experiment = config?.getExperimentForKey(experimentKey: experimentKey), experiment.id != "" else {
             return false
         }
-        if let _variationKey = variationKey {
-            if _variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces) == "" {
-                return false
-            }
-            
-            if var dict = config?.whitelistUsers[userId] {
-                dict[experimentKey] = variationKey
-            }
-            else {
-                config?.whitelistUsers[userId] = [experimentKey:_variationKey]
-            }
+        // Check if variationKey is null
+        guard let _variationKey = variationKey else {
+            // Clear the forced variation if the variation key is null
+            config?.forcedVariationMap[userId]?.removeValue(forKey: experiment.id)
+            return true
         }
-        else {
-            config?.whitelistUsers[userId]?.removeValue(forKey: experimentKey)
+        // Check if variationKey is empty string
+        if _variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces) == "" {
+            // TODO: Log Message here
+            return false
         }
+        // Get experiment from experimentKey and Check if variation with non-empty variationId exists
+        guard let variation = experiment.getVariationForVariationKey(variationKey: _variationKey), variation.id != "" else {
+            // TODO: Log Message here
+            return false
+        }
+        // Add/Replace Experiment to Variation ID map.
+        if config?.forcedVariationMap[userId] == nil {
+            config?.forcedVariationMap[userId] = [String:String]()
+        }
+        config?.forcedVariationMap[userId] = [experiment.id:variation.id]
         return true
     }
     

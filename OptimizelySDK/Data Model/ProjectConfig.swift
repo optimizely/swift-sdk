@@ -33,6 +33,48 @@ public class ProjectConfig : Codable
     var accountId:String = ""
     var events:[Event]? = []
     var revision:String = ""
+    private var _allExperiments:[Experiment]?
+    var allExperiments:[Experiment] {
+        if (_allExperiments == nil) {
+            _allExperiments = []
+            var all = [Experiment]()
+            all.append(contentsOf: experiments)
+            for group in self.groups {
+                for experiment in group.experiments {
+                    all.append(experiment)
+                }
+            }
+            _allExperiments = all
+        }
+        return _allExperiments!
+    }
+    // Experiment Maps
+    private var _experimentIdToExperimentMap:[String:Experiment]?
+    var experimentIdToExperimentMap: [String:Experiment] {
+        if (_experimentIdToExperimentMap == nil) {
+            _experimentIdToExperimentMap = [String:Experiment]()
+            _experimentIdToExperimentMap = self.generateExperimentIdToExperimentMap()
+        }
+        return _experimentIdToExperimentMap!
+    }
+    private var _experimentKeyToExperimentMap:[String:Experiment]?
+    var experimentKeyToExperimentMap:[String:Experiment] {
+        if (_experimentKeyToExperimentMap == nil) {
+            _experimentKeyToExperimentMap = [String:Experiment]()
+            _experimentKeyToExperimentMap = self.generateExperimentKeyToExperimentMap()
+        }
+        return _experimentKeyToExperimentMap!
+    }
+    private var _experimentKeyToExperimentIdMap:[String:String]?
+    var experimentKeyToExperimentIdMap:[String:String] {
+        if (_experimentKeyToExperimentIdMap == nil) {
+            _experimentKeyToExperimentIdMap = [String:String]()
+            _experimentKeyToExperimentIdMap = self.generateExperimentKeyToIdMap()
+        }
+        return _experimentKeyToExperimentIdMap!
+    }
+    var forcedVariationMap = [String:[String:String]]()
+    
     // transient
     var whitelistUsers:Dictionary<String,Dictionary<String,String>> = Dictionary<String,Dictionary<String,String>>()
     
@@ -82,5 +124,51 @@ extension ProjectConfig {
             return dic[experimentId]
         }
         return nil
+    }
+    func getExperimentForId(experimentId:String) -> Experiment? {
+        guard let experiment = self.experimentIdToExperimentMap[experimentId] else {
+            // TODO: Log Message here
+            return nil
+        }
+        return experiment
+    }
+    func getExperimentForKey(experimentKey:String) -> Experiment? {
+        guard let experiment = self.experimentKeyToExperimentMap[experimentKey] else {
+            // TODO: Log Message here
+            return nil
+        }
+        return experiment
+    }
+    func getExperimentIdForKey(experimentKey:String) -> String? {
+        guard let experimentId = self.experimentKeyToExperimentIdMap[experimentKey] else {
+            // TODO: Log Message here
+            return nil
+        }
+        return experimentId
+    }
+}
+
+//MARK:- Map generation methods
+extension ProjectConfig {
+    func generateExperimentIdToExperimentMap() -> [String:Experiment] {
+        var dict:[String:Experiment] = [String:Experiment]()
+        for experiment in self.allExperiments{
+            dict[experiment.id] = experiment
+        }
+        return dict
+    }
+    func generateExperimentKeyToExperimentMap() -> [String:Experiment] {
+        var dict:[String:Experiment] = [String:Experiment]()
+        for experiment in self.allExperiments{
+            dict[experiment.key] = experiment
+        }
+        return dict
+    }
+    func generateExperimentKeyToIdMap() -> [String:String] {
+        var dict:[String:String] = [String:String]()
+        for experiment in self.allExperiments{
+            dict[experiment.key] = experiment.id
+        }
+        return dict
     }
 }

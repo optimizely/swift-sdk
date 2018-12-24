@@ -227,7 +227,7 @@
 				0B61624621B70CE7000D7A28 /* implementation */,
 				0B124BBD21B5C00A001BE0FA /* utils */,
 				0B124BB821B32973001BE0FA /* protocols */,
-				0B7CB11221AE329B007B77E5 /* extensions */,
+				C7DAAFEC21D0CE52008E1D22 /* extensions */,
 				0B7CB0E921ADF261007B77E5 /* Data Model */,
 				0B7CB0C421AC5FE2007B77E5 /* OptimizelySDK */,
 				0B7CB0CF21AC5FE2007B77E5 /* OptimizelySDKTests */,
@@ -295,19 +295,19 @@
 			path = audience;
 			sourceTree = "<group>";
 		};
-		0B7CB11221AE329B007B77E5 /* extensions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = extensions;
-			sourceTree = "<group>";
-		};
 		0B807B1321C2FB770090DDC8 /* events */ = {
 			isa = PBXGroup;
 			children = (
 				0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */,
 			);
 			path = events;
+			sourceTree = "<group>";
+		};
+		C7DAAFEC21D0CE52008E1D22 /* extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -9,7 +9,7 @@
 import Foundation
 
 public class OptimizelyManager : Optimizely {
-    
+
     public var bucketer: Bucketer?
     public var decisionService: DecisionService?
     public var config: ProjectConfig?
@@ -76,14 +76,12 @@ public class OptimizelyManager : Optimizely {
         })
     }
     
-
-    
     public func activate(experimentKey: String, userId: String) -> Variation? {
         return activate(experimentKey: experimentKey, userId: userId, attributes: nil)
     }
     
     public func activate(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
-        if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
+        if let experiment = config?.getExperimentForKey(experimentKey: experimentKey),
             let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
             
             if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
@@ -103,7 +101,6 @@ public class OptimizelyManager : Optimizely {
             
             return variation
         }
-        
         return nil
     }
     
@@ -112,57 +109,25 @@ public class OptimizelyManager : Optimizely {
     }
     
     public func variation(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
-
-        if let experiment = config?.experiments.filter({$0.key == experimentKey}).first {
+        if let experiment = config?.getExperimentForKey(experimentKey: experimentKey) {
             return decisionService?.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:])
         }
-
         return nil
     }
     
     public func getForcedVariation(experimentKey: String, userId: String) -> Variation? {
-        if let dict = config?.whitelistUsers[userId], let variationKey = dict[experimentKey] {
-            return  config?.experiments.filter({$0.key == experimentKey}).first?.variations.filter({$0.key == variationKey}).first
-        }
-        
-        return nil
+        return config?.getForcedVariation(experimentKey: experimentKey, userId: userId)
     }
     
     public func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) -> Bool {
-        // Return true if there were no errors, else return false
-        // Check if experiment exists and experimentId is non-empty
-        guard let experiment = config?.getExperimentForKey(experimentKey: experimentKey), experiment.id != "" else {
-            return false
-        }
-        // Check if variationKey is null
-        guard let _variationKey = variationKey else {
-            // Clear the forced variation if the variation key is null
-            config?.forcedVariationMap[userId]?.removeValue(forKey: experiment.id)
-            return true
-        }
-        // Check if variationKey is empty string
-        if _variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces) == "" {
-            // TODO: Log Message here
-            return false
-        }
-        // Get experiment from experimentKey and Check if variation with non-empty variationId exists
-        guard let variation = experiment.getVariationForVariationKey(variationKey: _variationKey), variation.id != "" else {
-            // TODO: Log Message here
-            return false
-        }
-        // Add/Replace Experiment to Variation ID map.
-        if config?.forcedVariationMap[userId] == nil {
-            config?.forcedVariationMap[userId] = [String:String]()
-        }
-        config?.forcedVariationMap[userId] = [experiment.id:variation.id]
-        return true
+        return config?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: variationKey) ?? false
     }
     
     public func isFeatureEnabled(featureKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Bool {
-        guard let featureFlag = config?.featureFlags?.filter({$0.key == featureKey}).first  else {
+
+        guard let featureFlag = config?.getFeatureForKey(featureKey: featureKey) else {
             return false
         }
-        
         if let pair = decisionService?.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:]), let experiment = pair.experiment, let variation = pair.variation {
             if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
                 let event = EventForDispatch(body: body)
@@ -179,14 +144,13 @@ public class OptimizelyManager : Optimizely {
 
                 })
             }
-            
             return pair.variation?.featureEnabled ?? false
         }
         return false
     }
     
     public func getFeatureVariableBoolean(featureKey: String, variableKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Bool? {
-        if let featureFlag = config?.featureFlags?.filter({$0.key == featureKey}).first ,let variable = featureFlag.variables?.filter({$0.key == variableKey}).first {
+        if let variable = config?.featureKeyToFeatureVariablesMap[featureKey]?[variableKey] {
             if variable.type == "boolean" {
                 if let value = variable.defaultValue {
                     return Bool(value)
@@ -197,7 +161,7 @@ public class OptimizelyManager : Optimizely {
     }
     
     public func getFeatureVariableDouble(featureKey: String, variableKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Double? {
-        if let featureFlag = config?.featureFlags?.filter({$0.key == featureKey}).first ,let variable = featureFlag.variables?.filter({$0.key == variableKey}).first {
+        if let variable = config?.featureKeyToFeatureVariablesMap[featureKey]?[variableKey] {
             if variable.type == "double" {
                 if let value = variable.defaultValue  {
                     return Double(value)
@@ -208,7 +172,7 @@ public class OptimizelyManager : Optimizely {
     }
     
     public func getFeatureVariableInteger(featureKey: String, variableKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Int? {
-        if let featureFlag = config?.featureFlags?.filter({$0.key == featureKey}).first ,let variable = featureFlag.variables?.filter({$0.key == variableKey}).first {
+        if let variable = config?.featureKeyToFeatureVariablesMap[featureKey]?[variableKey] {
             if variable.type == "integer" {
                 if let value = variable.defaultValue  {
                     return Int(value)
@@ -216,11 +180,10 @@ public class OptimizelyManager : Optimizely {
             }
         }
         return nil
-
     }
     
     public func getFeatureVariableString(featureKey: String, variableKey: String, userId: String, attributes: Dictionary<String, Any>?) -> String? {
-        if let featureFlag = config?.featureFlags?.filter({$0.key == featureKey}).first ,let variable = featureFlag.variables?.filter({$0.key == variableKey}).first {
+        if let variable = config?.featureKeyToFeatureVariablesMap[featureKey]?[variableKey] {
             if variable.type == "string" {
                 if let value = variable.defaultValue  {
                     return value
@@ -228,7 +191,6 @@ public class OptimizelyManager : Optimizely {
             }
         }
         return nil
-
     }
     
     public func getEnabledFeatures(userId: String, attributes: Dictionary<String, Any>?) -> Array<String> {
@@ -263,7 +225,6 @@ public class OptimizelyManager : Optimizely {
 
             })
         }
-        
     }
     
     public class Builder {

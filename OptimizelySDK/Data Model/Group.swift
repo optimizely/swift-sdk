@@ -19,11 +19,12 @@
 
 import Foundation
 
-public class Group : Codable {
-    enum Policy : String, Codable {
-        case random
-        case overlapping
-    }
+enum Policy : String, Codable {
+    case random
+    case overlapping
+}
+
+public class Group : NSObject, Codable {
     
     var id:String = ""
     var policy:Policy = Policy.random

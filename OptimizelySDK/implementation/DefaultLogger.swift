@@ -37,5 +37,4 @@ public class DefaultLogger : Logger {
         NSLog(message)
     }
     
-    
 }

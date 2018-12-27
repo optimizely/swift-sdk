@@ -19,7 +19,7 @@
 
 import Foundation
 
-public class Event : Codable
+public class Event : NSObject, Codable
 {
     var experimentIds:[String] = []
     var id:String = ""

@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class Attribute : Codable {
+public class Attribute : NSObject, Codable {
     var id:String = ""
     var key:String = ""
     var segmentId:String? = ""

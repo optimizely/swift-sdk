@@ -19,7 +19,7 @@
 
 import Foundation
 
-public class Rollout : Codable
+public class Rollout : NSObject, Codable
 {
     var experiments:[Experiment] = []
     var id:String = ""

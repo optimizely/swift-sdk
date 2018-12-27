@@ -20,7 +20,7 @@
 
 import Foundation
 
-public class Variation : Codable
+public class Variation : NSObject, Codable
 {
     public var variables:[Variable]? = []
     public var id:String = ""

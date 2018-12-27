@@ -21,7 +21,7 @@
 
 import Foundation
 
-public class FeatureVariable : Codable
+public class FeatureVariable : NSObject, Codable
 {
     var defaultValue:String? = ""
     var type:String = ""

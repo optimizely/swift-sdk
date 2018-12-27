@@ -19,7 +19,7 @@
 
 import Foundation
 
-public class Variable : Codable
+public class Variable : NSObject, Codable
 {
     var id:String = ""
     var value:String = ""

@@ -21,7 +21,7 @@
 
 import Foundation
 
-public class FeatureFlag : Codable
+public class FeatureFlag : NSObject, Codable
 {
     var experimentIds:[String] = []
     var rolloutId:String?

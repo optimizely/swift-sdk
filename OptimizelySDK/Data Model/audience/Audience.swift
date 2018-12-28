@@ -17,7 +17,7 @@
 import Foundation
 
 public class Audience : NSObject, Codable {
-    var id:String = ""
+    @objc var id:String = ""
     var name:String = ""
     var conditions:ConditionHolder?
     
@@ -26,7 +26,7 @@ public class Audience : NSObject, Codable {
         case name
         case conditions
     }
-    
+
     override init() {
         
     }

@@ -21,7 +21,6 @@ import Foundation
 
 public class Variable : NSObject, Codable
 {
-    var id:String = ""
+    @objc var id:String = ""
     var value:String = ""
-    
 }

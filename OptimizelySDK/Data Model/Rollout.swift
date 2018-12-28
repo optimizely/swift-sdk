@@ -22,6 +22,6 @@ import Foundation
 public class Rollout : NSObject, Codable
 {
     var experiments:[Experiment] = []
-    var id:String = ""
+    @objc var id:String = ""
 }
 

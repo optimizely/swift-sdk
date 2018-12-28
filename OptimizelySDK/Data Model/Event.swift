@@ -22,6 +22,6 @@ import Foundation
 public class Event : NSObject, Codable
 {
     var experimentIds:[String] = []
-    var id:String = ""
-    var key:String = ""
+    @objc var id:String = ""
+    @objc var key:String = ""
 }

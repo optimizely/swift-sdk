@@ -19,7 +19,6 @@ import Foundation
 
 public class Experiment : NSObject, Codable
 {
-    
     enum Status: String, Codable {
         case Running
         case Launched
@@ -27,9 +26,19 @@ public class Experiment : NSObject, Codable
         case Not_started = "Not started"
         case Archived
     }
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case key
+        case layerId
+        case trafficAllocation
+        case audienceIds
+        case audienceConditions
+        case variations
+        case status
+    }
     
-    public var id:String = ""
-    public var key:String = ""
+    @objc public var id:String = ""
+    @objc public var key:String = ""
     public var layerId:String = ""
     public var trafficAllocation:[TrafficAllocation] = []
     public var audienceIds:[String] = []

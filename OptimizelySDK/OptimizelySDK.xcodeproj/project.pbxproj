@@ -88,6 +88,7 @@
 		0B807B1721C316380090DDC8 /* DefaultEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */; };
 		0B807B1C21C44E000090DDC8 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
 		0B807B1D21C4793A0090DDC8 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
+		C77B30F121D604ED00C4E5FA /* ProjectConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77B30F021D604ED00C4E5FA /* ProjectConfigTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,6 +149,7 @@
 		0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchEventBuilder.swift; sourceTree = "<group>"; };
 		0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultEventDispatcher.swift; sourceTree = "<group>"; };
 		0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDatafileHandler.swift; sourceTree = "<group>"; };
+		C77B30F021D604ED00C4E5FA /* ProjectConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfigTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +263,7 @@
 				0B61624921B7292E000D7A28 /* BucketTests.swift */,
 				0B61625321B86EC6000D7A28 /* DecisionServiceTest.swift */,
 				0B61631021BB9AB9000D7A28 /* OptimizelyManagerTests.swift */,
+				C77B30F021D604ED00C4E5FA /* ProjectConfigTest.swift */,
 			);
 			path = OptimizelySDKTests;
 			sourceTree = "<group>";
@@ -497,6 +500,7 @@
 				0B7CB10D21AE0ED2007B77E5 /* FeatureVariable.swift in Sources */,
 				0B61630A21BB2193000D7A28 /* DefaultLogger.swift in Sources */,
 				0B7CB10521AE0D18007B77E5 /* ProjectConfig.swift in Sources */,
+				C77B30F121D604ED00C4E5FA /* ProjectConfigTest.swift in Sources */,
 				0B61624A21B7292E000D7A28 /* BucketTests.swift in Sources */,
 				0B807B1421C302C80090DDC8 /* BatchEventBuilder.swift in Sources */,
 				0B61631521BB9D89000D7A28 /* EventDispatcher.swift in Sources */,

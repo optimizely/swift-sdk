@@ -25,7 +25,7 @@ public class FeatureVariable : NSObject, Codable
 {
     var defaultValue:String? = ""
     var type:String = ""
-    var id:String = ""
-    var key:String = ""
+    @objc var id:String = ""
+    @objc var key:String = ""
 }
 

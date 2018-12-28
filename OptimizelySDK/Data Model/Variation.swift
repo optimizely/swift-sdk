@@ -23,7 +23,7 @@ import Foundation
 public class Variation : NSObject, Codable
 {
     public var variables:[Variable]? = []
-    public var id:String = ""
-    public var key:String = ""
+    @objc public var id:String = ""
+    @objc public var key:String = ""
     public var featureEnabled:Bool? = false
 }

@@ -35,6 +35,29 @@ public class ProjectConfig : Codable
     var events:[Event]? = []
     var revision:String = ""
     var forcedVariationMap = [String:[String:String]]()
+    // transient
+    var whitelistUsers:Dictionary<String,Dictionary<String,String>> = Dictionary<String,Dictionary<String,String>>()
+    
+    private enum CodingKeys: String, CodingKey {
+        case version
+        case rollouts
+        case typedAudiences
+        case anonymizeIP
+        case projectId
+        case variables
+        case featureFlags
+        case experiments
+        case audiences
+        case groups
+        case attributes
+        case botFiltering
+        case accountId
+        case events
+        case revision
+        // transient
+        // case whitelistUsers
+    }
+    
     private var _allExperiments:[Experiment]?
     var allExperiments:[Experiment] {
         if (_allExperiments == nil) {
@@ -66,7 +89,7 @@ public class ProjectConfig : Codable
             if typedAudiences != nil {
                 tmpAudiences.append(contentsOf: typedAudiences!)
             }
-            _audienceIdToAudienceMap = generateKeyMap(entityList: tmpAudiences, mapValueType: Audience.self, key: "id")
+            _audienceIdToAudienceMap = generateKeyMap(entityList: tmpAudiences, key: "id", valueType: Audience.self)
         }
         return _audienceIdToAudienceMap!
     }
@@ -74,7 +97,7 @@ public class ProjectConfig : Codable
     var attributesKeyToAttributesMap:[String:Attribute] {
         if (_attributesKeyToAttributesMap == nil) {
             _attributesKeyToAttributesMap = [String:Attribute]()
-            _attributesKeyToAttributesMap = generateKeyMap(entityList: attributes, mapValueType: Attribute.self, key: "key")
+            _attributesKeyToAttributesMap = generateKeyMap(entityList: attributes, key: "key", valueType: Attribute.self)
         }
         return _attributesKeyToAttributesMap!
     }
@@ -82,7 +105,7 @@ public class ProjectConfig : Codable
     var experimentKeyToExperimentMap:[String:Experiment] {
         if (_experimentKeyToExperimentMap == nil) {
             _experimentKeyToExperimentMap = [String:Experiment]()
-            _experimentKeyToExperimentMap = generateKeyMap(entityList: allExperiments, mapValueType: Experiment.self, key: "key")
+            _experimentKeyToExperimentMap = generateKeyMap(entityList: allExperiments, key: "key", valueType: Experiment.self)
         }
         return _experimentKeyToExperimentMap!
     }
@@ -90,7 +113,7 @@ public class ProjectConfig : Codable
     var experimentIdToExperimentMap:[String:Experiment] {
         if (_experimentIdToExperimentMap == nil) {
             _experimentIdToExperimentMap = [String:Experiment]()
-            _experimentIdToExperimentMap = generateKeyMap(entityList: allExperiments, mapValueType: Experiment.self, key: "id")
+            _experimentIdToExperimentMap = generateKeyMap(entityList: allExperiments, key: "id", valueType: Experiment.self)
         }
         return _experimentIdToExperimentMap!
     }
@@ -98,7 +121,7 @@ public class ProjectConfig : Codable
     var experimentKeyToExperimentIdMap:[String:String] {
         if (_experimentKeyToExperimentIdMap == nil) {
             _experimentKeyToExperimentIdMap = [String:String]()
-            _experimentKeyToExperimentIdMap = generateKeyMap(entityList: allExperiments, mapValueType: String.self, key: "key", valueKey: "id")
+            _experimentKeyToExperimentIdMap = generateKeyMap(entityList: allExperiments, key: "key", valueKey: "id", valueType: String.self)
         }
         return _experimentKeyToExperimentIdMap!
     }
@@ -107,7 +130,7 @@ public class ProjectConfig : Codable
         if (_eventKeyToEventMap == nil) {
             _eventKeyToEventMap = [String:Event]()
             if let _events = events {
-                _eventKeyToEventMap = generateKeyMap(entityList: _events, mapValueType: Event.self, key: "key")
+                _eventKeyToEventMap = generateKeyMap(entityList: _events, key: "key", valueType: Event.self)
             }
         }
         return _eventKeyToEventMap!
@@ -117,7 +140,7 @@ public class ProjectConfig : Codable
         if (_featureKeyToFeatureMap == nil) {
             _featureKeyToFeatureMap = [String:FeatureFlag]()
             if let _featureFlags = featureFlags {
-                _featureKeyToFeatureMap = generateKeyMap(entityList: _featureFlags, mapValueType: FeatureFlag.self, key: "key")
+                _featureKeyToFeatureMap = generateKeyMap(entityList: _featureFlags, key: "key", valueType: FeatureFlag.self)
                 for (key,value) in _featureKeyToFeatureMap! {
                     // Check if any of the experiments are in a group and add the group id for faster bucketing later on
                     for experimentId in value.experimentIds {
@@ -139,7 +162,7 @@ public class ProjectConfig : Codable
             if let _featureFlags = featureFlags {
                 for flag in _featureFlags {
                     if let _featureVariables = flag.variables {
-                        _featureKeyToFeatureVariablesMap![flag.key] = generateKeyMap(entityList: _featureVariables, mapValueType: FeatureVariable.self, key: "key")
+                        _featureKeyToFeatureVariablesMap![flag.key] = generateKeyMap(entityList: _featureVariables, key: "key", valueType: FeatureVariable.self)
                     }
                 }
             }
@@ -156,7 +179,7 @@ public class ProjectConfig : Codable
                     self.groups[index].experiments[index2].groupPolicy = self.groups[index].policy
                 }
             }
-            _groupIdToGroupMap = generateKeyMap(entityList: groups, mapValueType: Group.self, key: "id")
+            _groupIdToGroupMap = generateKeyMap(entityList: groups, key: "id", valueType: Group.self)
         }
         return _groupIdToGroupMap!
     }
@@ -165,7 +188,7 @@ public class ProjectConfig : Codable
         if (_rolloutIdToRolloutMap == nil) {
             _rolloutIdToRolloutMap = [String:Rollout]()
             if let _rollouts = rollouts {
-                _rolloutIdToRolloutMap = generateKeyMap(entityList: _rollouts, mapValueType: Rollout.self, key: "id")
+                _rolloutIdToRolloutMap = generateKeyMap(entityList: _rollouts, key: "id", valueType: Rollout.self)
             }
         }
         return _rolloutIdToRolloutMap!
@@ -175,7 +198,7 @@ public class ProjectConfig : Codable
         if (_typedAudienceIdToTypedAudienceMap == nil) {
             _typedAudienceIdToTypedAudienceMap = [String:Audience]()
             if let _typedAudiences = typedAudiences {
-                _typedAudienceIdToTypedAudienceMap = generateKeyMap(entityList: _typedAudiences, mapValueType: Audience.self, key: "id")
+                _typedAudienceIdToTypedAudienceMap = generateKeyMap(entityList: _typedAudiences, key: "id", valueType: Audience.self)
             }
         }
         return _typedAudienceIdToTypedAudienceMap!
@@ -185,7 +208,7 @@ public class ProjectConfig : Codable
         if (_variationIdToVariationMap == nil) {
             _variationIdToVariationMap = [String:[String:Variation]]()
             for experiment in self.allExperiments {
-                _variationIdToVariationMap![experiment.key] = self.generateKeyMap(entityList: experiment.variations, mapValueType: Variation.self , key: "id")
+                _variationIdToVariationMap![experiment.key] = self.generateKeyMap(entityList: experiment.variations, key: "id", valueType: Variation.self)
             }
         }
         return _variationIdToVariationMap!
@@ -195,7 +218,7 @@ public class ProjectConfig : Codable
         if (_variationKeyToVariationMap == nil) {
             _variationKeyToVariationMap = [String:[String:Variation]]()
             for experiment in self.allExperiments {
-                _variationKeyToVariationMap![experiment.key] = self.generateKeyMap(entityList: experiment.variations, mapValueType: Variation.self , key: "key")
+                _variationKeyToVariationMap![experiment.key] = self.generateKeyMap(entityList: experiment.variations, key: "key", valueType: Variation.self)
             }
         }
         return _variationKeyToVariationMap!
@@ -208,36 +231,13 @@ public class ProjectConfig : Codable
                 if let _variations = variationKeyToVariationMap[experiment.key] {
                     for _variation in _variations.values {
                         if let _variables = _variation.variables {
-                           _variationIdToVariationVariablesMap![_variation.id] = self.generateKeyMap(entityList: _variables, mapValueType: Variable.self , key: "id")
+                            _variationIdToVariationVariablesMap![_variation.id] = self.generateKeyMap(entityList: _variables, key: "id", valueType: Variable.self)
                         }
                     }
                 }
             }
         }
         return _variationIdToVariationVariablesMap!
-    }
-    
-    // transient
-    var whitelistUsers:Dictionary<String,Dictionary<String,String>> = Dictionary<String,Dictionary<String,String>>()
-    
-    private enum CodingKeys: String, CodingKey {
-        case version
-        case rollouts
-        case typedAudiences
-        case anonymizeIP
-        case projectId
-        case variables
-        case featureFlags
-        case experiments
-        case audiences
-        case groups
-        case attributes
-        case botFiltering
-        case accountId
-        case events
-        case revision
-        // transient
-        // case whitelistUsers
     }
 
     class func DateFromString(dateString:String) -> NSDate
@@ -252,7 +252,7 @@ public class ProjectConfig : Codable
 
 //MARK:- Setter Methods
 extension ProjectConfig {
-    func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) -> Bool {
+    func setForcedVariation(experimentKey:String, userId:String, variationKey:String?) -> Bool {
         // Return true if there were no errors, else return false
         // Check if experiment exists and experimentId is non-empty
         guard let experiment = self.getExperimentForKey(experimentKey: experimentKey), experiment.id != "" else {
@@ -348,7 +348,7 @@ extension ProjectConfig {
         return feature
     }
     
-    public func getForcedVariation(experimentKey: String, userId: String) -> Variation? {
+    public func getForcedVariation(experimentKey:String, userId:String) -> Variation? {
         guard let _forcedVariationsDict = forcedVariationMap[userId] else {
             // TODO: Log Message here
             return nil
@@ -361,7 +361,7 @@ extension ProjectConfig {
             return nil
         }
         // TODO: Log Message here
-        return self.getVariationForVariationId(experimentKey:_experiment.key ,variationId:_variationId)
+        return self.getVariationFor(experimentKey:_experiment.key ,variationId:_variationId)
     }
     
     func getGroupForId(groupId:String) -> Group? {
@@ -380,18 +380,6 @@ extension ProjectConfig {
         return rollout
     }
     
-    func getVariableValueForVariation(variable:FeatureVariable, variation:Variation) -> String? {
-        guard let variablesDict = variationIdToVariationVariablesMap[variation.id] else {
-            return nil
-        }
-        guard let _variable = variablesDict[variable.id] else {
-            // TODO: Log Message here
-            return variable.defaultValue
-        }
-        // TODO: Log Message here
-        return _variable.value
-    }
-    
     func getVariableForFeature(featureKey:String, variableKey:String) -> FeatureVariable? {
         if self.featureKeyToFeatureMap[featureKey] == nil {
             // TODO: Log Message here
@@ -404,7 +392,19 @@ extension ProjectConfig {
         return _variable
     }
     
-    func getVariationForVariationId(experimentKey:String, variationId:String) -> Variation? {
+    func getVariableValueForVariation(variable:FeatureVariable, variation:Variation) -> String? {
+        guard let variablesDict = variationIdToVariationVariablesMap[variation.id] else {
+            return nil
+        }
+        guard let _variable = variablesDict[variable.id] else {
+            // TODO: Log Message here
+            return variable.defaultValue
+        }
+        // TODO: Log Message here
+        return _variable.value
+    }
+    
+    func getVariationFor(experimentKey:String, variationId:String) -> Variation? {
         guard let variation = self.variationIdToVariationMap[experimentKey]?[variationId] else {
             // TODO: Log Message here
             return nil
@@ -441,16 +441,20 @@ extension ProjectConfig {
 
 //MARK:- Helper Methods
 extension ProjectConfig {
-    func generateKeyMap<T:NSObject, U>(entityList:[T], mapValueType:U.Type, key:String, valueKey:String? = nil) -> [String:U] {
+    func generateKeyMap<T:NSObject, U>(entityList:[T], key:String, valueKey:String? = nil, valueType:U.Type) -> [String:U] {
         var dict = [String:U]()
         guard let _valueKey = valueKey else {
             for obj in entityList {
-                dict[obj.value(forKey: key) as! String] = obj as? U
+                if let _key:String = obj.value(forKey: key) as? String, let value:U = obj as? U {
+                    dict[_key] = value
+                }
             }
             return dict
         }
         for obj in entityList {
-            dict[obj.value(forKey: key) as! String] = obj.value(forKey: _valueKey) as? U
+            if let _key:String = obj.value(forKey: key) as? String, let _value: U = obj.value(forKey: _valueKey) as? U {
+                dict[_key] = _value
+            }
         }
         return dict
     }

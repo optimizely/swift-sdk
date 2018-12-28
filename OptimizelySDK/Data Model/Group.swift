@@ -25,8 +25,7 @@ enum Policy : String, Codable {
 }
 
 public class Group : NSObject, Codable {
-    
-    var id:String = ""
+    @objc var id:String = ""
     var policy:Policy = Policy.random
     var trafficAllocation:[TrafficAllocation] = []
     var experiments:[Experiment] = []

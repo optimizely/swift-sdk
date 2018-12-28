@@ -19,7 +19,7 @@
 import Foundation
 
 public class Attribute : NSObject, Codable {
-    var id:String = ""
-    var key:String = ""
+    @objc var id:String = ""
+    @objc var key:String = ""
     var segmentId:String? = ""
 }

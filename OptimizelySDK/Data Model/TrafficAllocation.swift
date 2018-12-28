@@ -20,5 +20,4 @@ public class TrafficAllocation : Codable
 {
     var entityId:String = ""
     var endOfRange:Int = 0
-    
 }

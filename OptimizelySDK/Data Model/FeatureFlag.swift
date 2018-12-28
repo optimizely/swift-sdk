@@ -27,6 +27,6 @@ public class FeatureFlag : NSObject, Codable
     var rolloutId:String?
     var groupId:String?
     var variables:[FeatureVariable]? = []
-    var id:String = ""
-    var key:String = ""
+    @objc var id:String = ""
+    @objc var key:String = ""
 }

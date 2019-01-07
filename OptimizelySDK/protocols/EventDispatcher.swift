@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias DispatchCompletionHandler = (Result<Data?, EventDispatchError>?)->(Void)
+public typealias DispatchCompletionHandler = (Result<Data, EventDispatchError>)->(Void)
 public class EventDispatchError : Error {
     public var localizedDescription: String
     

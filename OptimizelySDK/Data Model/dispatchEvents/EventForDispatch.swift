@@ -8,11 +8,11 @@
 
 import Foundation
 
-public class EventForDispatch {
+public class EventForDispatch : Equatable, Codable {
     static let eventEndpoint = "https://logx.optimizely.com/v1/events"
     
-    public let url:URL?
-    public let body:Data?
+    public let url:URL
+    public let body:Data
     
     convenience init(body:Data) {
         self.init(url: URL(string:EventForDispatch.eventEndpoint)!, body: body)

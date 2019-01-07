@@ -83,22 +83,20 @@ public class OptimizelyManager : Optimizely {
     }
     
     public func activate(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
-        if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
-            let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
-            
-            if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
-                let event = EventForDispatch(body: body)
-                eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
-                    guard let result = result else {
-                        return
-                    }
-                    switch result {
-                    case .failure(let error):
-                        self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
-                    case .success( _):
-                        self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
-                    }
-                })
+          if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
+              let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
+
+              if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
+                  let event = EventForDispatch(body: body)
+                  eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
+                      switch result {
+                      case .failure(let error):
+                          self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
+                      case .success( _):
+                          self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+                      }
+                  })                
+                return variation
             }
             
             return variation
@@ -159,9 +157,6 @@ public class OptimizelyManager : Optimizely {
             if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
                 let event = EventForDispatch(body: body)
                 eventDispatcher?.dispatchEvent(event: event, completionHandler:{ (result) -> (Void) in
-                    guard let result = result else {
-                        return
-                    }
                     switch result {
                     case .failure(let error):
                         self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
@@ -243,9 +238,6 @@ public class OptimizelyManager : Optimizely {
         if let event = BatchEventBuilder.createConversionEvent(config:config!, decisionService:decisionService!, eventKey:eventKey, userId:userId, attributes:attributes, eventTags:eventTags) {
             let eventForDispatch = EventForDispatch(body:event)
             eventDispatcher?.dispatchEvent(event: eventForDispatch, completionHandler: { (result) -> (Void) in
-                guard let result = result else {
-                    return
-                }
                 switch result {
                 case .failure(let error):
                     self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)

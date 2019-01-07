@@ -26,7 +26,9 @@ class DefaultDatafileHandler : DatafileHandler {
         let session = URLSession(configuration: config)
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
         var result:String?
-        let semp = DispatchSemaphore(value: 0)
+        let group = DispatchGroup()
+        
+        group.enter()
         
         if let url = URL(string: str) {
             let task = session.downloadTask(with: url, completionHandler: { (url, response, error) in
@@ -34,11 +36,12 @@ class DefaultDatafileHandler : DatafileHandler {
                 if let url = url, let projectConfig = try? String(contentsOf: url) {
                     result = projectConfig
                 }
+                group.leave()
             })
             
             task.resume()
             
-            semp.wait()
+            group.wait()
             
         }
         return result
@@ -54,13 +57,13 @@ class DefaultDatafileHandler : DatafileHandler {
                     self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: error.debugDescription)
                     let datafiledownloadError = DatafileDownloadError(description: error.debugDescription)
                     completionHandler(Result.failure(datafiledownloadError))
-                    return
                 }
-                if let url = url, let string = try? String(contentsOf: url) {
-                        print(string)
-                        completionHandler(Result.success(string))
+                else if let url = url, let string = try? String(contentsOf: url) {
+                    self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: string)
+                    completionHandler(Result.success(string))
                 }
                 self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
+                
             })
             
             task.resume()

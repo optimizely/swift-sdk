@@ -9,24 +9,15 @@
 import Foundation
 
 public class OptimizelyManager : Optimizely {
-    internal var isValid = false
     
     public var bucketer: Bucketer?
-    
     public var decisionService: DecisionService?
-    
     public var config: ProjectConfig?
-    
     public var errorHandler: ErrorHandler?
-    
     public var eventDispatcher: EventDispatcher?
-    
     public var datafileHandler: DatafileHandler?
-    
     public var logger: Logger?
-    
     public var userProfileService: UserProfileService?
-    
     public var notificationCenter: NotificationCenter?
     
     internal init(bucketer:Bucketer?, decisionService:DecisionService?, errorHandler:ErrorHandler?, eventDispatcher:EventDispatcher?, datafileHandler:DatafileHandler?, logger:Logger?, userProfileService:UserProfileService?, notificationCenter:NotificationCenter?) {
@@ -45,7 +36,6 @@ public class OptimizelyManager : Optimizely {
         config = try! JSONDecoder().decode(ProjectConfig.self, from: data)
         if let config = config, let bucketer = DefaultBucketer.createInstance(config: config) {
             decisionService = DefaultDecisionService.createInstance(config: config, bucketer: bucketer, userProfileService: userProfileService ?? DefaultUserProfileService.createInstance())
-            isValid = true
             return self
         }
         
@@ -89,32 +79,27 @@ public class OptimizelyManager : Optimizely {
 
     
     public func activate(experimentKey: String, userId: String) -> Variation? {
-        if isValid {
-            return activate(experimentKey: experimentKey, userId: userId, attributes: nil)
-        }
-        
-        return nil
+        return activate(experimentKey: experimentKey, userId: userId, attributes: nil)
     }
     
     public func activate(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
-        if isValid {
-            if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
-                let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
-                
-                if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
-                    let event = EventForDispatch(body: body)
-                    eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
-                        switch result {
-                        case .failure(let error):
-                            self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
-                        case .success( _):
-                            self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
-                        }
-                    })
-                }
-                
+          if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
+              let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
+
+              if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
+                  let event = EventForDispatch(body: body)
+                  eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
+                      switch result {
+                      case .failure(let error):
+                          self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
+                      case .success( _):
+                          self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+                      }
+                  })                
                 return variation
             }
+            
+            return variation
         }
         
         return nil
@@ -125,11 +110,11 @@ public class OptimizelyManager : Optimizely {
     }
     
     public func variation(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
-        if isValid {
-            if let experiment = config?.experiments.filter({$0.key == experimentKey}).first {
-                return decisionService?.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:])
-            }
+
+        if let experiment = config?.experiments.filter({$0.key == experimentKey}).first {
+            return decisionService?.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:])
         }
+
         return nil
     }
     

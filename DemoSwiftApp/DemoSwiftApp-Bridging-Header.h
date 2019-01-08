@@ -14,9 +14,9 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
-#ifndef OptimizelyDemoApp_Bridging_Header_h
-#define OptimizelyDemoApp_Bridging_Header_h
+#ifndef DemoSwiftApp_Bridging_Header_h
+#define DemoSwiftApp_Bridging_Header_h
 
 #import <Google/Analytics.h>
 
-#endif /* OptimizelyDemoApp_Bridging_Header_h */
+#endif /* DemoSwiftApp_Bridging_Header_h */

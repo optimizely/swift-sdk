@@ -11,6 +11,7 @@ import Foundation
 class DefaultDatafileHandler : DatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     let logger = DefaultLogger.createInstance(logLevel: .OptimizelyLogLevelDebug)
+    var timers:[String:Timer] = [String:Timer]()
     
     static func createInstance() -> DatafileHandler? {
         return DefaultDatafileHandler()
@@ -35,6 +36,7 @@ class DefaultDatafileHandler : DatafileHandler {
                 self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
                 if let url = url, let projectConfig = try? String(contentsOf: url) {
                     result = projectConfig
+                    self.saveDatafile(sdkKey: sdkKey, dataFile: projectConfig)
                 }
                 group.leave()
             })
@@ -60,6 +62,7 @@ class DefaultDatafileHandler : DatafileHandler {
                 }
                 else if let url = url, let string = try? String(contentsOf: url) {
                     self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: string)
+                    self.saveDatafile(sdkKey: sdkKey, dataFile: string)
                     completionHandler(Result.success(string))
                 }
                 self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
@@ -71,13 +74,41 @@ class DefaultDatafileHandler : DatafileHandler {
 
     }
     
-    func startBackgroundUpdates(sdkKey: String, updateInterval: Int) {
-        
+    func startPeriodicUpdates(sdkKey: String, updateInterval: Int) {
+        if let _ = timers[sdkKey] {
+            logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelInfo, message: "Timer already started for datafile updates")
+            return
+        }
+        if #available(iOS 10.0, *) {
+            let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: true) { (timer) in
+                self.downloadDatafile(sdkKey: sdkKey) { (result) in
+                 // background download saves to cache
+                }
+            }
+            timers[sdkKey] = timer
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
-    func stopBackgroundUpdates(sdkKey: String) {
+    func stopPeriodicUpdates(sdkKey: String) {
+        if let timer = timers[sdkKey] {
+            logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelInfo, message: "Stopping timer for datafile updates sdkKey:" + sdkKey)
+            
+            timer.invalidate()
+            timers.removeValue(forKey: sdkKey)
+        }
+
+    }
+    
+    func stopPeriodicUpdates() {
+        for key in timers.keys {
+            logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelInfo, message: "Stopping timer for all datafile updates")
+            stopPeriodicUpdates(sdkKey: key)
+        }
         
     }
+
     
     func saveDatafile(sdkKey: String, dataFile: String) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {

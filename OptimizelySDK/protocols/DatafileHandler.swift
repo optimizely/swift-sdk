@@ -38,22 +38,29 @@ public protocol DatafileHandler {
     func downloadDatafile(sdkKey:String, completionHandler:@escaping DatafileDownloadCompletionHandler)
     
     /**
-     * Start background updates to the project datafile .
+     * Start periodic updates to the project datafile .
      *
-     * @param context application context for download
-     * @param datafileConfig DatafileConfig for the datafile
+     * @param sdkKey SdkKey for the datafile
      * @param updateInterval frequency of updates in seconds
      */
-    func startBackgroundUpdates(sdkKey:String, updateInterval:Int)
+    func startPeriodicUpdates(sdkKey:String, updateInterval:Int)
     
     /**
-     * Stop the background updates.
+     * Stop the periodic updates. This should be called when the app goes to background
      *
      * @param context   application context for download
      * @param datafileConfig DatafileConfig for the datafile
      */
-    func stopBackgroundUpdates(sdkKey:String)
-    
+    func stopPeriodicUpdates(sdkKey:String)
+
+    /**
+     * Stop all periodic updates. This should be called when the app goes to background
+     *
+     * @param context   application context for download
+     * @param datafileConfig DatafileConfig for the datafile
+     */
+    func stopPeriodicUpdates()
+
     /**
      * Save the datafile to cache.
      *

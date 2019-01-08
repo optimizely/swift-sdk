@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "252D7DEC21C8800800134A7A"
-               BuildableName = "OptimizelyiOSDemoApp.app"
-               BlueprintName = "OptimizelyiOSDemoApp"
-               ReferencedContainer = "container:OptimizelyDemoApp.xcodeproj">
+               BuildableName = "DemoSwiftiOS.app"
+               BlueprintName = "DemoSwiftiOS"
+               ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "252D7DFF21C8800900134A7A"
                BuildableName = "OptimizelyiOSDemoAppUITests.xctest"
                BlueprintName = "OptimizelyiOSDemoAppUITests"
-               ReferencedContainer = "container:OptimizelyDemoApp.xcodeproj">
+               ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "252D7DEC21C8800800134A7A"
-            BuildableName = "OptimizelyiOSDemoApp.app"
-            BlueprintName = "OptimizelyiOSDemoApp"
-            ReferencedContainer = "container:OptimizelyDemoApp.xcodeproj">
+            BuildableName = "DemoSwiftiOS.app"
+            BlueprintName = "DemoSwiftiOS"
+            ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -66,9 +66,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "252D7DEC21C8800800134A7A"
-            BuildableName = "OptimizelyiOSDemoApp.app"
-            BlueprintName = "OptimizelyiOSDemoApp"
-            ReferencedContainer = "container:OptimizelyDemoApp.xcodeproj">
+            BuildableName = "DemoSwiftiOS.app"
+            BlueprintName = "DemoSwiftiOS"
+            ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -85,9 +85,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "252D7DEC21C8800800134A7A"
-            BuildableName = "OptimizelyiOSDemoApp.app"
-            BlueprintName = "OptimizelyiOSDemoApp"
-            ReferencedContainer = "container:OptimizelyDemoApp.xcodeproj">
+            BuildableName = "DemoSwiftiOS.app"
+            BlueprintName = "DemoSwiftiOS"
+            ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

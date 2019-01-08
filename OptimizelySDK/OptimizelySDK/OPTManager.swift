@@ -1,0 +1,255 @@
+//
+//  OPTManager.swift
+//  OptimizelySDK
+//
+//  Created by Jae Kim on 12/19/18.
+//  Copyright © 2018 Optimizely. All rights reserved.
+//
+
+import Foundation
+
+
+open class OPTManager: NSObject {
+    
+    // MARK: - Properties
+    
+    var sdkKey: String
+    var config:ProjectConfig!
+    var datafileHandler:DatafileHandler!
+    
+    
+    
+    // MARK: - Public properties (customization allowed)
+    // - do we need to support all these extensions?
+    
+    public var logger:Logger!
+    public var bucketer:Bucketer!
+    public var decisionService:DecisionService!
+    public var eventDispatcher:EventDispatcher!
+    public var userProfileService:UserProfileService!
+    public var notificationCenter:NotificationCenter!
+    
+    // MARK: - Public interfaces
+    
+    /// Initialize Optimizely Manager
+    ///
+    /// - Parameters:
+    ///   - sdkKey: sdk key
+    public init(sdkKey: String) {
+        self.sdkKey = sdkKey
+        
+        // default services (can be customized by clients
+        
+//        self.logger = LoggerDefault()
+//        self.bucketer = BucketerDefault()
+//        self.decisionService = DecisionServiceDefault()
+//        self.eventDispatcher = EventDispatcherDefault()
+//        self.userProfileService = UserProfileServiceDefault()
+//        self.notificationCenter = NotificationCenterDefault()
+    }
+    
+    /// Initialize Optimizely Manager
+    ///
+    /// - Parameters:
+    ///   - datafile: when given, this datafile will be used when cached copy is not available (fresh start)
+    ///                       a cached copy from previous download is used if it's available
+    ///                       the datafile will be updated from the server in the background thread
+    ///   - completion: callback when initialization is completed
+    public func initializeClient(datafile: String?=nil, completion: ((OPTResult) -> Void)?=nil) {
+        
+        // (1) cached datafile exist, no action
+        // (2) no cached datafile, local datafile = datafile
+        
+        self.config = ProjectConfig()
+//        self.datafileHandler = DatafileHandlerDefault()
+//
+//        // (3) fetch/update datafile (async)
+//        datafileHandler.downloadDatafile(sdkKey: sdkKey, completionHandler: { (result) in
+//            switch result {
+//            case .failure(let err):
+//                self.logger.log(level: .error, message: err.description)
+//                completion?(result)
+//            case .success:
+//                completion(?result)
+//            }
+//        })
+    }
+    
+    
+    /**
+     * Use the activate method to start an experiment.
+     *
+     * The activate call will conditionally activate an experiment for a user based on the provided experiment key and a randomized hash of the provided user ID.
+     * If the user satisfies audience conditions for the experiment and the experiment is valid and running, the function returns the variation the user is bucketed into.
+     * Otherwise, activate returns nil. Make sure that your code adequately deals with the case when the experiment is not activated (e.g. execute the default variation).
+     */
+    
+    /// Try to activate an experiment based on the experiment key and user ID with user attributes.
+    ///
+    /// - Parameters:
+    ///   - experimentKey: The key for the experiment.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: A map of attribute names to current user attribute values.
+    /// - Returns: The variation the user was bucketed into
+    /// - Throws: `OPTError` if error is detected
+    public func activate(experimentKey:String,
+                         userId:String,
+                         attributes:Dictionary<String, Any>?=nil) throws -> Variation {
+        return Variation()
+    }
+    
+    /// Get variation for experiment and user ID with user attributes.
+    ///
+    /// - Parameters:
+    ///   - experimentKey: The key for the experiment.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: A map of attribute names to current user attribute values.
+    /// - Returns: A map of attribute names to current user attribute values.
+    /// - Throws: `OPTError` if error is detected
+    public func getVariation(experimentKey:String,
+                             userId:String,
+                             attributes:Dictionary<String, Any>?=nil) throws -> Variation {
+        return Variation()
+    }
+    
+    /**
+     * Use the setForcedVariation method to force an experimentKey-userId
+     * pair into a specific variation for QA purposes.
+     * The forced bucketing feature allows customers to force users into
+     * variations in real time for QA purposes without requiring datafile
+     * downloads from the network. Methods activate and track are called
+     * as usual after the variation is set, but the user will be bucketed
+     * into the forced variation overriding any variation which would be
+     * computed via the network datafile.
+     */
+    
+    /// Get forced variation for experiment and user ID.
+    ///
+    /// - Parameters:
+    ///   - experimentKey: The key for the experiment.
+    ///   - userId: The user ID to be used for bucketing.
+    /// - Returns: forced variation if it exists, otherwise return nil.
+    /// - Throws: `OPTError` if error is detected
+    public func getForcedVariation(experimentKey:String, userId:String) throws -> Variation? {
+        return nil
+    }
+    
+    /// Set forced variation for experiment and user ID to variationKey.
+    ///
+    /// - Parameters:
+    ///   - experimentKey The key for the experiment.
+    ///   - userId The user ID to be used for bucketing.
+    ///   - variationKey The variation the user should be forced into.
+    ///                  This value can be nil, in which case, the forced variation is cleared.
+    /// - Returns: true if no error is detected, false otherwise.
+    /// - Throws: `OPTError` if feature parameter is not valid
+    public func setForcedVariation(experimentKey:String,
+                                   userId:String,
+                                   variationKey:String) throws -> Bool {
+        return false
+    }
+    
+    /// Determine whether a feature is enabled.
+    ///
+    /// - Parameters:
+    ///   - featureKey The key for the feature flag.
+    ///   - userId The user ID to be used for bucketing.
+    ///   - attributes The user's attributes.
+    /// - Returns: true if feature is enabled, false otherwise.
+    /// - Throws: `OPTError` if feature parameter is not valid
+    public func isFeatureEnabled(featureKeyy:String,
+                                 userId:String,
+                                 attributes:Dictionary<String,Any>?=nil) throws -> Bool {
+        return false
+    }
+    
+    /// Gets boolean feature variable value.
+    ///
+    /// - Parameters:
+    ///   - featureKey The key for the feature flag.
+    ///   - variableKey The key for the variable.
+    ///   - userId The user ID to be used for bucketing.
+    ///   - attributes The user's attributes.
+    /// - Returns: feature variable value of type boolean.
+    /// - Throws: `OPTError` if feature parameter is not valid
+    public func getFeatureVariableBoolean(featureKey:String,
+                                          variableKey:String,
+                                          userId:String,
+                                          attributes:Dictionary<String, Any>?=nil) throws -> Bool {
+        return false
+    }
+    
+    /// Gets double feature variable value.
+    ///
+    /// - Parameters:
+    ///   - featureKey The key for the feature flag.
+    ///   - variableKey The key for the variable.
+    ///   - userId The user ID to be used for bucketing.
+    ///   - attributes The user's attributes.
+    /// - Returns: feature variable value of type double.
+    /// - Throws: `OPTError` if feature parameter is not valid
+    public func getFeatureVariableDouble(featureKey:String,
+                                         variableKey:String,
+                                         userId:String,
+                                         attributes:Dictionary<String, Any>?=nil) throws -> Double {
+        return 0.0
+    }
+    
+    /// Gets integer feature variable value.
+    ///
+    /// - Parameters:
+    ///   - featureKey The key for the feature flag.
+    ///   - variableKey The key for the variable.
+    ///   - userId The user ID to be used for bucketing.
+    ///   - attributes The user's attributes.
+    /// - Returns: feature variable value of type integer.
+    /// - Throws: `OPTError` if feature parameter is not valid
+    public func getFeatureVariableInteger(featureKey:String,
+                                          variableKey:String,
+                                          userId:String,
+                                          attributes:Dictionary<String, Any>?=nil) throws -> Int {
+        return 0
+    }
+    
+    /// Gets string feature variable value.
+    ///
+    /// - Parameters:
+    ///   - featureKey The key for the feature flag.
+    ///   - variableKey The key for the variable.
+    ///   - userId The user ID to be used for bucketing.
+    ///   - attributes The user's attributes.
+    /// - Returns: feature variable value of type string.
+    /// - Throws: `OPTError` if feature parameter is not valid
+    public func getFeatureVariableString(featureKey:String,
+                                         variableKey:String,
+                                         userId:String,
+                                         attributes:Dictionary<String, Any>?=nil) throws -> String {
+        return String()
+    }
+    
+    /// Get array of features that are enabled for the user.
+    ///
+    /// - Parameters:
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
+    /// - Returns: Array of feature keys that are enabled for the user.
+    /// - Throws: `OPTError` if feature parameter is not valid
+    public func getEnabledFeatures(userId:String,
+                                   attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
+        return [String]()
+    }
+    
+    /// Track an event
+    ///
+    /// - Parameters:
+    ///   - eventKey: The event name
+    ///   - userId: The user ID associated with the event to track
+    ///   - eventTags: A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean)
+    /// - Throws: `OPTError` if event parameter is not valid
+    public func track(eventKey:String,
+                      userId:String,
+                      eventTags:Dictionary<String,Any>?=nil) throws {
+        
+    }
+    
+}

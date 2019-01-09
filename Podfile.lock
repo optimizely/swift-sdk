@@ -21,31 +21,12 @@ PODS:
   - Mixpanel-swift (2.5.5):
     - Mixpanel-swift/Complete (= 2.5.5)
   - Mixpanel-swift/Complete (2.5.5)
-  - OptimizelySDKCore (2.1.4)
-  - OptimizelySDKDatafileManager (2.1.4):
-    - OptimizelySDKShared (= 2.1.4)
-  - OptimizelySDKEventDispatcher (2.1.4):
-    - OptimizelySDKShared (= 2.1.4)
-  - OptimizelySDKiOS (2.1.4):
-    - OptimizelySDKDatafileManager (= 2.1.4)
-    - OptimizelySDKEventDispatcher (= 2.1.4)
-    - OptimizelySDKUserProfileService (= 2.1.4)
-  - OptimizelySDKShared (2.1.4):
-    - OptimizelySDKCore (= 2.1.4)
-  - OptimizelySDKTVOS (2.1.4):
-    - OptimizelySDKDatafileManager (= 2.1.4)
-    - OptimizelySDKEventDispatcher (= 2.1.4)
-    - OptimizelySDKUserProfileService (= 2.1.4)
-  - OptimizelySDKUserProfileService (2.1.4):
-    - OptimizelySDKShared (= 2.1.4)
 
 DEPENDENCIES:
   - Amplitude-iOS
   - Google/Analytics
   - Localytics
   - Mixpanel-swift
-  - OptimizelySDKiOS (= 2.1.4)
-  - OptimizelySDKTVOS (= 2.1.4)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -58,13 +39,6 @@ SPEC REPOS:
     - GoogleToolboxForMac
     - Localytics
     - Mixpanel-swift
-    - OptimizelySDKCore
-    - OptimizelySDKDatafileManager
-    - OptimizelySDKEventDispatcher
-    - OptimizelySDKiOS
-    - OptimizelySDKShared
-    - OptimizelySDKTVOS
-    - OptimizelySDKUserProfileService
 
 SPEC CHECKSUMS:
   Amplitude-iOS: 3e9a5f8aeadc885801c78f24b80efa25ff457ca4
@@ -76,14 +50,7 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
   Localytics: 578987f2f1d5cbc66719255b88c590430e5680dd
   Mixpanel-swift: 92fd02942ef4bf5a1bd0630a88223a417b8c8b39
-  OptimizelySDKCore: 17e6cee67f720ab09128e97b2b983b89cd50c145
-  OptimizelySDKDatafileManager: 3b00a6ef6f89cb7455e4092316b1679d456b5efc
-  OptimizelySDKEventDispatcher: 4d6059fcbf97ae5182b13d5af50a2bc55ca7638d
-  OptimizelySDKiOS: 409e22b1ec22cd5f5f288acdcedfc2d034c016b2
-  OptimizelySDKShared: d3c2afca439279220f61a5b5de52f49c61b43f4d
-  OptimizelySDKTVOS: c9760a1852138449ee11f8c5ea1b6e7a71c4cb88
-  OptimizelySDKUserProfileService: 657f338f74963885a619ad7ef1d43f9059362d82
 
-PODFILE CHECKSUM: 7429b1d1c974e9eeea17059551489af7291a3862
+PODFILE CHECKSUM: 351b6ae87aab91085d4cf7aa7e3a3540f6226b54
 
 COCOAPODS: 1.5.3

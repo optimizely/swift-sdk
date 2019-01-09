@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6EBAEB6B21E3FEF800D13AA9"
-               BuildableName = "OptimizelySwiftSDKiOS.framework"
-               BlueprintName = "OptimizelySwiftSDKiOS"
-               ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+               BuildableName = "OptimizelySwiftSDK.framework"
+               BlueprintName = "OptimizelySwiftSDK-iOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6EBAEB7321E3FEF900D13AA9"
-               BuildableName = "OptimizelySwiftSDKiOSTests.xctest"
-               BlueprintName = "OptimizelySwiftSDKiOSTests"
-               ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+               BuildableName = "OptimizelySwiftSDK-iOSTests.xctest"
+               BlueprintName = "OptimizelySwiftSDK-iOSTests"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6EBAEB6B21E3FEF800D13AA9"
-            BuildableName = "OptimizelySwiftSDKiOS.framework"
-            BlueprintName = "OptimizelySwiftSDKiOS"
-            ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+            BuildableName = "OptimizelySwiftSDK.framework"
+            BlueprintName = "OptimizelySwiftSDK-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -65,9 +65,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6EBAEB6B21E3FEF800D13AA9"
-            BuildableName = "OptimizelySwiftSDKiOS.framework"
-            BlueprintName = "OptimizelySwiftSDKiOS"
-            ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+            BuildableName = "OptimizelySwiftSDK.framework"
+            BlueprintName = "OptimizelySwiftSDK-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -83,9 +83,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6EBAEB6B21E3FEF800D13AA9"
-            BuildableName = "OptimizelySwiftSDKiOS.framework"
-            BlueprintName = "OptimizelySwiftSDKiOS"
-            ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+            BuildableName = "OptimizelySwiftSDK.framework"
+            BlueprintName = "OptimizelySwiftSDK-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

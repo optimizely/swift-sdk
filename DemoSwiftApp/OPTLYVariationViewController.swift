@@ -15,16 +15,12 @@
  ***************************************************************************/
 
 import UIKit
-#if os(iOS)
-    import OptimizelySDKiOS
-#elseif os(tvOS)
-    import OptimizelySDKTVOS
-#endif
+import OptimizelySwiftSDK
 
 class OPTLYVariationViewController: UIViewController {
     
     var eventKey :String = ""
-    var optimizelyClient :OPTLYClient? = nil
+ //   var optimizelyClient :OPTLYClient? = nil
     var variationKey :String = ""
     var userId :String = ""
 
@@ -62,7 +58,7 @@ class OPTLYVariationViewController: UIViewController {
     }
     
     @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {
-        self.optimizelyClient?.track(self.eventKey, userId: userId)
+     //   self.optimizelyClient?.track(self.eventKey, userId: userId)
         self.performSegue(withIdentifier: "OPTLYConversionSuccessSegue", sender: self)
     }
 }

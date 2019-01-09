@@ -32,14 +32,14 @@ class DefaultDatafileHandler : DatafileHandler {
         group.enter()
         
         if let url = URL(string: str) {
-            let task = session.downloadTask(with: url, completionHandler: { (url, response, error) in
+            let task = session.downloadTask(with: url){ (url, response, error) in
                 self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
                 if let url = url, let projectConfig = try? String(contentsOf: url) {
                     result = projectConfig
                     self.saveDatafile(sdkKey: sdkKey, dataFile: projectConfig)
                 }
                 group.leave()
-            })
+            }
             
             task.resume()
             
@@ -55,16 +55,21 @@ class DefaultDatafileHandler : DatafileHandler {
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
         if let url = URL(string: str) {
             let task = session.downloadTask(with: url, completionHandler: { (url, response, error) in
+                var result:Result = Result.failure(DatafileDownloadError(description: "Failed to parse"))
+                
                 if let _ = error {
                     self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: error.debugDescription)
                     let datafiledownloadError = DatafileDownloadError(description: error.debugDescription)
-                    completionHandler(Result.failure(datafiledownloadError))
+                    result = Result.failure(datafiledownloadError)
                 }
                 else if let url = url, let string = try? String(contentsOf: url) {
                     self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: string)
                     self.saveDatafile(sdkKey: sdkKey, dataFile: string)
-                    completionHandler(Result.success(string))
+                    result = Result.success(string)
                 }
+
+                completionHandler(result)
+                
                 self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
                 
             })
@@ -117,7 +122,7 @@ class DefaultDatafileHandler : DatafileHandler {
             
             //writing
             do {
-                try dataFile.write(to: fileURL, atomically: false, encoding: .utf8)
+                try dataFile.write(to: fileURL, atomically: true, encoding: .utf8)
             }
             catch {/* error handling here */}
         }

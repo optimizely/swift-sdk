@@ -10,7 +10,7 @@ import Foundation
 
 class DefaultDatafileHandler : DatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
-    let logger = DefaultLogger.createInstance(logLevel: .OptimizelyLogLevelDebug)
+    let logger = DefaultLogger.createInstance(logLevel: .debug)
     
     static func createInstance() -> DatafileHandler? {
         return DefaultDatafileHandler()
@@ -32,7 +32,7 @@ class DefaultDatafileHandler : DatafileHandler {
         
         if let url = URL(string: str) {
             let task = session.downloadTask(with: url, completionHandler: { (url, response, error) in
-                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
+                self.logger?.log(level: OptimizelyLogLevel.debug, message: response.debugDescription)
                 if let url = url, let projectConfig = try? String(contentsOf: url) {
                     result = projectConfig
                 }
@@ -54,15 +54,15 @@ class DefaultDatafileHandler : DatafileHandler {
         if let url = URL(string: str) {
             let task = session.downloadTask(with: url, completionHandler: { (url, response, error) in
                 if let _ = error {
-                    self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: error.debugDescription)
+                    self.logger?.log(level: OptimizelyLogLevel.error, message: error.debugDescription)
                     let datafiledownloadError = DatafileDownloadError(description: error.debugDescription)
                     completionHandler(Result.failure(datafiledownloadError))
                 }
                 else if let url = url, let string = try? String(contentsOf: url) {
-                    self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: string)
+                    self.logger?.log(level: OptimizelyLogLevel.debug, message: string)
                     completionHandler(Result.success(string))
                 }
-                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelDebug, message: response.debugDescription)
+                self.logger?.log(level: OptimizelyLogLevel.debug, message: response.debugDescription)
                 
             })
             

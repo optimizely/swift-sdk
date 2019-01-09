@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6E614DCC21E3F389005982A1"
-               BuildableName = "OptimizelySwiftSDKtvOS.framework"
-               BlueprintName = "OptimizelySwiftSDKtvOS"
-               ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+               BuildableName = "OptimizelySwiftSDK.framework"
+               BlueprintName = "OptimizelySwiftSDK-tvOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6E614DD421E3F38A005982A1"
-               BuildableName = "OptimizelySwiftSDKtvOSTests.xctest"
-               BlueprintName = "OptimizelySwiftSDKtvOSTests"
-               ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+               BuildableName = "OptimizelySwiftSDK-tvOSTests.xctest"
+               BlueprintName = "OptimizelySwiftSDK-tvOSTests"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6E614DCC21E3F389005982A1"
-            BuildableName = "OptimizelySwiftSDKtvOS.framework"
-            BlueprintName = "OptimizelySwiftSDKtvOS"
-            ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+            BuildableName = "OptimizelySwiftSDK.framework"
+            BlueprintName = "OptimizelySwiftSDK-tvOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -65,9 +65,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6E614DCC21E3F389005982A1"
-            BuildableName = "OptimizelySwiftSDKtvOS.framework"
-            BlueprintName = "OptimizelySwiftSDKtvOS"
-            ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+            BuildableName = "OptimizelySwiftSDK.framework"
+            BlueprintName = "OptimizelySwiftSDK-tvOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -83,9 +83,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6E614DCC21E3F389005982A1"
-            BuildableName = "OptimizelySwiftSDKtvOS.framework"
-            BlueprintName = "OptimizelySwiftSDKtvOS"
-            ReferencedContainer = "container:OptimizelySDK.xcodeproj">
+            BuildableName = "OptimizelySwiftSDK.framework"
+            BlueprintName = "OptimizelySwiftSDK-tvOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

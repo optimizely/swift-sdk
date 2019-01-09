@@ -32,8 +32,82 @@
 		6E4DD82E21E5208F00B0C2C7 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E4DD82121E5208F00B0C2C7 /* ProximaNova-Regular.otf */; };
 		6E4DD82F21E5208F00B0C2C7 /* ProximaNovaCond-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E4DD82221E5208F00B0C2C7 /* ProximaNovaCond-Regular.otf */; };
 		6E4DD83021E5208F00B0C2C7 /* ProximaNovaCond-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E4DD82221E5208F00B0C2C7 /* ProximaNovaCond-Regular.otf */; };
+		6E4DD97C21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; };
+		6E4DD97D21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E4DD98021E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; };
+		6E4DD98121E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DDB0B21C9FF18EAEA9E5F676 /* Pods_DemoObjctvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3822AD03E75EF61F9556BA6 /* Pods_DemoObjctvOS.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6E4DD97421E67A6500B0C2C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EBAEB6C21E3FEF800D13AA9;
+			remoteInfo = OptimizelySwiftSDKiOS;
+		};
+		6E4DD97621E67A6500B0C2C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E614DCD21E3F389005982A1;
+			remoteInfo = OptimizelySwiftSDKtvOS;
+		};
+		6E4DD97821E67A6500B0C2C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EBAEB7421E3FEF900D13AA9;
+			remoteInfo = OptimizelySwiftSDKiOSTests;
+		};
+		6E4DD97A21E67A6500B0C2C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E614DD521E3F38A005982A1;
+			remoteInfo = OptimizelySwiftSDKtvOSTests;
+		};
+		6E4DD97E21E67AAD00B0C2C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EBAEB6B21E3FEF800D13AA9;
+			remoteInfo = OptimizelySwiftSDKiOS;
+		};
+		6E4DD98221E67ABA00B0C2C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E614DCC21E3F389005982A1;
+			remoteInfo = OptimizelySwiftSDKtvOS;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6E4DD93B21E6708E00B0C2C7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6E4DD97D21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E4DD93F21E6709600B0C2C7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6E4DD98121E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3EFD1578D8AB431E6FD4B8FE /* Pods-DemoObjctvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjctvOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -51,6 +125,7 @@
 		6E4DD82021E5208F00B0C2C7 /* optimizely_8182362857.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_8182362857.json; sourceTree = "<group>"; };
 		6E4DD82121E5208F00B0C2C7 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
 		6E4DD82221E5208F00B0C2C7 /* ProximaNovaCond-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNovaCond-Regular.otf"; sourceTree = "<group>"; };
+		6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySDK/OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
 		6EF7497221E40467008B22A0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6EF7497321E40467008B22A0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		6EF7497521E40467008B22A0 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -70,6 +145,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				361EF872CB7D0F6C8202145F /* Pods_DemoObjciOS.framework in Frameworks */,
+				6E4DD97C21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +154,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDB0B21C9FF18EAEA9E5F676 /* Pods_DemoObjctvOS.framework in Frameworks */,
+				6E4DD98021E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,6 +198,17 @@
 			path = ../DemoSwiftApp/Resources;
 			sourceTree = "<group>";
 		};
+		6E4DD96E21E67A6500B0C2C7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */,
+				6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */,
+				6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDKiOSTests.xctest */,
+				6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDKtvOSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		6EF7496621E40467008B22A0 = {
 			isa = PBXGroup;
 			children = (
@@ -150,6 +238,7 @@
 		E4F9C3F25D5A22985B6E41CD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */,
 				F8E188D7982AFD9C7F1C7FE6 /* Pods_DemoObjciOS.framework */,
 				B3822AD03E75EF61F9556BA6 /* Pods_DemoObjctvOS.framework */,
 			);
@@ -179,10 +268,12 @@
 				6EF7498B21E404BB008B22A0 /* Frameworks */,
 				6EF7498C21E404BB008B22A0 /* Resources */,
 				3299F5F6EEFA0ABFC8825A37 /* [CP] Embed Pods Frameworks */,
+				6E4DD93B21E6708E00B0C2C7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6E4DD97F21E67AAD00B0C2C7 /* PBXTargetDependency */,
 			);
 			name = DemoObjciOS;
 			productName = DemoObjcAppiOS;
@@ -197,11 +288,12 @@
 				6EF749A421E404D6008B22A0 /* Sources */,
 				6EF749A521E404D6008B22A0 /* Frameworks */,
 				6EF749A621E404D6008B22A0 /* Resources */,
-				C267B737BF1CD66331663196 /* [CP] Embed Pods Frameworks */,
+				6E4DD93F21E6709600B0C2C7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6E4DD98321E67ABA00B0C2C7 /* PBXTargetDependency */,
 			);
 			name = DemoObjctvOS;
 			productName = DemoObjcApptvOS;
@@ -241,6 +333,12 @@
 			mainGroup = 6EF7496621E40467008B22A0;
 			productRefGroup = 6EF7497021E40467008B22A0 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 6E4DD96E21E67A6500B0C2C7 /* Products */;
+					ProjectRef = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				6EF7498D21E404BB008B22A0 /* DemoObjciOS */,
@@ -248,6 +346,37 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OptimizelySwiftSDK.framework;
+			remoteRef = 6E4DD97421E67A6500B0C2C7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OptimizelySwiftSDK.framework;
+			remoteRef = 6E4DD97621E67A6500B0C2C7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDKiOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OptimizelySwiftSDKiOSTests.xctest;
+			remoteRef = 6E4DD97821E67A6500B0C2C7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDKtvOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OptimizelySwiftSDKtvOSTests.xctest;
+			remoteRef = 6E4DD97A21E67A6500B0C2C7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		6EF7498C21E404BB008B22A0 /* Resources */ = {
@@ -320,12 +449,6 @@
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${PODS_ROOT}/Localytics/Localytics-iOS-5.4.0/Localytics.framework",
 				"${BUILT_PRODUCTS_DIR}/Mixpanel-swift/Mixpanel.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKCore-iOS/OptimizelySDKCore.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKDatafileManager-iOS/OptimizelySDKDatafileManager.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKEventDispatcher-iOS/OptimizelySDKEventDispatcher.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKShared-iOS/OptimizelySDKShared.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKUserProfileService-iOS/OptimizelySDKUserProfileService.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKiOS/OptimizelySDKiOS.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -335,48 +458,10 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Localytics.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mixpanel.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKDatafileManager.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKEventDispatcher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKShared.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKUserProfileService.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKiOS.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C267B737BF1CD66331663196 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKCore-tvOS/OptimizelySDKCore.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKDatafileManager-tvOS/OptimizelySDKDatafileManager.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKEventDispatcher-tvOS/OptimizelySDKEventDispatcher.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKShared-tvOS/OptimizelySDKShared.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKUserProfileService-tvOS/OptimizelySDKUserProfileService.framework",
-				"${BUILT_PRODUCTS_DIR}/OptimizelySDKTVOS/OptimizelySDKTVOS.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKDatafileManager.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKEventDispatcher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKShared.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKUserProfileService.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OptimizelySDKTVOS.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E6E9EA0276E70A419BFEAE7D /* [CP] Check Pods Manifest.lock */ = {
@@ -426,6 +511,19 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		6E4DD97F21E67AAD00B0C2C7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OptimizelySwiftSDKiOS;
+			targetProxy = 6E4DD97E21E67AAD00B0C2C7 /* PBXContainerItemProxy */;
+		};
+		6E4DD98321E67ABA00B0C2C7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OptimizelySwiftSDKtvOS;
+			targetProxy = 6E4DD98221E67ABA00B0C2C7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		6E4DD7FB21E51FDB00B0C2C7 /* iOSMain.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -449,6 +547,7 @@
 		6EF7498321E40468008B22A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -508,6 +607,7 @@
 		6EF7498421E40468008B22A0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

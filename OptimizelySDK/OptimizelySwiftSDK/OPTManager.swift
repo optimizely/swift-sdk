@@ -35,17 +35,27 @@ open class OPTManager: NSObject {
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
-    public init(sdkKey: String) {
+    ///   - logger: custom Logger
+    ///   - bucketer: custom Bucketer
+    ///   - ...
+    public init(sdkKey: String,
+                logger: Logger?=nil,
+                bucketer: Bucketer?=nil,
+                decisionService: DecisionService?=nil,
+                eventDispatcher: EventDispatcher?=nil,
+                userProfileService:UserProfileService?=nil,
+                notificationCenter:NotificationCenter?=nil) {
+        
         self.sdkKey = sdkKey
         
         // default services (can be customized by clients
         
-//        self.logger = LoggerDefault()
-//        self.bucketer = BucketerDefault()
-//        self.decisionService = DecisionServiceDefault()
-//        self.eventDispatcher = EventDispatcherDefault()
-//        self.userProfileService = UserProfileServiceDefault()
-//        self.notificationCenter = NotificationCenterDefault()
+//        self.logger = logger ?? LoggerDefault()
+//        self.bucketer = bucketer ?? BucketerDefault()
+//        self.decisionService = decisionService ?? DecisionServiceDefault()
+//        self.eventDispatcher = eventDispatcher ?? EventDispatcherDefault()
+//        self.userProfileService = userProfileService ?? UserProfileServiceDefault()
+//        self.notificationCenter = notificationCenter ?? NotificationCenterDefault()
     }
     
     /// Initialize Optimizely Manager

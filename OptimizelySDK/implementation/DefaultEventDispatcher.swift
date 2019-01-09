@@ -29,18 +29,18 @@ public class DefaultEventDispatcher : EventDispatcher {
                     
                     switch result {
                     case .failure(let error):
-                        self.logger.log(level: OptimizelyLogLevel.error, message: error.localizedDescription)
+                        self.logger.log(level: .error, message: error.localizedDescription)
                     case .success(_):
                         if let removedItem:EventForDispatch = self.dataStore.removeFirstItem() {
                             if removedItem != event {
-                                self.logger.log(level: OptimizelyLogLevel.error, message: "Removed event different from sent event")
+                                self.logger.log(level: .error, message: "Removed event different from sent event")
                             }
                             else {
-                                self.logger.log(level: OptimizelyLogLevel.debug, message: "Successfully sent event " + event.body.debugDescription)
+                                self.logger.log(level: .debug, message: "Successfully sent event " + event.body.debugDescription)
                             }
                         }
                         else {
-                            self.logger.log(level: OptimizelyLogLevel.error, message: "Removed event nil for sent item")
+                            self.logger.log(level: .error, message: "Removed event nil for sent item")
                         }
                     }
                     self.notify.leave()
@@ -60,9 +60,9 @@ public class DefaultEventDispatcher : EventDispatcher {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
-            self.logger.log(level: OptimizelyLogLevel.debug, message: "Event Sent")
+            self.logger.log(level: .debug, message: "Event Sent")
                 completionHandler(Result.success(event.body))
-            self.logger.log(level: OptimizelyLogLevel.debug, message: response.debugDescription)
+            self.logger.log(level: .debug, message: response.debugDescription)
             
             if let error = error {
                 completionHandler(Result.failure(EventDispatchError(description: error.localizedDescription)))

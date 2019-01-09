@@ -20,71 +20,64 @@ public typealias DatafileDownloadCompletionHandler = (Result<String,DatafileDown
 
 public protocol DatafileHandler {
     /**
-     * Synchronous call to download the datafile.
-     *
-     * @param context   application context for download
-     * @param datafileConfig DatafileConfig for the datafile
-     * @return a valid datafile or null
+    Synchronous call to download the datafile.
+
+    - Parameter sdkKey:   sdk key of the datafile to download
+    - Parameter datafileConfig: DatafileConfig for the datafile
+    - Returns: a valid datafile or null
      */
     func downloadDatafile(sdkKey:String) -> String?
     
     /**
-     * Asynchronous download data file.
-     *
-     * @param context   application context for download
-     * @param datafileConfig DatafileConfig for the datafile to get
-     * @param completionHhandler  listener to call when datafile download complete
+     Asynchronous download data file.
+     - Parameter sdkKey:   application context for download
+     - Parameter completionHhandler:  listener to call when datafile download complete
      */
     func downloadDatafile(sdkKey:String, completionHandler:@escaping DatafileDownloadCompletionHandler)
     
     /**
-     * Start background updates to the project datafile .
-     *
-     * @param context application context for download
-     * @param datafileConfig DatafileConfig for the datafile
-     * @param updateInterval frequency of updates in seconds
+      Start periodic updates to the project datafile .
+     
+      - Parameter sdkKey: SdkKey for the datafile
+      - Parameter updateInterval: frequency of updates in seconds
      */
-    func startBackgroundUpdates(sdkKey:String, updateInterval:Int)
+    func startPeriodicUpdates(sdkKey:String, updateInterval:Int)
     
     /**
-     * Stop the background updates.
-     *
-     * @param context   application context for download
-     * @param datafileConfig DatafileConfig for the datafile
+     Stop the periodic updates. This should be called when the app goes to background
+     
+     - Parameter sdkKey: sdk key for datafile.
      */
-    func stopBackgroundUpdates(sdkKey:String)
-    
+    func stopPeriodicUpdates(sdkKey:String)
+
     /**
-     * Save the datafile to cache.
-     *
-     * @param context   application context for datafile cache
-     * @param datafileConfig DatafileConfig for the datafile
-     * @param dataFile  the datafile to save
+     Stop all periodic updates. This should be called when the app goes to background
+     */
+    func stopPeriodicUpdates()
+
+    /**
+     Save the datafile to cache.
+     - Parameter sdkKey: sdkKey
+     - Parameter datafile: JSON string of datafile.
      */
     func saveDatafile(sdkKey:String, dataFile:String)
     
     /**
-     * Load a cached datafile if it exists
-     *
-     * @param context   application context for datafile cache
-     * @param projectId project id of the datafile to try and get from cache
-     * @return the datafile cached or null if it was not available
+     Load a cached datafile if it exists
+     - Parameter sdkKey: sdkKey
+     - Returns: the datafile cached or null if it was not available
      */
     func loadSavedDatafile(sdkKey:String) -> String?
     
     /**
-     * Has the file already been cached locally?
-     *
-     * @param context   application context for datafile cache
-     * @param datafileConfig DatafileConfig for the datafile
-     * @return true if the datafile is cached or false if not.
+     Has the file already been cached locally?
+     - Parameter sdkKey: sdkKey
+     - Returns: true if the datafile is cached or false if not.
      */
     func isDatafileSaved(sdkKey:String) -> Bool
     /**
-     * Remove the datafile in cache.
-     *
-     * @param context   application context for datafile cache
-     * @param datafileConfig DatafileConfig for the datafile
+     Remove the datafile in cache.
+     - Parameter sdkKey: sdkKey
      */
     func removeSavedDatafile(sdkKey:String)
 

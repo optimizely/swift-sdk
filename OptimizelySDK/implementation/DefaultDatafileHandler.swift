@@ -11,6 +11,7 @@ import Foundation
 class DefaultDatafileHandler : DatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     let logger = DefaultLogger.createInstance(logLevel: .debug)
+    var timers:[String:Timer] = [String:Timer]()
     
     static func createInstance() -> DatafileHandler? {
         return DefaultDatafileHandler()
@@ -31,13 +32,14 @@ class DefaultDatafileHandler : DatafileHandler {
         group.enter()
         
         if let url = URL(string: str) {
-            let task = session.downloadTask(with: url, completionHandler: { (url, response, error) in
-                self.logger?.log(level: OptimizelyLogLevel.debug, message: response.debugDescription)
+            let task = session.downloadTask(with: url){ (url, response, error) in
+                self.logger?.log(level: .debug, message: response.debugDescription)
                 if let url = url, let projectConfig = try? String(contentsOf: url) {
                     result = projectConfig
+                    self.saveDatafile(sdkKey: sdkKey, dataFile: projectConfig)
                 }
                 group.leave()
-            })
+            }
             
             task.resume()
             
@@ -53,16 +55,22 @@ class DefaultDatafileHandler : DatafileHandler {
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
         if let url = URL(string: str) {
             let task = session.downloadTask(with: url, completionHandler: { (url, response, error) in
+                var result = Result<String, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
+                
                 if let _ = error {
-                    self.logger?.log(level: OptimizelyLogLevel.error, message: error.debugDescription)
+                    self.logger?.log(level: .error, message: error.debugDescription)
                     let datafiledownloadError = DatafileDownloadError(description: error.debugDescription)
-                    completionHandler(Result.failure(datafiledownloadError))
+                    result = Result.failure(datafiledownloadError)
                 }
                 else if let url = url, let string = try? String(contentsOf: url) {
-                    self.logger?.log(level: OptimizelyLogLevel.debug, message: string)
-                    completionHandler(Result.success(string))
+                    self.logger?.log(level: .debug, message: string)
+                    self.saveDatafile(sdkKey: sdkKey, dataFile: string)
+                    result = Result.success(string)
                 }
-                self.logger?.log(level: OptimizelyLogLevel.debug, message: response.debugDescription)
+
+                completionHandler(result)
+                
+                self.logger?.log(level: .debug, message: response.debugDescription)
                 
             })
             
@@ -71,13 +79,41 @@ class DefaultDatafileHandler : DatafileHandler {
 
     }
     
-    func startBackgroundUpdates(sdkKey: String, updateInterval: Int) {
-        
+    func startPeriodicUpdates(sdkKey: String, updateInterval: Int) {
+        if let _ = timers[sdkKey] {
+            logger?.log(level: .info, message: "Timer already started for datafile updates")
+            return
+        }
+        if #available(iOS 10.0, *) {
+            let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: true) { (timer) in
+                self.downloadDatafile(sdkKey: sdkKey) { (result) in
+                 // background download saves to cache
+                }
+            }
+            timers[sdkKey] = timer
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
-    func stopBackgroundUpdates(sdkKey: String) {
+    func stopPeriodicUpdates(sdkKey: String) {
+        if let timer = timers[sdkKey] {
+            logger?.log(level: .info, message: "Stopping timer for datafile updates sdkKey:" + sdkKey)
+            
+            timer.invalidate()
+            timers.removeValue(forKey: sdkKey)
+        }
+
+    }
+    
+    func stopPeriodicUpdates() {
+        for key in timers.keys {
+            logger?.log(level: .info, message: "Stopping timer for all datafile updates")
+            stopPeriodicUpdates(sdkKey: key)
+        }
         
     }
+
     
     func saveDatafile(sdkKey: String, dataFile: String) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -86,7 +122,7 @@ class DefaultDatafileHandler : DatafileHandler {
             
             //writing
             do {
-                try dataFile.write(to: fileURL, atomically: false, encoding: .utf8)
+                try dataFile.write(to: fileURL, atomically: true, encoding: .utf8)
             }
             catch {/* error handling here */}
         }

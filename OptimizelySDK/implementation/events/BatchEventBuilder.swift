@@ -9,7 +9,7 @@
 import Foundation
 
 class BatchEventBuilder {
-    static private var logger = DefaultLogger.createInstance(logLevel: OptimizelyLogLevel.debug)
+    static private var logger = DefaultLogger.createInstance(logLevel: .debug)
     static func createImpressionEvent(config:ProjectConfig, decisionService:DecisionService, experiment:Experiment, varionation:Variation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
         var decisions = [Decision]()
         

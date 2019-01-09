@@ -15,7 +15,7 @@ class DefaultBucketer : Bucketer {
     var MAX_HASH_VALUE:UInt64?
     
     private var config:ProjectConfig
-    private var logger = DefaultLogger.createInstance(logLevel: OptimizelyLogLevel.debug)
+    private var logger = DefaultLogger.createInstance(logLevel: .debug)
     
     internal required init(config:ProjectConfig) {
         self.config = config

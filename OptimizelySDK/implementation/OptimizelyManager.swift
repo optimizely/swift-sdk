@@ -19,9 +19,11 @@ public class OptimizelyManager : Optimizely {
     public var logger: Logger?
     public var userProfileService: UserProfileService?
     public var notificationCenter: NotificationCenter?
+    private var periodicDownloadInterval:Int?
     
-    internal init(bucketer:Bucketer?, decisionService:DecisionService?, errorHandler:ErrorHandler?, eventDispatcher:EventDispatcher?, datafileHandler:DatafileHandler?, logger:Logger?, userProfileService:UserProfileService?, notificationCenter:NotificationCenter?) {
+    public init(bucketer:Bucketer? = nil, decisionService:DecisionService? = nil, errorHandler:ErrorHandler? = nil, eventDispatcher:EventDispatcher? = nil, datafileHandler:DatafileHandler? = nil, logger:Logger? = nil, userProfileService:UserProfileService? = nil, notificationCenter:NotificationCenter? = nil, periodicDownloadInterval:Int? = nil) {
         self.bucketer = bucketer
+        self.periodicDownloadInterval = periodicDownloadInterval
         self.decisionService = decisionService
         self.errorHandler = errorHandler
         self.eventDispatcher = eventDispatcher  ?? DefaultEventDispatcher.createInstance()
@@ -58,10 +60,14 @@ public class OptimizelyManager : Optimizely {
             datafileHandler = DefaultDatafileHandler.createInstance()
         }
         
+        if let periodicDownloadInterval = periodicDownloadInterval, periodicDownloadInterval > 0 {
+            datafileHandler?.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: periodicDownloadInterval)
+        }
+        
         datafileHandler?.downloadDatafile(sdkKey: sdkKey, completionHandler: { (result) in
             switch result {
             case .failure(let err):
-                self.logger?.log(level: OptimizelyLogLevel.error, message: err.description)
+                self.logger?.log(level: .error, message: err.description)
                 completetionHandler(Result.failure(IntializeError(description: err.description)))
             case .success(let datafile):
                 let optimizely = self.initialize(datafile: datafile)
@@ -91,7 +97,7 @@ public class OptimizelyManager : Optimizely {
                   eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
                       switch result {
                       case .failure(let error):
-                          self.logger?.log(level: OptimizelyLogLevel.error, message: "Failed to dispatch event " + error.localizedDescription)
+                          self.logger?.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
                       case .success( _):
                           self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
                       }
@@ -159,7 +165,7 @@ public class OptimizelyManager : Optimizely {
                 eventDispatcher?.dispatchEvent(event: event, completionHandler:{ (result) -> (Void) in
                     switch result {
                     case .failure(let error):
-                        self.logger?.log(level: OptimizelyLogLevel.error, message: "Failed to dispatch event " + error.localizedDescription)
+                        self.logger?.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
                     case .success( _):
                         self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any,"body":event.body as Any]])
                     }
@@ -240,7 +246,7 @@ public class OptimizelyManager : Optimizely {
             eventDispatcher?.dispatchEvent(event: eventForDispatch, completionHandler: { (result) -> (Void) in
                 switch result {
                 case .failure(let error):
-                    self.logger?.log(level: OptimizelyLogLevel.error, message: "Failed to dispatch event " + error.localizedDescription)
+                    self.logger?.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
                 case .success( _):
                     self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
                 }
@@ -248,70 +254,5 @@ public class OptimizelyManager : Optimizely {
             })
         }
         
-    }
-    
-    public class Builder {
-        var bucketer: Bucketer?
-        
-        var decisionService: DecisionService?
-        
-        var config: ProjectConfig?
-        
-        var errorHandler: ErrorHandler?
-        
-        var eventDispatcher: EventDispatcher?
-        
-        var datafileHandler: DatafileHandler?
-        
-        var logger: Logger?
-        
-        var userProfileService: UserProfileService?
-        
-        var notificationCenter: NotificationCenter?
-        
-        func withBucketer(bucketer:Bucketer) {
-            self.bucketer = bucketer
-        }
-        
-        public init() {
-            
-        }
-
-        public func withDecisionService(decisionService:DecisionService) {
-            self.decisionService = decisionService
-        }
-        
-        public func withConfig(projectConfig:ProjectConfig) {
-            self.config = projectConfig
-        }
-        
-        public func withErrorHandler(errorHandler:ErrorHandler) {
-            self.errorHandler = errorHandler
-        }
-        
-        public func withEventDispatcher(eventDispatcher:EventDispatcher) {
-            self.eventDispatcher = eventDispatcher
-        }
-        
-        public func withDatafileHandler(datafileHandler:DatafileHandler) {
-            self.datafileHandler = datafileHandler
-        }
-        
-        public func withLogger(logger:Logger) {
-            self.logger = logger
-        }
-        
-        public func withUserProfileService(userProfileService:UserProfileService) {
-            self.userProfileService = userProfileService
-        }
-        
-        public func withNotificationCenter(notificationCenter:NotificationCenter) {
-            self.notificationCenter = notificationCenter
-        }
-        
-        public func build() -> OptimizelyManager? {
-            return OptimizelyManager(bucketer:bucketer, decisionService:decisionService, errorHandler: errorHandler, eventDispatcher: eventDispatcher, datafileHandler: datafileHandler, logger: logger, userProfileService: userProfileService, notificationCenter: notificationCenter)
-        }
-
     }
 }

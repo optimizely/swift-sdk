@@ -19,9 +19,11 @@ public class OptimizelyManager : Optimizely {
     public var logger: Logger?
     public var userProfileService: UserProfileService?
     public var notificationCenter: NotificationCenter?
+    private var periodicDownloadInterval:Int?
     
-    internal init(bucketer:Bucketer?, decisionService:DecisionService?, errorHandler:ErrorHandler?, eventDispatcher:EventDispatcher?, datafileHandler:DatafileHandler?, logger:Logger?, userProfileService:UserProfileService?, notificationCenter:NotificationCenter?) {
+    public init(bucketer:Bucketer? = nil, decisionService:DecisionService? = nil, errorHandler:ErrorHandler? = nil, eventDispatcher:EventDispatcher? = nil, datafileHandler:DatafileHandler? = nil, logger:Logger? = nil, userProfileService:UserProfileService? = nil, notificationCenter:NotificationCenter? = nil, periodicDownloadInterval:Int? = nil) {
         self.bucketer = bucketer
+        self.periodicDownloadInterval = periodicDownloadInterval
         self.decisionService = decisionService
         self.errorHandler = errorHandler
         self.eventDispatcher = eventDispatcher  ?? DefaultEventDispatcher.createInstance()
@@ -56,6 +58,10 @@ public class OptimizelyManager : Optimizely {
         }
         else {
             datafileHandler = DefaultDatafileHandler.createInstance()
+        }
+        
+        if let periodicDownloadInterval = periodicDownloadInterval, periodicDownloadInterval > 0 {
+            datafileHandler?.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: periodicDownloadInterval)
         }
         
         datafileHandler?.downloadDatafile(sdkKey: sdkKey, completionHandler: { (result) in
@@ -248,70 +254,5 @@ public class OptimizelyManager : Optimizely {
             })
         }
         
-    }
-    
-    public class Builder {
-        var bucketer: Bucketer?
-        
-        var decisionService: DecisionService?
-        
-        var config: ProjectConfig?
-        
-        var errorHandler: ErrorHandler?
-        
-        var eventDispatcher: EventDispatcher?
-        
-        var datafileHandler: DatafileHandler?
-        
-        var logger: Logger?
-        
-        var userProfileService: UserProfileService?
-        
-        var notificationCenter: NotificationCenter?
-        
-        func withBucketer(bucketer:Bucketer) {
-            self.bucketer = bucketer
-        }
-        
-        public init() {
-            
-        }
-
-        public func withDecisionService(decisionService:DecisionService) {
-            self.decisionService = decisionService
-        }
-        
-        public func withConfig(projectConfig:ProjectConfig) {
-            self.config = projectConfig
-        }
-        
-        public func withErrorHandler(errorHandler:ErrorHandler) {
-            self.errorHandler = errorHandler
-        }
-        
-        public func withEventDispatcher(eventDispatcher:EventDispatcher) {
-            self.eventDispatcher = eventDispatcher
-        }
-        
-        public func withDatafileHandler(datafileHandler:DatafileHandler) {
-            self.datafileHandler = datafileHandler
-        }
-        
-        public func withLogger(logger:Logger) {
-            self.logger = logger
-        }
-        
-        public func withUserProfileService(userProfileService:UserProfileService) {
-            self.userProfileService = userProfileService
-        }
-        
-        public func withNotificationCenter(notificationCenter:NotificationCenter) {
-            self.notificationCenter = notificationCenter
-        }
-        
-        public func build() -> OptimizelyManager? {
-            return OptimizelyManager(bucketer:bucketer, decisionService:decisionService, errorHandler: errorHandler, eventDispatcher: eventDispatcher, datafileHandler: datafileHandler, logger: logger, userProfileService: userProfileService, notificationCenter: notificationCenter)
-        }
-
     }
 }

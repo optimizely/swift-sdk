@@ -17,17 +17,19 @@ open class OPTManager: NSObject {
     var config:ProjectConfig!
     var datafileHandler:DatafileHandler!
     
-    
-    
     // MARK: - Public properties (customization allowed)
-    // - do we need to support all these extensions?
     
-    public var logger:Logger!
-    public var bucketer:Bucketer!
-    public var decisionService:DecisionService!
-    public var eventDispatcher:EventDispatcher!
-    public var userProfileService:UserProfileService!
-    public var notificationCenter:NotificationCenter!
+    let logger: Logger
+    let bucketer: Bucketer
+    let decisionService: DecisionService
+    let config: ProjectConfig
+    let eventDispatcher: EventDispatcher
+    let datafileHandler: DatafileHandler
+    let userProfileService: UserProfileService
+    let notificationCenter: NotificationCenter
+    
+    let periodicDownloadInterval:Int
+
     
     // MARK: - Public interfaces
     
@@ -39,23 +41,27 @@ open class OPTManager: NSObject {
     ///   - bucketer: custom Bucketer
     ///   - ...
     public init(sdkKey: String,
-                logger: Logger?=nil,
-                bucketer: Bucketer?=nil,
-                decisionService: DecisionService?=nil,
-                eventDispatcher: EventDispatcher?=nil,
-                userProfileService:UserProfileService?=nil,
-                notificationCenter:NotificationCenter?=nil) {
+                logger:Logger? = nil,
+                bucketer:Bucketer? = nil,
+                decisionService:DecisionService? = nil,
+                eventDispatcher:EventDispatcher? = nil,
+                datafileHandler:DatafileHandler? = nil,
+                userProfileService:UserProfileService? = nil,
+                notificationCenter:NotificationCenter? = nil,
+                periodicDownloadInterval:Int? = nil) {
         
         self.sdkKey = sdkKey
         
         // default services (can be customized by clients
         
-//        self.logger = logger ?? LoggerDefault()
-//        self.bucketer = bucketer ?? BucketerDefault()
-//        self.decisionService = decisionService ?? DecisionServiceDefault()
-//        self.eventDispatcher = eventDispatcher ?? EventDispatcherDefault()
-//        self.userProfileService = userProfileService ?? UserProfileServiceDefault()
-//        self.notificationCenter = notificationCenter ?? NotificationCenterDefault()
+        self.logger = logger ?? DefaultLogger(level: .error)
+        self.bucketer = bucketer ?? DefaultBucketer()
+        self.decisionService = decisionService ?? DefaultDecisionService()
+        self.eventDispatcher = eventDispatcher ?? DefaultEventDispatcher()
+        self.datafileHandler = datafileHandler ?? DefaultDatafileHandler()
+        self.userProfileService = userProfileService ?? DefaultUserProfileService()
+        self.notificationCenter = notificationCenter ?? DefaultNotificationCenter()
+        self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
     }
     
     /// Initialize Optimizely Manager
@@ -65,25 +71,77 @@ open class OPTManager: NSObject {
     ///                       a cached copy from previous download is used if it's available
     ///                       the datafile will be updated from the server in the background thread
     ///   - completion: callback when initialization is completed
-    public func initializeClient(datafile: String?=nil, completion: ((OPTResult) -> Void)?=nil) {
+    public func initializeSDK(completion: ((OPTResult) -> Void)?=nil) {
         
-        // (1) cached datafile exist, no action
-        // (2) no cached datafile, local datafile = datafile
-        
-        self.config = ProjectConfig()
-//        self.datafileHandler = DatafileHandlerDefault()
-//
-//        // (3) fetch/update datafile (async)
-//        datafileHandler.downloadDatafile(sdkKey: sdkKey, completionHandler: { (result) in
-//            switch result {
-//            case .failure(let err):
-//                self.logger.log(level: .error, message: err.description)
-//                completion?(result)
-//            case .success:
-//                completion(?result)
-//            }
-//        })
+        fetchDatafileBackground() { result in
+            
+            switch result {
+            case .failure(let err):
+                completion?(result)
+            case .success(let datafileData):
+                
+                do {
+                    try configSDK(datafile: datafileData)
+                } catch {
+                    // current cached copy has error
+                    // continue to fetch datafile from server
+                }
+                
+            }
+
+            completion?(result)
+        }
     }
+    
+    // MARK: synchronous initialization
+    
+    public func initializeSDK(datafile: String) throws {
+        guard let datafileData = datafile.data(using: .utf8) else {
+            throw OPTError.dataFileInvalid
+        }
+        
+        try initializeSDK(datafile: datafileData)
+    }
+    
+    public func initializeSDK(datafile: Data) throws {
+        
+        // TODO: get the cached copy
+        let cachedDatafile: Data?
+
+        let selectedDatafile = cachedDatafile ?? datafile
+        
+        do {
+            try configSDK(datafileData: selectedDatafile)
+        } catch {
+            // current cached copy has error
+            // continue to fetch datafile from server
+        }
+        
+        fetchDatafileBackground()
+    }
+    
+    func configSDK(datafileData:Data) throws {
+        config = try! JSONDecoder().decode(ProjectConfig.self, from: datafileData)
+        
+        if let config = config, let bucketer = DefaultBucketer.createInstance(config: config) {
+            decisionService = DefaultDecisionService.createInstance(config: config, bucketer: bucketer, userProfileService: userProfileService)
+        } else {
+            throw OPTError.dataFileInvalid
+        }
+    }
+    
+    func fetchDatafileBackground(completion: ((OPTResult) -> Void)?=nil) {
+        datafileHandler.downloadDatafile(sdkKey: self.sdkKey){ result in
+            switch result {
+            case .failure(let err):
+                self.logger.log(level: .error, message: err.description)
+                completion?(result)
+            case .success:
+                completion?(result)
+            }
+        }
+    }
+
     
     
     /**
@@ -100,12 +158,38 @@ open class OPTManager: NSObject {
     ///   - experimentKey: The key for the experiment.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    /// - Returns: The variation the user was bucketed into
+    /// - Returns: The variation key the user was bucketed into
     /// - Throws: `OPTError` if error is detected
     public func activate(experimentKey:String,
                          userId:String,
-                         attributes:Dictionary<String, Any>?=nil) throws -> Variation {
-        return Variation()
+                         attributes:Dictionary<String, Any>?=nil) throws -> String {
+        
+        guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
+            throw OPTError.experimentUnknown(experimentKey)
+            
+        }
+        
+        
+            let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
+            
+            if let body = BatchEventBuilder.createImpressionEvent(config: config!, decisionService: decisionService!, experiment: experiment, varionation: variation, userId: userId, attributes: attributes) {
+                let event = EventForDispatch(body: body)
+                eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
+                    switch result {
+                    case .failure(let error):
+                        self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
+                    case .success( _):
+                        self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+                    }
+                })
+                return variation
+            }
+            
+            return variation
+        }
+        
+        return nil
+
     }
     
     /// Get variation for experiment and user ID with user attributes.
@@ -114,13 +198,30 @@ open class OPTManager: NSObject {
     ///   - experimentKey: The key for the experiment.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    /// - Returns: A map of attribute names to current user attribute values.
+    /// - Returns: The variation key the user was bucketed into
     /// - Throws: `OPTError` if error is detected
-    public func getVariation(experimentKey:String,
-                             userId:String,
-                             attributes:Dictionary<String, Any>?=nil) throws -> Variation {
-        return Variation()
+    public func getVariationKey(experimentKey:String,
+                                userId:String,
+                                attributes:Dictionary<String, Any>?=nil) throws -> String {
+        
+        let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        return variation.key
     }
+    
+    func getVariation(experimentKey:String,
+                      userId:String,
+                      attributes:Dictionary<String, Any>?=nil) throws -> Variation {
+        
+        if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
+            let variation = decisionService?.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) {
+            return variation
+        }
+        
+        // TODO: refine errors
+        
+        throw OPTError.attributeFormatInvalid
+    }
+
     
     /**
      * Use the setForcedVariation method to force an experimentKey-userId
@@ -138,9 +239,9 @@ open class OPTManager: NSObject {
     /// - Parameters:
     ///   - experimentKey: The key for the experiment.
     ///   - userId: The user ID to be used for bucketing.
-    /// - Returns: forced variation if it exists, otherwise return nil.
+    /// - Returns: forced variation key if it exists, otherwise return nil.
     /// - Throws: `OPTError` if error is detected
-    public func getForcedVariation(experimentKey:String, userId:String) throws -> Variation? {
+    public func getForcedVariation(experimentKey:String, userId:String) throws -> String? {
         return nil
     }
     

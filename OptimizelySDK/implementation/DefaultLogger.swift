@@ -12,7 +12,7 @@ public class DefaultLogger : Logger {
     private static var _logLevel:OptimizelyLogLevel?
     public static var logLevel: OptimizelyLogLevel {
         get {
-            return _logLevel ?? .OptimizelyLogLevelAll
+            return _logLevel ?? .all
         }
         set (newLevel){
             if _logLevel == nil {

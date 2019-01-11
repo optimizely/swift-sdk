@@ -15,19 +15,18 @@ open class OPTManager: NSObject {
     
     var sdkKey: String
     var config:ProjectConfig!
-    var datafileHandler:DatafileHandler!
     
+    // MARK: - Customizable
     
+    let logger: Logger
+    let bucketer: Bucketer
+    let decisionService: DecisionService
+    let eventDispatcher: EventDispatcher
+    let datafileHandler: DatafileHandler
+    let userProfileService: UserProfileService
+    let notificationCenter: NotificationCenter
     
-    // MARK: - Public properties (customization allowed)
-    // - do we need to support all these extensions?
-    
-    public var logger:Logger!
-    public var bucketer:Bucketer!
-    public var decisionService:DecisionService!
-    public var eventDispatcher:EventDispatcher!
-    public var userProfileService:UserProfileService!
-    public var notificationCenter:NotificationCenter!
+    let periodicDownloadInterval: Int
     
     // MARK: - Public interfaces
     
@@ -39,23 +38,28 @@ open class OPTManager: NSObject {
     ///   - bucketer: custom Bucketer
     ///   - ...
     public init(sdkKey: String,
-                logger: Logger?=nil,
-                bucketer: Bucketer?=nil,
-                decisionService: DecisionService?=nil,
-                eventDispatcher: EventDispatcher?=nil,
-                userProfileService:UserProfileService?=nil,
-                notificationCenter:NotificationCenter?=nil) {
+                logger:Logger? = nil,
+                bucketer:Bucketer? = nil,
+                decisionService:DecisionService? = nil,
+                eventDispatcher:EventDispatcher? = nil,
+                datafileHandler:DatafileHandler? = nil,
+                userProfileService:UserProfileService? = nil,
+                notificationCenter:NotificationCenter? = nil,
+                periodicDownloadInterval:Int? = nil) {
         
         self.sdkKey = sdkKey
         
         // default services (can be customized by clients
         
-//        self.logger = logger ?? LoggerDefault()
-//        self.bucketer = bucketer ?? BucketerDefault()
-//        self.decisionService = decisionService ?? DecisionServiceDefault()
-//        self.eventDispatcher = eventDispatcher ?? EventDispatcherDefault()
-//        self.userProfileService = userProfileService ?? UserProfileServiceDefault()
-//        self.notificationCenter = notificationCenter ?? NotificationCenterDefault()
+        self.logger = logger ?? DefaultLogger(level: .error)
+        self.eventDispatcher = eventDispatcher ?? DefaultEventDispatcher()
+        self.datafileHandler = datafileHandler ?? DefaultDatafileHandler()
+        self.userProfileService = userProfileService ?? DefaultUserProfileService()
+        self.notificationCenter = notificationCenter ?? DefaultNotificationCenter()
+        self.bucketer = bucketer ?? DefaultBucketer()
+        self.decisionService = decisionService ?? DefaultDecisionService()
+
+        self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
     }
     
     /// Initialize Optimizely Manager
@@ -65,27 +69,94 @@ open class OPTManager: NSObject {
     ///                       a cached copy from previous download is used if it's available
     ///                       the datafile will be updated from the server in the background thread
     ///   - completion: callback when initialization is completed
-    public func initializeClient(datafile: String?=nil, completion: ((OPTResult) -> Void)?=nil) {
+    public func initializeSDK(completion: ((OPTResult) -> Void)?=nil) {
         
-        // (1) cached datafile exist, no action
-        // (2) no cached datafile, local datafile = datafile
-        
-        self.config = ProjectConfig()
-//        self.datafileHandler = DatafileHandlerDefault()
-//
-//        // (3) fetch/update datafile (async)
-//        datafileHandler.downloadDatafile(sdkKey: sdkKey, completionHandler: { (result) in
-//            switch result {
-//            case .failure(let err):
-//                self.logger.log(level: .error, message: err.description)
-//                completion?(result)
-//            case .success:
-//                completion(?result)
-//            }
-//        })
+        fetchDatafileBackground() { result in
+            switch result {
+            case .failure(let err):
+                completion?(OPTResult.failure(err))
+            case .success(let datafile):
+                do {
+                    try self.configSDK(datafile: datafile)
+                    completion?(OPTResult.success)
+                } catch {
+                    
+                    // TODO: refine error-type
+                    completion?(OPTResult.failure(.configInvalid))
+                }
+            }
+        }
     }
     
+    // MARK: synchronous initialization
     
+    public func initializeSDK(datafile: String) throws {
+        guard let datafileData = datafile.data(using: .utf8) else {
+            throw OPTError.dataFileInvalid
+        }
+        
+        try initializeSDK(datafile: datafileData)
+    }
+    
+    public func initializeSDK(datafile: Data) throws {
+        
+        // TODO: get the cached copy
+        var cachedDatafile: Data?
+
+        let selectedDatafile = cachedDatafile ?? datafile
+        
+        do {
+            try configSDK(datafile: selectedDatafile)
+        } catch {
+            
+            // TODO:  refine error-type
+            throw OPTError.dataFileInvalid
+        }
+        
+        fetchDatafileBackground()
+    }
+    
+    func configSDK(datafile: String) throws {
+        guard let datafileData = datafile.data(using: .utf8) else {
+            throw OPTError.dataFileInvalid
+        }
+        
+        try configSDK(datafile: datafileData)
+    }
+    
+    func configSDK(datafile: Data) throws {
+        do {
+            self.config = try JSONDecoder().decode(ProjectConfig.self, from: datafile)
+            
+            bucketer.initialize(config: self.config)
+            decisionService.initialize(config: self.config,
+                                       bucketer: self.bucketer,
+                                       userProfileService: self.userProfileService)
+        } catch is DecodingError {
+            throw OPTError.dataFileInvalid
+        } catch is OPTError {
+            // TODO: refine error-type
+            throw OPTError.dataFileInvalid
+        }
+     }
+    
+    func fetchDatafileBackground(completion: ((OPTResultData<String>) -> Void)?=nil) {
+        datafileHandler.downloadDatafile(sdkKey: self.sdkKey){ result in
+            var fetchResult: OPTResultData<String>
+            switch result {
+            case .failure(let err):
+                self.logger.log(level: .error, message: err.description)
+                // TODO: refine error-type
+                fetchResult = .failure(.generic)
+            case .success(let datafile):
+                fetchResult = .success(datafile)
+            }
+            
+            completion?(fetchResult)
+        }
+    }
+
+        
     /**
      * Use the activate method to start an experiment.
      *
@@ -100,12 +171,42 @@ open class OPTManager: NSObject {
     ///   - experimentKey: The key for the experiment.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    /// - Returns: The variation the user was bucketed into
+    /// - Returns: The variation key the user was bucketed into
     /// - Throws: `OPTError` if error is detected
     public func activate(experimentKey:String,
                          userId:String,
-                         attributes:Dictionary<String, Any>?=nil) throws -> Variation {
-        return Variation()
+                         attributes:Dictionary<String, Any>?=nil) throws -> String {
+        
+        guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
+            // TODO: refine error type
+            throw OPTError.experimentUnknown(experimentKey)
+        }
+        
+        let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        
+        // TODO: fix for error handling
+        guard let body = BatchEventBuilder.createImpressionEvent(config: config,
+                                                                 decisionService: decisionService,
+                                                                 experiment: experiment,
+                                                                 varionation: variation,
+                                                                 userId: userId,
+                                                                 attributes: attributes) else
+        {
+            // TODO: refine error type
+            throw OPTError.eventUnknown(experimentKey)
+        }
+        
+        let event = EventForDispatch(body: body)
+        eventDispatcher.dispatchEvent(event: event) { result in
+            switch result {
+            case .failure(let error):
+                self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
+            case .success( _):
+                self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+            }
+        }
+        
+        return variation.key
     }
     
     /// Get variation for experiment and user ID with user attributes.
@@ -114,13 +215,30 @@ open class OPTManager: NSObject {
     ///   - experimentKey: The key for the experiment.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    /// - Returns: A map of attribute names to current user attribute values.
+    /// - Returns: The variation key the user was bucketed into
     /// - Throws: `OPTError` if error is detected
-    public func getVariation(experimentKey:String,
-                             userId:String,
-                             attributes:Dictionary<String, Any>?=nil) throws -> Variation {
-        return Variation()
+    public func getVariationKey(experimentKey:String,
+                                userId:String,
+                                attributes:Dictionary<String, Any>?=nil) throws -> String {
+        
+        let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        return variation.key
     }
+    
+    func getVariation(experimentKey:String,
+                      userId:String,
+                      attributes:Dictionary<String, Any>?=nil) throws -> Variation {
+        
+        if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
+            let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) {
+            return variation
+        }
+        
+        // TODO: refine errors
+        
+        throw OPTError.attributeFormatInvalid
+    }
+
     
     /**
      * Use the setForcedVariation method to force an experimentKey-userId
@@ -138,12 +256,29 @@ open class OPTManager: NSObject {
     /// - Parameters:
     ///   - experimentKey: The key for the experiment.
     ///   - userId: The user ID to be used for bucketing.
-    /// - Returns: forced variation if it exists, otherwise return nil.
+    /// - Returns: forced variation key if it exists, otherwise return nil.
     /// - Throws: `OPTError` if error is detected
-    public func getForcedVariation(experimentKey:String, userId:String) throws -> Variation? {
-        return nil
+    public func getForcedVariation(experimentKey:String, userId:String) throws -> String? {
+        guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
+            // TODO: refine error-type
+            throw OPTError.experimentUnknown(experimentKey)
+        }
+        
+        guard let dict = config.whitelistUsers[userId],
+            let variationKey = dict[experimentKey] else
+        {
+            return nil
+        }
+        
+        guard let variation = experiment.variations.filter({$0.key == variationKey}).first else {
+            // TODO: refine error-type
+            throw OPTError.variationUnknown(variationKey)
+        }
+        
+        return variation.key
     }
-    
+        
+
     /// Set forced variation for experiment and user ID to variationKey.
     ///
     /// - Parameters:
@@ -151,12 +286,32 @@ open class OPTManager: NSObject {
     ///   - userId The user ID to be used for bucketing.
     ///   - variationKey The variation the user should be forced into.
     ///                  This value can be nil, in which case, the forced variation is cleared.
-    /// - Returns: true if no error is detected, false otherwise.
     /// - Throws: `OPTError` if feature parameter is not valid
     public func setForcedVariation(experimentKey:String,
                                    userId:String,
-                                   variationKey:String) throws -> Bool {
-        return false
+                                   variationKey:String?) throws {
+        
+        guard let _ = config.experiments.filter({$0.key == experimentKey}).first else {
+            // TODO: refine error-type
+            throw OPTError.experimentUnknown(experimentKey)
+        }
+        
+        guard var variationKey = variationKey else
+        {
+            config.whitelistUsers[userId]?.removeValue(forKey: experimentKey)
+            return
+        }
+        
+        variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
+        
+        guard !variationKey.isEmpty else {
+            // TODO: refine error-type
+            throw OPTError.variationUnknown(variationKey)
+        }
+
+        var whitelist = config.whitelistUsers[userId] ?? [:]
+        whitelist[experimentKey] = variationKey
+        config.whitelistUsers[userId] = whitelist
     }
     
     /// Determine whether a feature is enabled.
@@ -167,10 +322,52 @@ open class OPTManager: NSObject {
     ///   - attributes The user's attributes.
     /// - Returns: true if feature is enabled, false otherwise.
     /// - Throws: `OPTError` if feature parameter is not valid
-    public func isFeatureEnabled(featureKeyy:String,
-                                 userId:String,
-                                 attributes:Dictionary<String,Any>?=nil) throws -> Bool {
-        return false
+    public func isFeatureEnabled(featureKey: String,
+                                 userId: String,
+                                 attributes: Dictionary<String,Any>?=nil) throws -> Bool {
+        guard let featureFlag = config.featureFlags?.filter({$0.key == featureKey}).first  else {
+            
+            // TODO: is this error?
+            return false
+        }
+        
+        guard let pair = decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:]),
+            let experiment = pair.experiment,
+            let variation = pair.variation else
+        {
+            // TODO: refine error-type
+            throw OPTError.variationUnknown(featureKey)
+        }
+        
+        guard let featureEnabled = variation.featureEnabled else {
+            // TODO: refine error-type (what does nil-featureEnabled mean?)
+            throw OPTError.generic
+        }
+    
+        // TODO: fix for error handling
+        guard let body = BatchEventBuilder.createImpressionEvent(config: config,
+                                                                 decisionService: decisionService,
+                                                                 experiment: experiment,
+                                                                 varionation: variation,
+                                                                 userId: userId,
+                                                                 attributes: attributes) else
+        {
+            // TODO: refine error type
+            throw OPTError.eventUnknown(experiment.key)
+        }
+
+        let event = EventForDispatch(body: body)
+        
+        eventDispatcher.dispatchEvent(event: event) { result in
+            switch result {
+            case .failure(let error):
+                self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
+            case .success(_):
+                self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+            }
+        }
+        
+        return featureEnabled
     }
     
     /// Gets boolean feature variable value.
@@ -186,7 +383,11 @@ open class OPTManager: NSObject {
                                           variableKey:String,
                                           userId:String,
                                           attributes:Dictionary<String, Any>?=nil) throws -> Bool {
-        return false
+        
+        return try getFeatureVariable(featureKey: featureKey,
+                                                variableKey: variableKey,
+                                                userId: userId,
+                                                attributes: attributes)
     }
     
     /// Gets double feature variable value.
@@ -202,7 +403,11 @@ open class OPTManager: NSObject {
                                          variableKey:String,
                                          userId:String,
                                          attributes:Dictionary<String, Any>?=nil) throws -> Double {
-        return 0.0
+        
+        return try getFeatureVariable(featureKey: featureKey,
+                                                variableKey: variableKey,
+                                                userId: userId,
+                                                attributes: attributes)
     }
     
     /// Gets integer feature variable value.
@@ -218,7 +423,11 @@ open class OPTManager: NSObject {
                                           variableKey:String,
                                           userId:String,
                                           attributes:Dictionary<String, Any>?=nil) throws -> Int {
-        return 0
+        
+        return try getFeatureVariable(featureKey: featureKey,
+                                                   variableKey: variableKey,
+                                                   userId: userId,
+                                                   attributes: attributes)
     }
     
     /// Gets string feature variable value.
@@ -230,12 +439,66 @@ open class OPTManager: NSObject {
     ///   - attributes The user's attributes.
     /// - Returns: feature variable value of type string.
     /// - Throws: `OPTError` if feature parameter is not valid
-    public func getFeatureVariableString(featureKey:String,
-                                         variableKey:String,
-                                         userId:String,
-                                         attributes:Dictionary<String, Any>?=nil) throws -> String {
-        return String()
+    public func getFeatureVariableString(featureKey: String,
+                                         variableKey: String,
+                                         userId: String,
+                                         attributes: Dictionary<String, Any>?=nil) throws -> String {
+        
+        return try getFeatureVariable(featureKey: featureKey,
+                                                           variableKey: variableKey,
+                                                           userId: userId,
+                                                           attributes: attributes)
     }
+    
+    func getFeatureVariable<T>(featureKey: String,
+                            variableKey: String,
+                            userId: String,
+                            attributes: Dictionary<String, Any>?=nil) throws -> T {
+        
+        guard let featureFlag = config.featureFlags?.filter({$0.key == featureKey}).first else {
+            // TODO: refine error-type
+            throw OPTError.generic
+        }
+        
+        guard let variable = featureFlag.variables?.filter({$0.key == variableKey}).first else {
+            // TODO: refine error-type
+            throw OPTError.generic
+        }
+        
+        guard let defaultValueString = variable.defaultValue else {
+            // TODO: refine error-type
+            throw OPTError.generic
+        }
+
+        var typeName: String
+        var value: T
+        
+        switch T.self {
+        case is String.Type:
+            typeName = "string"
+            value = defaultValueString as! T
+        case is Int.Type:
+            typeName = "integer"
+            value = Int(defaultValueString) as! T
+        case is Double.Type:
+            typeName = "double"
+            value = Double(defaultValueString) as! T
+        case is Bool.Type:
+            typeName = "boolean"
+            value = Bool(defaultValueString) as! T
+        default:
+            // TODO: refine error-type
+            throw OPTError.generic
+        }
+        
+        guard variable.type == typeName else {
+            // TODO: refine error-type
+            throw OPTError.generic
+        }
+        
+        return value
+    }
+
     
     /// Get array of features that are enabled for the user.
     ///
@@ -246,7 +509,17 @@ open class OPTManager: NSObject {
     /// - Throws: `OPTError` if feature parameter is not valid
     public func getEnabledFeatures(userId:String,
                                    attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
-        return [String]()
+
+        guard let featureFlags = config.featureFlags else {
+            // TODO: refine error type
+            throw OPTError.generic
+        }
+        
+        let enabledFeatures = try featureFlags.filter{
+            try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
+        }
+        
+        return enabledFeatures.map{$0.key}
     }
     
     /// Track an event
@@ -259,6 +532,31 @@ open class OPTManager: NSObject {
     public func track(eventKey:String,
                       userId:String,
                       eventTags:Dictionary<String,Any>?=nil) throws {
+        
+        // TODO: fix for error handling
+        guard let body = BatchEventBuilder.createConversionEvent(config: config,
+                                                                 decisionService: decisionService,
+                                                                 eventKey:eventKey,
+                                                                 userId:userId,
+                                                                 attributes:nil,
+                                                                 eventTags:eventTags) else
+        {
+            // TODO: refine error type
+            throw OPTError.eventUnknown(eventKey)
+        }
+        
+        let event = EventForDispatch(body: body)
+        eventDispatcher.dispatchEvent(event: event) { result in
+            switch result {
+            case .failure(let error):
+                self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
+            case .success( _):
+                
+                // TODO: clean up notification
+                print("fix notification")
+               // self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
+            }
+        }
         
     }
     

@@ -27,6 +27,11 @@ public protocol DecisionService {
      */
     static func createInstance(config:ProjectConfig, bucketer:Bucketer, userProfileService:UserProfileService) -> DecisionService?
     
+    
+    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
+    func initialize(config:ProjectConfig, bucketer:Bucketer, userProfileService:UserProfileService)
+
+    
     /**
      * Gets a variation based on the following rules (evaluated in sequential order):
      *

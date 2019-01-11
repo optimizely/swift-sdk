@@ -14,14 +14,25 @@ class DefaultBucketer : Bucketer {
     let MAX_HASH_SEED:UInt64 = 1
     var MAX_HASH_VALUE:UInt64?
     
-    private var config:ProjectConfig
+    private var config:ProjectConfig!
     private var logger = DefaultLogger.createInstance(logLevel: .debug)
     
     internal required init(config:ProjectConfig) {
         self.config = config
-        
+
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
     }
+    
+    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
+    init() {
+        MAX_HASH_VALUE = MAX_HASH_SEED << 32
+    }
+
+    func initialize(config:ProjectConfig) {
+        self.config = config
+    }
+
+    
     
     static func createInstance(config: ProjectConfig) -> Bucketer? {
         return DefaultBucketer(config: config)

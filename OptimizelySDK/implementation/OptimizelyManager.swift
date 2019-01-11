@@ -67,7 +67,7 @@ public class OptimizelyManager : Optimizely {
         datafileHandler?.downloadDatafile(sdkKey: sdkKey, completionHandler: { (result) in
             switch result {
             case .failure(let err):
-                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: err.description)
+                self.logger?.log(level: .error, message: err.description)
                 completetionHandler(Result.failure(IntializeError(description: err.description)))
             case .success(let datafile):
                 let optimizely = self.initialize(datafile: datafile)
@@ -97,7 +97,7 @@ public class OptimizelyManager : Optimizely {
                   eventDispatcher?.dispatchEvent(event: event, completionHandler: { (result) -> (Void) in
                       switch result {
                       case .failure(let error):
-                          self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
+                          self.logger?.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
                       case .success( _):
                           self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
                       }
@@ -165,7 +165,7 @@ public class OptimizelyManager : Optimizely {
                 eventDispatcher?.dispatchEvent(event: event, completionHandler:{ (result) -> (Void) in
                     switch result {
                     case .failure(let error):
-                        self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
+                        self.logger?.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
                     case .success( _):
                         self.notificationCenter?.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any,"body":event.body as Any]])
                     }
@@ -246,7 +246,7 @@ public class OptimizelyManager : Optimizely {
             eventDispatcher?.dispatchEvent(event: eventForDispatch, completionHandler: { (result) -> (Void) in
                 switch result {
                 case .failure(let error):
-                    self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
+                    self.logger?.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
                 case .success( _):
                     self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
                 }

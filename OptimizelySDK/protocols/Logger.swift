@@ -16,21 +16,21 @@ import Foundation
 public enum OptimizelyLogLevel : Int {
     
     /// If the filter level is set to OptimizelyLogLevelOff, all log messages will be suppressed.
-    case OptimizelyLogLevelOff = 0
+    case off = 0
     /// Any error that is causing a crash of the application.
-    case OptimizelyLogLevelCritical = 1
+    case critical = 1
     /// Any error that is not causing a crash of the application: unknown experiment referenced.
-    case OptimizelyLogLevelError = 2
+    case error = 2
     /// Anything that can potentially cause problems: method will be deprecated.
-    case OptimizelyLogLevelWarning = 3
+    case warning = 3
     /// Useful information: Lifecycle events, successfully activated experiment, parsed datafile.
-    case OptimizelyLogLevelInfo = 4
+    case info = 4
     /// Information diagnostically helpful: sending events, assigning buckets.
-    case OptimizelyLogLevelDebug = 5
+    case debug = 5
     /// Used for the most granular logging: method flows, variable values.
-    case OptimizelyLogLevelVerbose = 6
+    case verbose = 6
     /// If the filter level is set to OptimizelyLogLevelAll, no log messages will be suppressed.
-    case OptimizelyLogLevelAll = 7
+    case all = 7
 }
 
 /**

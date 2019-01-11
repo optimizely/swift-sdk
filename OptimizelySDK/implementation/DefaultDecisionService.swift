@@ -9,15 +9,26 @@
 import Foundation
 
 class DefaultDecisionService : DecisionService {
-    let config:ProjectConfig
-    let bucketer:Bucketer
-    let userProfileService:UserProfileService
-    
+    var config:ProjectConfig!
+    var bucketer:Bucketer!
+    var userProfileService:UserProfileService!
+
     internal required init(config:ProjectConfig, bucketer:Bucketer, userProfileService:UserProfileService) {
         self.config = config
         self.bucketer = bucketer
         self.userProfileService = userProfileService
     }
+    
+    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
+    init() {}
+    
+    func initialize(config:ProjectConfig, bucketer:Bucketer, userProfileService:UserProfileService) {
+        self.config = config
+        self.bucketer = bucketer
+        self.userProfileService = userProfileService
+    }
+    
+    
     
     static func createInstance(config: ProjectConfig, bucketer: Bucketer, userProfileService:UserProfileService) -> DecisionService? {
         return DefaultDecisionService(config: config, bucketer: bucketer, userProfileService: userProfileService)

@@ -15,20 +15,18 @@ open class OPTManager: NSObject {
     
     var sdkKey: String
     var config:ProjectConfig!
-    var datafileHandler:DatafileHandler!
     
-    // MARK: - Public properties (customization allowed)
+    // MARK: - Customizable
     
     let logger: Logger
     let bucketer: Bucketer
     let decisionService: DecisionService
-    let config: ProjectConfig
     let eventDispatcher: EventDispatcher
     let datafileHandler: DatafileHandler
     let userProfileService: UserProfileService
     let notificationCenter: NotificationCenter
     
-    let periodicDownloadInterval:Int
+    let periodicDownloadInterval: Int
 
     
     // MARK: - Public interfaces
@@ -55,12 +53,13 @@ open class OPTManager: NSObject {
         // default services (can be customized by clients
         
         self.logger = logger ?? DefaultLogger(level: .error)
-        self.bucketer = bucketer ?? DefaultBucketer()
-        self.decisionService = decisionService ?? DefaultDecisionService()
         self.eventDispatcher = eventDispatcher ?? DefaultEventDispatcher()
         self.datafileHandler = datafileHandler ?? DefaultDatafileHandler()
         self.userProfileService = userProfileService ?? DefaultUserProfileService()
         self.notificationCenter = notificationCenter ?? DefaultNotificationCenter()
+        self.bucketer = bucketer ?? DefaultBucketer()
+        self.decisionService = decisionService ?? DefaultDecisionService()
+
         self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
     }
     
@@ -74,24 +73,19 @@ open class OPTManager: NSObject {
     public func initializeSDK(completion: ((OPTResult) -> Void)?=nil) {
         
         fetchDatafileBackground() { result in
-            
             switch result {
             case .failure(let err):
                 completion?(OPTResult.failure(err))
-            case .success(let datafileData):
-                
-                
+            case .success(let datafile):
+                do {
+                    try self.configSDK(datafile: datafile)
+                    completion?(OPTResult.success)
+                } catch {
+                    
+                    // TODO: refine error-type
+                    completion?(OPTResult.failure(.configInvalid))
+                }
             }
-            
-            do {
-                try self.configSDK(datafile: datafileData)
-            } catch {
-                // current cached copy has error
-                // continue to fetch datafile from server
-            }
-
-
-            completion?(result)
         }
     }
     
@@ -108,39 +102,58 @@ open class OPTManager: NSObject {
     public func initializeSDK(datafile: Data) throws {
         
         // TODO: get the cached copy
-        let cachedDatafile: Data?
+        var cachedDatafile: Data?
 
         let selectedDatafile = cachedDatafile ?? datafile
         
         do {
-            try configSDK(datafileData: selectedDatafile)
+            try configSDK(datafile: selectedDatafile)
         } catch {
-            // current cached copy has error
-            // continue to fetch datafile from server
+            
+            // TODO:  refine error-type
+            throw OPTError.dataFileInvalid
         }
         
         fetchDatafileBackground()
     }
     
-    func configSDK(datafile:Data) throws {
-        config = try! JSONDecoder().decode(ProjectConfig.self, from: datafileData)
-        
-        if let config = config, let bucketer = DefaultBucketer.createInstance(config: config) {
-            decisionService = DefaultDecisionService.createInstance(config: config, bucketer: bucketer, userProfileService: userProfileService)
-        } else {
+    func configSDK(datafile: String) throws {
+        guard let datafileData = datafile.data(using: .utf8) else {
             throw OPTError.dataFileInvalid
         }
+        
+        try configSDK(datafile: datafileData)
     }
     
-    func fetchDatafileBackground(completion: ((OPTResultData<Data>) -> Void)?=nil) {
+    func configSDK(datafile: Data) throws {
+        do {
+            self.config = try JSONDecoder().decode(ProjectConfig.self, from: datafile)
+            
+            bucketer.initialize(config: self.config)
+            decisionService.initialize(config: self.config,
+                                       bucketer: self.bucketer,
+                                       userProfileService: self.userProfileService)
+        } catch is DecodingError {
+            throw OPTError.dataFileInvalid
+        } catch is OPTError {
+            // TODO: refine error-type
+            throw OPTError.dataFileInvalid
+        }
+     }
+    
+    func fetchDatafileBackground(completion: ((OPTResultData<String>) -> Void)?=nil) {
         datafileHandler.downloadDatafile(sdkKey: self.sdkKey){ result in
+            var fetchResult: OPTResultData<String>
             switch result {
             case .failure(let err):
                 self.logger.log(level: .error, message: err.description)
-                completion?(OPTResultData.failure(err))
-            case .success(let datafileData):
-                completion?(OPTResultData.success(datafileData))
+                // TODO: refine error-type
+                fetchResult = .failure(.generic)
+            case .success(let datafile):
+                fetchResult = .success(datafile)
             }
+            
+            completion?(fetchResult)
         }
     }
 
@@ -189,7 +202,7 @@ open class OPTManager: NSObject {
         eventDispatcher.dispatchEvent(event: event) { result in
             switch result {
             case .failure(let error):
-                self.logger.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
+                self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
             case .success( _):
                 self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
             }
@@ -219,7 +232,7 @@ open class OPTManager: NSObject {
                       attributes:Dictionary<String, Any>?=nil) throws -> Variation {
         
         if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
-            let variation = decisionService?.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) {
+            let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) {
             return variation
         }
         
@@ -280,7 +293,7 @@ open class OPTManager: NSObject {
                                    userId:String,
                                    variationKey:String?) throws {
         
-        guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
+        guard let _ = config.experiments.filter({$0.key == experimentKey}).first else {
             // TODO: refine error-type
             throw OPTError.experimentUnknown(experimentKey)
         }
@@ -298,7 +311,7 @@ open class OPTManager: NSObject {
             throw OPTError.variationUnknown(variationKey)
         }
 
-        let whitelist = config.whitelistUsers[userId] ?? [:]
+        var whitelist = config.whitelistUsers[userId] ?? [:]
         whitelist[experimentKey] = variationKey
         config.whitelistUsers[userId] = whitelist
     }
@@ -324,8 +337,13 @@ open class OPTManager: NSObject {
             let experiment = pair.experiment,
             let variation = pair.variation else
         {
-            // TODO: refind error-type
+            // TODO: refine error-type
             throw OPTError.variationUnknown(featureKey)
+        }
+        
+        guard let featureEnabled = variation.featureEnabled else {
+            // TODO: refine error-type (what does nil-featureEnabled mean?)
+            throw OPTError.generic
         }
     
         // TODO: fix for error handling
@@ -337,7 +355,7 @@ open class OPTManager: NSObject {
                                                                  attributes: attributes) else
         {
             // TODO: refine error type
-            throw OPTError.eventUnknown(experiment)
+            throw OPTError.eventUnknown(experiment.key)
         }
 
         let event = EventForDispatch(body: body)
@@ -345,13 +363,13 @@ open class OPTManager: NSObject {
         eventDispatcher.dispatchEvent(event: event) { result in
             switch result {
             case .failure(let error):
-                self.logger.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
+                self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
             case .success(_):
                 self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
             }
         }
         
-        return variation.featureEnabled
+        return featureEnabled
     }
     
     /// Gets boolean feature variable value.
@@ -460,16 +478,16 @@ open class OPTManager: NSObject {
         switch T.self {
         case is String.Type:
             typeName = "string"
-            value = defaultValueString
+            value = defaultValueString as! T
         case is Int.Type:
             typeName = "integer"
-            value = Int(defaultValueString)
+            value = Int(defaultValueString) as! T
         case is Double.Type:
             typeName = "double"
-            value = Double(defaultValueString)
+            value = Double(defaultValueString) as! T
         case is Bool.Type:
             typeName = "boolean"
-            value = Bool(defaultValueString)
+            value = Bool(defaultValueString) as! T
         default:
             // TODO: refine error-type
             throw OPTError.generic
@@ -494,8 +512,16 @@ open class OPTManager: NSObject {
     public func getEnabledFeatures(userId:String,
                                    attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
 
-        // TODO: refine error type
-        return config.featureFlags?.filter{ isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)}.map{$0.key} ?? []
+        guard let featureFlags = config.featureFlags else {
+            // TODO: refine error type
+            throw OPTError.generic
+        }
+        
+        let enabledFeatures = try featureFlags.filter{
+            try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
+        }
+        
+        return enabledFeatures.map{$0.key}
     }
     
     /// Track an event
@@ -525,9 +551,12 @@ open class OPTManager: NSObject {
         eventDispatcher.dispatchEvent(event: event) { result in
             switch result {
             case .failure(let error):
-                self.logger?.log(level: OptimizelyLogLevel.OptimizelyLogLevelError, message: "Failed to dispatch event " + error.localizedDescription)
+                self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
             case .success( _):
-                self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
+                
+                // TODO: clean up notification
+                print("fix notification")
+               // self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
             }
         }
         

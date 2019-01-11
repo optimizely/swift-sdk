@@ -24,6 +24,9 @@ public protocol Bucketer {
      */
     static func createInstance(config:ProjectConfig) -> Bucketer?
 
+    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
+    func initialize(config:ProjectConfig)
+
     /**
      * Bucket experiment based on bucket value and traffic allocations.
      * @param group representing Group from which experiment belongs to.

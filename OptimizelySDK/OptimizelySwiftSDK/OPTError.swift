@@ -9,6 +9,7 @@
 import Foundation
 
 public enum OPTError: Error {
+    case generic
     case dataFileInvalid
     case dataFileVersionInvalid(String)
     case eventDispatcherInvalid
@@ -35,6 +36,7 @@ extension OPTError: CustomStringConvertible {
         var message: String = "[Optimizely]"
         
         switch self {
+        case .generic:                                  message += "Unknown reason"
         case .dataFileInvalid:                          message += "Provided 'datafile' is in an invalid format."
         case .dataFileVersionInvalid (let value):       message += "Provided 'datafile' version \(value) is not supported."
         case .eventDispatcherInvalid:                   message += "Provided 'event dispatcher' is in an invalid format."

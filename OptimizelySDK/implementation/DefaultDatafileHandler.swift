@@ -84,7 +84,7 @@ class DefaultDatafileHandler : DatafileHandler {
             logger?.log(level: .info, message: "Timer already started for datafile updates")
             return
         }
-        if #available(iOS 10.0, *) {
+        if #available(iOS 10.0, tvOS 10.0, *) {
             let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: true) { (timer) in
                 self.downloadDatafile(sdkKey: sdkKey) { (result) in
                  // background download saves to cache

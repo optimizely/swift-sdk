@@ -2,12 +2,18 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:OptimizelyDemoApp/OptimizelyDemoApp.xcodeproj">
+      location = "group:DemoSwiftApp/DemoSwiftApp.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:OptimizelySDK/OptimizelySDK.xcodeproj">
+      location = "group:DemoObjcApp/DemoObjcApp.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:OptimizelySDK/OptimizelySwiftSDK.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:OptimizelySwiftSDK.podspec">
    </FileRef>
 </Workspace>

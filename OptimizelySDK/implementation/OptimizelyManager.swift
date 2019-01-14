@@ -70,7 +70,7 @@ public class OptimizelyManager : Optimizely {
                 self.logger?.log(level: .error, message: err.description)
                 completetionHandler(Result.failure(IntializeError(description: err.description)))
             case .success(let datafile):
-                let optimizely = self.initialize(datafile: datafile)
+                let optimizely = self.initialize(data: datafile)
                 if let optimizely = optimizely {
                     completetionHandler(Result.success(optimizely))
                 }

@@ -27,6 +27,6 @@ public class Group : Codable {
     
     var id:String = ""
     var policy:Policy = Policy.random
-    var trafficAllocation:[TrafficAllocation] = []
+    var trafficAllocation:[OPTTrafficAllocation] = []
     var experiments:[Experiment] = []
 }

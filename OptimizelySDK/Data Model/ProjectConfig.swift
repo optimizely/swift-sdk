@@ -20,13 +20,13 @@ public class ProjectConfig : Codable
 {
     var version:String = ""
     var rollouts:[Rollout]? = []
-    var typedAudiences:[Audience]? = []
+    var typedAudiences:[OPTAudience]? = []
     var anonymizeIP:Bool? = true
     var projectId:String = ""
-    var variables:[Variable]? = []
+    var variables:[OPTVariable]? = []
     var featureFlags:[FeatureFlag]? = []
     var experiments:[Experiment] = []
-    var audiences:[Audience] = []
+    var audiences:[OPTAudience] = []
     var groups:[Group] = []
     var attributes:[Attribute] = []
     var botFiltering:Bool? = false

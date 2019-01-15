@@ -32,7 +32,7 @@ public class Experiment : Codable
     public var key:String = ""
     var status:Status = Status.Not_started
     public var layerId:String = ""
-    public var trafficAllocation:[TrafficAllocation] = []
+    public var trafficAllocation:[OPTTrafficAllocation] = []
     public var audienceIds:[String] = []
     public var audienceConditions:ConditionHolder?
     public var variations:[Variation] = []

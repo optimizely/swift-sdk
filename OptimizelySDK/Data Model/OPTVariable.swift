@@ -19,7 +19,7 @@
 
 import Foundation
 
-public class Variable : Codable
+public class OPTVariable : Codable
 {
     var id:String = ""
     var value:String = ""

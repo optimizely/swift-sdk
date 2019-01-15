@@ -36,7 +36,7 @@ public protocol Optimizely {
     var datafileHandler:OPTDatafileHandler? { get }
     var logger:Logger? { get }
     var userProfileService:OPTUserProfileService? { get }
-    var notificationCenter:NotificationCenter? { get }
+    var notificationCenter:OPTNotificationCenter? { get }
     
 /**
  * Use the activate method to start an experiment.

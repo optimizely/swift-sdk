@@ -24,7 +24,7 @@ open class OPTManager: NSObject {
     let eventDispatcher: OPTEventDispatcher
     let datafileHandler: OPTDatafileHandler
     let userProfileService: OPTUserProfileService
-    let notificationCenter: NotificationCenter
+    let notificationCenter: OPTNotificationCenter
     
     let periodicDownloadInterval: Int
     
@@ -44,7 +44,7 @@ open class OPTManager: NSObject {
                 eventDispatcher:OPTEventDispatcher? = nil,
                 datafileHandler:OPTDatafileHandler? = nil,
                 userProfileService:OPTUserProfileService? = nil,
-                notificationCenter:NotificationCenter? = nil,
+                notificationCenter:OPTNotificationCenter? = nil,
                 periodicDownloadInterval:Int? = nil) {
         
         self.sdkKey = sdkKey

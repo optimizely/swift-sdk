@@ -9,7 +9,7 @@
 import Foundation
 import OptimizelySwiftSDK
 
-typealias OPTNotificationCenter = OptimizelySwiftSDK.NotificationCenter
+typealias OPTNotificationCenter = OptimizelySwiftSDK.OPTNotificationCenter
 
 class CustomNotificationCenter: OPTNotificationCenter {
     var notificationId: Int

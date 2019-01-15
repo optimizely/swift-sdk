@@ -69,20 +69,20 @@ open class OPTManager: NSObject {
     ///                       a cached copy from previous download is used if it's available
     ///                       the datafile will be updated from the server in the background thread
     ///   - completion: callback when initialization is completed
-    public func initializeSDK(completion: ((OPTResult) -> Void)?=nil) {
+    public func initializeSDK(completion: ((OPTResult<String>) -> Void)?=nil) {
         
         fetchDatafileBackground() { result in
             switch result {
-            case .failure(let err):
-                completion?(OPTResult.failure(err))
+            case .failure:
+                completion?(result)
             case .success(let datafile):
                 do {
                     try self.configSDK(datafile: datafile)
-                    completion?(OPTResult.success)
+                    completion?(result)
                 } catch {
                     
                     // TODO: refine error-type
-                    completion?(OPTResult.failure(.configInvalid))
+                    completion?(.failure(.configInvalid))
                 }
             }
         }
@@ -140,9 +140,9 @@ open class OPTManager: NSObject {
         }
      }
     
-    func fetchDatafileBackground(completion: ((OPTResultData<String>) -> Void)?=nil) {
+    func fetchDatafileBackground(completion: ((OPTResult<String>) -> Void)?=nil) {
         datafileHandler.downloadDatafile(sdkKey: self.sdkKey){ result in
-            var fetchResult: OPTResultData<String>
+            var fetchResult: OPTResult<String>
             switch result {
             case .failure(let err):
                 self.logger.log(level: .error, message: err.description)

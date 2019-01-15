@@ -8,12 +8,7 @@
 
 import Foundation
 
-public enum OPTResult {
-    case success
-    case failure(OPTError)
-}
-
-public enum OPTResultData<Value> {
+public enum OPTResult<Value> {
     case success(Value)
     case failure(OPTError)
 }

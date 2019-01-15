@@ -30,16 +30,8 @@
 		6EE7E54D21E50F9D0038EB37 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54521E50F9D0038EB37 /* Roboto-Medium.ttf */; };
 		6EE7E54E21E50F9D0038EB37 /* demoTestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54621E50F9D0038EB37 /* demoTestDatafile.json */; };
 		6EE7E54F21E50F9D0038EB37 /* demoTestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54621E50F9D0038EB37 /* demoTestDatafile.json */; };
-		6EE7E55021E50F9D0038EB37 /* demoTestDatafileV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54721E50F9D0038EB37 /* demoTestDatafileV3.json */; };
-		6EE7E55121E50F9D0038EB37 /* demoTestDatafileV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54721E50F9D0038EB37 /* demoTestDatafileV3.json */; };
-		6EE7E55221E50F9D0038EB37 /* SF-UI-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54821E50F9D0038EB37 /* SF-UI-Text-Regular.otf */; };
-		6EE7E55321E50F9D0038EB37 /* SF-UI-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54821E50F9D0038EB37 /* SF-UI-Text-Regular.otf */; };
-		6EE7E55421E50F9D0038EB37 /* optimizely_8182362857.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54921E50F9D0038EB37 /* optimizely_8182362857.json */; };
-		6EE7E55521E50F9D0038EB37 /* optimizely_8182362857.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54921E50F9D0038EB37 /* optimizely_8182362857.json */; };
 		6EE7E55621E50F9D0038EB37 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54A21E50F9D0038EB37 /* ProximaNova-Regular.otf */; };
 		6EE7E55721E50F9D0038EB37 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54A21E50F9D0038EB37 /* ProximaNova-Regular.otf */; };
-		6EE7E55821E50F9D0038EB37 /* ProximaNovaCond-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54B21E50F9D0038EB37 /* ProximaNovaCond-Regular.otf */; };
-		6EE7E55921E50F9D0038EB37 /* ProximaNovaCond-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6EE7E54B21E50F9D0038EB37 /* ProximaNovaCond-Regular.otf */; };
 		6EF2CF1D21E4158A00A5D78D /* tvOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EF2CF1B21E4158A00A5D78D /* tvOSMain.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -121,11 +113,7 @@
 		6E812F6321EE44C6004C8D6C /* CustomNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomNotificationCenter.swift; sourceTree = "<group>"; };
 		6EE7E54521E50F9D0038EB37 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		6EE7E54621E50F9D0038EB37 /* demoTestDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafile.json; sourceTree = "<group>"; };
-		6EE7E54721E50F9D0038EB37 /* demoTestDatafileV3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafileV3.json; sourceTree = "<group>"; };
-		6EE7E54821E50F9D0038EB37 /* SF-UI-Text-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-Regular.otf"; sourceTree = "<group>"; };
-		6EE7E54921E50F9D0038EB37 /* optimizely_8182362857.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_8182362857.json; sourceTree = "<group>"; };
 		6EE7E54A21E50F9D0038EB37 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
-		6EE7E54B21E50F9D0038EB37 /* ProximaNovaCond-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNovaCond-Regular.otf"; sourceTree = "<group>"; };
 		6EF2CF1C21E4158A00A5D78D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/tvOSMain.storyboard; sourceTree = "<group>"; };
 		9C185BE70FBE51067CFD104E /* Pods-DemoSwiftiOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoSwiftiOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoSwiftiOS/Pods-DemoSwiftiOS.release.xcconfig"; sourceTree = "<group>"; };
 		B301A636D5072557B288E62C /* Pods-DemoSwifttvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoSwifttvOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoSwifttvOS/Pods-DemoSwifttvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -202,11 +190,7 @@
 			children = (
 				6EE7E54521E50F9D0038EB37 /* Roboto-Medium.ttf */,
 				6EE7E54621E50F9D0038EB37 /* demoTestDatafile.json */,
-				6EE7E54721E50F9D0038EB37 /* demoTestDatafileV3.json */,
-				6EE7E54821E50F9D0038EB37 /* SF-UI-Text-Regular.otf */,
-				6EE7E54921E50F9D0038EB37 /* optimizely_8182362857.json */,
 				6EE7E54A21E50F9D0038EB37 /* ProximaNova-Regular.otf */,
-				6EE7E54B21E50F9D0038EB37 /* ProximaNovaCond-Regular.otf */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -405,13 +389,9 @@
 			files = (
 				6EE7E54C21E50F9D0038EB37 /* Roboto-Medium.ttf in Resources */,
 				25C6F3BE21C95D4100C2EBDD /* Assets.xcassets in Resources */,
-				6EE7E55421E50F9D0038EB37 /* optimizely_8182362857.json in Resources */,
 				25C6F3BF21C95D4800C2EBDD /* iOSMain.storyboard in Resources */,
-				6EE7E55021E50F9D0038EB37 /* demoTestDatafileV3.json in Resources */,
-				6EE7E55821E50F9D0038EB37 /* ProximaNovaCond-Regular.otf in Resources */,
 				6EE7E55621E50F9D0038EB37 /* ProximaNova-Regular.otf in Resources */,
 				6EE7E54E21E50F9D0038EB37 /* demoTestDatafile.json in Resources */,
-				6EE7E55221E50F9D0038EB37 /* SF-UI-Text-Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,12 +401,8 @@
 			files = (
 				6EE7E54F21E50F9D0038EB37 /* demoTestDatafile.json in Resources */,
 				6EE7E55721E50F9D0038EB37 /* ProximaNova-Regular.otf in Resources */,
-				6EE7E55321E50F9D0038EB37 /* SF-UI-Text-Regular.otf in Resources */,
-				6EE7E55921E50F9D0038EB37 /* ProximaNovaCond-Regular.otf in Resources */,
 				25C6F3C021C95D4C00C2EBDD /* Assets.xcassets in Resources */,
 				6EF2CF1D21E4158A00A5D78D /* tvOSMain.storyboard in Resources */,
-				6EE7E55521E50F9D0038EB37 /* optimizely_8182362857.json in Resources */,
-				6EE7E55121E50F9D0038EB37 /* demoTestDatafileV3.json in Resources */,
 				6EE7E54D21E50F9D0038EB37 /* Roboto-Medium.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -38,15 +38,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
-        // (1) asynchronous SDK initialization
+        
+        // initialize SDK in one of these two ways:
+        // (1) asynchronous SDK initialization (RECOMMENDED)
         //     - fetch a JSON datafile from the server
         //     - network delay, but the local configuration is in sync with the server experiment settings
-        initializeOptimizelySDKAsynchronous()
-        
         // (2) synchronous SDK initialization
         //     - initialize immediately with the given JSON datafile or its cached copy
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
-  ////      initializeOptimizelySDKSynchronous()
+        
+        initializeOptimizelySDKAsynchronous()
+        //initializeOptimizelySDKSynchronous()
     }
     
     func initializeOptimizelySDKAsynchronous() {

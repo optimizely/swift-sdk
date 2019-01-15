@@ -101,7 +101,7 @@ open class OPTManager: NSObject {
     public func initializeSDK(datafile: Data) throws {
         
         // TODO: get the cached copy
-        var cachedDatafile: Data?
+        let cachedDatafile: Data? = self.datafileHandler.isDatafileSaved(sdkKey: self.sdkKey) ? self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) : nil
 
         let selectedDatafile = cachedDatafile ?? datafile
         
@@ -140,9 +140,10 @@ open class OPTManager: NSObject {
         }
      }
     
-    func fetchDatafileBackground(completion: ((OPTResult<String>) -> Void)?=nil) {
+    func fetchDatafileBackground(completion: ((OPTResult<Data>) -> Void)?=nil) {
         datafileHandler.downloadDatafile(sdkKey: self.sdkKey){ result in
-            var fetchResult: OPTResult<String>
+            var fetchResult: OPTResult<Data>
+
             switch result {
             case .failure(let err):
                 self.logger.log(level: .error, message: err.description)

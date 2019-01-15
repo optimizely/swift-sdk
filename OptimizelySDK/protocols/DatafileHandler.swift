@@ -16,7 +16,7 @@ public struct DatafileDownloadError : Error {
     }
 }
 
-public typealias DatafileDownloadCompletionHandler = (Result<String,DatafileDownloadError>) -> Void
+public typealias DatafileDownloadCompletionHandler = (Result<Data,DatafileDownloadError>) -> Void
 
 public protocol DatafileHandler {
     /**
@@ -26,7 +26,7 @@ public protocol DatafileHandler {
     - Parameter datafileConfig: DatafileConfig for the datafile
     - Returns: a valid datafile or null
      */
-    func downloadDatafile(sdkKey:String) -> String?
+    func downloadDatafile(sdkKey:String) -> Data?
     
     /**
      Asynchronous download data file.
@@ -60,14 +60,14 @@ public protocol DatafileHandler {
      - Parameter sdkKey: sdkKey
      - Parameter datafile: JSON string of datafile.
      */
-    func saveDatafile(sdkKey:String, dataFile:String)
+    func saveDatafile(sdkKey:String, dataFile:Data)
     
     /**
      Load a cached datafile if it exists
      - Parameter sdkKey: sdkKey
      - Returns: the datafile cached or null if it was not available
      */
-    func loadSavedDatafile(sdkKey:String) -> String?
+    func loadSavedDatafile(sdkKey:String) -> Data?
     
     /**
      Has the file already been cached locally?

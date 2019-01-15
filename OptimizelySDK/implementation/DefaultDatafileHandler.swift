@@ -21,12 +21,12 @@ class DefaultDatafileHandler : DatafileHandler {
         
     }
     
-    func downloadDatafile(sdkKey: String) -> String? {
+    func downloadDatafile(sdkKey: String) -> Data? {
         
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
-        var result:String?
+        var result:Data?
         let group = DispatchGroup()
         
         group.enter()
@@ -34,7 +34,7 @@ class DefaultDatafileHandler : DatafileHandler {
         if let url = URL(string: str) {
             let task = session.downloadTask(with: url){ (url, response, error) in
                 self.logger?.log(level: .debug, message: response.debugDescription)
-                if let url = url, let projectConfig = try? String(contentsOf: url) {
+                if let url = url, let projectConfig = try? Data(contentsOf: url) {
                     result = projectConfig
                     self.saveDatafile(sdkKey: sdkKey, dataFile: projectConfig)
                 }
@@ -49,30 +49,32 @@ class DefaultDatafileHandler : DatafileHandler {
         return result
     }
     
-    func downloadDatafile(sdkKey: String, completionHandler: @escaping (Result<String, DatafileDownloadError>) -> Void) {
+    func downloadDatafile(sdkKey: String, completionHandler: @escaping (Result<Data, DatafileDownloadError>) -> Void) {
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
         if let url = URL(string: str) {
-            let task = session.downloadTask(with: url, completionHandler: { (url, response, error) in
-                var result = Result<String, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
+            let task = session.downloadTask(with: url) { (url, response, error) in
+                var result = Result<Data, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
                 
                 if let _ = error {
                     self.logger?.log(level: .error, message: error.debugDescription)
                     let datafiledownloadError = DatafileDownloadError(description: error.debugDescription)
                     result = Result.failure(datafiledownloadError)
                 }
-                else if let url = url, let string = try? String(contentsOf: url) {
-                    self.logger?.log(level: .debug, message: string)
-                    self.saveDatafile(sdkKey: sdkKey, dataFile: string)
-                    result = Result.success(string)
+                else if let url = url, let data = try? Data(contentsOf: url) {
+                    if let str = String(data: data, encoding: .utf8) {
+                        self.logger?.log(level: .debug, message: str)
+                    }
+                    self.saveDatafile(sdkKey: sdkKey, dataFile: data)
+                    result = Result.success(data)
                 }
 
                 completionHandler(result)
                 
                 self.logger?.log(level: .debug, message: response.debugDescription)
                 
-            })
+            }
             
             task.resume()
         }
@@ -115,28 +117,28 @@ class DefaultDatafileHandler : DatafileHandler {
     }
 
     
-    func saveDatafile(sdkKey: String, dataFile: String) {
+    func saveDatafile(sdkKey: String, dataFile: Data) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             
             let fileURL = dir.appendingPathComponent(sdkKey)
             
             //writing
             do {
-                try dataFile.write(to: fileURL, atomically: true, encoding: .utf8)
+                try? dataFile.write(to: fileURL, options: .atomic)
             }
             catch {/* error handling here */}
         }
     }
     
-    func loadSavedDatafile(sdkKey: String) -> String? {
+    func loadSavedDatafile(sdkKey: String) -> Data? {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             
             let fileURL = dir.appendingPathComponent(sdkKey)
             
             //reading
             do {
-                let text = try String(contentsOf: fileURL, encoding: .utf8)
-                return text
+                let data = try Data(contentsOf: fileURL)
+                return data
             }
             catch {/* error handling here */}
         }

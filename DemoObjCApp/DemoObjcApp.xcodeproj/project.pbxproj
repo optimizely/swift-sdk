@@ -8,10 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		361EF872CB7D0F6C8202145F /* Pods_DemoObjciOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8E188D7982AFD9C7F1C7FE6 /* Pods_DemoObjciOS.framework */; };
-		6E4DD7F321E51E4C00B0C2C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7497321E40467008B22A0 /* AppDelegate.m */; };
-		6E4DD7F421E51E4D00B0C2C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7497321E40467008B22A0 /* AppDelegate.m */; };
-		6E4DD7F521E51E5100B0C2C7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7497621E40467008B22A0 /* ViewController.m */; };
-		6E4DD7F621E51E5200B0C2C7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7497621E40467008B22A0 /* ViewController.m */; };
 		6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
 		6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
 		6E4DD7FE21E51FDB00B0C2C7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E4DD7FA21E51FDB00B0C2C7 /* Assets.xcassets */; };
@@ -28,6 +24,14 @@
 		6E4DD97D21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E4DD98021E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; };
 		6E4DD98121E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
+		6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
+		6EB8456D21EE5DE3005346CC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
+		6EB8456E21EE5DE3005346CC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
+		6EB8456F21EE5DE3005346CC /* FailureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456721EE5DE3005346CC /* FailureViewController.m */; };
+		6EB8457021EE5DE3005346CC /* FailureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456721EE5DE3005346CC /* FailureViewController.m */; };
+		6EB8457121EE5DE3005346CC /* SplashScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */; };
+		6EB8457221EE5DE3005346CC /* SplashScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */; };
 		DDB0B21C9FF18EAEA9E5F676 /* Pods_DemoObjctvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3822AD03E75EF61F9556BA6 /* Pods_DemoObjctvOS.framework */; };
 /* End PBXBuildFile section */
 
@@ -114,10 +118,14 @@
 		6E4DD81D21E5208F00B0C2C7 /* demoTestDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafile.json; sourceTree = "<group>"; };
 		6E4DD82121E5208F00B0C2C7 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
 		6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySDK/OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
-		6EF7497221E40467008B22A0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		6EF7497321E40467008B22A0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		6EF7497521E40467008B22A0 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		6EF7497621E40467008B22A0 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		6EB8456321EE5DE3005346CC /* SplashScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashScreenViewController.h; sourceTree = "<group>"; };
+		6EB8456421EE5DE3005346CC /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		6EB8456521EE5DE3005346CC /* VariationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VariationViewController.m; sourceTree = "<group>"; };
+		6EB8456621EE5DE3005346CC /* VariationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariationViewController.h; sourceTree = "<group>"; };
+		6EB8456721EE5DE3005346CC /* FailureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FailureViewController.m; sourceTree = "<group>"; };
+		6EB8456821EE5DE3005346CC /* FailureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FailureViewController.h; sourceTree = "<group>"; };
+		6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashScreenViewController.m; sourceTree = "<group>"; };
+		6EB8456A21EE5DE3005346CC /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6EF7498E21E404BB008B22A0 /* DemoObjciOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoObjciOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF7499F21E404BC008B22A0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6EF749A821E404D6008B22A0 /* DemoObjctvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoObjctvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -199,10 +207,14 @@
 				6E4DD7F921E51FDB00B0C2C7 /* DemoSwiftiOS */,
 				6E4DD80121E51FF600B0C2C7 /* DemoSwifttvOS */,
 				6E4DD81B21E5208F00B0C2C7 /* Resources */,
-				6EF7497221E40467008B22A0 /* AppDelegate.h */,
-				6EF7497321E40467008B22A0 /* AppDelegate.m */,
-				6EF7497521E40467008B22A0 /* ViewController.h */,
-				6EF7497621E40467008B22A0 /* ViewController.m */,
+				6EB8456A21EE5DE3005346CC /* AppDelegate.h */,
+				6EB8456421EE5DE3005346CC /* AppDelegate.m */,
+				6EB8456821EE5DE3005346CC /* FailureViewController.h */,
+				6EB8456721EE5DE3005346CC /* FailureViewController.m */,
+				6EB8456321EE5DE3005346CC /* SplashScreenViewController.h */,
+				6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */,
+				6EB8456621EE5DE3005346CC /* VariationViewController.h */,
+				6EB8456521EE5DE3005346CC /* VariationViewController.m */,
 				6EF7499F21E404BC008B22A0 /* main.m */,
 				6EF7497021E40467008B22A0 /* Products */,
 				EC8D1C27EBC6923BEA837213 /* Pods */,
@@ -469,9 +481,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E4DD7F521E51E5100B0C2C7 /* ViewController.m in Sources */,
+				6EB8456D21EE5DE3005346CC /* VariationViewController.m in Sources */,
+				6EB8456F21EE5DE3005346CC /* FailureViewController.m in Sources */,
+				6EB8457121EE5DE3005346CC /* SplashScreenViewController.m in Sources */,
+				6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */,
-				6E4DD7F321E51E4C00B0C2C7 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,9 +493,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E4DD7F621E51E5200B0C2C7 /* ViewController.m in Sources */,
+				6EB8456E21EE5DE3005346CC /* VariationViewController.m in Sources */,
+				6EB8457021EE5DE3005346CC /* FailureViewController.m in Sources */,
+				6EB8457221EE5DE3005346CC /* SplashScreenViewController.m in Sources */,
+				6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */,
-				6E4DD7F421E51E4D00B0C2C7 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -69,15 +69,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func initializeOptimizelySDKSynchronous() {
+        guard let localDatafilePath = Bundle(for: self.classForCoder).path(forResource: datafileName, ofType: "json") else {
+            fatalError("Local datafile cannot be found")
+        }
+        
         // customization example (optional)
         let customNotificationCenter = makeCustomNotificationCenter()
         
         optimizely = OPTManager(sdkKey: sdkKey,
                                 notificationCenter: customNotificationCenter)
-
-        guard let localDatafilePath = Bundle(for: self.classForCoder).path(forResource: datafileName, ofType: "json") else {
-            fatalError("Local datafile cannot be found")
-        }
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)

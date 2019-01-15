@@ -90,7 +90,7 @@ open class OPTManager: NSObject {
     
     // MARK: synchronous initialization
     
-    public func initializeSDK(datafile: String) throws {
+    @objc public func initializeSDK(datafile: String) throws {
         guard let datafileData = datafile.data(using: .utf8) else {
             throw OPTError.dataFileInvalid
         }
@@ -563,4 +563,46 @@ open class OPTManager: NSObject {
         
     }
     
+}
+
+// MARK: Objective-C Wrappers
+
+extension OPTManager {
+    
+    @objc public convenience init(sdkKey: String) {
+        self.init(sdkKey: sdkKey,
+                  logger: nil,
+                  bucketer: nil,
+                  decisionService: nil,
+                  eventDispatcher: nil,
+                  datafileHandler: nil,
+                  userProfileService: nil,
+                  notificationCenter: nil,
+                  periodicDownloadInterval: nil)
+    }
+    
+    @objc public func initializeSDK(completion: ((NSError?, Data?) -> Void)?) {
+        initializeSDK { result in
+            switch result {
+            case .failure(let error):
+                
+                completion?(self.convertErrorForObjc(error), nil)
+            case .success(let data):
+                completion?(nil, data)
+            }
+            
+        }
+    }
+    
+    func convertErrorForObjc(_ error: Error) -> NSError {
+        var errorInObjc: NSError
+        
+        switch error {
+        
+        default:
+            errorInObjc = NSError(domain: "com.optimizely.OptimizelySwiftSDK", code: 1000, userInfo: nil)
+        }
+        
+        return errorInObjc
+    }
 }

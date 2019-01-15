@@ -18,58 +18,164 @@ import UIKit
 import OptimizelySwiftSDK
 #if os(iOS)
     import Amplitude_iOS
-    import Localytics
-    import Mixpanel
-#elseif os(tvOS)
-    //
 #endif
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    var optimizely: OPTManager?
     
     // generate random user ID on each app load
     let userId = String(Int(arc4random_uniform(300000)))
     
     // customizable settings
-    let datafileName = "demoTestDatafile" // default parameter for initializing Optimizely from saved datafile
-    var projectId:String? // project name: X Mobile - Sample App
-    var experimentKey = "background_experiment"
-    var eventKey = "sample_conversion"
-    let attributes = ["sample_attribute_key":"sample_attribute_value"]
-    let eventDispatcherDispatchInterval = 1000
-    let datafileManagerDownloadInterval = 20000
+    let datafileName = "demoTestDatafile"
+    let experimentKey = "background_experiment"
+    let eventKey = "sample_conversion"
+    let attributes = ["browser_type": "safari"]
     let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
     
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
         
+        // initialize SDK in one of these two ways:
+        // (1) asynchronous SDK initialization (RECOMMENDED)
+        //     - fetch a JSON datafile from the server
+        //     - network delay, but the local configuration is in sync with the server experiment settings
+        // (2) synchronous SDK initialization
+        //     - initialize immediately with the given JSON datafile or its cached copy
+        //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
+        
+        initializeOptimizelySDKAsynchronous()
+        //initializeOptimizelySDKSynchronous()
     }
     
+    func initializeOptimizelySDKAsynchronous() {
+        optimizely = OPTManager(sdkKey: sdkKey)
+        
+        // initialize Optimizely Client from a datafile download
+        optimizely!.initializeSDK { result in
+            switch result {
+            case .failure(let error):
+                print("Optimizely SDK initiliazation failed: \(error)")
+                self.optimizely = nil
+            case .success:
+                print("Optimizely SDK initialized successfully!")
+            }
+            
+            self.startAppWithExperimentActivated()
+        }
+    }
+    
+    func initializeOptimizelySDKSynchronous() {
+        // customization example (optional)
+        let customNotificationCenter = makeCustomNotificationCenter()
+        
+        optimizely = OPTManager(sdkKey: sdkKey,
+                                notificationCenter: customNotificationCenter)
+
+        guard let localDatafilePath = Bundle(for: self.classForCoder).path(forResource: datafileName, ofType: "json") else {
+            fatalError("Local datafile cannot be found")
+        }
+
+        do {
+            let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
+            try optimizely!.initializeSDK(datafile: datafileJSON)
+            print("Optimizely SDK initialized successfully!")
+        } catch is DecodingError {
+            fatalError("Invalid JSON format")
+        } catch {
+            print("Optimizely SDK initiliazation failed: \(error)")
+            optimizely = nil
+        }
+        
+        startAppWithExperimentActivated()
+    }
+    
+    func startAppWithExperimentActivated() {
+        var variationKey: String?
+        
+        do {
+            variationKey = try self.optimizely?.activate(experimentKey: experimentKey,
+                                                         userId: userId,
+                                                         attributes: attributes)
+        } catch {
+            print("Optimizely SDK activation failed: \(error)")
+            self.optimizely = nil
+        }
+        
+        self.setRootViewController(optimizelyManager: self.optimizely, bucketedVariation: variationKey)
+    }
+    
+
+    func makeCustomNotificationCenter() -> OPTNotificationCenter {
+        #if os(tvOS)
+            return CustomNotificationCenter()
+        #else
+        
+        
+        // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
+        Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
+        
+        let notificationCenter = CustomNotificationCenter()
+        
+        notificationCenter.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
+            Amplitude.instance().logEvent("[Optimizely] \(experiment.key) - \(variation.key)")
+        }
+        
+        notificationCenter.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
+            Amplitude.instance().logEvent("[Optimizely] " + eventKey)
+        }
+
+        return notificationCenter
+        
+        #endif
+    }
+    
+    func setRootViewController(optimizelyManager: OPTManager?, bucketedVariation:String?) {
+        DispatchQueue.main.async {
+            var storyboard : UIStoryboard
+            
+            #if os(tvOS)
+            storyboard = UIStoryboard(name: "tvOSMain", bundle: nil)
+            #elseif os(iOS)
+            storyboard = UIStoryboard(name: "iOSMain", bundle: nil)
+            #endif
+            
+            var rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
+            
+            if let optimizelyManager = optimizelyManager,
+                let variationKey = bucketedVariation,
+                let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as? VariationViewController
+            {
+                variationViewController.eventKey = self.eventKey
+                variationViewController.optimizelyManager = optimizelyManager
+                variationViewController.userId = self.userId
+                variationViewController.variationKey = variationKey
+                
+                rootViewController = variationViewController
+            }
+            
+            self.window?.rootViewController = rootViewController
+        }
+    }
+
     func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
-    ////
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
         NotificationCenter.default.post(name: NSNotification.Name("OPTLYbackgroundFetchDone"), object: nil)
         completionHandler(.newData)

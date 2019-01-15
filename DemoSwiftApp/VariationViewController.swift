@@ -17,12 +17,12 @@
 import UIKit
 import OptimizelySwiftSDK
 
-class OPTLYVariationViewController: UIViewController {
+class VariationViewController: UIViewController {
     
-    var eventKey :String = ""
- //   var optimizelyClient :OPTLYClient? = nil
-    var variationKey :String = ""
-    var userId :String = ""
+    var eventKey: String = ""
+    var optimizelyManager: OPTManager?
+    var variationKey: String = ""
+    var userId: String = ""
 
     @IBOutlet weak var variationLetterLabel: UILabel!
     @IBOutlet weak var variationSubheaderLabel: UILabel!
@@ -59,6 +59,6 @@ class OPTLYVariationViewController: UIViewController {
     
     @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {
      //   self.optimizelyClient?.track(self.eventKey, userId: userId)
-        self.performSegue(withIdentifier: "OPTLYConversionSuccessSegue", sender: self)
+        self.performSegue(withIdentifier: "ConversionSuccessSegue", sender: self)
     }
 }

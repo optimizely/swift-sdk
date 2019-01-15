@@ -208,11 +208,11 @@
 		EA5246B41DC7186800AF6685 = {
 			isa = PBXGroup;
 			children = (
-				EA1E4AA51E5FD1C100BDDABD /* DemoSwiftApp-Bridging-Header.h */,
 				EA299EE21E55313B00931399 /* AppDelegate.swift */,
+				EA299EE51E55313B00931399 /* VariationViewController.swift */,
 				EA299EE31E55313B00931399 /* FailureViewController.swift */,
 				EA299EE41E55313B00931399 /* SplashScreenViewController.swift */,
-				EA299EE51E55313B00931399 /* VariationViewController.swift */,
+				EA1E4AA51E5FD1C100BDDABD /* DemoSwiftApp-Bridging-Header.h */,
 				6E812F6221EE44C6004C8D6C /* Customization */,
 				EA5246BF1DC7186800AF6685 /* DemoSwiftiOS */,
 				EA299ED51E5530A400931399 /* DemoSwifttvOS */,

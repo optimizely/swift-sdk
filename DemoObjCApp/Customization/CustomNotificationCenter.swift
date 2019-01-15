@@ -9,8 +9,6 @@
 import Foundation
 import OptimizelySwiftSDK
 
-typealias OPTNotificationCenter = OptimizelySwiftSDK.OPTNotificationCenter
-
 class CustomNotificationCenter: OPTNotificationCenter {
     var notificationId: Int
     
@@ -22,8 +20,8 @@ class CustomNotificationCenter: OPTNotificationCenter {
         return CustomNotificationCenter()
     }
 
-    func addGenericNotificationListener(notificationType: Int, listener: @escaping GenericListener) {
-        //
+    func addGenericNotificationListener(notificationType: Int, listener: @escaping GenericListener) -> Int? {
+        return nil
     }
     
     func removeNotificationListener(notificationId: Int) {
@@ -42,11 +40,13 @@ class CustomNotificationCenter: OPTNotificationCenter {
         //
     }
     
-    func addActivateNotificationListener(activateListener: @escaping ActivateListener) {
+    func addActivateNotificationListener(activateListener: @escaping ActivateListener) -> Int? {
         //
+        return nil
     }
     
-    func addTrackNotificationListener(trackListener: @escaping TrackListener) {
+    func addTrackNotificationListener(trackListener: @escaping TrackListener) -> Int? {
         //
+        return nil
     }
 }

@@ -19,7 +19,7 @@ open class OPTManager: NSObject {
     // MARK: - Customizable
     
     let logger: Logger
-    let bucketer: Bucketer
+    let bucketer: OPTBucketer
     let decisionService: DecisionService
     let eventDispatcher: EventDispatcher
     let datafileHandler: DatafileHandler
@@ -39,7 +39,7 @@ open class OPTManager: NSObject {
     ///   - ...
     public init(sdkKey: String,
                 logger:Logger? = nil,
-                bucketer:Bucketer? = nil,
+                bucketer:OPTBucketer? = nil,
                 decisionService:DecisionService? = nil,
                 eventDispatcher:EventDispatcher? = nil,
                 datafileHandler:DatafileHandler? = nil,

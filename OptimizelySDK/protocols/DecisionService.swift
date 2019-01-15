@@ -25,11 +25,11 @@ public protocol DecisionService {
      * @param bucketer The bucketer.
      * @return An instance of the decision service.
      */
-    static func createInstance(config:ProjectConfig, bucketer:Bucketer, userProfileService:UserProfileService) -> DecisionService?
+    static func createInstance(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:UserProfileService) -> DecisionService?
     
     
     // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
-    func initialize(config:ProjectConfig, bucketer:Bucketer, userProfileService:UserProfileService)
+    func initialize(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:UserProfileService)
 
     
     /**

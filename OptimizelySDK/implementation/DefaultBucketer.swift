@@ -8,7 +8,7 @@
 
 import Foundation
 
-class DefaultBucketer : Bucketer {
+class DefaultBucketer : OPTBucketer {
     let MAX_TRAFFIC_VALUE = 10000;
     let HASH_SEED = 1;
     let MAX_HASH_SEED:UInt64 = 1
@@ -34,7 +34,7 @@ class DefaultBucketer : Bucketer {
 
     
     
-    static func createInstance(config: ProjectConfig) -> Bucketer? {
+    static func createInstance(config: ProjectConfig) -> OPTBucketer? {
         return DefaultBucketer(config: config)
     }
     

@@ -17,9 +17,9 @@
 
 import Foundation
 
-public protocol ErrorHandler {
+public protocol OPTErrorHandler {
     
-    static func createInstance() -> ErrorHandler
+    static func createInstance() -> OPTErrorHandler
 
     /**
      Handle an error thrown by the SDK.

@@ -13,7 +13,7 @@ public class OptimizelyManager : Optimizely {
     public var bucketer: OPTBucketer?
     public var decisionService: OPTDecisionService?
     public var config: ProjectConfig?
-    public var errorHandler: ErrorHandler?
+    public var errorHandler: OPTErrorHandler?
     public var eventDispatcher: EventDispatcher?
     public var datafileHandler: DatafileHandler?
     public var logger: Logger?
@@ -21,7 +21,7 @@ public class OptimizelyManager : Optimizely {
     public var notificationCenter: NotificationCenter?
     private var periodicDownloadInterval:Int?
     
-    public init(bucketer:OPTBucketer? = nil, decisionService:OPTDecisionService? = nil, errorHandler:ErrorHandler? = nil, eventDispatcher:EventDispatcher? = nil, datafileHandler:DatafileHandler? = nil, logger:Logger? = nil, userProfileService:UserProfileService? = nil, notificationCenter:NotificationCenter? = nil, periodicDownloadInterval:Int? = nil) {
+    public init(bucketer:OPTBucketer? = nil, decisionService:OPTDecisionService? = nil, errorHandler:OPTErrorHandler? = nil, eventDispatcher:EventDispatcher? = nil, datafileHandler:DatafileHandler? = nil, logger:Logger? = nil, userProfileService:UserProfileService? = nil, notificationCenter:NotificationCenter? = nil, periodicDownloadInterval:Int? = nil) {
         self.bucketer = bucketer
         self.periodicDownloadInterval = periodicDownloadInterval
         self.decisionService = decisionService

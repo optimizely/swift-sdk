@@ -532,6 +532,7 @@ open class OPTManager: NSObject {
     /// - Throws: `OPTError` if event parameter is not valid
     public func track(eventKey:String,
                       userId:String,
+                      attributes:Dictionary<String,Any>?=nil,
                       eventTags:Dictionary<String,Any>?=nil) throws {
         
         // TODO: fix for error handling
@@ -539,7 +540,7 @@ open class OPTManager: NSObject {
                                                                  decisionService: decisionService,
                                                                  eventKey:eventKey,
                                                                  userId:userId,
-                                                                 attributes:nil,
+                                                                 attributes:attributes,
                                                                  eventTags:eventTags) else
         {
             // TODO: refine error type

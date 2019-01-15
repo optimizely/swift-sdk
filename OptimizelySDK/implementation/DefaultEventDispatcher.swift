@@ -31,9 +31,9 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
         dataStore.save(item: event)
         
         dispatcher.async {
-            while let event:EventForDispatch = self.dataStore.getFirstItem() {
+            while let eventToSend:EventForDispatch = self.dataStore.getFirstItem() {
                 self.notify.enter()
-                self.sendEvent(event: event) { (result) -> (Void) in
+                self.sendEvent(event: eventToSend) { (result) -> (Void) in
                     
                     switch result {
                     case .failure(let error):
@@ -68,15 +68,14 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
-            self.logger.log(level: .debug, message: "Event Sent")
-                completionHandler(Result.success(event.body))
             self.logger.log(level: .debug, message: response.debugDescription)
             
             if let error = error {
                 completionHandler(Result.failure(OPTEventDispatchError(description: error.localizedDescription)))
             }
             else {
-                
+                self.logger.log(level: .debug, message: "Event Sent")
+                completionHandler(Result.success(event.body))
             }
         }
         

@@ -10,7 +10,7 @@ import Foundation
 
 class BatchEventBuilder {
     static private var logger = DefaultLogger.createInstance(logLevel: .debug)
-    static func createImpressionEvent(config:ProjectConfig, decisionService:OPTDecisionService, experiment:Experiment, varionation:Variation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
+    static func createImpressionEvent(config:ProjectConfig, decisionService:OPTDecisionService, experiment:OPTExperiment, varionation:OPTVariation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
         var decisions = [Decision]()
         
         let decision = Decision(variationID: varionation.id, campaignID: experiment.layerId, experimentID: experiment.id)
@@ -43,11 +43,11 @@ class BatchEventBuilder {
             return nil
         }
         let experimentIds = event.experimentIds
-        let experiments = experimentIds.map { (id) -> Experiment? in
+        let experiments = experimentIds.map { (id) -> OPTExperiment? in
             config.experiments.filter({$0.id == id}).first
         }
         var decisions = [Decision]()
-        for experiment in experiments where experiment != nil && experiment?.status == Experiment.Status.Running {
+        for experiment in experiments where experiment != nil && experiment?.status == OPTExperiment.Status.Running {
             if let variation = decisionService.getVariation(userId: userId, experiment: experiment!, attributes: attributes ?? [String:Any]()) {
                 decisions.append(Decision(variationID: variation.id, campaignID: experiment!.layerId, experimentID: experiment!.id))
             }

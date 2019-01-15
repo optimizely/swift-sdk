@@ -50,7 +50,7 @@ public protocol OPTDecisionService {
      - Parameter experiment: The experiment in which to bucket the user.
      - Returns: The variation assigned to the specified user ID for an experiment.
      */
-    func getVariation(userId:String, experiment:Experiment, attributes:Dictionary<String, Any>) -> Variation?
+    func getVariation(userId:String, experiment:OPTExperiment, attributes:Dictionary<String, Any>) -> OPTVariation?
     
     /**
      Get a variation the user is bucketed into for the given FeatureFlag
@@ -59,6 +59,6 @@ public protocol OPTDecisionService {
      - Parameter attributes: User attributes
      - Returns: The variation assigned to the specified user ID for a feature flag.
      */
-    func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)?
+    func getVariationForFeature(featureFlag:OPTFeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:OPTExperiment?, variation:OPTVariation?)?
     
 }

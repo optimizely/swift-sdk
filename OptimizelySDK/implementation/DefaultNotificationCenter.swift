@@ -41,7 +41,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
         return incrementNotificationId()
     }
     
-    public func addActivateNotificationListener(activateListener: @escaping (Experiment, String, Dictionary<String, Any>?, Variation, Dictionary<String, Any>) -> Void) -> Int? {
+    public func addActivateNotificationListener(activateListener: @escaping (OPTExperiment, String, Dictionary<String, Any>?, OPTVariation, Dictionary<String, Any>) -> Void) -> Int? {
         notificationListeners[notificationId] = (NotificationType.Activate.rawValue,  { (args:Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
@@ -49,8 +49,8 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             if myArgs.count < 5 {
                 return
             }
-            if let experiment = myArgs[0] as? Experiment, let userId = myArgs[1] as? String,
-                let variation = myArgs[3] as? Variation {
+            if let experiment = myArgs[0] as? OPTExperiment, let userId = myArgs[1] as? String,
+                let variation = myArgs[3] as? OPTVariation {
                 let attributes = myArgs[2] as? Dictionary<String, Any>
                 let event = myArgs[4] as! Dictionary<String,Any>
                 activateListener(experiment, userId, attributes, variation, event)

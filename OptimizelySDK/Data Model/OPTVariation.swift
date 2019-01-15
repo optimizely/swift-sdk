@@ -1,6 +1,7 @@
 //
-//  Rollout.swift
+//  Variation.swift
 //  OptimizelySDK
+//
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -19,9 +20,10 @@
 
 import Foundation
 
-public class Rollout : Codable
+public class OPTVariation : Codable
 {
-    var experiments:[Experiment] = []
-    var id:String = ""
+    public var variables:[OPTVariable]? = []
+    public var id:String = ""
+    public var key:String = ""
+    public var featureEnabled:Bool? = false
 }
-

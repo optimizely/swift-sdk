@@ -84,11 +84,11 @@ public class OptimizelyManager : Optimizely {
     
 
     
-    public func activate(experimentKey: String, userId: String) -> Variation? {
+    public func activate(experimentKey: String, userId: String) -> OPTVariation? {
         return activate(experimentKey: experimentKey, userId: userId, attributes: nil)
     }
     
-    public func activate(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
+    public func activate(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> OPTVariation? {
           if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
               let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
 
@@ -111,11 +111,11 @@ public class OptimizelyManager : Optimizely {
         return nil
     }
     
-    public func variation(experimentKey: String, userId: String) -> Variation? {
+    public func variation(experimentKey: String, userId: String) -> OPTVariation? {
         return variation(experimentKey: experimentKey, userId: userId, attributes: nil)
     }
     
-    public func variation(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
+    public func variation(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> OPTVariation? {
 
         if let experiment = config?.experiments.filter({$0.key == experimentKey}).first {
             return decisionService?.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:])
@@ -124,7 +124,7 @@ public class OptimizelyManager : Optimizely {
         return nil
     }
     
-    public func getForcedVariation(experimentKey: String, userId: String) -> Variation? {
+    public func getForcedVariation(experimentKey: String, userId: String) -> OPTVariation? {
         if let dict = config?.whitelistUsers[userId], let variationKey = dict[experimentKey] {
             return  config?.experiments.filter({$0.key == experimentKey}).first?.variations.filter({$0.key == variationKey}).first
         }

@@ -33,7 +33,7 @@ public protocol OPTBucketer {
      - Parameter bucketingId: Id to be used for bucketing the user.
      - Returns: experiment which represent Experiment.
      */
-    func bucketToExperiment(group:Group, bucketingId:String) -> Experiment?
+    func bucketToExperiment(group:Group, bucketingId:String) -> OPTExperiment?
     
     /**
      Bucket a bucketingId into an experiment.
@@ -41,7 +41,7 @@ public protocol OPTBucketer {
      - Parameter bucketingId: The ID to bucket. This must be a non-null, non-empty string.
      - Returns: The variation the bucketingId was bucketed into.
      */
-    func bucketExperiment(experiment:Experiment, bucketingId:String) -> Variation?
+    func bucketExperiment(experiment:OPTExperiment, bucketingId:String) -> OPTVariation?
 
     /**
      Hash the bucketing ID and map it to the range [0, 10000).

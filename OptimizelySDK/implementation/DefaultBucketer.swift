@@ -1,4 +1,4 @@
-//****************************************************************************
+/****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
@@ -46,7 +46,7 @@ class DefaultBucketer : OPTBucketer {
         return DefaultBucketer(config: config)
     }
     
-    func bucketToExperiment(group: Group, bucketingId: String) -> Experiment? {
+    func bucketToExperiment(group: Group, bucketingId: String) -> OPTExperiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
         
@@ -79,7 +79,7 @@ class DefaultBucketer : OPTBucketer {
         return nil
     }
     
-    func bucketExperiment(experiment: Experiment, bucketingId: String) -> Variation? {
+    func bucketExperiment(experiment: OPTExperiment, bucketingId: String) -> OPTVariation? {
         var ok = true
         // check for mutex
         let group = config.groups.filter({ if let _ = $0.experiments.filter({$0.id == experiment.id }).first { return true } else { return false }}).first
@@ -108,7 +108,7 @@ class DefaultBucketer : OPTBucketer {
         }
     }
     
-    func bucketToVariation(experiment:Experiment, bucketingId:String) -> Variation? {
+    func bucketToVariation(experiment:OPTExperiment, bucketingId:String) -> OPTVariation? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)
         

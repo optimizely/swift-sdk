@@ -14,27 +14,13 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
-
 import Foundation
 
-public class Experiment : Codable
+public class OPTFeatureVariable : Codable
 {
-    
-    enum Status: String, Codable {
-        case Running
-        case Launched
-        case Paused
-        case Not_started = "Not started"
-        case Archived
-    }
-    
-    public var id:String = ""
-    public var key:String = ""
-    var status:Status = Status.Not_started
-    public var layerId:String = ""
-    public var trafficAllocation:[OPTTrafficAllocation] = []
-    public var audienceIds:[String] = []
-    public var audienceConditions:ConditionHolder?
-    public var variations:[Variation] = []
-    public var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
+    var defaultValue:String? = ""
+    var type:String = ""
+    var id:String = ""
+    var key:String = ""
 }
+

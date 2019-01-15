@@ -19,13 +19,13 @@ import Foundation
 public class ProjectConfig : Codable
 {
     var version:String = ""
-    var rollouts:[Rollout]? = []
+    var rollouts:[OPTRollout]? = []
     var typedAudiences:[OPTAudience]? = []
     var anonymizeIP:Bool? = true
     var projectId:String = ""
     var variables:[OPTVariable]? = []
-    var featureFlags:[FeatureFlag]? = []
-    var experiments:[Experiment] = []
+    var featureFlags:[OPTFeatureFlag]? = []
+    var experiments:[OPTExperiment] = []
     var audiences:[OPTAudience] = []
     var groups:[Group] = []
     var attributes:[Attribute] = []

@@ -228,7 +228,7 @@ open class OPTManager: NSObject {
     
     func getVariation(experimentKey:String,
                       userId:String,
-                      attributes:Dictionary<String, Any>?=nil) throws -> Variation {
+                      attributes:Dictionary<String, Any>?=nil) throws -> OPTVariation {
         
         if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
             let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) {

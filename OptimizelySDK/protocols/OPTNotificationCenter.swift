@@ -24,7 +24,7 @@ public enum NotificationType : Int {
 
 public typealias GenericListener = (Any...) -> Void
 
-public typealias ActivateListener = (_ experiment:Experiment, _ userId:String, _ attributes:Dictionary<String,Any>?, _ variation:Variation, _ event:Dictionary<String, Any>) -> Void
+public typealias ActivateListener = (_ experiment:OPTExperiment, _ userId:String, _ attributes:Dictionary<String,Any>?, _ variation:OPTVariation, _ event:Dictionary<String, Any>) -> Void
 
 public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>?, _ eventTags:Dictionary<String, Any>?, _ event:Dictionary<String, Any>) -> Void
 

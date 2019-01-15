@@ -34,7 +34,7 @@ public protocol Optimizely {
     var errorHandler:OPTErrorHandler? { get }
     var eventDispatcher:OPTEventDispatcher? { get }
     var datafileHandler:OPTDatafileHandler? { get }
-    var logger:Logger? { get }
+    var logger:OPTLogger? { get }
     var userProfileService:OPTUserProfileService? { get }
     var notificationCenter:OPTNotificationCenter? { get }
     

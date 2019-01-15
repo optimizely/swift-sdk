@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class DefaultLogger : Logger {
+public class DefaultLogger : OPTLogger {
     private static var _logLevel:OptimizelyLogLevel?
     public static var logLevel: OptimizelyLogLevel {
         get {
@@ -25,7 +25,7 @@ public class DefaultLogger : Logger {
         DefaultLogger.logLevel = level
     }
     
-    public static func createInstance(logLevel: OptimizelyLogLevel) -> Logger? {
+    public static func createInstance(logLevel: OptimizelyLogLevel) -> OPTLogger? {
         return DefaultLogger(level:logLevel)
     }
     

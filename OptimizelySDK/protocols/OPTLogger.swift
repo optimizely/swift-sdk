@@ -36,7 +36,7 @@ public enum OptimizelyLogLevel : Int {
 /**
  * Any logger must implement these following methods.
  */
-public protocol Logger {
+public protocol OPTLogger {
 
     /// The log level the Logger is initialized with.
     static var logLevel:OptimizelyLogLevel { get set }
@@ -44,18 +44,18 @@ public protocol Logger {
     /**
      * Initialize a new Optimizely Logger instance.
      */
-    static func createInstance(logLevel:OptimizelyLogLevel) -> Logger?
+    static func createInstance(logLevel:OptimizelyLogLevel) -> OPTLogger?
 
     /**
      Log a message at a certain level.
-     @param message The message to log.
-     @param level The priority level of the log.
+     - Parameter level: The priority level of the log.
+     - Parameter message: The message to log.
      */
     func log(level: OptimizelyLogLevel, message: String)
 
 }
 
-extension Logger {
+extension OPTLogger {
     static var logLevelNames:[String] {
         get {
             return ["OFF", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "VERBOSE", "ALL"]

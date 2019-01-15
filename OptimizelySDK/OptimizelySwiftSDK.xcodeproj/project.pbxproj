@@ -43,7 +43,7 @@
 		6E4DD85221E5250200B0C2C7 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E4DD85321E5250200B0C2C7 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */; };
 		6E4DD85421E5250200B0C2C7 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6E4DD85521E5250200B0C2C7 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* Logger.swift */; };
+		6E4DD85521E5250200B0C2C7 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* OPTLogger.swift */; };
 		6E4DD85621E5250200B0C2C7 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E4DD85721E5250200B0C2C7 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStore.swift */; };
 		6E4DD85821E5250200B0C2C7 /* Optimizely.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BB921B32996001BE0FA /* Optimizely.swift */; };
@@ -54,7 +54,7 @@
 		6E4DD85D21E5250200B0C2C7 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E4DD85E21E5250200B0C2C7 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */; };
 		6E4DD85F21E5250200B0C2C7 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6E4DD86021E5250200B0C2C7 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* Logger.swift */; };
+		6E4DD86021E5250200B0C2C7 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* OPTLogger.swift */; };
 		6E4DD86121E5250200B0C2C7 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E4DD86221E5250200B0C2C7 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStore.swift */; };
 		6E4DD86321E5250B00B0C2C7 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
@@ -125,7 +125,7 @@
 		6E4DD8A621E5260600B0C2C7 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E4DD8A721E5260600B0C2C7 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */; };
 		6E4DD8A821E5260600B0C2C7 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6E4DD8A921E5260600B0C2C7 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* Logger.swift */; };
+		6E4DD8A921E5260600B0C2C7 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* OPTLogger.swift */; };
 		6E4DD8AA21E5260600B0C2C7 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E4DD8AB21E5260600B0C2C7 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStore.swift */; };
 		6E4DD8AC21E5260700B0C2C7 /* Optimizely.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BB921B32996001BE0FA /* Optimizely.swift */; };
@@ -136,7 +136,7 @@
 		6E4DD8B121E5260700B0C2C7 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E4DD8B221E5260700B0C2C7 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */; };
 		6E4DD8B321E5260700B0C2C7 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6E4DD8B421E5260700B0C2C7 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* Logger.swift */; };
+		6E4DD8B421E5260700B0C2C7 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* OPTLogger.swift */; };
 		6E4DD8B521E5260700B0C2C7 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E4DD8B621E5260700B0C2C7 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStore.swift */; };
 		6E4DD8B721E5260A00B0C2C7 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
@@ -227,7 +227,7 @@
 		0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTDatafileHandler.swift; sourceTree = "<group>"; };
 		0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTUserProfileService.swift; sourceTree = "<group>"; };
 		0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTNotificationCenter.swift; sourceTree = "<group>"; };
-		0B61624421B6F1B6000D7A28 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		0B61624421B6F1B6000D7A28 /* OPTLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTLogger.swift; sourceTree = "<group>"; };
 		0B61624721B70D0F000D7A28 /* DefaultBucketer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultBucketer.swift; sourceTree = "<group>"; };
 		0B61624F21B72DCB000D7A28 /* DefaultDecisionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDecisionService.swift; sourceTree = "<group>"; };
 		0B61625121B731E8000D7A28 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -315,7 +315,7 @@
 				0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */,
 				0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */,
 				0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */,
-				0B61624421B6F1B6000D7A28 /* Logger.swift */,
+				0B61624421B6F1B6000D7A28 /* OPTLogger.swift */,
 				0B61625C21B8B82A000D7A28 /* JSONParse.swift */,
 				0B5ADA2521CC62CD0049BC2C /* DataStore.swift */,
 			);
@@ -652,7 +652,7 @@
 				6E4DD86B21E5251200B0C2C7 /* UserAttribute.swift in Sources */,
 				6E4DD84221E524F000B0C2C7 /* DefaultLogger.swift in Sources */,
 				6E4DD83421E524E900B0C2C7 /* BatchEventBuilder.swift in Sources */,
-				6E4DD86021E5250200B0C2C7 /* Logger.swift in Sources */,
+				6E4DD86021E5250200B0C2C7 /* OPTLogger.swift in Sources */,
 				6E4DD84021E524F000B0C2C7 /* DefaultDecisionService.swift in Sources */,
 				6E4DD87B21E5251800B0C2C7 /* Experiment.swift in Sources */,
 				6E4DD83F21E524F000B0C2C7 /* DefaultNotificationCenter.swift in Sources */,
@@ -701,7 +701,7 @@
 				6E4DD89F21E5260200B0C2C7 /* Result.swift in Sources */,
 				6E4DD8FC21E530A900B0C2C7 /* OPTManager.swift in Sources */,
 				6E4DD8C821E5261600B0C2C7 /* TrafficAllocation.swift in Sources */,
-				6E4DD8B421E5260700B0C2C7 /* Logger.swift in Sources */,
+				6E4DD8B421E5260700B0C2C7 /* OPTLogger.swift in Sources */,
 				6E4DD8B121E5260700B0C2C7 /* OPTDatafileHandler.swift in Sources */,
 				6E4DD8A021E5260200B0C2C7 /* Constants.swift in Sources */,
 				6E4DD89321E525FD00B0C2C7 /* DefaultNotificationCenter.swift in Sources */,
@@ -755,7 +755,7 @@
 				6E4DD86821E5251200B0C2C7 /* UserAttribute.swift in Sources */,
 				6E4DD83921E524EF00B0C2C7 /* DefaultLogger.swift in Sources */,
 				6E4DD83321E524E900B0C2C7 /* BatchEventBuilder.swift in Sources */,
-				6E4DD85521E5250200B0C2C7 /* Logger.swift in Sources */,
+				6E4DD85521E5250200B0C2C7 /* OPTLogger.swift in Sources */,
 				6E4DD83721E524EF00B0C2C7 /* DefaultDecisionService.swift in Sources */,
 				6E4DD87021E5251700B0C2C7 /* Experiment.swift in Sources */,
 				6E4DD83621E524EF00B0C2C7 /* DefaultNotificationCenter.swift in Sources */,
@@ -800,7 +800,7 @@
 				6E4DD8C121E5261500B0C2C7 /* Rollout.swift in Sources */,
 				6E4DD88521E525F000B0C2C7 /* EventForDispatch+extension.swift in Sources */,
 				6E4DD8FB21E530A900B0C2C7 /* OPTManager.swift in Sources */,
-				6E4DD8A921E5260600B0C2C7 /* Logger.swift in Sources */,
+				6E4DD8A921E5260600B0C2C7 /* OPTLogger.swift in Sources */,
 				6E4DD88D21E525FC00B0C2C7 /* DefaultLogger.swift in Sources */,
 				6E4DD8C321E5261500B0C2C7 /* FeatureFlag.swift in Sources */,
 				6E4DD8BB21E5261100B0C2C7 /* Audience.swift in Sources */,

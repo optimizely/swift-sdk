@@ -101,7 +101,7 @@ open class OPTManager: NSObject {
     public func initializeSDK(datafile: Data) throws {
         
         // TODO: get the cached copy
-        var cachedDatafile: Data? = self.datafileHandler.isDatafileSaved(sdkKey: self.sdkKey) ? self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) : nil
+        let cachedDatafile: Data? = self.datafileHandler.isDatafileSaved(sdkKey: self.sdkKey) ? self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) : nil
 
         let selectedDatafile = cachedDatafile ?? datafile
         

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol DataStore {
+public protocol DataStoreQueueStack {
     func save(item:T)
     func getFirstItem() -> T?
     func getLastItem() -> T?

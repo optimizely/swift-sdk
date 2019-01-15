@@ -8,12 +8,12 @@
 
 import Foundation
 
-class DefaultDatafileHandler : DatafileHandler {
+class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     let logger = DefaultLogger.createInstance(logLevel: .debug)
     var timers:[String:Timer] = [String:Timer]()
     
-    static func createInstance() -> DatafileHandler? {
+    static func createInstance() -> OPTDatafileHandler? {
         return DefaultDatafileHandler()
     }
     

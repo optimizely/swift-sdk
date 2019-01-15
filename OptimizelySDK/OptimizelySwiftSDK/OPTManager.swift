@@ -22,8 +22,8 @@ open class OPTManager: NSObject {
     let bucketer: OPTBucketer
     let decisionService: OPTDecisionService
     let eventDispatcher: OPTEventDispatcher
-    let datafileHandler: DatafileHandler
-    let userProfileService: UserProfileService
+    let datafileHandler: OPTDatafileHandler
+    let userProfileService: OPTUserProfileService
     let notificationCenter: NotificationCenter
     
     let periodicDownloadInterval: Int
@@ -42,8 +42,8 @@ open class OPTManager: NSObject {
                 bucketer:OPTBucketer? = nil,
                 decisionService:OPTDecisionService? = nil,
                 eventDispatcher:OPTEventDispatcher? = nil,
-                datafileHandler:DatafileHandler? = nil,
-                userProfileService:UserProfileService? = nil,
+                datafileHandler:OPTDatafileHandler? = nil,
+                userProfileService:OPTUserProfileService? = nil,
                 notificationCenter:NotificationCenter? = nil,
                 periodicDownloadInterval:Int? = nil) {
         

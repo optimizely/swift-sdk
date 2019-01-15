@@ -63,7 +63,7 @@ import Foundation
 //    };
 //}
 
-public class DefaultUserProfileService : UserProfileService {
+public class DefaultUserProfileService : OPTUserProfileService {
     static let variationId = "variation_id"
     static let userId = "user_id"
     static let experimentMap = "experiment_bucket_map"
@@ -74,7 +74,7 @@ public class DefaultUserProfileService : UserProfileService {
     init() {
         profiles = UserDefaults.standard.dictionary(forKey: DefaultUserProfileService.storageName) as? [String : Dictionary<String, Any>] ?? Dictionary<String, Dictionary<String,Any>>()
     }
-    public static func createInstance() -> UserProfileService {
+    public static func createInstance() -> OPTUserProfileService {
         return DefaultUserProfileService()
     }
     

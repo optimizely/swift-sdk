@@ -30,7 +30,7 @@ public protocol Optimizely {
     
     var bucketer:OPTBucketer? { get }
     var decisionService:OPTDecisionService? { get }
-    var config:ProjectConfig? { get }
+    var config:OPTProjectConfig? { get }
     var errorHandler:OPTErrorHandler? { get }
     var eventDispatcher:OPTEventDispatcher? { get }
     var datafileHandler:OPTDatafileHandler? { get }

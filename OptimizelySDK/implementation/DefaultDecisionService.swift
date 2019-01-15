@@ -17,11 +17,11 @@
 import Foundation
 
 class DefaultDecisionService : OPTDecisionService {
-    var config:ProjectConfig!
+    var config:OPTProjectConfig!
     var bucketer:OPTBucketer!
     var userProfileService:OPTUserProfileService!
 
-    internal required init(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) {
+    internal required init(config:OPTProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) {
         self.config = config
         self.bucketer = bucketer
         self.userProfileService = userProfileService
@@ -30,7 +30,7 @@ class DefaultDecisionService : OPTDecisionService {
     // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     init() {}
     
-    func initialize(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) {
+    func initialize(config:OPTProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) {
         self.config = config
         self.bucketer = bucketer
         self.userProfileService = userProfileService
@@ -38,7 +38,7 @@ class DefaultDecisionService : OPTDecisionService {
     
     
     
-    static func createInstance(config: ProjectConfig, bucketer: OPTBucketer, userProfileService:OPTUserProfileService) -> OPTDecisionService? {
+    static func createInstance(config: OPTProjectConfig, bucketer: OPTBucketer, userProfileService:OPTUserProfileService) -> OPTDecisionService? {
         return DefaultDecisionService(config: config, bucketer: bucketer, userProfileService: userProfileService)
     }
     
@@ -105,7 +105,7 @@ class DefaultDecisionService : OPTDecisionService {
         return true
     }
     
-    func getExperimentInGroup(group:Group, bucketingId:String) -> OPTExperiment? {
+    func getExperimentInGroup(group:OPTGroup, bucketingId:String) -> OPTExperiment? {
         let experiment = bucketer.bucketToExperiment(group:group, bucketingId:bucketingId)
         if let _ = experiment {
             // log

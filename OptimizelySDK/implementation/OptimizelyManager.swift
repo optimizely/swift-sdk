@@ -12,7 +12,7 @@ public class OptimizelyManager : Optimizely {
     
     public var bucketer: OPTBucketer?
     public var decisionService: OPTDecisionService?
-    public var config: ProjectConfig?
+    public var config: OPTProjectConfig?
     public var errorHandler: OPTErrorHandler?
     public var eventDispatcher: OPTEventDispatcher?
     public var datafileHandler: OPTDatafileHandler?
@@ -35,7 +35,7 @@ public class OptimizelyManager : Optimizely {
     }
 
     public func initialize(data:Data) -> Optimizely? {
-        config = try! JSONDecoder().decode(ProjectConfig.self, from: data)
+        config = try! JSONDecoder().decode(OPTProjectConfig.self, from: data)
         if let config = config, let bucketer = DefaultBucketer.createInstance(config: config) {
             decisionService = DefaultDecisionService.createInstance(config: config, bucketer: bucketer, userProfileService: userProfileService ?? DefaultUserProfileService.createInstance())
             return self

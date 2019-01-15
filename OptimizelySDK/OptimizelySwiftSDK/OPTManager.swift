@@ -14,7 +14,7 @@ open class OPTManager: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
-    var config:ProjectConfig!
+    var config:OPTProjectConfig!
     
     // MARK: - Customizable
     
@@ -126,7 +126,7 @@ open class OPTManager: NSObject {
     
     func configSDK(datafile: Data) throws {
         do {
-            self.config = try JSONDecoder().decode(ProjectConfig.self, from: datafile)
+            self.config = try JSONDecoder().decode(OPTProjectConfig.self, from: datafile)
             
             bucketer.initialize(config: self.config)
             decisionService.initialize(config: self.config,

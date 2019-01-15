@@ -22,10 +22,10 @@ public protocol OPTBucketer {
      - Parameter config: The project config that the bucketer will use for reference.
      - Returns: The bucketer that has been created.
      */
-    static func createInstance(config:ProjectConfig) -> OPTBucketer?
+    static func createInstance(config:OPTProjectConfig) -> OPTBucketer?
 
     // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
-    func initialize(config:ProjectConfig)
+    func initialize(config:OPTProjectConfig)
 
     /**
      Bucket experiment based on bucket value and traffic allocations.
@@ -33,7 +33,7 @@ public protocol OPTBucketer {
      - Parameter bucketingId: Id to be used for bucketing the user.
      - Returns: experiment which represent Experiment.
      */
-    func bucketToExperiment(group:Group, bucketingId:String) -> OPTExperiment?
+    func bucketToExperiment(group:OPTGroup, bucketingId:String) -> OPTExperiment?
     
     /**
      Bucket a bucketingId into an experiment.

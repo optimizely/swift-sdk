@@ -1,6 +1,5 @@
 //
-//  Group.swift
-//  OptimizelySDK
+//  Attribute.swift
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -19,14 +18,8 @@
 
 import Foundation
 
-public class Group : Codable {
-    enum Policy : String, Codable {
-        case random
-        case overlapping
-    }
-    
+public class OPTAttribute : Codable {
     var id:String = ""
-    var policy:Policy = Policy.random
-    var trafficAllocation:[OPTTrafficAllocation] = []
-    var experiments:[OPTExperiment] = []
+    var key:String = ""
+    var segmentId:String? = ""
 }

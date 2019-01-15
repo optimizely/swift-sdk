@@ -1,6 +1,3 @@
-//
-//  Event.swift
-//  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -19,7 +16,7 @@
 
 import Foundation
 
-public class Event : Codable
+public class OPTEvent : Codable
 {
     var experimentIds:[String] = []
     var id:String = ""

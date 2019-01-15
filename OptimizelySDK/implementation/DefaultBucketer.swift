@@ -22,10 +22,10 @@ class DefaultBucketer : OPTBucketer {
     let MAX_HASH_SEED:UInt64 = 1
     var MAX_HASH_VALUE:UInt64?
     
-    private var config:ProjectConfig!
+    private var config:OPTProjectConfig!
     private var logger = DefaultLogger.createInstance(logLevel: .debug)
     
-    internal required init(config:ProjectConfig) {
+    internal required init(config:OPTProjectConfig) {
         self.config = config
 
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
@@ -36,17 +36,17 @@ class DefaultBucketer : OPTBucketer {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
     }
 
-    func initialize(config:ProjectConfig) {
+    func initialize(config:OPTProjectConfig) {
         self.config = config
     }
 
     
     
-    static func createInstance(config: ProjectConfig) -> OPTBucketer? {
+    static func createInstance(config: OPTProjectConfig) -> OPTBucketer? {
         return DefaultBucketer(config: config)
     }
     
-    func bucketToExperiment(group: Group, bucketingId: String) -> OPTExperiment? {
+    func bucketToExperiment(group: OPTGroup, bucketingId: String) -> OPTExperiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
         

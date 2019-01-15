@@ -174,7 +174,7 @@ open class OPTManager: NSObject {
     ///   - attributes: A map of attribute names to current user attribute values.
     /// - Returns: The variation key the user was bucketed into
     /// - Throws: `OPTError` if error is detected
-    public func activate(experimentKey:String,
+    @objc public func activate(experimentKey:String,
                          userId:String,
                          attributes:Dictionary<String, Any>?=nil) throws -> String {
         

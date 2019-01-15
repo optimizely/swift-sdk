@@ -143,7 +143,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             storyboard = UIStoryboard(name: "iOSMain", bundle: nil)
             #endif
             
-            var rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
+            var rootViewController: UIViewController
             
             if let optimizelyManager = optimizelyManager,
                 let variationKey = bucketedVariation,
@@ -155,6 +155,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 variationViewController.variationKey = variationKey
                 
                 rootViewController = variationViewController
+            } else {
+                rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
             }
             
             self.window?.rootViewController = rootViewController

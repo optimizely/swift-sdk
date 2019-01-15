@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "VariationViewController.h"
+
 @import OptimizelySwiftSDK;
 #if TARGET_OS_IOS
     @import Amplitude_iOS;
@@ -38,7 +40,38 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     //     - fetch a JSON datafile from the server
     //     - network delay, but the local configuration is in sync with the server experiment settings
     // (2) synchronous SDK initialization
-    //     - initialize immediately with the given JSON datafile or its cached copy
+    //     - initialize immedi
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ately with the given JSON datafile or its cached copy
     //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
 
     [self initializeOptimizelySDKAsynchronous];
@@ -72,31 +105,43 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     
     self.optimizely = [[OPTManager alloc] initWithSdkKey:kOptimizelySdkKey];
     
-    NSError *error = nil;
-    NSString *datafileJSON = [NSString stringWithContentsOfFile:localDatafilePath encoding:NSUTF8StringEncoding error:&error];
+    NSString *datafileJSON = [NSString stringWithContentsOfFile:localDatafilePath encoding:NSUTF8StringEncoding error:nil];
         
-    if (error == nil) {
-        [self.optimizely initializeSDKWithDatafile:datafileJSON error:&error];
-        if (error == nil) {
+    if (datafileJSON == nil) {
+        NSLog(@"Invalid JSON format");
+        self.optimizely = nil;
+    } else {
+        NSError *error;
+        BOOL status = [self.optimizely initializeSDKWithDatafile:datafileJSON error:&error];
+        if (status) {
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
             self.optimizely = nil;
         }
-    } else {
-        NSLog(@"Invalid JSON format");
-        self.optimizely = nil;
     }
     
     [self startAppWithExperimentActivated];
 }
      
 -(void)startAppWithExperimentActivated {
+    NSError *error;
+    NSString *variationKey = [self.optimizely activateWithExperimentKey:kOptimizelyExperimentKey
+                                                                 userId:self.userId
+                                                             attributes:self.attributes
+                                                                  error:&error];
     
+    if (variationKey == nil) {
+        NSLog(@"Optimizely SDK activation failed: %@", error.localizedDescription);
+        self.optimizely = nil;
+    }
+                              
+
+    [self setRootViewControllerWithOtimizelyManager:self.optimizely bucketedVariation:variationKey];
 }
 
 
--(id<OPTNotificationCenter>)makeCustomNotificationCenter {
+-(id)makeCustomNotificationCenter {
 //#if os(tvOS)
 //    return CustomNotificationCenter()
 //#else
@@ -122,7 +167,31 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     return nil;
 }
 
--(void)setRootViewControllerWithOtimizelyManager: OPTManager bucketedVariation:NSString {
+-(void)setRootViewControllerWithOtimizelyManager:(OPTManager*)manager bucketedVariation:(NSString*)varationKey {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+#if TARGET_OS_IOS
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iOSMain" bundle:nil];
+#else
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"tvOSMain" bundle:nil];
+#endif
+        UIViewController *rootViewController;
+        
+        if ((manager != nil) && (varationKey != nil)) {
+            VariationViewController *vc = [storyboard instantiateViewControllerWithIdentifier: @"VariationViewController"];
+            
+//            vc.eventKey = kOptimizelyEventKey;
+//            vc.optimizelyManager = manager;
+//            vc.userId = self.userId;
+//            vc.variationKey = variationKey;
+
+            rootViewController = vc;
+        } else {
+            rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"FailureViewController"];
+        }
+        
+        self.window.rootViewController = rootViewController;
+    });
 }
 
 

@@ -10,7 +10,7 @@ import Foundation
 
 class BatchEventBuilder {
     static private var logger = DefaultLogger.createInstance(logLevel: .debug)
-    static func createImpressionEvent(config:ProjectConfig, decisionService:DecisionService, experiment:Experiment, varionation:Variation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
+    static func createImpressionEvent(config:ProjectConfig, decisionService:OPTDecisionService, experiment:Experiment, varionation:Variation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
         var decisions = [Decision]()
         
         let decision = Decision(variationID: varionation.id, campaignID: experiment.layerId, experimentID: experiment.id)
@@ -37,7 +37,7 @@ class BatchEventBuilder {
 
     }
     
-    static func createConversionEvent(config:ProjectConfig, decisionService:DecisionService, eventKey:String, userId:String, attributes:Dictionary<String,Any>?, eventTags:Dictionary<String, Any>?) -> Data? {
+    static func createConversionEvent(config:ProjectConfig, decisionService:OPTDecisionService, eventKey:String, userId:String, attributes:Dictionary<String,Any>?, eventTags:Dictionary<String, Any>?) -> Data? {
         
         guard let event = config.events?.filter({$0.key == eventKey}).first  else {
             return nil

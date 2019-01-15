@@ -20,7 +20,7 @@ open class OPTManager: NSObject {
     
     let logger: Logger
     let bucketer: OPTBucketer
-    let decisionService: DecisionService
+    let decisionService: OPTDecisionService
     let eventDispatcher: EventDispatcher
     let datafileHandler: DatafileHandler
     let userProfileService: UserProfileService
@@ -40,7 +40,7 @@ open class OPTManager: NSObject {
     public init(sdkKey: String,
                 logger:Logger? = nil,
                 bucketer:OPTBucketer? = nil,
-                decisionService:DecisionService? = nil,
+                decisionService:OPTDecisionService? = nil,
                 eventDispatcher:EventDispatcher? = nil,
                 datafileHandler:DatafileHandler? = nil,
                 userProfileService:UserProfileService? = nil,

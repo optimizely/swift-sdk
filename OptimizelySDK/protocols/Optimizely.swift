@@ -29,7 +29,7 @@ public typealias OptimizelyInitCompletionHandler = (Result<Optimizely, Intialize
 public protocol Optimizely {
     
     var bucketer:OPTBucketer? { get }
-    var decisionService:DecisionService? { get }
+    var decisionService:OPTDecisionService? { get }
     var config:ProjectConfig? { get }
     var errorHandler:ErrorHandler? { get }
     var eventDispatcher:EventDispatcher? { get }

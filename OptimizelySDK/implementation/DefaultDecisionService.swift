@@ -8,7 +8,7 @@
 
 import Foundation
 
-class DefaultDecisionService : DecisionService {
+class DefaultDecisionService : OPTDecisionService {
     var config:ProjectConfig!
     var bucketer:OPTBucketer!
     var userProfileService:UserProfileService!
@@ -30,7 +30,7 @@ class DefaultDecisionService : DecisionService {
     
     
     
-    static func createInstance(config: ProjectConfig, bucketer: OPTBucketer, userProfileService:UserProfileService) -> DecisionService? {
+    static func createInstance(config: ProjectConfig, bucketer: OPTBucketer, userProfileService:UserProfileService) -> OPTDecisionService? {
         return DefaultDecisionService(config: config, bucketer: bucketer, userProfileService: userProfileService)
     }
     

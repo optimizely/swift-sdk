@@ -1,8 +1,5 @@
-//
-//  Event.swift
-//  OptimizelySDK
 /****************************************************************************
- * Copyright 2018, Optimizely, Inc. and contributors                        *
+ * Copyright 2019, Optimizely, Inc. and contributors                        *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -19,9 +16,23 @@
 
 import Foundation
 
-public class Event : Codable
-{
-    var experimentIds:[String] = []
-    var id:String = ""
-    var key:String = ""
+/**
+ This is the protocol to implement in order to be notified of errors in the app.  However, if the method throws then you can simply catch the error and the error handler is not used.
+ */
+public protocol OPTErrorHandler {
+    
+    static func createInstance() -> OPTErrorHandler
+
+    /**
+     Handle an error thrown by the SDK.
+     - Parameter error: The error object to be handled.
+     */
+    func handleError(error:Error)
+    
+    /**
+     Handle an exception thrown by the SDK.
+     - Parameter exception: The exception object to be handled.
+     */
+    func handlerException(exception:NSException)
+
 }

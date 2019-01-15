@@ -16,22 +16,22 @@
 
 import Foundation
 
-public class ProjectConfig : Codable
+public class OPTProjectConfig : Codable
 {
     var version:String = ""
-    var rollouts:[Rollout]? = []
-    var typedAudiences:[Audience]? = []
+    var rollouts:[OPTRollout]? = []
+    var typedAudiences:[OPTAudience]? = []
     var anonymizeIP:Bool? = true
     var projectId:String = ""
-    var variables:[Variable]? = []
-    var featureFlags:[FeatureFlag]? = []
-    var experiments:[Experiment] = []
-    var audiences:[Audience] = []
-    var groups:[Group] = []
-    var attributes:[Attribute] = []
+    var variables:[OPTVariable]? = []
+    var featureFlags:[OPTFeatureFlag]? = []
+    var experiments:[OPTExperiment] = []
+    var audiences:[OPTAudience] = []
+    var groups:[OPTGroup] = []
+    var attributes:[OPTAttribute] = []
     var botFiltering:Bool? = false
     var accountId:String = ""
-    var events:[Event]? = []
+    var events:[OPTEvent]? = []
     var revision:String = ""
     // transient
     var whitelistUsers:Dictionary<String,Dictionary<String,String>> = Dictionary<String,Dictionary<String,String>>()
@@ -66,7 +66,7 @@ public class ProjectConfig : Codable
     }
 }
 
-extension ProjectConfig {
+extension OPTProjectConfig {
     func whitelistUser(userId:String, experimentId:String, variationId:String) {
         if var dic = whitelistUsers[userId] {
             dic[experimentId] = variationId

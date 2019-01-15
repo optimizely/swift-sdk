@@ -1,8 +1,3 @@
-//
-//  FeatureVariable.swift
-//  OptimizelySDK
-//
-//  Created by Thomas Zurkan on 11/27/18.
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -19,13 +14,27 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
+
 import Foundation
 
-public class FeatureVariable : Codable
+public class OPTExperiment : Codable
 {
-    var defaultValue:String? = ""
-    var type:String = ""
-    var id:String = ""
-    var key:String = ""
+    
+    enum Status: String, Codable {
+        case Running
+        case Launched
+        case Paused
+        case Not_started = "Not started"
+        case Archived
+    }
+    
+    public var id:String = ""
+    public var key:String = ""
+    var status:Status = Status.Not_started
+    public var layerId:String = ""
+    public var trafficAllocation:[OPTTrafficAllocation] = []
+    public var audienceIds:[String] = []
+    public var audienceConditions:ConditionHolder?
+    public var variations:[OPTVariation] = []
+    public var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
 }
-

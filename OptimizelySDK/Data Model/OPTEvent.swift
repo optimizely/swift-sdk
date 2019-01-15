@@ -16,9 +16,9 @@
 
 import Foundation
 
-public class TrafficAllocation : Codable
+public class OPTEvent : Codable
 {
-    var entityId:String = ""
-    var endOfRange:Int = 0
-    
+    var experimentIds:[String] = []
+    var id:String = ""
+    var key:String = ""
 }

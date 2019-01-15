@@ -28,15 +28,15 @@ public typealias OptimizelyInitCompletionHandler = (Result<Optimizely, Intialize
 
 public protocol Optimizely {
     
-    var bucketer:Bucketer? { get }
-    var decisionService:DecisionService? { get }
-    var config:ProjectConfig? { get }
-    var errorHandler:ErrorHandler? { get }
-    var eventDispatcher:EventDispatcher? { get }
-    var datafileHandler:DatafileHandler? { get }
-    var logger:Logger? { get }
-    var userProfileService:UserProfileService? { get }
-    var notificationCenter:NotificationCenter? { get }
+    var bucketer:OPTBucketer? { get }
+    var decisionService:OPTDecisionService? { get }
+    var config:OPTProjectConfig? { get }
+    var errorHandler:OPTErrorHandler? { get }
+    var eventDispatcher:OPTEventDispatcher? { get }
+    var datafileHandler:OPTDatafileHandler? { get }
+    var logger:OPTLogger? { get }
+    var userProfileService:OPTUserProfileService? { get }
+    var notificationCenter:OPTNotificationCenter? { get }
     
 /**
  * Use the activate method to start an experiment.
@@ -52,7 +52,7 @@ public protocol Optimizely {
  * @param userId The user ID to be used for bucketing.
  * @return The variation the user was bucketed into. This value can be nil.
  */
-    func activate(experimentKey:String, userId:String) -> Variation?
+    func activate(experimentKey:String, userId:String) -> OPTVariation?
 
 /**
  * Try to activate an experiment based on the experiment key and user ID with user attributes.
@@ -61,7 +61,7 @@ public protocol Optimizely {
  * @param attributes A map of attribute names to current user attribute values.
  * @return The variation the user was bucketed into. This value can be nil.
  */
-    func activate(experimentKey:String, userId:String, attributes:Dictionary<String, Any>?) -> Variation?
+    func activate(experimentKey:String, userId:String, attributes:Dictionary<String, Any>?) -> OPTVariation?
 /**
  * Use the getVariation method if activate has been called and the current variation assignment
  * is needed for a given experiment and user.
@@ -74,7 +74,7 @@ public protocol Optimizely {
  * @param userId The user ID to be used for bucketing.
  * @return The variation the user was bucketed into. This value can be nil.
  */
-    func variation(experimentKey:String, userId:String) -> Variation?
+    func variation(experimentKey:String, userId:String) -> OPTVariation?
 
 /**
  * Get variation for experiment and user ID with user attributes.
@@ -83,7 +83,7 @@ public protocol Optimizely {
  * @param attributes A map of attribute names to current user attribute values.
  * @return The variation the user was bucketed into. This value can be nil.
  */
-    func variation(experimentKey:String, userId:String, attributes:Dictionary<String, Any>?) -> Variation?
+    func variation(experimentKey:String, userId:String, attributes:Dictionary<String, Any>?) -> OPTVariation?
 /**
  * Use the setForcedVariation method to force an experimentKey-userId
  * pair into a specific variation for QA purposes.
@@ -101,7 +101,7 @@ public protocol Optimizely {
  * @param userId The user ID to be used for bucketing.
  * @return forced variation if it exists, otherwise return nil.
  */
-    func getForcedVariation(experimentKey:String, userId:String) -> Variation?
+    func getForcedVariation(experimentKey:String, userId:String) -> OPTVariation?
 
 /**
  * Set forced variation for experiment and user ID to variationKey.

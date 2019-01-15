@@ -1,8 +1,3 @@
-//
-//  FeatureFlag.swift
-//  OptimizelySDK
-//
-//  Created by Thomas Zurkan on 11/27/18.
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -21,12 +16,12 @@
 
 import Foundation
 
-public class FeatureFlag : Codable
+public class OPTFeatureFlag : Codable
 {
     var experimentIds:[String] = []
     var rolloutId:String?
     var groupId:String?
-    var variables:[FeatureVariable]? = []
+    var variables:[OPTFeatureVariable]? = []
     var id:String = ""
     var key:String = ""
 }

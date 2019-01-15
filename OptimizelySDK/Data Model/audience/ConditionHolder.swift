@@ -54,7 +54,7 @@ public enum ConditionHolder : Codable {
         }
     }
     
-    func evaluate(projectConfig:ProjectConfig, attributes:Dictionary<String,Any>) -> Bool? {
+    func evaluate(projectConfig:OPTProjectConfig, attributes:Dictionary<String,Any>) -> Bool? {
         switch self {
         case .string(let op):
             // assume it is a audienceId if it is not an operand
@@ -88,7 +88,7 @@ extension String {
 }
 
 extension Array where Element == ConditionHolder {
-    func evaluate(config: ProjectConfig, attributes: Dictionary<String,Any>) -> Bool? {
+    func evaluate(config: OPTProjectConfig, attributes: Dictionary<String,Any>) -> Bool? {
 
         for i in 0..<self.count {
             let condition = self[i]
@@ -115,7 +115,7 @@ extension Array where Element == ConditionHolder {
         return nil
     }
     
-    func evaluate(operand:String, config: ProjectConfig, attributes: Dictionary<String,Any>) -> Bool? {
+    func evaluate(operand:String, config: OPTProjectConfig, attributes: Dictionary<String,Any>) -> Bool? {
         func orEvaluate() -> Bool? {
             var foundNil = false
             for i in 1..<self.count {

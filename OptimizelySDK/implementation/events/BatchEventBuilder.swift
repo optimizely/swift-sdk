@@ -10,7 +10,7 @@ import Foundation
 
 class BatchEventBuilder {
     static private var logger = DefaultLogger.createInstance(logLevel: .debug)
-    static func createImpressionEvent(config:ProjectConfig, decisionService:DecisionService, experiment:Experiment, varionation:Variation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
+    static func createImpressionEvent(config:OPTProjectConfig, decisionService:OPTDecisionService, experiment:OPTExperiment, varionation:OPTVariation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
         var decisions = [Decision]()
         
         let decision = Decision(variationID: varionation.id, campaignID: experiment.layerId, experimentID: experiment.id)
@@ -37,17 +37,17 @@ class BatchEventBuilder {
 
     }
     
-    static func createConversionEvent(config:ProjectConfig, decisionService:DecisionService, eventKey:String, userId:String, attributes:Dictionary<String,Any>?, eventTags:Dictionary<String, Any>?) -> Data? {
+    static func createConversionEvent(config:OPTProjectConfig, decisionService:OPTDecisionService, eventKey:String, userId:String, attributes:Dictionary<String,Any>?, eventTags:Dictionary<String, Any>?) -> Data? {
         
         guard let event = config.events?.filter({$0.key == eventKey}).first  else {
             return nil
         }
         let experimentIds = event.experimentIds
-        let experiments = experimentIds.map { (id) -> Experiment? in
+        let experiments = experimentIds.map { (id) -> OPTExperiment? in
             config.experiments.filter({$0.id == id}).first
         }
         var decisions = [Decision]()
-        for experiment in experiments where experiment != nil && experiment?.status == Experiment.Status.Running {
+        for experiment in experiments where experiment != nil && experiment?.status == OPTExperiment.Status.Running {
             if let variation = decisionService.getVariation(userId: userId, experiment: experiment!, attributes: attributes ?? [String:Any]()) {
                 decisions.append(Decision(variationID: variation.id, campaignID: experiment!.layerId, experimentID: experiment!.id))
             }
@@ -84,7 +84,7 @@ class BatchEventBuilder {
         return nil
     }
     
-    static func getEventAttributes(config:ProjectConfig, attributes:Dictionary<String,Any>?)-> [EventAttribute] {
+    static func getEventAttributes(config:OPTProjectConfig, attributes:Dictionary<String,Any>?)-> [EventAttribute] {
         var eventAttributes = [EventAttribute]()
         
         if let attributes = attributes {

@@ -14,17 +14,17 @@ open class OPTManager: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
-    var config:ProjectConfig!
+    var config:OPTProjectConfig!
     
     // MARK: - Customizable
     
-    let logger: Logger
-    let bucketer: Bucketer
-    let decisionService: DecisionService
-    let eventDispatcher: EventDispatcher
-    let datafileHandler: DatafileHandler
-    let userProfileService: UserProfileService
-    let notificationCenter: NotificationCenter
+    let logger: OPTLogger
+    let bucketer: OPTBucketer
+    let decisionService: OPTDecisionService
+    let eventDispatcher: OPTEventDispatcher
+    let datafileHandler: OPTDatafileHandler
+    let userProfileService: OPTUserProfileService
+    let notificationCenter: OPTNotificationCenter
     
     let periodicDownloadInterval: Int
     
@@ -38,13 +38,13 @@ open class OPTManager: NSObject {
     ///   - bucketer: custom Bucketer
     ///   - ...
     public init(sdkKey: String,
-                logger:Logger? = nil,
-                bucketer:Bucketer? = nil,
-                decisionService:DecisionService? = nil,
-                eventDispatcher:EventDispatcher? = nil,
-                datafileHandler:DatafileHandler? = nil,
-                userProfileService:UserProfileService? = nil,
-                notificationCenter:NotificationCenter? = nil,
+                logger:OPTLogger? = nil,
+                bucketer:OPTBucketer? = nil,
+                decisionService:OPTDecisionService? = nil,
+                eventDispatcher:OPTEventDispatcher? = nil,
+                datafileHandler:OPTDatafileHandler? = nil,
+                userProfileService:OPTUserProfileService? = nil,
+                notificationCenter:OPTNotificationCenter? = nil,
                 periodicDownloadInterval:Int? = nil) {
         
         self.sdkKey = sdkKey
@@ -126,7 +126,7 @@ open class OPTManager: NSObject {
     
     func configSDK(datafile: Data) throws {
         do {
-            self.config = try JSONDecoder().decode(ProjectConfig.self, from: datafile)
+            self.config = try JSONDecoder().decode(OPTProjectConfig.self, from: datafile)
             
             bucketer.initialize(config: self.config)
             decisionService.initialize(config: self.config,
@@ -228,7 +228,7 @@ open class OPTManager: NSObject {
     
     func getVariation(experimentKey:String,
                       userId:String,
-                      attributes:Dictionary<String, Any>?=nil) throws -> Variation {
+                      attributes:Dictionary<String, Any>?=nil) throws -> OPTVariation {
         
         if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
             let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) {

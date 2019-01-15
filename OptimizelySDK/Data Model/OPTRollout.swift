@@ -1,3 +1,6 @@
+//
+//  Rollout.swift
+//  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -14,23 +17,11 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
-
 import Foundation
 
-public protocol ErrorHandler {
-    
-    static func createInstance() -> ErrorHandler
-
-    /**
-     * Handle an error thrown by the SDK.
-     * @param error The error object to be handled.
-     */
-    func handleError(error:Error)
-    
-    /**
-     * Handle an exception thrown by the SDK.
-     * @param exception The exception object to be handled.
-     */
-    func handlerException(exception:NSException)
-
+public class OPTRollout : Codable
+{
+    var experiments:[OPTExperiment] = []
+    var id:String = ""
 }
+

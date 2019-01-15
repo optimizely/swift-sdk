@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class Audience : Codable {
+public class OPTAudience : Codable {
     var id:String = ""
     var name:String = ""
     var conditions:ConditionHolder?

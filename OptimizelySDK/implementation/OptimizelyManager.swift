@@ -10,18 +10,18 @@ import Foundation
 
 public class OptimizelyManager : Optimizely {
     
-    public var bucketer: Bucketer?
-    public var decisionService: DecisionService?
-    public var config: ProjectConfig?
-    public var errorHandler: ErrorHandler?
-    public var eventDispatcher: EventDispatcher?
-    public var datafileHandler: DatafileHandler?
-    public var logger: Logger?
-    public var userProfileService: UserProfileService?
-    public var notificationCenter: NotificationCenter?
+    public var bucketer: OPTBucketer?
+    public var decisionService: OPTDecisionService?
+    public var config: OPTProjectConfig?
+    public var errorHandler: OPTErrorHandler?
+    public var eventDispatcher: OPTEventDispatcher?
+    public var datafileHandler: OPTDatafileHandler?
+    public var logger: OPTLogger?
+    public var userProfileService: OPTUserProfileService?
+    public var notificationCenter: OPTNotificationCenter?
     private var periodicDownloadInterval:Int?
     
-    public init(bucketer:Bucketer? = nil, decisionService:DecisionService? = nil, errorHandler:ErrorHandler? = nil, eventDispatcher:EventDispatcher? = nil, datafileHandler:DatafileHandler? = nil, logger:Logger? = nil, userProfileService:UserProfileService? = nil, notificationCenter:NotificationCenter? = nil, periodicDownloadInterval:Int? = nil) {
+    public init(bucketer:OPTBucketer? = nil, decisionService:OPTDecisionService? = nil, errorHandler:OPTErrorHandler? = nil, eventDispatcher:OPTEventDispatcher? = nil, datafileHandler:OPTDatafileHandler? = nil, logger:OPTLogger? = nil, userProfileService:OPTUserProfileService? = nil, notificationCenter:OPTNotificationCenter? = nil, periodicDownloadInterval:Int? = nil) {
         self.bucketer = bucketer
         self.periodicDownloadInterval = periodicDownloadInterval
         self.decisionService = decisionService
@@ -35,7 +35,7 @@ public class OptimizelyManager : Optimizely {
     }
 
     public func initialize(data:Data) -> Optimizely? {
-        config = try! JSONDecoder().decode(ProjectConfig.self, from: data)
+        config = try! JSONDecoder().decode(OPTProjectConfig.self, from: data)
         if let config = config, let bucketer = DefaultBucketer.createInstance(config: config) {
             decisionService = DefaultDecisionService.createInstance(config: config, bucketer: bucketer, userProfileService: userProfileService ?? DefaultUserProfileService.createInstance())
             return self
@@ -84,11 +84,11 @@ public class OptimizelyManager : Optimizely {
     
 
     
-    public func activate(experimentKey: String, userId: String) -> Variation? {
+    public func activate(experimentKey: String, userId: String) -> OPTVariation? {
         return activate(experimentKey: experimentKey, userId: userId, attributes: nil)
     }
     
-    public func activate(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
+    public func activate(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> OPTVariation? {
           if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
               let variation = variation(experimentKey: experimentKey, userId: userId, attributes: attributes) {
 
@@ -111,11 +111,11 @@ public class OptimizelyManager : Optimizely {
         return nil
     }
     
-    public func variation(experimentKey: String, userId: String) -> Variation? {
+    public func variation(experimentKey: String, userId: String) -> OPTVariation? {
         return variation(experimentKey: experimentKey, userId: userId, attributes: nil)
     }
     
-    public func variation(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> Variation? {
+    public func variation(experimentKey: String, userId: String, attributes: Dictionary<String, Any>?) -> OPTVariation? {
 
         if let experiment = config?.experiments.filter({$0.key == experimentKey}).first {
             return decisionService?.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:])
@@ -124,7 +124,7 @@ public class OptimizelyManager : Optimizely {
         return nil
     }
     
-    public func getForcedVariation(experimentKey: String, userId: String) -> Variation? {
+    public func getForcedVariation(experimentKey: String, userId: String) -> OPTVariation? {
         if let dict = config?.whitelistUsers[userId], let variationKey = dict[experimentKey] {
             return  config?.experiments.filter({$0.key == experimentKey}).first?.variations.filter({$0.key == variationKey}).first
         }

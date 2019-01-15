@@ -1,33 +1,47 @@
-//
-//  DefaultNotificationListener.swift
-//  OptimizelySDK
-//
-//  Created by Thomas Zurkan on 12/18/18.
-//  Copyright © 2018 Optimizely. All rights reserved.
-//
+/****************************************************************************
+ * Copyright 2019, Optimizely, Inc. and contributors                        *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
-public class DefaultNotificationCenter : NotificationCenter {
+public class DefaultNotificationCenter : OPTNotificationCenter {
     
     public var notificationId: Int = 1
     var notificationListeners = [Int:(Int,GenericListener)]()
     
-    public static func createInstance() -> NotificationCenter? {
+    public static func createInstance() -> OPTNotificationCenter? {
             return DefaultNotificationCenter()
     }
     
     internal init() {
         
     }
-
-    public func addGenericNotificationListener(notificationType: Int, listener: @escaping GenericListener) {
-        notificationListeners[notificationId] = (notificationType, listener)
-
+    
+    internal func incrementNotificationId() -> Int {
+        let returnValue = notificationId
         notificationId += 1
+        return returnValue
+    }
+
+    public func addGenericNotificationListener(notificationType: Int, listener: @escaping GenericListener) -> Int? {
+        notificationListeners[notificationId] = (notificationType, listener)
+        
+        return incrementNotificationId()
     }
     
-    public func addActivateNotificationListener(activateListener: @escaping (Experiment, String, Dictionary<String, Any>?, Variation, Dictionary<String, Any>) -> Void) {
+    public func addActivateNotificationListener(activateListener: @escaping (OPTExperiment, String, Dictionary<String, Any>?, OPTVariation, Dictionary<String, Any>) -> Void) -> Int? {
         notificationListeners[notificationId] = (NotificationType.Activate.rawValue,  { (args:Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
@@ -35,18 +49,18 @@ public class DefaultNotificationCenter : NotificationCenter {
             if myArgs.count < 5 {
                 return
             }
-            if let experiment = myArgs[0] as? Experiment, let userId = myArgs[1] as? String,
-                let variation = myArgs[3] as? Variation {
+            if let experiment = myArgs[0] as? OPTExperiment, let userId = myArgs[1] as? String,
+                let variation = myArgs[3] as? OPTVariation {
                 let attributes = myArgs[2] as? Dictionary<String, Any>
                 let event = myArgs[4] as! Dictionary<String,Any>
                 activateListener(experiment, userId, attributes, variation, event)
             }
         })
         
-        notificationId += 1
+        return incrementNotificationId()
     }
     
-    public func addTrackNotificationListener(trackListener: @escaping (String, String, Dictionary<String, Any>?, Dictionary<String, Any>?, Dictionary<String, Any>) -> Void) {
+    public func addTrackNotificationListener(trackListener: @escaping (String, String, Dictionary<String, Any>?, Dictionary<String, Any>?, Dictionary<String, Any>) -> Void) -> Int? {
         notificationListeners[notificationId] = (NotificationType.Track.rawValue,  { (args:Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
@@ -62,8 +76,7 @@ public class DefaultNotificationCenter : NotificationCenter {
             }
         })
         
-        notificationId += 1
-
+        return incrementNotificationId()
     }
     
     public func removeNotificationListener(notificationId: Int) {

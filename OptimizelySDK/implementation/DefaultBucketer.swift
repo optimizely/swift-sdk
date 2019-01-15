@@ -1,23 +1,31 @@
-//
-//  DefaultBucketer.swift
-//  OptimizelySDK
-//
-//  Created by Thomas Zurkan on 12/4/18.
-//  Copyright © 2018 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
-class DefaultBucketer : Bucketer {
+class DefaultBucketer : OPTBucketer {
     let MAX_TRAFFIC_VALUE = 10000;
     let HASH_SEED = 1;
     let MAX_HASH_SEED:UInt64 = 1
     var MAX_HASH_VALUE:UInt64?
     
-    private var config:ProjectConfig!
+    private var config:OPTProjectConfig!
     private var logger = DefaultLogger.createInstance(logLevel: .debug)
     
-    internal required init(config:ProjectConfig) {
+    internal required init(config:OPTProjectConfig) {
         self.config = config
 
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
@@ -28,17 +36,17 @@ class DefaultBucketer : Bucketer {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
     }
 
-    func initialize(config:ProjectConfig) {
+    func initialize(config:OPTProjectConfig) {
         self.config = config
     }
 
     
     
-    static func createInstance(config: ProjectConfig) -> Bucketer? {
+    static func createInstance(config: OPTProjectConfig) -> OPTBucketer? {
         return DefaultBucketer(config: config)
     }
     
-    func bucketToExperiment(group: Group, bucketingId: String) -> Experiment? {
+    func bucketToExperiment(group: OPTGroup, bucketingId: String) -> OPTExperiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
         
@@ -71,7 +79,7 @@ class DefaultBucketer : Bucketer {
         return nil
     }
     
-    func bucketExperiment(experiment: Experiment, bucketingId: String) -> Variation? {
+    func bucketExperiment(experiment: OPTExperiment, bucketingId: String) -> OPTVariation? {
         var ok = true
         // check for mutex
         let group = config.groups.filter({ if let _ = $0.experiments.filter({$0.id == experiment.id }).first { return true } else { return false }}).first
@@ -100,7 +108,7 @@ class DefaultBucketer : Bucketer {
         }
     }
     
-    func bucketToVariation(experiment:Experiment, bucketingId:String) -> Variation? {
+    func bucketToVariation(experiment:OPTExperiment, bucketingId:String) -> OPTVariation? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)
         

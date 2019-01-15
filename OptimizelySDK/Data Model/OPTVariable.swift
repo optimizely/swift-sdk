@@ -1,3 +1,6 @@
+//
+//  Variable.swift
+//  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -14,27 +17,11 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
-
 import Foundation
 
-public class Experiment : Codable
+public class OPTVariable : Codable
 {
+    var id:String = ""
+    var value:String = ""
     
-    enum Status: String, Codable {
-        case Running
-        case Launched
-        case Paused
-        case Not_started = "Not started"
-        case Archived
-    }
-    
-    public var id:String = ""
-    public var key:String = ""
-    var status:Status = Status.Not_started
-    public var layerId:String = ""
-    public var trafficAllocation:[TrafficAllocation] = []
-    public var audienceIds:[String] = []
-    public var audienceConditions:ConditionHolder?
-    public var variations:[Variation] = []
-    public var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
 }

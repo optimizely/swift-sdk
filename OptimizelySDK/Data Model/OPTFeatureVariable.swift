@@ -1,6 +1,3 @@
-//
-//  Variable.swift
-//  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -19,9 +16,11 @@
 
 import Foundation
 
-public class Variable : Codable
+public class OPTFeatureVariable : Codable
 {
+    var defaultValue:String? = ""
+    var type:String = ""
     var id:String = ""
-    var value:String = ""
-    
+    var key:String = ""
 }
+

@@ -1,7 +1,3 @@
-//
-//  Variation.swift
-//  OptimizelySDK
-//
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -20,10 +16,9 @@
 
 import Foundation
 
-public class Variation : Codable
+public class OPTTrafficAllocation : Codable
 {
-    public var variables:[Variable]? = []
-    public var id:String = ""
-    public var key:String = ""
-    public var featureEnabled:Bool? = false
+    var entityId:String = ""
+    var endOfRange:Int = 0
+    
 }

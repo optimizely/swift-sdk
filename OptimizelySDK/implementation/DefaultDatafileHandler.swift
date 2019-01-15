@@ -1,19 +1,27 @@
-//
-//  DefaultDatafileHandler.swift
-//  OptimizelySDK
-//
-//  Created by Thomas Zurkan on 12/14/18.
-//  Copyright © 2018 Optimizely. All rights reserved.
-//
+/****************************************************************************
+ * Copyright 2019, Optimizely, Inc. and contributors                        *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
-class DefaultDatafileHandler : DatafileHandler {
+class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     let logger = DefaultLogger.createInstance(logLevel: .debug)
     var timers:[String:Timer] = [String:Timer]()
     
-    static func createInstance() -> DatafileHandler? {
+    static func createInstance() -> OPTDatafileHandler? {
         return DefaultDatafileHandler()
     }
     
@@ -124,9 +132,11 @@ class DefaultDatafileHandler : DatafileHandler {
             
             //writing
             do {
-                try? dataFile.write(to: fileURL, options: .atomic)
+                try dataFile.write(to: fileURL, options: .atomic)
             }
-            catch {/* error handling here */}
+            catch {/* error handling here */
+                logger?.log(level: .error, message: "Problem saving datafile for key " + sdkKey)
+            }
         }
     }
     
@@ -140,7 +150,9 @@ class DefaultDatafileHandler : DatafileHandler {
                 let data = try Data(contentsOf: fileURL)
                 return data
             }
-            catch {/* error handling here */}
+            catch {/* error handling here */
+                logger?.log(level: .error, message: "Problem loading datafile for key " + sdkKey)
+            }
         }
         
         return nil

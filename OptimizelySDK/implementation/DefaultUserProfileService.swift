@@ -1,10 +1,18 @@
-//
-//  DefaultUserProfileService.swift
-//  OptimizelySDK
-//
-//  Created by Thomas Zurkan on 12/5/18.
-//  Copyright © 2018 Optimizely. All rights reserved.
-//
+/****************************************************************************
+ * Copyright 2019, Optimizely, Inc. and contributors                        *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -63,7 +71,7 @@ import Foundation
 //    };
 //}
 
-public class DefaultUserProfileService : UserProfileService {
+public class DefaultUserProfileService : OPTUserProfileService {
     static let variationId = "variation_id"
     static let userId = "user_id"
     static let experimentMap = "experiment_bucket_map"
@@ -74,7 +82,7 @@ public class DefaultUserProfileService : UserProfileService {
     init() {
         profiles = UserDefaults.standard.dictionary(forKey: DefaultUserProfileService.storageName) as? [String : Dictionary<String, Any>] ?? Dictionary<String, Dictionary<String,Any>>()
     }
-    public static func createInstance() -> UserProfileService {
+    public static func createInstance() -> OPTUserProfileService {
         return DefaultUserProfileService()
     }
     

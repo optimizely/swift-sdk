@@ -22,7 +22,7 @@ class BucketTests: XCTestCase {
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
         let experimentId = "1886780721"
-        let bucketer = DefaultBucketer.createInstance(config: ProjectConfig())
+        let bucketer = DefaultBucketer.createInstance(config: OPTProjectConfig())
         // These test inputs/outputs should be reproduced exactly in all clients to make sure that they behave
         // consistently.
         let tests = [["userId": "ppid1", "experimentId": experimentId, "expect": 5254],

@@ -80,7 +80,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="D28-hE-PB7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1501.5999999999999" y="208.24587706146929"/>
+            <point key="canvasLocation" x="1510" y="194"/>
         </scene>
         <!--Variation View Controller-->
         <scene sceneID="ihc-AL-Y2u">
@@ -138,6 +138,7 @@
                         <outlet property="variationLetterLabel" destination="GuL-M1-dn2" id="SPr-SQ-HLQ"/>
                         <outlet property="variationSubheaderLabel" destination="8CQ-8i-O97" id="Nqm-sd-3cV"/>
                         <segue destination="HJm-I5-YSq" kind="presentation" identifier="ConversionSuccessSegue" id="T9x-f2-ZEE"/>
+                        <segue destination="Dne-99-XyY" kind="presentation" identifier="ConversionFailureSegue" id="J3O-Lh-7lD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZfO-yh-LYQ" userLabel="First Responder" sceneMemberID="firstResponder"/>

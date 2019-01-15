@@ -532,6 +532,8 @@ open class OPTManager: NSObject {
     /// - Throws: `OPTError` if event parameter is not valid
     public func track(eventKey:String,
                       userId:String,
+                      // right now we are still passing in attributes.  But, there is a jira ticket open to use easy event tracking in which case passing in attributes to track will be removed.
+                      attributes:Dictionary<String,Any>?=nil,
                       eventTags:Dictionary<String,Any>?=nil) throws {
         
         // TODO: fix for error handling
@@ -539,7 +541,7 @@ open class OPTManager: NSObject {
                                                                  decisionService: decisionService,
                                                                  eventKey:eventKey,
                                                                  userId:userId,
-                                                                 attributes:nil,
+                                                                 attributes:attributes,
                                                                  eventTags:eventTags) else
         {
             // TODO: refine error type

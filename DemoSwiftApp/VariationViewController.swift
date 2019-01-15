@@ -58,7 +58,13 @@ class VariationViewController: UIViewController {
     }
     
     @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {
-     //   self.optimizelyClient?.track(self.eventKey, userId: userId)
-        self.performSegue(withIdentifier: "ConversionSuccessSegue", sender: self)
+        do {
+            try self.optimizelyManager?.track(eventKey: self.eventKey, userId: userId)
+            self.performSegue(withIdentifier: "ConversionSuccessSegue", sender: self)
+        }
+        catch {
+            self.performSegue(withIdentifier: "ConversionFailureSegue", sender: self)
+
+        }
     }
 }

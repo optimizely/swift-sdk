@@ -124,9 +124,11 @@ class DefaultDatafileHandler : DatafileHandler {
             
             //writing
             do {
-                try? dataFile.write(to: fileURL, options: .atomic)
+                try dataFile.write(to: fileURL, options: .atomic)
             }
-            catch {/* error handling here */}
+            catch {/* error handling here */
+                logger?.log(level: .error, message: "Problem saving datafile for key " + sdkKey)
+            }
         }
     }
     
@@ -140,7 +142,9 @@ class DefaultDatafileHandler : DatafileHandler {
                 let data = try Data(contentsOf: fileURL)
                 return data
             }
-            catch {/* error handling here */}
+            catch {/* error handling here */
+                logger?.log(level: .error, message: "Problem loading datafile for key " + sdkKey)
+            }
         }
         
         return nil

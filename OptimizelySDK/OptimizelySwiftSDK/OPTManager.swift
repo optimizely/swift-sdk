@@ -69,7 +69,7 @@ open class OPTManager: NSObject {
     ///                       a cached copy from previous download is used if it's available
     ///                       the datafile will be updated from the server in the background thread
     ///   - completion: callback when initialization is completed
-    public func initializeSDK(completion: ((OPTResult<String>) -> Void)?=nil) {
+    public func initializeSDK(completion: ((OPTResult<Data>) -> Void)?=nil) {
         
         fetchDatafileBackground() { result in
             switch result {

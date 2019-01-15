@@ -203,8 +203,8 @@
 			children = (
 				6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */,
 				6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */,
-				6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDKiOSTests.xctest */,
-				6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDKtvOSTests.xctest */,
+				6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */,
+				6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -263,12 +263,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6EF749A321E404BC008B22A0 /* Build configuration list for PBXNativeTarget "DemoObjciOS" */;
 			buildPhases = (
-				E6E9EA0276E70A419BFEAE7D /* [CP] Check Pods Manifest.lock */,
+				9C80D766758228B3848F863B /* [CP] Check Pods Manifest.lock */,
 				6EF7498A21E404BB008B22A0 /* Sources */,
 				6EF7498B21E404BB008B22A0 /* Frameworks */,
 				6EF7498C21E404BB008B22A0 /* Resources */,
-				3299F5F6EEFA0ABFC8825A37 /* [CP] Embed Pods Frameworks */,
 				6E4DD93B21E6708E00B0C2C7 /* Embed Frameworks */,
+				E446D4B40B95766419E07D97 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -284,7 +284,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6EF749B821E404D7008B22A0 /* Build configuration list for PBXNativeTarget "DemoObjctvOS" */;
 			buildPhases = (
-				277D0A49D9781FC26A2BC1E8 /* [CP] Check Pods Manifest.lock */,
+				50156C3313666B2B516DE355 /* [CP] Check Pods Manifest.lock */,
 				6EF749A421E404D6008B22A0 /* Sources */,
 				6EF749A521E404D6008B22A0 /* Frameworks */,
 				6EF749A621E404D6008B22A0 /* Resources */,
@@ -362,17 +362,17 @@
 			remoteRef = 6E4DD97621E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDKiOSTests.xctest */ = {
+		6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = OptimizelySwiftSDKiOSTests.xctest;
+			path = "OptimizelySwiftSDK-iOSTests.xctest";
 			remoteRef = 6E4DD97821E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDKtvOSTests.xctest */ = {
+		6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = OptimizelySwiftSDKtvOSTests.xctest;
+			path = "OptimizelySwiftSDK-tvOSTests.xctest";
 			remoteRef = 6E4DD97A21E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -414,7 +414,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		277D0A49D9781FC26A2BC1E8 /* [CP] Check Pods Manifest.lock */ = {
+		50156C3313666B2B516DE355 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -436,7 +436,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3299F5F6EEFA0ABFC8825A37 /* [CP] Embed Pods Frameworks */ = {
+		9C80D766758228B3848F863B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DemoObjciOS-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E446D4B40B95766419E07D97 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -462,28 +484,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E6E9EA0276E70A419BFEAE7D /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-DemoObjciOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -596,7 +596,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -650,7 +650,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -710,7 +710,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
 			};
 			name = Debug;
 		};
@@ -730,7 +730,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
 			};
 			name = Release;
 		};

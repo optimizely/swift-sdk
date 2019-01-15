@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-NS_ASSUME_NONNULL_BEGIN
+@class OPTManager;
 
 @interface VariationViewController : UIViewController
-
+@property(nullable, nonatomic, strong) OPTManager *optimizelyManager;
+@property(nonnull, nonatomic, strong) NSString *eventKey;
+@property(nonnull, nonatomic, strong) NSString *variationKey;
+@property(nonnull, nonatomic, strong) NSString *userId;
 @end
-
-NS_ASSUME_NONNULL_END

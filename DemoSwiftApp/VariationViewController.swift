@@ -19,8 +19,8 @@ import OptimizelySwiftSDK
 
 class VariationViewController: UIViewController {
     
-    var eventKey: String = ""
     var optimizelyManager: OPTManager?
+    var eventKey: String = ""
     var variationKey: String = ""
     var userId: String = ""
 
@@ -42,7 +42,7 @@ class VariationViewController: UIViewController {
                 self.variationLetterLabel.text = "B"
                 self.variationLetterLabel.textColor = UIColor.white
                 self.variationSubheaderLabel.textColor = UIColor.white
-            self.variationBackgroundImage.image = UIImage(named: "background_variB-marina")
+                self.variationBackgroundImage.image = UIImage(named: "background_variB-marina")
             default:
                 break
         }

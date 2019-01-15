@@ -7,8 +7,13 @@
 //
 
 #import "VariationViewController.h"
+@import OptimizelySwiftSDK;
 
 @interface VariationViewController ()
+
+@property (weak, nonatomic) IBOutlet UILabel *variationLetterLabel;
+@property (weak, nonatomic) IBOutlet UILabel *variationSubheaderLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *variationBackgroundImage;
 
 @end
 
@@ -16,7 +21,19 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
     // Do any additional setup after loading the view.
+    if ([self.variationKey isEqualToString:@"variation_a"]) {
+        self.variationLetterLabel.text = @"A";
+        self.variationLetterLabel.textColor = [UIColor blackColor];
+        self.variationSubheaderLabel.textColor = [UIColor blackColor];
+        self.variationBackgroundImage.image = [UIImage imageNamed:@"background_variA"];
+    } else {
+        self.variationLetterLabel.text = @"B";
+        self.variationLetterLabel.textColor = [UIColor whiteColor];
+        self.variationSubheaderLabel.textColor = [UIColor whiteColor];
+        self.variationBackgroundImage.image = [UIImage imageNamed:@"background_variB-marina"];
+    }
 }
 
 /*

@@ -40,38 +40,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     //     - fetch a JSON datafile from the server
     //     - network delay, but the local configuration is in sync with the server experiment settings
     // (2) synchronous SDK initialization
-    //     - initialize immedi
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    ately with the given JSON datafile or its cached copy
+    //     - initialize immediately with the given JSON datafile or its cached copy
     //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
 
     [self initializeOptimizelySDKAsynchronous];
@@ -167,8 +136,8 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     return nil;
 }
 
--(void)setRootViewControllerWithOtimizelyManager:(OPTManager*)manager bucketedVariation:(NSString*)varationKey {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+-(void)setRootViewControllerWithOtimizelyManager:(OPTManager*)manager bucketedVariation:(NSString*)variationKey {
+    dispatch_async(dispatch_get_main_queue(), ^{
         
 #if TARGET_OS_IOS
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iOSMain" bundle:nil];
@@ -177,13 +146,13 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 #endif
         UIViewController *rootViewController;
         
-        if ((manager != nil) && (varationKey != nil)) {
+        if ((manager != nil) && (variationKey != nil)) {
             VariationViewController *vc = [storyboard instantiateViewControllerWithIdentifier: @"VariationViewController"];
             
-//            vc.eventKey = kOptimizelyEventKey;
-//            vc.optimizelyManager = manager;
-//            vc.userId = self.userId;
-//            vc.variationKey = variationKey;
+            vc.eventKey = kOptimizelyEventKey;
+            vc.optimizelyManager = manager;
+            vc.userId = self.userId;
+            vc.variationKey = variationKey;
 
             rootViewController = vc;
         } else {

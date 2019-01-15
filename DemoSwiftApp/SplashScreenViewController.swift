@@ -16,8 +16,8 @@
 
 import UIKit
 
-class OPTLYFailureViewController: UIViewController {
-    
+class SplashScreenViewController: UIViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -27,6 +27,10 @@ class OPTLYFailureViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    @IBAction func unwindToSplashScreenSegue(unwindSegue: UIStoryboardSegue) {
+        
     }
     
 

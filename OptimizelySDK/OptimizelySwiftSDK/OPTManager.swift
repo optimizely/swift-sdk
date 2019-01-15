@@ -69,20 +69,20 @@ open class OPTManager: NSObject {
     ///                       a cached copy from previous download is used if it's available
     ///                       the datafile will be updated from the server in the background thread
     ///   - completion: callback when initialization is completed
-    public func initializeSDK(completion: ((OPTResult) -> Void)?=nil) {
+    public func initializeSDK(completion: ((OPTResult<Data>) -> Void)?=nil) {
         
         fetchDatafileBackground() { result in
             switch result {
-            case .failure(let err):
-                completion?(OPTResult.failure(err))
+            case .failure:
+                completion?(result)
             case .success(let datafile):
                 do {
                     try self.configSDK(datafile: datafile)
-                    completion?(OPTResult.success)
+                    completion?(result)
                 } catch {
                     
                     // TODO: refine error-type
-                    completion?(OPTResult.failure(.configInvalid))
+                    completion?(.failure(.configInvalid))
                 }
             }
         }
@@ -101,7 +101,7 @@ open class OPTManager: NSObject {
     public func initializeSDK(datafile: Data) throws {
         
         // TODO: get the cached copy
-        var cachedDatafile: Data?
+        let cachedDatafile: Data? = self.datafileHandler.isDatafileSaved(sdkKey: self.sdkKey) ? self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) : nil
 
         let selectedDatafile = cachedDatafile ?? datafile
         
@@ -140,9 +140,10 @@ open class OPTManager: NSObject {
         }
      }
     
-    func fetchDatafileBackground(completion: ((OPTResultData<String>) -> Void)?=nil) {
+    func fetchDatafileBackground(completion: ((OPTResult<Data>) -> Void)?=nil) {
         datafileHandler.downloadDatafile(sdkKey: self.sdkKey){ result in
-            var fetchResult: OPTResultData<String>
+            var fetchResult: OPTResult<Data>
+
             switch result {
             case .failure(let err):
                 self.logger.log(level: .error, message: err.description)

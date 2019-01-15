@@ -8,13 +8,13 @@
 
 import Foundation
 
-public class DefaultEventDispatcher : EventDispatcher {
+public class DefaultEventDispatcher : OPTEventDispatcher {
     let logger = DefaultLogger(level: .debug)
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     let dataStore = DataStoreEvents()
     let notify = DispatchGroup()
     
-    public static func createInstance() -> EventDispatcher? {
+    public static func createInstance() -> OPTEventDispatcher? {
         return DefaultEventDispatcher()
     }
     
@@ -65,7 +65,7 @@ public class DefaultEventDispatcher : EventDispatcher {
             self.logger.log(level: .debug, message: response.debugDescription)
             
             if let error = error {
-                completionHandler(Result.failure(EventDispatchError(description: error.localizedDescription)))
+                completionHandler(Result.failure(OPTEventDispatchError(description: error.localizedDescription)))
             }
             else {
                 

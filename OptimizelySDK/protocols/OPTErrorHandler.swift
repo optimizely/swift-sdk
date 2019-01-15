@@ -14,9 +14,11 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
-
 import Foundation
 
+/**
+ This is the protocol to implement in order to be notified of errors in the app.  However, if the method throws then you can simply catch the error and the error handler is not used.
+ */
 public protocol OPTErrorHandler {
     
     static func createInstance() -> OPTErrorHandler

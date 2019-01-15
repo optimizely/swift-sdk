@@ -21,7 +21,7 @@ open class OPTManager: NSObject {
     let logger: Logger
     let bucketer: OPTBucketer
     let decisionService: OPTDecisionService
-    let eventDispatcher: EventDispatcher
+    let eventDispatcher: OPTEventDispatcher
     let datafileHandler: DatafileHandler
     let userProfileService: UserProfileService
     let notificationCenter: NotificationCenter
@@ -41,7 +41,7 @@ open class OPTManager: NSObject {
                 logger:Logger? = nil,
                 bucketer:OPTBucketer? = nil,
                 decisionService:OPTDecisionService? = nil,
-                eventDispatcher:EventDispatcher? = nil,
+                eventDispatcher:OPTEventDispatcher? = nil,
                 datafileHandler:DatafileHandler? = nil,
                 userProfileService:UserProfileService? = nil,
                 notificationCenter:NotificationCenter? = nil,

@@ -32,7 +32,7 @@ public protocol Optimizely {
     var decisionService:OPTDecisionService? { get }
     var config:ProjectConfig? { get }
     var errorHandler:OPTErrorHandler? { get }
-    var eventDispatcher:EventDispatcher? { get }
+    var eventDispatcher:OPTEventDispatcher? { get }
     var datafileHandler:DatafileHandler? { get }
     var logger:Logger? { get }
     var userProfileService:UserProfileService? { get }

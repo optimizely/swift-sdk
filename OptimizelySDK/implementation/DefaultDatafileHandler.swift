@@ -20,6 +20,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     let logger = DefaultLogger.createInstance(logLevel: .debug)
     var timers:[String:Timer] = [String:Timer]()
+    let dataStore = DataStoreUserDefaults()
     
     static func createInstance() -> OPTDatafileHandler? {
         return DefaultDatafileHandler()
@@ -62,7 +63,13 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         let session = URLSession(configuration: config)
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
         if let url = URL(string: str) {
-            let task = session.downloadTask(with: url) { (url, response, error) in
+            var request = URLRequest(url: url)
+            
+            if let lastModified = dataStore.getItem(forKey: "OPTLastModified-" + sdkKey) {
+                request.addValue(lastModified as! String, forHTTPHeaderField: "If-Modified-Since")
+            }
+            
+            let task = session.downloadTask(with: request) { (url, response, error) in
                 var result = Result<Data, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
                 
                 if let _ = error {
@@ -70,12 +77,26 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     let datafiledownloadError = DatafileDownloadError(description: error.debugDescription)
                     result = Result.failure(datafiledownloadError)
                 }
-                else if let url = url, let data = try? Data(contentsOf: url) {
-                    if let str = String(data: data, encoding: .utf8) {
-                        self.logger?.log(level: .debug, message: str)
+                else if let response = response as? HTTPURLResponse {
+                    if response.statusCode == 200 {
+                        if let url = url, let data = try? Data(contentsOf: url) {
+                            if let str = String(data: data, encoding: .utf8) {
+                                self.logger?.log(level: .debug, message: str)
+                            }
+                            self.saveDatafile(sdkKey: sdkKey, dataFile: data)
+                            if let lastModified = response.allHeaderFields["Last-Modified"] {
+                                self.dataStore.saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
+                            }
+                            
+                            result = Result.success(data)
+                        }
                     }
-                    self.saveDatafile(sdkKey: sdkKey, dataFile: data)
-                    result = Result.success(data)
+                    else if response.statusCode == 304 {
+                        self.logger?.log(level: .debug, message: "The datafile was not modified and won't be downloaded again")
+                        if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
+                            result = Result.success(data)
+                        }
+                    }
                 }
 
                 completionHandler(result)

@@ -115,9 +115,6 @@
 		6E96819221EEA391009B7FEC /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		6E96819321EEA391009B7FEC /* demoTestDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafile.json; sourceTree = "<group>"; };
 		6E96819421EEA391009B7FEC /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
-		6EE7E54521E50F9D0038EB37 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
-		6EE7E54621E50F9D0038EB37 /* demoTestDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafile.json; sourceTree = "<group>"; };
-		6EE7E54A21E50F9D0038EB37 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
 		6EF2CF1C21E4158A00A5D78D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/tvOSMain.storyboard; sourceTree = "<group>"; };
 		9C185BE70FBE51067CFD104E /* Pods-DemoSwiftiOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoSwiftiOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoSwiftiOS/Pods-DemoSwiftiOS.release.xcconfig"; sourceTree = "<group>"; };
 		B301A636D5072557B288E62C /* Pods-DemoSwifttvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoSwifttvOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoSwifttvOS/Pods-DemoSwifttvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -223,16 +220,6 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		6EE7E54421E50F9D0038EB37 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				6EE7E54521E50F9D0038EB37 /* Roboto-Medium.ttf */,
-				6EE7E54621E50F9D0038EB37 /* demoTestDatafile.json */,
-				6EE7E54A21E50F9D0038EB37 /* ProximaNova-Regular.otf */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		EA299ED51E5530A400931399 /* DemoSwifttvOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -254,7 +241,6 @@
 				EA5246BF1DC7186800AF6685 /* DemoSwiftiOS */,
 				EA299ED51E5530A400931399 /* DemoSwifttvOS */,
 				6E96818C21EEA391009B7FEC /* SharedResources */,
-				6EE7E54421E50F9D0038EB37 /* Resources */,
 				EA5246BE1DC7186800AF6685 /* Products */,
 				EA5248C31DC72E8300AF6685 /* Frameworks */,
 				5D9DAC78D3124F03BF2A7CC8 /* Pods */,

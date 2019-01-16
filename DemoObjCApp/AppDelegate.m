@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "VariationViewController.h"
+#import "FailureViewController.h"
 
 @import OptimizelySwiftSDK;
 #if TARGET_OS_IOS
@@ -158,7 +159,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
         } else {
             rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"FailureViewController"];
         }
-        
+            
         self.window.rootViewController = rootViewController;
     });
 }

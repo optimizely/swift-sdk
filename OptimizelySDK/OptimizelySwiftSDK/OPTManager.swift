@@ -530,7 +530,7 @@ open class OPTManager: NSObject {
     ///   - userId: The user ID associated with the event to track
     ///   - eventTags: A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean)
     /// - Throws: `OPTError` if event parameter is not valid
-    public func track(eventKey:String,
+    @objc public func track(eventKey:String,
                       userId:String,
                       // right now we are still passing in attributes.  But, there is a jira ticket open to use easy event tracking in which case passing in attributes to track will be removed.
                       attributes:Dictionary<String,Any>?=nil,

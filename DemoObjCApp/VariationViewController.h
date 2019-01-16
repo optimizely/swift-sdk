@@ -15,4 +15,5 @@
 @property(nonnull, nonatomic, strong) NSString *eventKey;
 @property(nonnull, nonatomic, strong) NSString *variationKey;
 @property(nonnull, nonatomic, strong) NSString *userId;
+
 @end

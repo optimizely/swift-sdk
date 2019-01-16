@@ -16,14 +16,8 @@
 		6E4DD98121E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E96811521EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E96811421EE94DA009B7FEC /* CustomNotificationCenter.m */; };
 		6E96811621EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E96811421EE94DA009B7FEC /* CustomNotificationCenter.m */; };
-		6E96817B21EEA321009B7FEC /* tvOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817421EEA321009B7FEC /* tvOSMain.storyboard */; };
 		6E96817C21EEA321009B7FEC /* tvOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817421EEA321009B7FEC /* tvOSMain.storyboard */; };
-		6E96817D21EEA321009B7FEC /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817621EEA321009B7FEC /* Info.plist */; };
-		6E96817E21EEA321009B7FEC /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817621EEA321009B7FEC /* Info.plist */; };
 		6E96817F21EEA321009B7FEC /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817821EEA321009B7FEC /* iOSMain.storyboard */; };
-		6E96818021EEA321009B7FEC /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817821EEA321009B7FEC /* iOSMain.storyboard */; };
-		6E96818121EEA321009B7FEC /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817A21EEA321009B7FEC /* Info.plist */; };
-		6E96818221EEA321009B7FEC /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817A21EEA321009B7FEC /* Info.plist */; };
 		6E9681AB21EEA3D8009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A321EEA3D8009B7FEC /* Assets.xcassets */; };
 		6E9681AC21EEA3D8009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A521EEA3D8009B7FEC /* Assets.xcassets */; };
 		6E9681AE21EEA3D8009B7FEC /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A721EEA3D8009B7FEC /* Roboto-Medium.ttf */; };
@@ -32,14 +26,14 @@
 		6E9681B121EEA3D8009B7FEC /* demoTestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A821EEA3D8009B7FEC /* demoTestDatafile.json */; };
 		6E9681B221EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */; };
 		6E9681B321EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */; };
+		6E9681BA21EEB361009B7FEC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
+		6E9681BB21EEB361009B7FEC /* FailureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456721EE5DE3005346CC /* FailureViewController.m */; };
+		6E9681BC21EEB361009B7FEC /* SplashScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */; };
+		6E9681BD21EEB364009B7FEC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
+		6E9681BE21EEB364009B7FEC /* FailureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456721EE5DE3005346CC /* FailureViewController.m */; };
+		6E9681BF21EEB364009B7FEC /* SplashScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */; };
 		6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
 		6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
-		6EB8456D21EE5DE3005346CC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
-		6EB8456E21EE5DE3005346CC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
-		6EB8456F21EE5DE3005346CC /* FailureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456721EE5DE3005346CC /* FailureViewController.m */; };
-		6EB8457021EE5DE3005346CC /* FailureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456721EE5DE3005346CC /* FailureViewController.m */; };
-		6EB8457121EE5DE3005346CC /* SplashScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */; };
-		6EB8457221EE5DE3005346CC /* SplashScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */; };
 		DDB0B21C9FF18EAEA9E5F676 /* Pods_DemoObjctvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3822AD03E75EF61F9556BA6 /* Pods_DemoObjctvOS.framework */; };
 /* End PBXBuildFile section */
 
@@ -187,22 +181,22 @@
 			path = Customization;
 			sourceTree = "<group>";
 		};
-		6E96817321EEA321009B7FEC /* DemoSwifttvOS */ = {
+		6E96817321EEA321009B7FEC /* DemoObjctvOS */ = {
 			isa = PBXGroup;
 			children = (
 				6E96817421EEA321009B7FEC /* tvOSMain.storyboard */,
 				6E96817621EEA321009B7FEC /* Info.plist */,
 			);
-			path = DemoSwifttvOS;
+			path = DemoObjctvOS;
 			sourceTree = "<group>";
 		};
-		6E96817721EEA321009B7FEC /* DemoSwiftiOS */ = {
+		6E96817721EEA321009B7FEC /* DemoObjciOS */ = {
 			isa = PBXGroup;
 			children = (
 				6E96817821EEA321009B7FEC /* iOSMain.storyboard */,
 				6E96817A21EEA321009B7FEC /* Info.plist */,
 			);
-			path = DemoSwiftiOS;
+			path = DemoObjciOS;
 			sourceTree = "<group>";
 		};
 		6E9681A121EEA3D8009B7FEC /* SharedResources */ = {
@@ -254,8 +248,8 @@
 				6EB8456321EE5DE3005346CC /* SplashScreenViewController.h */,
 				6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */,
 				6E96812021EE957B009B7FEC /* Customization */,
-				6E96817721EEA321009B7FEC /* DemoSwiftiOS */,
-				6E96817321EEA321009B7FEC /* DemoSwifttvOS */,
+				6E96817721EEA321009B7FEC /* DemoObjciOS */,
+				6E96817321EEA321009B7FEC /* DemoObjctvOS */,
 				6E9681A121EEA3D8009B7FEC /* SharedResources */,
 				6EF7499F21E404BC008B22A0 /* main.m */,
 				6EF7497021E40467008B22A0 /* Products */,
@@ -421,13 +415,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E96818121EEA321009B7FEC /* Info.plist in Resources */,
 				6E96817F21EEA321009B7FEC /* iOSMain.storyboard in Resources */,
 				6E9681B221EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */,
-				6E96817D21EEA321009B7FEC /* Info.plist in Resources */,
 				6E9681AE21EEA3D8009B7FEC /* Roboto-Medium.ttf in Resources */,
 				6E9681B021EEA3D8009B7FEC /* demoTestDatafile.json in Resources */,
-				6E96817B21EEA321009B7FEC /* tvOSMain.storyboard in Resources */,
 				6E9681AC21EEA3D8009B7FEC /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -436,10 +427,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E96818221EEA321009B7FEC /* Info.plist in Resources */,
-				6E96818021EEA321009B7FEC /* iOSMain.storyboard in Resources */,
 				6E9681B321EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */,
-				6E96817E21EEA321009B7FEC /* Info.plist in Resources */,
 				6E9681AF21EEA3D8009B7FEC /* Roboto-Medium.ttf in Resources */,
 				6E9681B121EEA3D8009B7FEC /* demoTestDatafile.json in Resources */,
 				6E96817C21EEA321009B7FEC /* tvOSMain.storyboard in Resources */,
@@ -529,12 +517,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EB8456D21EE5DE3005346CC /* VariationViewController.m in Sources */,
-				6EB8456F21EE5DE3005346CC /* FailureViewController.m in Sources */,
-				6EB8457121EE5DE3005346CC /* SplashScreenViewController.m in Sources */,
+				6E9681BA21EEB361009B7FEC /* VariationViewController.m in Sources */,
 				6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */,
+				6E9681BB21EEB361009B7FEC /* FailureViewController.m in Sources */,
 				6E96811521EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */,
 				6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */,
+				6E9681BC21EEB361009B7FEC /* SplashScreenViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,12 +530,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EB8456E21EE5DE3005346CC /* VariationViewController.m in Sources */,
-				6EB8457021EE5DE3005346CC /* FailureViewController.m in Sources */,
-				6EB8457221EE5DE3005346CC /* SplashScreenViewController.m in Sources */,
+				6E9681BD21EEB364009B7FEC /* VariationViewController.m in Sources */,
 				6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */,
+				6E9681BE21EEB364009B7FEC /* FailureViewController.m in Sources */,
 				6E96811621EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */,
 				6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */,
+				6E9681BF21EEB364009B7FEC /* SplashScreenViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,11 +10,9 @@
 @import OptimizelySwiftSDK;
 
 @interface VariationViewController ()
-
 @property (weak, nonatomic) IBOutlet UILabel *variationLetterLabel;
 @property (weak, nonatomic) IBOutlet UILabel *variationSubheaderLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *variationBackgroundImage;
-
 @end
 
 @implementation VariationViewController
@@ -36,14 +34,23 @@
     }
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (IBAction)unwindToVariationAction:(UIStoryboardSegue *)segue {
+    
 }
-*/
+
+- (IBAction)attemptTrackAndShowSuccessOrFailure:(id)sender {
+    NSError *error;
+    BOOL status = [self.optimizelyManager trackWithEventKey:self.eventKey
+                                                     userId:self.userId
+                                                 attributes:nil eventTags:nil
+                                                      error:&error];
+    
+    if (status) {
+        [self performSegueWithIdentifier:@"ConversionSuccessSegue" sender:self];
+    } else {
+        [self performSegueWithIdentifier:@"ConversionFailureSegue" sender:self];
+    }
+}
+
 
 @end

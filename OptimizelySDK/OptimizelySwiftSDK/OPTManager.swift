@@ -18,17 +18,14 @@ open class OPTManager: NSObject {
     
     // MARK: - Customizable
     
-    // TODO: review this for Objective-C clients support (@objc)
-    // NOTE: all customizable engines set to <public, var> for supporting Objective-C clients
-    //       which is not allowed to use initializer with optional arguments
-    public var logger: OPTLogger
-    public var bucketer: OPTBucketer
-    public var decisionService: OPTDecisionService
-    public var eventDispatcher: OPTEventDispatcher
-    public var datafileHandler: OPTDatafileHandler
-    public var userProfileService: OPTUserProfileService
-    public var notificationCenter: OPTNotificationCenter
-    public var periodicDownloadInterval: Int
+    let logger: OPTLogger
+    let bucketer: OPTBucketer
+    let decisionService: OPTDecisionService
+    let eventDispatcher: OPTEventDispatcher
+    let datafileHandler: OPTDatafileHandler
+    let userProfileService: OPTUserProfileService
+    let notificationCenter: OPTNotificationCenter
+    let periodicDownloadInterval: Int
     
     // MARK: - Public interfaces
     
@@ -581,6 +578,19 @@ extension OPTManager {
                   notificationCenter: nil,
                   periodicDownloadInterval: nil)
     }
+    
+    // TODO: review this for Objective-C clients support (@objc)
+    
+//    @objc public convenience init(sdkKey: String,
+//                                  logger:OPTLogger?,
+//                                  bucketer:OPTBucketer?,
+//                                  decisionService:OPTDecisionService?,
+//                                  eventDispatcher:OPTEventDispatcher?,
+//                                  datafileHandler:OPTDatafileHandler?,
+//                                  userProfileService:OPTUserProfileService?,
+//                                  notificationCenter:OPTNotificationCenter?,
+//                                  periodicDownloadInterval:Int? = nil) {
+
     
     @objc public func initializeSDK(completion: ((NSError?, Data?) -> Void)?) {
         initializeSDK { result in

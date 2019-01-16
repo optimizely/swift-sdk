@@ -21,12 +21,10 @@ static NSString * const kOptimizelyExperimentKey = @"background_experiment";
 static NSString * const kOptimizelyEventKey = @"sample_conversion";
 static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 
-
 @interface AppDelegate ()
 @property(nonnull, strong, nonatomic) NSString *userId;
 @property(nonnull, strong, nonatomic) NSDictionary *attributes;
 @property(nullable, strong, nonatomic) OPTManager *optimizely;
-
 @end
 
 @implementation AppDelegate

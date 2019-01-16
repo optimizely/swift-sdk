@@ -23,7 +23,7 @@ class DefaultBucketer : OPTBucketer {
     var MAX_HASH_VALUE:UInt64?
     
     private var config:OPTProjectConfig!
-    private var logger = DefaultLogger.createInstance(logLevel: .debug)
+    private var logger = DefaultLogger.buildRegisteredLogger(name: "default", level: .debug)
     
     internal required init(config:OPTProjectConfig) {
         self.config = config

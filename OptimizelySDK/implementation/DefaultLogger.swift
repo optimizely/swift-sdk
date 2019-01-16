@@ -29,12 +29,11 @@ public class DefaultLogger : OPTLogger {
         }
     }
     
-    public init(level:OptimizelyLogLevel) {
+    required public init(level:OptimizelyLogLevel) {
         DefaultLogger.logLevel = level
-    }
-    
-    public static func createInstance(logLevel: OptimizelyLogLevel) -> OPTLogger? {
-        return DefaultLogger(level:logLevel)
+        if !DefaultLogger.lookupRegisteredLogger(name: "default") {
+            DefaultLogger.registerLogger(name: "default", builder: DefaultLogger.init)
+        }
     }
     
     public func log(level: OptimizelyLogLevel, message: String) {

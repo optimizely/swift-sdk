@@ -49,7 +49,6 @@ open class OPTManager: NSObject {
         self.sdkKey = sdkKey
         
         // default services (can be customized by clients
-        
         self.logger = logger ?? DefaultLogger(level: .error)
         self.eventDispatcher = eventDispatcher ?? DefaultEventDispatcher()
         self.datafileHandler = datafileHandler ?? DefaultDatafileHandler()
@@ -530,7 +529,6 @@ open class OPTManager: NSObject {
     /// - Throws: `OPTError` if event parameter is not valid
     @objc public func track(eventKey:String,
                       userId:String,
-                      // right now we are still passing in attributes.  But, there is a jira ticket open to use easy event tracking in which case passing in attributes to track will be removed.
                       attributes:Dictionary<String,Any>?=nil,
                       eventTags:Dictionary<String,Any>?=nil) throws {
         

@@ -17,7 +17,7 @@
 import Foundation
 
 public class DefaultEventDispatcher : OPTEventDispatcher {
-    let logger = DefaultLogger(level: .debug)
+    let logger = DefaultLogger.buildRegisteredLogger(name: "default", level: .debug)!
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     let dataStore = DataStoreQueueStackEvents()
     let notify = DispatchGroup()

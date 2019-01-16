@@ -69,15 +69,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func initializeOptimizelySDKSynchronous() {
+        guard let localDatafilePath = Bundle(for: self.classForCoder).path(forResource: datafileName, ofType: "json") else {
+            fatalError("Local datafile cannot be found")
+        }
+        
         // customization example (optional)
         let customNotificationCenter = makeCustomNotificationCenter()
         
         optimizely = OPTManager(sdkKey: sdkKey,
                                 notificationCenter: customNotificationCenter)
-
-        guard let localDatafilePath = Bundle(for: self.classForCoder).path(forResource: datafileName, ofType: "json") else {
-            fatalError("Local datafile cannot be found")
-        }
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -143,7 +143,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             storyboard = UIStoryboard(name: "iOSMain", bundle: nil)
             #endif
             
-            var rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
+            var rootViewController: UIViewController
             
             if let optimizelyManager = optimizelyManager,
                 let variationKey = bucketedVariation,
@@ -155,6 +155,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 variationViewController.variationKey = variationKey
                 
                 rootViewController = variationViewController
+            } else {
+                rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
             }
             
             self.window?.rootViewController = rootViewController

@@ -25,7 +25,6 @@ open class OPTManager: NSObject {
     let datafileHandler: OPTDatafileHandler
     let userProfileService: OPTUserProfileService
     let notificationCenter: OPTNotificationCenter
-    
     let periodicDownloadInterval: Int
     
     // MARK: - Public interfaces
@@ -58,7 +57,6 @@ open class OPTManager: NSObject {
         self.notificationCenter = notificationCenter ?? DefaultNotificationCenter()
         self.bucketer = bucketer ?? DefaultBucketer()
         self.decisionService = decisionService ?? DefaultDecisionService()
-
         self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
     }
     
@@ -90,7 +88,7 @@ open class OPTManager: NSObject {
     
     // MARK: synchronous initialization
     
-    public func initializeSDK(datafile: String) throws {
+    @objc public func initializeSDK(datafile: String) throws {
         guard let datafileData = datafile.data(using: .utf8) else {
             throw OPTError.dataFileInvalid
         }
@@ -174,7 +172,7 @@ open class OPTManager: NSObject {
     ///   - attributes: A map of attribute names to current user attribute values.
     /// - Returns: The variation key the user was bucketed into
     /// - Throws: `OPTError` if error is detected
-    public func activate(experimentKey:String,
+    @objc public func activate(experimentKey:String,
                          userId:String,
                          attributes:Dictionary<String, Any>?=nil) throws -> String {
         
@@ -530,7 +528,7 @@ open class OPTManager: NSObject {
     ///   - userId: The user ID associated with the event to track
     ///   - eventTags: A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean)
     /// - Throws: `OPTError` if event parameter is not valid
-    public func track(eventKey:String,
+    @objc public func track(eventKey:String,
                       userId:String,
                       // right now we are still passing in attributes.  But, there is a jira ticket open to use easy event tracking in which case passing in attributes to track will be removed.
                       attributes:Dictionary<String,Any>?=nil,
@@ -563,4 +561,59 @@ open class OPTManager: NSObject {
         
     }
     
+}
+
+// MARK: Objective-C Wrappers
+
+extension OPTManager {
+    
+    @objc public convenience init(sdkKey: String) {
+        self.init(sdkKey: sdkKey,
+                  logger: nil,
+                  bucketer: nil,
+                  decisionService: nil,
+                  eventDispatcher: nil,
+                  datafileHandler: nil,
+                  userProfileService: nil,
+                  notificationCenter: nil,
+                  periodicDownloadInterval: nil)
+    }
+    
+    // TODO: review this for Objective-C clients support (@objc)
+    
+//    @objc public convenience init(sdkKey: String,
+//                                  logger:OPTLogger?,
+//                                  bucketer:OPTBucketer?,
+//                                  decisionService:OPTDecisionService?,
+//                                  eventDispatcher:OPTEventDispatcher?,
+//                                  datafileHandler:OPTDatafileHandler?,
+//                                  userProfileService:OPTUserProfileService?,
+//                                  notificationCenter:OPTNotificationCenter?,
+//                                  periodicDownloadInterval:Int? = nil) {
+
+    
+    @objc public func initializeSDK(completion: ((NSError?, Data?) -> Void)?) {
+        initializeSDK { result in
+            switch result {
+            case .failure(let error):
+                
+                completion?(self.convertErrorForObjc(error), nil)
+            case .success(let data):
+                completion?(nil, data)
+            }
+            
+        }
+    }
+    
+    func convertErrorForObjc(_ error: Error) -> NSError {
+        var errorInObjc: NSError
+        
+        switch error {
+        
+        default:
+            errorInObjc = NSError(domain: "com.optimizely.OptimizelySwiftSDK", code: 1000, userInfo: nil)
+        }
+        
+        return errorInObjc
+    }
 }

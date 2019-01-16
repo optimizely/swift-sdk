@@ -1,20 +1,20 @@
 //
-//  CustomNotificationCenter.m
+//  CustomLogger.m
 //  DemoObjcApp
 //
 //  Created by Jae Kim on 1/15/19.
 //  Copyright © 2019 Optimizely. All rights reserved.
 //
 
-#import "CustomNotificationCenter.h"
+#import "CustomLogger.h"
 @import OptimizelySwiftSDK;
 
-@implementation CustomNotificationCenter
+@implementation CustomLogger
 
 -(instancetype)init {
     self = [super init];
     if (self != nil) {
-        _notificationId = 0;
+        //
     }
     
     return self;

@@ -1,5 +1,5 @@
 //
-//  CustomNotificationCenter.h
+//  CustomLogger.h
 //  DemoObjcApp
 //
 //  Created by Jae Kim on 1/15/19.
@@ -10,11 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol OPTNotificationCenter
+@protocol OPTLogger
 
 @end
-@interface CustomNotificationCenter : NSObject <OPTNotificationCenter>
-@property(nonatomic, assign) int notificationId;
+@interface CustomLogger : NSObject <OPTLogger>
 @end
 
 NS_ASSUME_NONNULL_END

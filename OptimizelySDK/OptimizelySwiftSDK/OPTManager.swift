@@ -18,15 +18,17 @@ open class OPTManager: NSObject {
     
     // MARK: - Customizable
     
-    let logger: OPTLogger
-    let bucketer: OPTBucketer
-    let decisionService: OPTDecisionService
-    let eventDispatcher: OPTEventDispatcher
-    let datafileHandler: OPTDatafileHandler
-    let userProfileService: OPTUserProfileService
-    let notificationCenter: OPTNotificationCenter
-    
-    let periodicDownloadInterval: Int
+    // TODO: review this for Objective-C clients support (@objc)
+    // NOTE: all customizable engines set to <public, var> for supporting Objective-C clients
+    //       which is not allowed to use initializer with optional arguments
+    public var logger: OPTLogger
+    public var bucketer: OPTBucketer
+    public var decisionService: OPTDecisionService
+    public var eventDispatcher: OPTEventDispatcher
+    public var datafileHandler: OPTDatafileHandler
+    public var userProfileService: OPTUserProfileService
+    public var notificationCenter: OPTNotificationCenter
+    public var periodicDownloadInterval: Int
     
     // MARK: - Public interfaces
     
@@ -58,7 +60,6 @@ open class OPTManager: NSObject {
         self.notificationCenter = notificationCenter ?? DefaultNotificationCenter()
         self.bucketer = bucketer ?? DefaultBucketer()
         self.decisionService = decisionService ?? DefaultDecisionService()
-
         self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
     }
     

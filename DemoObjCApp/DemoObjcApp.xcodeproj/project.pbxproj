@@ -32,6 +32,8 @@
 		6E9681BD21EEB364009B7FEC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
 		6E9681BE21EEB364009B7FEC /* FailureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456721EE5DE3005346CC /* FailureViewController.m */; };
 		6E9681BF21EEB364009B7FEC /* SplashScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */; };
+		6E9681D821EFA5B2009B7FEC /* CustomLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9681D721EFA5B2009B7FEC /* CustomLogger.m */; };
+		6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9681D721EFA5B2009B7FEC /* CustomLogger.m */; };
 		6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
 		6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
 		DDB0B21C9FF18EAEA9E5F676 /* Pods_DemoObjctvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3822AD03E75EF61F9556BA6 /* Pods_DemoObjctvOS.framework */; };
@@ -122,6 +124,8 @@
 		6E9681A721EEA3D8009B7FEC /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		6E9681A821EEA3D8009B7FEC /* demoTestDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafile.json; sourceTree = "<group>"; };
 		6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
+		6E9681D421EFA5B2009B7FEC /* CustomLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLogger.h; sourceTree = "<group>"; };
+		6E9681D721EFA5B2009B7FEC /* CustomLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLogger.m; sourceTree = "<group>"; };
 		6EB8456321EE5DE3005346CC /* SplashScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashScreenViewController.h; sourceTree = "<group>"; };
 		6EB8456421EE5DE3005346CC /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		6EB8456521EE5DE3005346CC /* VariationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VariationViewController.m; sourceTree = "<group>"; };
@@ -175,6 +179,8 @@
 		6E96812021EE957B009B7FEC /* Customization */ = {
 			isa = PBXGroup;
 			children = (
+				6E9681D421EFA5B2009B7FEC /* CustomLogger.h */,
+				6E9681D721EFA5B2009B7FEC /* CustomLogger.m */,
 				6E96811321EE94DA009B7FEC /* CustomNotificationCenter.h */,
 				6E96811421EE94DA009B7FEC /* CustomNotificationCenter.m */,
 			);
@@ -519,6 +525,7 @@
 			files = (
 				6E9681BA21EEB361009B7FEC /* VariationViewController.m in Sources */,
 				6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */,
+				6E9681D821EFA5B2009B7FEC /* CustomLogger.m in Sources */,
 				6E9681BB21EEB361009B7FEC /* FailureViewController.m in Sources */,
 				6E96811521EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */,
 				6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */,
@@ -532,6 +539,7 @@
 			files = (
 				6E9681BD21EEB364009B7FEC /* VariationViewController.m in Sources */,
 				6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */,
+				6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */,
 				6E9681BE21EEB364009B7FEC /* FailureViewController.m in Sources */,
 				6E96811621EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */,
 				6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */,

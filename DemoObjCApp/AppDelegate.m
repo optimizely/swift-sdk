@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "VariationViewController.h"
 #import "FailureViewController.h"
+#import "CustomNotificationCenter.h"
 
 @import OptimizelySwiftSDK;
 #if TARGET_OS_IOS
@@ -75,6 +76,9 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     
     self.optimizely = [[OPTManager alloc] initWithSdkKey:kOptimizelySdkKey];
     
+    // customization example (optional)
+    // TODO: add cutomization for ObjC
+    
     NSString *datafileJSON = [NSString stringWithContentsOfFile:localDatafilePath encoding:NSUTF8StringEncoding error:nil];
         
     if (datafileJSON == nil) {
@@ -111,17 +115,16 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 }
 
 
--(id)makeCustomNotificationCenter {
-//#if os(tvOS)
-//    return CustomNotificationCenter()
-//#else
-//
-//
-//    // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-//    Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
-//
-//    let notificationCenter = CustomNotificationCenter()
-//
+-(id<OPTNotificationCenter>)makeCustomNotificationCenter {
+#if TARGET_OS_TV
+    return [[CustomNotificationCenter alloc] init];
+#else
+    
+    // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
+    [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
+    
+    id<OPTNotificationCenter> notificationCenter = [[CustomNotificationCenter alloc] init];
+    
 //    notificationCenter.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
 //        Amplitude.instance().logEvent("[Optimizely] \(experiment.key) - \(variation.key)")
 //    }
@@ -129,12 +132,10 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 //    notificationCenter.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
 //        Amplitude.instance().logEvent("[Optimizely] " + eventKey)
 //    }
-//
-//    return notificationCenter
-//
-//#endif
     
-    return nil;
+    return notificationCenter;
+
+#endif
 }
 
 -(void)setRootViewControllerWithOtimizelyManager:(OPTManager*)manager bucketedVariation:(NSString*)variationKey {

@@ -52,7 +52,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func initializeOptimizelySDKAsynchronous() {
-        optimizely = OPTManager(sdkKey: sdkKey)
+        CustomLogger.registerLogger(name: "default", builder: CustomLogger.init)
+        optimizely = OPTManager(sdkKey: sdkKey, logger: CustomLogger(level: .all))
         
         // initialize Optimizely Client from a datafile download
         optimizely!.initializeSDK { result in

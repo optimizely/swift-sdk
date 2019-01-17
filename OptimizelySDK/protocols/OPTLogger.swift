@@ -53,7 +53,7 @@ public protocol OPTLogger {
 }
 
 extension OPTLogger {
-    static var logLevelNames:[String] {
+    static public var logLevelNames:[String] {
         get {
             return ["OFF", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "VERBOSE", "ALL"]
         }

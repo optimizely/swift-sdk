@@ -17,8 +17,8 @@
 import Foundation
 
 public class DefaultLogger : OPTLogger {
-    private static var _logLevel:OptimizelyLogLevel?
-    public static var logLevel: OptimizelyLogLevel {
+    private static var _logLevel: OPTLogLevel?
+    public static var logLevel: OPTLogLevel {
         get {
             return _logLevel ?? .all
         }
@@ -29,21 +29,19 @@ public class DefaultLogger : OPTLogger {
         }
     }
     
-    public init(level:OptimizelyLogLevel) {
+    public init(level: OPTLogLevel) {
         DefaultLogger.logLevel = level
     }
     
-    public static func createInstance(logLevel: OptimizelyLogLevel) -> OPTLogger? {
+    public static func createInstance(logLevel: OPTLogLevel) -> OPTLogger? {
         return DefaultLogger(level:logLevel)
     }
     
-    public func log(level: OptimizelyLogLevel, message: String) {
+    public func log(level: OPTLogLevel, message: String) {
         if level.rawValue > DefaultLogger.logLevel.rawValue {
             return
         }
-        let message = "[OPTIMIZELY SDK][" + DefaultLogger.logLevelNames[level.rawValue] + "]:" + message
+        let message = "[OPTIMIZELY SDK][" + level.name + "]:" + message
         NSLog(message)
     }
-    
-    
 }

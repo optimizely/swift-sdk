@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class DataStoreQueuStackImplt<T> : DataStoreQueueStack where T:Codable {
+public class DataStoreQueuStackImpl<T> : DataStoreQueueStack where T:Codable {
     let queueStackName:String
     let lock:DispatchQueue
     let dataStore:OPTDataStore

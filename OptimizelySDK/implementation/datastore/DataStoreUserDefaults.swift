@@ -9,7 +9,7 @@
 import Foundation
 
 class DataStoreUserDefaults : OPTDataStore {
-    static let dispatchQueue = DispatchQueue(label: "OPTDataStoreQueue")
+    static let dispatchQueue = DispatchQueue(label: "OPTDataStoreQueueUserDefaults")
     
     func getItem(forKey: String) -> Any? {
         

@@ -8,30 +8,30 @@
 
 import Foundation
 
-public class DataStoreQueuStackUserDefaults<T> : DataStoreQueueStack where T:Codable {
+public class DataStoreQueuStackImplt<T> : DataStoreQueueStack where T:Codable {
     let queueStackName:String
     let lock:DispatchQueue
+    let dataStore:OPTDataStore
 
     /**
      Get instance of user defaults queue or stack.  Keep in mind that the queueStackName and lock name should be the same for each instance that wants to share the queue or stack.
      - Parameter queueStackName: name used for shared stack or queue.
     */
-    init(queueStackName:String) {
+    init(queueStackName:String, dataStore:OPTDataStore) {
         self.queueStackName = queueStackName
         self.lock = DispatchQueue(label: queueStackName)
+        self.dataStore = dataStore
     }
     
     public func save(item:T) {
         lock.async {
             guard let data = try? JSONEncoder().encode(item) else { return }
-            if var queue = UserDefaults.standard.array(forKey: self.queueStackName) {
+            if var queue = self.dataStore.getItem(forKey: self.queueStackName) as? Array<Data> {
                 queue.append(data)
-                UserDefaults.standard.set(queue, forKey: self.queueStackName)
-                UserDefaults.standard.synchronize()
+                self.dataStore.saveItem(forKey: self.queueStackName, value: queue)
             }
             else {
-                UserDefaults.standard.set([data], forKey: self.queueStackName)
-                UserDefaults.standard.synchronize()
+                self.dataStore.saveItem(forKey: self.queueStackName, value: [data])
             }
         }
     }
@@ -40,8 +40,8 @@ public class DataStoreQueuStackUserDefaults<T> : DataStoreQueueStack where T:Cod
         var item:T?
         
         lock.sync {
-            if let queue = UserDefaults.standard.array(forKey: queueStackName) {
-                if let data = queue.first as? Data {
+            if let queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
+                if let data = queue.first {
                     item = try? JSONDecoder().decode(T.self, from: data)
                 }
             }
@@ -53,8 +53,8 @@ public class DataStoreQueuStackUserDefaults<T> : DataStoreQueueStack where T:Cod
     public func getLastItem() -> T? {
         var item:T?
         lock.sync {
-            if let queue = UserDefaults.standard.array(forKey: queueStackName) {
-                if let data = queue.last as? Data {
+            if let queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
+                if let data = queue.last {
                     item = try? JSONDecoder().decode(T.self, from: data)
                 }
             }
@@ -67,13 +67,12 @@ public class DataStoreQueuStackUserDefaults<T> : DataStoreQueueStack where T:Cod
         var item:T?
         
         lock.sync {
-            if var queue = UserDefaults.standard.array(forKey: queueStackName) {
-                if let data = queue.first as? Data {
+            if var queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
+                if let data = queue.first {
                     item = try? JSONDecoder().decode(T.self, from: data)
                     if queue.count > 0 {
                         queue.remove(at: 0)
-                        UserDefaults.standard.set(queue, forKey: queueStackName)
-                        UserDefaults.standard.synchronize()
+                        dataStore.saveItem(forKey: queueStackName, value: queue)
                     }
                 }
             }
@@ -84,8 +83,8 @@ public class DataStoreQueuStackUserDefaults<T> : DataStoreQueueStack where T:Cod
     public func removeLastItem() -> T? {
         var item:T?
         lock.sync {
-            if var queue = UserDefaults.standard.array(forKey: queueStackName) {
-                if let data = queue.first as? Data {
+            if var queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
+                if let data = queue.first {
                     item = try? JSONDecoder().decode(T.self, from: data)
                     if queue.count > 0 {
                         queue.removeLast()

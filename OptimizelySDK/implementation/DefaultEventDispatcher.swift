@@ -19,7 +19,7 @@ import Foundation
 public class DefaultEventDispatcher : OPTEventDispatcher {
     let logger = DefaultLogger(level: .debug)
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
-    let dataStore = DataStoreQueuStackUserDefaults<EventForDispatch>(queueStackName: "EventQueue")
+    let dataStore = DataStoreQueuStackImplt<EventForDispatch>(queueStackName: "EventQueue", dataStore: DataStoreUserDefaults())
     let notify = DispatchGroup()
     
     public static func createInstance() -> OPTEventDispatcher? {

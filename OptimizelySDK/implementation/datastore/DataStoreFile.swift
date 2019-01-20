@@ -8,7 +8,9 @@
 
 import Foundation
 
-class DataStoreFile<T> : OPTDataStore where T:Codable {
+/// Implementation of OPTDataStore as a generic for per type storeage in a flat file.
+/// This class should be used as a singleton per storeName and type (T)
+public class DataStoreFile<T> : OPTDataStore where T:Codable {
     let datafileName:String
     let lock:DispatchQueue
     let url:URL
@@ -33,7 +35,7 @@ class DataStoreFile<T> : OPTDataStore where T:Codable {
         }
     }
     
-    func getItem(forKey: String) -> Any? {
+    public func getItem(forKey: String) -> Any? {
         var returnItem:T?
         
         lock.sync {
@@ -50,7 +52,7 @@ class DataStoreFile<T> : OPTDataStore where T:Codable {
         return returnItem
     }
     
-    func saveItem(forKey: String, value: Any) {
+    public func saveItem(forKey: String, value: Any) {
         lock.async {
             do {
                 if let value = value as? T {

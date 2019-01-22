@@ -15,7 +15,7 @@ public class DataStoreQueuStackImpl<T> : DataStoreQueueStack where T:Codable {
     let dataStore:OPTDataStore
 
     /**
-     Create instance of user defaults queue or stack.
+     Create instance of DataStoreQueueStack queue or stack.
      - Parameter queueStackName: name used for shared stack or queue.
      - Parameter dataStore: OPTDataStore implementation.
     */

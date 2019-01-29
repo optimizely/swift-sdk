@@ -73,11 +73,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Local datafile cannot be found")
         }
         
-        // customization example (optional)
-        let customNotificationCenter = makeCustomNotificationCenter()
-        
         optimizely = OPTManager(sdkKey: sdkKey,
-                                notificationCenter: customNotificationCenter)
+                                logger: CustomLogger())
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -109,26 +106,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
 
-    func makeCustomNotificationCenter() -> OPTNotificationCenter {
+    func customizeNotificationCenter() {
         #if os(tvOS)
-            return CustomNotificationCenter()
+            return
         #else
-        
         
         // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
         Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
         
-        let notificationCenter = CustomNotificationCenter()
-        
-        notificationCenter.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
-            Amplitude.instance().logEvent("[Optimizely] \(experiment.key) - \(variation.key)")
+        _ = optimizely?.notificationCenter.addActivateNotificationListener { (experimentKey, userId, attributes, variationKey, event) in
+            Amplitude.instance().logEvent("[Optimizely] \(experimentKey) - \(variationKey)")
         }
         
-        notificationCenter.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
+        _ = optimizely?.notificationCenter.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
             Amplitude.instance().logEvent("[Optimizely] " + eventKey)
         }
-
-        return notificationCenter
         
         #endif
     }

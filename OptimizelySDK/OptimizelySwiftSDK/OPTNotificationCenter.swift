@@ -16,13 +16,11 @@
 
 import Foundation
 
-public typealias OPTNotificationListenr = (Dictionary<String, Any>) -> Void
+public typealias OPTActivateCallback = (_ experimentKey: String, _ userId: String, _ attributes: Dictionary<String,Any>?, _ variation: String, _ event: Dictionary<String, Any>) -> Void
 
-//public typealias OPTGenericListener = (Any...) -> Void
-//public typealias OPTActivateListener = (_ experiment: String, _ userId: String, _ attributes: Dictionary<String,Any>?, _ variation: String, _ event: Dictionary<String, Any>) -> Void
-//public typealias OPTTrackListener = (_ eventKey: String, _ userId: String, _ attributes: Dictionary<String, Any>?, _ eventTags: Dictionary<String, Any>?, _ event: Dictionary<String, Any>) -> Void
+public typealias OPTTrackCallback = (_ eventKey: String, _ userId: String, _ attributes: Dictionary<String, Any>?, _ eventTags: Dictionary<String, Any>?, _ event: Dictionary<String, Any>) -> Void
 
-
+public typealias OPTGenericCallback = (Any?...) -> Void
 
 
 public class OPTNotificationCenter {
@@ -30,16 +28,16 @@ public class OPTNotificationCenter {
     var notificationId: Int = 1
     var notificationListeners = [Int: CoreNotificationListener]()
     
-    public func addGenericNotificationListener(callback: @escaping OPTNotificationListenr) -> Int {
-        return addNotificationListener(CoreGenericListner(callback: callback))
-    }
-    
-    public func addActivateNotificationListener(callback: @escaping OPTNotificationListenr) -> Int {
+    public func addActivateNotificationListener(callback: @escaping OPTActivateCallback) -> Int {
         return addNotificationListener(CoreActivateListner(callback: callback))
     }
     
-    public func addTrackNotificationListener(callback: @escaping OPTNotificationListenr) -> Int {
+    public func addTrackNotificationListener(callback: @escaping OPTTrackCallback) -> Int {
         return addNotificationListener(CoreTrackListner(callback: callback))
+    }
+    
+    public func addGenericNotificationListener(callback: @escaping OPTGenericCallback) -> Int {
+        return addNotificationListener(CoreGenericListner(callback: callback))
     }
     
     func addNotificationListener(_ listener: CoreNotificationListener) -> Int {
@@ -53,21 +51,17 @@ public class OPTNotificationCenter {
         return returnValue
     }
 
-    public func removeNotificationListener(notificationId: Int) {
-        self.notificationListeners.removeValue(forKey: notificationId)
-    }
-    
-    public func clearNotificationListeners(type: OPTNotificationType) {
-        notificationListeners = notificationListeners.filter{ !$0.value.isNotficationType(of: type) }
+    public func clearNotificationListener(notificationId: Int) {
+        notificationListeners.removeValue(forKey: notificationId)
     }
     
     public func clearAllNotificationListeners() {
         notificationListeners.removeAll()
     }
     
-    public func sendNotifications(type: OPTNotificationType, args: Array<Any?>) {
+    func sendNotifications(type: NotificationType, args: [Any]) {
         notificationListeners.values.forEach {
-            $0.notifyIfTypeMatched(type: type, data: [:])
+            try? $0.notifyTypeMatched(type: type, data: args)
         }
     }
     

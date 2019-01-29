@@ -14,8 +14,6 @@
 		6E4DD97D21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E4DD98021E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; };
 		6E4DD98121E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E96811521EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E96811421EE94DA009B7FEC /* CustomNotificationCenter.m */; };
-		6E96811621EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E96811421EE94DA009B7FEC /* CustomNotificationCenter.m */; };
 		6E96817C21EEA321009B7FEC /* tvOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817421EEA321009B7FEC /* tvOSMain.storyboard */; };
 		6E96817F21EEA321009B7FEC /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817821EEA321009B7FEC /* iOSMain.storyboard */; };
 		6E9681AB21EEA3D8009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A321EEA3D8009B7FEC /* Assets.xcassets */; };
@@ -113,8 +111,6 @@
 		3EFD1578D8AB431E6FD4B8FE /* Pods-DemoObjctvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjctvOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		4BE4886BF950708C866FA8F2 /* Pods-DemoObjciOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjciOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS.debug.xcconfig"; sourceTree = "<group>"; };
 		6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySDK/OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
-		6E96811321EE94DA009B7FEC /* CustomNotificationCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomNotificationCenter.h; sourceTree = "<group>"; };
-		6E96811421EE94DA009B7FEC /* CustomNotificationCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomNotificationCenter.m; sourceTree = "<group>"; };
 		6E96817521EEA321009B7FEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/tvOSMain.storyboard; sourceTree = "<group>"; };
 		6E96817621EEA321009B7FEC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E96817921EEA321009B7FEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iOSMain.storyboard; sourceTree = "<group>"; };
@@ -181,8 +177,6 @@
 			children = (
 				6E9681D421EFA5B2009B7FEC /* CustomLogger.h */,
 				6E9681D721EFA5B2009B7FEC /* CustomLogger.m */,
-				6E96811321EE94DA009B7FEC /* CustomNotificationCenter.h */,
-				6E96811421EE94DA009B7FEC /* CustomNotificationCenter.m */,
 			);
 			path = Customization;
 			sourceTree = "<group>";
@@ -527,7 +521,6 @@
 				6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E9681D821EFA5B2009B7FEC /* CustomLogger.m in Sources */,
 				6E9681BB21EEB361009B7FEC /* FailureViewController.m in Sources */,
-				6E96811521EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */,
 				6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */,
 				6E9681BC21EEB361009B7FEC /* SplashScreenViewController.m in Sources */,
 			);
@@ -541,7 +534,6 @@
 				6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */,
 				6E9681BE21EEB364009B7FEC /* FailureViewController.m in Sources */,
-				6E96811621EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */,
 				6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */,
 				6E9681BF21EEB364009B7FEC /* SplashScreenViewController.m in Sources */,
 			);

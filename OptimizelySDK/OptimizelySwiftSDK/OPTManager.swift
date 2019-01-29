@@ -24,11 +24,12 @@ open class OPTManager: NSObject {
     let eventDispatcher: OPTEventDispatcher
     let datafileHandler: OPTDatafileHandler
     let userProfileService: OPTUserProfileService
-    let notificationCenter: OPTNotificationCenter
     let periodicDownloadInterval: Int
     
     // MARK: - Public interfaces
     
+    public let notificationCenter: OPTNotificationCenter
+
     /// Initialize Optimizely Manager
     ///
     /// - Parameters:
@@ -38,26 +39,25 @@ open class OPTManager: NSObject {
     ///   - ...
     public init(sdkKey: String,
                 logger:OPTLogger? = nil,
-                bucketer:OPTBucketer? = nil,
-                decisionService:OPTDecisionService? = nil,
                 eventDispatcher:OPTEventDispatcher? = nil,
-                datafileHandler:OPTDatafileHandler? = nil,
                 userProfileService:OPTUserProfileService? = nil,
-                notificationCenter:OPTNotificationCenter? = nil,
                 periodicDownloadInterval:Int? = nil) {
         
         self.sdkKey = sdkKey
         
-        // default services (can be customized by clients
+        // default services (can be customized by clients)
         
         self.logger = logger ?? DefaultLogger(level: .error)
         self.eventDispatcher = eventDispatcher ?? DefaultEventDispatcher()
-        self.datafileHandler = datafileHandler ?? DefaultDatafileHandler()
         self.userProfileService = userProfileService ?? DefaultUserProfileService()
-        self.notificationCenter = notificationCenter ?? DefaultNotificationCenter()
-        self.bucketer = bucketer ?? DefaultBucketer()
-        self.decisionService = decisionService ?? DefaultDecisionService()
         self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
+        
+        // configurable
+        
+        self.notificationCenter = OPTNotificationCenter()
+        self.bucketer = DefaultBucketer()
+        self.decisionService = DefaultDecisionService()
+        self.datafileHandler = DefaultDatafileHandler()
     }
     
     /// Initialize Optimizely Manager
@@ -201,7 +201,11 @@ open class OPTManager: NSObject {
             case .failure(let error):
                 self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
             case .success( _):
-                self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+                self.notificationCenter.sendNotifications(type: .activate,
+                                                          args: [experiment,
+                                                                 userId,
+                                                                 attributes,
+                                                                 variation, ["url":event.url as Any, "body":event.body as Any]])
             }
         }
         
@@ -362,7 +366,12 @@ open class OPTManager: NSObject {
             case .failure(let error):
                 self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
             case .success(_):
-                self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+                self.notificationCenter.sendNotifications(type: .activate,
+                                                          args: [experiment,
+                                                                 userId,
+                                                                 attributes,
+                                                                 variation,
+                                                                 ["url":event.url as Any, "body":event.body as Any]])
             }
         }
         
@@ -570,12 +579,8 @@ extension OPTManager {
     @objc public convenience init(sdkKey: String) {
         self.init(sdkKey: sdkKey,
                   logger: nil,
-                  bucketer: nil,
-                  decisionService: nil,
                   eventDispatcher: nil,
-                  datafileHandler: nil,
                   userProfileService: nil,
-                  notificationCenter: nil,
                   periodicDownloadInterval: nil)
     }
     
@@ -583,12 +588,8 @@ extension OPTManager {
     
 //    @objc public convenience init(sdkKey: String,
 //                                  logger:OPTLogger?,
-//                                  bucketer:OPTBucketer?,
-//                                  decisionService:OPTDecisionService?,
 //                                  eventDispatcher:OPTEventDispatcher?,
-//                                  datafileHandler:OPTDatafileHandler?,
 //                                  userProfileService:OPTUserProfileService?,
-//                                  notificationCenter:OPTNotificationCenter?,
 //                                  periodicDownloadInterval:Int? = nil) {
 
     

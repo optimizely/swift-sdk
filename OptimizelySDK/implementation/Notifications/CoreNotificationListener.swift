@@ -8,19 +8,23 @@
 
 import Foundation
 
+// MARK: notification type
+
+enum NotificationType: Int {
+    case generic = 0
+    case activate
+    case track
+}
+
 // MARK: Listener Protocol
 
 protocol CoreNotificationListener {
-    
-    init(callback: @escaping OPTNotificationListenr)
-    
-    func notify(data: Array<Any?>) throws
-    
-    func isNotficationType(of: OPTNotificationType) -> Bool
+    func notify(data: [Any]) throws
+    func isNotficationType(of: NotificationType) -> Bool
 }
 
 extension CoreNotificationListener {
-    func notifyIfTypeMatched(type: OPTNotificationType, data: Array<Any?>) throws {
+    func notifyTypeMatched(type: NotificationType, data: [Any]) throws {
         guard isNotficationType(of: type) else { return }
         try notify(data: data)
     }
@@ -29,26 +33,25 @@ extension CoreNotificationListener {
 // MARK: Listener Types
 
 struct CoreGenericListner: CoreNotificationListener {
-    let callback: OPTNotificationListenr
+    let callback: OPTGenericCallback
     
-    init(callback: @escaping OPTNotificationListenr) {
+    init(callback: @escaping OPTGenericCallback) {
         self.callback = callback
     }
     
-    func notify(data: Array<Any?>) throws {
+    func notify(data: [Any]) throws {
         callback([:])
     }
     
-    func isNotficationType(of type: OPTNotificationType) -> Bool {
+    func isNotficationType(of type: NotificationType) -> Bool {
         return type == .generic
     }
 }
 
-
 struct CoreActivateListner: CoreNotificationListener {
-    let callback: OPTNotificationListenr
+    let callback: OPTActivateCallback
     
-    init(callback: @escaping OPTNotificationListenr) {
+    init(callback: @escaping OPTActivateCallback) {
         self.callback = callback
     }
     
@@ -58,38 +61,38 @@ struct CoreActivateListner: CoreNotificationListener {
     // variationKey: String,
     // event: Dictionary<String, Any>
     
-    func notify(data: Array<Any?>) throws {
+    func notify(data: [Any]) throws {
+        
         guard let data = data.first as? [Any?] else {
             // TODO: refine error-type
             throw OPTError.generic
         }
-        
+
         guard data.count >= 5 else {
             // TODO: refine error-type
             throw OPTError.generic
         }
-        
+
         if let experiment = data[0] as? OPTExperiment,
             let userId = data[1] as? String,
             let variation = data[3] as? OPTVariation
         {
             let attributes = data[2] as? Dictionary<String, Any>
             let event = data[4] as! Dictionary<String,Any>
-            
-            //entry(experiment.key, userId, attributes, variation.key, event)
-            callback([:])
+
+            callback(experiment.key, userId, attributes, variation.key, event)
         }
     }
     
-    func isNotficationType(of type: OPTNotificationType) -> Bool {
+    func isNotficationType(of type: NotificationType) -> Bool {
         return type == .activate
     }
 }
 
-public struct CoreTrackListner: CoreNotificationListener {
-    let callback: OPTNotificationListenr
+struct CoreTrackListner: CoreNotificationListener {
+    let callback: OPTTrackCallback
     
-    init(callback: @escaping OPTNotificationListenr) {
+    init(callback: @escaping OPTTrackCallback) {
         self.callback = callback
     }
     
@@ -99,8 +102,8 @@ public struct CoreTrackListner: CoreNotificationListener {
     // eventTags: Dictionary<String, Any>?
     // event: Dictionary<String, Any>
     
-    func notify(data: Array<Any?>) {
-        
+    func notify(data: [Any]) {
+
         guard let data = data[0] as? [Any?] else {
             return
         }
@@ -113,13 +116,12 @@ public struct CoreTrackListner: CoreNotificationListener {
             let attributes = data[2] as? Dictionary<String, Any>
             let eventTags = data[3] as? Dictionary<String,Any>
             let event = data[4] as! Dictionary<String,Any>
-            
-            //trackListener(eventKey, userId, attributes, eventTags, event)
-            callback([:])
+
+            callback(eventKey, userId, attributes, eventTags, event)
         }
     }
     
-    func isNotficationType(of type: OPTNotificationType) -> Bool {
+    func isNotficationType(of type: NotificationType) -> Bool {
         return type == .track
     }
 }

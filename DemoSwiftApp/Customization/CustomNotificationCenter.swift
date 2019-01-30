@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import OptimizelySwiftSDK
+import Optimizely
 
 class CustomNotificationCenter: OPTNotificationCenter {
     var notificationId: Int

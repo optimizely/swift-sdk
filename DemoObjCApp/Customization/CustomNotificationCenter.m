@@ -7,7 +7,7 @@
 //
 
 #import "CustomNotificationCenter.h"
-@import OptimizelySwiftSDK;
+@import Optimizely;
 
 @implementation CustomNotificationCenter
 

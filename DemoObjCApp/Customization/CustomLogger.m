@@ -7,7 +7,7 @@
 //
 
 #import "CustomLogger.h"
-@import OptimizelySwiftSDK;
+@import Optimizely;
 
 @implementation CustomLogger
 

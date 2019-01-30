@@ -7,7 +7,7 @@
 //
 
 #import "VariationViewController.h"
-@import OptimizelySwiftSDK;
+@import Optimizely;
 
 @interface VariationViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *variationLetterLabel;
@@ -40,7 +40,7 @@
 
 - (IBAction)attemptTrackAndShowSuccessOrFailure:(id)sender {
     NSError *error;
-    BOOL status = [self.optimizelyManager trackWithEventKey:self.eventKey
+    BOOL status = [self.optimizely trackWithEventKey:self.eventKey
                                                      userId:self.userId
                                                  attributes:nil eventTags:nil
                                                       error:&error];

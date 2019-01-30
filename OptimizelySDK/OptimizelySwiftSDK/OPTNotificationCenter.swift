@@ -26,21 +26,21 @@ public typealias OPTGenericCallback = (Any?...) -> Void
 public class OPTNotificationCenter {
 
     var notificationId: Int = 1
-    var notificationListeners = [Int: CoreNotificationListener]()
+    var notificationListeners = [Int: CoreEventListener]()
     
     public func addActivateNotificationListener(callback: @escaping OPTActivateCallback) -> Int {
-        return addNotificationListener(CoreActivateListner(callback: callback))
+        return addNotificationListener(ActivateEventListner(callback: callback))
     }
     
     public func addTrackNotificationListener(callback: @escaping OPTTrackCallback) -> Int {
-        return addNotificationListener(CoreTrackListner(callback: callback))
+        return addNotificationListener(TrackEventListner(callback: callback))
     }
     
     public func addGenericNotificationListener(callback: @escaping OPTGenericCallback) -> Int {
-        return addNotificationListener(CoreGenericListner(callback: callback))
+        return addNotificationListener(GenericEventListner(callback: callback))
     }
     
-    func addNotificationListener(_ listener: CoreNotificationListener) -> Int {
+    func addNotificationListener(_ listener: CoreEventListener) -> Int {
         notificationListeners[notificationId] = listener
         return incrementNotificationId()
     }
@@ -64,6 +64,5 @@ public class OPTNotificationCenter {
             try? $0.notifyTypeMatched(type: type, data: args)
         }
     }
-    
     
 }

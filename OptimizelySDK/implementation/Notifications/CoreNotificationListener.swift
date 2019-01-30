@@ -18,21 +18,25 @@ enum NotificationType: Int {
 
 // MARK: Listener Protocol
 
-protocol CoreNotificationListener {
+protocol CoreEventListener {
+    var type: NotificationType { get }
     func notify(data: [Any]) throws
-    func isNotficationType(of: NotificationType) -> Bool
 }
 
-extension CoreNotificationListener {
+extension CoreEventListener {
     func notifyTypeMatched(type: NotificationType, data: [Any]) throws {
-        guard isNotficationType(of: type) else { return }
+        guard self.type == type else { return }
         try notify(data: data)
     }
 }
 
 // MARK: Listener Types
 
-struct CoreGenericListner: CoreNotificationListener {
+struct GenericEventListner: CoreEventListener {
+    var type: NotificationType {
+        return .generic
+    }
+    
     let callback: OPTGenericCallback
     
     init(callback: @escaping OPTGenericCallback) {
@@ -40,15 +44,15 @@ struct CoreGenericListner: CoreNotificationListener {
     }
     
     func notify(data: [Any]) throws {
-        callback([:])
-    }
-    
-    func isNotficationType(of type: NotificationType) -> Bool {
-        return type == .generic
+        callback(data)
     }
 }
 
-struct CoreActivateListner: CoreNotificationListener {
+struct ActivateEventListner: CoreEventListener {
+    var type: NotificationType {
+        return .activate
+    }
+
     let callback: OPTActivateCallback
     
     init(callback: @escaping OPTActivateCallback) {
@@ -83,13 +87,13 @@ struct CoreActivateListner: CoreNotificationListener {
             callback(experiment.key, userId, attributes, variation.key, event)
         }
     }
-    
-    func isNotficationType(of type: NotificationType) -> Bool {
-        return type == .activate
-    }
 }
 
-struct CoreTrackListner: CoreNotificationListener {
+struct TrackEventListner: CoreEventListener {
+    var type: NotificationType {
+        return .track
+    }
+    
     let callback: OPTTrackCallback
     
     init(callback: @escaping OPTTrackCallback) {
@@ -119,9 +123,5 @@ struct CoreTrackListner: CoreNotificationListener {
 
             callback(eventKey, userId, attributes, eventTags, event)
         }
-    }
-    
-    func isNotficationType(of type: NotificationType) -> Bool {
-        return type == .track
     }
 }

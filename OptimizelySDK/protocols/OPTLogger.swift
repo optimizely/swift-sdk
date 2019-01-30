@@ -15,19 +15,19 @@ import Foundation
 public protocol OPTLogger {
 
     /// The log level the Logger is initialized with.
-    static var logLevel: OPTLogLevel { get set }
+    static var logLevel: OptimizelyLogLevel { get set }
 
     /**
      * Initialize a new Optimizely Logger instance.
      */
-    static func createInstance(logLevel:OPTLogLevel) -> OPTLogger?
+    static func createInstance(logLevel: OptimizelyLogLevel) -> OPTLogger?
 
     /**
      Log a message at a certain level.
      - Parameter level: The priority level of the log.
      - Parameter message: The message to log.
      */
-    func log(level: OPTLogLevel, message: String)
+    func log(level: OptimizelyLogLevel, message: String)
 
 }
 

@@ -9,9 +9,8 @@
 #import "AppDelegate.h"
 #import "VariationViewController.h"
 #import "FailureViewController.h"
-#import "CustomNotificationCenter.h"
 
-@import OptimizelySwiftSDK;
+@import Optimizely;
 #if TARGET_OS_IOS
     @import Amplitude_iOS;
 #endif
@@ -24,7 +23,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 @interface AppDelegate ()
 @property(nonnull, strong, nonatomic) NSString *userId;
 @property(nonnull, strong, nonatomic) NSDictionary *attributes;
-@property(nullable, strong, nonatomic) OPTManager *optimizely;
+@property(nullable, strong, nonatomic) OptimizelyManager *optimizely;
 @end
 
 @implementation AppDelegate
@@ -50,7 +49,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 }
 
 -(void)initializeOptimizelySDKAsynchronous {
-    self.optimizely = [[OPTManager alloc] initWithSdkKey:kOptimizelySdkKey];
+    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey];
     
     [self.optimizely initializeSDKWithCompletion:^(NSError * _Nullable error, NSData * _Nullable data) {
         if (error == nil) {
@@ -72,7 +71,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
         return;
     }
     
-    self.optimizely = [[OPTManager alloc] initWithSdkKey:kOptimizelySdkKey];
+    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey];
     
     // customization example (optional)
     // TODO: add cutomization for ObjC
@@ -112,31 +111,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     [self setRootViewControllerWithOtimizelyManager:self.optimizely bucketedVariation:variationKey];
 }
 
-
--(id<OPTNotificationCenter>)makeCustomNotificationCenter {
-#if TARGET_OS_TV
-    return [[CustomNotificationCenter alloc] init];
-#else
-    
-    // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-    [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
-    
-    id<OPTNotificationCenter> notificationCenter = [[CustomNotificationCenter alloc] init];
-    
-//    notificationCenter.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
-//        Amplitude.instance().logEvent("[Optimizely] \(experiment.key) - \(variation.key)")
-//    }
-//
-//    notificationCenter.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
-//        Amplitude.instance().logEvent("[Optimizely] " + eventKey)
-//    }
-    
-    return notificationCenter;
-
-#endif
-}
-
--(void)setRootViewControllerWithOtimizelyManager:(OPTManager*)manager bucketedVariation:(NSString*)variationKey {
+-(void)setRootViewControllerWithOtimizelyManager:(OptimizelyManager*)manager bucketedVariation:(NSString*)variationKey {
     dispatch_async(dispatch_get_main_queue(), ^{
         
 #if TARGET_OS_IOS
@@ -150,7 +125,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
             VariationViewController *vc = [storyboard instantiateViewControllerWithIdentifier: @"VariationViewController"];
             
             vc.eventKey = kOptimizelyEventKey;
-            vc.optimizelyManager = manager;
+            vc.optimizely = manager;
             vc.userId = self.userId;
             vc.variationKey = variationKey;
 

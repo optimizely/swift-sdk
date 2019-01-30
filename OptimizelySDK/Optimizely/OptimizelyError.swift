@@ -1,5 +1,5 @@
 //
-//  OPTError.swift
+//  OptimizelyError.swift
 //  OptimizelySDK
 //
 //  Created by Jae Kim on 12/18/18.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum OPTError: Error {
+public enum OptimizelyError: Error {
     case generic
     case dataFileInvalid
     case dataFileVersionInvalid(String)
@@ -31,7 +31,7 @@ public enum OPTError: Error {
     case projectConfigInvalidAudienceCondition
 }
 
-extension OPTError: CustomStringConvertible {
+extension OptimizelyError: CustomStringConvertible {
     public var description: String {
         var message: String = "[Optimizely]"
         

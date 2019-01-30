@@ -1,5 +1,5 @@
 //
-//  OPTLogLevel.swift
+//  OptimizelyLogLevel.swift
 //  OptimizelySwiftSDK
 //
 //  Created by Jae Kim on 1/17/19.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public enum OPTLogLevel : Int {
+@objc public enum OptimizelyLogLevel : Int {
     
     /// If the filter level is set to OptimizelyLogLevelOff, all log messages will be suppressed.
     case off = 0

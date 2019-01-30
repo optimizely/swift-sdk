@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import UIKit
-import OptimizelySwiftSDK
+import Optimizely
 #if os(iOS)
     import Amplitude_iOS
 #endif
@@ -24,7 +24,7 @@ import OptimizelySwiftSDK
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    var optimizely: OPTManager?
+    var optimizely: OptimizelyManager?
     
     // generate random user ID on each app load
     let userId = String(Int(arc4random_uniform(300000)))
@@ -52,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func initializeOptimizelySDKAsynchronous() {
-        optimizely = OPTManager(sdkKey: sdkKey)
+        optimizely = OptimizelyManager(sdkKey: sdkKey)
         
         // initialize Optimizely Client from a datafile download
         optimizely!.initializeSDK { result in
@@ -73,8 +73,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Local datafile cannot be found")
         }
         
-        optimizely = OPTManager(sdkKey: sdkKey,
-                                logger: CustomLogger())
+        optimizely = OptimizelyManager(sdkKey: sdkKey,
+                                        logger: CustomLogger())
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -125,7 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
     }
     
-    func setRootViewController(optimizelyManager: OPTManager?, bucketedVariation:String?) {
+    func setRootViewController(optimizelyManager: OptimizelyManager?, bucketedVariation:String?) {
         DispatchQueue.main.async {
             var storyboard : UIStoryboard
             

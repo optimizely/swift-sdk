@@ -1,5 +1,5 @@
 //
-//  OPTResult.swift
+//  OptimizelyResult.swift
 //  OptimizelySDK
 //
 //  Created by Jae Kim on 12/19/18.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum OPTResult<Value> {
+public enum OptimizelyResult<Value> {
     case success(Value)
-    case failure(OPTError)
+    case failure(OptimizelyError)
 }

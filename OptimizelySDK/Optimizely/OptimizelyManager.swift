@@ -1,5 +1,5 @@
 //
-//  OPTManager.swift
+//  OptimizelyManager.swift
 //  OptimizelySDK
 //
 //  Created by Jae Kim on 12/19/18.
@@ -9,7 +9,7 @@
 import Foundation
 
 
-open class OPTManager: NSObject {
+open class OptimizelyManager: NSObject {
     
     // MARK: - Properties
     
@@ -67,7 +67,7 @@ open class OPTManager: NSObject {
     ///                       a cached copy from previous download is used if it's available
     ///                       the datafile will be updated from the server in the background thread
     ///   - completion: callback when initialization is completed
-    public func initializeSDK(completion: ((OPTResult<Data>) -> Void)?=nil) {
+    public func initializeSDK(completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         
         fetchDatafileBackground() { result in
             switch result {
@@ -90,7 +90,7 @@ open class OPTManager: NSObject {
     
     @objc public func initializeSDK(datafile: String) throws {
         guard let datafileData = datafile.data(using: .utf8) else {
-            throw OPTError.dataFileInvalid
+            throw OptimizelyError.dataFileInvalid
         }
         
         try initializeSDK(datafile: datafileData)
@@ -108,7 +108,7 @@ open class OPTManager: NSObject {
         } catch {
             
             // TODO:  refine error-type
-            throw OPTError.dataFileInvalid
+            throw OptimizelyError.dataFileInvalid
         }
         
         fetchDatafileBackground()
@@ -116,7 +116,7 @@ open class OPTManager: NSObject {
     
     func configSDK(datafile: String) throws {
         guard let datafileData = datafile.data(using: .utf8) else {
-            throw OPTError.dataFileInvalid
+            throw OptimizelyError.dataFileInvalid
         }
         
         try configSDK(datafile: datafileData)
@@ -131,16 +131,16 @@ open class OPTManager: NSObject {
                                        bucketer: self.bucketer,
                                        userProfileService: self.userProfileService)
         } catch is DecodingError {
-            throw OPTError.dataFileInvalid
-        } catch is OPTError {
+            throw OptimizelyError.dataFileInvalid
+        } catch is OptimizelyError {
             // TODO: refine error-type
-            throw OPTError.dataFileInvalid
+            throw OptimizelyError.dataFileInvalid
         }
      }
     
-    func fetchDatafileBackground(completion: ((OPTResult<Data>) -> Void)?=nil) {
+    func fetchDatafileBackground(completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         datafileHandler.downloadDatafile(sdkKey: self.sdkKey){ result in
-            var fetchResult: OPTResult<Data>
+            var fetchResult: OptimizelyResult<Data>
 
             switch result {
             case .failure(let err):
@@ -178,7 +178,7 @@ open class OPTManager: NSObject {
         
         guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
             // TODO: refine error type
-            throw OPTError.experimentUnknown(experimentKey)
+            throw OptimizelyError.experimentUnknown(experimentKey)
         }
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
@@ -192,7 +192,7 @@ open class OPTManager: NSObject {
                                                                  attributes: attributes) else
         {
             // TODO: refine error type
-            throw OPTError.eventUnknown(experimentKey)
+            throw OptimizelyError.eventUnknown(experimentKey)
         }
         
         let event = EventForDispatch(body: body)
@@ -239,7 +239,7 @@ open class OPTManager: NSObject {
         
         // TODO: refine errors
         
-        throw OPTError.attributeFormatInvalid
+        throw OptimizelyError.attributeFormatInvalid
     }
 
     
@@ -264,7 +264,7 @@ open class OPTManager: NSObject {
     public func getForcedVariation(experimentKey:String, userId:String) throws -> String? {
         guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
             // TODO: refine error-type
-            throw OPTError.experimentUnknown(experimentKey)
+            throw OptimizelyError.experimentUnknown(experimentKey)
         }
         
         guard let dict = config.whitelistUsers[userId],
@@ -275,7 +275,7 @@ open class OPTManager: NSObject {
         
         guard let variation = experiment.variations.filter({$0.key == variationKey}).first else {
             // TODO: refine error-type
-            throw OPTError.variationUnknown(variationKey)
+            throw OptimizelyError.variationUnknown(variationKey)
         }
         
         return variation.key
@@ -296,7 +296,7 @@ open class OPTManager: NSObject {
         
         guard let _ = config.experiments.filter({$0.key == experimentKey}).first else {
             // TODO: refine error-type
-            throw OPTError.experimentUnknown(experimentKey)
+            throw OptimizelyError.experimentUnknown(experimentKey)
         }
         
         guard var variationKey = variationKey else
@@ -309,7 +309,7 @@ open class OPTManager: NSObject {
         
         guard !variationKey.isEmpty else {
             // TODO: refine error-type
-            throw OPTError.variationUnknown(variationKey)
+            throw OptimizelyError.variationUnknown(variationKey)
         }
 
         var whitelist = config.whitelistUsers[userId] ?? [:]
@@ -339,12 +339,12 @@ open class OPTManager: NSObject {
             let variation = pair.variation else
         {
             // TODO: refine error-type
-            throw OPTError.variationUnknown(featureKey)
+            throw OptimizelyError.variationUnknown(featureKey)
         }
         
         guard let featureEnabled = variation.featureEnabled else {
             // TODO: refine error-type (what does nil-featureEnabled mean?)
-            throw OPTError.generic
+            throw OptimizelyError.generic
         }
     
         // TODO: fix for error handling
@@ -356,7 +356,7 @@ open class OPTManager: NSObject {
                                                                  attributes: attributes) else
         {
             // TODO: refine error type
-            throw OPTError.eventUnknown(experiment.key)
+            throw OptimizelyError.eventUnknown(experiment.key)
         }
 
         let event = EventForDispatch(body: body)
@@ -465,17 +465,17 @@ open class OPTManager: NSObject {
         
         guard let featureFlag = config.featureFlags?.filter({$0.key == featureKey}).first else {
             // TODO: refine error-type
-            throw OPTError.generic
+            throw OptimizelyError.generic
         }
         
         guard let variable = featureFlag.variables?.filter({$0.key == variableKey}).first else {
             // TODO: refine error-type
-            throw OPTError.generic
+            throw OptimizelyError.generic
         }
         
         guard let defaultValueString = variable.defaultValue else {
             // TODO: refine error-type
-            throw OPTError.generic
+            throw OptimizelyError.generic
         }
 
         var typeName: String
@@ -496,12 +496,12 @@ open class OPTManager: NSObject {
             value = Bool(defaultValueString) as! T
         default:
             // TODO: refine error-type
-            throw OPTError.generic
+            throw OptimizelyError.generic
         }
         
         guard variable.type == typeName else {
             // TODO: refine error-type
-            throw OPTError.generic
+            throw OptimizelyError.generic
         }
         
         return value
@@ -520,7 +520,7 @@ open class OPTManager: NSObject {
 
         guard let featureFlags = config.featureFlags else {
             // TODO: refine error type
-            throw OPTError.generic
+            throw OptimizelyError.generic
         }
         
         let enabledFeatures = try featureFlags.filter{
@@ -552,7 +552,7 @@ open class OPTManager: NSObject {
                                                                  eventTags:eventTags) else
         {
             // TODO: refine error type
-            throw OPTError.eventUnknown(eventKey)
+            throw OptimizelyError.eventUnknown(eventKey)
         }
         
         let event = EventForDispatch(body: body)
@@ -574,7 +574,7 @@ open class OPTManager: NSObject {
 
 // MARK: Objective-C Wrappers
 
-extension OPTManager {
+extension OptimizelyManager {
     
     @objc public convenience init(sdkKey: String) {
         self.init(sdkKey: sdkKey,

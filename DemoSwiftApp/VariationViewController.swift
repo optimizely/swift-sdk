@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import UIKit
-import OptimizelySwiftSDK
+import Optimizely
 
 class VariationViewController: UIViewController {
     
-    var optimizelyManager: OPTManager?
+    var optimizelyManager: OptimizelyManager?
     var eventKey: String = ""
     var variationKey: String = ""
     var userId: String = ""

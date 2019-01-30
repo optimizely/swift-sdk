@@ -16,27 +16,38 @@
 
 import Foundation
 
-public typealias OPTActivateCallback = (_ experimentKey: String, _ userId: String, _ attributes: Dictionary<String,Any>?, _ variation: String, _ event: Dictionary<String, Any>) -> Void
+// MARK: Notification Types
 
-public typealias OPTTrackCallback = (_ eventKey: String, _ userId: String, _ attributes: Dictionary<String, Any>?, _ eventTags: Dictionary<String, Any>?, _ event: Dictionary<String, Any>) -> Void
+public enum OptimizelyNotificationType: Int {
+    case generic = 0
+    case activate
+    case track
+}
 
-public typealias OPTGenericCallback = (Any?...) -> Void
+// MARK: Callbacks
 
+public typealias OptimizelyActivateCallback = (_ experimentKey: String, _ userId: String, _ attributes: Dictionary<String,Any>?, _ variation: String, _ event: Dictionary<String, Any>) -> Void
 
-public class OPTNotificationCenter {
+public typealias OptimizelyTrackCallback = (_ eventKey: String, _ userId: String, _ attributes: Dictionary<String, Any>?, _ eventTags: Dictionary<String, Any>?, _ event: Dictionary<String, Any>) -> Void
+
+public typealias OptimizelyGenericCallback = (Any?...) -> Void
+
+// MARK: NotficationCenter
+
+public class OptimizelyNotificationCenter {
 
     var notificationId: Int = 1
     var notificationListeners = [Int: CoreEventListener]()
     
-    public func addActivateNotificationListener(callback: @escaping OPTActivateCallback) -> Int {
+    public func addActivateNotificationListener(callback: @escaping OptimizelyActivateCallback) -> Int {
         return addNotificationListener(ActivateEventListner(callback: callback))
     }
     
-    public func addTrackNotificationListener(callback: @escaping OPTTrackCallback) -> Int {
+    public func addTrackNotificationListener(callback: @escaping OptimizelyTrackCallback) -> Int {
         return addNotificationListener(TrackEventListner(callback: callback))
     }
     
-    public func addGenericNotificationListener(callback: @escaping OPTGenericCallback) -> Int {
+    public func addGenericNotificationListener(callback: @escaping OptimizelyGenericCallback) -> Int {
         return addNotificationListener(GenericEventListner(callback: callback))
     }
     
@@ -55,13 +66,17 @@ public class OPTNotificationCenter {
         notificationListeners.removeValue(forKey: notificationId)
     }
     
+    public func clearNotificationListeners(type: OptimizelyNotificationType) {
+        notificationListeners = notificationListeners.filter{ !$0.value.isType(of: type) }
+    }
+    
     public func clearAllNotificationListeners() {
         notificationListeners.removeAll()
     }
     
-    func sendNotifications(type: NotificationType, args: [Any]) {
+    func sendNotifications(type: OptimizelyNotificationType, args: [Any]) {
         notificationListeners.values.forEach {
-            try? $0.notifyTypeMatched(type: type, data: args)
+            try? $0.notify(type: type, data: args)
         }
     }
     

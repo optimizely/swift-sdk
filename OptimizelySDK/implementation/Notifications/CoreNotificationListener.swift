@@ -8,24 +8,17 @@
 
 import Foundation
 
-// MARK: notification type
-
-enum NotificationType: Int {
-    case generic = 0
-    case activate
-    case track
-}
-
 // MARK: Listener Protocol
 
 protocol CoreEventListener {
-    var type: NotificationType { get }
+    func isType(of type: OptimizelyNotificationType) -> Bool
     func notify(data: [Any]) throws
 }
 
 extension CoreEventListener {
-    func notifyTypeMatched(type: NotificationType, data: [Any]) throws {
-        guard self.type == type else { return }
+    func notify(type: OptimizelyNotificationType, data: [Any]) throws {
+        guard isType(of: type) else { return }
+        
         try notify(data: data)
     }
 }
@@ -33,14 +26,14 @@ extension CoreEventListener {
 // MARK: Listener Types
 
 struct GenericEventListner: CoreEventListener {
-    var type: NotificationType {
-        return .generic
+    let callback: OptimizelyGenericCallback
+    
+    init(callback: @escaping OptimizelyGenericCallback) {
+        self.callback = callback
     }
     
-    let callback: OPTGenericCallback
-    
-    init(callback: @escaping OPTGenericCallback) {
-        self.callback = callback
+    func isType(of type: OptimizelyNotificationType) -> Bool {
+        return type == .generic
     }
     
     func notify(data: [Any]) throws {
@@ -49,16 +42,16 @@ struct GenericEventListner: CoreEventListener {
 }
 
 struct ActivateEventListner: CoreEventListener {
-    var type: NotificationType {
-        return .activate
-    }
-
-    let callback: OPTActivateCallback
+    let callback: OptimizelyActivateCallback
     
-    init(callback: @escaping OPTActivateCallback) {
+    init(callback: @escaping OptimizelyActivateCallback) {
         self.callback = callback
     }
     
+    func isType(of type: OptimizelyNotificationType) -> Bool {
+        return type == .activate
+    }
+
     // experimentKey: String
     // userId: String
     // attributes: Dictionary<String,Any>?
@@ -69,12 +62,12 @@ struct ActivateEventListner: CoreEventListener {
         
         guard let data = data.first as? [Any?] else {
             // TODO: refine error-type
-            throw OPTError.generic
+            throw OptimizelyError.generic
         }
 
         guard data.count >= 5 else {
             // TODO: refine error-type
-            throw OPTError.generic
+            throw OptimizelyError.generic
         }
 
         if let experiment = data[0] as? OPTExperiment,
@@ -90,14 +83,14 @@ struct ActivateEventListner: CoreEventListener {
 }
 
 struct TrackEventListner: CoreEventListener {
-    var type: NotificationType {
-        return .track
+    let callback: OptimizelyTrackCallback
+    
+    init(callback: @escaping OptimizelyTrackCallback) {
+        self.callback = callback
     }
     
-    let callback: OPTTrackCallback
-    
-    init(callback: @escaping OPTTrackCallback) {
-        self.callback = callback
+    func isType(of type: OptimizelyNotificationType) -> Bool {
+        return type == .track
     }
     
     // eventKey: String

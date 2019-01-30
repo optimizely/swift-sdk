@@ -7,16 +7,16 @@
 //
 
 import Foundation
-import OptimizelySwiftSDK
+import Optimizely
 
 class CustomLogger: OPTLogger {
-    static var logLevel: OPTLogLevel = .error
+    static var logLevel: OptimizelyLogLevel = .error
     
-    static func createInstance(logLevel: OPTLogLevel) -> OPTLogger? {
+    static func createInstance(logLevel: OptimizelyLogLevel) -> OPTLogger? {
         return CustomLogger()
     }
     
-    func log(level: OPTLogLevel, message: String) {
+    func log(level: OptimizelyLogLevel, message: String) {
         
     }
     

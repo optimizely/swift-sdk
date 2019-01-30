@@ -28,7 +28,7 @@ open class OptimizelyManager: NSObject {
     
     // MARK: - Public interfaces
     
-    public let notificationCenter: OPTNotificationCenter
+    public let notificationCenter: OptimizelyNotificationCenter
 
     /// Initialize Optimizely Manager
     ///
@@ -54,7 +54,7 @@ open class OptimizelyManager: NSObject {
         
         // configurable
         
-        self.notificationCenter = OPTNotificationCenter()
+        self.notificationCenter = OptimizelyNotificationCenter()
         self.bucketer = DefaultBucketer()
         self.decisionService = DefaultDecisionService()
         self.datafileHandler = DefaultDatafileHandler()

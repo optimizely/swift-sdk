@@ -193,7 +193,7 @@
 		6E7C0B7621F1372600ECFF34 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */; };
 		6E7C0B7721F1372600ECFF34 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */; };
 		6EBAEB7521E3FEF900D13AA9 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
-		6EBAEB7C21E3FEF900D13AA9 /* OptimizelySwiftSDKiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBAEB6E21E3FEF800D13AA9 /* OptimizelySwiftSDKiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6EBAEB7C21E3FEF900D13AA9 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -272,7 +272,7 @@
 		6E614DDC21E3F38A005982A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyLogLevel.swift; sourceTree = "<group>"; };
 		6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EBAEB6E21E3FEF800D13AA9 /* OptimizelySwiftSDKiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptimizelySwiftSDKiOS.h; sourceTree = "<group>"; };
+		6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Optimizely.h; sourceTree = "<group>"; };
 		6EBAEB6F21E3FEF800D13AA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EBAEB7421E3FEF900D13AA9 /* OptimizelySwiftSDK-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelySwiftSDK-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -380,6 +380,7 @@
 				0B124BBD21B5C00A001BE0FA /* utils */,
 				0B124BB821B32973001BE0FA /* protocols */,
 				0B7CB0E921ADF261007B77E5 /* Data Model */,
+				6E53A6572202702C00EA3A61 /* Supporting Files */,
 				6E4DD99021E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests */,
 				6E614DD921E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests */,
 				0B7CB0C321AC5FE2007B77E5 /* Products */,
@@ -444,8 +445,6 @@
 				6E4DD8EF21E530A900B0C2C7 /* OptimizelyError.swift */,
 				6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */,
 				6E53A61C22025E8F00EA3A61 /* OptimizelyNotificationCenter.swift */,
-				6EBAEB6E21E3FEF800D13AA9 /* OptimizelySwiftSDKiOS.h */,
-				6EBAEB6F21E3FEF800D13AA9 /* Info.plist */,
 			);
 			path = Optimizely;
 			sourceTree = "<group>";
@@ -489,6 +488,15 @@
 			path = datastore;
 			sourceTree = "<group>";
 		};
+		6E53A6572202702C00EA3A61 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */,
+				6EBAEB6F21E3FEF800D13AA9 /* Info.plist */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		6E614DD921E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -512,7 +520,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EBAEB7C21E3FEF900D13AA9 /* OptimizelySwiftSDKiOS.h in Headers */,
+				6EBAEB7C21E3FEF900D13AA9 /* Optimizely.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1026,7 +1034,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Optimizely/Info.plist;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1052,7 +1060,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Optimizely/Info.plist;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1118,7 +1126,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Optimizely/Info.plist;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1143,7 +1151,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Optimizely/Info.plist;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (

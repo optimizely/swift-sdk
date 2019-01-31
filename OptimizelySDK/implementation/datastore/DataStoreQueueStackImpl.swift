@@ -94,8 +94,7 @@ public class DataStoreQueuStackImpl<T> : DataStoreQueueStack where T:Codable {
                     item = try? JSONDecoder().decode(T.self, from: data)
                     if queue.count > 0 {
                         queue.removeLast()
-                        UserDefaults.standard.set(queue, forKey: queueStackName)
-                        UserDefaults.standard.synchronize()
+                        dataStore.saveItem(forKey: queueStackName, value: queue)
                     }
                 }
             }

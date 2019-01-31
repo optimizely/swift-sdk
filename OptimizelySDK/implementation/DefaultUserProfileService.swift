@@ -112,6 +112,9 @@ public class DefaultUserProfileService : OPTUserProfileService {
         if var profile =  profiles[userId] {
             if var experimentMap = profile[DefaultUserProfileService.experimentMap] as? Dictionary<String,String> {
                 experimentMap[experimentId] = variationId
+                profile[DefaultUserProfileService.experimentMap] = experimentMap
+                profiles[userId] = profile
+                save(userProfile: profiles)
             }
             else {
                 profile[DefaultUserProfileService.userId] = userId

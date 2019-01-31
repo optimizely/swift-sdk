@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let experimentKey = "background_experiment"
     let eventKey = "sample_conversion"
     let attributes = ["browser_type": "safari"]
-    let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
+    let sdkKey = "FCnSegiEkRry9rhVMroit4"
     
     
     func applicationDidFinishLaunching(_ application: UIApplication) {

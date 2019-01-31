@@ -23,6 +23,8 @@
 		0B7B9EC421F2ACB100056589 /* DataStoreFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7B9EC221F2ACB100056589 /* DataStoreFile.swift */; };
 		0B7B9EC521F51AF600056589 /* DataStoreFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7B9EC221F2ACB100056589 /* DataStoreFile.swift */; };
 		0B7B9EC621F51AF700056589 /* DataStoreFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7B9EC221F2ACB100056589 /* DataStoreFile.swift */; };
+		0BC48EA32203764E003AFD71 /* DataStoreQueueStackImpl+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA22203764E003AFD71 /* DataStoreQueueStackImpl+extension.swift */; };
+		0BC48EA522038491003AFD71 /* ArrayEventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */; };
 		6E4DD83121E524E300B0C2C7 /* EventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2A21CC739E0049BC2C /* EventForDispatch+extension.swift */; };
 		6E4DD83221E524E400B0C2C7 /* EventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2A21CC739E0049BC2C /* EventForDispatch+extension.swift */; };
 		6E4DD83321E524E900B0C2C7 /* BatchEventBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */; };
@@ -266,6 +268,8 @@
 		0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchEventBuilder.swift; sourceTree = "<group>"; };
 		0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultEventDispatcher.swift; sourceTree = "<group>"; };
 		0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDatafileHandler.swift; sourceTree = "<group>"; };
+		0BC48EA22203764E003AFD71 /* DataStoreQueueStackImpl+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataStoreQueueStackImpl+extension.swift"; sourceTree = "<group>"; };
+		0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ArrayEventForDispatch+extension.swift"; sourceTree = "<group>"; };
 		6E4DD8EE21E530A900B0C2C7 /* OptimizelyResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyResult.swift; sourceTree = "<group>"; };
 		6E4DD8EF21E530A900B0C2C7 /* OptimizelyError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyError.swift; sourceTree = "<group>"; };
 		6E4DD8F021E530A900B0C2C7 /* OptimizelyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyManager.swift; sourceTree = "<group>"; };
@@ -361,6 +365,8 @@
 			isa = PBXGroup;
 			children = (
 				0B5ADA2A21CC739E0049BC2C /* EventForDispatch+extension.swift */,
+				0BC48EA22203764E003AFD71 /* DataStoreQueueStackImpl+extension.swift */,
+				0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -805,6 +811,7 @@
 				6E4DD87121E5251700B0C2C7 /* OPTRollout.swift in Sources */,
 				6E7C0B7421F1372100ECFF34 /* OptimizelyLogLevel.swift in Sources */,
 				6E4DD85621E5250200B0C2C7 /* JSONParse.swift in Sources */,
+				0BC48EA522038491003AFD71 /* ArrayEventForDispatch+extension.swift in Sources */,
 				6E4DD85221E5250200B0C2C7 /* OPTDatafileHandler.swift in Sources */,
 				6E4DD83B21E524EF00B0C2C7 /* DefaultEventDispatcher.swift in Sources */,
 				6E4DD86721E5251200B0C2C7 /* OPTAudience.swift in Sources */,
@@ -817,6 +824,7 @@
 				6E4DD85021E5250200B0C2C7 /* OPTErrorHandler.swift in Sources */,
 				6E4DD84E21E5250200B0C2C7 /* OPTBucketer.swift in Sources */,
 				6E4DD86321E5250B00B0C2C7 /* EventForDispatch.swift in Sources */,
+				0BC48EA32203764E003AFD71 /* DataStoreQueueStackImpl+extension.swift in Sources */,
 				6E4DD84721E524FB00B0C2C7 /* MurmurHash3.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -15,17 +15,9 @@ protocol CoreEventListener {
     func notify(data: [Any]) throws
 }
 
-extension CoreEventListener {
-    func notify(type: OptimizelyNotificationType, data: [Any]) throws {
-        guard isType(of: type) else { return }
-        
-        try notify(data: data)
-    }
-}
-
 // MARK: Listener Types
 
-struct GenericEventListner: CoreEventListener {
+struct GenericEventListener: CoreEventListener {
     let callback: OptimizelyGenericCallback
     
     init(callback: @escaping OptimizelyGenericCallback) {
@@ -41,7 +33,7 @@ struct GenericEventListner: CoreEventListener {
     }
 }
 
-struct ActivateEventListner: CoreEventListener {
+struct ActivateEventListener: CoreEventListener {
     let callback: OptimizelyActivateCallback
     
     init(callback: @escaping OptimizelyActivateCallback) {
@@ -82,7 +74,7 @@ struct ActivateEventListner: CoreEventListener {
     }
 }
 
-struct TrackEventListner: CoreEventListener {
+struct TrackEventListener: CoreEventListener {
     let callback: OptimizelyTrackCallback
     
     init(callback: @escaping OptimizelyTrackCallback) {

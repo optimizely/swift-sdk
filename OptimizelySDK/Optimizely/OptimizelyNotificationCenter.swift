@@ -40,15 +40,15 @@ public class OptimizelyNotificationCenter {
     var notificationListeners = [Int: CoreEventListener]()
     
     public func addActivateNotificationListener(callback: @escaping OptimizelyActivateCallback) -> Int {
-        return addNotificationListener(ActivateEventListner(callback: callback))
+        return addNotificationListener(ActivateEventListener(callback: callback))
     }
     
     public func addTrackNotificationListener(callback: @escaping OptimizelyTrackCallback) -> Int {
-        return addNotificationListener(TrackEventListner(callback: callback))
+        return addNotificationListener(TrackEventListener(callback: callback))
     }
     
     public func addGenericNotificationListener(callback: @escaping OptimizelyGenericCallback) -> Int {
-        return addNotificationListener(GenericEventListner(callback: callback))
+        return addNotificationListener(GenericEventListener(callback: callback))
     }
     
     func addNotificationListener(_ listener: CoreEventListener) -> Int {
@@ -75,8 +75,12 @@ public class OptimizelyNotificationCenter {
     }
     
     func sendNotifications(type: OptimizelyNotificationType, args: [Any]) {
-        notificationListeners.values.forEach {
-            try? $0.notify(type: type, data: args)
+        notificationListeners.values.filter{ $0.isType(of: type) }.forEach {
+            do {
+                try $0.notify(data: args)
+            } catch {
+                print("ERROR: notification callback error: \(error)")
+            }
         }
     }
     

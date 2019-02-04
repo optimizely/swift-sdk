@@ -54,22 +54,36 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
             var batchSizeHolder = 0
             // the batch send count if the events failed to be batched.
             var sendCount = 0
+            
+            let failedBatch = { () -> Void in
+                // hold the batch size
+                batchSizeHolder = self.batchSize
+                // set it to 1 until the last batch that couldn't be batched is sent
+                self.batchSize = 1
+            }
+            
+            let resetBatch = { ()->Void in
+                if batchSizeHolder != 0 {
+                    self.batchSize = batchSizeHolder
+                    sendCount = 0
+                    batchSizeHolder = 0
+                }
+                
+            }
             while let eventsToSend:[EventForDispatch] = self.dataStore.getFirstItems(count:self.batchSize) {
                 var eventToSend = eventsToSend.batch()
                 if let _ = eventToSend {
                     // we merged the event and ready for batch
                 }
                 else {
-                    // hold the batch size
-                    batchSizeHolder = self.batchSize
-                    // set it to 1 until the last batch that couldn't be batched is sent
-                    self.batchSize = 1
+                    failedBatch()
                     // just send the first one and let the rest be sent until sendCount == batchSizeHolder
                     eventToSend = eventsToSend.first
                 }
                 
                 guard let event = eventToSend else {
                     self.logger.log(level: .error, message: "Cannot find event to send")
+                    resetBatch()
                     break
                 }
 
@@ -78,6 +92,7 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
                 if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
                     self.logger.log(level: .error, message:"EventDispatcher failed to send \(failureCount) times. Backing off.")
                     failureCount = 0
+                    resetBatch()
                     break;
                 }
 
@@ -108,9 +123,7 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
                             sendCount += 1
                             // have we sent all the events in this batch?
                             if sendCount == batchSizeHolder {
-                                self.batchSize = batchSizeHolder
-                                sendCount = 0
-                                batchSizeHolder = 0
+                                resetBatch()
                             }
                         }
                         else {

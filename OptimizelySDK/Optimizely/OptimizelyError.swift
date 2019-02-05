@@ -15,6 +15,7 @@ public enum OptimizelyError: Error {
     
     case experimentKeyInvalid(_ key: String)
     case experimentUnknown
+    case experimentNotParticipated
     case experimentHasNoTrafficAllocation(_ key: String)
     case featureKeyInvalid(_ key: String)
     case featureUnknown

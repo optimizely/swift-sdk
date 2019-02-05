@@ -36,6 +36,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let attributes = ["browser_type": "safari"]
     let sdkKey = "FCnSegiEkRry9rhVMroit4"
     
+    var storyboard: UIStoryboard {
+        #if os(iOS)
+        return UIStoryboard(name: "iOSMain", bundle: nil)
+        #else
+        return UIStoryboard(name: "tvOSMain", bundle: nil)
+        #endif
+    }
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
         
@@ -64,7 +71,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Optimizely SDK initialized successfully!")
             }
             
-            self.startAppWithExperimentActivated()
+            DispatchQueue.main.async {
+                self.setRootViewController(optimizelyManager: self.optimizely)
+            }
         }
     }
     
@@ -81,60 +90,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
             try optimizely!.initializeSDK(datafile: datafileJSON)
             print("Optimizely SDK initialized successfully!")
-        } catch is DecodingError {
-            fatalError("Invalid JSON format")
         } catch {
             print("Optimizely SDK initiliazation failed: \(error)")
             optimizely = nil
         }
         
-        startAppWithExperimentActivated()
+        setRootViewController(optimizelyManager: self.optimizely)
     }
     
-    func startAppWithExperimentActivated() {
-        var variationKey: String?
+    func setRootViewController(optimizelyManager: OptimizelyManager?) {
+        guard let optimizely = optimizely else {
+            openVariationView(optimizelyManager: nil, variationKey: nil)
+            return
+        }
         
         do {
-            variationKey = try self.optimizely?.activate(experimentKey: experimentKey,
-                                                         userId: userId,
-                                                         attributes: attributes)
+            let variationKey = try optimizely.activate(experimentKey: experimentKey,
+                                                   userId: userId,
+                                                   attributes: attributes)
+            openVariationView(optimizelyManager: optimizely, variationKey: variationKey)
+        } catch OptimizelyError.experimentNotParticipated {
+            print("Optimizely SDK activation cannot map this user to experiemnt")
+            openVariationView(optimizelyManager: optimizely, variationKey: nil)
         } catch {
             print("Optimizely SDK activation failed: \(error)")
-            self.optimizely = nil
+            openFailureView(optimizelyManager: optimizely)
         }
-        
-        self.setRootViewController(optimizelyManager: self.optimizely, bucketedVariation: variationKey)
     }
     
+    func openVariationView(optimizelyManager: OptimizelyManager?, variationKey: String?) {
+        let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as! VariationViewController
+
+        variationViewController.eventKey = eventKey
+        variationViewController.userId = userId
+        variationViewController.optimizelyManager = optimizelyManager
+        variationViewController.variationKey = variationKey
+        
+        window?.rootViewController = variationViewController
+    }
     
-    func setRootViewController(optimizelyManager: OptimizelyManager?, bucketedVariation:String?) {
-        DispatchQueue.main.async {
-            var storyboard : UIStoryboard
-            
-            #if os(tvOS)
-            storyboard = UIStoryboard(name: "tvOSMain", bundle: nil)
-            #elseif os(iOS)
-            storyboard = UIStoryboard(name: "iOSMain", bundle: nil)
-            #endif
-            
-            var rootViewController: UIViewController
-            
-            if let optimizelyManager = optimizelyManager,
-                let variationKey = bucketedVariation,
-                let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as? VariationViewController
-            {
-                variationViewController.eventKey = self.eventKey
-                variationViewController.optimizelyManager = optimizelyManager
-                variationViewController.userId = self.userId
-                variationViewController.variationKey = variationKey
-                
-                rootViewController = variationViewController
-            } else {
-                rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
-            }
-            
-            self.window?.rootViewController = rootViewController
-        }
+    func openFailureView(optimizelyManager: OptimizelyManager?) {
+        window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

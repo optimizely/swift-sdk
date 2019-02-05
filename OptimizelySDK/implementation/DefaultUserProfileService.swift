@@ -103,37 +103,20 @@ public class DefaultUserProfileService : OPTUserProfileService {
     public func save(userProfile: Dictionary<String, Any>) {
         profiles = userProfile as! [String : Dictionary<String, Any>]
         let defaults = UserDefaults.standard
-        defaults.setPersistentDomain(profiles, forName: DefaultUserProfileService.storageName)
+        defaults.set(profiles, forKey: DefaultUserProfileService.storageName)
         defaults.synchronize()
         
     }
     
     public func saveProfile(userId:String, experimentId:String, variationId:String) {
-        if var profile =  profiles[userId] {
-            if var experimentMap = profile[DefaultUserProfileService.experimentMap] as? Dictionary<String,String> {
-                experimentMap[experimentId] = variationId
-                profile[DefaultUserProfileService.experimentMap] = experimentMap
-                profiles[userId] = profile
-                save(userProfile: profiles)
-            }
-            else {
-                profile[DefaultUserProfileService.userId] = userId
-                var experimentMap = Dictionary<String,String>()
-                experimentMap[experimentId] = variationId
-                profile[DefaultUserProfileService.experimentMap] = experimentMap
-                profiles[userId] = profile
-                save(userProfile: profiles)
-            }
-        }
-        else {
-            var profile = Dictionary<String,Any>()
-            var experimentMap = Dictionary<String,String>()
-            experimentMap[experimentId] = variationId
-            profile[DefaultUserProfileService.experimentMap] = experimentMap
-            profile[DefaultUserProfileService.userId] = userId
-            profiles[userId] = profile
-            save(userProfile: profiles)
-        }
+        var profile = profiles[userId] ?? [String: Any]()
+        var experimentMap = profile[DefaultUserProfileService.experimentMap] as? [String: [String: String]] ?? [String: [String: String]]()
         
+        experimentMap[experimentId] = [DefaultUserProfileService.variationId: variationId]
+        profile[DefaultUserProfileService.experimentMap] = experimentMap
+        profile[DefaultUserProfileService.userId] = userId
+        profiles[userId] = profile
+        save(userProfile: profiles)
     }
+    
 }

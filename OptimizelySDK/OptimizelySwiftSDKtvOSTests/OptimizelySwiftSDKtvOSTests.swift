@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import OptimizelySwiftSDK
+@testable import Optimizely
 
 class OptimizelySwiftSDKtvOSTests: XCTestCase {
 

@@ -18,7 +18,7 @@ import Foundation
 
 class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
-    let logger = DefaultLogger.createInstance(logLevel: .debug)
+    lazy var logger = HandlerRegistryService.shared.injectComponent(service:OPTLogger.self) as! OPTLogger?
     var timers:[String:Timer] = [String:Timer]()
     let dataStore = DataStoreUserDefaults()
     
@@ -26,7 +26,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         return DefaultDatafileHandler()
     }
     
-    internal init() {
+    required init() {
         
     }
     

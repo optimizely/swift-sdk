@@ -52,8 +52,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func initializeOptimizelySDKAsynchronous() {
-        optimizely = OptimizelyManager(sdkKey: sdkKey)
+        // customization example (optional)
+        let customLogger = makeCustomLogger()
         
+        optimizely = OptimizelyManager(sdkKey: sdkKey,
+                                       logger: customLogger)
+
         // initialize Optimizely Client from a datafile download
         optimizely!.initializeSDK { result in
             switch result {
@@ -74,10 +78,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // customization example (optional)
-        let customNotificationCenter = makeCustomNotificationCenter()
+        let customLogger = makeCustomLogger()
         
         optimizely = OptimizelyManager(sdkKey: sdkKey,
-                                notificationCenter: customNotificationCenter)
+                                       logger: customLogger)
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -109,28 +113,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
 
-    func makeCustomNotificationCenter() -> OPTNotificationCenter {
-        #if os(tvOS)
-            return CustomNotificationCenter()
-        #else
-        
-        
-        // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-        Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
-        
-        let notificationCenter = CustomNotificationCenter()
-        
-        notificationCenter.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
-            Amplitude.instance().logEvent("[Optimizely] \(experiment.key) - \(variation.key)")
+    func makeCustomLogger() -> OPTLogger {
+        class Logger : OPTLogger {
+            static var level:OptimizelyLogLevel?
+            static var logLevel: OptimizelyLogLevel {
+                get {
+                    if let level = level {
+                        return level
+                    }
+                    return .all
+                }
+                set {
+                    if let _ = level {
+                        // already set.
+                    }
+                    else {
+                        level = newValue
+                    }
+                }
+            }
+            
+            required init() {
+                
+            }
+            
+            func log(level: OptimizelyLogLevel, message: String) {
+                if level.rawValue <= Logger.logLevel.rawValue {
+                    print("🐱 - [\(level.name)] Kitty - \(message)")
+                }
+            }
+            
         }
         
-        notificationCenter.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
-            Amplitude.instance().logEvent("[Optimizely] " + eventKey)
-        }
-
-        return notificationCenter
-        
-        #endif
+        return Logger()
     }
     
     func setRootViewController(optimizelyManager: OptimizelyManager?, bucketedVariation:String?) {

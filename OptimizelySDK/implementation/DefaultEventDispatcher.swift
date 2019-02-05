@@ -27,14 +27,14 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
     // TODO: implement
     public var maxQueueSize:Int = 3000
     
-    let logger = DefaultLogger(level: .debug)
+    lazy var logger = HandlerRegistryService.shared.injectComponent(service: OPTLogger.self) as! OPTLogger
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
     let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: "OPTEventQueue"))
     let notify = DispatchGroup()
     
-    public static func createInstance() -> OPTEventDispatcher? {
-        return DefaultEventDispatcher()
+    required public init() {
+        
     }
     
     public func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {

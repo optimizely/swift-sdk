@@ -15,8 +15,8 @@ class OptimizelyManagerTests: XCTestCase {
     
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        optimizely = OptimizelyManager()
-        let _ = optimizely?.initialize(datafile:json)
+        optimizely = OptimizelyManager(sdkKey: "SDKKEY")
+        try? optimizely?.initializeSDK(datafile:json)
     }
 
     override func tearDown() {
@@ -26,23 +26,23 @@ class OptimizelyManagerTests: XCTestCase {
     }
 
     func testTypedAudience() {
-        let variation = optimizely?.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
-        XCTAssertNotNil(variation, "no variation found")
+        let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
+        XCTAssertNotNil(variation!, "no variation found")
         
     }
 
     func testBasicExperiment() {
-        let basicVariation = optimizely?.activate(experimentKey: "basic_experiment", userId: "userId")
+        let basicVariation = try? optimizely?.activate(experimentKey: "basic_experiment", userId: "userId")
         
-        XCTAssertNotNil(basicVariation, "no variation found")
+        XCTAssertNotNil(basicVariation!, "no variation found")
     }
 
     func testPerformanceInitialize() {
         // This is an example of a performance test case.
         measure {
-            let optimizely = OptimizelyManager()
+            let optimizely = OptimizelyManager(sdkKey: "SDKKEY")
             
-            let _ = optimizely.initialize(datafile:json)
+            try? optimizely.initializeSDK(datafile:json)
         }
     }
 

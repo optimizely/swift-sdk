@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B0590142209D8780007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */; };
+		0B0590152209D8790007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */; };
+		0B0590162209D87A0007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */; };
 		0B4E11F921EE8FF400D5B370 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		0B4E11FA21EE8FF400D5B370 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		0B4E11FC21EE90F600D5B370 /* DataStoreUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11FB21EE90F600D5B370 /* DataStoreUserDefaults.swift */; };
@@ -197,7 +200,7 @@
 		6E4DD99721E6BAA700B0C2C7 /* DecisionServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99221E6BAA700B0C2C7 /* DecisionServiceTest.swift */; };
 		6E4DD99821E6BAA700B0C2C7 /* OptimizelyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99321E6BAA700B0C2C7 /* OptimizelyManagerTests.swift */; };
 		6E4DD99921E6BAA700B0C2C7 /* BucketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99421E6BAA700B0C2C7 /* BucketTests.swift */; };
-		6E53A6692203872600EA3A61 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */; };
+		6E53A6692203872600EA3A61 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E614DD621E3F38A005982A1 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6E614DDB21E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E614DDA21E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests.swift */; };
 		6E7C0B7421F1372100ECFF34 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */; };
@@ -678,6 +681,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B0590142209D8780007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */,
 				6E4DD84121E524F000B0C2C7 /* DefaultUserProfileService.swift in Sources */,
 				6E4DD87E21E5251800B0C2C7 /* OPTFeatureFlag.swift in Sources */,
 				6E4DD85C21E5250200B0C2C7 /* OPTEventDispatcher.swift in Sources */,
@@ -766,6 +770,7 @@
 				6E4DD8F421E530A900B0C2C7 /* OptimizelyResult.swift in Sources */,
 				6E4DD8BA21E5260B00B0C2C7 /* BatchEvent.swift in Sources */,
 				6E4DD8CA21E5261600B0C2C7 /* OPTVariation.swift in Sources */,
+				0B0590162209D87A0007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */,
 				6E4DD8D221E5261600B0C2C7 /* OPTAttribute.swift in Sources */,
 				6E4DD89221E525FD00B0C2C7 /* DefaultBucketer.swift in Sources */,
 				6E4DD89821E525FD00B0C2C7 /* DefaultEventDispatcher.swift in Sources */,
@@ -863,6 +868,7 @@
 				6E4DD8D421E5273F00B0C2C7 /* UserAttribute.swift in Sources */,
 				6E4DD8C721E5261500B0C2C7 /* OPTAttribute.swift in Sources */,
 				6E4DD8D721E5274600B0C2C7 /* ConditionHolder.swift in Sources */,
+				0B0590152209D8790007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */,
 				6E4DD8F721E530A900B0C2C7 /* OptimizelyError.swift in Sources */,
 				6E4DD88C21E525FC00B0C2C7 /* DefaultUserProfileService.swift in Sources */,
 				6E4DD8C021E5261500B0C2C7 /* OPTExperiment.swift in Sources */,

@@ -37,4 +37,7 @@ public protocol OPTEventDispatcher {
      - Parameter completionHandler: Called when the event has been sent or if an error occured.  This may not be called in the case where the dispatcher is doing batch events. It is up to the implementor of the protocol.
     */
     func dispatchEvent(event:EventForDispatch, completionHandler: @escaping DispatchCompletionHandler)
+    
+    /// Attempts to flush the event queue if there are any events to process.
+    func flushEvents()
 }

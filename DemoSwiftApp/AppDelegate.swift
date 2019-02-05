@@ -74,10 +74,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // customization example (optional)
-        let customNotificationCenter = makeCustomNotificationCenter()
         
-        optimizely = OptimizelyManager(sdkKey: sdkKey,
-                                notificationCenter: customNotificationCenter)
+        optimizely = OptimizelyManager(sdkKey: sdkKey)
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -108,30 +106,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.setRootViewController(optimizelyManager: self.optimizely, bucketedVariation: variationKey)
     }
     
-
-    func makeCustomNotificationCenter() -> OPTNotificationCenter {
-        #if os(tvOS)
-            return CustomNotificationCenter()
-        #else
-        
-        
-        // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-        Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
-        
-        let notificationCenter = CustomNotificationCenter()
-        
-        notificationCenter.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
-            Amplitude.instance().logEvent("[Optimizely] \(experiment.key) - \(variation.key)")
-        }
-        
-        notificationCenter.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
-            Amplitude.instance().logEvent("[Optimizely] " + eventKey)
-        }
-
-        return notificationCenter
-        
-        #endif
-    }
     
     func setRootViewController(optimizelyManager: OptimizelyManager?, bucketedVariation:String?) {
         DispatchQueue.main.async {

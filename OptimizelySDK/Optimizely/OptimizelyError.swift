@@ -14,29 +14,27 @@ public enum OptimizelyError: Error {
     // MARK: - Experiment
     
     case experimentKeyInvalid(_ key: String)
-    case experimentIdInvalid(_ id: String)
+    case experimentUnknown
     case experimentHasNoTrafficAllocation(_ key: String)
     case featureKeyInvalid(_ key: String)
-    case featureIdInvalid(_ id: String)
-    case variableKeyInvalid(_ key: String)
-    case variableIdInvalid(_ id: String)
-    case variableTypeNotMatched(_ key: String)
-    case eventKeyInvalid(_ key: String)
-    case eventIdInvalid(_ id: String)
+    case featureUnknown
     case variationKeyInvalid(_ key: String)
-    case variationIdInvalid(_ id: String)
+    case variationUnknown
+    case variableKeyInvalid(_ key: String)
+    case variableUnknown
+    case variableValueInvalid(_ key: String)
+    case eventKeyInvalid(_ key: String)
+    case eventUnknown
     case attributesKeyInvalid(_ key: String)
-    case attributesIdInvalid(_ id: String)
     case attributeFormatInvalid
     case groupKeyInvalid(_ key: String)
-    case groupIdInvalid(_ id: String)
+    case groupUnknown
     case groupHasNoTrafficAllocation(_ key: String)
     case rolloutKeyInvalid(_ key: String)
-    case rolloutIdInvalid(_ id: String)
-    
-    case variationUnknownForExperimentKey(_ key: String)
+    case rolloutUnknown
+
     case trafficAllocationNotInRange
-    case trafficAllocationUnknown(_ id: UInt32)
+    case trafficAllocationUnknown
     case eventNotAssociatedToExperiment(_ key: String)
 
     // MARK: - Bucketing

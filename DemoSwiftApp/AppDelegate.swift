@@ -17,7 +17,7 @@
 import UIKit
 import Optimizely
 #if os(iOS)
-    import Amplitude_iOS
+import Amplitude_iOS
 #endif
 
 @UIApplicationMain
@@ -85,7 +85,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // customization example (optional)
         
         optimizely = OptimizelyManager(sdkKey: sdkKey)
-
+        
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
             try optimizely!.initializeSDK(datafile: datafileJSON)
@@ -100,27 +100,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func setRootViewController(optimizelyManager: OptimizelyManager?) {
         guard let optimizely = optimizely else {
-            openVariationView(optimizelyManager: nil, variationKey: nil)
+            openFailureView()
             return
         }
         
         do {
             let variationKey = try optimizely.activate(experimentKey: experimentKey,
-                                                   userId: userId,
-                                                   attributes: attributes)
+                                                       userId: userId,
+                                                       attributes: attributes)
             openVariationView(optimizelyManager: optimizely, variationKey: variationKey)
         } catch OptimizelyError.experimentNotParticipated {
             print("Optimizely SDK activation cannot map this user to experiemnt")
             openVariationView(optimizelyManager: optimizely, variationKey: nil)
         } catch {
             print("Optimizely SDK activation failed: \(error)")
-            openFailureView(optimizelyManager: optimizely)
+            openFailureView()
         }
     }
     
     func openVariationView(optimizelyManager: OptimizelyManager?, variationKey: String?) {
         let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as! VariationViewController
-
+        
         variationViewController.eventKey = eventKey
         variationViewController.userId = userId
         variationViewController.optimizelyManager = optimizelyManager
@@ -129,10 +129,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = variationViewController
     }
     
-    func openFailureView(optimizelyManager: OptimizelyManager?) {
+    func openFailureView() {
         window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
     }
-
+    
     func applicationWillResignActive(_ application: UIApplication) {
     }
     

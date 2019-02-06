@@ -24,7 +24,7 @@ open class OptimizelyManager: NSObject {
     let eventDispatcher: OPTEventDispatcher
     let datafileHandler: OPTDatafileHandler
     let userProfileService: OPTUserProfileService
-    let notificationCenter: OPTNotificationCenter
+    public let notificationCenter: OPTNotificationCenter
     let periodicDownloadInterval: Int
     
     // MARK: - Public interfaces

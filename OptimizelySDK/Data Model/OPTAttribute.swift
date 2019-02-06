@@ -18,8 +18,10 @@
 
 import Foundation
 
-public class OPTAttribute : Codable {
-    var id:String = ""
-    var key:String = ""
-    var segmentId:String? = ""
+struct OPTAttribute: Codable {
+    var id: String
+    var key: String
+    
+    // TODO: what is this for?
+    //var segmentId:String? = ""
 }

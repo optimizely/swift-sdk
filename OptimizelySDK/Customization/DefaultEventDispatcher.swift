@@ -17,8 +17,19 @@
 import Foundation
 
 public class DefaultEventDispatcher : OPTEventDispatcher {
+    // the max failure count.  there is no backoff timer.
+    static let MAX_FAILURE_COUNT = 3
+    
+    // default batchSize.
+    // attempt to send events in batches with batchSize number of events combined
+    public var batchSize:Int = 4
+    // start trimming the front of the queue when we get to over maxQueueSize
+    // TODO: implement
+    public var maxQueueSize:Int = 3000
+    
     let logger = DefaultLogger(level: .debug)
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
+    // using a datastore queue with a backing file
     let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: "OPTEventQueue"))
     let notify = DispatchGroup()
     
@@ -30,17 +41,72 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
         
         dataStore.save(item: event)
         
+        flushEvents()
+    }
+    
+    public func flushEvents() {
         dispatcher.async {
-            while let eventToSend:EventForDispatch = self.dataStore.getFirstItem() {
+            // we don't remove anthing off of the queue unless it is successfully sent.
+            var failureCount = 0;
+            // if we can't batch the events because they are not from the same project or
+            // are being sent to a different url.  we set the batchSizeHolder to batchSize
+            // and batchSize to 1 until we have sent the last batch that couldn't be batched.
+            var batchSizeHolder = 0
+            // the batch send count if the events failed to be batched.
+            var sendCount = 0
+            
+            let failedBatch = { () -> Void in
+                // hold the batch size
+                batchSizeHolder = self.batchSize
+                // set it to 1 until the last batch that couldn't be batched is sent
+                self.batchSize = 1
+            }
+            
+            let resetBatch = { ()->Void in
+                if batchSizeHolder != 0 {
+                    self.batchSize = batchSizeHolder
+                    sendCount = 0
+                    batchSizeHolder = 0
+                }
+                
+            }
+            while let eventsToSend:[EventForDispatch] = self.dataStore.getFirstItems(count:self.batchSize) {
+                var eventToSend = eventsToSend.batch()
+                if let _ = eventToSend {
+                    // we merged the event and ready for batch
+                }
+                else {
+                    failedBatch()
+                    // just send the first one and let the rest be sent until sendCount == batchSizeHolder
+                    eventToSend = eventsToSend.first
+                }
+                
+                guard let event = eventToSend else {
+                    self.logger.log(level: .error, message: "Cannot find event to send")
+                    resetBatch()
+                    break
+                }
+
+                // we've exhuasted our failure count.  Give up and try the next time a event
+                // is queued or someone calls flush.
+                if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
+                    self.logger.log(level: .error, message:"EventDispatcher failed to send \(failureCount) times. Backing off.")
+                    failureCount = 0
+                    resetBatch()
+                    break;
+                }
+
+                // make the send event synchronous. enter our notify
                 self.notify.enter()
-                self.sendEvent(event: eventToSend) { (result) -> (Void) in
-                    
+                self.sendEvent(event: event) { (result) -> (Void) in
                     switch result {
                     case .failure(let error):
                         self.logger.log(level: .error, message: error.localizedDescription)
+                        failureCount += 1
                     case .success(_):
-                        if let removedItem:EventForDispatch = self.dataStore.removeFirstItem() {
-                            if removedItem != event {
+                        // we succeeded. remove the batch size sent.
+                        if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
+                            if self.batchSize == 1 && removedItem.first != event {
                                 self.logger.log(level: .error, message: "Removed event different from sent event")
                             }
                             else {
@@ -50,13 +116,28 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
                         else {
                             self.logger.log(level: .error, message: "Removed event nil for sent item")
                         }
+                        // reset failureCount
+                        failureCount = 0
+                        // did we have to send a batch one at a time?
+                        if batchSizeHolder != 0 {
+                            sendCount += 1
+                            // have we sent all the events in this batch?
+                            if sendCount == batchSizeHolder {
+                                resetBatch()
+                            }
+                        }
+                        else {
+                            // batch worked
+                        }
                     }
+                    // our send it done.
                     self.notify.leave()
                 }
+                // wait for send
                 self.notify.wait()
             }
         }
-        
+
     }
     
     func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {

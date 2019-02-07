@@ -42,63 +42,103 @@ public class DataStoreQueuStackImpl<T> : DataStoreQueueStack where T:Codable {
         }
     }
     
-    public func getFirstItem() -> T? {
-        var item:T?
+    public var count:Int {
+        get {
+            var returnValue = 0
+            
+            lock.sync {
+                if let queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
+                    returnValue = queue.count
+                }
+            }
+            
+            return returnValue
+        }
+    }
+    
+    public func getFirstItems(count:Int = 1) -> [T]? {
+        var items:[T]?
         
         lock.sync {
             if let queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
-                if let data = queue.first {
-                    item = try? JSONDecoder().decode(T.self, from: data)
-                }
-            }
-        }
-        return item
-        
-    }
-    
-    public func getLastItem() -> T? {
-        var item:T?
-        lock.sync {
-            if let queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
-                if let data = queue.last {
-                    item = try? JSONDecoder().decode(T.self, from: data)
-                }
-            }
-        }
-        return item
-    }
-    
-    
-    public func removeFirstItem() -> T? {
-        var item:T?
-        
-        lock.sync {
-            if var queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
-                if let data = queue.first {
-                    item = try? JSONDecoder().decode(T.self, from: data)
-                    if queue.count > 0 {
-                        queue.remove(at: 0)
-                        dataStore.saveItem(forKey: queueStackName, value: queue)
+                let count = count < queue.count ? count : queue.count
+                if count != 0 {
+                    let data = queue[0...count-1]
+                    items = [T]()
+                    for item in data {
+                        if let returnItem = try? JSONDecoder().decode(T.self, from: item) {
+                            items?.append(returnItem)
+                        }
                     }
                 }
             }
         }
-        return item
+        return items
     }
     
-    public func removeLastItem() -> T? {
-        var item:T?
+    public func getLastItems(count:Int = 1) -> [T]? {
+        var items:[T]?
         lock.sync {
-            if var queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
-                if let data = queue.first {
-                    item = try? JSONDecoder().decode(T.self, from: data)
-                    if queue.count > 0 {
-                        queue.removeLast()
-                        dataStore.saveItem(forKey: queueStackName, value: queue)
+            if let queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
+                let count = count < queue.count ? count : queue.count
+                if count != 0 {
+                    let start = count == queue.count ? 0 : queue.count - count
+                    let data = queue[start...queue.count-1]
+                    items = [T]()
+                    for item in data {
+                        if let returnItem = try? JSONDecoder().decode(T.self, from: item) {
+                            items?.append(returnItem)
+                        }
                     }
                 }
             }
         }
-        return item
+        return items
+    }
+    
+    
+    public func removeFirstItems(count:Int = 1) -> [T]? {
+        var items:[T]?
+        
+        lock.sync {
+            if var queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
+                let count = count < queue.count ? count : queue.count
+                if count != 0 {
+                    let data = queue[0...count-1]
+                    items = [T]()
+                    for item in data {
+                        if let returnItem = try? JSONDecoder().decode(T.self, from: item) {
+                            items?.append(returnItem)
+                        }
+                    }
+                    queue.removeFirst(count)
+                    dataStore.saveItem(forKey: queueStackName, value: queue)
+                }
+            }
+        }
+        return items
+        
+    }
+    
+    public func removeLastItems(count:Int = 1) -> [T]? {
+        var items:[T]?
+        lock.sync {
+            if var queue = dataStore.getItem(forKey: queueStackName) as? Array<Data> {
+                let count = count < queue.count ? count : queue.count
+                if count != 0 {
+                    let start = count == queue.count ? 0 : queue.count - count
+                    let data = queue[start...queue.count-1]
+                    items = [T]()
+                    for item in data {
+                        if let returnItem = try? JSONDecoder().decode(T.self, from: item) {
+                            items?.append(returnItem)
+                        }
+                    }
+                    queue.removeLast(count)
+                    dataStore.saveItem(forKey: queueStackName, value: queue)
+                }
+            }
+        }
+        return items
     }
 }

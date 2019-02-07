@@ -14,14 +14,29 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
+
 import Foundation
 
-struct OPTFeatureFlag : Codable
+struct Experiment : Codable
 {
-    var experimentIds:[String] = []
-    var rolloutId:String?
-    var groupId:String?
-    var variables:[OPTFeatureVariable]? = []
+    
+    enum Status: String, Codable {
+        case Running
+        case Launched
+        case Paused
+        case Not_started = "Not started"
+        case Archived
+    }
+    
     var id:String = ""
     var key:String = ""
+    
+    var status:Status = Status.Not_started
+    
+    var layerId:String = ""
+    var trafficAllocation:[TrafficAllocation] = []
+    var audienceIds:[String] = []
+    var audienceConditions:ConditionHolder?
+    var variations:[Variation] = []
+    var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
 }

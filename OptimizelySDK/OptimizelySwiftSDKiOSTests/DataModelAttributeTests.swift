@@ -10,26 +10,26 @@ import XCTest
 
 class DataModelAttributeTests: XCTestCase {
     
-    let modelType = OPTAttribute.self
+    let modelType = Attribute.self
 
     // MARK: - Decode
     
     func testDecodeSuccessWithJSONValid() {
         let json = ["id": "553339214", "key": "house"]
         let jsonData = try! JSONEncoder().encode(json)
-        let attribute = try! JSONDecoder().decode(modelType, from: jsonData)
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
-        XCTAssert(attribute.id == "553339214")
-        XCTAssert(attribute.key == "house")
+        XCTAssert(model.id == "553339214")
+        XCTAssert(model.key == "house")
     }
     
     func testDecodeSuccessWithExtraFields() {
         let json = ["id": "553339214", "key": "house", "extra": "123"]
         let jsonData = try! JSONEncoder().encode(json)
-        let attribute = try! JSONDecoder().decode(modelType, from: jsonData)
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
-        XCTAssert(attribute.id == "553339214")
-        XCTAssert(attribute.key == "house")
+        XCTAssert(model.id == "553339214")
+        XCTAssert(model.key == "house")
     }
 
     func testDecodeFailWithMissingKey() {
@@ -68,12 +68,12 @@ class DataModelAttributeTests: XCTestCase {
     // MARK: - Encode
     
     func testEncodeJSON() {
-        let attributeGiven = modelType.init(id: "553339214", key: "house")
+        let modelGiven = modelType.init(id: "553339214", key: "house")
         
-        let jsonData = try! JSONEncoder().encode(attributeGiven)
-        let attributeExp = try! JSONDecoder().decode(modelType, from: jsonData)
+        let jsonData = try! JSONEncoder().encode(modelGiven)
+        let modelExp = try! JSONDecoder().decode(modelType, from: jsonData)
 
-        XCTAssert(attributeExp.id == attributeGiven.id)
-        XCTAssert(attributeExp.key == attributeGiven.key)
+        XCTAssert(modelExp.id == modelGiven.id)
+        XCTAssert(modelExp.key == modelGiven.key)
     }
 }

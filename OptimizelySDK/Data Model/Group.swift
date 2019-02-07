@@ -1,3 +1,6 @@
+//
+//  Group.swift
+//  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -16,9 +19,14 @@
 
 import Foundation
 
-struct OPTEvent : Codable
-{
-    var experimentIds:[String] = []
+struct Group : Codable {
+    enum Policy : String, Codable {
+        case random
+        case overlapping
+    }
+    
     var id:String = ""
-    var key:String = ""
+    var policy:Policy = Policy.random
+    var trafficAllocation:[TrafficAllocation] = []
+    var experiments:[Experiment] = []
 }

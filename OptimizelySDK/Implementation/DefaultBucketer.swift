@@ -22,10 +22,10 @@ class DefaultBucketer : OPTBucketer {
     let MAX_HASH_SEED:UInt64 = 1
     var MAX_HASH_VALUE:UInt64?
     
-    private var config:OPTProjectConfig!
+    private var config:ProjectConfig!
     private var logger = DefaultLogger.createInstance(logLevel: .debug)
     
-    internal required init(config:OPTProjectConfig) {
+    internal required init(config:ProjectConfig) {
         self.config = config
 
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
@@ -36,17 +36,17 @@ class DefaultBucketer : OPTBucketer {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
     }
 
-    func initialize(config:OPTProjectConfig) {
+    func initialize(config:ProjectConfig) {
         self.config = config
     }
 
     
     
-    static func createInstance(config: OPTProjectConfig) -> OPTBucketer? {
+    static func createInstance(config: ProjectConfig) -> OPTBucketer? {
         return DefaultBucketer(config: config)
     }
     
-    func bucketToExperiment(group: OPTGroup, bucketingId: String) -> OPTExperiment? {
+    func bucketToExperiment(group: Group, bucketingId: String) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
         
@@ -79,7 +79,7 @@ class DefaultBucketer : OPTBucketer {
         return nil
     }
     
-    func bucketExperiment(experiment: OPTExperiment, bucketingId: String) -> OPTVariation? {
+    func bucketExperiment(experiment: Experiment, bucketingId: String) -> Variation? {
         var ok = true
         // check for mutex
         let group = config.groups.filter({ if let _ = $0.experiments.filter({$0.id == experiment.id }).first { return true } else { return false }}).first
@@ -108,7 +108,7 @@ class DefaultBucketer : OPTBucketer {
         }
     }
     
-    func bucketToVariation(experiment:OPTExperiment, bucketingId:String) -> OPTVariation? {
+    func bucketToVariation(experiment:Experiment, bucketingId:String) -> Variation? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)
         

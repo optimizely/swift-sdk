@@ -16,8 +16,10 @@
 
 import Foundation
 
-struct OPTTrafficAllocation: Codable
-{
-    var entityId: String
-    var endOfRange: Int
+struct FeatureVariable: Codable {
+    var id: String
+    var key: String
+    var type: String
+    var defaultValue: String
 }
+

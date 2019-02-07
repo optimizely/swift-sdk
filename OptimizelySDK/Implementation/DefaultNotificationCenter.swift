@@ -50,8 +50,8 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             if myArgs.count < 5 {
                 return
             }
-            if let experiment = myArgs[0] as? OPTExperiment, let userId = myArgs[1] as? String,
-                let variation = myArgs[3] as? OPTVariation {
+            if let experiment = myArgs[0] as? Experiment, let userId = myArgs[1] as? String,
+                let variation = myArgs[3] as? Variation {
                 let attributes = myArgs[2] as? Dictionary<String, Any>
                 let event = myArgs[4] as! Dictionary<String,Any>
                 

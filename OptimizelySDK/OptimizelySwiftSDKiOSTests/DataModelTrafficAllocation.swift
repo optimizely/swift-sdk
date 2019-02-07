@@ -10,7 +10,7 @@ import XCTest
 
 class DataModelTrafficAllocation: XCTestCase {
 
-    let modelType = OPTTrafficAllocation.self
+    let modelType = TrafficAllocation.self
     
     // MARK: - Decode
     

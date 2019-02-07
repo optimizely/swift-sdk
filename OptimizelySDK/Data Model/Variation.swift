@@ -1,3 +1,7 @@
+//
+//  Variation.swift
+//  OptimizelySDK
+//
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -14,29 +18,12 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
-
 import Foundation
 
-struct OPTExperiment : Codable
+struct Variation : Codable
 {
-    
-    enum Status: String, Codable {
-        case Running
-        case Launched
-        case Paused
-        case Not_started = "Not started"
-        case Archived
-    }
-    
+    var variables:[Variable]? = []
     var id:String = ""
     var key:String = ""
-    
-    var status:Status = Status.Not_started
-    
-    var layerId:String = ""
-    var trafficAllocation:[OPTTrafficAllocation] = []
-    var audienceIds:[String] = []
-    var audienceConditions:ConditionHolder?
-    var variations:[OPTVariation] = []
-    var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
+    var featureEnabled:Bool? = false
 }

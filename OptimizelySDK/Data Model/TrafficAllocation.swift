@@ -1,6 +1,3 @@
-//
-//  Variable.swift
-//  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -19,7 +16,8 @@
 
 import Foundation
 
-struct OPTVariable: Codable {
-    var id: String
-    var value: String
+struct TrafficAllocation: Codable
+{
+    var entityId: String
+    var endOfRange: Int
 }

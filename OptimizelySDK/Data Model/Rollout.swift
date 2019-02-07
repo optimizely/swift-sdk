@@ -1,5 +1,5 @@
 //
-//  Group.swift
+//  Rollout.swift
 //  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
@@ -19,14 +19,9 @@
 
 import Foundation
 
-struct OPTGroup : Codable {
-    enum Policy : String, Codable {
-        case random
-        case overlapping
-    }
-    
+struct Rollout : Codable
+{
+    var experiments:[Experiment] = []
     var id:String = ""
-    var policy:Policy = Policy.random
-    var trafficAllocation:[OPTTrafficAllocation] = []
-    var experiments:[OPTExperiment] = []
 }
+

@@ -81,7 +81,7 @@ public class UserAttribute : Codable {
         }
     }
     
-    func evaluate(config: OPTProjectConfig, attributes: Dictionary<String, Any>) -> Bool? {
+    func evaluate(config: ProjectConfig, attributes: Dictionary<String, Any>) -> Bool? {
         let attributeValue = attributes[name]
         
         func convertToDouble(v:Any?) -> Double? {

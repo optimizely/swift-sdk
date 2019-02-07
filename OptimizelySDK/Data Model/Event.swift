@@ -16,10 +16,9 @@
 
 import Foundation
 
-struct OPTFeatureVariable: Codable {
-    var id: String
-    var key: String
-    var type: String
-    var defaultValue: String
+struct Event : Codable
+{
+    var experimentIds:[String] = []
+    var id:String = ""
+    var key:String = ""
 }
-

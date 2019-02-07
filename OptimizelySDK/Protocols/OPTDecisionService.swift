@@ -25,11 +25,11 @@ protocol OPTDecisionService {
      - Parameter bucketer: The bucketer.
      - Returns: An instance of the decision service.
      */
-    static func createInstance(config:OPTProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) -> OPTDecisionService?
+    static func createInstance(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) -> OPTDecisionService?
     
     
     // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
-    func initialize(config:OPTProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService)
+    func initialize(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService)
 
     
     /**
@@ -50,7 +50,7 @@ protocol OPTDecisionService {
      - Parameter experiment: The experiment in which to bucket the user.
      - Returns: The variation assigned to the specified user ID for an experiment.
      */
-    func getVariation(userId:String, experiment:OPTExperiment, attributes:Dictionary<String, Any>) -> OPTVariation?
+    func getVariation(userId:String, experiment:Experiment, attributes:Dictionary<String, Any>) -> Variation?
     
     /**
      Get a variation the user is bucketed into for the given FeatureFlag
@@ -59,6 +59,6 @@ protocol OPTDecisionService {
      - Parameter attributes: User attributes
      - Returns: The variation assigned to the specified user ID for a feature flag.
      */
-    func getVariationForFeature(featureFlag:OPTFeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:OPTExperiment?, variation:OPTVariation?)?
+    func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)?
     
 }

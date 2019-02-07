@@ -10,26 +10,26 @@ import XCTest
 
 class DataModelVariableTests: XCTestCase {
     
-    let modelType = OPTVariable.self
+    let modelType = Variable.self
 
     // MARK: - Decode
     
     func testDecodeSuccessWithJSONValid() {
         let json = ["id": "553339214", "value": "100"]
         let jsonData = try! JSONEncoder().encode(json)
-        let variable = try! JSONDecoder().decode(modelType, from: jsonData)
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
-        XCTAssert(variable.id == "553339214")
-        XCTAssert(variable.value == "100")
+        XCTAssert(model.id == "553339214")
+        XCTAssert(model.value == "100")
     }
     
     func testDecodeSuccessWithExtraFields() {
         let json = ["id": "553339214", "value": "100", "extra": "123"]
         let jsonData = try! JSONEncoder().encode(json)
-        let variable = try! JSONDecoder().decode(modelType, from: jsonData)
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
-        XCTAssert(variable.id == "553339214")
-        XCTAssert(variable.value == "100")
+        XCTAssert(model.id == "553339214")
+        XCTAssert(model.value == "100")
     }
     
     func testDecodeFailWithMissingKey() {
@@ -68,12 +68,12 @@ class DataModelVariableTests: XCTestCase {
     // MARK: - Encode
     
     func testEncodeJSON() {
-        let variableGiven = modelType.init(id: "553339214", value: "100")
+        let modelGiven = modelType.init(id: "553339214", value: "100")
         
-        let jsonData = try! JSONEncoder().encode(variableGiven)
-        let variableExp = try! JSONDecoder().decode(modelType, from: jsonData)
+        let jsonData = try! JSONEncoder().encode(modelGiven)
+        let modelExp = try! JSONDecoder().decode(modelType, from: jsonData)
         
-        XCTAssert(variableExp.id == variableGiven.id)
-        XCTAssert(variableExp.value == variableGiven.value)
+        XCTAssert(modelExp.id == modelGiven.id)
+        XCTAssert(modelExp.value == modelGiven.value)
     }
 }

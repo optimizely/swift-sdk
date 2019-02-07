@@ -1,5 +1,5 @@
 //
-//  Rollout.swift
+//  Variable.swift
 //  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
@@ -19,9 +19,7 @@
 
 import Foundation
 
-struct OPTRollout : Codable
-{
-    var experiments:[OPTExperiment] = []
-    var id:String = ""
+struct Variable: Codable {
+    var id: String
+    var value: String
 }
-

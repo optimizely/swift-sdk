@@ -1,5 +1,3 @@
-//
-//  Attribute.swift
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -18,10 +16,12 @@
 
 import Foundation
 
-struct OPTAttribute: Codable {
-    var id: String
-    var key: String
-    
-    // TODO: what is this for?
-    //var segmentId:String? = ""
+struct FeatureFlag : Codable
+{
+    var experimentIds:[String] = []
+    var rolloutId:String?
+    var groupId:String?
+    var variables:[FeatureVariable]? = []
+    var id:String = ""
+    var key:String = ""
 }

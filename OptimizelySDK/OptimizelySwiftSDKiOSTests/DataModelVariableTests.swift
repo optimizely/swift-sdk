@@ -1,5 +1,5 @@
 //
-//  DataModelAttributeTests.swift
+//  DataModelVariableTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/6/19.
@@ -8,30 +8,30 @@
 
 import XCTest
 
-class DataModelAttributeTests: XCTestCase {
+class DataModelVariableTests: XCTestCase {
     
-    let modelType = OPTAttribute.self
+    let modelType = OPTVariable.self
 
     // MARK: - Decode
     
     func testDecodeSuccessWithJSONValid() {
-        let json = ["id": "553339214", "key": "house"]
+        let json = ["id": "553339214", "value": "100"]
         let jsonData = try! JSONEncoder().encode(json)
-        let attribute = try! JSONDecoder().decode(modelType, from: jsonData)
+        let variable = try! JSONDecoder().decode(modelType, from: jsonData)
         
-        XCTAssert(attribute.id == "553339214")
-        XCTAssert(attribute.key == "house")
+        XCTAssert(variable.id == "553339214")
+        XCTAssert(variable.value == "100")
     }
     
     func testDecodeSuccessWithExtraFields() {
-        let json = ["id": "553339214", "key": "house", "extra": "123"]
+        let json = ["id": "553339214", "value": "100", "extra": "123"]
         let jsonData = try! JSONEncoder().encode(json)
-        let attribute = try! JSONDecoder().decode(modelType, from: jsonData)
+        let variable = try! JSONDecoder().decode(modelType, from: jsonData)
         
-        XCTAssert(attribute.id == "553339214")
-        XCTAssert(attribute.key == "house")
+        XCTAssert(variable.id == "553339214")
+        XCTAssert(variable.value == "100")
     }
-
+    
     func testDecodeFailWithMissingKey() {
         let json = ["id": "553339214"]
         let jsonData = try! JSONEncoder().encode(json)
@@ -42,9 +42,9 @@ class DataModelAttributeTests: XCTestCase {
             XCTAssert(true)
         }
     }
-
+    
     func testDecodeFailWithMissingId() {
-        let json = ["key": "house"]
+        let json = ["value": "100"]
         let jsonData = try! JSONEncoder().encode(json)
         do {
             _ = try JSONDecoder().decode(modelType, from: jsonData)
@@ -68,12 +68,12 @@ class DataModelAttributeTests: XCTestCase {
     // MARK: - Encode
     
     func testEncodeJSON() {
-        let attributeGiven = modelType.init(id: "553339214", key: "house")
+        let variableGiven = modelType.init(id: "553339214", value: "100")
         
-        let jsonData = try! JSONEncoder().encode(attributeGiven)
-        let attributeExp = try! JSONDecoder().decode(modelType, from: jsonData)
-
-        XCTAssert(attributeExp.id == attributeGiven.id)
-        XCTAssert(attributeExp.key == attributeGiven.key)
+        let jsonData = try! JSONEncoder().encode(variableGiven)
+        let variableExp = try! JSONDecoder().decode(modelType, from: jsonData)
+        
+        XCTAssert(variableExp.id == variableGiven.id)
+        XCTAssert(variableExp.value == variableGiven.value)
     }
 }

@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class OPTFeatureFlag : Codable
+struct OPTFeatureFlag : Codable
 {
     var experimentIds:[String] = []
     var rolloutId:String?

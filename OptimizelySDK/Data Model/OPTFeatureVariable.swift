@@ -16,11 +16,10 @@
 
 import Foundation
 
-public class OPTFeatureVariable : Codable
-{
-    var defaultValue:String? = ""
-    var type:String = ""
-    var id:String = ""
-    var key:String = ""
+struct OPTFeatureVariable: Codable {
+    var id: String
+    var key: String
+    var type: String
+    var defaultValue: String
 }
 

@@ -19,9 +19,7 @@
 
 import Foundation
 
-public class OPTVariable : Codable
-{
-    var id:String = ""
-    var value:String = ""
-    
+struct OPTVariable: Codable {
+    var id: String
+    var value: String
 }

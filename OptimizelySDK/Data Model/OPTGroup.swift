@@ -19,7 +19,7 @@
 
 import Foundation
 
-public class OPTGroup : Codable {
+struct OPTGroup : Codable {
     enum Policy : String, Codable {
         case random
         case overlapping

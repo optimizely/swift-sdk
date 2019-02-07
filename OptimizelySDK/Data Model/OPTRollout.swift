@@ -19,7 +19,7 @@
 
 import Foundation
 
-public class OPTRollout : Codable
+struct OPTRollout : Codable
 {
     var experiments:[OPTExperiment] = []
     var id:String = ""

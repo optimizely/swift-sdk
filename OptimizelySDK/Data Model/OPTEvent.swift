@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class OPTEvent : Codable
+struct OPTEvent : Codable
 {
     var experimentIds:[String] = []
     var id:String = ""

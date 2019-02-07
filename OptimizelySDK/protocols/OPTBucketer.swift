@@ -16,7 +16,7 @@
 
 import Foundation
 
-public protocol OPTBucketer {
+protocol OPTBucketer {
     /**
      Initialize the default bucketer with the project config.
      - Parameter config: The project config that the bucketer will use for reference.

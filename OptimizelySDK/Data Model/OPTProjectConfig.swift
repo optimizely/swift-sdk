@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class OPTProjectConfig : Codable
+class OPTProjectConfig : Codable
 {
     var version:String = ""
     var rollouts:[OPTRollout]? = []

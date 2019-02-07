@@ -20,10 +20,10 @@
 
 import Foundation
 
-public class OPTVariation : Codable
+struct OPTVariation : Codable
 {
-    public var variables:[OPTVariable]? = []
-    public var id:String = ""
-    public var key:String = ""
-    public var featureEnabled:Bool? = false
+    var variables:[OPTVariable]? = []
+    var id:String = ""
+    var key:String = ""
+    var featureEnabled:Bool? = false
 }

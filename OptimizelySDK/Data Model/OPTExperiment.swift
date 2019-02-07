@@ -17,7 +17,7 @@
 
 import Foundation
 
-public class OPTExperiment : Codable
+struct OPTExperiment : Codable
 {
     
     enum Status: String, Codable {
@@ -28,13 +28,15 @@ public class OPTExperiment : Codable
         case Archived
     }
     
-    public var id:String = ""
-    public var key:String = ""
+    var id:String = ""
+    var key:String = ""
+    
     var status:Status = Status.Not_started
-    public var layerId:String = ""
-    public var trafficAllocation:[OPTTrafficAllocation] = []
-    public var audienceIds:[String] = []
-    public var audienceConditions:ConditionHolder?
-    public var variations:[OPTVariation] = []
-    public var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
+    
+    var layerId:String = ""
+    var trafficAllocation:[OPTTrafficAllocation] = []
+    var audienceIds:[String] = []
+    var audienceConditions:ConditionHolder?
+    var variations:[OPTVariation] = []
+    var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
 }

@@ -38,12 +38,8 @@ open class OptimizelyManager: NSObject {
     ///   - ...
     public init(sdkKey: String,
                 logger:OPTLogger? = nil,
-                bucketer:OPTBucketer? = nil,
-                decisionService:OPTDecisionService? = nil,
                 eventDispatcher:OPTEventDispatcher? = nil,
-                datafileHandler:OPTDatafileHandler? = nil,
                 userProfileService:OPTUserProfileService? = nil,
-                notificationCenter:OPTNotificationCenter? = nil,
                 periodicDownloadInterval:Int? = nil) {
         
         self.sdkKey = sdkKey
@@ -52,12 +48,13 @@ open class OptimizelyManager: NSObject {
         
         self.logger = logger ?? DefaultLogger(level: .error)
         self.eventDispatcher = eventDispatcher ?? DefaultEventDispatcher()
-        self.datafileHandler = datafileHandler ?? DefaultDatafileHandler()
         self.userProfileService = userProfileService ?? DefaultUserProfileService()
-        self.notificationCenter = notificationCenter ?? DefaultNotificationCenter()
-        self.bucketer = bucketer ?? DefaultBucketer()
-        self.decisionService = decisionService ?? DefaultDecisionService()
         self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
+        
+        self.datafileHandler = DefaultDatafileHandler()
+        self.notificationCenter = DefaultNotificationCenter()
+        self.bucketer = DefaultBucketer()
+        self.decisionService = DefaultDecisionService()
     }
     
     /// Initialize Optimizely Manager
@@ -464,10 +461,8 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.generic
         }
         
-        guard let defaultValueString = variable.defaultValue else {
-            // TODO: refine error-type
-            throw OptimizelyError.generic
-        }
+        // TODO: check if non-optional is OK
+        let defaultValueString = variable.defaultValue
 
         var typeName: String
         var value: T
@@ -570,12 +565,8 @@ extension OptimizelyManager {
     @objc public convenience init(sdkKey: String) {
         self.init(sdkKey: sdkKey,
                   logger: nil,
-                  bucketer: nil,
-                  decisionService: nil,
                   eventDispatcher: nil,
-                  datafileHandler: nil,
                   userProfileService: nil,
-                  notificationCenter: nil,
                   periodicDownloadInterval: nil)
     }
     

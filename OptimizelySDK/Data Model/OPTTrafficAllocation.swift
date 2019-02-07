@@ -16,8 +16,8 @@
 
 import Foundation
 
-struct OPTTrafficAllocation : Codable
+struct OPTTrafficAllocation: Codable
 {
-    var entityId:String = ""
-    var endOfRange:Int = 0
+    var entityId: String
+    var endOfRange: Int
 }

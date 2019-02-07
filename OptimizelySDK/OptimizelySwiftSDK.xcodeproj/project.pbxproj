@@ -330,88 +330,83 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0B124BB821B32973001BE0FA /* protocols */ = {
+		0B124BB821B32973001BE0FA /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
 				0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */,
 				0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */,
 				0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */,
-				0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */,
 				0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */,
-				0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */,
 				0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */,
-				0B61624421B6F1B6000D7A28 /* OPTLogger.swift */,
 				0B61625C21B8B82A000D7A28 /* JSONParse.swift */,
 				0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */,
 				0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */,
 			);
-			path = protocols;
+			path = Protocols;
 			sourceTree = "<group>";
 		};
-		0B124BBD21B5C00A001BE0FA /* utils */ = {
+		0B124BBD21B5C00A001BE0FA /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				0B124BBE21B5C024001BE0FA /* MurmurHash3.swift */,
 				0B124BCA21B5DF39001BE0FA /* Result.swift */,
 				0B61625121B731E8000D7A28 /* Constants.swift */,
 			);
-			path = utils;
+			path = Utils;
 			sourceTree = "<group>";
 		};
-		0B124BC521B5DCD4001BE0FA /* dispatchEvents */ = {
+		0B124BC521B5DCD4001BE0FA /* DispatchEvents */ = {
 			isa = PBXGroup;
 			children = (
 				0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */,
 				0B61623A21B60167000D7A28 /* BatchEvent.swift */,
 			);
-			path = dispatchEvents;
+			path = DispatchEvents;
 			sourceTree = "<group>";
 		};
-		0B5ADA2921CC73730049BC2C /* extensions */ = {
+		0B5ADA2921CC73730049BC2C /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				0B5ADA2A21CC739E0049BC2C /* EventForDispatch+extension.swift */,
 				0BC48EA22203764E003AFD71 /* DataStoreQueueStackImpl+extension.swift */,
 				0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */,
 			);
-			path = extensions;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
-		0B61624621B70CE7000D7A28 /* implementation */ = {
+		0B61624621B70CE7000D7A28 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				0B7B9EBB21F2A64800056589 /* datastore */,
-				0B807B1321C2FB770090DDC8 /* events */,
+				0B7B9EBB21F2A64800056589 /* Datastore */,
+				0B807B1321C2FB770090DDC8 /* Events */,
 				0B61624721B70D0F000D7A28 /* DefaultBucketer.swift */,
 				0B54908A21C9602900BE04C5 /* DefaultNotificationCenter.swift */,
 				0B61624F21B72DCB000D7A28 /* DefaultDecisionService.swift */,
-				0B61625921B870C6000D7A28 /* DefaultUserProfileService.swift */,
-				0B61625E21B8C3A9000D7A28 /* DefaultLogger.swift */,
-				0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */,
 				0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */,
 			);
-			path = implementation;
+			path = Implementation;
 			sourceTree = "<group>";
 		};
-		0B7B9EBB21F2A64800056589 /* datastore */ = {
+		0B7B9EBB21F2A64800056589 /* Datastore */ = {
 			isa = PBXGroup;
 			children = (
 				0B4E11FB21EE90F600D5B370 /* DataStoreUserDefaults.swift */,
 				0B7B9EB921F29E3400056589 /* DataStoreQueueStackImpl.swift */,
 				0B7B9EC221F2ACB100056589 /* DataStoreFile.swift */,
 			);
-			path = datastore;
+			path = Datastore;
 			sourceTree = "<group>";
 		};
 		0B7CB0B821AC5FE2007B77E5 = {
 			isa = PBXGroup;
 			children = (
 				6E4DD8ED21E530A900B0C2C7 /* Optimizely */,
-				0B5ADA2921CC73730049BC2C /* extensions */,
-				0B61624621B70CE7000D7A28 /* implementation */,
-				0B124BBD21B5C00A001BE0FA /* utils */,
-				0B124BB821B32973001BE0FA /* protocols */,
+				6E53A67C2204CC6C00EA3A61 /* Customization */,
+				0B61624621B70CE7000D7A28 /* Implementation */,
+				0B124BB821B32973001BE0FA /* Protocols */,
 				0B7CB0E921ADF261007B77E5 /* Data Model */,
+				0B5ADA2921CC73730049BC2C /* Extensions */,
+				0B124BBD21B5C00A001BE0FA /* Utils */,
 				6E53A668220386BB00EA3A61 /* Supporting Files */,
 				6E4DD99021E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests */,
 				6E614DD921E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests */,
@@ -450,22 +445,22 @@
 			path = "Data Model";
 			sourceTree = "<group>";
 		};
-		0B7CB10221AE04C1007B77E5 /* audience */ = {
+		0B7CB10221AE04C1007B77E5 /* Audience */ = {
 			isa = PBXGroup;
 			children = (
 				0B7CB10321AE053A007B77E5 /* OPTAudience.swift */,
 				0B7CB11821AF753D007B77E5 /* UserAttribute.swift */,
 				0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */,
 			);
-			path = audience;
+			path = Audience;
 			sourceTree = "<group>";
 		};
-		0B807B1321C2FB770090DDC8 /* events */ = {
+		0B807B1321C2FB770090DDC8 /* Events */ = {
 			isa = PBXGroup;
 			children = (
 				0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */,
 			);
-			path = events;
+			path = Events;
 			sourceTree = "<group>";
 		};
 		6E4DD8ED21E530A900B0C2C7 /* Optimizely */ = {
@@ -502,6 +497,27 @@
 				6EBAEB6F21E3FEF800D13AA9 /* Info.plist */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6E53A67C2204CC6C00EA3A61 /* Customization */ = {
+			isa = PBXGroup;
+			children = (
+				0B61625E21B8C3A9000D7A28 /* DefaultLogger.swift */,
+				0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */,
+				0B61625921B870C6000D7A28 /* DefaultUserProfileService.swift */,
+				6E53A67D2204CC9900EA3A61 /* Protocols */,
+			);
+			path = Customization;
+			sourceTree = "<group>";
+		};
+		6E53A67D2204CC9900EA3A61 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				0B61624421B6F1B6000D7A28 /* OPTLogger.swift */,
+				0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */,
+				0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		6E614DD921E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests */ = {

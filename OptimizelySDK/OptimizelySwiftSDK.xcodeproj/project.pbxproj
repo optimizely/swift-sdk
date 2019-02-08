@@ -207,6 +207,7 @@
 		6E7D3EE7220BA39000410FDE /* DataModelVariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7D3EE6220BA39000410FDE /* DataModelVariableTests.swift */; };
 		6E7D3EE9220BAB0800410FDE /* DataModelFeatureVariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7D3EE8220BAB0800410FDE /* DataModelFeatureVariableTests.swift */; };
 		6E7D3EEB220CC50A00410FDE /* DataModelTrafficAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7D3EEA220CC50A00410FDE /* DataModelTrafficAllocation.swift */; };
+		6E7FC679220CFDF2009A171F /* DataModelEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC678220CFDF2009A171F /* DataModelEventTests.swift */; };
 		6EBAEB7521E3FEF900D13AA9 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EBAEB7C21E3FEF900D13AA9 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -290,6 +291,7 @@
 		6E7D3EE6220BA39000410FDE /* DataModelVariableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelVariableTests.swift; sourceTree = "<group>"; };
 		6E7D3EE8220BAB0800410FDE /* DataModelFeatureVariableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelFeatureVariableTests.swift; sourceTree = "<group>"; };
 		6E7D3EEA220CC50A00410FDE /* DataModelTrafficAllocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelTrafficAllocation.swift; sourceTree = "<group>"; };
+		6E7FC678220CFDF2009A171F /* DataModelEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelEventTests.swift; sourceTree = "<group>"; };
 		6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Optimizely.h; sourceTree = "<group>"; };
 		6EBAEB6F21E3FEF800D13AA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -477,6 +479,7 @@
 		6E4DD99021E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests */ = {
 			isa = PBXGroup;
 			children = (
+				6E7FC678220CFDF2009A171F /* DataModelEventTests.swift */,
 				6E7D3EEA220CC50A00410FDE /* DataModelTrafficAllocation.swift */,
 				6E7D3EE8220BAB0800410FDE /* DataModelFeatureVariableTests.swift */,
 				6E7D3EE6220BA39000410FDE /* DataModelVariableTests.swift */,
@@ -887,6 +890,7 @@
 				6E4DD8AB21E5260600B0C2C7 /* DataStoreQueueStack.swift in Sources */,
 				6E4DD8D421E5273F00B0C2C7 /* UserAttribute.swift in Sources */,
 				6E4DD8C721E5261500B0C2C7 /* Attribute.swift in Sources */,
+				6E7FC679220CFDF2009A171F /* DataModelEventTests.swift in Sources */,
 				6E4DD8D721E5274600B0C2C7 /* ConditionHolder.swift in Sources */,
 				0B0590152209D8790007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */,
 				6E7D3EE9220BAB0800410FDE /* DataModelFeatureVariableTests.swift in Sources */,

@@ -16,8 +16,7 @@
 
 import Foundation
 
-struct TrafficAllocation: Codable
-{
+struct TrafficAllocation: Codable {
     var entityId: String
     var endOfRange: Int
 }

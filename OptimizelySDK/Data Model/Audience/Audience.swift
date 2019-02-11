@@ -16,56 +16,43 @@
 
 import Foundation
 
-public class Audience : Codable {
-    var id:String = ""
-    var name:String = ""
-    var conditions:ConditionHolder?
+struct Audience: Codable {
+    var id: String
+    var name: String
+    var conditions: ConditionHolder
     
-    enum codingKeys : String, CodingKey {
+    enum CodingKeys : String, CodingKey {
         case id
         case name
         case conditions
     }
     
-    init() {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
-    }
-    
-    required public init(from decoder: Decoder) throws {
-        let container = try? decoder.container(keyedBy: codingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
         
-        if let value = try container?.decode(String.self, forKey: .id) {
-            id = value
-        }
-        if let value = try container?.decode(String.self, forKey: .name) {
-            name = value
-        }
-        if let value = try? container?.decode(String.self, forKey: .conditions) {
-            let data = value?.data(using: .utf8)
-            if let holders = try? JSONDecoder().decode(ConditionHolder.self, from: data!) {
-                conditions = holders
-            }
-            
-        }
-        else if let value = try? container?.nestedUnkeyedContainer(forKey: .conditions) {
-            guard var value = value else { return }
+        if let value = try? container.decode(String.self, forKey: .conditions) {
+            let data = value.data(using: .utf8)
+            self.conditions = try JSONDecoder().decode(ConditionHolder.self, from: data!)
+        } else if var value = try? container.nestedUnkeyedContainer(forKey: .conditions) {
             var conditionList = [ConditionHolder]()
             while !value.isAtEnd {
                 if let condition = try? value.decode(ConditionHolder.self) {
                     conditionList.append(condition)
                 }
             }
-            conditions = ConditionHolder.array(conditionList)
+            self.conditions = ConditionHolder.array(conditionList)
+        } else {
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
         }
-        
     }
     
-    public func encode(to encoder: Encoder) throws
-    {
-        var container = encoder.container(keyedBy: codingKeys.self)
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(conditions, forKey: .conditions)
     }
-
 }

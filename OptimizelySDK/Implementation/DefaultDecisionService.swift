@@ -117,10 +117,17 @@ class DefaultDecisionService : OPTDecisionService {
      func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
         //Evaluate in this order:
         
+        
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // TODO: JSON schema does not have groupId, so removed from model. check it out.
+        //
         //1. Attempt to check if the feature is in a mutex group.
-        if let groupId = featureFlag.groupId, let variation = getVariationForFeatureGroup(featureFlag: featureFlag, groupId: groupId, userId: userId, attributes: attributes) {
-            return variation
-        }
+//        if let groupId = featureFlag.groupId, let variation = getVariationForFeatureGroup(featureFlag: featureFlag, groupId: groupId, userId: userId, attributes: attributes) {
+//            return variation
+//        }
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        
         
         //2. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
@@ -179,10 +186,10 @@ class DefaultDecisionService : OPTDecisionService {
     
         let bucketingId = getBucketingId(userId: userId, attributes:attributes)
         
-        guard let rolloutId = featureFlag.rolloutId, rolloutId.trimmingCharacters(in: CharacterSet.whitespaces) != "" else {
+        guard featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces) != "" else {
             return nil
         }
-        guard let rollout = config.rollouts?.filter({$0.id == rolloutId}).first else {
+        guard let rollout = config.rollouts?.filter({$0.id == featureFlag.rolloutId}).first else {
             return nil
         }
         let rolloutRules = rollout.experiments

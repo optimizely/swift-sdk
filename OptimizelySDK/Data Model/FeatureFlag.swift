@@ -16,12 +16,13 @@
 
 import Foundation
 
-struct FeatureFlag : Codable
-{
-    var experimentIds:[String] = []
-    var rolloutId:String?
-    var groupId:String?
-    var variables:[FeatureVariable]? = []
-    var id:String = ""
-    var key:String = ""
+struct FeatureFlag: Codable {
+    var id: String
+    var key: String
+    var experimentIds: [String]
+    var rolloutId: String
+    var variables: [FeatureVariable]
+    
+    // TODO: Tom, can you confirm why we have this here? datafile schema does not have this field for FeatureFlag
+    //var groupId: String?
 }

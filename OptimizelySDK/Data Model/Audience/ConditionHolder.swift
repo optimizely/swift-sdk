@@ -16,23 +16,25 @@
 
 import Foundation
 
-public enum ConditionHolder : Codable {
+enum ConditionHolder: Codable {
     case string(String)
     case userAttribute(UserAttribute)
     case array([ConditionHolder])
     
     public init(from decoder: Decoder) throws {
         if let container = try? decoder.singleValueContainer() {
-            if let value = try? container.decode([ConditionHolder].self) {
-                self = .array(value)
-                return
-            }
             if let value = try? container.decode(String.self) {
                 self = .string(value)
                 return
             }
+            
             if let value = try? container.decode(UserAttribute.self) {
                 self = .userAttribute(value)
+                return
+            }
+        } else if let container = try? decoder.unkeyedContainer() {
+            if let value = try? container.decode([ConditionHolder].self) {
+                self = .array(value)
                 return
             }
         }
@@ -54,16 +56,16 @@ public enum ConditionHolder : Codable {
         }
     }
     
-    func evaluate(projectConfig:ProjectConfig, attributes:Dictionary<String,Any>) -> Bool? {
+    func evaluate(projectConfig: ProjectConfig, attributes: Dictionary<String, Any>) -> Bool? {
         switch self {
         case .string(let op):
             // assume it is a audienceId if it is not an operand
             if !op.isOperand {
                 if let audience = projectConfig.typedAudiences?.filter({$0.id == op}).first {
-                    return audience.conditions?.evaluate(projectConfig: projectConfig, attributes: attributes)
+                    return audience.conditions.evaluate(projectConfig: projectConfig, attributes: attributes)
                 }
                 else if let audience = projectConfig.audiences.filter({$0.id == op}).first {
-                    return audience.conditions?.evaluate(projectConfig: projectConfig, attributes: attributes)
+                    return audience.conditions.evaluate(projectConfig: projectConfig, attributes: attributes)
                 }
             }
         case .userAttribute(let userAttr):
@@ -77,7 +79,7 @@ public enum ConditionHolder : Codable {
 }
 
 extension String {
-    var isOperand:Bool {
+    var isOperand: Bool {
         switch self {
         case "and","or","not":
             return true
@@ -88,10 +90,9 @@ extension String {
 }
 
 extension Array where Element == ConditionHolder {
-    func evaluate(config: ProjectConfig, attributes: Dictionary<String,Any>) -> Bool? {
+    func evaluate(config: ProjectConfig, attributes: Dictionary<String, Any>) -> Bool? {
 
-        for i in 0..<self.count {
-            let condition = self[i]
+        for condition in self {
             switch condition {
             case .string(let op):
                 if op.isOperand {
@@ -99,10 +100,10 @@ extension Array where Element == ConditionHolder {
                 }
                 else {
                     if let audience = config.typedAudiences?.filter({$0.id == op}).first {
-                        return audience.conditions?.evaluate(projectConfig: config, attributes: attributes)
+                        return audience.conditions.evaluate(projectConfig: config, attributes: attributes)
                     }
                     else if let audience = config.audiences.filter({$0.id == op}).first {
-                        return audience.conditions?.evaluate(projectConfig: config, attributes: attributes)
+                        return audience.conditions.evaluate(projectConfig: config, attributes: attributes)
                     }
                 }
             case .array(let conditions):

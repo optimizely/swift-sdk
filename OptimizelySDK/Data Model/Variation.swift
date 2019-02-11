@@ -20,10 +20,9 @@
 
 import Foundation
 
-struct Variation : Codable
-{
-    var variables:[Variable]? = []
-    var id:String = ""
-    var key:String = ""
-    var featureEnabled:Bool? = false
+struct Variation: Codable {
+    var id:String
+    var key:String
+    var featureEnabled: Bool?
+    var variables: [Variable]?
 }

@@ -17,6 +17,6 @@
 import Foundation
 
 struct TrafficAllocation: Codable {
-    var entityId: String
+    var entityId: String    // can be empty string "" to indicate not-allocated range
     var endOfRange: Int
 }

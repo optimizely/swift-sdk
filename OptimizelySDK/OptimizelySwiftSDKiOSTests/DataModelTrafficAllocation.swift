@@ -72,12 +72,8 @@ class DataModelTrafficAllocation: XCTestCase {
     // MARK: - Encode
 
     func testEncodeJSON() {
-        let modelGiven = modelType.init(entityId: "553339214", endOfRange: 5000)
-        let jsonData = try! JSONEncoder().encode(modelGiven)
-        let modelExp = try! JSONDecoder().decode(modelType, from: jsonData)
-
-        XCTAssert(modelExp.entityId == modelGiven.entityId)
-        XCTAssert(modelExp.endOfRange == modelGiven.endOfRange)
+        let model = modelType.init(entityId: "553339214", endOfRange: 5000)
+        XCTAssert(isEqualWithEncodeThenDecode(model))
     }
 
 }

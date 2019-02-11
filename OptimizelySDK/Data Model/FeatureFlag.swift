@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct FeatureFlag: Codable {
+struct FeatureFlag: Codable, Equatable {
     var id: String
     var key: String
     var experimentIds: [String]

@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Event: Codable {
+struct Event: Codable, Equatable {
     var id: String
     var key: String
     var experimentIds: [String]

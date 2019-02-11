@@ -68,12 +68,7 @@ class DataModelVariableTests: XCTestCase {
     // MARK: - Encode
     
     func testEncodeJSON() {
-        let modelGiven = modelType.init(id: "553339214", value: "100")
-        
-        let jsonData = try! JSONEncoder().encode(modelGiven)
-        let modelExp = try! JSONDecoder().decode(modelType, from: jsonData)
-        
-        XCTAssert(modelExp.id == modelGiven.id)
-        XCTAssert(modelExp.value == modelGiven.value)
+        let model = modelType.init(id: "553339214", value: "100")
+        XCTAssert(isEqualWithEncodeThenDecode(model))
     }
 }

@@ -140,28 +140,14 @@ class DataModelFeatureFlagTests: XCTestCase {
     // MARK: - Encode
 
     func testEncodeJSON() {
-        let modelGiven = modelType.init(id: "553339214",
-                                        key: "house",
-                                        experimentIds: ["12345", "12346"],
-                                        rolloutId: "34567",
-                                        variables: [
-                                            FeatureVariable(id:"56789", key:"price", type:"integer", defaultValue:"20"),
-                                            FeatureVariable(id:"56780", key:"name", type:"string", defaultValue:"Jack")])
-        let jsonData = try! JSONEncoder().encode(modelGiven)
-        let modelExp = try! JSONDecoder().decode(modelType, from: jsonData)
-
-        XCTAssert(modelExp.id == modelGiven.id)
-        XCTAssert(modelExp.key == modelGiven.key)
-        XCTAssert(modelExp.experimentIds == modelGiven.experimentIds)
-        XCTAssert(modelExp.rolloutId == modelGiven.rolloutId)
-        XCTAssert(modelExp.variables[0].id == modelGiven.variables[0].id)
-        XCTAssert(modelExp.variables[0].key == modelGiven.variables[0].key)
-        XCTAssert(modelExp.variables[0].type == modelGiven.variables[0].type)
-        XCTAssert(modelExp.variables[0].defaultValue == modelGiven.variables[0].defaultValue)
-        XCTAssert(modelExp.variables[1].id == modelGiven.variables[1].id)
-        XCTAssert(modelExp.variables[1].key == modelGiven.variables[1].key)
-        XCTAssert(modelExp.variables[1].type == modelGiven.variables[1].type)
-        XCTAssert(modelExp.variables[1].defaultValue == modelGiven.variables[1].defaultValue)
+        let model = modelType.init(id: "553339214",
+                                   key: "house",
+                                   experimentIds: ["12345", "12346"],
+                                   rolloutId: "34567",
+                                   variables: [
+                                    FeatureVariable(id:"56789", key:"price", type:"integer", defaultValue:"20"),
+                                    FeatureVariable(id:"56780", key:"name", type:"string", defaultValue:"Jack")])
+        XCTAssert(isEqualWithEncodeThenDecode(model))
     }
 
 }

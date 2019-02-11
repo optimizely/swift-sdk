@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct Attribute: Codable {
+struct Attribute: Codable, Equatable {
     var id: String
     var key: String
     

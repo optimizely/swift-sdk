@@ -125,22 +125,13 @@ class DataModelVariationTests: XCTestCase {
     // MARK: - Encode
 
     func testEncodeJSON() {
-        let modelGiven = modelType.init(id: "553339214",
-                                        key: "house",
-                                        featureEnabled: true,
-                                        variables: [
-                                            Variable(id: "123450", value: "100"),
-                                            Variable(id: "123451", value: "200")])
-        let jsonData = try! JSONEncoder().encode(modelGiven)
-        let modelExp = try! JSONDecoder().decode(modelType, from: jsonData)
-
-        XCTAssert(modelExp.id == modelGiven.id)
-        XCTAssert(modelExp.key == modelGiven.key)
-        XCTAssert(modelExp.featureEnabled == modelGiven.featureEnabled)
-        XCTAssert(modelExp.variables![0].id == modelGiven.variables![0].id)
-        XCTAssert(modelExp.variables![0].value == modelGiven.variables![0].value)
-        XCTAssert(modelExp.variables![1].id == modelGiven.variables![1].id)
-        XCTAssert(modelExp.variables![1].value == modelGiven.variables![1].value)
+        let model = modelType.init(id: "553339214",
+                                   key: "house",
+                                   featureEnabled: true,
+                                   variables: [
+                                    Variable(id: "123450", value: "100"),
+                                    Variable(id: "123451", value: "200")])
+        XCTAssert(isEqualWithEncodeThenDecode(model))
     }
     
 }

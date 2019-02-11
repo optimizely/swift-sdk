@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct Variation: Codable {
+struct Variation: Codable, Equatable {
     var id:String
     var key:String
     var featureEnabled: Bool?

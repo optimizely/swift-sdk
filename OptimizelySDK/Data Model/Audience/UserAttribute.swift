@@ -19,9 +19,9 @@ import Foundation
 struct UserAttribute: Codable {
     var name: String
     var type: String
-    var value: Any
     var match: String?
-    
+    var value: Any
+
     enum CodingKeys : String, CodingKey {
         case name
         case type
@@ -34,11 +34,8 @@ struct UserAttribute: Codable {
         
         self.name = try container.decode(String.self, forKey: .name)
         self.type = try container.decode(String.self, forKey: .type)
-        
-        if let match = try? container.decode(String.self, forKey: .match) {
-            self.match = match
-        }
-        
+        self.match = try container.decodeIfPresent(String.self, forKey: .match)
+
         if let value = try? container.decode(String.self, forKey: .value) {
             self.value = value
         } else if let value = try? container.decode(Double.self, forKey: .value) {
@@ -54,20 +51,21 @@ struct UserAttribute: Codable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
         try container.encode(name, forKey: .name)
         try container.encode(type, forKey: .type)
-        try container.encode(match, forKey: .match)
+        try container.encodeIfPresent(match, forKey: .match)
+        
         if value is String {
             try container.encode(value as! String, forKey: .value)
-        }
-        else if value is Double {
+        } else if value is Double {
             try container.encode(value as! Double, forKey: .value)
-        }
-        else if value is Int {
+        } else if value is Int {
             try container.encode(value as! Int, forKey: .value)
-        }
-        else if value is Bool {
+        } else if value is Bool {
             try container.encode(value as! Bool, forKey: .value)
+        } else {
+            throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: [], debugDescription: "Invalid value type in Condition"))
         }
     }
     

@@ -21,20 +21,18 @@ enum ConditionHolder: Codable {
     case userAttribute(UserAttribute)
     case array([ConditionHolder])
     
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         if let container = try? decoder.singleValueContainer() {
+            if let value = try? container.decode([ConditionHolder].self) {
+                self = .array(value)
+                return
+            }
             if let value = try? container.decode(String.self) {
                 self = .string(value)
                 return
             }
-            
             if let value = try? container.decode(UserAttribute.self) {
                 self = .userAttribute(value)
-                return
-            }
-        } else if let container = try? decoder.unkeyedContainer() {
-            if let value = try? container.decode([ConditionHolder].self) {
-                self = .array(value)
                 return
             }
         }
@@ -42,7 +40,7 @@ enum ConditionHolder: Codable {
         throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
     }
     
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
         switch self {
         case .string(let op):
             var container = encoder.singleValueContainer()
@@ -55,7 +53,7 @@ enum ConditionHolder: Codable {
             try? container.encode(holder)
         }
     }
-    
+
     func evaluate(projectConfig: ProjectConfig, attributes: Dictionary<String, Any>) -> Bool? {
         switch self {
         case .string(let op):

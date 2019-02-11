@@ -102,13 +102,10 @@ class DataModelEventTests: XCTestCase {
     // MARK: - Encode
 
     func testEncodeJSON() {
-        let modelGiven = modelType.init(id: "553339214", key: "house", experimentIds: ["12105773750", "13139830210"])
-        let jsonData = try! JSONEncoder().encode(modelGiven)
-        let modelExp = try! JSONDecoder().decode(modelType, from: jsonData)
-
-        XCTAssert(modelExp.id == modelGiven.id)
-        XCTAssert(modelExp.key == modelGiven.key)
-        XCTAssert(modelExp.experimentIds == modelGiven.experimentIds)
+        let model = modelType.init(id: "553339214",
+                                        key: "house",
+                                        experimentIds: ["12105773750", "13139830210"])
+        XCTAssert(isEqualWithEncodeThenDecode(model))
     }
 
 }

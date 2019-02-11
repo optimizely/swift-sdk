@@ -94,14 +94,7 @@ class DataModelFeatureVariableTests: XCTestCase {
     // MARK: - Encode
     
     func testEncodeJSON() {
-        let modelGiven = modelType.init(id: "553339214", key: "price", type: "integer", defaultValue: "100")
-        
-        let jsonData = try! JSONEncoder().encode(modelGiven)
-        let modelExp = try! JSONDecoder().decode(modelType, from: jsonData)
-        
-        XCTAssert(modelExp.id == modelGiven.id)
-        XCTAssert(modelExp.key == modelGiven.key)
-        XCTAssert(modelExp.type == modelGiven.type)
-        XCTAssert(modelExp.defaultValue == modelGiven.defaultValue)
+        let model = modelType.init(id: "553339214", key: "price", type: "integer", defaultValue: "100")
+        XCTAssert(isEqualWithEncodeThenDecode(model))
    }
 }

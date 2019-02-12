@@ -23,7 +23,7 @@ class DefaultBucketer : OPTBucketer {
     var MAX_HASH_VALUE:UInt64?
     
     private var config:OPTProjectConfig!
-    private lazy var logger = HandlerRegistryService.shared.injectComponent(service: OPTLogger.self) as! OPTLogger?
+    private lazy var logger = HandlerRegistryService.shared.injectLogger()
     
     internal required init(config:OPTProjectConfig) {
         self.config = config

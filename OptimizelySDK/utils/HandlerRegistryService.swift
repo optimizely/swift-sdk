@@ -26,10 +26,14 @@ class HandlerRegistryService {
         }
     }
     
-    func injectComponent(service:Any, isReintialize:Bool=false) -> Any? {
+    func injectComponent(service:Any, sdkKey:String? = nil, isReintialize:Bool=false) -> Any? {
         var result:Any?
         dispatchQueue.sync {
-            if var binder = self.binders.filter({type(of: $0.service) == type(of: service)}).first {
+            var binders = self.binders
+            if let sdkKey = sdkKey {
+                binders = binders.filter({$0.sdkKey == sdkKey})
+            }
+            if var binder = binders.filter({type(of: $0.service) == type(of: service)}).first {
                 if isReintialize && binder.stategy == .reCreate {
                     binder.instance = nil
                 }
@@ -46,7 +50,14 @@ class HandlerRegistryService {
         return result
     }
     
-    
+    func lookupComponents(sdkKey:String)->[Any?]? {
+        var value:[Any]?
+        
+        dispatchQueue.sync {
+            value = self.binders.filter({$0.sdkKey == sdkKey}).map({ self.injectComponent(service: $0.service) as Any })
+        }
+        return value
+    }
 }
 
 enum reInitializeStrategy {

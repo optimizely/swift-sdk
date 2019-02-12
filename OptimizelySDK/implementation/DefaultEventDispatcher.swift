@@ -27,7 +27,7 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
     // TODO: implement
     public var maxQueueSize:Int = 3000
     
-    lazy var logger = HandlerRegistryService.shared.injectComponent(service: OPTLogger.self) as! OPTLogger
+    lazy var logger = HandlerRegistryService.shared.injectLogger()
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
     let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: "OPTEventQueue"))
@@ -82,7 +82,7 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
                 }
                 
                 guard let event = eventToSend else {
-                    self.logger.log(level: .error, message: "Cannot find event to send")
+                    self.logger?.log(level: .error, message: "Cannot find event to send")
                     resetBatch()
                     break
                 }
@@ -90,7 +90,7 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
                 // we've exhuasted our failure count.  Give up and try the next time a event
                 // is queued or someone calls flush.
                 if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
-                    self.logger.log(level: .error, message:"EventDispatcher failed to send \(failureCount) times. Backing off.")
+                    self.logger?.log(level: .error, message:"EventDispatcher failed to send \(failureCount) times. Backing off.")
                     failureCount = 0
                     resetBatch()
                     break;
@@ -101,20 +101,20 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
                 self.sendEvent(event: event) { (result) -> (Void) in
                     switch result {
                     case .failure(let error):
-                        self.logger.log(level: .error, message: error.localizedDescription)
+                        self.logger?.log(level: .error, message: error.localizedDescription)
                         failureCount += 1
                     case .success(_):
                         // we succeeded. remove the batch size sent.
                         if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
                             if self.batchSize == 1 && removedItem.first != event {
-                                self.logger.log(level: .error, message: "Removed event different from sent event")
+                                self.logger?.log(level: .error, message: "Removed event different from sent event")
                             }
                             else {
-                                self.logger.log(level: .debug, message: "Successfully sent event " + event.body.debugDescription)
+                                self.logger?.log(level: .debug, message: "Successfully sent event " + event.body.debugDescription)
                             }
                         }
                         else {
-                            self.logger.log(level: .error, message: "Removed event nil for sent item")
+                            self.logger?.log(level: .error, message: "Removed event nil for sent item")
                         }
                         // reset failureCount
                         failureCount = 0
@@ -149,13 +149,13 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
-            self.logger.log(level: .debug, message: response.debugDescription)
+            self.logger?.log(level: .debug, message: response.debugDescription)
             
             if let error = error {
                 completionHandler(Result.failure(OPTEventDispatchError(description: error.localizedDescription)))
             }
             else {
-                self.logger.log(level: .debug, message: "Event Sent")
+                self.logger?.log(level: .debug, message: "Event Sent")
                 completionHandler(Result.success(event.body))
             }
         }

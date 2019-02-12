@@ -9,7 +9,7 @@
 import Foundation
 
 class BatchEventBuilder {
-    static private var logger = HandlerRegistryService.shared.injectComponent(service: OPTLogger.self) as! OPTLogger?
+    static private var logger = HandlerRegistryService.shared.injectLogger()
     static func createImpressionEvent(config:OPTProjectConfig, decisionService:OPTDecisionService, experiment:OPTExperiment, varionation:OPTVariation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
         var decisions = [Decision]()
         

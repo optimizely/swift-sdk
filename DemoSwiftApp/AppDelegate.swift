@@ -59,8 +59,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func initializeOptimizelySDKAsynchronous() {
-        optimizely = OptimizelyManager(sdkKey: sdkKey)
         
+        optimizely = OptimizelyManager(sdkKey: sdkKey,
+                                       periodicDownloadInterval:60)
+
         // initialize Optimizely Client from a datafile download
         optimizely!.initializeSDK { result in
             switch result {

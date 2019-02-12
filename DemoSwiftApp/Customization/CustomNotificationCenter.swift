@@ -49,4 +49,8 @@ class CustomNotificationCenter: OPTNotificationCenter {
         //
         return nil
     }
+    func addDatafileChangeNotificationListener(datafileListener: @escaping DatafileChangeListener) -> Int? {
+        return nil
+    }
+    
 }

@@ -19,10 +19,10 @@ import Optimizely
 
 class VariationViewController: UIViewController {
     
+    var eventKey: String!
+    var userId: String!
+    var variationKey: String?
     var optimizelyManager: OptimizelyManager?
-    var eventKey: String = ""
-    var variationKey: String = ""
-    var userId: String = ""
 
     @IBOutlet weak var variationLetterLabel: UILabel!
     @IBOutlet weak var variationSubheaderLabel: UILabel!
@@ -30,9 +30,9 @@ class VariationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-        switch self.variationKey {
+        
+        if let variationKey = self.variationKey {
+            switch variationKey {
             case "variation_a":
                 self.variationLetterLabel.text = "A"
                 self.variationLetterLabel.textColor = UIColor.black
@@ -44,7 +44,13 @@ class VariationViewController: UIViewController {
                 self.variationSubheaderLabel.textColor = UIColor.white
                 self.variationBackgroundImage.image = UIImage(named: "background_variB-marina")
             default:
-                break
+                fatalError("Invalid variation key: \(variationKey)")
+            }
+        } else {
+            // not mapped to experiement (not error)
+            self.variationLetterLabel.text = "U"
+            self.variationLetterLabel.textColor = UIColor.gray
+            self.variationSubheaderLabel.textColor = UIColor.white
         }
     }
 

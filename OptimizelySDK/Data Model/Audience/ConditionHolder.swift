@@ -67,7 +67,7 @@ enum ConditionHolder: Codable {
                 }
             }
         case .userAttribute(let userAttr):
-            return userAttr.evaluate(config: projectConfig, attributes: attributes)
+            return userAttr.evaluate(attributes: attributes)
         case .array(let holder):
             return holder.evaluate(config: projectConfig, attributes: attributes)
         }
@@ -107,7 +107,7 @@ extension Array where Element == ConditionHolder {
             case .array(let conditions):
                 return conditions.evaluate(config: config, attributes: attributes)
             case .userAttribute(let userAttr):
-                return userAttr.evaluate(config: config, attributes: attributes)
+                return userAttr.evaluate(attributes: attributes)
             }
         }
         

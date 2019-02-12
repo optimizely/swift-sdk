@@ -29,6 +29,13 @@ struct UserAttribute: Codable {
         case value
     }
     
+    init(name: String, type: String, match: String?, value: Any) {
+        self.name = name
+        self.type = type
+        self.match = match
+        self.value = value
+    }
+    
     init(from decoder:Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -69,13 +76,16 @@ struct UserAttribute: Codable {
         }
     }
     
-    func evaluate(config: ProjectConfig, attributes: Dictionary<String, Any>) -> Bool? {
+    // TODO: "do we need optional here?"
+    func evaluate(attributes: Dictionary<String, Any>) -> Bool? {
+        // TODO: if not matched?
         let attributeValue = attributes[name]
         
         func convertToDouble(v:Any?) -> Double? {
             if v is Int {
                 return Double(v as! Int)
             }
+            
             if v is Double {
                 return (v as! Double)
             }
@@ -91,6 +101,7 @@ struct UserAttribute: Codable {
             if let attrValue = attributeValue as? T {
                 return value == attrValue
             }
+            
             return nil
          }
         
@@ -106,6 +117,7 @@ struct UserAttribute: Codable {
             if let value = convertToDouble(v: value), let attrValue = convertToDouble(v: attributeValue) {
                 return attrValue < value
             }
+            
             return nil
         }
         
@@ -113,6 +125,7 @@ struct UserAttribute: Codable {
             if let _ = attributeValue {
                 return true
             }
+            
             return false
         }
         
@@ -120,8 +133,24 @@ struct UserAttribute: Codable {
             if let value = value as? String, let attributeValue = attributeValue as? String {
                 return attributeValue.contains(value)
             }
+            
             return nil
         }
+        
+//        switch match {
+//        case "substring":
+//            return substring()
+//        case "exists":
+//            return exists()
+//        case "exact":
+//            return exactMatch(value: value)
+//        case "lt":
+//            return lessThan()
+//        case "gt":
+//            return greaterThan()
+//        default:
+//            return exactMatch(value: value)
+//        }
         
         func matcher<T:Equatable>(value:T) -> Bool? {
             switch match {
@@ -138,9 +167,9 @@ struct UserAttribute: Codable {
             default:
                 return exactMatch(value: value)
             }
-
+            
         }
-
+        
         if value is String {
             return matcher(value: value as! String)
         }
@@ -153,8 +182,26 @@ struct UserAttribute: Codable {
         else if value is Bool {
             return matcher(value: value as! Bool)
         }
-
+        
         return nil
+    }
+    
+}
+
+extension UserAttribute: Equatable {
+    
+    static func == (lhs: UserAttribute, rhs: UserAttribute) -> Bool {
+        if lhs.name != rhs.name || lhs.type != rhs.type || lhs.match != rhs.match {
+            return false
+        }
+        
+        switch (lhs.value, rhs.value) {
+        case (let lv as String, let rv as String): return lv == rv
+        case (let lv as Int, let rv as Int): return lv == rv
+        case (let lv as Double, let rv as Double): return lv == rv
+        case (let lv as Bool, let rv as Bool): return lv == rv
+        default: return false
+        }
     }
     
 }

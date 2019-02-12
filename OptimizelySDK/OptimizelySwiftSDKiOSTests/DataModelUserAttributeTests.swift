@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DataModelUserAttributeTest: XCTestCase {
+class DataModelUserAttributeTests: XCTestCase {
     
     let modelType = UserAttribute.self
     
@@ -120,88 +120,10 @@ class DataModelUserAttributeTest: XCTestCase {
 
 // MARK: - Encode
 
-extension DataModelUserAttributeTest {
+extension DataModelUserAttributeTests {
     func testEncodeJSON() {
-        let modelGiven = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: "us")
+        let modelGiven = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: .string("us"))
         XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
     }
-}
-
-// MARK: - Equatable
-
-extension DataModelUserAttributeTest {
-    
-    func testEqual() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: "us")
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: "us")
-        XCTAssertEqual(model1, model2)
-    }
-    
-    func testEqual2() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: 100)
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: 100)
-        XCTAssertEqual(model1, model2)
-    }
-    
-    func testEqual3() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: 15.3)
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: 15.3)
-        XCTAssertEqual(model1, model2)
-    }
-    
-    func testEqual4() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: true)
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: true)
-        XCTAssertEqual(model1, model2)
-    }
-    
-    func testNotEqual() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: "us")
-        let model2 = modelType.init(name: "geoNE", type: "custom_attribute", match: "exact", value: "us")
-        XCTAssertNotEqual(model1, model2)
-    }
-    
-    func testNotEqual2() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: "us")
-        let model2 = modelType.init(name: "geo", type: "custom_attributeNE", match: "exact", value: "us")
-        XCTAssertNotEqual(model1, model2)
-    }
-    
-    func testNotEqual3() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: "us")
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exactNE", value: "us")
-        XCTAssertNotEqual(model1, model2)
-    }
-    
-    func testNotEqual4() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: "us")
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: "usNE")
-        XCTAssertNotEqual(model1, model2)
-    }
-    
-    func testNotEqual5() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: 10)
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: 20)
-        XCTAssertNotEqual(model1, model2)
-    }
-    
-    func testNotEqual6() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: 15.3)
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: 15.4)
-        XCTAssertNotEqual(model1, model2)
-    }
-    
-    func testNotEqual7() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: true)
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: false)
-        XCTAssertNotEqual(model1, model2)
-    }
-    
-    func testNotEqual8() {
-        let model1 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: "us")
-        let model2 = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: 100)
-        XCTAssertNotEqual(model1, model2)
-    }
-    
 }
 

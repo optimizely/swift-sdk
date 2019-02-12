@@ -8,67 +8,67 @@
 
 import XCTest
 
-class DataModelUserAttributeTestEvaluate: XCTestCase {
+class DataModelUserAttributeTestsEvaluate: XCTestCase {
     
     // MARK: - Evaluate (Exact)
     
     func testEvaluateExactString() {
         let attributes = ["country": "us"]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: "us")
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: .string("us"))
         XCTAssert(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateExactInt() {
         let attributes = ["country": 100]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: 100)
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: .int(100))
         XCTAssert(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateExactDouble() {
         let attributes = ["country": 15.3]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: 15.3)
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: .double(15.3))
         XCTAssert(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateExactBool() {
         let attributes = ["country": true]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: true)
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: .bool(true))
         XCTAssert(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateExactStringFalse() {
         let attributes = ["country": "ca"]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: "us")
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: .string("us"))
         XCTAssertFalse(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateExactIntFalse() {
         let attributes = ["country": 200]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: 100)
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: .int(100))
         XCTAssertFalse(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateExactDoubleFalse() {
         let attributes = ["country": 15.4]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: 15.3)
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: .double(15.3))
         XCTAssertFalse(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateExactBoolFalse() {
         let attributes = ["country": false]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: true)
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: .bool(true))
         XCTAssertFalse(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateExactDifferentTypeNil() {
         let attributes = ["country": "us"]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: 100)
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "exact", value: .int(100))
         XCTAssertNil(model.evaluate(attributes: attributes))
     }
     
     func testEvaluateExactMissingAttributeNil() {
         let attributes = ["country": "us"]
-        let model = UserAttribute(name: "house", type: "custom_attribute", match: "exact", value: "us")
+        let model = UserAttribute(name: "house", type: "custom_attribute", match: "exact", value: .string("us"))
         XCTAssertNil(model.evaluate(attributes: attributes))
     }
     
@@ -76,29 +76,29 @@ class DataModelUserAttributeTestEvaluate: XCTestCase {
 
 // MARK: - Evaluate (Substring)
 
-extension DataModelUserAttributeTestEvaluate {
+extension DataModelUserAttributeTestsEvaluate {
     
     func testEvaluateSubstring() {
         let attributes = ["country": "us, gb"]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "substring", value: "us")
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "substring", value: .string("us"))
         XCTAssert(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateSubstringFalse() {
         let attributes = ["country": "gb, ca"]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "substring", value: "us")
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "substring", value: .string("us"))
         XCTAssertFalse(model.evaluate(attributes: attributes)!)
     }
     
     func testEvaluateSubstringDifferentTypeNil() {
         let attributes = ["country": "us"]
-        let model = UserAttribute(name: "country", type: "custom_attribute", match: "substring", value: 100)
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "substring", value: .int(100))
         XCTAssertNil(model.evaluate(attributes: attributes))
     }
     
     func testEvaluateSubstringMissingAttributeNil() {
         let attributes = ["country": "us"]
-        let model = UserAttribute(name: "house", type: "custom_attribute", match: "substring", value: "us")
+        let model = UserAttribute(name: "house", type: "custom_attribute", match: "substring", value: .string("us"))
         XCTAssertNil(model.evaluate(attributes: attributes))
     }
 
@@ -106,19 +106,19 @@ extension DataModelUserAttributeTestEvaluate {
 
 // MARK: - Evaluate (Exists)
 
-extension DataModelUserAttributeTestEvaluate {
+extension DataModelUserAttributeTestsEvaluate {
     
 }
 
 // MARK: - Evaluate (GT)
 
-extension DataModelUserAttributeTestEvaluate {
+extension DataModelUserAttributeTestsEvaluate {
     
 }
 
 // MARK: - Evaluate (LT)
 
-extension DataModelUserAttributeTestEvaluate {
+extension DataModelUserAttributeTestsEvaluate {
     
 }
 

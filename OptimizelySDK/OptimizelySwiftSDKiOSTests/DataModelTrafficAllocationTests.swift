@@ -1,5 +1,5 @@
 //
-//  DataModelTrafficAllocation.swift
+//  DataModelTrafficAllocationTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/7/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DataModelTrafficAllocation: XCTestCase {
+class DataModelTrafficAllocationTests: XCTestCase {
 
     let modelType = TrafficAllocation.self
     

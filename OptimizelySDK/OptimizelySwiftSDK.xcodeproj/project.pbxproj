@@ -196,6 +196,13 @@
 		6E4DD99721E6BAA700B0C2C7 /* DecisionServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99221E6BAA700B0C2C7 /* DecisionServiceTest.swift */; };
 		6E4DD99821E6BAA700B0C2C7 /* OptimizelyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99321E6BAA700B0C2C7 /* OptimizelyManagerTests.swift */; };
 		6E4DD99921E6BAA700B0C2C7 /* BucketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99421E6BAA700B0C2C7 /* BucketTests.swift */; };
+		6E4F0D7922133C5A00DD13A5 /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F0D7822133C5A00DD13A5 /* AttributeValue.swift */; };
+		6E4F0D7A22133C5A00DD13A5 /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F0D7822133C5A00DD13A5 /* AttributeValue.swift */; };
+		6E4F0D7B22133C5A00DD13A5 /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F0D7822133C5A00DD13A5 /* AttributeValue.swift */; };
+		6E4F0D7C22133C5A00DD13A5 /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F0D7822133C5A00DD13A5 /* AttributeValue.swift */; };
+		6E4F0D7E2213536F00DD13A5 /* DataModelAttributeValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F0D7D2213536F00DD13A5 /* DataModelAttributeValueTests.swift */; };
+		6E4F0D82221389AA00DD13A5 /* DataModelAttributeValueTestsEvaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F0D81221389AA00DD13A5 /* DataModelAttributeValueTestsEvaluate.swift */; };
+		6E4F0D8E22138B4200DD13A5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6E53A6692203872600EA3A61 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E614DD621E3F38A005982A1 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6E614DDB21E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E614DDA21E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests.swift */; };
@@ -206,19 +213,26 @@
 		6E7C0B7721F1372600ECFF34 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */; };
 		6E7D3EE7220BA39000410FDE /* DataModelVariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7D3EE6220BA39000410FDE /* DataModelVariableTests.swift */; };
 		6E7D3EE9220BAB0800410FDE /* DataModelFeatureVariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7D3EE8220BAB0800410FDE /* DataModelFeatureVariableTests.swift */; };
-		6E7D3EEB220CC50A00410FDE /* DataModelTrafficAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7D3EEA220CC50A00410FDE /* DataModelTrafficAllocation.swift */; };
+		6E7D3EEB220CC50A00410FDE /* DataModelTrafficAllocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7D3EEA220CC50A00410FDE /* DataModelTrafficAllocationTests.swift */; };
 		6E7FC679220CFDF2009A171F /* DataModelEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC678220CFDF2009A171F /* DataModelEventTests.swift */; };
 		6E7FC67B220D064B009A171F /* DataModelVariationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC67A220D064B009A171F /* DataModelVariationTests.swift */; };
 		6E7FC67D220E005A009A171F /* DataModelFeatureFlagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC67C220E005A009A171F /* DataModelFeatureFlagTests.swift */; };
 		6E7FC6A322121D27009A171F /* OptimizelyTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A222121D27009A171F /* OptimizelyTestUtils.swift */; };
 		6E7FC6A422121D27009A171F /* OptimizelyTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A222121D27009A171F /* OptimizelyTestUtils.swift */; };
-		6E7FC6A6221222CD009A171F /* DataModelUserAttributeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A5221222CD009A171F /* DataModelUserAttributeTest.swift */; };
-		6E7FC6A822125487009A171F /* DataModelUserAttributeTestEvaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A722125487009A171F /* DataModelUserAttributeTestEvaluate.swift */; };
+		6E7FC6A6221222CD009A171F /* DataModelUserAttributeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A5221222CD009A171F /* DataModelUserAttributeTests.swift */; };
+		6E7FC6A822125487009A171F /* DataModelUserAttributeTestsEvaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A722125487009A171F /* DataModelUserAttributeTestsEvaluate.swift */; };
 		6EBAEB7521E3FEF900D13AA9 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EBAEB7C21E3FEF900D13AA9 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6E4F0D8F22138B4200DD13A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0B7CB0B921AC5FE2007B77E5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EBAEB6B21E3FEF800D13AA9;
+			remoteInfo = "OptimizelySwiftSDK-iOS";
+		};
 		6E614DD721E3F38A005982A1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0B7CB0B921AC5FE2007B77E5 /* Project object */;
@@ -288,6 +302,10 @@
 		6E4DD99321E6BAA700B0C2C7 /* OptimizelyManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyManagerTests.swift; sourceTree = "<group>"; };
 		6E4DD99421E6BAA700B0C2C7 /* BucketTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests.swift; sourceTree = "<group>"; };
 		6E4DD99521E6BAA700B0C2C7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6E4F0D7822133C5A00DD13A5 /* AttributeValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AttributeValue.swift; path = "Data Model/audience/AttributeValue.swift"; sourceTree = SOURCE_ROOT; };
+		6E4F0D7D2213536F00DD13A5 /* DataModelAttributeValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelAttributeValueTests.swift; sourceTree = "<group>"; };
+		6E4F0D81221389AA00DD13A5 /* DataModelAttributeValueTestsEvaluate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataModelAttributeValueTestsEvaluate.swift; sourceTree = "<group>"; };
+		6E4F0D8922138B4200DD13A5 /* OptimizelyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptimizelyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E614DCD21E3F389005982A1 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E614DD521E3F38A005982A1 /* OptimizelySwiftSDK-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelySwiftSDK-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E614DDA21E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelySwiftSDKtvOSTests.swift; sourceTree = "<group>"; };
@@ -296,13 +314,13 @@
 		6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyLogLevel.swift; sourceTree = "<group>"; };
 		6E7D3EE6220BA39000410FDE /* DataModelVariableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelVariableTests.swift; sourceTree = "<group>"; };
 		6E7D3EE8220BAB0800410FDE /* DataModelFeatureVariableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelFeatureVariableTests.swift; sourceTree = "<group>"; };
-		6E7D3EEA220CC50A00410FDE /* DataModelTrafficAllocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelTrafficAllocation.swift; sourceTree = "<group>"; };
+		6E7D3EEA220CC50A00410FDE /* DataModelTrafficAllocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelTrafficAllocationTests.swift; sourceTree = "<group>"; };
 		6E7FC678220CFDF2009A171F /* DataModelEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelEventTests.swift; sourceTree = "<group>"; };
 		6E7FC67A220D064B009A171F /* DataModelVariationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelVariationTests.swift; sourceTree = "<group>"; };
 		6E7FC67C220E005A009A171F /* DataModelFeatureFlagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelFeatureFlagTests.swift; sourceTree = "<group>"; };
 		6E7FC6A222121D27009A171F /* OptimizelyTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyTestUtils.swift; sourceTree = "<group>"; };
-		6E7FC6A5221222CD009A171F /* DataModelUserAttributeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelUserAttributeTest.swift; sourceTree = "<group>"; };
-		6E7FC6A722125487009A171F /* DataModelUserAttributeTestEvaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelUserAttributeTestEvaluate.swift; sourceTree = "<group>"; };
+		6E7FC6A5221222CD009A171F /* DataModelUserAttributeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelUserAttributeTests.swift; sourceTree = "<group>"; };
+		6E7FC6A722125487009A171F /* DataModelUserAttributeTestsEvaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelUserAttributeTestsEvaluate.swift; sourceTree = "<group>"; };
 		6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Optimizely.h; sourceTree = "<group>"; };
 		6EBAEB6F21E3FEF800D13AA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -310,6 +328,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6E4F0D8622138B4200DD13A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E4F0D8E22138B4200DD13A5 /* Optimizely.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E614DCA21E3F389005982A1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -434,6 +460,7 @@
 				6E614DD521E3F38A005982A1 /* OptimizelySwiftSDK-tvOSTests.xctest */,
 				6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */,
 				6EBAEB7421E3FEF900D13AA9 /* OptimizelySwiftSDK-iOSTests.xctest */,
+				6E4F0D8922138B4200DD13A5 /* OptimizelyTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -462,8 +489,9 @@
 			isa = PBXGroup;
 			children = (
 				0B7CB10321AE053A007B77E5 /* Audience.swift */,
-				0B7CB11821AF753D007B77E5 /* UserAttribute.swift */,
 				0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */,
+				0B7CB11821AF753D007B77E5 /* UserAttribute.swift */,
+				6E4F0D7822133C5A00DD13A5 /* AttributeValue.swift */,
 			);
 			path = Audience;
 			sourceTree = "<group>";
@@ -490,12 +518,14 @@
 		6E4DD99021E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests */ = {
 			isa = PBXGroup;
 			children = (
-				6E7FC6A5221222CD009A171F /* DataModelUserAttributeTest.swift */,
-				6E7FC6A722125487009A171F /* DataModelUserAttributeTestEvaluate.swift */,
+				6E4F0D7D2213536F00DD13A5 /* DataModelAttributeValueTests.swift */,
+				6E4F0D81221389AA00DD13A5 /* DataModelAttributeValueTestsEvaluate.swift */,
+				6E7FC6A5221222CD009A171F /* DataModelUserAttributeTests.swift */,
+				6E7FC6A722125487009A171F /* DataModelUserAttributeTestsEvaluate.swift */,
 				6E7FC67C220E005A009A171F /* DataModelFeatureFlagTests.swift */,
 				6E7FC67A220D064B009A171F /* DataModelVariationTests.swift */,
 				6E7FC678220CFDF2009A171F /* DataModelEventTests.swift */,
-				6E7D3EEA220CC50A00410FDE /* DataModelTrafficAllocation.swift */,
+				6E7D3EEA220CC50A00410FDE /* DataModelTrafficAllocationTests.swift */,
 				6E7D3EE8220BAB0800410FDE /* DataModelFeatureVariableTests.swift */,
 				6E7D3EE6220BA39000410FDE /* DataModelVariableTests.swift */,
 				6E65E55A220B8B0C0048081D /* DataModelAttributeTests.swift */,
@@ -570,6 +600,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		6E4F0D8822138B4200DD13A5 /* OptimizelyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E4F0D9322138B4200DD13A5 /* Build configuration list for PBXNativeTarget "OptimizelyTests" */;
+			buildPhases = (
+				6E4F0D8522138B4200DD13A5 /* Sources */,
+				6E4F0D8622138B4200DD13A5 /* Frameworks */,
+				6E4F0D8722138B4200DD13A5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6E4F0D9022138B4200DD13A5 /* PBXTargetDependency */,
+			);
+			name = OptimizelyTests;
+			productName = OptimizelyTests;
+			productReference = 6E4F0D8922138B4200DD13A5 /* OptimizelyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		6E614DCC21E3F389005982A1 /* OptimizelySwiftSDK-tvOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E614DE221E3F38A005982A1 /* Build configuration list for PBXNativeTarget "OptimizelySwiftSDK-tvOS" */;
@@ -652,6 +700,9 @@
 				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
+					6E4F0D8822138B4200DD13A5 = {
+						CreatedOnToolsVersion = 10.1;
+					};
 					6E614DCC21E3F389005982A1 = {
 						CreatedOnToolsVersion = 10.1;
 					};
@@ -682,11 +733,19 @@
 				6E614DCC21E3F389005982A1 /* OptimizelySwiftSDK-tvOS */,
 				6EBAEB7321E3FEF900D13AA9 /* OptimizelySwiftSDK-iOSTests */,
 				6E614DD421E3F38A005982A1 /* OptimizelySwiftSDK-tvOSTests */,
+				6E4F0D8822138B4200DD13A5 /* OptimizelyTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6E4F0D8722138B4200DD13A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E614DCB21E3F389005982A1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -718,10 +777,18 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6E4F0D8522138B4200DD13A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E614DC921E3F389005982A1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E4F0D7A22133C5A00DD13A5 /* AttributeValue.swift in Sources */,
 				0B0590142209D8780007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */,
 				6E4DD84121E524F000B0C2C7 /* DefaultUserProfileService.swift in Sources */,
 				6E4DD87E21E5251800B0C2C7 /* FeatureFlag.swift in Sources */,
@@ -778,6 +845,7 @@
 			files = (
 				6E4DD88621E525F100B0C2C7 /* EventForDispatch+extension.swift in Sources */,
 				6E4DD8B521E5260700B0C2C7 /* JSONParse.swift in Sources */,
+				6E4F0D7C22133C5A00DD13A5 /* AttributeValue.swift in Sources */,
 				6E4DD8D021E5261600B0C2C7 /* ProjectConfig.swift in Sources */,
 				6E4DD8C921E5261600B0C2C7 /* Variable.swift in Sources */,
 				6E4DD8AF21E5260700B0C2C7 /* OPTErrorHandler.swift in Sources */,
@@ -868,6 +936,7 @@
 				6E4DD85621E5250200B0C2C7 /* JSONParse.swift in Sources */,
 				0BC48EA522038491003AFD71 /* ArrayEventForDispatch+extension.swift in Sources */,
 				6E4DD85221E5250200B0C2C7 /* OPTDatafileHandler.swift in Sources */,
+				6E4F0D7922133C5A00DD13A5 /* AttributeValue.swift in Sources */,
 				6E4DD83B21E524EF00B0C2C7 /* DefaultEventDispatcher.swift in Sources */,
 				6E4DD86721E5251200B0C2C7 /* Audience.swift in Sources */,
 				6E4DD84921E524FB00B0C2C7 /* Constants.swift in Sources */,
@@ -911,6 +980,7 @@
 				6E7FC679220CFDF2009A171F /* DataModelEventTests.swift in Sources */,
 				6E4DD8D721E5274600B0C2C7 /* ConditionHolder.swift in Sources */,
 				0B0590152209D8790007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */,
+				6E4F0D7B22133C5A00DD13A5 /* AttributeValue.swift in Sources */,
 				6E7D3EE9220BAB0800410FDE /* DataModelFeatureVariableTests.swift in Sources */,
 				6E4DD8F721E530A900B0C2C7 /* OptimizelyError.swift in Sources */,
 				6E7FC6A322121D27009A171F /* OptimizelyTestUtils.swift in Sources */,
@@ -921,7 +991,7 @@
 				6E4DD8B721E5260A00B0C2C7 /* EventForDispatch.swift in Sources */,
 				6E4DD99721E6BAA700B0C2C7 /* DecisionServiceTest.swift in Sources */,
 				6E4DD8C221E5261500B0C2C7 /* FeatureVariable.swift in Sources */,
-				6E7FC6A822125487009A171F /* DataModelUserAttributeTestEvaluate.swift in Sources */,
+				6E7FC6A822125487009A171F /* DataModelUserAttributeTestsEvaluate.swift in Sources */,
 				6E4DD8A821E5260600B0C2C7 /* OPTNotificationCenter.swift in Sources */,
 				6E4DD8C621E5261500B0C2C7 /* Group.swift in Sources */,
 				0B7B9EBE21F2A65800056589 /* DataStoreQueueStackImpl.swift in Sources */,
@@ -929,7 +999,9 @@
 				6E7D3EE7220BA39000410FDE /* DataModelVariableTests.swift in Sources */,
 				6E4DD8C421E5261500B0C2C7 /* Event.swift in Sources */,
 				6E4DD8A221E5260600B0C2C7 /* OPTBucketer.swift in Sources */,
+				6E4F0D82221389AA00DD13A5 /* DataModelAttributeValueTestsEvaluate.swift in Sources */,
 				6E4DD88721E525F500B0C2C7 /* BatchEventBuilder.swift in Sources */,
+				6E4F0D7E2213536F00DD13A5 /* DataModelAttributeValueTests.swift in Sources */,
 				6E4DD99621E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests.swift in Sources */,
 				6E4DD89B21E5260100B0C2C7 /* MurmurHash3.swift in Sources */,
 				6E7C0B7621F1372600ECFF34 /* OptimizelyLogLevel.swift in Sources */,
@@ -938,11 +1010,11 @@
 				6E4DD8A421E5260600B0C2C7 /* OPTErrorHandler.swift in Sources */,
 				6E4DD8BF21E5261500B0C2C7 /* Variation.swift in Sources */,
 				6E7FC67D220E005A009A171F /* DataModelFeatureFlagTests.swift in Sources */,
-				6E7D3EEB220CC50A00410FDE /* DataModelTrafficAllocation.swift in Sources */,
+				6E7D3EEB220CC50A00410FDE /* DataModelTrafficAllocationTests.swift in Sources */,
 				6E4DD8C521E5261500B0C2C7 /* ProjectConfig.swift in Sources */,
 				6E4DD8A321E5260600B0C2C7 /* OPTDecisionService.swift in Sources */,
 				6E4DD88A21E525FC00B0C2C7 /* DefaultNotificationCenter.swift in Sources */,
-				6E7FC6A6221222CD009A171F /* DataModelUserAttributeTest.swift in Sources */,
+				6E7FC6A6221222CD009A171F /* DataModelUserAttributeTests.swift in Sources */,
 				6E4DD8AA21E5260600B0C2C7 /* JSONParse.swift in Sources */,
 				6E4DD89C21E5260100B0C2C7 /* Result.swift in Sources */,
 				6E4DD89021E525FC00B0C2C7 /* DefaultDatafileHandler.swift in Sources */,
@@ -954,6 +1026,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6E4F0D9022138B4200DD13A5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6EBAEB6B21E3FEF800D13AA9 /* OptimizelySwiftSDK-iOS */;
+			targetProxy = 6E4F0D8F22138B4200DD13A5 /* PBXContainerItemProxy */;
+		};
 		6E614DD821E3F38A005982A1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6E614DCC21E3F389005982A1 /* OptimizelySwiftSDK-tvOS */;
@@ -1086,6 +1163,42 @@
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		6E4F0D9122138B4200DD13A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.abcExtended.OptimizelyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6E4F0D9222138B4200DD13A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.abcExtended.OptimizelyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1277,6 +1390,15 @@
 			buildConfigurations = (
 				0B7CB0D421AC5FE2007B77E5 /* Debug */,
 				0B7CB0D521AC5FE2007B77E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E4F0D9322138B4200DD13A5 /* Build configuration list for PBXNativeTarget "OptimizelyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E4F0D9122138B4200DD13A5 /* Debug */,
+				6E4F0D9222138B4200DD13A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

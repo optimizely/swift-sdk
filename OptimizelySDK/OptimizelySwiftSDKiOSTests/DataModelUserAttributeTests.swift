@@ -23,7 +23,7 @@ class DataModelUserAttributeTests: XCTestCase {
         XCTAssert(model.name == "geo")
         XCTAssert(model.type == "custom_attribute")
         XCTAssert(model.match == "exact")
-        XCTAssert(model.value as! Double == 30)
+        XCTAssert(model.value == .int(30))
     }
     
     func testDecodeSuccessWithJSONValid2() {
@@ -34,7 +34,7 @@ class DataModelUserAttributeTests: XCTestCase {
         XCTAssert(model.name == "geo")
         XCTAssert(model.type == "custom_attribute")
         XCTAssert(model.match == "gt")
-        XCTAssert(model.value as! Double == 30.5)
+        XCTAssert(model.value == .double(30.5))
     }
 
     func testDecodeSuccessWithJSONValid3() {
@@ -45,7 +45,7 @@ class DataModelUserAttributeTests: XCTestCase {
         XCTAssert(model.name == "geo")
         XCTAssert(model.type == "custom_attribute")
         XCTAssert(model.match == "exists")
-        XCTAssert(model.value as! Bool == true)
+        XCTAssert(model.value == .bool(true))
     }
 
     func testDecodeSuccessWithJSONValid4() {
@@ -56,7 +56,7 @@ class DataModelUserAttributeTests: XCTestCase {
         XCTAssert(model.name == "geo")
         XCTAssert(model.type == "custom_attribute")
         XCTAssert(model.match == "substring")
-        XCTAssert(model.value as! String == "us")
+        XCTAssert(model.value == .string("us"))
     }
     
     func testDecodeSuccessWithMissingMatch() {
@@ -66,7 +66,7 @@ class DataModelUserAttributeTests: XCTestCase {
         
         XCTAssert(model.name == "geo")
         XCTAssert(model.type == "custom_attribute")
-        XCTAssert(model.value as! String == "us")
+        XCTAssert(model.value == .string("us"))
     }
 
     func testDecodeFailWithMissingName() {

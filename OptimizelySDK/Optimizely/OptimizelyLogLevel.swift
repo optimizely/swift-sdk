@@ -28,7 +28,7 @@ import Foundation
     case all = 7
     
     // NOTE: this property is not converted for ObjC APIs (separate map should be defined for ObjC-client customization)
-    var name: String {
+    public var name: String {
         switch self {
         case .off:          return "OFF"
         case .critical:     return "CRITICAL"

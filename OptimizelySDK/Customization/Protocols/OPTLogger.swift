@@ -20,7 +20,7 @@ public protocol OPTLogger {
     /**
      * Initialize a new Optimizely Logger instance.
      */
-    static func createInstance(logLevel: OptimizelyLogLevel) -> OPTLogger?
+    init()
 
     /**
      Log a message at a certain level.

@@ -23,7 +23,7 @@ class DefaultBucketer : OPTBucketer {
     var MAX_HASH_VALUE:UInt64?
     
     private var config:ProjectConfig!
-    private var logger = DefaultLogger.createInstance(logLevel: .debug)
+    private lazy var logger = HandlerRegistryService.shared.injectLogger()
     
     internal required init(config:ProjectConfig) {
         self.config = config

@@ -59,7 +59,7 @@ class DefaultBucketer : OPTBucketer {
         for trafficAllocation in group.trafficAllocation {
             if bucketValue <= trafficAllocation.endOfRange {
                 let experimentId = trafficAllocation.entityId;
-                let experiment = config.experiments.filter({$0.id == experimentId}).first
+                let experiment = config.project.experiments.filter({$0.id == experimentId}).first
                 
                 // propagate errors and logs for unknown experiment
                 if let _ = experiment
@@ -82,7 +82,7 @@ class DefaultBucketer : OPTBucketer {
     func bucketExperiment(experiment: Experiment, bucketingId: String) -> Variation? {
         var ok = true
         // check for mutex
-        let group = config.groups.filter({ if let _ = $0.experiments.filter({$0.id == experiment.id }).first { return true } else { return false }}).first
+        let group = config.project.groups.filter({ if let _ = $0.experiments.filter({$0.id == experiment.id }).first { return true } else { return false }}).first
         
         if let group = group {
             switch group.policy {

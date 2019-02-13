@@ -17,26 +17,23 @@
 
 import Foundation
 
-struct Experiment : Codable
-{
-    
+struct Experiment: Codable, Equatable {
     enum Status: String, Codable {
-        case Running
-        case Launched
-        case Paused
-        case Not_started = "Not started"
-        case Archived
+        case running = "Running"
+        case launched = "Launched"
+        case paused = "Paused"
+        case notStarted = "Not started"
+        case archived = "Archived"
     }
     
-    var id:String = ""
-    var key:String = ""
-    
-    var status:Status = Status.Not_started
-    
-    var layerId:String = ""
-    var trafficAllocation:[TrafficAllocation] = []
-    var audienceIds:[String] = []
-    var audienceConditions:ConditionHolder?
-    var variations:[Variation] = []
-    var forcedVariations:Dictionary<String,String>? = Dictionary<String,String>()
+    var id: String
+    var key: String
+    var status: Status
+    var layerId: String
+    var variations: [Variation]
+    var trafficAllocation: [TrafficAllocation]
+    var audienceIds: [String]
+    var audienceConditions: ConditionHolder?
+    // TODO: datafile spec defines this as [String: Any]. check it out
+    var forcedVariations: [String: String]
 }

@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Audience: Codable {
+struct Audience: Codable, Equatable {
     var id: String
     var name: String
     var conditions: ConditionHolder

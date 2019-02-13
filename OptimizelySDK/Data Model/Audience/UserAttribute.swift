@@ -22,13 +22,6 @@ struct UserAttribute: Codable, Equatable {
     var match: String?
     var value: AttributeValue
     
-//    init(name: String, type: String, match: String?, value: AttributeValue) {
-//        self.name = name
-//        self.type = type
-//        self.match = match
-//        self.value = value
-//    }
-    
     // TODO: "do we need optional here?"
     func evaluate(attributes: Dictionary<String, Any>) -> Bool? {
         let attributeValue = attributes[name]

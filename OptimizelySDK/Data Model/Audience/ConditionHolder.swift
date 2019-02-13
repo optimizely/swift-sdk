@@ -16,7 +16,7 @@
 
 import Foundation
 
-enum ConditionHolder: Codable {
+enum ConditionHolder: Codable, Equatable {
     case string(String)
     case userAttribute(UserAttribute)
     case array([ConditionHolder])
@@ -59,10 +59,10 @@ enum ConditionHolder: Codable {
         case .string(let op):
             // assume it is a audienceId if it is not an operand
             if !op.isOperand {
-                if let audience = projectConfig.typedAudiences?.filter({$0.id == op}).first {
+                if let audience = projectConfig.project.typedAudiences.filter({$0.id == op}).first {
                     return audience.conditions.evaluate(projectConfig: projectConfig, attributes: attributes)
                 }
-                else if let audience = projectConfig.audiences.filter({$0.id == op}).first {
+                else if let audience = projectConfig.project.audiences.filter({$0.id == op}).first {
                     return audience.conditions.evaluate(projectConfig: projectConfig, attributes: attributes)
                 }
             }
@@ -97,10 +97,10 @@ extension Array where Element == ConditionHolder {
                     return evaluate(operand: op, config: config, attributes: attributes)
                 }
                 else {
-                    if let audience = config.typedAudiences?.filter({$0.id == op}).first {
+                    if let audience = config.project.typedAudiences.filter({$0.id == op}).first {
                         return audience.conditions.evaluate(projectConfig: config, attributes: attributes)
                     }
-                    else if let audience = config.audiences.filter({$0.id == op}).first {
+                    else if let audience = config.project.audiences.filter({$0.id == op}).first {
                         return audience.conditions.evaluate(projectConfig: config, attributes: attributes)
                     }
                 }

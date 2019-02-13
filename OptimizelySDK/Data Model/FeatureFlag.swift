@@ -23,6 +23,6 @@ struct FeatureFlag: Codable, Equatable {
     var rolloutId: String
     var variables: [FeatureVariable]
     
-    // TODO: Tom, can you confirm why we have this here? datafile schema does not have this field for FeatureFlag
+    // TODO: this will be removed. clean up existing code using this
     //var groupId: String?
 }

@@ -21,7 +21,4 @@ import Foundation
 struct Attribute: Codable, Equatable {
     var id: String
     var key: String
-    
-    // TODO: what is this for?
-    //var segmentId:String? = ""
 }

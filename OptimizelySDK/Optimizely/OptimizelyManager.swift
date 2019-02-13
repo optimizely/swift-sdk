@@ -16,79 +16,79 @@ open class OptimizelyManager: NSObject {
     var sdkKey: String
     var config:OPTProjectConfig!
     
-    // MARK: - Customizable
-    
+    // MARK: - Customizable Services
+
     let logger: OPTLogger
+    let eventDispatcher: OPTEventDispatcher
+    let userProfileService: OPTUserProfileService
+    let periodicDownloadInterval: Int
+
+    // MARK: - Default Services
+
     let bucketer: OPTBucketer
     let decisionService: OPTDecisionService
-    let eventDispatcher: OPTEventDispatcher
     let datafileHandler: OPTDatafileHandler
-    let userProfileService: OPTUserProfileService
     public let notificationCenter: OPTNotificationCenter
-    let periodicDownloadInterval: Int
     
     // MARK: - Public interfaces
     
-    /// Initialize Optimizely Manager
+    /// Optimizely Manager
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
     ///   - logger: custom Logger
-    ///   - bucketer: custom Bucketer
+    ///   - eventDispatcher: custom EventDispatcher
     ///   - ...
     public init(sdkKey: String,
                 logger:OPTLogger? = nil,
-                bucketer:OPTBucketer? = nil,
-                decisionService:OPTDecisionService? = nil,
                 eventDispatcher:OPTEventDispatcher? = nil,
-                datafileHandler:OPTDatafileHandler? = nil,
                 userProfileService:OPTUserProfileService? = nil,
-                notificationCenter:OPTNotificationCenter? = nil,
                 periodicDownloadInterval:Int? = nil) {
         
         self.sdkKey = sdkKey
         
-        // default services (can be customized by clients
-        
         self.logger = logger ?? DefaultLogger(level: .error)
         self.eventDispatcher = eventDispatcher ?? DefaultEventDispatcher()
-        self.datafileHandler = datafileHandler ?? DefaultDatafileHandler()
         self.userProfileService = userProfileService ?? DefaultUserProfileService()
-        self.notificationCenter = notificationCenter ?? DefaultNotificationCenter()
-        self.bucketer = bucketer ?? DefaultBucketer()
-        self.decisionService = decisionService ?? DefaultDecisionService()
         self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
+
+        self.datafileHandler = DefaultDatafileHandler()
+        self.notificationCenter = DefaultNotificationCenter()
+        self.bucketer = DefaultBucketer()
+        self.decisionService = DefaultDecisionService()
     }
     
-    /// Initialize Optimizely Manager
+    /// Initialize Optimizely Manager (Asynchronous)
     ///
     /// - Parameters:
-    ///   - datafile: when given, this datafile will be used when cached copy is not available (fresh start)
-    ///                       a cached copy from previous download is used if it's available
-    ///                       the datafile will be updated from the server in the background thread
     ///   - completion: callback when initialization is completed
     public func initializeSDK(completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
-        
-        fetchDatafileBackground() { result in
+        fetchDatafileBackground { result in
             switch result {
             case .failure:
                 completion?(result)
             case .success(let datafile):
                 do {
                     try self.configSDK(datafile: datafile)
-                    completion?(result)
-                } catch {
                     
-                    // TODO: refine error-type
-                    completion?(.failure(.configInvalid))
+                    completion?(result)
+                } catch let error as OptimizelyError {
+                    completion?(.failure(error))
+                } catch {
+                    print("Invalid error types: \(error)")
+                    completion?(.failure(OptimizelyError.datafileDownloadFailed("Unknown")))
                 }
             }
         }
     }
     
-    // MARK: synchronous initialization
-    
-    @objc public func initializeSDK(datafile: String) throws {
+    /// Initialize Optimizely Manager (Synchronous)
+    ///
+    /// - Parameters:
+    ///   - datafile: when given, this datafile will be used when cached copy is not available (fresh start)
+    ///                       a cached copy from previous download is used if it's available
+    ///                       the datafile will be updated from the server in the background thread
+    public func initializeSDK(datafile: String) throws {
         guard let datafileData = datafile.data(using: .utf8) else {
             throw OptimizelyError.dataFileInvalid
         }
@@ -97,55 +97,45 @@ open class OptimizelyManager: NSObject {
     }
     
     public func initializeSDK(datafile: Data) throws {
-        
-        // TODO: get the cached copy
-        let cachedDatafile: Data? = self.datafileHandler.isDatafileSaved(sdkKey: self.sdkKey) ? self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) : nil
+        let cachedDatafile = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey)
 
         let selectedDatafile = cachedDatafile ?? datafile
         
-        do {
-            try configSDK(datafile: selectedDatafile)
-        } catch {
-            
-            // TODO:  refine error-type
-            throw OptimizelyError.dataFileInvalid
-        }
+        try configSDK(datafile: selectedDatafile)
         
+        // continue to fetch updated datafile from the server in background and cache it for next sessions
         fetchDatafileBackground()
-    }
-    
-    func configSDK(datafile: String) throws {
-        guard let datafileData = datafile.data(using: .utf8) else {
-            throw OptimizelyError.dataFileInvalid
-        }
-        
-        try configSDK(datafile: datafileData)
     }
     
     func configSDK(datafile: Data) throws {
         do {
             self.config = try JSONDecoder().decode(OPTProjectConfig.self, from: datafile)
             
+            // TODO: fix these to throw errors
             bucketer.initialize(config: self.config)
             decisionService.initialize(config: self.config,
                                        bucketer: self.bucketer,
                                        userProfileService: self.userProfileService)
-        } catch is DecodingError {
-            throw OptimizelyError.dataFileInvalid
-        } catch is OptimizelyError {
-            // TODO: refine error-type
+        } catch let error as OptimizelyError {
+            // .datafileInvalid
+            // .datafaileVersionInvalid
+            // .datafaileLoadingFailed
+            throw error
+        } catch {  // DecodingError, etc.
             throw OptimizelyError.dataFileInvalid
         }
      }
     
     func fetchDatafileBackground(completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+        
+        // TODO: fix downloadDatafile to throw OptimizelyError
+        //       those errors propagated instead of handling here
+        
         datafileHandler.downloadDatafile(sdkKey: self.sdkKey){ result in
             var fetchResult: OptimizelyResult<Data>
 
             switch result {
-            case .failure(let err):
-                self.logger.log(level: .error, message: err.description)
-                // TODO: refine error-type
+            case .failure:
                 fetchResult = .failure(.generic)
             case .success(let datafile):
                 fetchResult = .success(datafile)
@@ -171,19 +161,19 @@ open class OptimizelyManager: NSObject {
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
     /// - Returns: The variation key the user was bucketed into
-    /// - Throws: `OPTError` if error is detected
-    @objc public func activate(experimentKey:String,
+    /// - Throws: `OptimizelyError` if error is detected
+    public func activate(experimentKey:String,
                          userId:String,
                          attributes:Dictionary<String, Any>?=nil) throws -> String {
         
+        // TODO: fix config to throw common errors (.experimentUnknown, .experimentKeyInvalid, ...)
         guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
-            // TODO: refine error type
-            throw OptimizelyError.experimentUnknown(experimentKey)
+            throw OptimizelyError.experimentUnknown
         }
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
         
-        // TODO: fix for error handling
+        // TODO: fix to throw errors
         guard let body = BatchEventBuilder.createImpressionEvent(config: config,
                                                                  decisionService: decisionService,
                                                                  experiment: experiment,
@@ -191,15 +181,14 @@ open class OptimizelyManager: NSObject {
                                                                  userId: userId,
                                                                  attributes: attributes) else
         {
-            // TODO: refine error type
-            throw OptimizelyError.eventUnknown(experimentKey)
+            throw OptimizelyError.eventUnknown    // TODO: pass errors
         }
         
         let event = EventForDispatch(body: body)
         eventDispatcher.dispatchEvent(event: event) { result in
             switch result {
-            case .failure(let error):
-                self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
+            case .failure:
+                break
             case .success( _):
                 self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
             }
@@ -215,7 +204,7 @@ open class OptimizelyManager: NSObject {
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
     /// - Returns: The variation key the user was bucketed into
-    /// - Throws: `OPTError` if error is detected
+    /// - Throws: `OptimizelyError` if error is detected
     public func getVariationKey(experimentKey:String,
                                 userId:String,
                                 attributes:Dictionary<String, Any>?=nil) throws -> String {
@@ -228,14 +217,16 @@ open class OptimizelyManager: NSObject {
                       userId:String,
                       attributes:Dictionary<String, Any>?=nil) throws -> OPTVariation {
         
-        if let experiment = config?.experiments.filter({$0.key == experimentKey}).first,
-            let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) {
-            return variation
+        guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
+            throw OptimizelyError.experimentUnknown
+        }
+
+        // fix DecisionService to throw error
+        guard let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) else {
+            throw OptimizelyError.variationUnknown
         }
         
-        // TODO: refine errors
-        
-        throw OptimizelyError.attributeFormatInvalid
+        return variation
     }
 
     
@@ -256,11 +247,10 @@ open class OptimizelyManager: NSObject {
     ///   - experimentKey: The key for the experiment.
     ///   - userId: The user ID to be used for bucketing.
     /// - Returns: forced variation key if it exists, otherwise return nil.
-    /// - Throws: `OPTError` if error is detected
+    /// - Throws: `OptimizelyError` if error is detected
     public func getForcedVariation(experimentKey:String, userId:String) throws -> String? {
         guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
-            // TODO: refine error-type
-            throw OptimizelyError.experimentUnknown(experimentKey)
+            throw OptimizelyError.experimentUnknown
         }
         
         guard let dict = config.whitelistUsers[userId],
@@ -270,8 +260,7 @@ open class OptimizelyManager: NSObject {
         }
         
         guard let variation = experiment.variations.filter({$0.key == variationKey}).first else {
-            // TODO: refine error-type
-            throw OptimizelyError.variationUnknown(variationKey)
+            throw OptimizelyError.variationUnknown
         }
         
         return variation.key
@@ -285,27 +274,25 @@ open class OptimizelyManager: NSObject {
     ///   - userId The user ID to be used for bucketing.
     ///   - variationKey The variation the user should be forced into.
     ///                  This value can be nil, in which case, the forced variation is cleared.
-    /// - Throws: `OPTError` if feature parameter is not valid
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func setForcedVariation(experimentKey:String,
                                    userId:String,
                                    variationKey:String?) throws {
         
         guard let _ = config.experiments.filter({$0.key == experimentKey}).first else {
-            // TODO: refine error-type
-            throw OptimizelyError.experimentUnknown(experimentKey)
+            throw OptimizelyError.experimentUnknown
         }
         
-        guard var variationKey = variationKey else
-        {
+        guard var variationKey = variationKey else {
             config.whitelistUsers[userId]?.removeValue(forKey: experimentKey)
             return
         }
         
+        // TODO: common function to trim all keys
         variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
         
         guard !variationKey.isEmpty else {
-            // TODO: refine error-type
-            throw OptimizelyError.variationUnknown(variationKey)
+            throw OptimizelyError.variationKeyInvalid(variationKey)
         }
 
         var whitelist = config.whitelistUsers[userId] ?? [:]
@@ -320,30 +307,28 @@ open class OptimizelyManager: NSObject {
     ///   - userId The user ID to be used for bucketing.
     ///   - attributes The user's attributes.
     /// - Returns: true if feature is enabled, false otherwise.
-    /// - Throws: `OPTError` if feature parameter is not valid
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
                                  attributes: Dictionary<String,Any>?=nil) throws -> Bool {
         guard let featureFlag = config.featureFlags?.filter({$0.key == featureKey}).first  else {
-            
-            // TODO: is this error?
             return false
         }
         
+        // fix DecisionService to throw error
         guard let pair = decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:]),
             let experiment = pair.experiment,
             let variation = pair.variation else
         {
-            // TODO: refine error-type
-            throw OptimizelyError.variationUnknown(featureKey)
+            throw OptimizelyError.variationUnknown
         }
         
         guard let featureEnabled = variation.featureEnabled else {
-            // TODO: refine error-type (what does nil-featureEnabled mean?)
-            throw OptimizelyError.generic
+            // TODO: do we need to handle this error?
+            throw OptimizelyError.featureUnknown
         }
     
-        // TODO: fix for error handling
+        // TODO: fix to throw errors
         guard let body = BatchEventBuilder.createImpressionEvent(config: config,
                                                                  decisionService: decisionService,
                                                                  experiment: experiment,
@@ -351,16 +336,16 @@ open class OptimizelyManager: NSObject {
                                                                  userId: userId,
                                                                  attributes: attributes) else
         {
-            // TODO: refine error type
-            throw OptimizelyError.eventUnknown(experiment.key)
+            // TODO: pass error
+            throw OptimizelyError.eventUnknown
         }
 
         let event = EventForDispatch(body: body)
         
         eventDispatcher.dispatchEvent(event: event) { result in
             switch result {
-            case .failure(let error):
-                self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
+            case .failure:
+                break
             case .success(_):
                 self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
             }
@@ -377,16 +362,16 @@ open class OptimizelyManager: NSObject {
     ///   - userId The user ID to be used for bucketing.
     ///   - attributes The user's attributes.
     /// - Returns: feature variable value of type boolean.
-    /// - Throws: `OPTError` if feature parameter is not valid
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableBoolean(featureKey:String,
                                           variableKey:String,
                                           userId:String,
                                           attributes:Dictionary<String, Any>?=nil) throws -> Bool {
         
         return try getFeatureVariable(featureKey: featureKey,
-                                                variableKey: variableKey,
-                                                userId: userId,
-                                                attributes: attributes)
+                                      variableKey: variableKey,
+                                      userId: userId,
+                                      attributes: attributes)
     }
     
     /// Gets double feature variable value.
@@ -397,16 +382,16 @@ open class OptimizelyManager: NSObject {
     ///   - userId The user ID to be used for bucketing.
     ///   - attributes The user's attributes.
     /// - Returns: feature variable value of type double.
-    /// - Throws: `OPTError` if feature parameter is not valid
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableDouble(featureKey:String,
                                          variableKey:String,
                                          userId:String,
                                          attributes:Dictionary<String, Any>?=nil) throws -> Double {
         
         return try getFeatureVariable(featureKey: featureKey,
-                                                variableKey: variableKey,
-                                                userId: userId,
-                                                attributes: attributes)
+                                      variableKey: variableKey,
+                                      userId: userId,
+                                      attributes: attributes)
     }
     
     /// Gets integer feature variable value.
@@ -417,16 +402,16 @@ open class OptimizelyManager: NSObject {
     ///   - userId The user ID to be used for bucketing.
     ///   - attributes The user's attributes.
     /// - Returns: feature variable value of type integer.
-    /// - Throws: `OPTError` if feature parameter is not valid
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableInteger(featureKey:String,
                                           variableKey:String,
                                           userId:String,
                                           attributes:Dictionary<String, Any>?=nil) throws -> Int {
         
         return try getFeatureVariable(featureKey: featureKey,
-                                                   variableKey: variableKey,
-                                                   userId: userId,
-                                                   attributes: attributes)
+                                      variableKey: variableKey,
+                                      userId: userId,
+                                      attributes: attributes)
     }
     
     /// Gets string feature variable value.
@@ -437,67 +422,65 @@ open class OptimizelyManager: NSObject {
     ///   - userId The user ID to be used for bucketing.
     ///   - attributes The user's attributes.
     /// - Returns: feature variable value of type string.
-    /// - Throws: `OPTError` if feature parameter is not valid
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableString(featureKey: String,
                                          variableKey: String,
                                          userId: String,
                                          attributes: Dictionary<String, Any>?=nil) throws -> String {
         
         return try getFeatureVariable(featureKey: featureKey,
-                                                           variableKey: variableKey,
-                                                           userId: userId,
-                                                           attributes: attributes)
+                                      variableKey: variableKey,
+                                      userId: userId,
+                                      attributes: attributes)
     }
     
     func getFeatureVariable<T>(featureKey: String,
-                            variableKey: String,
-                            userId: String,
-                            attributes: Dictionary<String, Any>?=nil) throws -> T {
+                               variableKey: String,
+                               userId: String,
+                               attributes: Dictionary<String, Any>?=nil) throws -> T {
         
+        // fix config to throw errors
         guard let featureFlag = config.featureFlags?.filter({$0.key == featureKey}).first else {
-            // TODO: refine error-type
-            throw OptimizelyError.generic
+            throw OptimizelyError.featureUnknown
         }
         
         guard let variable = featureFlag.variables?.filter({$0.key == variableKey}).first else {
-            // TODO: refine error-type
-            throw OptimizelyError.generic
+            throw OptimizelyError.variableUnknown
         }
         
         guard let defaultValueString = variable.defaultValue else {
-            // TODO: refine error-type
-            throw OptimizelyError.generic
+            throw OptimizelyError.variableValueInvalid(variableKey)
         }
-
-        var typeName: String
-        var value: T
+        
+        var typeName: String?
+        var valueParsed: T?
         
         switch T.self {
         case is String.Type:
             typeName = "string"
-            value = defaultValueString as! T
+            valueParsed = defaultValueString as? T
         case is Int.Type:
             typeName = "integer"
-            value = Int(defaultValueString) as! T
+            valueParsed = Int(defaultValueString) as? T
         case is Double.Type:
             typeName = "double"
-            value = Double(defaultValueString) as! T
+            valueParsed = Double(defaultValueString) as? T
         case is Bool.Type:
             typeName = "boolean"
-            value = Bool(defaultValueString) as! T
+            valueParsed = Bool(defaultValueString) as? T
         default:
-            // TODO: refine error-type
-            throw OptimizelyError.generic
+            break
         }
         
-        guard variable.type == typeName else {
-            // TODO: refine error-type
-            throw OptimizelyError.generic
+        guard let value = valueParsed,
+            variable.type == typeName else
+        {
+            throw OptimizelyError.variableValueInvalid(variableKey)
         }
         
         return value
     }
-
+    
     
     /// Get array of features that are enabled for the user.
     ///
@@ -505,20 +488,19 @@ open class OptimizelyManager: NSObject {
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: The user's attributes.
     /// - Returns: Array of feature keys that are enabled for the user.
-    /// - Throws: `OPTError` if feature parameter is not valid
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId:String,
                                    attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
-
-        guard let featureFlags = config.featureFlags else {
-            // TODO: refine error type
-            throw OptimizelyError.generic
+        
+        let enabledFeatures = config.featureFlags?.filter{
+            do {
+                return try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
+            } catch {
+                return false
+            }
         }
         
-        let enabledFeatures = try featureFlags.filter{
-            try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
-        }
-        
-        return enabledFeatures.map{$0.key}
+        return enabledFeatures?.map{$0.key} ?? []
     }
     
     /// Track an event
@@ -527,14 +509,14 @@ open class OptimizelyManager: NSObject {
     ///   - eventKey: The event name
     ///   - userId: The user ID associated with the event to track
     ///   - eventTags: A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean)
-    /// - Throws: `OPTError` if event parameter is not valid
-    @objc public func track(eventKey:String,
+    /// - Throws: `OptimizelyError` if event parameter is not valid
+    public func track(eventKey:String,
                       userId:String,
                       // right now we are still passing in attributes.  But, there is a jira ticket open to use easy event tracking in which case passing in attributes to track will be removed.
-                      attributes:Dictionary<String,Any>?=nil,
-                      eventTags:Dictionary<String,Any>?=nil) throws {
+        attributes:Dictionary<String,Any>?=nil,
+        eventTags:Dictionary<String,Any>?=nil) throws {
         
-        // TODO: fix for error handling
+        // TODO: fix to throw errors
         guard let body = BatchEventBuilder.createConversionEvent(config: config,
                                                                  decisionService: decisionService,
                                                                  eventKey:eventKey,
@@ -542,20 +524,19 @@ open class OptimizelyManager: NSObject {
                                                                  attributes:attributes,
                                                                  eventTags:eventTags) else
         {
-            // TODO: refine error type
-            throw OptimizelyError.eventUnknown(eventKey)
+            throw OptimizelyError.eventUnknown    // TODO: pass errors
         }
         
         let event = EventForDispatch(body: body)
         eventDispatcher.dispatchEvent(event: event) { result in
             switch result {
-            case .failure(let error):
-                self.logger.log(level: .error, message: "Failed to dispatch event " + error.localizedDescription)
+            case .failure:
+                break
             case .success( _):
                 
                 // TODO: clean up notification
                 print("fix notification")
-               // self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
+                // self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
             }
         }
         
@@ -563,34 +544,26 @@ open class OptimizelyManager: NSObject {
     
 }
 
-// MARK: Objective-C Wrappers
+// MARK: - Objective-C Wrappers (WIP)
 
 extension OptimizelyManager {
     
     @objc public convenience init(sdkKey: String) {
         self.init(sdkKey: sdkKey,
                   logger: nil,
-                  bucketer: nil,
-                  decisionService: nil,
                   eventDispatcher: nil,
-                  datafileHandler: nil,
                   userProfileService: nil,
-                  notificationCenter: nil,
                   periodicDownloadInterval: nil)
     }
     
     // TODO: review this for Objective-C clients support (@objc)
     
-//    @objc public convenience init(sdkKey: String,
-//                                  logger:OPTLogger?,
-//                                  bucketer:OPTBucketer?,
-//                                  decisionService:OPTDecisionService?,
-//                                  eventDispatcher:OPTEventDispatcher?,
-//                                  datafileHandler:OPTDatafileHandler?,
-//                                  userProfileService:OPTUserProfileService?,
-//                                  notificationCenter:OPTNotificationCenter?,
-//                                  periodicDownloadInterval:Int? = nil) {
-
+    //    @objc public convenience init(sdkKey: String,
+    //                                  logger:OPTLogger?,
+    //                                  eventDispatcher:OPTEventDispatcher?,
+    //                                  userProfileService:OPTUserProfileService?,
+    //                                  periodicDownloadInterval:Int? = nil) {
+    
     
     @objc public func initializeSDK(completion: ((NSError?, Data?) -> Void)?) {
         initializeSDK { result in
@@ -609,7 +582,7 @@ extension OptimizelyManager {
         var errorInObjc: NSError
         
         switch error {
-        
+            
         default:
             errorInObjc = NSError(domain: "com.optimizely.OptimizelySwiftSDK", code: 1000, userInfo: nil)
         }

@@ -79,7 +79,7 @@ open class DefaultUserProfileService : OPTUserProfileService {
     
     var profiles = Dictionary<String, Dictionary<String,Any>>()
     
-    public init() {
+    required public init() {
         profiles = UserDefaults.standard.dictionary(forKey: DefaultUserProfileService.storageName) as? [String : Dictionary<String, Any>] ?? Dictionary<String, Dictionary<String,Any>>()
     }
     public static func createInstance() -> OPTUserProfileService {

@@ -47,15 +47,21 @@ open class OptimizelyManager: NSObject {
         
         self.sdkKey = sdkKey
         
-        self.logger = logger ?? DefaultLogger(level: .error)
+        self.logger = logger ?? DefaultLogger()
+
         self.eventDispatcher = eventDispatcher ?? DefaultEventDispatcher()
         self.userProfileService = userProfileService ?? DefaultUserProfileService()
         self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
 
+        
         self.datafileHandler = DefaultDatafileHandler()
         self.notificationCenter = DefaultNotificationCenter()
         self.bucketer = DefaultBucketer()
         self.decisionService = DefaultDecisionService()
+
+        super.init()
+        
+        self.registerServices(sdkKey:sdkKey)
     }
     
     /// Initialize Optimizely Manager (Asynchronous)
@@ -544,8 +550,66 @@ open class OptimizelyManager: NSObject {
     
 }
 
-// MARK: - Objective-C Wrappers (WIP)
+extension HandlerRegistryService {
+    func injectNotificationCenter() -> OPTNotificationCenter? {
+        return injectComponent(service: OPTNotificationCenter.self) as! OPTNotificationCenter?
+    }
+    func injectDecisionService() -> OPTDecisionService? {
+        return injectComponent(service: OPTDecisionService.self) as! OPTDecisionService?
+    }
+    func injectBucketer() -> OPTBucketer? {
+        return injectComponent(service: OPTBucketer.self) as! OPTBucketer?
+    }
 
+    func injectLogger() -> OPTLogger? {
+        return injectComponent(service: OPTLogger.self) as! OPTLogger?
+    }
+    
+    func injectEventDispatcher() -> OPTEventDispatcher? {
+        return injectComponent(service: OPTEventDispatcher.self) as! OPTEventDispatcher?
+    }
+    
+    func injectDatafileHandler() -> OPTDatafileHandler? {
+        return injectComponent(service: OPTDatafileHandler.self) as! OPTDatafileHandler?
+    }
+    
+    func injectUserProfileService() -> OPTUserProfileService? {
+        return injectComponent(service: OPTUserProfileService.self) as! OPTUserProfileService?
+    }
+
+}
+extension OptimizelyManager {
+    func registerServices(sdkKey:String) {
+        // bind it as a non-singleton.  so, we will create an instance anytime injected.
+        let binder:Binder = Binder<OPTLogger>(service: OPTLogger.self).to(factory: type(of:self.logger).init)
+        //Register my logger service.
+        HandlerRegistryService.shared.registerBinding(binder: binder)
+
+        // this is bound a reusable singleton. so, if we re-initalize, we will keep this.
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTNotificationCenter>(service: OPTNotificationCenter.self).singetlon().reInitializeStategy(strategy: .reUse).using(instance:self.notificationCenter))
+
+        // this is a singleton but it has a reIntializeStrategy of reCreate.  So, we create a new
+        // instance on re-initialize.
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTBucketer>(service: OPTBucketer.self).singetlon().using(instance:self.bucketer))
+
+        // the decision service is also a singleton that will reCreate on re-initalize
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance:self.decisionService))
+        
+        // An event dispatcher.  We rely on the factory to create and mantain. Again, recreate on re-initalize.
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().to(factory: type(of:self.eventDispatcher).init))
+        
+        // This is a singleton and might be a good candidate for reuse.  The handler supports mulitple
+        // sdk keys without having to be created for every key.
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().to(factory: type(of:self.datafileHandler).init))
+
+        // the user profile service is also a singleton using eh passed in version.
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTUserProfileService>(service: OPTUserProfileService.self).singetlon().reInitializeStategy(strategy:.reUse).using(instance:self.userProfileService).to(factory: type(of:self.userProfileService).init))
+
+    }
+}
+
+
+// MARK: - Objective-C Wrappers (WIP)
 extension OptimizelyManager {
     
     @objc public convenience init(sdkKey: String) {

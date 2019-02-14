@@ -10,6 +10,10 @@
 		0B0590142209D8780007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */; };
 		0B0590152209D8790007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */; };
 		0B0590162209D87A0007F4A2 /* ArrayEventForDispatch+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA422038491003AFD71 /* ArrayEventForDispatch+extension.swift */; };
+		0B0590182209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
+		0B0590192209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
+		0B05901A2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
+		0B05901B2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B4E11F921EE8FF400D5B370 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		0B4E11FA21EE8FF400D5B370 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		0B4E11FC21EE90F600D5B370 /* DataStoreUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11FB21EE90F600D5B370 /* DataStoreUserDefaults.swift */; };
@@ -229,6 +233,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandlerRegistryService.swift; sourceTree = "<group>"; };
 		0B124BB921B32996001BE0FA /* Optimizely.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optimizely.swift; sourceTree = "<group>"; };
 		0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTBucketer.swift; sourceTree = "<group>"; };
 		0B124BBE21B5C024001BE0FA /* MurmurHash3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurmurHash3.swift; sourceTree = "<group>"; };
@@ -349,6 +354,7 @@
 				0B124BBE21B5C024001BE0FA /* MurmurHash3.swift */,
 				0B124BCA21B5DF39001BE0FA /* Result.swift */,
 				0B61625121B731E8000D7A28 /* Constants.swift */,
+				0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -734,6 +740,7 @@
 				6E4DD86121E5250200B0C2C7 /* JSONParse.swift in Sources */,
 				6E4DD85D21E5250200B0C2C7 /* OPTDatafileHandler.swift in Sources */,
 				6E4DD84421E524F000B0C2C7 /* DefaultEventDispatcher.swift in Sources */,
+				0B0590192209DC180007F4A2 /* HandlerRegistryService.swift in Sources */,
 				6E4DD86A21E5251200B0C2C7 /* OPTAudience.swift in Sources */,
 				6E4DD85821E5250200B0C2C7 /* Optimizely.swift in Sources */,
 				6E4DD84C21E524FC00B0C2C7 /* Constants.swift in Sources */,
@@ -777,6 +784,7 @@
 				6E4DD8CD21E5261600B0C2C7 /* OPTFeatureVariable.swift in Sources */,
 				6E4DD8B621E5260700B0C2C7 /* DataStoreQueueStack.swift in Sources */,
 				6E4DD89621E525FD00B0C2C7 /* DefaultLogger.swift in Sources */,
+				0B05901B2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */,
 				6E4DD8CB21E5261600B0C2C7 /* OPTExperiment.swift in Sources */,
 				0B7B9EA621F2821C00056589 /* DataStoreUserDefaults.swift in Sources */,
 				6E614DDB21E3F38A005982A1 /* OptimizelySwiftSDKtvOSTests.swift in Sources */,
@@ -833,6 +841,7 @@
 				6E4DD83621E524EF00B0C2C7 /* DefaultNotificationCenter.swift in Sources */,
 				6E4DD85321E5250200B0C2C7 /* OPTUserProfileService.swift in Sources */,
 				6E4DD85721E5250200B0C2C7 /* DataStoreQueueStack.swift in Sources */,
+				0B0590182209DC180007F4A2 /* HandlerRegistryService.swift in Sources */,
 				6E4DD86E21E5251700B0C2C7 /* OPTVariable.swift in Sources */,
 				6E4DD87521E5251700B0C2C7 /* OPTProjectConfig.swift in Sources */,
 				6E4DD86921E5251200B0C2C7 /* ConditionHolder.swift in Sources */,
@@ -914,6 +923,7 @@
 				6E4DD8AA21E5260600B0C2C7 /* JSONParse.swift in Sources */,
 				6E4DD89C21E5260100B0C2C7 /* Result.swift in Sources */,
 				6E4DD89021E525FC00B0C2C7 /* DefaultDatafileHandler.swift in Sources */,
+				0B05901A2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */,
 				0B7B9EA721F2823500056589 /* OPTDataStore.swift in Sources */,
 				6E4DD89D21E5260100B0C2C7 /* Constants.swift in Sources */,
 			);

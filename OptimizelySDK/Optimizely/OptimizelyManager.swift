@@ -122,6 +122,14 @@ open class OptimizelyManager: NSObject {
             decisionService.initialize(config: self.config,
                                        bucketer: self.bucketer,
                                        userProfileService: self.userProfileService)
+            if periodicDownloadInterval > 0 {
+                datafileHandler.stopPeriodicUpdates(sdkKey: self.sdkKey)
+                datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
+                    self.notificationCenter.sendNotifications(type: NotificationType.DatafileChange.rawValue, args: [data])
+                    try? self.configSDK(datafile: data)
+                }
+                
+            }
         } catch let error as OptimizelyError {
             // .datafileInvalid
             // .datafaileVersionInvalid
@@ -144,7 +152,19 @@ open class OptimizelyManager: NSObject {
             case .failure:
                 fetchResult = .failure(.generic)
             case .success(let datafile):
-                fetchResult = .success(datafile)
+                // we got a new datafile.
+                if let datafile = datafile {
+                    fetchResult = .success(datafile)
+                }
+                // we got a success but no datafile 304. So, load the saved datafile.
+                else if let data = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) {
+                    fetchResult = .success(data)
+                }
+                // if that fails, we have a problem.
+                else {
+                    fetchResult = .failure(.generic)
+                }
+
             }
             
             completion?(fetchResult)

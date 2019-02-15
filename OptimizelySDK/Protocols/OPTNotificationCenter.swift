@@ -20,6 +20,7 @@ import Foundation
 public enum NotificationType : Int {
     case Activate = 1
     case Track
+    case DatafileChange
 }
 
 public typealias GenericListener = (Any...) -> Void
@@ -27,6 +28,8 @@ public typealias GenericListener = (Any...) -> Void
 public typealias ActivateListener = (_ experiment:OPTExperiment, _ userId:String, _ attributes:Dictionary<String,Any>?, _ variation:OPTVariation, _ event:Dictionary<String, Any>) -> Void
 
 public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>?, _ eventTags:Dictionary<String, Any>?, _ event:Dictionary<String, Any>) -> Void
+
+public typealias DatafileChangeListener = (_ datafile:Data) -> Void
 
 public protocol OPTNotificationCenter {
 
@@ -55,6 +58,13 @@ func addActivateNotificationListener(activateListener:@escaping ActivateListener
  - Returns: the notification id used to remove the notification. It is greater than 0 on success.
  */
 func addTrackNotificationListener(trackListener:@escaping TrackListener) -> Int?
+
+/**
+ Add a datafile change notification listener
+ - Parameter datafileChangeListener: Notification to add.
+ - Returns: the notification id used to remove the notification. It is greater than 0 on success.
+ */
+func addDatafileChangeNotificationListener(datafileListener:@escaping DatafileChangeListener) -> Int?
 
 /**
  Remove the notification listener based on the notificationId passed back from addNotification.

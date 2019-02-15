@@ -30,7 +30,7 @@ public class OPTEventDispatchError : Error {
  The OPTEventDispatcher dispatches events to the Optimizely backend used in results.
  */
 public protocol OPTEventDispatcher {
-    static func createInstance() -> OPTEventDispatcher?
+    init()
     /**
      Dispatch event to Optimizely backend for results measurement.
      - Parameter event: EventForDispatch object which contains the url to send to and the body.

@@ -18,15 +18,11 @@ import Foundation
 
 class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
-    let logger = DefaultLogger.createInstance(logLevel: .debug)
+    lazy var logger = HandlerRegistryService.shared.injectLogger()
     var timers:[String:Timer] = [String:Timer]()
     let dataStore = DataStoreUserDefaults()
     
-    static func createInstance() -> OPTDatafileHandler? {
-        return DefaultDatafileHandler()
-    }
-    
-    internal init() {
+    required init() {
         
     }
     
@@ -58,7 +54,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         return result
     }
     
-    func downloadDatafile(sdkKey: String, completionHandler: @escaping (Result<Data, DatafileDownloadError>) -> Void) {
+    func downloadDatafile(sdkKey: String, completionHandler: @escaping (Result<Data?, DatafileDownloadError>) -> Void) {
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
@@ -70,7 +66,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             }
             
             let task = session.downloadTask(with: request) { (url, response, error) in
-                var result = Result<Data, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
+                var result = Result<Data?, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
                 
                 if let _ = error {
                     self.logger?.log(level: .error, message: error.debugDescription)
@@ -93,9 +89,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     }
                     else if response.statusCode == 304 {
                         self.logger?.log(level: .debug, message: "The datafile was not modified and won't be downloaded again")
-                        if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
-                            result = Result.success(data)
-                        }
+                        result = .success(nil)
                     }
                 }
 
@@ -110,18 +104,31 @@ class DefaultDatafileHandler : OPTDatafileHandler {
 
     }
     
-    func startPeriodicUpdates(sdkKey: String, updateInterval: Int) {
+    func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification:((Data)->Void)?) {
         if let _ = timers[sdkKey] {
             logger?.log(level: .info, message: "Timer already started for datafile updates")
             return
         }
         if #available(iOS 10.0, tvOS 10.0, *) {
-            let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: true) { (timer) in
-                self.downloadDatafile(sdkKey: sdkKey) { (result) in
-                 // background download saves to cache
+            DispatchQueue.main.async {
+                let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: true) { (timer) in
+                    self.downloadDatafile(sdkKey: sdkKey) { (result) in
+                        if let datafileChangeNotification = datafileChangeNotification {
+                            switch result {
+                            case .success(let data):
+                                if let data = data {
+                                    datafileChangeNotification(data)
+                                }
+                            case .failure( _): break
+                                // don't do anything.
+                            }
+                        }
+                        // background download saves to cache
+                    }
                 }
+                self.timers[sdkKey] = timer
+
             }
-            timers[sdkKey] = timer
         } else {
             // Fallback on earlier versions
         }

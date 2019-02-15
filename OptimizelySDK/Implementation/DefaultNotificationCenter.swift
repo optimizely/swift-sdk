@@ -18,7 +18,6 @@ import Foundation
 
 
 public class DefaultNotificationCenter : OPTNotificationCenter {
-    
     public var notificationId: Int = 1
     var notificationListeners = [Int:(Int,GenericListener)]()
     
@@ -73,16 +72,35 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             if myArgs.count < 5 {
                 return
             }
-            if let eventKey = myArgs[0] as? String, let userId = myArgs[1] as? String {
-                let attributes = myArgs[2] as? Dictionary<String, Any>
-                let eventTags = myArgs[3] as? Dictionary<String,Any>
-                let event = myArgs[4] as! Dictionary<String,Any>
+            if let eventKey = myArgs[0] as? String, let userId = myArgs[1] as? String,
+                let attributes = myArgs[2] as? Dictionary<String, Any>,
+                let eventTags = myArgs[3] as? Dictionary<String,Any>,
+                let event = myArgs[4] as? Dictionary<String,Any>
+                {
                 trackListener(eventKey, userId, attributes, eventTags, event)
             }
         })
         
         return incrementNotificationId()
     }
+    
+    public func addDatafileChangeNotificationListener(datafileListener: @escaping DatafileChangeListener) -> Int? {
+        notificationListeners[notificationId] = (NotificationType.DatafileChange.rawValue,  { (args:Any...) in
+            guard let myArgs = args[0] as? [Any?] else {
+                return
+            }
+            if myArgs.count < 1 {
+                return
+            }
+            if let data = myArgs[0] as? Data {
+                datafileListener(data)
+            }
+        })
+        
+        return incrementNotificationId()
+    }
+    
+
     
     public func removeNotificationListener(notificationId: Int) {
         self.notificationListeners.removeValue(forKey: notificationId)

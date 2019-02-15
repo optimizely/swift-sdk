@@ -24,7 +24,7 @@ public struct DatafileDownloadError : Error {
     }
 }
 
-public typealias DatafileDownloadCompletionHandler = (Result<Data,DatafileDownloadError>) -> Void
+public typealias DatafileDownloadCompletionHandler = (Result<Data?,DatafileDownloadError>) -> Void
 
 ///
 /// The datafile handler is used by the optimizely manager to manage the Optimizely datafile.
@@ -53,7 +53,7 @@ public protocol OPTDatafileHandler {
       - Parameter sdkKey: SdkKey for the datafile
       - Parameter updateInterval: frequency of updates in seconds
      */
-    func startPeriodicUpdates(sdkKey:String, updateInterval:Int)
+    func startPeriodicUpdates(sdkKey:String, updateInterval:Int, datafileChangeNotification:((Data)->Void)?)
     
     /**
      Stop the periodic updates. This should be called when the app goes to background

@@ -18,9 +18,10 @@ import Foundation
 
 class ProjectConfig : Codable {
     
-    var project: Project
-    var whitelistUsers = [String: [String: String]]()
+    var project: Project!   // TODO: [Jae] force unwrap for temp for test
     
+    var whitelistUsers = [String: [String: String]]()
+        
     class func DateFromString(dateString:String) -> NSDate
     {
         let dateFormatter = DateFormatter()

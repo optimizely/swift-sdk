@@ -26,7 +26,7 @@ class DecisionServiceTest: XCTestCase {
         let bucketer = DefaultBucketer.createInstance(config: config)
         let decisionService = DefaultDecisionService.createInstance(config: config, bucketer: bucketer!, userProfileService: DefaultUserProfileService())
         
-        let experiment = config.experiments.filter({$0.key == "typed_audience_experiment"}).first
+        let experiment = config.project.experiments.filter({$0.key == "typed_audience_experiment"}).first
         let attr = ["integerKey":1, "doubleKey": 99.0, "booleanKey": true, "nationality":"English"] as [String : Any]
         let variation = decisionService?.getVariation(userId: "1234", experiment: experiment!, attributes: attr)
         

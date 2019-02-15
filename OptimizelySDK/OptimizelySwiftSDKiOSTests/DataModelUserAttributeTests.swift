@@ -12,6 +12,17 @@ class DataModelUserAttributeTests: XCTestCase {
     
     let modelType = UserAttribute.self
     
+    
+    static func baseModel() -> UserAttribute {
+        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact", "value":30]
+        return jsonDecodeFromDict(json)
+    }
+    
+    static func baseModelJsonString() -> String {
+        let data = try! JSONEncoder().encode(baseModel())
+        return String(data: data, encoding: .utf8)!
+    }
+    
     // MARK: - Decode
     
     func testDecodeSuccessWithJSONValid() {

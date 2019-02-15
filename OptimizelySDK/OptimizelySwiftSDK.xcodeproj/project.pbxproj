@@ -229,6 +229,7 @@
 		6E7FC6A422121D27009A171F /* OptimizelyTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A222121D27009A171F /* OptimizelyTestUtils.swift */; };
 		6E7FC6A6221222CD009A171F /* DataModelUserAttributeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A5221222CD009A171F /* DataModelUserAttributeTests.swift */; };
 		6E7FC6A822125487009A171F /* DataModelUserAttributeTestsEvaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A722125487009A171F /* DataModelUserAttributeTestsEvaluate.swift */; };
+		6EBA4EDC2216380800D4B49A /* DataModelAudienceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBA4EDB2216380800D4B49A /* DataModelAudienceTests.swift */; };
 		6EBAEB7521E3FEF900D13AA9 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EBAEB7C21E3FEF900D13AA9 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -324,6 +325,7 @@
 		6E7FC6A222121D27009A171F /* OptimizelyTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyTestUtils.swift; sourceTree = "<group>"; };
 		6E7FC6A5221222CD009A171F /* DataModelUserAttributeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelUserAttributeTests.swift; sourceTree = "<group>"; };
 		6E7FC6A722125487009A171F /* DataModelUserAttributeTestsEvaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelUserAttributeTestsEvaluate.swift; sourceTree = "<group>"; };
+		6EBA4EDB2216380800D4B49A /* DataModelAudienceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelAudienceTests.swift; sourceTree = "<group>"; };
 		6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Optimizely.h; sourceTree = "<group>"; };
 		6EBAEB6F21E3FEF800D13AA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -514,6 +516,7 @@
 		6E4DD99021E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests */ = {
 			isa = PBXGroup;
 			children = (
+				6EBA4EDB2216380800D4B49A /* DataModelAudienceTests.swift */,
 				6E4F0D94221393A500DD13A5 /* DataModelRolloutTests.swift */,
 				6E4F0D7D2213536F00DD13A5 /* DataModelAttributeValueTests.swift */,
 				6E4F0D81221389AA00DD13A5 /* DataModelAttributeValueTestsEvaluate.swift */,
@@ -930,6 +933,7 @@
 				6E4DD8BD21E5261500B0C2C7 /* TrafficAllocation.swift in Sources */,
 				6E4DD99821E6BAA700B0C2C7 /* OptimizelyManagerTests.swift in Sources */,
 				6E4DD8B821E5260A00B0C2C7 /* BatchEvent.swift in Sources */,
+				6EBA4EDC2216380800D4B49A /* DataModelAudienceTests.swift in Sources */,
 				6E4DD8BE21E5261500B0C2C7 /* Variable.swift in Sources */,
 				6E4DD8C121E5261500B0C2C7 /* Rollout.swift in Sources */,
 				6E4DD88521E525F000B0C2C7 /* EventForDispatch+extension.swift in Sources */,

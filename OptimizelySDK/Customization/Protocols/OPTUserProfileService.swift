@@ -75,7 +75,7 @@ import Foundation
 
 public protocol OPTUserProfileService {
     
-    static func createInstance() -> OPTUserProfileService
+    init()
 
     /**
      Returns a user entity corresponding to the user ID.

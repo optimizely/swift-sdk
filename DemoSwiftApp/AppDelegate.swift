@@ -60,7 +60,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func initializeOptimizelySDKAsynchronous() {
         
+        // customization example (optional)
+        let customLogger = makeCustomLogger()
+        
         optimizely = OptimizelyManager(sdkKey: sdkKey,
+                                       logger: customLogger,
                                        periodicDownloadInterval:60)
 
         // initialize Optimizely Client from a datafile download
@@ -85,9 +89,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // customization example (optional)
+        let customLogger = makeCustomLogger()
         
-        optimizely = OptimizelyManager(sdkKey: sdkKey)
-        
+        optimizely = OptimizelyManager(sdkKey: sdkKey,
+                                       logger: customLogger)
+
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
             try optimizely!.initializeSDK(datafile: datafileJSON)
@@ -120,6 +126,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+
+    func makeCustomLogger() -> OPTLogger {
+        class Logger : OPTLogger {
+            static var level:OptimizelyLogLevel?
+            static var logLevel: OptimizelyLogLevel {
+                get {
+                    if let level = level {
+                        return level
+                    }
+                    return .all
+                }
+                set {
+                    if let _ = level {
+                        // already set.
+                    }
+                    else {
+                        level = newValue
+                    }
+                }
+            }
+            
+            required init() {
+                
+            }
+            
+            func log(level: OptimizelyLogLevel, message: String) {
+                if level.rawValue <= Logger.logLevel.rawValue {
+                    print("🐱 - [\(level.name)] Kitty - \(message)")
+                }
+            }
+            
+        }
+        
+        return Logger()
+    }
+
     func openVariationView(optimizelyManager: OptimizelyManager?, variationKey: String?) {
         let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as! VariationViewController
         

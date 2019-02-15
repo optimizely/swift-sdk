@@ -30,6 +30,7 @@ public typealias DatafileDownloadCompletionHandler = (Result<Data?,DatafileDownl
 /// The datafile handler is used by the optimizely manager to manage the Optimizely datafile.
 ///
 public protocol OPTDatafileHandler {
+    init()
     /**
     Synchronous call to download the datafile.
 

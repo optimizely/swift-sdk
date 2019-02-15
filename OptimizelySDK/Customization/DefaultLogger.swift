@@ -29,12 +29,8 @@ public class DefaultLogger : OPTLogger {
         }
     }
     
-    public init(level: OptimizelyLogLevel) {
-        DefaultLogger.logLevel = level
-    }
-    
-    public static func createInstance(logLevel: OptimizelyLogLevel) -> OPTLogger? {
-        return DefaultLogger(level:logLevel)
+    required public init() {
+        DefaultLogger.logLevel = .all
     }
     
     public func log(level: OptimizelyLogLevel, message: String) {

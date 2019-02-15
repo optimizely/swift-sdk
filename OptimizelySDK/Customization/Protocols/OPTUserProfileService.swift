@@ -76,6 +76,7 @@ import Foundation
 public protocol OPTUserProfileService {
     
     init()
+
     /**
      Returns a user entity corresponding to the user ID.
      - Parameter userId: The user id to get the user entity of.

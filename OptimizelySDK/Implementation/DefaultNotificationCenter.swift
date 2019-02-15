@@ -16,6 +16,7 @@
 
 import Foundation
 
+
 public class DefaultNotificationCenter : OPTNotificationCenter {
     public var notificationId: Int = 1
     var notificationListeners = [Int:(Int,GenericListener)]()
@@ -40,7 +41,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
         return incrementNotificationId()
     }
     
-    public func addActivateNotificationListener(activateListener: @escaping (OPTExperiment, String, Dictionary<String, Any>?, OPTVariation, Dictionary<String, Any>) -> Void) -> Int? {
+    public func addActivateNotificationListener(activateListener: @escaping (OptimizelyExperimentData, String, Dictionary<String, Any>?, OptimizelyVariationData, Dictionary<String, Any>) -> Void) -> Int? {
         notificationListeners[notificationId] = (NotificationType.Activate.rawValue,  { (args:Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
@@ -48,11 +49,15 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             if myArgs.count < 5 {
                 return
             }
-            if let experiment = myArgs[0] as? OPTExperiment, let userId = myArgs[1] as? String,
-                let variation = myArgs[3] as? OPTVariation,
-                let attributes = myArgs[2] as? Dictionary<String, Any>,
-                let event = myArgs[4] as? Dictionary<String,Any> {
-                activateListener(experiment, userId, attributes, variation, event)
+            if let experiment = myArgs[0] as? Experiment, let userId = myArgs[1] as? String,
+                let variation = myArgs[3] as? Variation {
+                let attributes = myArgs[2] as? Dictionary<String, Any>
+                let event = myArgs[4] as! Dictionary<String,Any>
+                
+                // TODO: fix this temp data type for internal data model issueus
+                let experimentData = [String: Any]()
+                let variationData = [String: Any]()
+                activateListener(experimentData, userId, attributes, variationData, event)
             }
         })
         

@@ -1,7 +1,5 @@
 //
-//  Variation.swift
-//  OptimizelySDK
-//
+//  Attribute.swift
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -20,10 +18,7 @@
 
 import Foundation
 
-public class OPTVariation : Codable
-{
-    public var variables:[OPTVariable]? = []
-    public var id:String = ""
-    public var key:String = ""
-    public var featureEnabled:Bool? = false
+struct Attribute: Codable {
+    var id: String
+    var key: String
 }

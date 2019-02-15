@@ -16,9 +16,12 @@
 
 import Foundation
 
-public class OPTEvent : Codable
+struct FeatureFlag : Codable
 {
     var experimentIds:[String] = []
+    var rolloutId:String?
+    var groupId:String?
+    var variables:[FeatureVariable]? = []
     var id:String = ""
     var key:String = ""
 }

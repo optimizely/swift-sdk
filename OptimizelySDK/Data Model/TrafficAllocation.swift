@@ -1,6 +1,3 @@
-//
-//  Rollout.swift
-//  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -19,9 +16,8 @@
 
 import Foundation
 
-public class OPTRollout : Codable
+struct TrafficAllocation: Codable
 {
-    var experiments:[OPTExperiment] = []
-    var id:String = ""
+    var entityId: String
+    var endOfRange: Int
 }
-

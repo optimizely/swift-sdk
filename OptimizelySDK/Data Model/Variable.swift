@@ -1,5 +1,5 @@
 //
-//  Group.swift
+//  Variable.swift
 //  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
@@ -19,14 +19,7 @@
 
 import Foundation
 
-public class OPTGroup : Codable {
-    enum Policy : String, Codable {
-        case random
-        case overlapping
-    }
-    
-    var id:String = ""
-    var policy:Policy = Policy.random
-    var trafficAllocation:[OPTTrafficAllocation] = []
-    var experiments:[OPTExperiment] = []
+struct Variable: Codable {
+    var id: String
+    var value: String
 }

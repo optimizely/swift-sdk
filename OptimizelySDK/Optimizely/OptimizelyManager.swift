@@ -14,7 +14,7 @@ open class OptimizelyManager: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
-    var config:OPTProjectConfig!
+    var config:ProjectConfig!
     
     // MARK: - Customizable Services
 
@@ -115,7 +115,7 @@ open class OptimizelyManager: NSObject {
     
     func configSDK(datafile: Data) throws {
         do {
-            self.config = try JSONDecoder().decode(OPTProjectConfig.self, from: datafile)
+            self.config = try JSONDecoder().decode(ProjectConfig.self, from: datafile)
             
             // TODO: fix these to throw errors
             bucketer.initialize(config: self.config)
@@ -221,7 +221,7 @@ open class OptimizelyManager: NSObject {
     
     func getVariation(experimentKey:String,
                       userId:String,
-                      attributes:Dictionary<String, Any>?=nil) throws -> OPTVariation {
+                      attributes:Dictionary<String, Any>?=nil) throws -> Variation {
         
         guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
@@ -454,10 +454,9 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variableUnknown
         }
         
-        guard let defaultValueString = variable.defaultValue else {
-            throw OptimizelyError.variableValueInvalid(variableKey)
-        }
-        
+        // TODO: check if non-optional is OK
+        let defaultValueString = variable.defaultValue
+
         var typeName: String?
         var valueParsed: T?
         

@@ -1,3 +1,6 @@
+//
+//  Rollout.swift
+//  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -16,11 +19,9 @@
 
 import Foundation
 
-public class OPTFeatureVariable : Codable
+struct Rollout : Codable
 {
-    var defaultValue:String? = ""
-    var type:String = ""
+    var experiments:[Experiment] = []
     var id:String = ""
-    var key:String = ""
 }
 

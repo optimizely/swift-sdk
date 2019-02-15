@@ -1,6 +1,3 @@
-//
-//  Variable.swift
-//  OptimizelySDK
 /****************************************************************************
  * Copyright 2018, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -19,9 +16,10 @@
 
 import Foundation
 
-public class OPTVariable : Codable
-{
-    var id:String = ""
-    var value:String = ""
-    
+struct FeatureVariable: Codable {
+    var id: String
+    var key: String
+    var type: String
+    var defaultValue: String
 }
+

@@ -17,11 +17,11 @@
 import Foundation
 
 class DefaultDecisionService : OPTDecisionService {
-    var config:OPTProjectConfig!
+    var config:ProjectConfig!
     var bucketer:OPTBucketer!
     var userProfileService:OPTUserProfileService!
 
-    internal required init(config:OPTProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) {
+    internal required init(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) {
         self.config = config
         self.bucketer = bucketer
         self.userProfileService = userProfileService
@@ -30,7 +30,7 @@ class DefaultDecisionService : OPTDecisionService {
     // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     init() {}
     
-    func initialize(config:OPTProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) {
+    func initialize(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) {
         self.config = config
         self.bucketer = bucketer
         self.userProfileService = userProfileService
@@ -38,18 +38,18 @@ class DefaultDecisionService : OPTDecisionService {
     
     
     
-    static func createInstance(config: OPTProjectConfig, bucketer: OPTBucketer, userProfileService:OPTUserProfileService) -> OPTDecisionService? {
+    static func createInstance(config: ProjectConfig, bucketer: OPTBucketer, userProfileService:OPTUserProfileService) -> OPTDecisionService? {
         return DefaultDecisionService(config: config, bucketer: bucketer, userProfileService: userProfileService)
     }
     
-    func getVariation(userId:String, experiment: OPTExperiment, attributes: Dictionary<String, Any>) -> OPTVariation? {
+    func getVariation(userId:String, experiment: Experiment, attributes: Dictionary<String, Any>) -> Variation? {
         let experimentId = experiment.id;
         
         // Acquire bucketingId .
         let bucketingId = getBucketingId(userId:userId, attributes:attributes)
         
         // ---- check if the experiment is running ----
-        if experiment.status != OPTExperiment.Status.Running {
+        if experiment.status != Experiment.Status.Running {
             return nil;
         }
         
@@ -69,7 +69,7 @@ class DefaultDecisionService : OPTDecisionService {
             return variation
         }
         
-        var bucketedVariation:OPTVariation?
+        var bucketedVariation:Variation?
         // ---- check if the user passes audience targeting before bucketing ----
         if let result = isInExperiment(
             experiment:experiment,
@@ -89,7 +89,7 @@ class DefaultDecisionService : OPTDecisionService {
 
     }
     
-    func isInExperiment(experiment:OPTExperiment, userId:String, attributes:Dictionary<String, Any>) -> Bool? {
+    func isInExperiment(experiment:Experiment, userId:String, attributes:Dictionary<String, Any>) -> Bool? {
         if let _ = experiment.audienceConditions {
             return experiment.audienceConditions?.evaluate(projectConfig: config, attributes: attributes)
         }
@@ -105,7 +105,7 @@ class DefaultDecisionService : OPTDecisionService {
         return true
     }
     
-    func getExperimentInGroup(group:OPTGroup, bucketingId:String) -> OPTExperiment? {
+    func getExperimentInGroup(group:Group, bucketingId:String) -> Experiment? {
         let experiment = bucketer.bucketToExperiment(group:group, bucketingId:bucketingId)
         if let _ = experiment {
             // log
@@ -114,7 +114,7 @@ class DefaultDecisionService : OPTDecisionService {
         return experiment;
     }
     
-     func getVariationForFeature(featureFlag:OPTFeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:OPTExperiment?, variation:OPTVariation?)? {
+     func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
         //Evaluate in this order:
         
         //1. Attempt to check if the feature is in a mutex group.
@@ -138,7 +138,7 @@ class DefaultDecisionService : OPTDecisionService {
 
     }
     
-    func getVariationForFeatureGroup(featureFlag:OPTFeatureFlag, groupId:String, userId:String,                attributes:Dictionary<String, Any>) -> (experiment:OPTExperiment?, variation:OPTVariation?)? {
+    func getVariationForFeatureGroup(featureFlag:FeatureFlag, groupId:String, userId:String,                attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
         
         let bucketing_id = getBucketingId(userId:userId, attributes:attributes)
         if let group = config.groups.filter({$0.id == groupId}).first {
@@ -157,9 +157,9 @@ class DefaultDecisionService : OPTDecisionService {
         return nil
     }
     
-    func getVariationForFeatureExperiment(featureFlag:OPTFeatureFlag,
+    func getVariationForFeatureExperiment(featureFlag:FeatureFlag,
                                           userId:String,
-                                          attributes:Dictionary<String,Any>) -> (experiment:OPTExperiment?, variation:OPTVariation?)? {
+                                          attributes:Dictionary<String,Any>) -> (experiment:Experiment?, variation:Variation?)? {
         
         let experimentIds = featureFlag.experimentIds;
         // Check if there are any experiment IDs inside feature flag
@@ -173,9 +173,9 @@ class DefaultDecisionService : OPTDecisionService {
         return nil;
     }
     
-    func getVariationForFeatureRollout(featureFlag:OPTFeatureFlag,
+    func getVariationForFeatureRollout(featureFlag:FeatureFlag,
                                        userId:String,
-                                       attributes:Dictionary<String, Any>) -> OPTVariation? {
+                                       attributes:Dictionary<String, Any>) -> Variation? {
     
         let bucketingId = getBucketingId(userId: userId, attributes:attributes)
         

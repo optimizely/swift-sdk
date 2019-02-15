@@ -16,16 +16,16 @@
 
 import Foundation
 
-public protocol OPTBucketer {
+protocol OPTBucketer {
     /**
      Initialize the default bucketer with the project config.
      - Parameter config: The project config that the bucketer will use for reference.
      - Returns: The bucketer that has been created.
      */
-    static func createInstance(config:OPTProjectConfig) -> OPTBucketer?
+    static func createInstance(config:ProjectConfig) -> OPTBucketer?
 
     // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
-    func initialize(config:OPTProjectConfig)
+    func initialize(config:ProjectConfig)
 
     /**
      Bucket experiment based on bucket value and traffic allocations.
@@ -33,7 +33,7 @@ public protocol OPTBucketer {
      - Parameter bucketingId: Id to be used for bucketing the user.
      - Returns: experiment which represent Experiment.
      */
-    func bucketToExperiment(group:OPTGroup, bucketingId:String) -> OPTExperiment?
+    func bucketToExperiment(group:Group, bucketingId:String) -> Experiment?
     
     /**
      Bucket a bucketingId into an experiment.
@@ -41,7 +41,7 @@ public protocol OPTBucketer {
      - Parameter bucketingId: The ID to bucket. This must be a non-null, non-empty string.
      - Returns: The variation the bucketingId was bucketed into.
      */
-    func bucketExperiment(experiment:OPTExperiment, bucketingId:String) -> OPTVariation?
+    func bucketExperiment(experiment:Experiment, bucketingId:String) -> Variation?
 
     /**
      Hash the bucketing ID and map it to the range [0, 10000).

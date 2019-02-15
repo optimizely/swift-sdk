@@ -20,7 +20,7 @@ open class OptimizelyManager: NSObject {
 
     let logger: OPTLogger
     let eventDispatcher: OPTEventDispatcher
-    let userProfileService: OPTUserProfileService
+    public let userProfileService: OPTUserProfileService
     let periodicDownloadInterval: Int
 
     // MARK: - Default Services
@@ -28,7 +28,7 @@ open class OptimizelyManager: NSObject {
     let bucketer: OPTBucketer
     let decisionService: OPTDecisionService
     let datafileHandler: OPTDatafileHandler
-    let notificationCenter: OPTNotificationCenter
+    public let notificationCenter: OPTNotificationCenter
     
     // MARK: - Public interfaces
     

@@ -24,8 +24,7 @@ enum LogicalOp: String, Codable {
 
 enum ConditionHolder: Codable, Equatable {
     case logicalOp(LogicalOp)
-    case audienceId(String)
-    case attribute(UserAttribute)
+    case leaf(ConditionLeaf)
     case array([ConditionHolder])
     
     init(from decoder: Decoder) throws {
@@ -35,13 +34,8 @@ enum ConditionHolder: Codable, Equatable {
                 return
             }
             
-            if let value = try? container.decode(String.self) {
-                self = .audienceId(value)
-                return
-            }
-            
-            if let value = try? container.decode(UserAttribute.self) {
-                self = .attribute(value)
+            if let value = try? container.decode(ConditionLeaf.self) {
+                self = .leaf(value)
                 return
             }
             
@@ -60,10 +54,8 @@ enum ConditionHolder: Codable, Equatable {
         switch self {
         case .logicalOp(let op):
             try? container.encode(op)
-        case .audienceId(let id):
-            try? container.encode(id)
-        case .attribute(let userAttribute):
-            try? container.encode(userAttribute)
+        case .leaf(let conditionLeaf):
+            try? container.encode(conditionLeaf)
         case .array(let conditions):
             try? container.encode(conditions)
         }
@@ -73,10 +65,8 @@ enum ConditionHolder: Codable, Equatable {
         switch self {
         case .logicalOp:
             return nil   // invalid
-        case .audienceId(let id):
-            return project.evaluateAudience(audienceId: id, attributes: attributes)
-        case .attribute(let userAttribute):
-            return userAttribute.evaluate(attributes: attributes)
+        case .leaf(let conditionLeaf):
+            return conditionLeaf.evaluate(project: project, attributes: attributes)
         case .array(let conditions):
             return conditions.evaluate(project: project, attributes: attributes)
         }
@@ -93,12 +83,13 @@ extension Array where Element == ConditionHolder {
         switch firstItem {
         case .logicalOp(let op):
             return evaluate(op: op, project: project, attributes: attributes)
-        case .audienceId,
-             .attribute:
+        case .leaf:
+            // special case - array has a single ConditionLeaf
             guard self.count == 1 else { return nil }
             return firstItem.evaluate(project: project, attributes: attributes)
         default:
-            return nil    // invalid first item
+            // invalid first item
+            return nil
         }
     }
     

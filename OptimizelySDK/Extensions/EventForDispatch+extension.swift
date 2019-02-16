@@ -12,6 +12,4 @@ extension EventForDispatch {
     public static func == (lhs: EventForDispatch, rhs: EventForDispatch) -> Bool {
         return lhs.url == rhs.url && lhs.body == rhs.body
     }
-    
-    
 }

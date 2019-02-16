@@ -27,7 +27,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
                                             "value":20]
 
     func testEvaluate_I() {
-        let model = ConditionHolder.audienceId("11111")
+        let model = ConditionHolder.leaf(.audienceId("11111"))
         XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
     
@@ -49,7 +49,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
     func testEvaluate_AI() {
         let model = ConditionHolder.array([
             .logicalOp(.and),
-            .audienceId("11111")]
+            .leaf(.audienceId("11111"))]
             )
         XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
@@ -57,7 +57,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
     func testEvaluate_OI() {
         let model = ConditionHolder.array([
             .logicalOp(.or),
-            .audienceId("11111")]
+            .leaf(.audienceId("11111"))]
         )
         XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
@@ -65,7 +65,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
     func testEvaluate_NI() {
         let model = ConditionHolder.array([
             .logicalOp(.not),
-            .audienceId("11111")]
+            .leaf(.audienceId("11111"))]
         )
         XCTAssertFalse(model.evaluate(project: project, attributes: attributeData)!)
     }
@@ -74,7 +74,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
         let model = ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.and),
-                    .audienceId("11111")])
+                    .leaf(.audienceId("11111"))])
             ])
         XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
@@ -83,7 +83,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
         let model = ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.or),
-                    .audienceId("11111")])
+                    .leaf(.audienceId("11111"))])
             ])
         XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
@@ -92,7 +92,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
         let model = ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.not),
-                    .audienceId("11111")])
+                    .leaf(.audienceId("11111"))])
             ])
         XCTAssertFalse(model.evaluate(project: project, attributes: attributeData)!)
     }
@@ -100,10 +100,10 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
     func testEvaluate_A_I_AII() {
         let model = ConditionHolder.array([
             .logicalOp(.and),
-            .audienceId("11111"),
+            .leaf(.audienceId("11111")),
             .array([.logicalOp(.and),
-                    .audienceId("33333"),
-                    .audienceId("44444")])
+                    .leaf(.audienceId("33333")),
+                    .leaf(.audienceId("44444"))])
             ])
         XCTAssertFalse(model.evaluate(project: project, attributes: attributeData)!)
     }
@@ -112,16 +112,16 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
         let model = ConditionHolder.array([
             .logicalOp(.or),
             .array([.logicalOp(.and),
-                    .audienceId("11111"),
+                    .leaf(.audienceId("11111")),
                     .array([.logicalOp(.or),
-                            .audienceId("22222"),
-                            .audienceId("33333")])]),
+                            .leaf(.audienceId("22222")),
+                            .leaf(.audienceId("33333"))])]),
             .array([.logicalOp(.or),
                     .array([.logicalOp(.and),
-                            .audienceId("44444"),
-                            .audienceId("55555")]),
+                            .leaf(.audienceId("44444")),
+                            .leaf(.audienceId("55555"))]),
                     .array([.logicalOp(.not),
-                            .audienceId("66666")])])
+                            .leaf(.audienceId("66666"))])])
             ])
         XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
@@ -148,4 +148,21 @@ extension DataModelConditionHolderTestsEvaluate {
         XCTAssertFalse(model.evaluate(project: project, attributes: attributeData)!)
     }
 
+}
+
+// MARK: - And/Not/Or
+
+extension DataModelConditionHolderTestsEvaluate {
+
+    func testAndEvaluate() {
+        
+    }
+    
+    func testOrEvaluate() {
+        
+    }
+    
+    func testNotEvaluate() {
+        
+    }
 }

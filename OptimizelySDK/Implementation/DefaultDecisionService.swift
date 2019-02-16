@@ -97,7 +97,7 @@ class DefaultDecisionService : OPTDecisionService {
             var holder = [ConditionHolder]()
             holder.append(.logicalOp(.or))
             for id in experiment.audienceIds {
-                holder.append(.audienceId(id))
+              holder.append(.leaf(.audienceId(id)))
             }
             return holder.evaluate(project: config.project, attributes: attributes)
         }

@@ -84,8 +84,10 @@ enum AttributeValue: Codable, Equatable {
 
 extension AttributeValue {
     
-    func isExactMatch(with target: Any?) -> Bool? {
-        guard let targetValue = AttributeValue(value: target) else { return nil }
+    func isExactMatch(with target: Any?) throws -> Bool {
+        guard let targetValue = AttributeValue(value: target) else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
         
         // same type and same value
         if self == targetValue {
@@ -100,30 +102,46 @@ extension AttributeValue {
         return false
     }
 
-    func isSubstring(of target: Any?) -> Bool? {
-        guard case .string(let value) = self else { return nil }
+    func isSubstring(of target: Any?) throws -> Bool {
+        guard case .string(let value) = self else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
         
-        guard let target = target as? String else { return nil  }
+        guard let target = target as? String else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
         
         return target.contains(value)
     }
     
-    func isGreater(than target: Any?) -> Bool? {
-        guard let targetValue = AttributeValue(value: target) else { return nil }
+    func isGreater(than target: Any?) throws -> Bool {
+        guard let targetValue = AttributeValue(value: target) else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
         
-        guard let currentDouble = self.doubleValue else { return nil }
+        guard let currentDouble = self.doubleValue else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
         
-        guard let targetDouble = targetValue.doubleValue else { return nil }
+        guard let targetDouble = targetValue.doubleValue else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
         
         return currentDouble > targetDouble
     }
     
-    func isLess(than target: Any?) -> Bool? {
-        guard let targetValue = AttributeValue(value: target) else { return nil }
+    func isLess(than target: Any?) throws -> Bool {
+        guard let targetValue = AttributeValue(value: target) else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
         
-        guard let currentDouble = self.doubleValue else { return nil }
+        guard let currentDouble = self.doubleValue else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
         
-        guard let targetDouble = targetValue.doubleValue else { return nil }
+        guard let targetDouble = targetValue.doubleValue else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
         
         return currentDouble < targetDouble
     }

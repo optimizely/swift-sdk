@@ -39,12 +39,12 @@ enum ConditionLeaf: Codable, Equatable {
         }
     }
     
-    func evaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
+    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
         switch self {
         case .audienceId(let id):
-            return project.evaluateAudience(audienceId: id, attributes: attributes)
+            return try project.evaluateAudience(audienceId: id, attributes: attributes)
         case .attribute(let userAttribute):
-            return userAttribute.evaluate(attributes: attributes)
+            return try userAttribute.evaluate(attributes: attributes)
         }
     }
     

@@ -9,7 +9,7 @@
 import Foundation
 
 protocol ProjectProtocol {
-    func evaluateAudience(audienceId: String, attributes: [String: Any]) -> Bool?
+    func evaluateAudience(audienceId: String, attributes: [String: Any]) throws -> Bool
 }
 
 struct Project: Codable, Equatable {
@@ -37,13 +37,15 @@ struct Project: Codable, Equatable {
 
 extension Project: ProjectProtocol {
     
-    func evaluateAudience(audienceId: String, attributes: [String: Any]) -> Bool? {
+    func evaluateAudience(audienceId: String, attributes: [String: Any]) throws -> Bool {
         let audienceMatch = typedAudiences.filter{$0.id == audienceId}.first ??
                             audiences.filter{$0.id == audienceId}.first
         
-        guard let audience = audienceMatch else { return nil }
+        guard let audience = audienceMatch else {
+            throw OptimizelyError.conditionNoMatchingAudience(audienceId)
+        }
         
-        return audience.evaluate(project: self, attributes: attributes)
+        return try audience.evaluate(project: self, attributes: attributes)
     }
     
 }

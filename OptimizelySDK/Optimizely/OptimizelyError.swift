@@ -38,6 +38,12 @@ public enum OptimizelyError: Error {
     case trafficAllocationUnknown
     case eventNotAssociatedToExperiment(_ key: String)
 
+    // MARK: - Audience Conditions
+    
+    case conditionNoMatchingAudience(_ hint: String)
+    case conditionInvalidValueType(_ hint: String)
+    case conditionInvalidFormat(_ hint: String)
+    
     // MARK: - Bucketing
     
     case userIdInvalid

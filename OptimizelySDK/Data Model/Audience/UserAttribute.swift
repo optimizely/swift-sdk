@@ -22,27 +22,26 @@ struct UserAttribute: Codable, Equatable {
     var match: String?
     var value: AttributeValue
     
-    // TODO: "do we need optional here?"
-    func evaluate(attributes: [String: Any]) -> Bool? {
+    func evaluate(attributes: [String: Any]) throws -> Bool {
         let attributeValue = attributes[name]
         
         switch match {
         case "exists":
             return attributeValue != nil
         case "exact":
-            return value.isExactMatch(with: attributeValue)
+            return try value.isExactMatch(with: attributeValue)
         case "substring":
-            return value.isSubstring(of: attributeValue)
+            return try value.isSubstring(of: attributeValue)
         case "lt":
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
-            return value.isGreater(than: attributeValue)
+            return try value.isGreater(than: attributeValue)
         case "gt":
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
-            return value.isLess(than: attributeValue)
+            return try value.isLess(than: attributeValue)
         default:
-            return value.isExactMatch(with: attributeValue)
+            return try value.isExactMatch(with: attributeValue)
         }
     }
     

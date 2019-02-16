@@ -61,57 +61,66 @@ enum ConditionHolder: Codable, Equatable {
         }
     }
     
-    func evaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
+    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
         switch self {
         case .logicalOp:
-            return nil   // invalid
+            throw OptimizelyError.conditionInvalidFormat("logical op not evaluated")
         case .leaf(let conditionLeaf):
-            return conditionLeaf.evaluate(project: project, attributes: attributes)
+            return try conditionLeaf.evaluate(project: project, attributes: attributes)
         case .array(let conditions):
-            return conditions.evaluate(project: project, attributes: attributes)
+            return try conditions.evaluate(project: project, attributes: attributes)
         }
     }
 }
 
 extension Array where Element == ConditionHolder {
     
-    func evaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
-        guard self.count > 0 else { return nil }
+    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+        guard self.count > 0 else {
+            throw OptimizelyError.conditionInvalidFormat("empty condition array")
+        }
         
         let firstItem = self.first!
         
         switch firstItem {
         case .logicalOp(let op):
-            return evaluate(op: op, project: project, attributes: attributes)
+            return try evaluate(op: op, project: project, attributes: attributes)
         case .leaf:
             // special case - array has a single ConditionLeaf
-            guard self.count == 1 else { return nil }
-            return firstItem.evaluate(project: project, attributes: attributes)
+            guard self.count == 1 else {
+                throw OptimizelyError.conditionInvalidFormat("invalid condition array format")
+            }
+            
+            return try firstItem.evaluate(project: project, attributes: attributes)
         default:
-            // invalid first item
-            return nil
+            throw OptimizelyError.conditionInvalidFormat("invalid first item")
         }
     }
     
-    func evaluate(op: LogicalOp, project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
-        guard self.count > 1 else { return nil }
-        
-        let eval = { (idx: Int) -> Bool? in
-            return self[idx].evaluate(project: project, attributes: attributes)
+    func evaluate(op: LogicalOp, project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+        guard self.count > 1 else {
+            throw OptimizelyError.conditionInvalidFormat("not enough items for logical op")
         }
         
+        let eval = { (idx: Int) -> Bool? in
+            do {
+                return try self[idx].evaluate(project: project, attributes: attributes)
+            } catch {
+                return nil
+            }
+        }
         
         switch op {
         case .and:
-            return andEvaluate(eval)
+            return try andEvaluate(eval)
         case .or:
-            return orEvaluate(eval)
+            return try orEvaluate(eval)
         case .not:
-            return notEvaluate(eval)
+            return try notEvaluate(eval)
         }
     }
     
-    func orEvaluate(_ eval: (Int) -> Bool?) -> Bool? {
+    func orEvaluate(_ eval: (Int) -> Bool?) throws -> Bool {
         var foundNil = false
         
         for i in 1..<self.count {
@@ -124,29 +133,33 @@ extension Array where Element == ConditionHolder {
             }
         }
         
-        return foundNil ? nil : false
+        if foundNil {
+            throw OptimizelyError.conditionInvalidFormat("logical OR with invalid items")
+        }
+        
+        return false
     }
     
-    func andEvaluate(_ eval: (Int) -> Bool?) -> Bool? {
+    func andEvaluate(_ eval: (Int) -> Bool?) throws -> Bool {
         for i in 1..<self.count {
             if let result = eval(i) {
                 if result == false {
                     return false
                 }
             } else {
-                return nil
+                throw OptimizelyError.conditionInvalidFormat("logical AND with an invalid item")
             }
         }
         
         return true
     }
     
-    func notEvaluate(_ eval: (Int) -> Bool?) -> Bool? {
+    func notEvaluate(_ eval: (Int) -> Bool?) throws -> Bool {
         if let result = eval(1) {
             return !result
         }
         
-        return nil
+        throw OptimizelyError.conditionInvalidFormat("logical AND with an invalid item")
     }
 
 }

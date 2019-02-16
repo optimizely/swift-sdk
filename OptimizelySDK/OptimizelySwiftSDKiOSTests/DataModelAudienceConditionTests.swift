@@ -70,29 +70,32 @@ import XCTest
  
  // [and/or/not, UserAttribute, [and/or/not, UserAttribute]]
  
- A.UA.AI = ["and", UA, AI]
- A.UA.OI = ["and", UA, OI]
- A.UA.NI = ["and", UA, NI]
- O.UA.AI = ["or", UA, AI]
- O.UA.OI = ["or", UA, OI]
- O.UA.NI = ["or", UA, NI]
+ A.I.AII = ["and", I, AII]
+ A.I.OII = ["and", I, OII]
+ A.I.NI = ["and", I, NI]
+ O.I.AII = ["or", I, AII]
+ O.I.OII = ["or", I, OII]
+ O.I.NI = ["or", I, NI]
  
- A.AI.UA = ["and", AI, UA]
- A.OI.UA = ["and", OI, UA]
- A.NI.UA = ["and", NI, UA]
- O.AI.UA = ["or", AI, UA]
- O.OI.UA = ["or", OI, UA]
- O.NI.UA = ["or", NI, UA]
+ A.AII.I = ["and", AII, I]
+ A.OII.I = ["and", OII, I]
+ A.NI.I = ["and", NI, I]
+ O.AII.I = ["or", AII, I]
+ O.OII.I = ["or", OII, I]
+ O.NI.I = ["or", NI, I]
  
  // [and/or/not, [and/or/not, UserAttribute, [and/or/not, UserAttribute], [and/or/not, UserAttribute]]
  
- Complex1 = ["and", A.UA.AI, AI]
- Complex2 = ["or", A.UA.AI, O.UA.AI]
+ Complex1 = ["and", A.I.AII, AI]
+ Complex2 = ["or", A.I.OII, O.AII.NI]
  
  */
 
 
 class DataModelAudienceConditionTests: XCTestCase {
+    
+    let config = ProjectConfig()
+    let attributes = ["age": 30]
     
     // MARK: - Decode
     
@@ -139,6 +142,70 @@ class DataModelAudienceConditionTests: XCTestCase {
             .audienceId("12345")]
             ))
     }
+    
+    func testDecode_A_AI() {
+        let model: AudienceCondition = jsonDecodeFromDict(["and", ["and", "12345"]])
+        XCTAssert(model == AudienceCondition.array([
+            .logicalOp(.and),
+            .array([.logicalOp(.and),
+                    .audienceId("12345")])
+            ]))
+    }
+
+    func testDecode_A_OI() {
+        let model: AudienceCondition = jsonDecodeFromDict(["and", ["or", "12345"]])
+        XCTAssert(model == AudienceCondition.array([
+            .logicalOp(.and),
+            .array([.logicalOp(.or),
+                    .audienceId("12345")])
+            ]))
+    }
+
+    func testDecode_A_NI() {
+        let model: AudienceCondition = jsonDecodeFromDict(["and", ["not", "12345"]])
+        XCTAssert(model == AudienceCondition.array([
+            .logicalOp(.and),
+            .array([.logicalOp(.not),
+                    .audienceId("12345")])
+            ]))
+    }
+    
+    func testDecode_A_I_AII() {
+        let model: AudienceCondition = jsonDecodeFromDict(["and",
+                                                           "12345",
+                                                           ["and", "33333", "44444"]])
+        XCTAssert(model == AudienceCondition.array([
+            .logicalOp(.and),
+            .audienceId("12345"),
+            .array([.logicalOp(.and),
+                    .audienceId("33333"),
+                    .audienceId("44444")])
+            ]))
+    }
+    
+    func testDecode_O__A_I_OII__O_AII_NI() {
+        let model: AudienceCondition = jsonDecodeFromDict(["or",
+                                                           ["and",
+                                                            "11111",
+                                                            ["or", "22222", "33333"]],
+                                                           ["or",
+                                                            ["and", "44444", "55555"],
+                                                            ["not", "66666"]]])
+        XCTAssert(model == AudienceCondition.array([
+            .logicalOp(.or),
+            .array([.logicalOp(.and),
+                    .audienceId("11111"),
+                    .array([.logicalOp(.or),
+                            .audienceId("22222"),
+                            .audienceId("33333")])]),
+            .array([.logicalOp(.or),
+                    .array([.logicalOp(.and),
+                            .audienceId("44444"),
+                            .audienceId("55555")]),
+                    .array([.logicalOp(.not),
+                            .audienceId("66666")])])
+            ]))
+    }
 }
 
 // MARK: - Encode
@@ -148,10 +215,9 @@ extension DataModelAudienceConditionTests {
         let modelGiven = AudienceCondition.array([
             .logicalOp(.and),
             .audienceId("12345"),
-            .array([
-                .logicalOp(.or),
-                .audienceId("67890"),
-                .audienceId("55555")])
+            .array([.logicalOp(.or),
+                    .audienceId("67890"),
+                    .audienceId("55555")])
             ])
         XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
     }

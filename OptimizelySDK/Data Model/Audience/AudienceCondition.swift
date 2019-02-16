@@ -59,12 +59,20 @@ enum AudienceCondition: Codable, Equatable {
             return nil   // invalid
         case .audienceId(let id):
             
+            /*
             let audienceMatch = projectConfig.project.typedAudiences.filter{$0.id == id}.first ??
                 projectConfig.project.audiences.filter{$0.id == id}.first
             
             guard let audience = audienceMatch else { return nil }
             
             return audience.conditions.evaluate(projectConfig: projectConfig, attributes: attributes)
+            */
+            
+            let intId = Int(id)!
+            return intId < 20000
+            
+            
+            
         case .array(let conditions):
             return conditions.evaluate(config: projectConfig, attributes: attributes)
         }
@@ -79,11 +87,11 @@ extension Array where Element == AudienceCondition {
         let firstItem = self.first!
         
         switch firstItem {
+        case .logicalOp(let op):
+            return evaluate(op: op, config: config, attributes: attributes)
         case .audienceId:
             guard self.count == 1 else { return nil }
             return firstItem.evaluate(projectConfig: config, attributes: attributes)
-        case .logicalOp(let op):
-            return evaluate(op: op, config: config, attributes: attributes)
         default:
             return nil    // invalid first item
         }

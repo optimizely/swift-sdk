@@ -56,7 +56,7 @@ struct Audience: Codable, Equatable {
         try container.encode(conditions, forKey: .conditions)
     }
     
-    func evaluate(attributes: [String: Any]) -> Bool? {
-        return conditions.evaluate(attributes: attributes)
+    func evaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
+        return conditions.evaluate(project: project, attributes: attributes)
     }
 }

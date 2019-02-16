@@ -8,6 +8,9 @@
 
 import XCTest
 
+
+// MARK: - Evaluate (AudienceIds)
+
 class DataModelConditionHolderTestsEvaluate: XCTestCase {
 
     struct ProjectMock: ProjectProtocol {
@@ -17,28 +20,30 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
     }
     
     var project = ProjectMock()
-    let attributes = ["age": 30]
-    
-    // MARK: - Decode
-    
+    let attributeData = ["age": 30]
+    let userAttributeData: [String: Any] = ["name":"age",
+                                            "type":"custom_attribute",
+                                            "match":"gt",
+                                            "value":20]
+
     func testEvaluate_I() {
         let model = ConditionHolder.audienceId("11111")
-        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
     
     func testEvaluate_A() {
         let model = ConditionHolder.logicalOp(.and)
-        XCTAssertNil(model.evaluate(project: project, attributes: attributes))
+        XCTAssertNil(model.evaluate(project: project, attributes: attributeData))
     }
     
     func testEvaluate_O() {
         let model = ConditionHolder.logicalOp(.or)
-        XCTAssertNil(model.evaluate(project: project, attributes: attributes))
+        XCTAssertNil(model.evaluate(project: project, attributes: attributeData))
     }
     
     func testEvaluate_N() {
         let model = ConditionHolder.logicalOp(.not)
-        XCTAssertNil(model.evaluate(project: project, attributes: attributes))
+        XCTAssertNil(model.evaluate(project: project, attributes: attributeData))
     }
     
     func testEvaluate_AI() {
@@ -46,7 +51,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
             .logicalOp(.and),
             .audienceId("11111")]
             )
-        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
     
     func testEvaluate_OI() {
@@ -54,7 +59,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
             .logicalOp(.or),
             .audienceId("11111")]
         )
-        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
     
     func testEvaluate_NI() {
@@ -62,7 +67,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
             .logicalOp(.not),
             .audienceId("11111")]
         )
-        XCTAssertFalse(model.evaluate(project: project, attributes: attributes)!)
+        XCTAssertFalse(model.evaluate(project: project, attributes: attributeData)!)
     }
     
     func testEvaluate_A_AI() {
@@ -71,7 +76,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
             .array([.logicalOp(.and),
                     .audienceId("11111")])
             ])
-        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
     
     func testEvaluate_A_OI() {
@@ -80,7 +85,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
             .array([.logicalOp(.or),
                     .audienceId("11111")])
             ])
-        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
     
     func testEvaluate_A_NI() {
@@ -89,7 +94,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
             .array([.logicalOp(.not),
                     .audienceId("11111")])
             ])
-        XCTAssertFalse(model.evaluate(project: project, attributes: attributes)!)
+        XCTAssertFalse(model.evaluate(project: project, attributes: attributeData)!)
     }
     
     func testEvaluate_A_I_AII() {
@@ -100,7 +105,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
                     .audienceId("33333"),
                     .audienceId("44444")])
             ])
-        XCTAssertFalse(model.evaluate(project: project, attributes: attributes)!)
+        XCTAssertFalse(model.evaluate(project: project, attributes: attributeData)!)
     }
     
     func testEvaluate_O__A_I_OII__O_AII_NI() {
@@ -118,7 +123,29 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
                     .array([.logicalOp(.not),
                             .audienceId("66666")])])
             ])
-        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
     }
     
+}
+
+
+// MARK: - Evaluate (UserAttributes)
+
+extension DataModelConditionHolderTestsEvaluate {
+
+    func testEvaluate_U() {
+        let model: ConditionHolder = jsonDecodeFromDict(userAttributeData)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
+    }
+
+    func testEvaluate_AU() {
+        let model: ConditionHolder = jsonDecodeFromDict(["and", userAttributeData])
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributeData)!)
+    }
+
+    func testEvaluate_NU() {
+        let model: ConditionHolder = jsonDecodeFromDict(["not", userAttributeData])
+        XCTAssertFalse(model.evaluate(project: project, attributes: attributeData)!)
+    }
+
 }

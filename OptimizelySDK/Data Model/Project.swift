@@ -43,7 +43,7 @@ extension Project: ProjectProtocol {
         
         guard let audience = audienceMatch else { return nil }
         
-        return audience.evaluate(attributes: attributes)
+        return audience.evaluate(project: self, attributes: attributes)
     }
     
 }

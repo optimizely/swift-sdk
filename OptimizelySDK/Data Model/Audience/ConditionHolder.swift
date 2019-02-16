@@ -25,6 +25,7 @@ enum LogicalOp: String, Codable {
 enum ConditionHolder: Codable, Equatable {
     case logicalOp(LogicalOp)
     case audienceId(String)
+    case attribute(UserAttribute)
     case array([ConditionHolder])
     
     init(from decoder: Decoder) throws {
@@ -36,6 +37,11 @@ enum ConditionHolder: Codable, Equatable {
             
             if let value = try? container.decode(String.self) {
                 self = .audienceId(value)
+                return
+            }
+            
+            if let value = try? container.decode(UserAttribute.self) {
+                self = .attribute(value)
                 return
             }
             
@@ -56,14 +62,11 @@ enum ConditionHolder: Codable, Equatable {
             try? container.encode(op)
         case .audienceId(let id):
             try? container.encode(id)
+        case .attribute(let userAttribute):
+            try? container.encode(userAttribute)
         case .array(let conditions):
             try? container.encode(conditions)
         }
-    }
-    
-    func evaluate(attributes: [String: Any]) -> Bool? {
-        
-        return nil
     }
     
     func evaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
@@ -72,6 +75,8 @@ enum ConditionHolder: Codable, Equatable {
             return nil   // invalid
         case .audienceId(let id):
             return project.evaluateAudience(audienceId: id, attributes: attributes)
+        case .attribute(let userAttribute):
+            return userAttribute.evaluate(attributes: attributes)
         case .array(let conditions):
             return conditions.evaluate(project: project, attributes: attributes)
         }
@@ -88,7 +93,8 @@ extension Array where Element == ConditionHolder {
         switch firstItem {
         case .logicalOp(let op):
             return evaluate(op: op, project: project, attributes: attributes)
-        case .audienceId:
+        case .audienceId,
+             .attribute:
             guard self.count == 1 else { return nil }
             return firstItem.evaluate(project: project, attributes: attributes)
         default:
@@ -127,8 +133,6 @@ extension Array where Element == ConditionHolder {
     }
     
     func andEvaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
-        var foundNil = false
-        
         for i in 1..<self.count {
             let condition = self[i]
             if let result = condition.evaluate(project: project, attributes: attributes) {
@@ -136,16 +140,16 @@ extension Array where Element == ConditionHolder {
                     return false
                 }
             } else {
-                foundNil = true
+                return nil
             }
         }
         
-        return foundNil ? nil : true
+        return true
     }
     
     func notEvaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
         let condition = self[1]
-        
+                
         if let result = condition.evaluate(project: project, attributes: attributes) {
             return !result
         }

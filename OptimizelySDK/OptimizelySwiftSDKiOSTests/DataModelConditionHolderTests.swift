@@ -92,14 +92,19 @@ import XCTest
  */
 
 
+// MARK: - Decode (AudienceIds)
+
 class DataModelConditionHolderTests: XCTestCase {
     
     let config = ProjectConfig()
-    let attributes = ["age": 30]
-    
-    // MARK: - Decode
+    let attributeData = ["age": 30]
+    let userAttributeData: [String: Any] = ["name":"age",
+                                            "type":"custom_attribute",
+                                            "match":"exact",
+                                            "value":30]
     
     func testDecode_I() {
+        // JSON does not support raw string (so use array of string)
         let model: [ConditionHolder] = jsonDecodeFromDict(["12345"])
         XCTAssert(model[0] == ConditionHolder.audienceId("12345"))
     }
@@ -206,6 +211,25 @@ class DataModelConditionHolderTests: XCTestCase {
                             .audienceId("66666")])])
             ]))
     }
+}
+
+// MARK: - Decode (UserAttributes)
+
+extension DataModelConditionHolderTests {
+    
+    func testDecode_U() {
+        let model: ConditionHolder = jsonDecodeFromDict(userAttributeData)
+        XCTAssert(model == ConditionHolder.attribute(jsonDecodeFromDict(userAttributeData)))
+    }
+    
+    func testDecode_AU() {
+        let model: ConditionHolder = jsonDecodeFromDict(["and", userAttributeData])
+        XCTAssert(model == ConditionHolder.array([
+            .logicalOp(.and),
+            .attribute(jsonDecodeFromDict(userAttributeData))]
+            ))
+    }
+    
 }
 
 // MARK: - Encode

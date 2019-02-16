@@ -491,9 +491,9 @@
 			isa = PBXGroup;
 			children = (
 				0B7CB10321AE053A007B77E5 /* Audience.swift */,
+				0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */,
 				0B7CB11821AF753D007B77E5 /* UserAttribute.swift */,
 				6E4F0D7822133C5A00DD13A5 /* AttributeValue.swift */,
-				0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */,
 			);
 			path = Audience;
 			sourceTree = "<group>";

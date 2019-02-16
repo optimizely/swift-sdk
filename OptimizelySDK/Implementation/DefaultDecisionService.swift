@@ -95,9 +95,9 @@ class DefaultDecisionService : OPTDecisionService {
         }
         else if experiment.audienceIds.count > 0 {
             var holder = [ConditionHolder]()
-            holder.append(ConditionHolder.string("or"))
-            for audienceId in experiment.audienceIds {
-                holder.append(ConditionHolder.string(audienceId))
+            holder.append(.logicalOp(.or))
+            for id in experiment.audienceIds {
+                holder.append(.audienceId(id))
             }
             return holder.evaluate(config: config, attributes: attributes)
         }

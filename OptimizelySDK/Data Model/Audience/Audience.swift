@@ -55,4 +55,8 @@ struct Audience: Codable, Equatable {
         try container.encode(name, forKey: .name)
         try container.encode(conditions, forKey: .conditions)
     }
+    
+    func evaluate(attributes: [String: Any]) -> Bool? {
+        return conditions.evaluate(attributes: attributes)
+    }
 }

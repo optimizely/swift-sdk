@@ -96,23 +96,27 @@ extension Array where Element == ConditionHolder {
     func evaluate(op: LogicalOp, project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
         guard self.count > 1 else { return nil }
         
+        let eval = { (idx: Int) -> Bool? in
+            return self[idx].evaluate(project: project, attributes: attributes)
+        }
+        
+        
         switch op {
         case .and:
-            return andEvaluate(project: project, attributes: attributes)
+            return andEvaluate(eval)
         case .or:
-            return orEvaluate(project: project, attributes: attributes)
+            return orEvaluate(eval)
         case .not:
-            return notEvaluate(project: project, attributes: attributes)
+            return notEvaluate(eval)
         }
     }
     
-    func orEvaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
+    func orEvaluate(_ eval: (Int) -> Bool?) -> Bool? {
         var foundNil = false
         
         for i in 1..<self.count {
-            let condition = self[i]
-            if let result = condition.evaluate(project: project, attributes: attributes) {
-                if result == true {
+            if let result = eval(i) {
+                if result {
                     return true
                 }
             } else {
@@ -123,10 +127,9 @@ extension Array where Element == ConditionHolder {
         return foundNil ? nil : false
     }
     
-    func andEvaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
+    func andEvaluate(_ eval: (Int) -> Bool?) -> Bool? {
         for i in 1..<self.count {
-            let condition = self[i]
-            if let result = condition.evaluate(project: project, attributes: attributes) {
+            if let result = eval(i) {
                 if result == false {
                     return false
                 }
@@ -138,14 +141,12 @@ extension Array where Element == ConditionHolder {
         return true
     }
     
-    func notEvaluate(project: ProjectProtocol, attributes: [String: Any]) -> Bool? {
-        let condition = self[1]
-                
-        if let result = condition.evaluate(project: project, attributes: attributes) {
+    func notEvaluate(_ eval: (Int) -> Bool?) -> Bool? {
+        if let result = eval(1) {
             return !result
         }
         
         return nil
     }
-    
+
 }

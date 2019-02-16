@@ -33,7 +33,7 @@ public enum OptimizelyError: Error {
     case groupHasNoTrafficAllocation(_ key: String)
     case rolloutKeyInvalid(_ key: String)
     case rolloutUnknown
-
+    
     case trafficAllocationNotInRange
     case trafficAllocationUnknown
     case eventNotAssociatedToExperiment(_ key: String)

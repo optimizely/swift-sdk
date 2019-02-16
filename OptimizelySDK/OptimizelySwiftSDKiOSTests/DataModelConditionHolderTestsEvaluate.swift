@@ -128,7 +128,6 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
     
 }
 
-
 // MARK: - Evaluate (UserAttributes)
 
 extension DataModelConditionHolderTestsEvaluate {
@@ -155,7 +154,21 @@ extension DataModelConditionHolderTestsEvaluate {
 extension DataModelConditionHolderTestsEvaluate {
 
     func testAndEvaluate() {
+        let model = [ConditionHolder](repeating: ConditionHolder.logicalOp(.and), count: 3)
+        var result = model.andEvaluate { return [nil, true, true][$0] }
+        XCTAssertTrue(result!)
         
+        result = model.andEvaluate { return [nil, false, true][$0] }
+        XCTAssertFalse(result!)
+
+        result = model.andEvaluate { return [nil, true, false][$0] }
+        XCTAssertFalse(result!)
+
+        result = model.andEvaluate { return [nil, nil, true][$0] }
+        XCTAssertNil(result)
+
+        result = model.andEvaluate { return [nil, true, nil][$0] }
+        XCTAssertNil(result)
     }
     
     func testOrEvaluate() {

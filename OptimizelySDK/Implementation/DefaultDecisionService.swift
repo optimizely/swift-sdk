@@ -91,7 +91,7 @@ class DefaultDecisionService : OPTDecisionService {
     
     func isInExperiment(experiment:Experiment, userId:String, attributes:Dictionary<String, Any>) -> Bool? {
         if let _ = experiment.audienceConditions {
-            return experiment.audienceConditions?.evaluate(projectConfig: config, attributes: attributes)
+            return experiment.audienceConditions?.evaluate(project: config.project, attributes: attributes)
         }
         else if experiment.audienceIds.count > 0 {
             var holder = [ConditionHolder]()
@@ -99,7 +99,7 @@ class DefaultDecisionService : OPTDecisionService {
             for id in experiment.audienceIds {
                 holder.append(.audienceId(id))
             }
-            return holder.evaluate(config: config, attributes: attributes)
+            return holder.evaluate(project: config.project, attributes: attributes)
         }
         
         return true

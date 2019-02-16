@@ -8,6 +8,10 @@
 
 import Foundation
 
+protocol ProjectProtocol {
+    func evaluateAudience(audienceId: String, attributes: [String: Any]) -> Bool?
+}
+
 struct Project: Codable, Equatable {
     
     // V2
@@ -28,5 +32,18 @@ struct Project: Codable, Equatable {
     var typedAudiences: [Audience]
     var featureFlags: [FeatureFlag]
     var botFiltering: Bool
+    
+}
+
+extension Project: ProjectProtocol {
+    
+    func evaluateAudience(audienceId: String, attributes: [String: Any]) -> Bool? {
+        let audienceMatch = typedAudiences.filter{$0.id == audienceId}.first ??
+                            audiences.filter{$0.id == audienceId}.first
+        
+        guard let audience = audienceMatch else { return nil }
+        
+        return audience.evaluate(attributes: attributes)
+    }
     
 }

@@ -10,91 +10,97 @@ import XCTest
 
 class DataModelConditionHolderTestsEvaluate: XCTestCase {
 
-    var config = ProjectConfig()
+    struct ProjectMock: ProjectProtocol {
+        func evaluateAudience(audienceId: String, attributes: [String : Any]) -> Bool? {
+            return Int(audienceId)! < 20000
+        }
+    }
+    
+    var project = ProjectMock()
     let attributes = ["age": 30]
     
     // MARK: - Decode
     
     func testEvaluate_I() {
-        let model = ConditionHolder.audienceId("12345")
-        XCTAssertTrue(model.evaluate(projectConfig: config, attributes: attributes)!)
+        let model = ConditionHolder.audienceId("11111")
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
     }
     
     func testEvaluate_A() {
         let model = ConditionHolder.logicalOp(.and)
-        XCTAssertNil(model.evaluate(projectConfig: config, attributes: attributes))
+        XCTAssertNil(model.evaluate(project: project, attributes: attributes))
     }
     
     func testEvaluate_O() {
         let model = ConditionHolder.logicalOp(.or)
-        XCTAssertNil(model.evaluate(projectConfig: config, attributes: attributes))
+        XCTAssertNil(model.evaluate(project: project, attributes: attributes))
     }
     
     func testEvaluate_N() {
         let model = ConditionHolder.logicalOp(.not)
-        XCTAssertNil(model.evaluate(projectConfig: config, attributes: attributes))
+        XCTAssertNil(model.evaluate(project: project, attributes: attributes))
     }
     
     func testEvaluate_AI() {
         let model = ConditionHolder.array([
             .logicalOp(.and),
-            .audienceId("12345")]
+            .audienceId("11111")]
             )
-        XCTAssertTrue(model.evaluate(projectConfig: config, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
     }
     
     func testEvaluate_OI() {
         let model = ConditionHolder.array([
             .logicalOp(.or),
-            .audienceId("12345")]
+            .audienceId("11111")]
         )
-        XCTAssertTrue(model.evaluate(projectConfig: config, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
     }
     
     func testEvaluate_NI() {
         let model = ConditionHolder.array([
             .logicalOp(.not),
-            .audienceId("12345")]
+            .audienceId("11111")]
         )
-        XCTAssertFalse(model.evaluate(projectConfig: config, attributes: attributes)!)
+        XCTAssertFalse(model.evaluate(project: project, attributes: attributes)!)
     }
     
     func testEvaluate_A_AI() {
         let model = ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.and),
-                    .audienceId("12345")])
+                    .audienceId("11111")])
             ])
-        XCTAssertTrue(model.evaluate(projectConfig: config, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
     }
     
     func testEvaluate_A_OI() {
         let model = ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.or),
-                    .audienceId("12345")])
+                    .audienceId("11111")])
             ])
-        XCTAssertTrue(model.evaluate(projectConfig: config, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
     }
     
     func testEvaluate_A_NI() {
         let model = ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.not),
-                    .audienceId("12345")])
+                    .audienceId("11111")])
             ])
-        XCTAssertFalse(model.evaluate(projectConfig: config, attributes: attributes)!)
+        XCTAssertFalse(model.evaluate(project: project, attributes: attributes)!)
     }
     
     func testEvaluate_A_I_AII() {
         let model = ConditionHolder.array([
             .logicalOp(.and),
-            .audienceId("12345"),
+            .audienceId("11111"),
             .array([.logicalOp(.and),
                     .audienceId("33333"),
                     .audienceId("44444")])
             ])
-        XCTAssertFalse(model.evaluate(projectConfig: config, attributes: attributes)!)
+        XCTAssertFalse(model.evaluate(project: project, attributes: attributes)!)
     }
     
     func testEvaluate_O__A_I_OII__O_AII_NI() {
@@ -112,7 +118,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
                     .array([.logicalOp(.not),
                             .audienceId("66666")])])
             ])
-        XCTAssertTrue(model.evaluate(projectConfig: config, attributes: attributes)!)
+        XCTAssertTrue(model.evaluate(project: project, attributes: attributes)!)
     }
     
 }

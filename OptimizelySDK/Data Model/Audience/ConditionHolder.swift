@@ -53,11 +53,11 @@ enum ConditionHolder: Codable, Equatable {
         
         switch self {
         case .logicalOp(let op):
-            try? container.encode(op)
+            try container.encode(op)
         case .leaf(let conditionLeaf):
-            try? container.encode(conditionLeaf)
+            try container.encode(conditionLeaf)
         case .array(let conditions):
-            try? container.encode(conditions)
+            try container.encode(conditions)
         }
     }
     

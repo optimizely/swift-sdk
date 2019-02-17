@@ -33,9 +33,9 @@ enum ConditionLeaf: Codable, Equatable {
         
         switch self {
         case .audienceId(let id):
-            try? container.encode(id)
+            try container.encode(id)
         case .attribute(let userAttribute):
-            try? container.encode(userAttribute)
+            try container.encode(userAttribute)
         }
     }
     

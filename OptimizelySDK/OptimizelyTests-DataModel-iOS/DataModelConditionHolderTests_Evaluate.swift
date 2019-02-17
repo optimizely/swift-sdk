@@ -1,5 +1,5 @@
 //
-//  DataModelConditionHolderTestsEvaluate.swift
+//  DataModelConditionHolderTests_Evaluate.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/15/19.
@@ -11,7 +11,7 @@ import XCTest
 
 // MARK: - Evaluate (AudienceIds)
 
-class DataModelConditionHolderTestsEvaluate: XCTestCase {
+class DataModelConditionHolderTests_Evaluate: XCTestCase {
 
     struct ProjectMock: ProjectProtocol {
         func evaluateAudience(audienceId: String, attributes: [String : Any]) throws -> Bool {
@@ -130,7 +130,7 @@ class DataModelConditionHolderTestsEvaluate: XCTestCase {
 
 // MARK: - Evaluate (UserAttributes)
 
-extension DataModelConditionHolderTestsEvaluate {
+extension DataModelConditionHolderTests_Evaluate {
 
     func testEvaluate_U() {
         let model: ConditionHolder = jsonDecodeFromDict(userAttributeData)
@@ -151,7 +151,7 @@ extension DataModelConditionHolderTestsEvaluate {
 
 // MARK: - And/Not/Or
 
-extension DataModelConditionHolderTestsEvaluate {
+extension DataModelConditionHolderTests_Evaluate {
 
     func testAndEvaluate() {
         let model = [ConditionHolder](repeating: ConditionHolder.logicalOp(.and), count: 3)

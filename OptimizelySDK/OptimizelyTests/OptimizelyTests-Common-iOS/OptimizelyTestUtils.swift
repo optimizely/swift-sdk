@@ -23,16 +23,16 @@ func getAttributeValueFromNative(_ value: Any) throws -> AttributeValue {
     return modelArray[0]
 }
 
-func jsonDataFromDict(_ raw: Any) -> Data {
+func jsonDataFromNative(_ raw: Any) -> Data {
     return try! JSONSerialization.data(withJSONObject: raw, options: [])
 }
 
-func jsonStringFromDict(_ raw: Any) -> String {
-    return String(data: jsonDataFromDict(raw), encoding: .utf8)!
+func jsonStringFromNative(_ raw: Any) -> String {
+    return String(data: jsonDataFromNative(raw), encoding: .utf8)!
 }
 
-func jsonDecodeFromDict<T: Codable>(_ raw: Any) -> T {
-    return try! JSONDecoder().decode(T.self, from: jsonDataFromDict(raw))
+func modelFromNative<T: Codable>(_ raw: Any) throws -> T {
+    return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
 }
 
 

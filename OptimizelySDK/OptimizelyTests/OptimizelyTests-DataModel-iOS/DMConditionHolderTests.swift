@@ -1,5 +1,5 @@
 //
-//  DataModelConditionHolderTests.swift
+//  DMConditionHolderTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/15/19.
@@ -92,40 +92,47 @@ import XCTest
  */
 
 
+// MARK: - Sample Data
+
+class DMConditionHolderTests: XCTestCase {
+    static var sampleData: [Any] = ["or", DMUserAttributeTests.sampleData]
+
+    func testDecodeSample() {
+        let model: ConditionHolder = try! modelFromNative(DMConditionHolderTests.sampleData)
+        let userAttribute: UserAttribute = try! modelFromNative(DMUserAttributeTests.sampleData)
+        
+        XCTAssert(model == ConditionHolder.array([
+            .logicalOp(.or),
+            .leaf(.attribute(userAttribute))]))
+    }
+}
+
 // MARK: - Decode (AudienceIds)
 
-class DataModelConditionHolderTests: XCTestCase {
-    
-    let config = ProjectConfig()
-    let attributeData = ["age": 30]
-    let userAttributeData: [String: Any] = ["name":"age",
-                                            "type":"custom_attribute",
-                                            "match":"exact",
-                                            "value":30]
-    
+extension DMConditionHolderTests {
     func testDecode_I() {
         // JSON does not support raw string (so use array of string)
-        let model: [ConditionHolder] = jsonDecodeFromDict(["11111"])
+        let model: [ConditionHolder] = try! modelFromNative(["11111"])
         XCTAssert(model[0] == ConditionHolder.leaf(.audienceId("11111")))
     }
     
     func testDecode_A() {
-        let model: [ConditionHolder] = jsonDecodeFromDict(["and"])
+        let model: [ConditionHolder] = try! modelFromNative(["and"])
         XCTAssert(model[0] == ConditionHolder.logicalOp(.and))
     }
 
     func testDecode_O() {
-        let model: [ConditionHolder] = jsonDecodeFromDict(["or"])
+        let model: [ConditionHolder] = try! modelFromNative(["or"])
         XCTAssert(model[0] == ConditionHolder.logicalOp(.or))
     }
 
     func testDecode_N() {
-        let model: [ConditionHolder] = jsonDecodeFromDict(["not"])
+        let model: [ConditionHolder] = try! modelFromNative(["not"])
         XCTAssert(model[0] == ConditionHolder.logicalOp(.not))
     }
 
     func testDecode_AI() {
-        let model: ConditionHolder = jsonDecodeFromDict(["and", "11111"])
+        let model: ConditionHolder = try! modelFromNative(["and", "11111"])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .leaf(.audienceId("11111"))]
@@ -133,7 +140,7 @@ class DataModelConditionHolderTests: XCTestCase {
     }
 
     func testDecode_OI() {
-        let model: ConditionHolder = jsonDecodeFromDict(["or", "11111"])
+        let model: ConditionHolder = try! modelFromNative(["or", "11111"])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.or),
             .leaf(.audienceId("11111"))]
@@ -141,7 +148,7 @@ class DataModelConditionHolderTests: XCTestCase {
     }
 
     func testDecode_NI() {
-        let model: ConditionHolder = jsonDecodeFromDict(["not", "11111"])
+        let model: ConditionHolder = try! modelFromNative(["not", "11111"])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.not),
             .leaf(.audienceId("11111"))]
@@ -149,7 +156,7 @@ class DataModelConditionHolderTests: XCTestCase {
     }
 
     func testDecode_A_AI() {
-        let model: ConditionHolder = jsonDecodeFromDict(["and", ["and", "11111"]])
+        let model: ConditionHolder = try! modelFromNative(["and", ["and", "11111"]])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.and),
@@ -158,7 +165,7 @@ class DataModelConditionHolderTests: XCTestCase {
     }
 
     func testDecode_A_OI() {
-        let model: ConditionHolder = jsonDecodeFromDict(["and", ["or", "11111"]])
+        let model: ConditionHolder = try! modelFromNative(["and", ["or", "11111"]])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.or),
@@ -167,7 +174,7 @@ class DataModelConditionHolderTests: XCTestCase {
     }
 
     func testDecode_A_NI() {
-        let model: ConditionHolder = jsonDecodeFromDict(["and", ["not", "11111"]])
+        let model: ConditionHolder = try! modelFromNative(["and", ["not", "11111"]])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.not),
@@ -176,7 +183,7 @@ class DataModelConditionHolderTests: XCTestCase {
     }
 
     func testDecode_A_I_AII() {
-        let model: ConditionHolder = jsonDecodeFromDict(["and",
+        let model: ConditionHolder = try! modelFromNative(["and",
                                                            "11111",
                                                            ["and", "33333", "44444"]])
         XCTAssert(model == ConditionHolder.array([
@@ -189,7 +196,7 @@ class DataModelConditionHolderTests: XCTestCase {
     }
 
     func testDecode_O__A_I_OII__O_AII_NI() {
-        let model: ConditionHolder = jsonDecodeFromDict(["or",
+        let model: ConditionHolder = try! modelFromNative(["or",
                                                            ["and",
                                                             "11111",
                                                             ["or", "22222", "33333"]],
@@ -215,17 +222,21 @@ class DataModelConditionHolderTests: XCTestCase {
 
 // MARK: - Decode (UserAttributes)
 
-extension DataModelConditionHolderTests {
+extension DMConditionHolderTests {
 
     func testDecode_U() {
-        let model: ConditionHolder = jsonDecodeFromDict(userAttributeData)
-        let leaf = ConditionLeaf.attribute(jsonDecodeFromDict(userAttributeData))
+        let userAttributeData = DMUserAttributeTests.sampleData
+        
+        let model: ConditionHolder = try! modelFromNative(userAttributeData)
+        let leaf = ConditionLeaf.attribute(try! modelFromNative(userAttributeData))
         XCTAssert(model == ConditionHolder.leaf(leaf))
     }
 
     func testDecode_AU() {
-        let model: ConditionHolder = jsonDecodeFromDict(["and", userAttributeData])
-        let leaf = ConditionLeaf.attribute(jsonDecodeFromDict(userAttributeData))
+        let userAttributeData = DMUserAttributeTests.sampleData
+
+        let model: ConditionHolder = try! modelFromNative(["and", userAttributeData])
+        let leaf = ConditionLeaf.attribute(try! modelFromNative(userAttributeData))
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .leaf(leaf)]
@@ -236,7 +247,7 @@ extension DataModelConditionHolderTests {
 
 // MARK: - Encode
 
-extension DataModelConditionHolderTests {
+extension DMConditionHolderTests {
     func testEncodeJSON() {
         let modelGiven = ConditionHolder.array([
             .logicalOp(.and),

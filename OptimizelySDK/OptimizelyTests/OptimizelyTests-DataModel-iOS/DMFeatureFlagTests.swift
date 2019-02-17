@@ -1,5 +1,5 @@
 //
-//  DataModelFeatureFlagTests.swift
+//  DMFeatureFlagTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/8/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DataModelFeatureFlagTests: XCTestCase {
+class DMFeatureFlagTests: XCTestCase {
 
     let modelType = FeatureFlag.self
     

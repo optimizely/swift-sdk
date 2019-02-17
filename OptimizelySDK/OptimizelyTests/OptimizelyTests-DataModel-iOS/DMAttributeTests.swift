@@ -1,5 +1,5 @@
 //
-//  DataModelAttributeTests.swift
+//  DMAttributeTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/6/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DataModelAttributeTests: XCTestCase {
+class DMAttributeTests: XCTestCase {
     
     let modelType = Attribute.self
 

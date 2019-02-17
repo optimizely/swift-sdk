@@ -1,5 +1,5 @@
 //
-//  DataModelFeatureVariableTests.swift
+//  DMFeatureVariableTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/6/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DataModelFeatureVariableTests: XCTestCase {
+class DMFeatureVariableTests: XCTestCase {
     
     let modelType = FeatureVariable.self
     

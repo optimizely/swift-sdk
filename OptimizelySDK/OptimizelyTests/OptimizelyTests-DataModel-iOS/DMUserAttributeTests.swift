@@ -1,5 +1,5 @@
 //
-//  DataModelUserAttributeTest.swift
+//  DMUserAttributeTest.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/11/19.
@@ -8,23 +8,19 @@
 
 import XCTest
 
-class DataModelUserAttributeTests: XCTestCase {
-    
+// MARK: - Sample Data
+class DMUserAttributeTests: XCTestCase {
     let modelType = UserAttribute.self
     
-    
-    static func baseModel() -> UserAttribute {
-        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact", "value":30]
-        return jsonDecodeFromDict(json)
-    }
-    
-    static func baseModelJsonString() -> String {
-        let data = try! JSONEncoder().encode(baseModel())
-        return String(data: data, encoding: .utf8)!
-    }
-    
-    // MARK: - Decode
-    
+    static var sampleData: [String: Any] = ["name":"geo",
+                                            "type":"custom_attribute",
+                                            "match":"exact",
+                                            "value":30]
+}
+
+// MARK: - Decode
+
+extension DMUserAttributeTests {
     func testDecodeSuccessWithJSONValid() {
         let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact", "value":30]
         // JSONEncoder not happy with [String: Any]
@@ -131,7 +127,7 @@ class DataModelUserAttributeTests: XCTestCase {
 
 // MARK: - Encode
 
-extension DataModelUserAttributeTests {
+extension DMUserAttributeTests {
     func testEncodeJSON() {
         let modelGiven = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: .string("us"))
         XCTAssert(isEqualWithEncodeThenDecode(modelGiven))

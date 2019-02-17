@@ -73,14 +73,14 @@ enum ConditionHolder: Codable, Equatable {
     }
 }
 
+// MARK: - [ConditionHolder]
+
 extension Array where Element == ConditionHolder {
     
     func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
-        guard self.count > 0 else {
+        guard let firstItem = self.first else {
             throw OptimizelyError.conditionInvalidFormat("empty condition array")
         }
-        
-        let firstItem = self.first!
         
         switch firstItem {
         case .logicalOp(let op):
@@ -98,68 +98,28 @@ extension Array where Element == ConditionHolder {
     }
     
     func evaluate(op: LogicalOp, project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
-        guard self.count > 1 else {
-            throw OptimizelyError.conditionInvalidFormat("not enough items for logical op")
+        guard self.count > 0 else {
+            throw OptimizelyError.conditionInvalidFormat(#function)
         }
         
-        let eval = { (idx: Int) -> Bool? in
-            do {
-                return try self[idx].evaluate(project: project, attributes: attributes)
-            } catch {
-                return nil
+        let itemsAfterOpTrimmed = Array(self[1...])
+        
+        // create closure array for delayed evaluations to avoid unnecessary ops
+        let evalList = itemsAfterOpTrimmed.map { holder -> ThrowableCondition in
+            return {
+                return try holder.evaluate(project: project, attributes: attributes)
             }
         }
         
         switch op {
         case .and:
-            return try andEvaluate(eval)
+            return try evalList.and()
         case .or:
-            return try orEvaluate(eval)
+            return try evalList.or()
         case .not:
-            return try notEvaluate(eval)
+            return try evalList.not()
         }
     }
     
-    func orEvaluate(_ eval: (Int) -> Bool?) throws -> Bool {
-        var foundNil = false
-        
-        for i in 1..<self.count {
-            if let result = eval(i) {
-                if result {
-                    return true
-                }
-            } else {
-                foundNil = true
-            }
-        }
-        
-        if foundNil {
-            throw OptimizelyError.conditionInvalidFormat("logical OR with invalid items")
-        }
-        
-        return false
-    }
-    
-    func andEvaluate(_ eval: (Int) -> Bool?) throws -> Bool {
-        for i in 1..<self.count {
-            if let result = eval(i) {
-                if result == false {
-                    return false
-                }
-            } else {
-                throw OptimizelyError.conditionInvalidFormat("logical AND with an invalid item")
-            }
-        }
-        
-        return true
-    }
-    
-    func notEvaluate(_ eval: (Int) -> Bool?) throws -> Bool {
-        if let result = eval(1) {
-            return !result
-        }
-        
-        throw OptimizelyError.conditionInvalidFormat("logical AND with an invalid item")
-    }
-
 }
+

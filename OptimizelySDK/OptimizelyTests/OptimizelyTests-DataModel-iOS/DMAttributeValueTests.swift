@@ -1,5 +1,5 @@
 //
-//  DataModelAttributeValueTests.swift
+//  DMAttributeValueTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/12/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DataModelAttributeValueTests: XCTestCase {
+class DMAttributeValueTests: XCTestCase {
     
     // MARK: - Decode
     
@@ -50,7 +50,7 @@ class DataModelAttributeValueTests: XCTestCase {
 
 // MARK: - Encode
 
-extension DataModelAttributeValueTests {
+extension DMAttributeValueTests {
     func testEncodeJSON() {
         let modelGiven = [AttributeValue.string("us")]
         XCTAssert(isEqualWithEncodeThenDecode(modelGiven))

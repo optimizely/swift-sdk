@@ -1,5 +1,5 @@
 //
-//  DataModelConditionHolderTests_Evaluate.swift
+//  DMConditionHolderTests_Evaluate.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/15/19.
@@ -11,7 +11,7 @@ import XCTest
 
 // MARK: - Evaluate (AudienceIds)
 
-class DataModelConditionHolderTests_Evaluate: XCTestCase {
+class DMConditionHolderTests_Evaluate: XCTestCase {
 
     struct ProjectMock: ProjectProtocol {
         func evaluateAudience(audienceId: String, attributes: [String : Any]) throws -> Bool {
@@ -130,52 +130,22 @@ class DataModelConditionHolderTests_Evaluate: XCTestCase {
 
 // MARK: - Evaluate (UserAttributes)
 
-extension DataModelConditionHolderTests_Evaluate {
+extension DMConditionHolderTests_Evaluate {
 
     func testEvaluate_U() {
-        let model: ConditionHolder = jsonDecodeFromDict(userAttributeData)
+        let model: ConditionHolder = try! modelFromNative(userAttributeData)
         XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
     }
 
     func testEvaluate_AU() {
-        let model: ConditionHolder = jsonDecodeFromDict(["and", userAttributeData])
+        let model: ConditionHolder = try! modelFromNative(["and", userAttributeData])
         XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
     }
 
     func testEvaluate_NU() {
-        let model: ConditionHolder = jsonDecodeFromDict(["not", userAttributeData])
+        let model: ConditionHolder = try! modelFromNative(["not", userAttributeData])
         XCTAssertFalse(try! model.evaluate(project: project, attributes: attributeData))
     }
 
 }
 
-// MARK: - And/Not/Or
-
-extension DataModelConditionHolderTests_Evaluate {
-
-    func testAndEvaluate() {
-        let model = [ConditionHolder](repeating: ConditionHolder.logicalOp(.and), count: 3)
-        var result = try! model.andEvaluate { return [nil, true, true][$0] }
-        XCTAssertTrue(result)
-        
-        result = try!model.andEvaluate { return [nil, false, true][$0] }
-        XCTAssertFalse(result)
-
-        result = try! model.andEvaluate { return [nil, true, false][$0] }
-        XCTAssertFalse(result)
-
-//        result = try? model.andEvaluate { return [nil, nil, true][$0] }
-//        XCTAssertNil(result)
-//
-//        result = try? model.andEvaluate { return [nil, true, nil][$0] }
-//        XCTAssertNil(result)
-    }
-    
-    func testOrEvaluate() {
-        
-    }
-    
-    func testNotEvaluate() {
-        
-    }
-}

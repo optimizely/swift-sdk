@@ -34,9 +34,19 @@ struct Audience: Codable, Equatable {
         self.name = try container.decode(String.self, forKey: .name)
         
         if let value = try? container.decode(String.self, forKey: .conditions) {
+            
+            // legacy stringified conditions
+            // - "[\"or\",{\"value\":30,\"type\":\"custom_attribute\",\"match\":\"exact\",\"name\":\"geo\"}]"
+            // decode it to recover to formatted CondtionHolder type
+            
             let data = value.data(using: .utf8)
             self.conditions = try JSONDecoder().decode(ConditionHolder.self, from: data!)
-        } else if var value = try? container.nestedUnkeyedContainer(forKey: .conditions) {
+            
+        } else if var value = try?
+            
+            // typedAudience formats
+            
+            container.nestedUnkeyedContainer(forKey: .conditions) {
             var conditionList = [ConditionHolder]()
             while !value.isAtEnd {
                 if let condition = try? value.decode(ConditionHolder.self) {
@@ -44,6 +54,7 @@ struct Audience: Codable, Equatable {
                 }
             }
             self.conditions = ConditionHolder.array(conditionList)
+            
         } else {
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
         }

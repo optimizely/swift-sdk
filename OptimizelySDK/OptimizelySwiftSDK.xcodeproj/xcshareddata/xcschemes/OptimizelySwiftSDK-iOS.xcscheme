@@ -58,6 +58,16 @@
                ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6EA4265A2219242100B074B5"
+               BuildableName = "OptimizelyTests-Others-iOS.xctest"
+               BlueprintName = "OptimizelyTests-Others-iOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

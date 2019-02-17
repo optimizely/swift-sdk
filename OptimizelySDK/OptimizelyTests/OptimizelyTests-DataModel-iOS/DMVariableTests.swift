@@ -1,5 +1,5 @@
 //
-//  DataModelVariableTests.swift
+//  DMVariableTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/6/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DataModelVariableTests: XCTestCase {
+class DMVariableTests: XCTestCase {
     
     let modelType = Variable.self
 

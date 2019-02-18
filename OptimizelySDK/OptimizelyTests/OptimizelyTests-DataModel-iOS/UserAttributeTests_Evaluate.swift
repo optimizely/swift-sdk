@@ -1,5 +1,5 @@
 //
-//  DMUserAttributeTests_Evaluate.swift
+//  UserAttributeTests_Evaluate.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/11/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DMUserAttributeTests_Evaluate: XCTestCase {
+class UserAttributeTests_Evaluate: XCTestCase {
     
     // MARK: - Evaluate (Exact)
     
@@ -82,7 +82,7 @@ class DMUserAttributeTests_Evaluate: XCTestCase {
 
 // MARK: - Evaluate (Substring)
 
-extension DMUserAttributeTests_Evaluate {
+extension UserAttributeTests_Evaluate {
     
     func testEvaluateSubstring() {
         let attributes = ["country": "us-gb"]
@@ -118,7 +118,7 @@ extension DMUserAttributeTests_Evaluate {
 
 // MARK: - Evaluate (Exists)
 
-extension DMUserAttributeTests_Evaluate {
+extension UserAttributeTests_Evaluate {
     
     func testExist() {
         let attributes = ["country": "us"]
@@ -136,7 +136,7 @@ extension DMUserAttributeTests_Evaluate {
 
 // MARK: - Evaluate (GT)
 
-extension DMUserAttributeTests_Evaluate {
+extension UserAttributeTests_Evaluate {
     
     func testGreaterThanIntToInt() {
         let attributes = ["country": 100]
@@ -196,7 +196,7 @@ extension DMUserAttributeTests_Evaluate {
 
 // MARK: - Evaluate (LT)
 
-extension DMUserAttributeTests_Evaluate {
+extension UserAttributeTests_Evaluate {
     
     func testLessThanIntToInt() {
         let attributes = ["country": 10]

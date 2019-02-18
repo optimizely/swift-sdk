@@ -1,5 +1,5 @@
 //
-//  DMUserAttributeTest.swift
+//  UserAttributeTest.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/11/19.
@@ -9,7 +9,7 @@
 import XCTest
 
 // MARK: - Sample Data
-class DMUserAttributeTests: XCTestCase {
+class UserAttributeTests: XCTestCase {
     let modelType = UserAttribute.self
     
     static var sampleData: [String: Any] = ["name":"geo",
@@ -20,7 +20,7 @@ class DMUserAttributeTests: XCTestCase {
 
 // MARK: - Decode
 
-extension DMUserAttributeTests {
+extension UserAttributeTests {
     func testDecodeSuccessWithJSONValid() {
         let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact", "value":30]
         // JSONEncoder not happy with [String: Any]
@@ -127,7 +127,7 @@ extension DMUserAttributeTests {
 
 // MARK: - Encode
 
-extension DMUserAttributeTests {
+extension UserAttributeTests {
     func testEncodeJSON() {
         let modelGiven = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: .string("us"))
         XCTAssert(isEqualWithEncodeThenDecode(modelGiven))

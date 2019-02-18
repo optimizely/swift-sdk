@@ -1,5 +1,5 @@
 //
-//  DMAttributeValueTests_Evaluate.swift
+//  AttributeValueTests_Evaluate.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/12/19.
@@ -10,7 +10,7 @@ import XCTest
 
 // MARK: - Evaluate (Equal)
 
-class DMAttributeValueTests_Evaluate: XCTestCase {
+class AttributeValueTests_Evaluate: XCTestCase {
     
     func testIsExactMatchString() {
         let model = try! getAttributeValueFromNative("us")
@@ -65,7 +65,7 @@ class DMAttributeValueTests_Evaluate: XCTestCase {
 
 // MARK: - Evaluate (Substring)
 
-extension DMAttributeValueTests_Evaluate {
+extension AttributeValueTests_Evaluate {
 
     func testIsSubstringSuccessSame() {
         let model = try! getAttributeValueFromNative("us")
@@ -101,7 +101,7 @@ extension DMAttributeValueTests_Evaluate {
 
 // MARK: - Evaluate (GreaterThan)
 
-extension DMAttributeValueTests_Evaluate {
+extension AttributeValueTests_Evaluate {
 
     func testIsGreaterSuccess() {
         let model = try! getAttributeValueFromNative(13.5)
@@ -127,7 +127,7 @@ extension DMAttributeValueTests_Evaluate {
 
 // MARK: - Evaluate (LessThan)
 
-extension DMAttributeValueTests_Evaluate {
+extension AttributeValueTests_Evaluate {
     
     func testIsLessSuccess() {
         let model = try! getAttributeValueFromNative(13.5)

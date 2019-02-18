@@ -1,5 +1,5 @@
 //
-//  DMAttributeTests.swift
+//  VariableTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/6/19.
@@ -8,30 +8,30 @@
 
 import XCTest
 
-class DMAttributeTests: XCTestCase {
+class VariableTests: XCTestCase {
     
-    let modelType = Attribute.self
+    let modelType = Variable.self
 
     // MARK: - Decode
     
     func testDecodeSuccessWithJSONValid() {
-        let json = ["id": "553339214", "key": "house"]
+        let json = ["id": "553339214", "value": "100"]
         let jsonData = try! JSONEncoder().encode(json)
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
         XCTAssert(model.id == "553339214")
-        XCTAssert(model.key == "house")
+        XCTAssert(model.value == "100")
     }
     
     func testDecodeSuccessWithExtraFields() {
-        let json = ["id": "553339214", "key": "house", "extra": "123"]
+        let json = ["id": "553339214", "value": "100", "extra": "123"]
         let jsonData = try! JSONEncoder().encode(json)
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
         XCTAssert(model.id == "553339214")
-        XCTAssert(model.key == "house")
+        XCTAssert(model.value == "100")
     }
-
+    
     func testDecodeFailWithMissingKey() {
         let json = ["id": "553339214"]
         let jsonData = try! JSONEncoder().encode(json)
@@ -42,9 +42,9 @@ class DMAttributeTests: XCTestCase {
             XCTAssert(true)
         }
     }
-
+    
     func testDecodeFailWithMissingId() {
-        let json = ["key": "house"]
+        let json = ["value": "100"]
         let jsonData = try! JSONEncoder().encode(json)
         do {
             _ = try JSONDecoder().decode(modelType, from: jsonData)
@@ -68,9 +68,7 @@ class DMAttributeTests: XCTestCase {
     // MARK: - Encode
     
     func testEncodeJSON() {
-        let modelGiven = modelType.init(id: "553339214", key: "house")
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        let model = modelType.init(id: "553339214", value: "100")
+        XCTAssert(isEqualWithEncodeThenDecode(model))
     }
 }
-
-

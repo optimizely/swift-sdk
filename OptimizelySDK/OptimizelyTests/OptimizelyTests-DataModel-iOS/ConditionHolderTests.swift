@@ -1,5 +1,5 @@
 //
-//  DMConditionHolderTests.swift
+//  ConditionHolderTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/15/19.
@@ -94,12 +94,12 @@ import XCTest
 
 // MARK: - Sample Data
 
-class DMConditionHolderTests: XCTestCase {
-    static var sampleData: [Any] = ["or", DMUserAttributeTests.sampleData]
+class ConditionHolderTests: XCTestCase {
+    static var sampleData: [Any] = ["or", UserAttributeTests.sampleData]
 
     func testDecodeSample() {
-        let model: ConditionHolder = try! modelFromNative(DMConditionHolderTests.sampleData)
-        let userAttribute: UserAttribute = try! modelFromNative(DMUserAttributeTests.sampleData)
+        let model: ConditionHolder = try! modelFromNative(ConditionHolderTests.sampleData)
+        let userAttribute: UserAttribute = try! modelFromNative(UserAttributeTests.sampleData)
         
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.or),
@@ -109,7 +109,7 @@ class DMConditionHolderTests: XCTestCase {
 
 // MARK: - Decode (AudienceIds)
 
-extension DMConditionHolderTests {
+extension ConditionHolderTests {
     func testDecode_I() {
         // JSON does not support raw string (so use array of string)
         let model: [ConditionHolder] = try! modelFromNative(["11111"])
@@ -222,10 +222,10 @@ extension DMConditionHolderTests {
 
 // MARK: - Decode (UserAttributes)
 
-extension DMConditionHolderTests {
+extension ConditionHolderTests {
 
     func testDecode_U() {
-        let userAttributeData = DMUserAttributeTests.sampleData
+        let userAttributeData = UserAttributeTests.sampleData
         
         let model: ConditionHolder = try! modelFromNative(userAttributeData)
         let leaf = ConditionLeaf.attribute(try! modelFromNative(userAttributeData))
@@ -233,7 +233,7 @@ extension DMConditionHolderTests {
     }
 
     func testDecode_AU() {
-        let userAttributeData = DMUserAttributeTests.sampleData
+        let userAttributeData = UserAttributeTests.sampleData
 
         let model: ConditionHolder = try! modelFromNative(["and", userAttributeData])
         let leaf = ConditionLeaf.attribute(try! modelFromNative(userAttributeData))
@@ -247,7 +247,7 @@ extension DMConditionHolderTests {
 
 // MARK: - Encode
 
-extension DMConditionHolderTests {
+extension ConditionHolderTests {
     func testEncodeJSON() {
         let modelGiven = ConditionHolder.array([
             .logicalOp(.and),

@@ -1,5 +1,5 @@
 //
-//  DMAudienceTests.swift
+//  AudienceTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/14/19.
@@ -10,32 +10,32 @@ import XCTest
 
 // MARK: - Sample Data
 
-class DMAudienceTests: XCTestCase {
+class AudienceTests: XCTestCase {
     let modelType = Audience.self
 
     static var sampleData: [String: Any] = ["id": "553339214",
                                             "name": "america",
-                                            "conditions": DMConditionHolderTests.sampleData]
+                                            "conditions": ConditionHolderTests.sampleData]
     
     func testDecodeSample() {
-        let model: Audience = try! modelFromNative(DMAudienceTests.sampleData)
+        let model: Audience = try! modelFromNative(AudienceTests.sampleData)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! modelFromNative(DMConditionHolderTests.sampleData)))
+        XCTAssert(model.conditions == (try! modelFromNative(ConditionHolderTests.sampleData)))
     }
 }
 
 // MARK: - Decode (Legacy Audiences)
 
-extension DMAudienceTests {
+extension AudienceTests {
 
     func testDecodeSuccessWithLegacyAudience() {
         // legacy audience uses stringified conditions
         // - "[\"or\",{\"value\":30,\"type\":\"custom_attribute\",\"match\":\"exact\",\"name\":\"geo\"}]"
         // Audience will decode it to recover to typedAudience formats
         
-        let legacyConditionString = jsonStringFromNative(DMConditionHolderTests.sampleData)
+        let legacyConditionString = jsonStringFromNative(ConditionHolderTests.sampleData)
         
         let data: [String: Any] = ["id": "553339214",
                                    "name": "america",
@@ -44,36 +44,36 @@ extension DMAudienceTests {
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! modelFromNative(DMConditionHolderTests.sampleData)))
+        XCTAssert(model.conditions == (try! modelFromNative(ConditionHolderTests.sampleData)))
     }
     
 }
 
 // MARK: - Decode (Typed Audience)
 
-extension DMAudienceTests {
+extension AudienceTests {
     
     func testDecodeSuccessWithJSONValid() {
         let data: [String: Any] = ["id": "553339214",
                                    "name": "america",
-                                   "conditions": DMConditionHolderTests.sampleData]
+                                   "conditions": ConditionHolderTests.sampleData]
         let model: Audience = try! modelFromNative(data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! modelFromNative(DMConditionHolderTests.sampleData)))
+        XCTAssert(model.conditions == (try! modelFromNative(ConditionHolderTests.sampleData)))
     }
     
     func testDecodeFailWithMissingId() {
         let data: [String: Any] = ["name": "america",
-                                   "conditions": DMConditionHolderTests.sampleData]
+                                   "conditions": ConditionHolderTests.sampleData]
         let model: Audience? = try? modelFromNative(data)
         XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingName() {
         let data: [String: Any] = ["id": "553339214",
-                                   "conditions": DMConditionHolderTests.sampleData]
+                                   "conditions": ConditionHolderTests.sampleData]
         let model: Audience? = try? modelFromNative(data)
         XCTAssertNil(model)
     }
@@ -88,12 +88,12 @@ extension DMAudienceTests {
 
 // MARK: - Encode
 
-extension DMAudienceTests {
+extension AudienceTests {
     
     func testEncodeJSON() {
         let data: [String: Any] = ["id": "553339214",
                                    "name": "america",
-                                   "conditions": DMConditionHolderTests.sampleData]
+                                   "conditions": ConditionHolderTests.sampleData]
         let modelGiven: Audience = try! modelFromNative(data)
 
         XCTAssert(isEqualWithEncodeThenDecode(modelGiven))

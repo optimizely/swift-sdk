@@ -1,5 +1,5 @@
 //
-//  DMRolloutTests.swift
+//  RolloutTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/12/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DMRolloutTests: XCTestCase {
+class RolloutTests: XCTestCase {
 
     
 }

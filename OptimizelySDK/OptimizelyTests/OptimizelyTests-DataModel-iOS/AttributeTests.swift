@@ -1,5 +1,5 @@
 //
-//  DMVariableTests.swift
+//  AttributeTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/6/19.
@@ -8,30 +8,30 @@
 
 import XCTest
 
-class DMVariableTests: XCTestCase {
+class AttributeTests: XCTestCase {
     
-    let modelType = Variable.self
+    let modelType = Attribute.self
 
     // MARK: - Decode
     
     func testDecodeSuccessWithJSONValid() {
-        let json = ["id": "553339214", "value": "100"]
+        let json = ["id": "553339214", "key": "house"]
         let jsonData = try! JSONEncoder().encode(json)
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
         XCTAssert(model.id == "553339214")
-        XCTAssert(model.value == "100")
+        XCTAssert(model.key == "house")
     }
     
     func testDecodeSuccessWithExtraFields() {
-        let json = ["id": "553339214", "value": "100", "extra": "123"]
+        let json = ["id": "553339214", "key": "house", "extra": "123"]
         let jsonData = try! JSONEncoder().encode(json)
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
         XCTAssert(model.id == "553339214")
-        XCTAssert(model.value == "100")
+        XCTAssert(model.key == "house")
     }
-    
+
     func testDecodeFailWithMissingKey() {
         let json = ["id": "553339214"]
         let jsonData = try! JSONEncoder().encode(json)
@@ -42,9 +42,9 @@ class DMVariableTests: XCTestCase {
             XCTAssert(true)
         }
     }
-    
+
     func testDecodeFailWithMissingId() {
-        let json = ["value": "100"]
+        let json = ["key": "house"]
         let jsonData = try! JSONEncoder().encode(json)
         do {
             _ = try JSONDecoder().decode(modelType, from: jsonData)
@@ -68,7 +68,9 @@ class DMVariableTests: XCTestCase {
     // MARK: - Encode
     
     func testEncodeJSON() {
-        let model = modelType.init(id: "553339214", value: "100")
-        XCTAssert(isEqualWithEncodeThenDecode(model))
+        let modelGiven = modelType.init(id: "553339214", key: "house")
+        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
     }
 }
+
+

@@ -1,5 +1,5 @@
 //
-//  DMEventTests.swift
+//  EventTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/7/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DMEventTests: XCTestCase {
+class EventTests: XCTestCase {
 
     let modelType = Event.self
     

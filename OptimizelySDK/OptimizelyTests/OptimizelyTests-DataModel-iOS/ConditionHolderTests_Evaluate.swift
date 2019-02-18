@@ -1,5 +1,5 @@
 //
-//  DMConditionHolderTests_Evaluate.swift
+//  ConditionHolderTests_Evaluate.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/15/19.
@@ -11,7 +11,7 @@ import XCTest
 
 // MARK: - Evaluate (AudienceIds)
 
-class DMConditionHolderTests_Evaluate: XCTestCase {
+class ConditionHolderTests_Evaluate: XCTestCase {
 
     struct ProjectMock: ProjectProtocol {
         func evaluateAudience(audienceId: String, attributes: [String : Any]) throws -> Bool {
@@ -130,7 +130,7 @@ class DMConditionHolderTests_Evaluate: XCTestCase {
 
 // MARK: - Evaluate (UserAttributes)
 
-extension DMConditionHolderTests_Evaluate {
+extension ConditionHolderTests_Evaluate {
 
     func testEvaluate_U() {
         let model: ConditionHolder = try! modelFromNative(userAttributeData)

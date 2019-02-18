@@ -1,5 +1,5 @@
 //
-//  DMVariationTests.swift
+//  VariationTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/7/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DMVariationTests: XCTestCase {
+class VariationTests: XCTestCase {
 
     let modelType = Variation.self
     

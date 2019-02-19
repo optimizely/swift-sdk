@@ -67,6 +67,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                        logger: customLogger,
                                        periodicDownloadInterval:60)
 
+        
+        _ = optimizely?.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in
+            DispatchQueue.main.async {
+                let alert = UIAlertView(title: "Datafile change", message: "something changed.", delegate: nil, cancelButtonTitle: "cancel")
+                alert.show()
+            }
+        })
         // initialize Optimizely Client from a datafile download
         optimizely!.initializeSDK { result in
             switch result {

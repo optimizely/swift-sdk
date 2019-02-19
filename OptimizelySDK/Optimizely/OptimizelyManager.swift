@@ -127,7 +127,7 @@ open class OptimizelyManager: NSObject {
                 datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
                     self.notificationCenter.sendNotifications(type: NotificationType.DatafileChange.rawValue, args: [data])
                     self.bucketer = HandlerRegistryService.shared.injectComponent(service: OPTBucketer.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTBucketer
-                    self.decisionService = HandlerRegistryService.shared.injectComponent(service: OPTBucketer.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTDecisionService
+                    self.decisionService = HandlerRegistryService.shared.injectComponent(service: OPTDecisionService.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTDecisionService
                     
                     try? self.configSDK(datafile: data)
                 }
@@ -612,17 +612,17 @@ extension OptimizelyManager {
 
         // this is a singleton but it has a reIntializeStrategy of reCreate.  So, we create a new
         // instance on re-initialize.
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTBucketer>(service: OPTBucketer.self).singetlon().using(instance:self.bucketer))
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTBucketer>(service: OPTBucketer.self).singetlon().using(instance:self.bucketer).sdkKey(key: self.sdkKey))
 
         // the decision service is also a singleton that will reCreate on re-initalize
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance:self.decisionService))
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance:self.decisionService).sdkKey(key: self.sdkKey))
         
         // An event dispatcher.  We rely on the factory to create and mantain. Again, recreate on re-initalize.
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().to(factory: type(of:self.eventDispatcher).init))
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().reInitializeStategy(strategy: .reUse).to(factory: type(of:self.eventDispatcher).init))
         
         // This is a singleton and might be a good candidate for reuse.  The handler supports mulitple
         // sdk keys without having to be created for every key.
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().to(factory: type(of:self.datafileHandler).init))
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStategy(strategy: .reUse).to(factory: type(of:self.datafileHandler).init))
 
         // the user profile service is also a singleton using eh passed in version.
         HandlerRegistryService.shared.registerBinding(binder:Binder<OPTUserProfileService>(service: OPTUserProfileService.self).singetlon().reInitializeStategy(strategy:.reUse).using(instance:self.userProfileService).to(factory: type(of:self.userProfileService).init))

@@ -29,15 +29,12 @@ class HandlerRegistryService {
     func injectComponent(service:Any, sdkKey:String? = nil, isReintialize:Bool=false) -> Any? {
         var result:Any?
         dispatchQueue.sync {
-            var binders = self.binders
-            if let sdkKey = sdkKey {
-                binders = binders.filter({$0.sdkKey == sdkKey})
-            }
-            if var binder = binders.filter({type(of: $0.service) == type(of: service)}).first {
+            if var binder = binders.filter({(type(of: $0.service) == type(of: service)) && $0.sdkKey == sdkKey}).first {
                 if isReintialize && binder.stategy == .reCreate {
-                    binder.instance = nil
+                    binder.instance = binder.factory()
+                    result = binder.instance
                 }
-                if let inst = binder.instance, binder.isSingleton {
+                else if let inst = binder.instance, binder.isSingleton {
                     result = inst
                 }
                 else {

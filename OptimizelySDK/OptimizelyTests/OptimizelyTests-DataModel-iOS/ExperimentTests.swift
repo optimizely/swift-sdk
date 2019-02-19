@@ -11,24 +11,23 @@ import XCTest
 // MARK: - Sample Data
 
 class ExperimentTests: XCTestCase {
-    let modelType = Experiment.self
-    
-    
-    static var sampleData: [String: Any] = ["id": "11111",
-                                            "key": "background",
-                                            "status": "Running",
-                                            "layerId": "22222",
-                                            "variations": [],
-                                            "trafficAllocation": [],
-                                            "audienceIds": ["33333"],
-                                            //"audienceConditions": ConditionHolder?
-                                            "forcedVariations": ["12345": "1234567890"]]
-
-    func testDecodeSample() {
-        let model: Experiment = try! modelFromNative(ExperimentTests.sampleData)
-        
-        XCTAssert(model.id == "11111")
-    }
+//    let modelType = Experiment.self
+//    
+//    static var sampleData: [String: Any] = ["id": "11111",
+//                                            "key": "background",
+//                                            "status": "Running",
+//                                            "layerId": "22222",
+//                                            "variations": [],
+//                                            "trafficAllocation": [],
+//                                            "audienceIds": ["33333"],
+//                                            //"audienceConditions": ConditionHolder?
+//                                            "forcedVariations": ["12345": "1234567890"]]
+//
+//    func testDecodeSample() {
+//        let model: Experiment = try! modelFromNative(ExperimentTests.sampleData)
+//        
+//        XCTAssert(model.id == "11111")
+//    }
 }
 
 // MARK: - Decode

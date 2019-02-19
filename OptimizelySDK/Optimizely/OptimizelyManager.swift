@@ -25,8 +25,8 @@ open class OptimizelyManager: NSObject {
 
     // MARK: - Default Services
 
-    let bucketer: OPTBucketer
-    let decisionService: OPTDecisionService
+    var bucketer: OPTBucketer
+    var decisionService: OPTDecisionService
     let datafileHandler: OPTDatafileHandler
     public let notificationCenter: OPTNotificationCenter
     
@@ -126,6 +126,9 @@ open class OptimizelyManager: NSObject {
                 datafileHandler.stopPeriodicUpdates(sdkKey: self.sdkKey)
                 datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
                     self.notificationCenter.sendNotifications(type: NotificationType.DatafileChange.rawValue, args: [data])
+                    self.bucketer = HandlerRegistryService.shared.injectComponent(service: OPTBucketer.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTBucketer
+                    self.decisionService = HandlerRegistryService.shared.injectComponent(service: OPTBucketer.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTDecisionService
+                    
                     try? self.configSDK(datafile: data)
                 }
                 

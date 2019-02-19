@@ -8,6 +8,16 @@
 
 import Foundation
 
+enum HandlerRegistryServiceError: Error {
+    case alreadyRegistered
+    
+    var localizedDescription: String {
+        get {
+            return "Already registered Service"
+        }
+    }
+}
+
 class HandlerRegistryService {
     
     static let shared = HandlerRegistryService()
@@ -20,9 +30,19 @@ class HandlerRegistryService {
         
     }
     
-    func registerBinding(binder:BinderProtocol) {
+    func registerBinding(binder:BinderProtocol) throws {
+        var shouldThrow = false
         dispatchQueue.sync {
-            binders.append(binder)
+            if let _ = binders.filter({(type(of: $0.service) == type(of: binder.service)) && $0.sdkKey == binder.sdkKey}).first {
+                shouldThrow = true
+            }
+            else {
+                binders.append(binder)
+            }
+        }
+        
+        if shouldThrow {
+            throw HandlerRegistryServiceError.alreadyRegistered
         }
     }
     

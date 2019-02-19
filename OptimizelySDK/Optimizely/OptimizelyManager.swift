@@ -605,27 +605,27 @@ extension OptimizelyManager {
         // bind it as a non-singleton.  so, we will create an instance anytime injected.
         let binder:Binder = Binder<OPTLogger>(service: OPTLogger.self).to(factory: type(of:self.logger).init)
         //Register my logger service.
-        HandlerRegistryService.shared.registerBinding(binder: binder)
+        try? HandlerRegistryService.shared.registerBinding(binder: binder)
 
         // this is bound a reusable singleton. so, if we re-initalize, we will keep this.
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTNotificationCenter>(service: OPTNotificationCenter.self).singetlon().reInitializeStategy(strategy: .reUse).using(instance:self.notificationCenter))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTNotificationCenter>(service: OPTNotificationCenter.self).singetlon().reInitializeStategy(strategy: .reUse).using(instance:self.notificationCenter))
 
         // this is a singleton but it has a reIntializeStrategy of reCreate.  So, we create a new
         // instance on re-initialize.
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTBucketer>(service: OPTBucketer.self).singetlon().using(instance:self.bucketer).sdkKey(key: self.sdkKey))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTBucketer>(service: OPTBucketer.self).singetlon().using(instance:self.bucketer).sdkKey(key: self.sdkKey))
 
         // the decision service is also a singleton that will reCreate on re-initalize
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance:self.decisionService).sdkKey(key: self.sdkKey))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance:self.decisionService).sdkKey(key: self.sdkKey))
         
         // An event dispatcher.  We rely on the factory to create and mantain. Again, recreate on re-initalize.
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().reInitializeStategy(strategy: .reUse).to(factory: type(of:self.eventDispatcher).init))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().reInitializeStategy(strategy: .reUse).to(factory: type(of:self.eventDispatcher).init))
         
         // This is a singleton and might be a good candidate for reuse.  The handler supports mulitple
         // sdk keys without having to be created for every key.
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStategy(strategy: .reUse).to(factory: type(of:self.datafileHandler).init))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStategy(strategy: .reUse).to(factory: type(of:self.datafileHandler).init))
 
         // the user profile service is also a singleton using eh passed in version.
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTUserProfileService>(service: OPTUserProfileService.self).singetlon().reInitializeStategy(strategy:.reUse).using(instance:self.userProfileService).to(factory: type(of:self.userProfileService).init))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTUserProfileService>(service: OPTUserProfileService.self).singetlon().reInitializeStategy(strategy:.reUse).using(instance:self.userProfileService).to(factory: type(of:self.userProfileService).init))
 
     }
 }

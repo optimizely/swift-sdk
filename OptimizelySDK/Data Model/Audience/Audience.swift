@@ -42,19 +42,14 @@ struct Audience: Codable, Equatable {
             let data = value.data(using: .utf8)
             self.conditions = try JSONDecoder().decode(ConditionHolder.self, from: data!)
             
-        } else if var value = try?
-            
+        } else if let value = try? container.decode(ConditionHolder.self, forKey: .conditions) {
+
             // typedAudience formats
-            
-            container.nestedUnkeyedContainer(forKey: .conditions) {
-            var conditionList = [ConditionHolder]()
-            while !value.isAtEnd {
-                if let condition = try? value.decode(ConditionHolder.self) {
-                    conditionList.append(condition)
-                }
-            }
-            self.conditions = ConditionHolder.array(conditionList)
-            
+            // [TODO] Tom: check if this is correct
+            // NOTE: UserAttribute (not in array) at the top-level is allowed
+
+            self.conditions = value
+
         } else {
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
         }

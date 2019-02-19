@@ -84,6 +84,20 @@ extension AudienceTests {
         let model: Audience? = try? modelFromNative(data)
         XCTAssertNil(model)
     }
+    
+    // not-array at top level of conditions (UserAttribute)
+    
+    func testDecodeSuccessWithNonArrayConditions() {
+        let data: [String: Any] = ["id": "553339214",
+                                   "name": "america",
+                                   "conditions": UserAttributeTests.sampleData]
+        let model: Audience = try! modelFromNative(data)
+        
+        XCTAssert(model.id == "553339214")
+        XCTAssert(model.name == "america")
+        XCTAssert(model.conditions == (try! modelFromNative(UserAttributeTests.sampleData)))
+    }
+    
 }
 
 // MARK: - Encode

@@ -18,10 +18,32 @@ import Foundation
 
 class ProjectConfig : Codable {
     
-    var project: Project!   // TODO: [Jae] force unwrap for temp for test
+    var project: Project!
     
     var whitelistUsers = [String: [String: String]]()
+    
+    init(datafile: Data) throws {
+        do {
+            self.project = try JSONDecoder().decode(Project.self, from: datafile)
+        } catch {
+            // TODO: clean up (debug only)
+            print(">>>>> Project Decode Error: \(error)")
+            throw OptimizelyError.dataFileInvalid
+        }
+    }
+    
+    convenience init(datafile: String) throws {
+        guard let data = datafile.data(using: .utf8) else {
+            throw OptimizelyError.dataFileInvalid
+        }
         
+        try self.init(datafile: data)
+   }
+    
+    init() {
+        // TODO: [Jae] fix to throw error
+    }
+    
     class func DateFromString(dateString:String) -> NSDate
     {
         let dateFormatter = DateFormatter()

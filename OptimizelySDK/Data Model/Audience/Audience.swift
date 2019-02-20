@@ -51,7 +51,8 @@ struct Audience: Codable, Equatable {
             self.conditions = value
 
         } else {
-            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
+            let hint = "id: \(self.id), name: \(self.name)"
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: container.codingPath, debugDescription: "Faield to decode Audience Condition (\(hint))"))
         }
     }
     

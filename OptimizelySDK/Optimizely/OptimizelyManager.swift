@@ -115,7 +115,7 @@ open class OptimizelyManager: NSObject {
     
     func configSDK(datafile: Data) throws {
         do {
-            self.config = try JSONDecoder().decode(ProjectConfig.self, from: datafile)
+            self.config = try ProjectConfig(datafile: datafile)
             
             // TODO: fix these to throw errors
             bucketer.initialize(config: self.config)

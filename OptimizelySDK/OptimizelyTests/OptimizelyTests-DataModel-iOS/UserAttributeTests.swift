@@ -9,6 +9,7 @@
 import XCTest
 
 // MARK: - Sample Data
+
 class UserAttributeTests: XCTestCase {
     let modelType = UserAttribute.self
     

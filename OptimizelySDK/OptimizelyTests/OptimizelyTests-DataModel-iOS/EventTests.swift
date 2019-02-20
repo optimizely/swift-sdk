@@ -8,17 +8,19 @@
 
 import XCTest
 
-class EventTests: XCTestCase {
+// MARK: - Sample Data
 
-    let modelType = Event.self
-    
-    // MARK: - Decode
+class EventTests: XCTestCase {
+    static var sampleData: [String: Any] = ["id": "553339214", "key": "house", "experimentIds": ["12105773750", "13139830210"]]
+}
+
+// MARK: - Decode
+
+extension EventTests {
     
     func testDecodeSuccessWithJSONValid() {
-        let json: [String: Any] = ["id": "553339214", "key": "house", "experimentIds": ["12105773750", "13139830210"]]
-        // JSONEncoder not happy with [String: Any]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+        let data: [String: Any] = ["id": "553339214", "key": "house", "experimentIds": ["12105773750", "13139830210"]]
+        let model: Event = try! modelFromNative(data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -26,19 +28,17 @@ class EventTests: XCTestCase {
     }
     
     func testDecodeSuccessWithJSONValid2() {
-        let json: [String: Any] = ["id": "553339214", "key": "house", "experimentIds": ["12105773750"]]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+        let data: [String: Any] = ["id": "553339214", "key": "house", "experimentIds": ["12105773750"]]
+        let model: Event = try! modelFromNative(data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
         XCTAssert(model.experimentIds == ["12105773750"])
     }
-
+    
     func testDecodeSuccessWithJSONValid3() {
-        let json: [String: Any] = ["id": "553339214", "key": "house", "experimentIds": []]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+        let data: [String: Any] = ["id": "553339214", "key": "house", "experimentIds": []]
+        let model: Event = try! modelFromNative(data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -46,9 +46,8 @@ class EventTests: XCTestCase {
     }
     
     func testDecodeSuccessWithExtraFields() {
-        let json: [String: Any] = ["id": "553339214", "key": "house", "experimentIds": ["12105773750", "13139830210"], "extra": "123"]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+        let data: [String: Any] = ["id": "553339214", "key": "house", "experimentIds": ["12105773750", "13139830210"], "extra": "123"]
+        let model: Event = try! modelFromNative(data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -56,56 +55,37 @@ class EventTests: XCTestCase {
     }
     
     func testDecodeFailWithMissingId() {
-        let json: [String: Any] = ["key": "house", "experimentIds": ["12105773750", "13139830210"]]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data: [String: Any] = ["key": "house", "experimentIds": ["12105773750", "13139830210"]]
+        let model: Event? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
     
     func testDecodeFailWithMissingKey() {
-        let json: [String: Any] = ["id": "553339214", "experimentIds": ["12105773750", "13139830210"]]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data: [String: Any] = ["id": "553339214", "experimentIds": ["12105773750", "13139830210"]]
+        let model: Event? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
     
     func testDecodeFailWithMissingExperimentIds() {
-        let json: [String: Any] = ["id": "553339214", "key": "house"]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data: [String: Any] = ["id": "553339214", "key": "house"]
+        let model: Event? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
-
+    
     func testDecodeFailWithJSONEmpty() {
-        let json: [String: Any] = [:]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data: [String: Any] = [:]
+        let model: Event? = try? modelFromNative(data)
+        XCTAssertNil(model)
+        
     }
-
+    
     // MARK: - Encode
-
+    
     func testEncodeJSON() {
-        let model = modelType.init(id: "553339214",
-                                        key: "house",
-                                        experimentIds: ["12105773750", "13139830210"])
+        let model = Event(id: "553339214",
+                          key: "house",
+                          experimentIds: ["12105773750", "13139830210"])
         XCTAssert(isEqualWithEncodeThenDecode(model))
     }
-
+    
 }

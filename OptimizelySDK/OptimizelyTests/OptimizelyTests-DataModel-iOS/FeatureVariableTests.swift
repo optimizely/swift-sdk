@@ -8,17 +8,20 @@
 
 import XCTest
 
+// MARK: - Sample Data
+
 class FeatureVariableTests: XCTestCase {
-    
-    let modelType = FeatureVariable.self
-    
-    // MARK: - Decode
+    static var sampleData = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100"]
+}
+
+// MARK: - Decode
+
+extension FeatureVariableTests {
     
     func testDecodeSuccessWithJSONValid() {
-        let json = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100"]
-        let jsonData = try! JSONEncoder().encode(json)
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
-        
+        let data = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100"]
+        let model: FeatureVariable = try! modelFromNative(data)
+
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "price")
         XCTAssert(model.type == "integer")
@@ -26,10 +29,9 @@ class FeatureVariableTests: XCTestCase {
     }
     
     func testDecodeSuccessWithExtraFields() {
-        let json = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100", "extra": "123"]
-        let jsonData = try! JSONEncoder().encode(json)
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
-        
+        let data = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100", "extra": "123"]
+        let model: FeatureVariable = try! modelFromNative(data)
+
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "price")
         XCTAssert(model.type == "integer")
@@ -37,64 +39,39 @@ class FeatureVariableTests: XCTestCase {
     }
     
     func testDecodeFailWithMissingId() {
-        let json = ["key": "price", "type": "integer", "defaultValue": "100"]
-        let jsonData = try! JSONEncoder().encode(json)
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data = ["key": "price", "type": "integer", "defaultValue": "100"]
+        let model: FeatureVariable? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
     
     func testDecodeFailWithMissingKey() {
-        let json = ["id": "553339214", "type": "integer", "defaultValue": "100"]
-        let jsonData = try! JSONEncoder().encode(json)
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data = ["id": "553339214", "type": "integer", "defaultValue": "100"]
+        let model: FeatureVariable? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingType() {
-        let json = ["id": "553339214", "key": "price", "defaultValue": "100"]
-        let jsonData = try! JSONEncoder().encode(json)
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data = ["id": "553339214", "key": "price", "defaultValue": "100"]
+        let model: FeatureVariable? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingDefaultValue() {
-        let json = ["id": "553339214", "key": "price", "type": "integer"]
-        let jsonData = try! JSONEncoder().encode(json)
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data = ["id": "553339214", "key": "price", "type": "integer"]
+        let model: FeatureVariable? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
     
     func testDecodeFailWithJSONEmpty() {
-        let json = [String: String]()
-        let jsonData = try! JSONEncoder().encode(json)
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data = [String: String]()
+        let model: FeatureVariable? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
     
     // MARK: - Encode
     
     func testEncodeJSON() {
-        let model = modelType.init(id: "553339214", key: "price", type: "integer", defaultValue: "100")
+        let model = FeatureVariable(id: "553339214", key: "price", type: "integer", defaultValue: "100")
         XCTAssert(isEqualWithEncodeThenDecode(model))
    }
 }

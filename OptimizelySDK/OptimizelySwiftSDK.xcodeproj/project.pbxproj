@@ -212,6 +212,10 @@
 		6E7C0B7721F1372600ECFF34 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */; };
 		6E852C6A221A7E3300C41F94 /* ExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E852C69221A7E3300C41F94 /* ExperimentTests.swift */; };
 		6E852C6B221A7E3300C41F94 /* ExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E852C69221A7E3300C41F94 /* ExperimentTests.swift */; };
+		6E8B6A48221CBBC5006EA8A6 /* GroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A47221CBBC5006EA8A6 /* GroupTests.swift */; };
+		6E8B6A49221CBBC5006EA8A6 /* GroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A47221CBBC5006EA8A6 /* GroupTests.swift */; };
+		6E8B6A4B221CC2D6006EA8A6 /* ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */; };
+		6E8B6A4C221CC2D6006EA8A6 /* ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */; };
 		6E95C8B62217F10800B6EE06 /* ConditionLeaf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95C8B52217F10800B6EE06 /* ConditionLeaf.swift */; };
 		6E95C8B92217F9B100B6EE06 /* ConditionLeaf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95C8B52217F10800B6EE06 /* ConditionLeaf.swift */; };
 		6E95C8BA2217F9B200B6EE06 /* ConditionLeaf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95C8B52217F10800B6EE06 /* ConditionLeaf.swift */; };
@@ -727,6 +731,8 @@
 		6E7FC6A5221222CD009A171F /* UserAttributeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAttributeTests.swift; sourceTree = "<group>"; };
 		6E7FC6A722125487009A171F /* UserAttributeTests_Evaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAttributeTests_Evaluate.swift; sourceTree = "<group>"; };
 		6E852C69221A7E3300C41F94 /* ExperimentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentTests.swift; sourceTree = "<group>"; };
+		6E8B6A47221CBBC5006EA8A6 /* GroupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTests.swift; sourceTree = "<group>"; };
+		6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTests.swift; sourceTree = "<group>"; };
 		6E95C8A822176EA500B6EE06 /* AudienceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudienceTests.swift; sourceTree = "<group>"; };
 		6E95C8AA2217736000B6EE06 /* ConditionHolderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionHolderTests.swift; sourceTree = "<group>"; };
 		6E95C8B12217C92E00B6EE06 /* ConditionHolderTests_Evaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionHolderTests_Evaluate.swift; sourceTree = "<group>"; };
@@ -942,16 +948,16 @@
 				0B7CB10221AE04C1007B77E5 /* Audience */,
 				0B7CB0FC21AE0058007B77E5 /* ProjectConfig.swift */,
 				6E4F0D962213A4EF00DD13A5 /* Project.swift */,
+				0B7CB0FE21AE03A0007B77E5 /* Group.swift */,
+				0B7CB0F421ADFE27007B77E5 /* Rollout.swift */,
+				0B7CB0F221ADF784007B77E5 /* Experiment.swift */,
+				0B7CB0F821ADFF0F007B77E5 /* FeatureFlag.swift */,
+				0B7CB0EE21ADF6C1007B77E5 /* Variation.swift */,
+				0B7CB0EA21ADF4E6007B77E5 /* TrafficAllocation.swift */,
 				0B7CB10021AE042E007B77E5 /* Attribute.swift */,
 				0B7CB0EC21ADF6A2007B77E5 /* Variable.swift */,
 				0B7CB0F621ADFEBD007B77E5 /* FeatureVariable.swift */,
-				0B7CB0EA21ADF4E6007B77E5 /* TrafficAllocation.swift */,
 				0B7CB0FA21ADFFFB007B77E5 /* Event.swift */,
-				0B7CB0EE21ADF6C1007B77E5 /* Variation.swift */,
-				0B7CB0F821ADFF0F007B77E5 /* FeatureFlag.swift */,
-				0B7CB0F221ADF784007B77E5 /* Experiment.swift */,
-				0B7CB0F421ADFE27007B77E5 /* Rollout.swift */,
-				0B7CB0FE21AE03A0007B77E5 /* Group.swift */,
 			);
 			path = "Data Model";
 			sourceTree = "<group>";
@@ -1065,6 +1071,8 @@
 		6EA4257A2218E61E00B074B5 /* OptimizelyTests-DataModel-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */,
+				6E8B6A47221CBBC5006EA8A6 /* GroupTests.swift */,
 				6E852C69221A7E3300C41F94 /* ExperimentTests.swift */,
 				6E95C8B12217C92E00B6EE06 /* ConditionHolderTests_Evaluate.swift */,
 				6E95C8AA2217736000B6EE06 /* ConditionHolderTests.swift */,
@@ -1686,6 +1694,7 @@
 				6EA425A02218E6AE00B074B5 /* RolloutTests.swift in Sources */,
 				6EA4262A2218E74F00B074B5 /* OPTDatafileHandler.swift in Sources */,
 				6EA426442218E74F00B074B5 /* ArrayEventForDispatch+Extension.swift in Sources */,
+				6E8B6A49221CBBC5006EA8A6 /* GroupTests.swift in Sources */,
 				6EA4265622191EEC00B074B5 /* Array+Extension.swift in Sources */,
 				6EA425A52218E6AE00B074B5 /* AudienceTests.swift in Sources */,
 				6EA426202218E74F00B074B5 /* DataStoreQueueStackImpl.swift in Sources */,
@@ -1720,6 +1729,7 @@
 				6EA425A82218E6AE00B074B5 /* EventTests.swift in Sources */,
 				6EA426382218E74F00B074B5 /* Attribute.swift in Sources */,
 				6EA425A72218E6AE00B074B5 /* VariationTests.swift in Sources */,
+				6E8B6A4C221CC2D6006EA8A6 /* ProjectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1828,6 +1838,7 @@
 				6EA425912218E6AD00B074B5 /* RolloutTests.swift in Sources */,
 				6EA425F62218E74E00B074B5 /* OPTDatafileHandler.swift in Sources */,
 				6EA426102218E74E00B074B5 /* ArrayEventForDispatch+Extension.swift in Sources */,
+				6E8B6A48221CBBC5006EA8A6 /* GroupTests.swift in Sources */,
 				6EA4265322191EEC00B074B5 /* Array+Extension.swift in Sources */,
 				6EA425962218E6AD00B074B5 /* AudienceTests.swift in Sources */,
 				6EA425EC2218E74E00B074B5 /* DataStoreQueueStackImpl.swift in Sources */,
@@ -1862,6 +1873,7 @@
 				6EA425992218E6AD00B074B5 /* EventTests.swift in Sources */,
 				6EA426042218E74E00B074B5 /* Attribute.swift in Sources */,
 				6EA425982218E6AD00B074B5 /* VariationTests.swift in Sources */,
+				6E8B6A4B221CC2D6006EA8A6 /* ProjectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

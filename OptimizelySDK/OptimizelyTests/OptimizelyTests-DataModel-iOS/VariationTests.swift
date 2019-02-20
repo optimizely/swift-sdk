@@ -8,20 +8,25 @@
 
 import XCTest
 
-class VariationTests: XCTestCase {
+// MARK: - Sample Data
 
-    let modelType = Variation.self
-    
-    // MARK: - Decode
+class VariationTests: XCTestCase {
+    static var sampleData: [String: Any] = ["id": "553339214",
+                                            "key": "house",
+                                            "featureEnabled": true,
+                                            "variables": [VariableTests.sampleData]]
+}
+
+// MARK: - Decode
+
+extension VariationTests {
     
     func testDecodeSuccessWithJSONValid() {
-        let json: [String: Any] = ["id": "553339214",
+        let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
                                    "featureEnabled": true,
                                    "variables": [["id": "123450", "value": "100"], ["id": "123451", "value": "200"]]]
-        // JSONEncoder not happy with [String: Any]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+        let model: Variation = try! modelFromNative(data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -33,14 +38,12 @@ class VariationTests: XCTestCase {
     }
     
     func testDecodeSuccessWithJSONValid2() {
-        let json: [String: Any] = ["id": "553339214",
+        let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
                                    "featureEnabled": false,
                                    "variables": []]
-        // JSONEncoder not happy with [String: Any]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
-        
+        let model: Variation = try! modelFromNative(data)
+
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
         XCTAssert(model.featureEnabled == false)
@@ -48,13 +51,11 @@ class VariationTests: XCTestCase {
     }
     
     func testDecodeSuccessWithJSONValid3() {
-        let json: [String: Any] = ["id": "553339214",
+        let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
                                    "featureEnabled": true]
-        // JSONEncoder not happy with [String: Any]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
-        
+        let model: Variation = try! modelFromNative(data)
+
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
         XCTAssert(model.featureEnabled == true)
@@ -62,13 +63,11 @@ class VariationTests: XCTestCase {
     }
     
     func testDecodeSuccessWithJSONValid4() {
-        let json: [String: Any] = ["id": "553339214",
+        let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
                                    "variables": []]
-        // JSONEncoder not happy with [String: Any]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
-        
+        let model: Variation = try! modelFromNative(data)
+
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
         XCTAssert(model.featureEnabled == nil)
@@ -76,12 +75,10 @@ class VariationTests: XCTestCase {
     }
     
     func testDecodeSuccessWithJSONValid5() {
-        let json: [String: Any] = ["id": "553339214",
+        let data: [String: Any] = ["id": "553339214",
                                    "key": "house"]
-        // JSONEncoder not happy with [String: Any]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let model = try! JSONDecoder().decode(modelType, from: jsonData)
-        
+        let model: Variation = try! modelFromNative(data)
+
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
         XCTAssert(model.featureEnabled == nil)
@@ -90,42 +87,30 @@ class VariationTests: XCTestCase {
     
 
     func testDecodeFailWithMissingId() {
-        let json: [String: Any] = ["key": "house"]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data: [String: Any] = ["key": "house"]
+        let model: Variation? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingKey() {
-        let json: [String: Any] = ["id": "553339214"]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data: [String: Any] = ["id": "553339214"]
+        let model: Variation? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
 
     func testDecodeFailWithJSONEmpty() {
-        let json: [String: Any] = [:]
-        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let data: [String: Any] = [:]
+        let model: Variation? = try? modelFromNative(data)
+        XCTAssertNil(model)
     }
+}
 
-    // MARK: - Encode
+// MARK: - Encode
 
+extension VariationTests {
+    
     func testEncodeJSON() {
-        let model = modelType.init(id: "553339214",
+        let model = Variation(id: "553339214",
                                    key: "house",
                                    featureEnabled: true,
                                    variables: [

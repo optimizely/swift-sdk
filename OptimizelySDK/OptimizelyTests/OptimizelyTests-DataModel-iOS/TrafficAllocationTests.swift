@@ -8,12 +8,18 @@
 
 import XCTest
 
-class TrafficAllocationTests: XCTestCase {
+// MARK: - Sample Data
 
+class TrafficAllocationTests: XCTestCase {
     let modelType = TrafficAllocation.self
     
-    // MARK: - Decode
-    
+    static var sampleData: [String: Any] = ["entityId": "553339214", "endOfRange": 5000]
+}
+
+// MARK: - Decode
+
+extension TrafficAllocationTests {
+
     func testDecodeSuccessWithJSONValid() {
         let json: [String: Any] = ["entityId": "553339214", "endOfRange": 5000]
         // JSONEncoder not happy with [String: Any]
@@ -68,9 +74,12 @@ class TrafficAllocationTests: XCTestCase {
             XCTAssert(true)
         }
     }
+}
 
-    // MARK: - Encode
+// MARK: - Encode
 
+extension TrafficAllocationTests {
+    
     func testEncodeJSON() {
         let model = modelType.init(entityId: "553339214", endOfRange: 5000)
         XCTAssert(isEqualWithEncodeThenDecode(model))

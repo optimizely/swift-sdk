@@ -16,14 +16,6 @@ class AudienceTests: XCTestCase {
     static var sampleData: [String: Any] = ["id": "553339214",
                                             "name": "america",
                                             "conditions": ConditionHolderTests.sampleData]
-    
-    func testDecodeSample() {
-        let model: Audience = try! modelFromNative(AudienceTests.sampleData)
-        
-        XCTAssert(model.id == "553339214")
-        XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! modelFromNative(ConditionHolderTests.sampleData)))
-    }
 }
 
 // MARK: - Decode (Legacy Audiences)

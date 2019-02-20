@@ -1,5 +1,6 @@
 Pod::Spec.new do |s|
   s.name                    = "OptimizelySwiftSDK"
+  s.module_name	            = "Optimizely"
   s.version                 = "3.0.0"
   s.summary                 = "Optimizely server-side testing core framework."
   s.homepage                = "http://developers.optimizely.com/server/reference/index.html?language=objectivec"

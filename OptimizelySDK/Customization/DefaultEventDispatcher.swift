@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class DefaultEventDispatcher : OPTEventDispatcher {
+open class DefaultEventDispatcher : OPTEventDispatcher {
     // the max failure count.  there is no backoff timer.
     static let MAX_FAILURE_COUNT = 3
     

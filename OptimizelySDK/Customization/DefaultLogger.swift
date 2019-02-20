@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class DefaultLogger : OPTLogger {
+open class DefaultLogger : OPTLogger {
     private static var _logLevel: OptimizelyLogLevel?
     public static var logLevel: OptimizelyLogLevel {
         get {

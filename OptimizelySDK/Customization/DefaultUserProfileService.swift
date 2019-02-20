@@ -71,7 +71,7 @@ import Foundation
 //    };
 //}
 
-public class DefaultUserProfileService : OPTUserProfileService {
+open class DefaultUserProfileService : OPTUserProfileService {
     static let variationId = "variation_id"
     static let userId = "user_id"
     static let experimentMap = "experiment_bucket_map"

@@ -126,7 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             openVariationView(optimizelyManager: optimizely, variationKey: variationKey)
             
             DispatchQueue.global(qos: .background).async {
-                repeat {
+            //    repeat {
                     do {
                         let variationKey = try optimizely.activate(experimentKey: self.experimentKey,
                                                                userId: self.userId,
@@ -136,8 +136,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     catch let error {
                         print(error)
                     }
-                }
-                while true
+            //    }
+            //    while true
                 
             }
         } catch OptimizelyError.experimentNotParticipated {

@@ -124,22 +124,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                        userId: userId,
                                                        attributes: attributes)
             openVariationView(optimizelyManager: optimizely, variationKey: variationKey)
-            
-            DispatchQueue.global(qos: .background).async {
-            //    repeat {
-                    do {
-                        let variationKey = try optimizely.activate(experimentKey: self.experimentKey,
-                                                               userId: self.userId,
-                                                               attributes: self.attributes)
-                        print(variationKey)
-                    }
-                    catch let error {
-                        print(error)
-                    }
-            //    }
-            //    while true
-                
-            }
+
+// used to test threading and datafile updates.
+//
+//            DispatchQueue.global(qos: .background).async {
+//                repeat {
+//                    do {
+//                        let userId = String(Int(arc4random_uniform(300000)))
+//                        let variationKey = try optimizely.activate(experimentKey: self.experimentKey,
+//                                                               userId: userId,
+//                                                               attributes: self.attributes)
+//                        print(variationKey)
+//                    }
+//                    catch let error {
+//                        print(error)
+//                    }
+//                    sleep(1)
+//                }
+//                while true
+//
+//            }
         } catch OptimizelyError.experimentNotParticipated {
             print("Optimizely SDK activation cannot map this user to experiemnt")
             openVariationView(optimizelyManager: optimizely, variationKey: nil)

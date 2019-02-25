@@ -16,46 +16,34 @@
 
 import Foundation
 
-class ProjectConfig : Codable
-{
-    var version:String = ""
-    var rollouts:[Rollout]? = []
-    var typedAudiences:[Audience]? = []
-    var anonymizeIP:Bool? = true
-    var projectId:String = ""
-    var variables:[Variable]? = []
-    var featureFlags:[FeatureFlag]? = []
-    var experiments:[Experiment] = []
-    var audiences:[Audience] = []
-    var groups:[Group] = []
-    var attributes:[Attribute] = []
-    var botFiltering:Bool? = false
-    var accountId:String = ""
-    var events:[Event]? = []
-    var revision:String = ""
-    // transient
-    var whitelistUsers:Dictionary<String,Dictionary<String,String>> = Dictionary<String,Dictionary<String,String>>()
+class ProjectConfig : Codable {
     
-    private enum CodingKeys: String, CodingKey {
-        case version
-        case rollouts
-        case typedAudiences
-        case anonymizeIP
-        case projectId
-        case variables
-        case featureFlags
-        case experiments
-        case audiences
-        case groups
-        case attributes
-        case botFiltering
-        case accountId
-        case events
-        case revision
-        // transient
-        // case whitelistUsers
+    var project: Project!
+    
+    var whitelistUsers = [String: [String: String]]()
+    
+    init(datafile: Data) throws {
+        do {
+            self.project = try JSONDecoder().decode(Project.self, from: datafile)
+        } catch {
+            // TODO: clean up (debug only)
+            print(">>>>> Project Decode Error: \(error)")
+            throw OptimizelyError.dataFileInvalid
+        }
     }
-
+    
+    convenience init(datafile: String) throws {
+        guard let data = datafile.data(using: .utf8) else {
+            throw OptimizelyError.dataFileInvalid
+        }
+        
+        try self.init(datafile: data)
+   }
+    
+    init() {
+        // TODO: [Jae] fix to throw error
+    }
+    
     class func DateFromString(dateString:String) -> NSDate
     {
         let dateFormatter = DateFormatter()
@@ -84,3 +72,4 @@ extension ProjectConfig {
         return nil
     }
 }
+

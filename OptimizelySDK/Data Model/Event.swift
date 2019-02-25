@@ -16,9 +16,8 @@
 
 import Foundation
 
-struct Event : Codable
-{
-    var experimentIds:[String] = []
-    var id:String = ""
-    var key:String = ""
+struct Event: Codable, Equatable {
+    var id: String
+    var key: String
+    var experimentIds: [String]
 }

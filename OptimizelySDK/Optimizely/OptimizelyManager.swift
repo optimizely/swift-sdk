@@ -115,7 +115,7 @@ open class OptimizelyManager: NSObject {
     
     func configSDK(datafile: Data) throws {
         do {
-            self.config = try JSONDecoder().decode(ProjectConfig.self, from: datafile)
+            self.config = try ProjectConfig(datafile: datafile)
             
             // TODO: fix these to throw errors
             bucketer.initialize(config: self.config)
@@ -196,7 +196,7 @@ open class OptimizelyManager: NSObject {
                          attributes:Dictionary<String, Any>?=nil) throws -> String {
         
         // TODO: fix config to throw common errors (.experimentUnknown, .experimentKeyInvalid, ...)
-        guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = config.project.experiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
         }
         
@@ -246,7 +246,7 @@ open class OptimizelyManager: NSObject {
                       userId:String,
                       attributes:Dictionary<String, Any>?=nil) throws -> Variation {
         
-        guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = config.project.experiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
         }
 
@@ -278,7 +278,7 @@ open class OptimizelyManager: NSObject {
     /// - Returns: forced variation key if it exists, otherwise return nil.
     /// - Throws: `OptimizelyError` if error is detected
     public func getForcedVariation(experimentKey:String, userId:String) throws -> String? {
-        guard let experiment = config.experiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = config.project.experiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
         }
         
@@ -308,7 +308,7 @@ open class OptimizelyManager: NSObject {
                                    userId:String,
                                    variationKey:String?) throws {
         
-        guard let _ = config.experiments.filter({$0.key == experimentKey}).first else {
+        guard let _ = config.project.experiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
         }
         
@@ -340,7 +340,7 @@ open class OptimizelyManager: NSObject {
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
                                  attributes: Dictionary<String,Any>?=nil) throws -> Bool {
-        guard let featureFlag = config.featureFlags?.filter({$0.key == featureKey}).first  else {
+        guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first  else {
             return false
         }
         
@@ -469,11 +469,11 @@ open class OptimizelyManager: NSObject {
                                attributes: Dictionary<String, Any>?=nil) throws -> T {
         
         // fix config to throw errors
-        guard let featureFlag = config.featureFlags?.filter({$0.key == featureKey}).first else {
+        guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first else {
             throw OptimizelyError.featureUnknown
         }
         
-        guard let variable = featureFlag.variables?.filter({$0.key == variableKey}).first else {
+        guard let variable = featureFlag.variables.filter({$0.key == variableKey}).first else {
             throw OptimizelyError.variableUnknown
         }
         
@@ -520,7 +520,7 @@ open class OptimizelyManager: NSObject {
     public func getEnabledFeatures(userId:String,
                                    attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
         
-        let enabledFeatures = config.featureFlags?.filter{
+        let enabledFeatures = config.project.featureFlags.filter{
             do {
                 return try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
             } catch {
@@ -528,7 +528,7 @@ open class OptimizelyManager: NSObject {
             }
         }
         
-        return enabledFeatures?.map{$0.key} ?? []
+        return enabledFeatures.map{$0.key} ?? []
     }
     
     /// Track an event

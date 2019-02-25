@@ -33,11 +33,17 @@ public enum OptimizelyError: Error {
     case groupHasNoTrafficAllocation(_ key: String)
     case rolloutKeyInvalid(_ key: String)
     case rolloutUnknown
-
+    
     case trafficAllocationNotInRange
     case trafficAllocationUnknown
     case eventNotAssociatedToExperiment(_ key: String)
 
+    // MARK: - Audience Conditions
+    
+    case conditionNoMatchingAudience(_ hint: String)
+    case conditionInvalidValueType(_ hint: String)
+    case conditionInvalidFormat(_ hint: String)
+    
     // MARK: - Bucketing
     
     case userIdInvalid

@@ -33,8 +33,38 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6EBAEB7321E3FEF900D13AA9"
-               BuildableName = "OptimizelySwiftSDK-iOSTests.xctest"
-               BlueprintName = "OptimizelySwiftSDK-iOSTests"
+               BuildableName = "OptimizelyTests-iOS.xctest"
+               BlueprintName = "OptimizelyTests-iOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6EA425692218E60A00B074B5"
+               BuildableName = "OptimizelyTests-Common-iOS.xctest"
+               BlueprintName = "OptimizelyTests-Common-iOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6EA425782218E61E00B074B5"
+               BuildableName = "OptimizelyTests-DataModel-iOS.xctest"
+               BlueprintName = "OptimizelyTests-DataModel-iOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6EA4265A2219242100B074B5"
+               BuildableName = "OptimizelyTests-Others-iOS.xctest"
+               BlueprintName = "OptimizelyTests-Others-iOS"
                ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </TestableReference>

@@ -19,14 +19,14 @@
 
 import Foundation
 
-struct Group : Codable {
-    enum Policy : String, Codable {
+struct Group: Codable, Equatable {
+    enum Policy: String, Codable {
         case random
         case overlapping
     }
     
-    var id:String = ""
-    var policy:Policy = Policy.random
-    var trafficAllocation:[TrafficAllocation] = []
-    var experiments:[Experiment] = []
+    var id: String
+    var policy: Policy
+    var trafficAllocation: [TrafficAllocation]
+    var experiments: [Experiment]
 }

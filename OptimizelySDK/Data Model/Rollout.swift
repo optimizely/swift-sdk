@@ -19,9 +19,8 @@
 
 import Foundation
 
-struct Rollout : Codable
-{
-    var experiments:[Experiment] = []
-    var id:String = ""
+struct Rollout: Codable, Equatable {
+    var id: String
+    var experiments: [Experiment]
 }
 

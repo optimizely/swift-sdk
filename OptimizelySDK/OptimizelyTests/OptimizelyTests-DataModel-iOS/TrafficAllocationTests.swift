@@ -1,5 +1,5 @@
 //
-//  DataModelTrafficAllocation.swift
+//  TrafficAllocationTests.swift
 //  OptimizelySwiftSDK-iOSTests
 //
 //  Created by Jae Kim on 2/7/19.
@@ -8,12 +8,18 @@
 
 import XCTest
 
-class DataModelTrafficAllocation: XCTestCase {
+// MARK: - Sample Data
 
+class TrafficAllocationTests: XCTestCase {
     let modelType = TrafficAllocation.self
     
-    // MARK: - Decode
-    
+    static var sampleData: [String: Any] = ["entityId": "553339214", "endOfRange": 5000]
+}
+
+// MARK: - Decode
+
+extension TrafficAllocationTests {
+
     func testDecodeSuccessWithJSONValid() {
         let json: [String: Any] = ["entityId": "553339214", "endOfRange": 5000]
         // JSONEncoder not happy with [String: Any]
@@ -68,16 +74,15 @@ class DataModelTrafficAllocation: XCTestCase {
             XCTAssert(true)
         }
     }
+}
 
-    // MARK: - Encode
+// MARK: - Encode
 
+extension TrafficAllocationTests {
+    
     func testEncodeJSON() {
-        let modelGiven = modelType.init(entityId: "553339214", endOfRange: 5000)
-        let jsonData = try! JSONEncoder().encode(modelGiven)
-        let modelExp = try! JSONDecoder().decode(modelType, from: jsonData)
-
-        XCTAssert(modelExp.entityId == modelGiven.entityId)
-        XCTAssert(modelExp.endOfRange == modelGiven.endOfRange)
+        let model = modelType.init(entityId: "553339214", endOfRange: 5000)
+        XCTAssert(isEqualWithEncodeThenDecode(model))
     }
 
 }

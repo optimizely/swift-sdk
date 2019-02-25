@@ -49,7 +49,7 @@ class DefaultDecisionService : OPTDecisionService {
         let bucketingId = getBucketingId(userId:userId, attributes:attributes)
         
         // ---- check if the experiment is running ----
-        if experiment.status != Experiment.Status.Running {
+        if experiment.status != Experiment.Status.running {
             return nil;
         }
         
@@ -60,7 +60,7 @@ class DefaultDecisionService : OPTDecisionService {
         }
 
         // ---- check if the experiment has forced variation ----
-        if let variationId = experiment.forcedVariations?[userId], let variation = experiment.variations.filter({$0.id == variationId}).first {
+        if let variationId = experiment.forcedVariations[userId], let variation = experiment.variations.filter({$0.id == variationId}).first {
             return variation
         }
         
@@ -91,15 +91,19 @@ class DefaultDecisionService : OPTDecisionService {
     
     func isInExperiment(experiment:Experiment, userId:String, attributes:Dictionary<String, Any>) -> Bool? {
         if let _ = experiment.audienceConditions {
-            return experiment.audienceConditions?.evaluate(projectConfig: config, attributes: attributes)
+            
+            // TODO: [Jae] fix with OptimizelyError
+            return try! experiment.audienceConditions?.evaluate(project: config.project, attributes: attributes)
         }
         else if experiment.audienceIds.count > 0 {
             var holder = [ConditionHolder]()
-            holder.append(ConditionHolder.string("or"))
-            for audienceId in experiment.audienceIds {
-                holder.append(ConditionHolder.string(audienceId))
+            holder.append(.logicalOp(.or))
+            for id in experiment.audienceIds {
+              holder.append(.leaf(.audienceId(id)))
             }
-            return holder.evaluate(config: config, attributes: attributes)
+            
+            // TODO: [Jae] fix with OptimizelyError
+            return try? holder.evaluate(project: config.project, attributes: attributes)
         }
         
         return true
@@ -117,10 +121,17 @@ class DefaultDecisionService : OPTDecisionService {
      func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
         //Evaluate in this order:
         
+        
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // TODO: JSON schema does not have groupId, so removed from model. check it out.
+        //
         //1. Attempt to check if the feature is in a mutex group.
-        if let groupId = featureFlag.groupId, let variation = getVariationForFeatureGroup(featureFlag: featureFlag, groupId: groupId, userId: userId, attributes: attributes) {
-            return variation
-        }
+//        if let groupId = featureFlag.groupId, let variation = getVariationForFeatureGroup(featureFlag: featureFlag, groupId: groupId, userId: userId, attributes: attributes) {
+//            return variation
+//        }
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        
         
         //2. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
@@ -141,7 +152,7 @@ class DefaultDecisionService : OPTDecisionService {
     func getVariationForFeatureGroup(featureFlag:FeatureFlag, groupId:String, userId:String,                attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
         
         let bucketing_id = getBucketingId(userId:userId, attributes:attributes)
-        if let group = config.groups.filter({$0.id == groupId}).first {
+        if let group = config.project.groups.filter({$0.id == groupId}).first {
             
             if let experiment = getExperimentInGroup(group: group, bucketingId:bucketing_id),
                 featureFlag.experimentIds.contains(experiment.id),
@@ -165,7 +176,7 @@ class DefaultDecisionService : OPTDecisionService {
         // Check if there are any experiment IDs inside feature flag
         // Evaluate each experiment ID and return the first bucketed experiment variation
         for experimentId in experimentIds {
-            if let experiment = config.experiments.filter({$0.id == experimentId }).first {
+            if let experiment = config.project.experiments.filter({$0.id == experimentId }).first {
                 let variation = getVariation(userId: userId, experiment: experiment, attributes: attributes)
                 return (experiment,variation)
             }
@@ -179,10 +190,10 @@ class DefaultDecisionService : OPTDecisionService {
     
         let bucketingId = getBucketingId(userId: userId, attributes:attributes)
         
-        guard let rolloutId = featureFlag.rolloutId, rolloutId.trimmingCharacters(in: CharacterSet.whitespaces) != "" else {
+        guard featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces) != "" else {
             return nil
         }
-        guard let rollout = config.rollouts?.filter({$0.id == rolloutId}).first else {
+        guard let rollout = config.project.rollouts.filter({$0.id == featureFlag.rolloutId}).first else {
             return nil
         }
         let rolloutRules = rollout.experiments

@@ -27,7 +27,7 @@ class BatchEventBuilder {
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
-        let batchEvent = BatchEvent(revision: config.revision, accountID: config.accountId, clientVersion: "1.0", visitors: [visitor], projectID: config.projectId, clientName: "swift-sdk", anonymizeIP: config.anonymizeIP ?? false)
+        let batchEvent = BatchEvent(revision: config.project.revision, accountID: config.project.accountId, clientVersion: "1.0", visitors: [visitor], projectID: config.project.projectId, clientName: "swift-sdk", anonymizeIP: config.project.anonymizeIP ?? false)
         
         if let data = try? JSONEncoder().encode(batchEvent) {
             return data
@@ -39,15 +39,15 @@ class BatchEventBuilder {
     
     static func createConversionEvent(config:ProjectConfig, decisionService:OPTDecisionService, eventKey:String, userId:String, attributes:Dictionary<String,Any>?, eventTags:Dictionary<String, Any>?) -> Data? {
         
-        guard let event = config.events?.filter({$0.key == eventKey}).first  else {
+        guard let event = config.project.events.filter({$0.key == eventKey}).first  else {
             return nil
         }
         let experimentIds = event.experimentIds
         let experiments = experimentIds.map { (id) -> Experiment? in
-            config.experiments.filter({$0.id == id}).first
+            config.project.experiments.filter({$0.id == id}).first
         }
         var decisions = [Decision]()
-        for experiment in experiments where experiment != nil && experiment?.status == Experiment.Status.Running {
+        for experiment in experiments where experiment != nil && experiment?.status == Experiment.Status.running {
             if let variation = decisionService.getVariation(userId: userId, experiment: experiment!, attributes: attributes ?? [String:Any]()) {
                 decisions.append(Decision(variationID: variation.id, campaignID: experiment!.layerId, experimentID: experiment!.id))
             }
@@ -75,7 +75,7 @@ class BatchEventBuilder {
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
-        let batchEvent = BatchEvent(revision: config.revision, accountID: config.accountId, clientVersion: "1.0", visitors: [visitor], projectID: config.projectId, clientName: "swift-sdk", anonymizeIP: config.anonymizeIP ?? false)
+        let batchEvent = BatchEvent(revision: config.project.revision, accountID: config.project.accountId, clientVersion: "1.0", visitors: [visitor], projectID: config.project.projectId, clientName: "swift-sdk", anonymizeIP: config.project.anonymizeIP ?? false)
         
         if let data = try? JSONEncoder().encode(batchEvent) {
             return data
@@ -89,7 +89,7 @@ class BatchEventBuilder {
         
         if let attributes = attributes {
             for attr in attributes.keys {
-                if let attributeId = config.attributes.filter({$0.key == attr}).first?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
+                if let attributeId = config.project.attributes.filter({$0.key == attr}).first?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
                     if let eventValue = AttributeValue(value:attributes[attr]) {
                         let eventAttribute = EventAttribute(value: eventValue, key: attr, shouldIndex: true, type: "custom_attribute", entityID: attributeId)
                         eventAttributes.append(eventAttribute)

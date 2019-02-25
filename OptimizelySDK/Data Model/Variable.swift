@@ -19,7 +19,7 @@
 
 import Foundation
 
-struct Variable: Codable {
+struct Variable: Codable, Equatable {
     var id: String
     var value: String
 }

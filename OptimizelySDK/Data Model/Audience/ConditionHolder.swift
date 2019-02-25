@@ -16,154 +16,110 @@
 
 import Foundation
 
-public enum ConditionHolder : Codable {
-    case string(String)
-    case userAttribute(UserAttribute)
+enum LogicalOp: String, Codable {
+    case and
+    case or
+    case not
+}
+
+enum ConditionHolder: Codable, Equatable {
+    case logicalOp(LogicalOp)
+    case leaf(ConditionLeaf)
     case array([ConditionHolder])
     
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         if let container = try? decoder.singleValueContainer() {
+            if let value = try? container.decode(LogicalOp.self) {
+                self = .logicalOp(value)
+                return
+            }
+            
+            if let value = try? container.decode(ConditionLeaf.self) {
+                self = .leaf(value)
+                return
+            }
+            
             if let value = try? container.decode([ConditionHolder].self) {
                 self = .array(value)
                 return
             }
-            if let value = try? container.decode(String.self) {
-                self = .string(value)
-                return
-            }
-            if let value = try? container.decode(UserAttribute.self) {
-                self = .userAttribute(value)
-                return
-            }
         }
         
-        throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
+        throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode ConditionHolder"))
     }
     
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        
         switch self {
-        case .string(let op):
-            var container = encoder.singleValueContainer()
-            try? container.encode(op)
-        case .userAttribute(let userAttr):
-            var container = encoder.singleValueContainer()
-            try? container.encode(userAttr)
-        case .array(let holder):
-            var container = encoder.unkeyedContainer()
-            try? container.encode(holder)
+        case .logicalOp(let op):
+            try container.encode(op)
+        case .leaf(let conditionLeaf):
+            try container.encode(conditionLeaf)
+        case .array(let conditions):
+            try container.encode(conditions)
         }
     }
     
-    func evaluate(projectConfig:ProjectConfig, attributes:Dictionary<String,Any>) -> Bool? {
+    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
         switch self {
-        case .string(let op):
-            // assume it is a audienceId if it is not an operand
-            if !op.isOperand {
-                if let audience = projectConfig.typedAudiences?.filter({$0.id == op}).first {
-                    return audience.conditions?.evaluate(projectConfig: projectConfig, attributes: attributes)
-                }
-                else if let audience = projectConfig.audiences.filter({$0.id == op}).first {
-                    return audience.conditions?.evaluate(projectConfig: projectConfig, attributes: attributes)
-                }
-            }
-        case .userAttribute(let userAttr):
-            return userAttr.evaluate(config: projectConfig, attributes: attributes)
-        case .array(let holder):
-            return holder.evaluate(config: projectConfig, attributes: attributes)
+        case .logicalOp:
+            throw OptimizelyError.conditionInvalidFormat("logical op not evaluated")
+        case .leaf(let conditionLeaf):
+            return try conditionLeaf.evaluate(project: project, attributes: attributes)
+        case .array(let conditions):
+            return try conditions.evaluate(project: project, attributes: attributes)
         }
-        
-        return nil
     }
 }
 
-extension String {
-    var isOperand:Bool {
-        switch self {
-        case "and","or","not":
-            return true
-        default:
-            return false;
-        }
-    }
-}
+// MARK: - [ConditionHolder]
 
 extension Array where Element == ConditionHolder {
-    func evaluate(config: ProjectConfig, attributes: Dictionary<String,Any>) -> Bool? {
-
-        for i in 0..<self.count {
-            let condition = self[i]
-            switch condition {
-            case .string(let op):
-                if op.isOperand {
-                    return evaluate(operand: op, config: config, attributes: attributes)
-                }
-                else {
-                    if let audience = config.typedAudiences?.filter({$0.id == op}).first {
-                        return audience.conditions?.evaluate(projectConfig: config, attributes: attributes)
-                    }
-                    else if let audience = config.audiences.filter({$0.id == op}).first {
-                        return audience.conditions?.evaluate(projectConfig: config, attributes: attributes)
-                    }
-                }
-            case .array(let conditions):
-                return conditions.evaluate(config: config, attributes: attributes)
-            case .userAttribute(let userAttr):
-                return userAttr.evaluate(config: config, attributes: attributes)
-            }
+    
+    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+        guard let firstItem = self.first else {
+            throw OptimizelyError.conditionInvalidFormat("empty condition array")
         }
         
-        return nil
+        switch firstItem {
+        case .logicalOp(let op):
+            return try evaluate(op: op, project: project, attributes: attributes)
+        case .leaf:
+            // special case - array has a single ConditionLeaf
+            guard self.count == 1 else {
+                throw OptimizelyError.conditionInvalidFormat("invalid condition array format")
+            }
+            
+            return try firstItem.evaluate(project: project, attributes: attributes)
+        default:
+            throw OptimizelyError.conditionInvalidFormat("invalid first item")
+        }
     }
     
-    func evaluate(operand:String, config: ProjectConfig, attributes: Dictionary<String,Any>) -> Bool? {
-        func orEvaluate() -> Bool? {
-            var foundNil = false
-            for i in 1..<self.count {
-                let condition = self[i]
-                if let result = condition.evaluate(projectConfig: config, attributes: attributes) {
-                    if result == true {
-                        return true
-                    }
-                }
-                else {
-                    foundNil = true
-                }
-            }
-            return foundNil ? nil : false
-        }
-        func andEvaluate() -> Bool? {
-            var foundNil = false
-            for i in 1..<self.count {
-                let condition = self[i]
-                if let result = condition.evaluate(projectConfig: config, attributes: attributes) {
-                    if result == false {
-                        return false
-                    }
-                }
-                else {
-                    foundNil = true
-                }
-            }
-            return foundNil ? nil : true
-        }
-        func notEvaluate() -> Bool? {
-            let condition = self[1]
-            if let result = condition.evaluate(projectConfig: config, attributes: attributes) {
-                return !result
-            }
-            return nil
+    func evaluate(op: LogicalOp, project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+        guard self.count > 0 else {
+            throw OptimizelyError.conditionInvalidFormat(#function)
         }
         
-        switch operand {
-        case "and":
-            return andEvaluate()
-        case "or":
-            return orEvaluate()
-        case "not":
-            return notEvaluate()
-        default:
-            return orEvaluate()
+        let itemsAfterOpTrimmed = Array(self[1...])
+        
+        // create closure array for delayed evaluations to avoid unnecessary ops
+        let evalList = itemsAfterOpTrimmed.map { holder -> ThrowableCondition in
+            return {
+                return try holder.evaluate(project: project, attributes: attributes)
+            }
         }
-
-     }
+        
+        switch op {
+        case .and:
+            return try evalList.and()
+        case .or:
+            return try evalList.or()
+        case .not:
+            return try evalList.not()
+        }
+    }
+    
 }
+

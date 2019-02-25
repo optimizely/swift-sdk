@@ -33,8 +33,38 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6E614DD421E3F38A005982A1"
-               BuildableName = "OptimizelySwiftSDK-tvOSTests.xctest"
-               BlueprintName = "OptimizelySwiftSDK-tvOSTests"
+               BuildableName = "OptimizelyTests-tvOS.xctest"
+               BlueprintName = "OptimizelyTests-tvOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6EA425072218E41500B074B5"
+               BuildableName = "OptimizelyTests-Common-tvOS.xctest"
+               BlueprintName = "OptimizelyTests-Common-tvOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6EA4255A2218E58400B074B5"
+               BuildableName = "OptimizelyTests-DataModel-tvOS.xctest"
+               BlueprintName = "OptimizelyTests-DataModel-tvOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6EA426692219243D00B074B5"
+               BuildableName = "OptimizelyTests-Others-tvOS.xctest"
+               BlueprintName = "OptimizelyTests-Others-tvOS"
                ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </TestableReference>

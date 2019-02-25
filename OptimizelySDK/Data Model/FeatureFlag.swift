@@ -16,12 +16,13 @@
 
 import Foundation
 
-struct FeatureFlag : Codable
-{
-    var experimentIds:[String] = []
-    var rolloutId:String?
-    var groupId:String?
-    var variables:[FeatureVariable]? = []
-    var id:String = ""
-    var key:String = ""
+struct FeatureFlag: Codable, Equatable {
+    var id: String
+    var key: String
+    var experimentIds: [String]
+    var rolloutId: String
+    var variables: [FeatureVariable]
+    
+    // TODO: this will be removed. clean up existing code using this
+    //var groupId: String?
 }

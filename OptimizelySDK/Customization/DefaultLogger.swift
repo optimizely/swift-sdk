@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class DefaultLogger : OPTLogger {
+open class DefaultLogger : OPTLogger {
     private static var _logLevel: OptimizelyLogLevel?
     public static var logLevel: OptimizelyLogLevel {
         get {
@@ -33,7 +33,7 @@ public class DefaultLogger : OPTLogger {
         DefaultLogger.logLevel = .all
     }
     
-    public func log(level: OptimizelyLogLevel, message: String) {
+    open func log(level: OptimizelyLogLevel, message: String) {
         if level.rawValue > DefaultLogger.logLevel.rawValue {
             return
         }

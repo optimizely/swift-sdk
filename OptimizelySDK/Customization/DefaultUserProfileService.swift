@@ -71,7 +71,7 @@ import Foundation
 //    };
 //}
 
-public class DefaultUserProfileService : OPTUserProfileService {
+open class DefaultUserProfileService : OPTUserProfileService {
     static let variationId = "variation_id"
     static let userId = "user_id"
     static let experimentMap = "experiment_bucket_map"
@@ -84,7 +84,7 @@ public class DefaultUserProfileService : OPTUserProfileService {
         profiles = UserDefaults.standard.dictionary(forKey: DefaultUserProfileService.storageName) as? [String : Dictionary<String, Any>] ?? Dictionary<String, Dictionary<String,Any>>()
     }
 
-    public func lookup(userId: String) -> Dictionary<String, Any>? {
+    open func lookup(userId: String) -> Dictionary<String, Any>? {
         var retVal: Dictionary<String, Any>?
         lock.sync {
             retVal = profiles[userId]
@@ -92,7 +92,7 @@ public class DefaultUserProfileService : OPTUserProfileService {
         return retVal
     }
 
-    public func variationId(userId: String, experimentId:String) -> String? {
+    open func variationId(userId: String, experimentId:String) -> String? {
         var retVal:String?
         lock.sync {
             if let profile =  profiles[userId] as? Dictionary<String,Dictionary<String,Any>> {
@@ -104,7 +104,7 @@ public class DefaultUserProfileService : OPTUserProfileService {
         return retVal
     }
 
-    public func save(userProfile: Dictionary<String, Any>) {
+    open func save(userProfile: Dictionary<String, Any>) {
         lock.async {
             self.profiles = userProfile as! [String : Dictionary<String, Any>]
             let defaults = UserDefaults.standard
@@ -114,7 +114,7 @@ public class DefaultUserProfileService : OPTUserProfileService {
         
     }
     
-    public func saveProfile(userId:String, experimentId:String, variationId:String) {
+    open func saveProfile(userId:String, experimentId:String, variationId:String) {
         lock.async {
             var profile = self.profiles[userId] ?? [String: Any]()
             var experimentMap = profile[DefaultUserProfileService.experimentMap] as? [String: [String: String]] ?? [String: [String: String]]()

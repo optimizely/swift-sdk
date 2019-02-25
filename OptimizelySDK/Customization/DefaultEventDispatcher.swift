@@ -16,16 +16,16 @@
 
 import Foundation
 
-public class DefaultEventDispatcher : OPTEventDispatcher {
+open class DefaultEventDispatcher : OPTEventDispatcher {
     // the max failure count.  there is no backoff timer.
     static let MAX_FAILURE_COUNT = 3
     
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
-    public var batchSize:Int = 4
+    open var batchSize:Int = 4
     // start trimming the front of the queue when we get to over maxQueueSize
     // TODO: implement
-    public var maxQueueSize:Int = 3000
+    open var maxQueueSize:Int = 3000
     
     lazy var logger = HandlerRegistryService.shared.injectLogger()
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
@@ -37,14 +37,14 @@ public class DefaultEventDispatcher : OPTEventDispatcher {
         
     }
     
-    public func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    open func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         
         dataStore.save(item: event)
         
         flushEvents()
     }
     
-    public func flushEvents() {
+    open func flushEvents() {
         dispatcher.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0;

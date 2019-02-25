@@ -463,7 +463,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-DemoSwiftiOS/Pods-DemoSwiftiOS-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-DemoSwiftiOS/Pods-DemoSwiftiOS-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Amplitude-iOS/Amplitude_iOS.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${PODS_ROOT}/Localytics/Localytics-iOS-5.4.0/Localytics.framework",
@@ -480,7 +480,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-DemoSwiftiOS/Pods-DemoSwiftiOS-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DemoSwiftiOS/Pods-DemoSwiftiOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8C29F1E0722378268CBB6EF1 /* [CP] Check Pods Manifest.lock */ = {

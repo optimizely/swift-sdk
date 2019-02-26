@@ -14,12 +14,8 @@ public class EventForDispatch : Equatable, Codable {
     public let url:URL
     public let body:Data
     
-    convenience init(body:Data) {
-        self.init(url: URL(string:EventForDispatch.eventEndpoint)!, body: body)
-    }
-    
-    init(url:URL, body:Data) {
-        self.url = url
+    init(url: URL? = nil, body: Data) {
+        self.url = url ?? URL(string: EventForDispatch.eventEndpoint)!
         self.body = body
     }
 }

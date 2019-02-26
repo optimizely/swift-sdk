@@ -8,11 +8,16 @@
 
 import Foundation
 
-struct BatchEvent: Codable {
-    let revision, accountID, clientVersion: String
+struct BatchEvent: Codable, Equatable {
+    let revision: String
+    let accountID: String
+    let clientVersion: String
     let visitors: [Visitor]
-    let projectID, clientName: String
+    let projectID: String
+    let clientName: String
     let anonymizeIP: Bool
+    // TODO: [Tom] found in spec, but not listed. don't we need "enrichDecision"?
+    let enrichDecisions: Bool = true
     
     enum CodingKeys: String, CodingKey {
         case revision
@@ -22,38 +27,42 @@ struct BatchEvent: Codable {
         case projectID = "project_id"
         case clientName = "client_name"
         case anonymizeIP = "anonymize_ip"
+        case enrichDecisions = "enrich_decisions"
     }
 }
 
-struct Visitor: Codable {
+struct Visitor: Codable, Equatable {
     let attributes: [EventAttribute]
     let snapshots: [Snapshot]
     let visitorID: String
     
     enum CodingKeys: String, CodingKey {
-        case attributes, snapshots
+        case attributes
+        case snapshots
         case visitorID = "visitor_id"
     }
 }
 
-struct EventAttribute: Codable {
+struct EventAttribute: Codable, Equatable {
     let value: AttributeValue
     let key: String
-    let shouldIndex: Bool
-    let type, entityID: String
+    let type: String
+    let entityID: String
     
     enum CodingKeys: String, CodingKey {
-        case value, key, shouldIndex, type
+        case value
+        case key
+        case type
         case entityID = "entity_id"
     }
 }
 
-struct Snapshot: Codable {
+struct Snapshot: Codable, Equatable {
     let decisions: [Decision]
     let events: [DispatchEvent]
 }
 
-struct Decision: Codable {
+struct Decision: Codable, Equatable {
     let variationID, campaignID, experimentID: String
     
     enum CodingKeys: String, CodingKey {
@@ -63,24 +72,45 @@ struct Decision: Codable {
     }
 }
 
-struct DispatchEvent: Codable {
+struct DispatchEvent: Codable, Equatable {
     static let revenueKey = "revenue"
     static let valueKey = "value"
     static let activateEventKey = "campaign_activated"
-    let timestamp: Int64
-    // entityID is the layer id for impression events.
-    let key, entityID, uuid: String
-    var tags:Dictionary<String,AttributeValue>? = [:]
-    var value:AttributeValue? = nil
-    var revenue:AttributeValue? = nil
     
+    // entityID is the layer id for impression events.
+    let entityID: String
+    let key: String
+    let timestamp: Int64
+    let uuid: String
+    var tags: [String: AttributeValue]?
+    var revenue: AttributeValue?
+    var value: AttributeValue?
+
+    // TODO: [Tom] these two in spec, not used here. is it ok?
+    // quantity: MISSING
+    // type: MISSING
+
     enum CodingKeys: String, CodingKey {
-        case timestamp, key
         case entityID = "entity_id"
+        case key
+        case tags
+        case timestamp
         case uuid
+        case revenue
+        case value
     }
     
-    init(timestamp:Int64, key:String, entityID:String, uuid:String, tags:Dictionary<String,AttributeValue>?, value:AttributeValue?, revenue:AttributeValue?) {
+    init(timestamp: Int64,
+         key: String,
+         entityID: String,
+         uuid: String,
+         tags: Dictionary<String,AttributeValue>? = [:],
+         value: AttributeValue? = nil,
+         revenue: AttributeValue? = nil)
+    {
+        
+        // TODO: add validation and throw here for invalid value (int, double) and revenue (int) types
+
         self.timestamp = timestamp
         self.key = key
         self.entityID = entityID
@@ -89,9 +119,4 @@ struct DispatchEvent: Codable {
         self.value = value
         self.revenue = revenue
     }
-    
-    init(timestamp:Int64, key:String, entityID:String, uuid:String) {
-        self.init(timestamp: timestamp, key: key, entityID: entityID, uuid: uuid, tags: [:], value: nil, revenue: nil)
-    }
-
 }

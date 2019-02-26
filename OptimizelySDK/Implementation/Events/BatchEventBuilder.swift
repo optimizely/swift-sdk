@@ -21,7 +21,10 @@ class BatchEventBuilder {
         let early = Date.timeIntervalBetween1970AndReferenceDate * 1000
         let after = Date.timeIntervalSinceReferenceDate * 1000
         let fullNumber:Int64 = Int64(early + after)
-        let dispatchEvent = DispatchEvent(timestamp: fullNumber, key: DispatchEvent.activateEventKey, entityID: experiment.layerId, uuid: UUID().uuidString)
+        let dispatchEvent = DispatchEvent(timestamp: fullNumber,
+                                          key: DispatchEvent.activateEventKey,
+                                          entityID: experiment.layerId,
+                                          uuid: UUID().uuidString)
         let snapShot = Snapshot(decisions: decisions, events: [dispatchEvent])
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
@@ -75,7 +78,13 @@ class BatchEventBuilder {
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
-        let batchEvent = BatchEvent(revision: config.project.revision, accountID: config.project.accountId, clientVersion: "1.0", visitors: [visitor], projectID: config.project.projectId, clientName: "swift-sdk", anonymizeIP: config.project.anonymizeIP ?? false)
+        let batchEvent = BatchEvent(revision: config.project.revision,
+                                    accountID: config.project.accountId,
+                                    clientVersion: "1.0",
+                                    visitors: [visitor],
+                                    projectID: config.project.projectId,
+                                    clientName: "swift-sdk",
+                                    anonymizeIP: config.project.anonymizeIP)
         
         if let data = try? JSONEncoder().encode(batchEvent) {
             return data
@@ -91,7 +100,10 @@ class BatchEventBuilder {
             for attr in attributes.keys {
                 if let attributeId = config.project.attributes.filter({$0.key == attr}).first?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
                     if let eventValue = AttributeValue(value:attributes[attr]) {
-                        let eventAttribute = EventAttribute(value: eventValue, key: attr, shouldIndex: true, type: "custom_attribute", entityID: attributeId)
+                        let eventAttribute = EventAttribute(value: eventValue,
+                                                            key: attr,
+                                                            type: "custom_attribute",
+                                                            entityID: attributeId)
                         eventAttributes.append(eventAttribute)
                     }
                 }

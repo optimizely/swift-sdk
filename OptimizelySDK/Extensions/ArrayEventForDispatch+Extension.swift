@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Array where Element:EventForDispatch {
+extension Array where Element == EventForDispatch {
     func batch() -> EventForDispatch? {
         if count == 0 {
             return nil
@@ -65,7 +65,13 @@ extension Array where Element:EventForDispatch {
         }
         
         if let first = firstBatchEvent {
-            let batchEvent = BatchEvent(revision: first.revision, accountID: first.accountID, clientVersion: first.clientVersion, visitors: visitors, projectID: first.projectID, clientName: first.clientName, anonymizeIP: first.anonymizeIP)
+            let batchEvent = BatchEvent(revision: first.revision,
+                                        accountID: first.accountID,
+                                        clientVersion: first.clientVersion,
+                                        visitors: visitors,
+                                        projectID: first.projectID,
+                                        clientName: first.clientName,
+                                        anonymizeIP: first.anonymizeIP)
             
             if let data = try? JSONEncoder().encode(batchEvent), let url = url {
                 return EventForDispatch(url: url, body: data)

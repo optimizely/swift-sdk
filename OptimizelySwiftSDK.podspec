@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   }
   s.source_files            = "OptimizelySDK/**/*.{swift,h}"
   s.public_header_files     = "OptimizelySDK/OptimizelySwiftSDK/*.h"
-  s.exclude_files           = "OptimizelySDK/OptimizelySwiftSDK*Tests/**/*"
+  s.exclude_files           = "OptimizelySDK/Optimizely*Tests/**/*"
   s.framework               = "Foundation"
   s.requires_arc            = true
   s.xcconfig                = { 'GCC_PREPROCESSOR_DEFINITIONS' => "OPTIMIZELY_SDK_VERSION=@\\\"#{s.version}\\\"" }

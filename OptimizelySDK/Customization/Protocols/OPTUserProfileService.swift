@@ -75,13 +75,10 @@ import Foundation
 
 public protocol OPTUserProfileService {
     
-    typealias UPVariationId = String
-    typealias UPExperimentId = String
-    typealias UPUserId = String
-    typealias UPExperimentMap = [UPVariationId: String]
-    typealias UPBucketMap = [UPExperimentId: UPExperimentMap]
-    typealias UPUserMap = [String: Any]   // {"experiment_bucket_map", "user_id"}
-    typealias UserProfileData = [UPUserId: UPUserMap]
+    typealias UPExperimentMap = [String: String]
+    typealias UPBucketMap = [String: UPExperimentMap]
+    typealias UPProfile = [String: Any]   // {"experiment_bucket_map", "user_id"}
+    typealias UserProfileData = [String: UPProfile]
 
     init()
 
@@ -90,7 +87,7 @@ public protocol OPTUserProfileService {
      - Parameter userId: The user id to get the user entity of.
      - Returns: A dictionary of the user profile details.
      **/
-    func lookup(userId: String) -> UPUserMap?
+    func lookup(userId: String) -> UPProfile?
 
     /**
      Saves the user profile.

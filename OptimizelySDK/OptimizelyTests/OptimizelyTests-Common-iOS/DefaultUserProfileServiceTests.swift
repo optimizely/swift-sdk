@@ -10,24 +10,82 @@ import XCTest
 
 class DefaultUserProfileServiceTests: XCTestCase {
 
+    let sampleData = [
+        "11": [
+            "experiment_bucket_map": [
+                "21": [
+                    "variation_id": "31"
+                ],
+                "22": [
+                    "variation_id": "32"
+                ]
+            ],
+            "user_id": "11"
+        ]
+    ]
+    
+    var ups: DefaultUserProfileService!
+    
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        ups = DefaultUserProfileService()
+    }
+    
+    func testSave() {
+        ups.save(userProfile: sampleData)
+        let variationId = ups.variationId(userId: "11", experimentId: "21")
+        XCTAssert(variationId == "31")
     }
 
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    func testLookup_Found() {
+        ups.save(userProfile: sampleData)
+        let profile = ups.lookup(userId: "11")!
+        XCTAssert(profile["user_id"] as! String == "11")
+        XCTAssertNotNil(profile["experiment_bucket_map"])
+    }
+    
+    func testLookup_NotFound() {
+        ups.save(userProfile: sampleData)
+        let profile = ups.lookup(userId: "99999")
+        XCTAssertNil(profile)
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testVariationId_Found() {
+        ups.save(userProfile: sampleData)
+        let variationId = ups.variationId(userId: "11", experimentId: "22")
+        XCTAssert(variationId == "32")
+    }
+    
+    func testVariationId_WrongUserId() {
+        ups.save(userProfile: sampleData)
+        let variationId = ups.variationId(userId: "99999", experimentId: "21")
+        XCTAssertNil(variationId)
     }
 
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testVariationId_WrongExperimentId() {
+        ups.save(userProfile: sampleData)
+        let variationId = ups.variationId(userId: "11", experimentId: "99999")
+        XCTAssertNil(variationId)
+    }
+
+    func testSaveProfile_NewUserId() {
+        ups.save(userProfile: sampleData)
+        ups.saveProfile(userId: "19999", experimentId: "29999", variationId: "39999")
+        let variationId = ups.variationId(userId: "19999", experimentId: "29999")
+        XCTAssert(variationId == "39999")
+    }
+    
+    func testSaveProfile_OldUserIdWithNewExperiment() {
+        ups.save(userProfile: sampleData)
+        ups.saveProfile(userId: "11", experimentId: "29999", variationId: "39999")
+        let variationId = ups.variationId(userId: "11", experimentId: "29999")
+        XCTAssert(variationId == "39999")
+    }
+
+    func testSaveProfile_OldUserIdWithOldExperimentWithNewVariation() {
+        ups.save(userProfile: sampleData)
+        ups.saveProfile(userId: "11", experimentId: "21", variationId: "39999")
+        let variationId = ups.variationId(userId: "11", experimentId: "21")
+        XCTAssert(variationId == "39999")
     }
 
 }

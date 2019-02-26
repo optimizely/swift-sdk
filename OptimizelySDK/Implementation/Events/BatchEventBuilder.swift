@@ -30,7 +30,14 @@ class BatchEventBuilder {
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
-        let batchEvent = BatchEvent(revision: config.project.revision, accountID: config.project.accountId, clientVersion: "1.0", visitors: [visitor], projectID: config.project.projectId, clientName: "swift-sdk", anonymizeIP: config.project.anonymizeIP ?? false)
+        let batchEvent = BatchEvent(revision: config.revision,
+                                    accountID: config.accountId,
+                                    clientVersion: "3.0",
+                                    visitors: [visitor],
+                                    projectID: config.projectId,
+                                    clientName: "swift-sdk",
+                                    anonymizeIP: config.anonymizeIP ?? false,
+                                    enrichDecisions: true)
         
         if let data = try? JSONEncoder().encode(batchEvent) {
             return data
@@ -45,18 +52,8 @@ class BatchEventBuilder {
         guard let event = config.project.events.filter({$0.key == eventKey}).first  else {
             return nil
         }
-        let experimentIds = event.experimentIds
-        let experiments = experimentIds.map { (id) -> Experiment? in
-            config.project.experiments.filter({$0.id == id}).first
-        }
-        var decisions = [Decision]()
-        for experiment in experiments where experiment != nil && experiment?.status == Experiment.Status.running {
-            if let variation = decisionService.getVariation(userId: userId, experiment: experiment!, attributes: attributes ?? [String:Any]()) {
-                decisions.append(Decision(variationID: variation.id, campaignID: experiment!.layerId, experimentID: experiment!.id))
-            }
-        }
-        
-    // create batch event.
+
+        // create batch event.
         let early = Date.timeIntervalBetween1970AndReferenceDate * 1000
         let after = Date.timeIntervalSinceReferenceDate * 1000
         let fullNumber:Int64 = Int64(early + after)
@@ -73,18 +70,20 @@ class BatchEventBuilder {
         
         let dispatchEvent = DispatchEvent(timestamp: fullNumber, key: event.key, entityID: event.id, uuid: UUID().uuidString, tags: tags, value:value, revenue:revenue)
         
-        let snapShot = Snapshot(decisions: decisions, events: [dispatchEvent])
+        let snapShot = Snapshot(decisions: nil, events: [dispatchEvent])
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
+        
         let batchEvent = BatchEvent(revision: config.project.revision,
                                     accountID: config.project.accountId,
-                                    clientVersion: "1.0",
+                                    clientVersion: "3.0",
                                     visitors: [visitor],
                                     projectID: config.project.projectId,
                                     clientName: "swift-sdk",
-                                    anonymizeIP: config.project.anonymizeIP)
+                                    anonymizeIP: config.project.anonymizeIP,
+                                    enrichDecisions:true)
         
         if let data = try? JSONEncoder().encode(batchEvent) {
             return data

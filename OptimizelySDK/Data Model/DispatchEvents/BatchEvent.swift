@@ -16,7 +16,6 @@ struct BatchEvent: Codable, Equatable {
     let projectID: String
     let clientName: String
     let anonymizeIP: Bool
-    // TODO: [Tom] found in spec, but not listed. don't we need "enrichDecision"?
     let enrichDecisions: Bool = true
     
     enum CodingKeys: String, CodingKey {
@@ -58,7 +57,7 @@ struct EventAttribute: Codable, Equatable {
 }
 
 struct Snapshot: Codable, Equatable {
-    let decisions: [Decision]
+    let decisions: [Decision]?
     let events: [DispatchEvent]
 }
 

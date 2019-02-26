@@ -30,13 +30,13 @@ class BatchEventBuilder {
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
-        let batchEvent = BatchEvent(revision: config.revision,
-                                    accountID: config.accountId,
+        let batchEvent = BatchEvent(revision: config.project.revision,
+                                    accountID: config.project.accountId,
                                     clientVersion: "3.0",
                                     visitors: [visitor],
-                                    projectID: config.projectId,
+                                    projectID: config.project.projectId,
                                     clientName: "swift-sdk",
-                                    anonymizeIP: config.anonymizeIP ?? false,
+                                    anonymizeIP: config.project.anonymizeIP ?? false,
                                     enrichDecisions: true)
         
         if let data = try? JSONEncoder().encode(batchEvent) {

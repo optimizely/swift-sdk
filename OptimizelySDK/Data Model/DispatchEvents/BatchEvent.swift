@@ -16,7 +16,7 @@ struct BatchEvent: Codable, Equatable {
     let projectID: String
     let clientName: String
     let anonymizeIP: Bool
-    let enrichDecisions: Bool = true
+    let enrichDecisions: Bool
     
     enum CodingKeys: String, CodingKey {
         case revision

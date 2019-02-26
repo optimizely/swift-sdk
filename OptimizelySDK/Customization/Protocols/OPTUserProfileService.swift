@@ -75,6 +75,11 @@ import Foundation
 
 public protocol OPTUserProfileService {
     
+    typealias UPExperimentMap = [String: String]
+    typealias UPBucketMap = [String: UPExperimentMap]
+    typealias UPProfile = [String: Any]   // {"experiment_bucket_map", "user_id"}
+    typealias UserProfileData = [String: UPProfile]
+
     init()
 
     /**
@@ -82,13 +87,13 @@ public protocol OPTUserProfileService {
      - Parameter userId: The user id to get the user entity of.
      - Returns: A dictionary of the user profile details.
      **/
-    func lookup(userId:String) -> Dictionary<String,Any>?
+    func lookup(userId: String) -> UPProfile?
 
     /**
      Saves the user profile.
      - Parameter userProfile: The user profile.
      **/
-    func save(userProfile:Dictionary<String,Any>)
+    func save(userProfile: UserProfileData)
  
     /**
     Get a variation id for a experiment id for a user
@@ -96,7 +101,7 @@ public protocol OPTUserProfileService {
      - Parameter experimentId: experiment id to lookup variation id in the "experiment_bucket_map"
      - Returns: the variation id if one is saved for this user.
     **/
-    func variationId(userId: String, experimentId:String) -> String?
+    func variationId(userId: String, experimentId: String) -> String?
     
     /**
      Save entry for a user in the experiment_bucket_map for experiment.
@@ -104,5 +109,5 @@ public protocol OPTUserProfileService {
      - Parameter experimentId: experiment id to lookup variation id in the "experiment_bucket_map"
      - Parameter variationId: variation id that the user was bucketed into for the experiment.
      **/
-    func saveProfile(userId:String, experimentId:String, variationId:String)
+    func saveProfile(userId: String, experimentId: String, variationId: String)
 }

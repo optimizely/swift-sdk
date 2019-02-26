@@ -477,8 +477,10 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variableUnknown
         }
         
-        // TODO: check if non-optional is OK
-        let defaultValueString = variable.defaultValue
+        // TODO: [Jae] spec requires this field, but FSC suites not (return "null" value). verify which one is correct.
+        guard let defaultValueString = variable.defaultValue else {
+            throw OptimizelyError.variableValueInvalid(variableKey)
+        }
 
         var typeName: String?
         var valueParsed: T?

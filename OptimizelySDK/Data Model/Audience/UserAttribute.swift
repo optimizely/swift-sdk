@@ -20,9 +20,17 @@ struct UserAttribute: Codable, Equatable {
     var name: String
     var type: String
     var match: String?
-    var value: AttributeValue
+    
+    // TODO: [Jae] spec requires this field, but FSC suites not. verify which one is correct.
+    var value: AttributeValue?
     
     func evaluate(attributes: [String: Any]) throws -> Bool {
+        
+        // TODO: [jae] is this correct behavior when value is missing
+        guard let value = value else {
+            return false
+        }
+        
         let attributeValue = attributes[name]
         
         switch match {

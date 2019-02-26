@@ -20,6 +20,8 @@ struct FeatureVariable: Codable, Equatable {
     var id: String
     var key: String
     var type: String
-    var defaultValue: String
+    
+    // TODO: [Jae] spec requires this field, but FSC suites not (return "null" value). verify which one is correct.
+    var defaultValue: String?
 }
 

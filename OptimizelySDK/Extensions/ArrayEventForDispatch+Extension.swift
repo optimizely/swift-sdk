@@ -71,7 +71,8 @@ extension Array where Element == EventForDispatch {
                                         visitors: visitors,
                                         projectID: first.projectID,
                                         clientName: first.clientName,
-                                        anonymizeIP: first.anonymizeIP)
+                                        anonymizeIP: first.anonymizeIP,
+                                        enrichDecisions: true)
             
             if let data = try? JSONEncoder().encode(batchEvent), let url = url {
                 return EventForDispatch(url: url, body: data)

@@ -142,6 +142,12 @@ open class OptimizelyManager: NSObject {
                         
                         self.bucketer = HandlerRegistryService.shared.injectComponent(service: OPTBucketer.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTBucketer
                         self.decisionService = HandlerRegistryService.shared.injectComponent(service: OPTDecisionService.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTDecisionService
+                        
+                        self.bucketer.initialize(config: self.config)
+                        self.decisionService.initialize(config: self.config,
+                                                   bucketer: self.bucketer,
+                                                   userProfileService: self.userProfileService)
+
 
                         self.notificationCenter.sendNotifications(type:
                             NotificationType.DatafileChange.rawValue, args: [data])

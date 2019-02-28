@@ -125,11 +125,32 @@ open class OptimizelyManager: NSObject {
             if periodicDownloadInterval > 0 {
                 datafileHandler.stopPeriodicUpdates(sdkKey: self.sdkKey)
                 datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
-                    self.notificationCenter.sendNotifications(type: NotificationType.DatafileChange.rawValue, args: [data])
-                    self.bucketer = HandlerRegistryService.shared.injectComponent(service: OPTBucketer.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTBucketer
-                    self.decisionService = HandlerRegistryService.shared.injectComponent(service: OPTDecisionService.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTDecisionService
+                    // new datafile came in...
+                    if let config = try? ProjectConfig(datafile: data) {
+                        var featureToggleNotifications:[String:FeatureFlagToggle] = [String:FeatureFlagToggle]()
+                        for feature in self.config.project.featureFlags {
+                            if let experiment = self.config.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first,
+                                let newExperiment = config.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first {
+                                if experiment.status != newExperiment.status {
+                                    // call rollout change with status changed.
+                                    featureToggleNotifications[feature.key] = newExperiment.status == .running ? FeatureFlagToggle.on : FeatureFlagToggle.off
+                                }
+                            }
+                            
+                        }
+                        self.config = config
+                        
+                        self.bucketer = HandlerRegistryService.shared.injectComponent(service: OPTBucketer.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTBucketer
+                        self.decisionService = HandlerRegistryService.shared.injectComponent(service: OPTDecisionService.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTDecisionService
+
+                        self.notificationCenter.sendNotifications(type:
+                            NotificationType.DatafileChange.rawValue, args: [data])
+                        
+                        for notify in featureToggleNotifications.keys {
+                            self.notificationCenter.sendNotifications(type: NotificationType.FeatureFlagRolloutToggle.rawValue, args: [notify, featureToggleNotifications[notify]])
+                        }
+                    }
                     
-                    try? self.configSDK(datafile: data)
                 }
                 
             }

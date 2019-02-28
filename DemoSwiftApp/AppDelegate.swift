@@ -74,6 +74,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 alert.show()
             }
         })
+        
+        _ = optimizely?.notificationCenter.addFeatureFlagRolloutChangeListener(featureListener: { (featurekey, toggle) in
+            DispatchQueue.main.async {
+                let alert = UIAlertView(title: "Feature flag \(featurekey) changed", message: "toggled to \(toggle)", delegate: nil, cancelButtonTitle: "cancel")
+                alert.show()
+            }
+
+        })
         // initialize Optimizely Client from a datafile download
         optimizely!.initializeSDK { result in
             switch result {

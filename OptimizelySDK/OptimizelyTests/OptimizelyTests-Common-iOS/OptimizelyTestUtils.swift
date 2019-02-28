@@ -35,4 +35,11 @@ func modelFromNative<T: Codable>(_ raw: Any) throws -> T {
     return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
 }
 
+func loadJSONDatafileIntoDataObject(datafile:String) -> Data? {
+    let filePath = Bundle(for: BatchEventBuilder.self).path(forResource: datafile, ofType: "json")
+    
+    return try? Data(contentsOf: URL(fileURLWithPath: filePath!, isDirectory: false))
+}
+
+
 

@@ -14,6 +14,12 @@
 		0B0590192209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B05901A2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B05901B2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
+		0B4AE9F122289A830047B75D /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9EA22289A830047B75D /* UnsupportedVersionDatafile.json */; };
+		0B4AE9F222289A830047B75D /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9EA22289A830047B75D /* UnsupportedVersionDatafile.json */; };
+		0B4AE9F422289AFC0047B75D /* valid-project-config-v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F322289AFB0047B75D /* valid-project-config-v4.json */; };
+		0B4AE9F522289AFC0047B75D /* valid-project-config-v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F322289AFB0047B75D /* valid-project-config-v4.json */; };
+		0B4AE9FA22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
+		0B4AE9FB22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
 		0B4E11F921EE8FF400D5B370 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		0B4E11FA21EE8FF400D5B370 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		0B4E11FC21EE90F600D5B370 /* DataStoreUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11FB21EE90F600D5B370 /* DataStoreUserDefaults.swift */; };
@@ -668,6 +674,9 @@
 		0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventForDispatch.swift; sourceTree = "<group>"; };
 		0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTEventDispatcher.swift; sourceTree = "<group>"; };
 		0B124BCA21B5DF39001BE0FA /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		0B4AE9EA22289A830047B75D /* UnsupportedVersionDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UnsupportedVersionDatafile.json; sourceTree = "<group>"; };
+		0B4AE9F322289AFB0047B75D /* valid-project-config-v4.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "valid-project-config-v4.json"; sourceTree = "<group>"; };
+		0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchEventBuilderTest.swift; sourceTree = "<group>"; };
 		0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTDataStore.swift; sourceTree = "<group>"; };
 		0B4E11FB21EE90F600D5B370 /* DataStoreUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreUserDefaults.swift; sourceTree = "<group>"; };
 		0B54908A21C9602900BE04C5 /* DefaultNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultNotificationCenter.swift; sourceTree = "<group>"; };
@@ -877,6 +886,15 @@
 			path = DispatchEvents;
 			sourceTree = "<group>";
 		};
+		0B4AE9E622289A830047B75D /* TestData */ = {
+			isa = PBXGroup;
+			children = (
+				0B4AE9F322289AFB0047B75D /* valid-project-config-v4.json */,
+				0B4AE9EA22289A830047B75D /* UnsupportedVersionDatafile.json */,
+			);
+			path = TestData;
+			sourceTree = "<group>";
+		};
 		0B5ADA2921CC73730049BC2C /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1068,6 +1086,7 @@
 				6E4DD99421E6BAA700B0C2C7 /* BucketTests.swift */,
 				6E7FC6A222121D27009A171F /* OptimizelyTestUtils.swift */,
 				6EA4256E2218E60A00B074B5 /* Info.plist */,
+				0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */,
 			);
 			path = "OptimizelyTests-Common-iOS";
 			sourceTree = "<group>";
@@ -1101,6 +1120,7 @@
 		6EA4264B2218EB4200B074B5 /* OptimizelyTests */ = {
 			isa = PBXGroup;
 			children = (
+				0B4AE9E622289A830047B75D /* TestData */,
 				6E4DD99021E6BAA700B0C2C7 /* OptimizelyTests-iOS */,
 				6EA4256B2218E60A00B074B5 /* OptimizelyTests-Common-iOS */,
 				6EA4257A2218E61E00B074B5 /* OptimizelyTests-DataModel-iOS */,
@@ -1419,6 +1439,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B4AE9F222289A830047B75D /* UnsupportedVersionDatafile.json in Resources */,
+				0B4AE9F522289AFC0047B75D /* valid-project-config-v4.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1433,6 +1455,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B4AE9F122289A830047B75D /* UnsupportedVersionDatafile.json in Resources */,
+				0B4AE9F422289AFC0047B75D /* valid-project-config-v4.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1598,6 +1622,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EA425362218E4A300B074B5 /* OPTErrorHandler.swift in Sources */,
+				0B4AE9FB22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */,
 				6EA4265522191EEC00B074B5 /* Array+Extension.swift in Sources */,
 				6EA425522218E4A300B074B5 /* MurmurHash3.swift in Sources */,
 				6EA425322218E4A300B074B5 /* DefaultDecisionService.swift in Sources */,
@@ -1743,6 +1768,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EA425B62218E74D00B074B5 /* OPTUserProfileService.swift in Sources */,
+				0B4AE9FA22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */,
 				6EA4265222191EEC00B074B5 /* Array+Extension.swift in Sources */,
 				6EA425D12218E74D00B074B5 /* Variable.swift in Sources */,
 				6EA425CB2218E74D00B074B5 /* ConditionLeaf.swift in Sources */,

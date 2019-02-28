@@ -1,0 +1,497 @@
+{
+  "accountId": "4424670202",
+  "anonymizeIP": true,
+  "attributes": [
+    {
+      "id": "4438070142",
+      "key": "customattr"
+    }
+  ],
+  "audiences": [
+    {
+      "conditions": "[\"and\", {\"name\": \"customattr\", \"type\": \"custom_attribute\", \"value\": \"yes\"}]",
+      "id": "4447260158",
+      "name": "feature_audience"
+    },
+    {
+      "conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]",
+      "id": "$opt_dummy_audience",
+      "name": "Optimizely-Generated Audience for Backwards Compatibility"
+    }
+  ],
+  "botFiltering": false,
+  "events": [
+    {
+      "experimentIds": [
+        "4447240074"
+      ],
+      "id": "4420640163",
+      "key": "ab_test_zero_alloc_event"
+    },
+    {
+      "experimentIds": [],
+      "id": "4424800023",
+      "key": "unused_event"
+    },
+    {
+      "experimentIds": [
+        "4432720115"
+      ],
+      "id": "4445500110",
+      "key": "winning"
+    }
+  ],
+  "experiments": [
+    {
+      "audienceIds": [],
+      "forcedVariations": {},
+      "id": "4430460101",
+      "key": "feature_running_disabled_exp",
+      "layerId": "4445410089",
+      "status": "Running",
+      "trafficAllocation": [
+        {
+          "endOfRange": 10000,
+          "entityId": "4420920057"
+        }
+      ],
+      "variations": [
+        {
+          "featureEnabled": false,
+          "id": "4420920057",
+          "key": "disabled",
+          "variables": []
+        },
+        {
+          "featureEnabled": true,
+          "id": "4443480061",
+          "key": "enabled",
+          "variables": [
+            {
+              "id": "4463110006",
+              "value": "10.5"
+            },
+            {
+              "id": "4420960032",
+              "value": "s"
+            },
+            {
+              "id": "4457210107",
+              "value": "true"
+            },
+            {
+              "id": "4430490032",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "audienceIds": [],
+      "forcedVariations": {},
+      "id": "4430680105",
+      "key": "feature_running_noalloc_exp",
+      "layerId": "4432500087",
+      "status": "Running",
+      "trafficAllocation": [
+        {
+          "endOfRange": 0,
+          "entityId": "4443480062"
+        },
+        {
+          "endOfRange": 0,
+          "entityId": "4459110022"
+        }
+      ],
+      "variations": [
+        {
+          "featureEnabled": false,
+          "id": "4443480062",
+          "key": "var_1",
+          "variables": []
+        },
+        {
+          "featureEnabled": true,
+          "id": "4459110022",
+          "key": "var_2",
+          "variables": [
+            {
+              "id": "4432530158",
+              "value": "true"
+            },
+            {
+              "id": "4424980020",
+              "value": "s"
+            },
+            {
+              "id": "4439780031",
+              "value": "10.5"
+            },
+            {
+              "id": "4424740136",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "audienceIds": [],
+      "forcedVariations": {
+        "feature_disabled_user": "var_1",
+        "feature_enabled_user": "var_2"
+      },
+      "id": "4432720115",
+      "key": "feature_running_exp",
+      "layerId": "4455080313",
+      "status": "Running",
+      "trafficAllocation": [
+        {
+          "endOfRange": 10000,
+          "entityId": "4447380082"
+        }
+      ],
+      "variations": [
+        {
+          "featureEnabled": false,
+          "id": "4438250123",
+          "key": "var_1",
+          "variables": []
+        },
+        {
+          "featureEnabled": true,
+          "id": "4447380082",
+          "key": "var_2",
+          "variables": [
+            {
+              "id": "4428940099",
+              "value": "s"
+            },
+            {
+              "id": "4441800215",
+              "value": "10.5"
+            },
+            {
+              "id": "4447410110",
+              "value": "true"
+            },
+            {
+              "id": "4447430186",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "audienceIds": [
+        "4447260158"
+      ],
+      "forcedVariations": {},
+      "id": "4436200075",
+      "key": "feature_targeted_exp",
+      "layerId": "4451230069",
+      "status": "Running",
+      "trafficAllocation": [
+        {
+          "endOfRange": 10000,
+          "entityId": "4436180158"
+        }
+      ],
+      "variations": [
+        {
+          "featureEnabled": false,
+          "id": "4422740125",
+          "key": "var_1",
+          "variables": []
+        },
+        {
+          "featureEnabled": true,
+          "id": "4436180158",
+          "key": "var_2",
+          "variables": [
+            {
+              "id": "4428740221",
+              "value": "10.5"
+            },
+            {
+              "id": "4449520037",
+              "value": "true"
+            },
+            {
+              "id": "4453010098",
+              "value": "s"
+            },
+            {
+              "id": "4412990274",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "audienceIds": [],
+      "forcedVariations": {},
+      "id": "4447240074",
+      "key": "ab_test_zero_alloc",
+      "layerId": "4418910275",
+      "status": "Running",
+      "trafficAllocation": [
+        {
+          "endOfRange": 0,
+          "entityId": "4449250186"
+        }
+      ],
+      "variations": [
+        {
+          "id": "4449250186",
+          "key": "no_traffic_variation",
+          "variables": []
+        }
+      ]
+    }
+  ],
+  "featureFlags": [
+    {
+      "experimentIds": [],
+      "id": "4418920049",
+      "key": "feature_archived",
+      "rolloutId": "",
+      "variables": [
+        {
+          "defaultValue": "true",
+          "id": "4416950091",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "s",
+          "id": "4430590036",
+          "key": "s",
+          "type": "string"
+        },
+        {
+          "defaultValue": "3",
+          "id": "4449080288",
+          "key": "i",
+          "type": "integer"
+        },
+        {
+          "defaultValue": "10.5",
+          "id": "4449320036",
+          "key": "d",
+          "type": "double"
+        }
+      ]
+    },
+    {
+      "experimentIds": [
+        "4430460101"
+      ],
+      "id": "4428770100",
+      "key": "feature_running_disabled",
+      "rolloutId": "",
+      "variables": [
+        {
+          "defaultValue": "s",
+          "id": "4420960032",
+          "key": "s",
+          "type": "string"
+        },
+        {
+          "defaultValue": "3",
+          "id": "4430490032",
+          "key": "i",
+          "type": "integer"
+        },
+        {
+          "defaultValue": "true",
+          "id": "4457210107",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "10.5",
+          "id": "4463110006",
+          "key": "d",
+          "type": "double"
+        }
+      ]
+    },
+    {
+      "experimentIds": [
+        "4432720115"
+      ],
+      "id": "4436270134",
+      "key": "feature_running",
+      "rolloutId": "",
+      "variables": [
+        {
+          "defaultValue": "s",
+          "id": "4428940099",
+          "key": "s",
+          "type": "string"
+        },
+        {
+          "defaultValue": "10.5",
+          "id": "4441800215",
+          "key": "d",
+          "type": "double"
+        },
+        {
+          "defaultValue": "true",
+          "id": "4447410110",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "3",
+          "id": "4447430186",
+          "key": "i",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "experimentIds": [],
+      "id": "4441760124",
+      "key": "feature_draft",
+      "rolloutId": "",
+      "variables": [
+        {
+          "defaultValue": "true",
+          "id": "4428750142",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "10.5",
+          "id": "4445340139",
+          "key": "d",
+          "type": "double"
+        },
+        {
+          "defaultValue": "s",
+          "id": "4447340194",
+          "key": "s",
+          "type": "string"
+        },
+        {
+          "defaultValue": "3",
+          "id": "4455350047",
+          "key": "i",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "experimentIds": [
+        "4436200075"
+      ],
+      "id": "4443670097",
+      "key": "feature_targeted",
+      "rolloutId": "",
+      "variables": [
+        {
+          "defaultValue": "3",
+          "id": "4412990274",
+          "key": "i",
+          "type": "integer"
+        },
+        {
+          "defaultValue": "10.5",
+          "id": "4428740221",
+          "key": "d",
+          "type": "double"
+        },
+        {
+          "defaultValue": "true",
+          "id": "4449520037",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "s",
+          "id": "4453010098",
+          "key": "s",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "experimentIds": [
+        "4430680105"
+      ],
+      "id": "4451130060",
+      "key": "feature_running_noalloc",
+      "rolloutId": "",
+      "variables": [
+        {
+          "defaultValue": "3",
+          "id": "4424740136",
+          "key": "i",
+          "type": "integer"
+        },
+        {
+          "defaultValue": "s",
+          "id": "4424980020",
+          "key": "s",
+          "type": "string"
+        },
+        {
+          "defaultValue": "true",
+          "id": "4432530158",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "10.5",
+          "id": "4439780031",
+          "key": "d",
+          "type": "double"
+        }
+      ]
+    },
+    {
+      "experimentIds": [],
+      "id": "4457200045",
+      "key": "feature_paused",
+      "rolloutId": "",
+      "variables": [
+        {
+          "defaultValue": "3",
+          "id": "4420790084",
+          "key": "i",
+          "type": "integer"
+        },
+        {
+          "defaultValue": "s",
+          "id": "4424770266",
+          "key": "s",
+          "type": "string"
+        },
+        {
+          "defaultValue": "true",
+          "id": "4445380046",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "10.5",
+          "id": "4447240073",
+          "key": "d",
+          "type": "double"
+        }
+      ]
+    }
+  ],
+  "groups": [],
+  "projectId": "4424670202",
+  "revision": "8",
+  "rollouts": [],
+  "typedAudiences": [],
+  "variables": [],
+  "version": "4"
+}

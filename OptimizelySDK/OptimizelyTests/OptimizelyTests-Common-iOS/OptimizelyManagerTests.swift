@@ -17,7 +17,7 @@ class OptimizelyManagerTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         optimizely = OptimizelyManager(sdkKey: "SDKKEY")
         
-        try! optimizely?.initializeSDK(datafile:json)
+  //      try! optimizely?.initializeSDK(datafile:json)
     }
 
     override func tearDown() {
@@ -26,16 +26,47 @@ class OptimizelyManagerTests: XCTestCase {
         
     }
 
-    func testTypedAudience() {
-        let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
-        XCTAssertNotNil(variation!, "no variation found")
+//    func testTypedAudience() {
+//        let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
+//        XCTAssertNotNil(variation!, "no variation found")
+//
+//    }
+//
+//    func testBasicExperiment() {
+//        let basicVariation = try? optimizely?.activate(experimentKey: "basic_experiment", userId: "userId")
+//
+//        XCTAssertNotNil(basicVariation!, "no variation found")
+//    }
+    
+    func testLoadingTestJson() {
+        let files = ["ab_experiments",
+            "audience_targeting",
+            "bot_filtering_enabled",
+            "bucketing_id",
+            "empty_datafile",
+            "feature_exp",
+            "feature_experiments",
+            "feature_flag",
+            "feature_management_experiment_bucketing",
+            "feature_rollouts",
+            "feature_variables",
+            "forced_variation",
+            "grouped_experiments",
+            "rollout_bucketing",
+            "simple_datafile",
+            "unsupported_datafile"]
         
-    }
-
-    func testBasicExperiment() {
-        let basicVariation = try? optimizely?.activate(experimentKey: "basic_experiment", userId: "userId")
-        
-        XCTAssertNotNil(basicVariation!, "no variation found")
+        for file in files {
+            let data = loadJSONDatafileIntoDataObject(datafile: file)
+            let opt = OptimizelyManager(sdkKey: "nothgin", periodicDownloadInterval: 0)
+            do {
+                try opt.initializeSDK(datafile: data!)
+            }
+            catch {
+                print(error)
+                XCTAssert(false, "problem loading datafile \(file)")
+            }
+        }
     }
 
     func testPerformanceInitialize() {
@@ -47,19 +78,19 @@ class OptimizelyManagerTests: XCTestCase {
         }
     }
 
-    func testPerformanceBasicExperiment() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-            testBasicExperiment()
-        }
-    }
-    func testPerformanceTypedAudience() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-            testTypedAudience()
-        }
-    }
+//    func testPerformanceBasicExperiment() {
+//        // This is an example of a performance test case.
+//        self.measure {
+//            // Put the code you want to measure the time of here.
+//            testBasicExperiment()
+//        }
+//    }
+//    func testPerformanceTypedAudience() {
+//        // This is an example of a performance test case.
+//        self.measure {
+//            // Put the code you want to measure the time of here.
+//            testTypedAudience()
+//        }
+//    }
 
 }

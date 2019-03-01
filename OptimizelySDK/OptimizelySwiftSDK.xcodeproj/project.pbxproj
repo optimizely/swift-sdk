@@ -14,8 +14,6 @@
 		0B0590192209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B05901A2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B05901B2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
-		0B4AE9F122289A830047B75D /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9EA22289A830047B75D /* UnsupportedVersionDatafile.json */; };
-		0B4AE9F222289A830047B75D /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9EA22289A830047B75D /* UnsupportedVersionDatafile.json */; };
 		0B4AE9FA22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
 		0B4AE9FB22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
 		0B4AEA112228A6430047B75D /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9FC2228A6410047B75D /* bucketing_id.json */; };
@@ -712,7 +710,6 @@
 		0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventForDispatch.swift; sourceTree = "<group>"; };
 		0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTEventDispatcher.swift; sourceTree = "<group>"; };
 		0B124BCA21B5DF39001BE0FA /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
-		0B4AE9EA22289A830047B75D /* UnsupportedVersionDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UnsupportedVersionDatafile.json; sourceTree = "<group>"; };
 		0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchEventBuilderTest.swift; sourceTree = "<group>"; };
 		0B4AE9FC2228A6410047B75D /* bucketing_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bucketing_id.json; sourceTree = "<group>"; };
 		0B4AE9FE2228A6410047B75D /* 10_entities.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = 10_entities.json; sourceTree = "<group>"; };
@@ -964,7 +961,6 @@
 				0B4AEA092228A6420047B75D /* rollout_bucketing.json */,
 				0B4AEA0F2228A6430047B75D /* simple_datafile.json */,
 				0B4AEA102228A6430047B75D /* unsupported_datafile.json */,
-				0B4AE9EA22289A830047B75D /* UnsupportedVersionDatafile.json */,
 			);
 			path = TestData;
 			sourceTree = "<group>";
@@ -1531,7 +1527,6 @@
 				0B4AEA382228A6430047B75D /* unsupported_datafile.json in Resources */,
 				0B4AEA182228A6430047B75D /* 100_entities.json in Resources */,
 				0B4AEA202228A6430047B75D /* audience_targeting.json in Resources */,
-				0B4AE9F222289A830047B75D /* UnsupportedVersionDatafile.json in Resources */,
 				0B4AEA282228A6430047B75D /* grouped_experiments.json in Resources */,
 				0B4AEA162228A6430047B75D /* 50_entities.json in Resources */,
 				0B4AEA242228A6430047B75D /* feature_experiments.json in Resources */,
@@ -1566,7 +1561,6 @@
 				0B4AEA372228A6430047B75D /* unsupported_datafile.json in Resources */,
 				0B4AEA172228A6430047B75D /* 100_entities.json in Resources */,
 				0B4AEA1F2228A6430047B75D /* audience_targeting.json in Resources */,
-				0B4AE9F122289A830047B75D /* UnsupportedVersionDatafile.json in Resources */,
 				0B4AEA272228A6430047B75D /* grouped_experiments.json in Resources */,
 				0B4AEA152228A6430047B75D /* 50_entities.json in Resources */,
 				0B4AEA232228A6430047B75D /* feature_experiments.json in Resources */,

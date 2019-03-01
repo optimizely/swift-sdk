@@ -21,6 +21,12 @@ public enum NotificationType : Int {
     case Activate = 1
     case Track
     case DatafileChange
+    case FeatureFlagRolloutToggle
+}
+
+public enum FeatureFlagToggle {
+    case on
+    case off
 }
 
 // TODO: fix this
@@ -36,6 +42,8 @@ public typealias ActivateListener = (_ experiment:OptimizelyExperimentData, _ us
 public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>?, _ eventTags:Dictionary<String, Any>?, _ event:Dictionary<String, Any>) -> Void
 
 public typealias DatafileChangeListener = (_ datafile:Data) -> Void
+
+public typealias FeatureFlagRolloutChangeListener = (_ featureFlagKey:String, _ toggle:FeatureFlagToggle ) -> Void
 
 public protocol OPTNotificationCenter {
 
@@ -71,6 +79,13 @@ func addTrackNotificationListener(trackListener:@escaping TrackListener) -> Int?
  - Returns: the notification id used to remove the notification. It is greater than 0 on success.
  */
 func addDatafileChangeNotificationListener(datafileListener:@escaping DatafileChangeListener) -> Int?
+
+/**
+ Add a feature flag rollout toggle listener.
+ - Parameter featureListener: Notification to add.
+ - Returns: the notification id used to remove the notification. It is greater than 0 on success.
+ */
+func addFeatureFlagRolloutChangeListener(featureListener:@escaping FeatureFlagRolloutChangeListener) -> Int?
 
 /**
  Remove the notification listener based on the notificationId passed back from addNotification.

@@ -372,10 +372,9 @@ open class OptimizelyManager: NSObject {
         }
         
         // fix DecisionService to throw error
-        guard let pair = decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:]),
-            let experiment = pair.experiment,
-            let variation = pair.variation else
-        {
+        let pair = decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:])
+        
+        guard let variation = pair?.variation else {
             throw OptimizelyError.variationUnknown
         }
         
@@ -384,26 +383,29 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.featureUnknown
         }
     
+        // we came from an experiment if experiment is not nil
+        if let experiment = pair?.experiment {
         // TODO: fix to throw errors
-        guard let body = BatchEventBuilder.createImpressionEvent(config: config,
+            guard let body = BatchEventBuilder.createImpressionEvent(config: config,
                                                                  decisionService: decisionService,
                                                                  experiment: experiment,
                                                                  varionation: variation,
                                                                  userId: userId,
                                                                  attributes: attributes) else
-        {
-            // TODO: pass error
-            throw OptimizelyError.eventUnknown
-        }
+            {
+                // TODO: pass error
+                throw OptimizelyError.eventUnknown
+            }
 
-        let event = EventForDispatch(body: body)
-        
-        eventDispatcher.dispatchEvent(event: event) { result in
-            switch result {
-            case .failure:
-                break
-            case .success(_):
-                self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+            let event = EventForDispatch(body: body)
+            
+            eventDispatcher.dispatchEvent(event: event) { result in
+                switch result {
+                case .failure:
+                    break
+                case .success(_):
+                    self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+                }
             }
         }
         

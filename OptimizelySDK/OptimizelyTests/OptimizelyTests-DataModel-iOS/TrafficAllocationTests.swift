@@ -82,7 +82,7 @@ extension TrafficAllocationTests {
     
     func testEncodeJSON() {
         let model = modelType.init(entityId: "553339214", endOfRange: 5000)
-        XCTAssert(isEqualWithEncodeThenDecode(model))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(model))
     }
 
 }

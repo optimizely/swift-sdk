@@ -61,7 +61,7 @@ enum ConditionHolder: Codable, Equatable {
         }
     }
     
-    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, attributes: [String: Any]?) throws -> Bool {
         switch self {
         case .logicalOp:
             throw OptimizelyError.conditionInvalidFormat("logical op not evaluated")
@@ -77,7 +77,7 @@ enum ConditionHolder: Codable, Equatable {
 
 extension Array where Element == ConditionHolder {
     
-    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, attributes: [String: Any]?) throws -> Bool {
         guard let firstItem = self.first else {
             throw OptimizelyError.conditionInvalidFormat("empty condition array")
         }
@@ -97,7 +97,7 @@ extension Array where Element == ConditionHolder {
         }
     }
     
-    func evaluate(op: LogicalOp, project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+    func evaluate(op: LogicalOp, project: ProjectProtocol?, attributes: [String: Any]?) throws -> Bool {
         guard self.count > 0 else {
             throw OptimizelyError.conditionInvalidFormat(#function)
         }

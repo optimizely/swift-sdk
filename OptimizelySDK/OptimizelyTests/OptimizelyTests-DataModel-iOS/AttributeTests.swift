@@ -20,7 +20,7 @@ extension AttributeTests {
     
     func testDecodeSuccessWithJSONValid() {
         let data = ["id": "553339214", "key": "house"]
-        let model: Attribute = try! modelFromNative(data)
+        let model: Attribute = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -28,7 +28,7 @@ extension AttributeTests {
     
     func testDecodeSuccessWithExtraFields() {
         let data = ["id": "553339214", "key": "house", "extra": "123"]
-        let model: Attribute = try! modelFromNative(data)
+        let model: Attribute = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -36,19 +36,19 @@ extension AttributeTests {
 
     func testDecodeFailWithMissingKey() {
         let data = ["id": "553339214"]
-        let model: Attribute? = try? modelFromNative(data)
+        let model: Attribute? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingId() {
         let data = ["key": "house"]
-        let model: Attribute? = try? modelFromNative(data)
+        let model: Attribute? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
     func testDecodeFailWithJSONEmpty() {
         let data = [String: String]()
-        let model: Attribute? = try? modelFromNative(data)
+        let model: Attribute? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -56,7 +56,7 @@ extension AttributeTests {
     
     func testEncodeJSON() {
         let modelGiven = Attribute(id: "553339214", key: "house")
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
 }
 

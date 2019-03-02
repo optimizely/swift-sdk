@@ -17,31 +17,59 @@
 import Foundation
 
 struct UserAttribute: Codable, Equatable {
-    var name: String
-    var type: String
-    var match: String?
-    var value: AttributeValue
     
-    func evaluate(attributes: [String: Any]) throws -> Bool {
+    // TODO: [Jae] spec does not require any of these fields. need to confirm
+    //       Confirmed with Nikhil: "name" and "type" required for V4+
+    
+    enum ConditionType: String, Codable {
+        case customAttribute = "custom_attribute"
+    }
+    
+    enum ConditionMatch: String, Codable {
+        case exact
+        case exists
+        case substring
+        case lt
+        case gt
+    }
+    
+    var name: String
+    var type: ConditionType
+    var match: ConditionMatch?
+    var value: AttributeValue?
+}
+
+extension UserAttribute {
+    
+    func evaluate(attributes: [String: Any]?) throws -> Bool {
+        guard let attributes = attributes, !attributes.isEmpty else {
+            // TODO: [Jae] confirm this
+            return false
+        }
+        
         let attributeValue = attributes[name]
         
-        switch match {
-        case "exists":
+        let matchFinal = match ?? .exact       // legacy audience (default = "exact")
+        
+        if matchFinal != .exists, value == nil {
+            throw OptimizelyError.conditionInvalidFormat("missing value (\(name)))")
+        }
+        
+        switch matchFinal {
+        case .exists:
             return attributeValue != nil
-        case "exact":
-            return try value.isExactMatch(with: attributeValue)
-        case "substring":
-            return try value.isSubstring(of: attributeValue)
-        case "lt":
+        case .exact:
+            return try value!.isExactMatch(with: attributeValue)
+        case .substring:
+            return try value!.isSubstring(of: attributeValue)
+        case .lt:
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
-            return try value.isGreater(than: attributeValue)
-        case "gt":
+            return try value!.isGreater(than: attributeValue)
+        case .gt:
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
-            return try value.isLess(than: attributeValue)
-        default:
-            return try value.isExactMatch(with: attributeValue)
+            return try value!.isLess(than: attributeValue)
         }
     }
     

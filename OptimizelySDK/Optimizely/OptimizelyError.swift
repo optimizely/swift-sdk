@@ -43,6 +43,7 @@ public enum OptimizelyError: Error {
     case conditionNoMatchingAudience(_ hint: String)
     case conditionInvalidValueType(_ hint: String)
     case conditionInvalidFormat(_ hint: String)
+    case conditionCannotBeEvaluated(_ hint: String)
     
     // MARK: - Bucketing
     

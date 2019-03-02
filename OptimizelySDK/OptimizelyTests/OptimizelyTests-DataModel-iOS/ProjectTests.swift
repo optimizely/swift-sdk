@@ -35,22 +35,22 @@ extension ProjectTests {
     func testDecodeSuccessWithJSONValid() {
         let data: [String: Any] = ProjectTests.sampleData
         
-        let model: Project = try! modelFromNative(data)
+        let model: Project = try! OTUtils.model(from: data)
         
         XCTAssert(model.version == "4")
         XCTAssert(model.projectId == "11111")
-        XCTAssert(model.experiments == [try! modelFromNative(ExperimentTests.sampleData)])
-        XCTAssert(model.audiences == [try! modelFromNative(AudienceTests.sampleData)])
-        XCTAssert(model.groups == [try! modelFromNative(GroupTests.sampleData)])
-        XCTAssert(model.attributes == [try! modelFromNative(AttributeTests.sampleData)])
+        XCTAssert(model.experiments == [try! OTUtils.model(from: ExperimentTests.sampleData)])
+        XCTAssert(model.audiences == [try! OTUtils.model(from: AudienceTests.sampleData)])
+        XCTAssert(model.groups == [try! OTUtils.model(from: GroupTests.sampleData)])
+        XCTAssert(model.attributes == [try! OTUtils.model(from: AttributeTests.sampleData)])
         XCTAssert(model.accountId == "1234567890")
-        XCTAssert(model.events == [try! modelFromNative(EventTests.sampleData)])
+        XCTAssert(model.events == [try! OTUtils.model(from: EventTests.sampleData)])
         XCTAssert(model.revision == "5")
         XCTAssert(model.anonymizeIP == true)
-        XCTAssert(model.variables == [try! modelFromNative(VariableTests.sampleData)])
-        XCTAssert(model.rollouts == [try! modelFromNative(RolloutTests.sampleData)])
-        XCTAssert(model.typedAudiences == [try! modelFromNative(AudienceTests.sampleData)])
-        XCTAssert(model.featureFlags == [try modelFromNative(FeatureFlagTests.sampleData)])
+        XCTAssert(model.variables == [try! OTUtils.model(from: VariableTests.sampleData)])
+        XCTAssert(model.rollouts == [try! OTUtils.model(from: RolloutTests.sampleData)])
+        XCTAssert(model.typedAudiences == [try! OTUtils.model(from: AudienceTests.sampleData)])
+        XCTAssert(model.featureFlags == [try OTUtils.model(from: FeatureFlagTests.sampleData)])
         XCTAssert(model.botFiltering == false)
     }
     
@@ -58,7 +58,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["version"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -66,7 +66,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["projectId"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -74,7 +74,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["experiments"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -82,7 +82,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["audiences"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -90,7 +90,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["groups"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -98,7 +98,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["attributes"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -106,7 +106,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["accountId"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -114,7 +114,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["events"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -122,7 +122,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["revision"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -130,7 +130,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["anonymizeIP"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -138,7 +138,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["variables"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -146,7 +146,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["rollouts"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -154,7 +154,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["typedAudiences"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -163,7 +163,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["featureFlags"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -172,7 +172,7 @@ extension ProjectTests {
         var data: [String: Any] = ProjectTests.sampleData
         data["botFiltering"] = nil
         
-        let model: Project? = try? modelFromNative(data)
+        let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -184,9 +184,9 @@ extension ProjectTests {
     
     func testEncodeJSON() {
         let data: [String: Any] = ProjectTests.sampleData
-        let modelGiven: Project = try! modelFromNative(data)
+        let modelGiven: Project = try! OTUtils.model(from: data)
         
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
 }

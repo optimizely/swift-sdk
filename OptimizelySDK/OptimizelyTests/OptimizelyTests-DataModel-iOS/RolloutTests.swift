@@ -22,17 +22,17 @@ extension RolloutTests {
     func testDecodeSuccessWithJSONValid() {
         let data: [String: Any] = RolloutTests.sampleData
         
-        let model: Rollout = try! modelFromNative(data)
+        let model: Rollout = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "11111")
-        XCTAssert(model.experiments == [try! modelFromNative(ExperimentTests.sampleData)])
+        XCTAssert(model.experiments == [try! OTUtils.model(from: ExperimentTests.sampleData)])
     }
     
     func testDecodeFailWithMissingId() {
         var data: [String: Any] = RolloutTests.sampleData
         data["id"] = nil
         
-        let model: Rollout? = try? modelFromNative(data)
+        let model: Rollout? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -40,7 +40,7 @@ extension RolloutTests {
         var data: [String: Any] = RolloutTests.sampleData
         data["experiments"] = nil
         
-        let model: Rollout? = try? modelFromNative(data)
+        let model: Rollout? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -52,9 +52,9 @@ extension RolloutTests {
     
     func testEncodeJSON() {
         let data: [String: Any] = RolloutTests.sampleData
-        let modelGiven: Rollout = try! modelFromNative(data)
+        let modelGiven: Rollout = try! OTUtils.model(from: data)
         
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
 }

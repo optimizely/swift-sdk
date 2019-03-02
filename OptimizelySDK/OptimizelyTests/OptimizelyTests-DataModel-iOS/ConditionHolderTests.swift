@@ -98,8 +98,8 @@ class ConditionHolderTests: XCTestCase {
     static var sampleData: [Any] = ["or", UserAttributeTests.sampleData]
 
     func testDecodeSample() {
-        let model: ConditionHolder = try! modelFromNative(ConditionHolderTests.sampleData)
-        let userAttribute: UserAttribute = try! modelFromNative(UserAttributeTests.sampleData)
+        let model: ConditionHolder = try! OTUtils.model(from: ConditionHolderTests.sampleData)
+        let userAttribute: UserAttribute = try! OTUtils.model(from: UserAttributeTests.sampleData)
         
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.or),
@@ -112,27 +112,27 @@ class ConditionHolderTests: XCTestCase {
 extension ConditionHolderTests {
     func testDecode_I() {
         // JSON does not support raw string (so use array of string)
-        let model: [ConditionHolder] = try! modelFromNative(["11111"])
+        let model: [ConditionHolder] = try! OTUtils.model(from: ["11111"])
         XCTAssert(model[0] == ConditionHolder.leaf(.audienceId("11111")))
     }
     
     func testDecode_A() {
-        let model: [ConditionHolder] = try! modelFromNative(["and"])
+        let model: [ConditionHolder] = try! OTUtils.model(from: ["and"])
         XCTAssert(model[0] == ConditionHolder.logicalOp(.and))
     }
 
     func testDecode_O() {
-        let model: [ConditionHolder] = try! modelFromNative(["or"])
+        let model: [ConditionHolder] = try! OTUtils.model(from: ["or"])
         XCTAssert(model[0] == ConditionHolder.logicalOp(.or))
     }
 
     func testDecode_N() {
-        let model: [ConditionHolder] = try! modelFromNative(["not"])
+        let model: [ConditionHolder] = try! OTUtils.model(from: ["not"])
         XCTAssert(model[0] == ConditionHolder.logicalOp(.not))
     }
 
     func testDecode_AI() {
-        let model: ConditionHolder = try! modelFromNative(["and", "11111"])
+        let model: ConditionHolder = try! OTUtils.model(from: ["and", "11111"])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .leaf(.audienceId("11111"))]
@@ -140,7 +140,7 @@ extension ConditionHolderTests {
     }
 
     func testDecode_OI() {
-        let model: ConditionHolder = try! modelFromNative(["or", "11111"])
+        let model: ConditionHolder = try! OTUtils.model(from: ["or", "11111"])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.or),
             .leaf(.audienceId("11111"))]
@@ -148,7 +148,7 @@ extension ConditionHolderTests {
     }
 
     func testDecode_NI() {
-        let model: ConditionHolder = try! modelFromNative(["not", "11111"])
+        let model: ConditionHolder = try! OTUtils.model(from: ["not", "11111"])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.not),
             .leaf(.audienceId("11111"))]
@@ -156,7 +156,7 @@ extension ConditionHolderTests {
     }
 
     func testDecode_A_AI() {
-        let model: ConditionHolder = try! modelFromNative(["and", ["and", "11111"]])
+        let model: ConditionHolder = try! OTUtils.model(from: ["and", ["and", "11111"]])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.and),
@@ -165,7 +165,7 @@ extension ConditionHolderTests {
     }
 
     func testDecode_A_OI() {
-        let model: ConditionHolder = try! modelFromNative(["and", ["or", "11111"]])
+        let model: ConditionHolder = try! OTUtils.model(from: ["and", ["or", "11111"]])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.or),
@@ -174,7 +174,7 @@ extension ConditionHolderTests {
     }
 
     func testDecode_A_NI() {
-        let model: ConditionHolder = try! modelFromNative(["and", ["not", "11111"]])
+        let model: ConditionHolder = try! OTUtils.model(from: ["and", ["not", "11111"]])
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .array([.logicalOp(.not),
@@ -183,7 +183,7 @@ extension ConditionHolderTests {
     }
 
     func testDecode_A_I_AII() {
-        let model: ConditionHolder = try! modelFromNative(["and",
+        let model: ConditionHolder = try! OTUtils.model(from: ["and",
                                                            "11111",
                                                            ["and", "33333", "44444"]])
         XCTAssert(model == ConditionHolder.array([
@@ -196,7 +196,7 @@ extension ConditionHolderTests {
     }
 
     func testDecode_O__A_I_OII__O_AII_NI() {
-        let model: ConditionHolder = try! modelFromNative(["or",
+        let model: ConditionHolder = try! OTUtils.model(from: ["or",
                                                            ["and",
                                                             "11111",
                                                             ["or", "22222", "33333"]],
@@ -227,16 +227,16 @@ extension ConditionHolderTests {
     func testDecode_U() {
         let userAttributeData = UserAttributeTests.sampleData
         
-        let model: ConditionHolder = try! modelFromNative(userAttributeData)
-        let leaf = ConditionLeaf.attribute(try! modelFromNative(userAttributeData))
+        let model: ConditionHolder = try! OTUtils.model(from: userAttributeData)
+        let leaf = ConditionLeaf.attribute(try! OTUtils.model(from: userAttributeData))
         XCTAssert(model == ConditionHolder.leaf(leaf))
     }
 
     func testDecode_AU() {
         let userAttributeData = UserAttributeTests.sampleData
 
-        let model: ConditionHolder = try! modelFromNative(["and", userAttributeData])
-        let leaf = ConditionLeaf.attribute(try! modelFromNative(userAttributeData))
+        let model: ConditionHolder = try! OTUtils.model(from: ["and", userAttributeData])
+        let leaf = ConditionLeaf.attribute(try! OTUtils.model(from: userAttributeData))
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.and),
             .leaf(leaf)]
@@ -256,7 +256,7 @@ extension ConditionHolderTests {
                     .leaf(.audienceId("22222")),
                     .leaf(.audienceId("33333"))])
             ])
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
 }
 

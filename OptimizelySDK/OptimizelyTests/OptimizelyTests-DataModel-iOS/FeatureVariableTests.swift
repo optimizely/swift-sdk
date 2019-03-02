@@ -20,7 +20,7 @@ extension FeatureVariableTests {
     
     func testDecodeSuccessWithJSONValid() {
         let data = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100"]
-        let model: FeatureVariable = try! modelFromNative(data)
+        let model: FeatureVariable = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "price")
@@ -30,7 +30,7 @@ extension FeatureVariableTests {
     
     func testDecodeSuccessWithExtraFields() {
         let data = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100", "extra": "123"]
-        let model: FeatureVariable = try! modelFromNative(data)
+        let model: FeatureVariable = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "price")
@@ -40,31 +40,31 @@ extension FeatureVariableTests {
     
     func testDecodeFailWithMissingId() {
         let data = ["key": "price", "type": "integer", "defaultValue": "100"]
-        let model: FeatureVariable? = try? modelFromNative(data)
+        let model: FeatureVariable? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
     func testDecodeFailWithMissingKey() {
         let data = ["id": "553339214", "type": "integer", "defaultValue": "100"]
-        let model: FeatureVariable? = try? modelFromNative(data)
+        let model: FeatureVariable? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingType() {
         let data = ["id": "553339214", "key": "price", "defaultValue": "100"]
-        let model: FeatureVariable? = try? modelFromNative(data)
+        let model: FeatureVariable? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingDefaultValue() {
         let data = ["id": "553339214", "key": "price", "type": "integer"]
-        let model: FeatureVariable? = try? modelFromNative(data)
+        let model: FeatureVariable? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
     func testDecodeFailWithJSONEmpty() {
         let data = [String: String]()
-        let model: FeatureVariable? = try? modelFromNative(data)
+        let model: FeatureVariable? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -72,6 +72,6 @@ extension FeatureVariableTests {
     
     func testEncodeJSON() {
         let model = FeatureVariable(id: "553339214", key: "price", type: "integer", defaultValue: "100")
-        XCTAssert(isEqualWithEncodeThenDecode(model))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(model))
    }
 }

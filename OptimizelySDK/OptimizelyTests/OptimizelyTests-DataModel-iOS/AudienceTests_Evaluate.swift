@@ -419,226 +419,116 @@ class AudienceTests_Evaluate: XCTestCase {
         XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
         XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
     }
-//
-//                                                                                                                                        - (void)testSubstringMatcherReturnsNullWhenAttributeValueIsNotAString {
-//                                                                                                                                            NSDictionary *attributesPassOrValue1 = {"attr_value" : 10.5};
-//                                                                                                                                            NSDictionary *attributesPassOrValue2 = {"attr_value" : [NSNull null]};
-//                                                                                                                                            NSDictionary *attributesPassOrValue3 = {};
-//                                                                                                                                            id loggerMock = OCMPartialMock((OPTLYLoggerDefault *)self.optimizelyTypedAudience.logger);
-//                                                                                                                                            
-//                                                                                                                                            OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithSubstringMatchType]];
-//                                                                                                                                            XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue1 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                            XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue2 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                            XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue3 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                            OPTLYBaseCondition *baseCondition = (OPTLYBaseCondition *)[((OPTLYOrCondition *)[((OPTLYOrCondition *)[andCondition.subConditions firstObject]).subConditions firstObject]).subConditions firstObject];
-//                                                                                                                                            
-//                                                                                                                                            NSString *userAttributeClassName = NSStringFromClass([[attributesPassOrValue1 objectForKey:"attr_value"] class]);
-//                                                                                                                                            userAttributeClassName = userAttributeClassName;
-//                                                                                                                                            NSString *logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedType, [baseCondition toString], userAttributeClassName, baseCondition.name];
-//                                                                                                                                            OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelWarning]);
-//                                                                                                                                            
-//                                                                                                                                            logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedTypeNull, [baseCondition toString], baseCondition.name];
-//                                                                                                                                            OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelDebug]);
-//                                                                                                                                            
-//                                                                                                                                            logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForMissingAttribute, [baseCondition toString], baseCondition.name];
-//                                                                                                                                            OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelDebug]);
-//                                                                                                                                            
-//                                                                                                                                            [loggerMock stopMocking];
-//                                                                                                                                            }
-//                                                                                                                                            
-//                                                                                                                                            - (void)testSubstringMatcherReturnsNullWhenAttributeIsNotProvided{
-//                                                                                                                                                NSDictionary *attributesPassOrValue = {};
-//                                                                                                                                                id loggerMock = OCMPartialMock((OPTLYLoggerDefault *)self.optimizelyTypedAudience.logger);
-//                                                                                                                                                OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithSubstringMatchType]];
-//                                                                                                                                                XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                OPTLYBaseCondition *baseCondition = (OPTLYBaseCondition *)[((OPTLYOrCondition *)[((OPTLYOrCondition *)[andCondition.subConditions firstObject]).subConditions firstObject]).subConditions firstObject];
-//                                                                                                                                                NSString *logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForMissingAttribute, [baseCondition toString], baseCondition.name];
-//                                                                                                                                                OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelDebug]);
-//                                                                                                                                                [loggerMock stopMocking];
-//                                                                                                                                                }
-//                                                                                                                                                
-//                                                                                                                                                ///MARK:- GTMatcher Tests
-//                                                                                                                                                
-//                                                                                                                                                - (void)testGTMatcherReturnsNullWhenUnsupportedConditionValue {
-//                                                                                                                                                    id loggerMock = OCMPartialMock((OPTLYLoggerDefault *)self.optimizelyTypedAudience.logger);
-//                                                                                                                                                    NSDictionary *attributesPassOrValue1 = {"name": "device_type",
-//                                                                                                                                                        "value": {},
-//                                                                                                                                                        "type": "custom_attribute",
-//                                                                                                                                                        "match": "gt"};
-//                                                                                                                                                    
-//                                                                                                                                                    NSDictionary *userAttributes = {"device_type" : "iPhone"};
-//                                                                                                                                                    OPTLYBaseCondition *condition = [[OPTLYBaseCondition alloc] initWithDictionary:attributesPassOrValue1 error:nil];
-//                                                                                                                                                    XCTAssertNil([condition evaluateConditionsWithAttributes:userAttributes projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                    NSString *logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorUnsupportedValueType, [condition toString]];
-//                                                                                                                                                    OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelWarning]);
-//                                                                                                                                                    [loggerMock stopMocking];
-//                                                                                                                                                    }
-//                                                                                                                                                    
-//                                                                                                                                                    - (void)testGTMatcherReturnsFalseWhenAttributeValueIsLessThanOrEqualToConditionValue {
-//                                                                                                                                                        NSDictionary *attributesPassOrValue1 = {"attr_value" : 5};
-//                                                                                                                                                        NSDictionary *attributesPassOrValue2 = {"attr_value" : 10};
-//                                                                                                                                                        NSDictionary *attributesPassOrValue3 = {"attr_value" : 10.0};
-//                                                                                                                                                        
-//                                                                                                                                                        OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithGreaterThanMatchType]];
-//                                                                                                                                                        XCTAssertFalse([[andCondition evaluateConditionsWithAttributes:attributesPassOrValue1 projectConfig:nil] boolValue]);
-//                                                                                                                                                        XCTAssertFalse([[andCondition evaluateConditionsWithAttributes:attributesPassOrValue2 projectConfig:nil] boolValue]);
-//                                                                                                                                                        XCTAssertFalse([[andCondition evaluateConditionsWithAttributes:attributesPassOrValue3 projectConfig:nil] boolValue]);
-//                                                                                                                                                        }
-//                                                                                                                                                        
-//                                                                                                                                                        - (void)testGTMatcherReturnsNullWhenAttributeValueIsNotANumericValue {
-//                                                                                                                                                            id loggerMock = OCMPartialMock((OPTLYLoggerDefault *)self.optimizelyTypedAudience.logger);
-//                                                                                                                                                            NSDictionary *attributesPassOrValue1 = {"attr_value" : "invalid"};
-//                                                                                                                                                            NSDictionary *attributesPassOrValue2 = {};
-//                                                                                                                                                            NSDictionary *attributesPassOrValue3 = {"attr_value" : YES};
-//                                                                                                                                                            NSDictionary *attributesPassOrValue4 = {"attr_value" : NO};
-//                                                                                                                                                            NSDictionary *attributesPassOrValue5 = {"attr_value" : [NSNull null]};
-//                                                                                                                                                            
-//                                                                                                                                                            OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithGreaterThanMatchType]];
-//                                                                                                                                                            OPTLYBaseCondition *baseCondition = (OPTLYBaseCondition *)[((OPTLYOrCondition *)[((OPTLYOrCondition *)[andCondition.subConditions firstObject]).subConditions firstObject]).subConditions firstObject];
-//                                                                                                                                                            XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue1 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                            NSString *userAttributeClassName = NSStringFromClass([[attributesPassOrValue1 objectForKey:"attr_value"] class]);
-//                                                                                                                                                            userAttributeClassName = userAttributeClassName;
-//                                                                                                                                                            NSString *logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedType, [baseCondition toString], userAttributeClassName, baseCondition.name];
-//                                                                                                                                                            OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelWarning]);
-//                                                                                                                                                            
-//                                                                                                                                                            XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue2 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                            logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForMissingAttribute, [baseCondition toString], baseCondition.name];
-//                                                                                                                                                            OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelDebug]);
-//                                                                                                                                                            
-//                                                                                                                                                            XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue3 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                            userAttributeClassName = NSStringFromClass([[attributesPassOrValue3 objectForKey:"attr_value"] class]);
-//                                                                                                                                                            userAttributeClassName = userAttributeClassName;
-//                                                                                                                                                            logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedType, [baseCondition toString], userAttributeClassName, baseCondition.name];
-//                                                                                                                                                            OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelWarning]);
-//                                                                                                                                                            
-//                                                                                                                                                            XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue4 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                            userAttributeClassName = NSStringFromClass([[attributesPassOrValue4 objectForKey:"attr_value"] class]);
-//                                                                                                                                                            userAttributeClassName = userAttributeClassName;
-//                                                                                                                                                            logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedType, [baseCondition toString], userAttributeClassName, baseCondition.name];
-//                                                                                                                                                            OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelWarning]);
-//                                                                                                                                                            
-//                                                                                                                                                            XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue5 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                            logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedTypeNull, [baseCondition toString], baseCondition.name];
-//                                                                                                                                                            OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelDebug]);
-//                                                                                                                                                            
-//                                                                                                                                                            [loggerMock stopMocking];
-//                                                                                                                                                            }
-//                                                                                                                                                            
-//                                                                                                                                                            - (void)testGTMatcherReturnsNullWhenAttributeValueIsInfinity {
-//                                                                                                                                                                id loggerMock = OCMPartialMock((OPTLYLoggerDefault *)self.optimizelyTypedAudience.logger);
-//                                                                                                                                                                NSDictionary *attributesPassOrValue = {"attr_value" : [NSNumber numberWithFloat:INFINITY]};
-//                                                                                                                                                                OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithGreaterThanMatchType]];
-//                                                                                                                                                                XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                                
-//                                                                                                                                                                OPTLYBaseCondition *baseCondition = (OPTLYBaseCondition *)[((OPTLYOrCondition *)[((OPTLYOrCondition *)[andCondition.subConditions firstObject]).subConditions firstObject]).subConditions firstObject];
-//                                                                                                                                                                NSString *logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedTypeNanInfinity, [baseCondition toString], baseCondition.name];
-//                                                                                                                                                                OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelDebug]);
-//                                                                                                                                                                [loggerMock stopMocking];
-//                                                                                                                                                                }
-//                                                                                                                                                                
-//                                                                                                                                                                - (void)testGTMatcherReturnsTrueWhenAttributeValueIsGreaterThanConditionValue {
-//                                                                                                                                                                    NSDictionary *attributesPassOrValue1 = {"attr_value" : 15};
-//                                                                                                                                                                    NSDictionary *attributesPassOrValue2 = {"attr_value" : 10.1};
-//                                                                                                                                                                    
-//                                                                                                                                                                    OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithGreaterThanMatchType]];
-//                                                                                                                                                                    XCTAssertTrue([[andCondition evaluateConditionsWithAttributes:attributesPassOrValue1 projectConfig:nil] boolValue]);
-//                                                                                                                                                                    XCTAssertTrue([[andCondition evaluateConditionsWithAttributes:attributesPassOrValue2 projectConfig:nil] boolValue]);
-//                                                                                                                                                                    }
-//                                                                                                                                                                    
-//                                                                                                                                                                    ///MARK:- LTMatcher Tests
-//                                                                                                                                                                    
-//                                                                                                                                                                    - (void)testLTMatcherReturnsNullWhenUnsupportedConditionValue {
-//                                                                                                                                                                        id loggerMock = OCMPartialMock((OPTLYLoggerDefault *)self.optimizelyTypedAudience.logger);
-//                                                                                                                                                                        NSDictionary *attributesPassOrValue1 = {"name": "device_type",
-//                                                                                                                                                                            "value": {},
-//                                                                                                                                                                            "type": "custom_attribute",
-//                                                                                                                                                                            "match": "lt"};
-//                                                                                                                                                                        
-//                                                                                                                                                                        NSDictionary *userAttributes = {"device_type" : "iPhone"};
-//                                                                                                                                                                        OPTLYBaseCondition *condition = [[OPTLYBaseCondition alloc] initWithDictionary:attributesPassOrValue1 error:nil];
-//                                                                                                                                                                        XCTAssertNil([condition evaluateConditionsWithAttributes:userAttributes projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                                        NSString *logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorUnsupportedValueType, [condition toString]];
-//                                                                                                                                                                        OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelWarning]);
-//                                                                                                                                                                        [loggerMock stopMocking];
-//                                                                                                                                                                        }
-//                                                                                                                                                                        
-//                                                                                                                                                                        - (void)testLTMatcherReturnsFalseWhenAttributeValueIsGreaterThanOrEqualToConditionValue {
-//                                                                                                                                                                            NSDictionary *attributesPassOrValue1 = {"attr_value" : 15};
-//                                                                                                                                                                            NSDictionary *attributesPassOrValue2 = {"attr_value" : 10};
-//                                                                                                                                                                            
-//                                                                                                                                                                            OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithLessThanMatchType]];
-//                                                                                                                                                                            XCTAssertFalse([[andCondition evaluateConditionsWithAttributes:attributesPassOrValue1 projectConfig:nil] boolValue]);
-//                                                                                                                                                                            XCTAssertFalse([[andCondition evaluateConditionsWithAttributes:attributesPassOrValue2 projectConfig:nil] boolValue]);
-//                                                                                                                                                                            }
-//                                                                                                                                                                            
-//                                                                                                                                                                            - (void)testLTMatcherReturnsNullWhenAttributeValueIsNotANumericValue {
-//                                                                                                                                                                                NSDictionary *attributesPassOrValue1 = {"attr_value" : "invalid"};
-//                                                                                                                                                                                NSDictionary *attributesPassOrValue2 = {};
-//                                                                                                                                                                                NSDictionary *attributesPassOrValue3 = {"attr_value" : YES};
-//                                                                                                                                                                                NSDictionary *attributesPassOrValue4 = {"attr_value" : NO};
-//                                                                                                                                                                                NSDictionary *attributesPassOrValue5 = {"attr_value" : [NSNull null]};
-//                                                                                                                                                                                id loggerMock = OCMPartialMock((OPTLYLoggerDefault *)self.optimizelyTypedAudience.logger);
-//                                                                                                                                                                                
-//                                                                                                                                                                                OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithLessThanMatchType]];
-//                                                                                                                                                                                OPTLYBaseCondition *baseCondition = (OPTLYBaseCondition *)[((OPTLYOrCondition *)[((OPTLYOrCondition *)[andCondition.subConditions firstObject]).subConditions firstObject]).subConditions firstObject];
-//                                                                                                                                                                                
-//                                                                                                                                                                                XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue1 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                                                NSString *userAttributeClassName = NSStringFromClass([[attributesPassOrValue1 objectForKey:"attr_value"] class]);
-//                                                                                                                                                                                userAttributeClassName = userAttributeClassName;
-//                                                                                                                                                                                NSString *logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedType, [baseCondition toString], userAttributeClassName, baseCondition.name];
-//                                                                                                                                                                                OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelWarning]);
-//                                                                                                                                                                                
-//                                                                                                                                                                                XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue2 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                                                logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForMissingAttribute, [baseCondition toString], baseCondition.name];
-//                                                                                                                                                                                OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelDebug]);
-//                                                                                                                                                                                
-//                                                                                                                                                                                XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue3 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                                                userAttributeClassName = NSStringFromClass([[attributesPassOrValue3 objectForKey:"attr_value"] class]);
-//                                                                                                                                                                                userAttributeClassName = userAttributeClassName;
-//                                                                                                                                                                                logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedType, [baseCondition toString], userAttributeClassName, baseCondition.name];
-//                                                                                                                                                                                OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelWarning]);
-//                                                                                                                                                                                
-//                                                                                                                                                                                XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue4 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                                                userAttributeClassName = NSStringFromClass([[attributesPassOrValue4 objectForKey:"attr_value"] class]);
-//                                                                                                                                                                                userAttributeClassName = userAttributeClassName;
-//                                                                                                                                                                                logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedType, [baseCondition toString], userAttributeClassName, baseCondition.name];
-//                                                                                                                                                                                OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelWarning]);
-//                                                                                                                                                                                
-//                                                                                                                                                                                XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue5 projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                                                logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedTypeNull, [baseCondition toString], baseCondition.name];
-//                                                                                                                                                                                OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelDebug]);
-//                                                                                                                                                                                
-//                                                                                                                                                                                [loggerMock stopMocking];
-//                                                                                                                                                                                }
-//                                                                                                                                                                                
-//                                                                                                                                                                                - (void)testLTMatcherReturnsNullWhenAttributeValueIsInfinity {
-//                                                                                                                                                                                    id loggerMock = OCMPartialMock((OPTLYLoggerDefault *)self.optimizelyTypedAudience.logger);
-//                                                                                                                                                                                    NSDictionary *attributesPassOrValue = {"attr_value" : [NSNumber numberWithFloat:INFINITY]};
-//                                                                                                                                                                                    
-//                                                                                                                                                                                    OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithLessThanMatchType]];
-//                                                                                                                                                                                    OPTLYBaseCondition *baseCondition = (OPTLYBaseCondition *)[((OPTLYOrCondition *)[((OPTLYOrCondition *)[andCondition.subConditions firstObject]).subConditions firstObject]).subConditions firstObject];
-//                                                                                                                                                                                    XCTAssertNil([andCondition evaluateConditionsWithAttributes:attributesPassOrValue projectConfig:self.optimizelyTypedAudience.config]);
-//                                                                                                                                                                                    NSString *logMessage = [NSString stringWithFormat:OPTLYLoggerMessagesAudienceEvaluatorConditionEvaluatedAsUnknownForUnexpectedTypeNanInfinity, [baseCondition toString], baseCondition.name];
-//                                                                                                                                                                                    OCMVerify([loggerMock logMessage:logMessage withLevel:OptimizelyLogLevelDebug]);
-//                                                                                                                                                                                    [loggerMock stopMocking];
-//                                                                                                                                                                                    }
-//                                                                                                                                                                                    
-//                                                                                                                                                                                    - (void)testLTMatcherReturnsTrueWhenAttributeValueIsLessThanConditionValue {
-//                                                                                                                                                                                        NSDictionary *attributesPassOrValue1 = {"attr_value" : 5};
-//                                                                                                                                                                                        NSDictionary *attributesPassOrValue2 = {"attr_value" : 9.9};
-//                                                                                                                                                                                        
-//                                                                                                                                                                                        OPTLYAndCondition *andCondition = (OPTLYAndCondition *)[self getFirstConditionFromArray:[self kAudienceConditionsWithLessThanMatchType]];
-//                                                                                                                                                                                        XCTAssertTrue([[andCondition evaluateConditionsWithAttributes:attributesPassOrValue1 projectConfig:nil] boolValue]);
-//                                                                                                                                                                                        XCTAssertTrue([[andCondition evaluateConditionsWithAttributes:attributesPassOrValue2 projectConfig:nil] boolValue]);
-//                                                                                                                                                                                        }
-//                                                                                                                                                                                        
-//                                                                                                                                                                                        ///MARK:- Helper Methods
-//                                                                                                                                                                                        
-//                                                                                                                                                                                        - (OPTLYCondition *)getFirstConditionFromArray:(NSArray *)array {
-//                                                                                                                                                                                            NSArray *conditionArray = [OPTLYCondition deserializeJSON:array];
-//                                                                                                                                                                                            return conditionArray[0];
-//}
-//
-//end
+    
+    func testSubstringMatcherReturnsNullWhenAttributeValueIsNotAString() {
+        let attributesPassOrValue1 = ["attr_value" : 10.5]
+        let attributesPassOrValue2: [String: Any] = [:]
+        // TODO: [Jae] confirm: filtered by type checking, so not valid attribute
+        //let attributesPassOrValue3: [String: Any] = ["attr_value" : nil]
 
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithSubstringMatchType)
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+    }
+    
+    func testSubstringMatcherReturnsNullWhenAttributeIsNotProvided() {
+        // same test as above
+    }
+    
+    //MARK:- GTMatcher Tests
+    
+    func testGTMatcherReturnsNullWhenUnsupportedConditionValue() {
+        // TODO: [Jae] confirm: filtered by type checking, so not valid UserAttribute
+    }
+    
+    func testGTMatcherReturnsFalseWhenAttributeValueIsLessThanOrEqualToConditionValue() {
+        let attributesPassOrValue1 = ["attr_value" : 5]
+        let attributesPassOrValue2 = ["attr_value" : 10]
+        let attributesPassOrValue3 = ["attr_value" : 10.0]
+    
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
+        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
+    }
+    
+    func testGTMatcherReturnsNullWhenAttributeValueIsNotANumericValue() {
+        let attributesPassOrValue1 = ["attr_value" : "invalid"]
+        let attributesPassOrValue2 = [String: String]()
+        let attributesPassOrValue3 = ["attr_value" : true]
+        let attributesPassOrValue4 = ["attr_value" : false]
+        // TODO: [Jae] confirm: filtered by type checking, so not valid attribute
+        //let attributesPassOrValue5 = ["attr_value" : nil]
+    
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
+    }
+    
+    func testGTMatcherReturnsNullWhenAttributeValueIsInfinity() {
+        let attributesPassOrValue = ["attr_value" : Double.infinity]
+        
+        // TODO: [Jae] expected behavior for inifinity??
+
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+    }
+    
+    func testGTMatcherReturnsTrueWhenAttributeValueIsGreaterThanConditionValue() {
+        let attributesPassOrValue1 = ["attr_value" : 15]
+        let attributesPassOrValue2 = ["attr_value" : 10.1]
+    
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
+        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+    }
+    
+    //MARK: - LTMatcher Tests
+    
+    func testLTMatcherReturnsNullWhenUnsupportedConditionValue() {
+        // TODO: [Jae] confirm: filtered by type checking, so not valid UserAttribute
+    }
+    
+    func testLTMatcherReturnsFalseWhenAttributeValueIsGreaterThanOrEqualToConditionValue() {
+        let attributesPassOrValue1 = ["attr_value" : 15]
+        let attributesPassOrValue2 = ["attr_value" : 10]
+    
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithLessThanMatchType)
+        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+    }
+    
+    func testLTMatcherReturnsNullWhenAttributeValueIsNotANumericValue() {
+        let attributesPassOrValue1 = ["attr_value" : "invalid"]
+        let attributesPassOrValue2 = [String: String]()
+        let attributesPassOrValue3 = ["attr_value" : true]
+        let attributesPassOrValue4 = ["attr_value" : false]
+        // TODO: [Jae] confirm: filtered by type checking, so not valid attribute
+        //let attributesPassOrValue5 = ["attr_value" : nil]
+        
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithLessThanMatchType)
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
+    }
+    
+    func testLTMatcherReturnsNullWhenAttributeValueIsInfinity() {
+        let attributesPassOrValue = ["attr_value" : Double.infinity]
+    
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithLessThanMatchType)
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+    }
+    
+    func testLTMatcherReturnsTrueWhenAttributeValueIsLessThanConditionValue() {
+        let attributesPassOrValue1 = ["attr_value" : 5]
+        let attributesPassOrValue2 = ["attr_value" : 9.9]
+    
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithLessThanMatchType)
+        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+    }
+    
 }

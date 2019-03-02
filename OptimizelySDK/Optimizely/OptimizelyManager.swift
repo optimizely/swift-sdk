@@ -196,14 +196,16 @@ open class OptimizelyManager: NSObject {
         var featureToggleNotifications:[String:FeatureFlagToggle] =
         [String:FeatureFlagToggle]()
         for feature in self.config.project.featureFlags {
-            if let experiment = self.config.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first,
-                let newExperiment = newConfig.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first {
-                if experiment.status != newExperiment.status {
+            if let experiment = self.config.project.rollouts.filter(
+                {$0.id == feature.rolloutId }).first?.experiments.filter(
+                    {$0.layerId == feature.rolloutId}).first,
+                let newExperiment = newConfig.project.rollouts.filter(
+                {$0.id == feature.rolloutId }).first?.experiments.filter(
+                    {$0.layerId == feature.rolloutId}).first,
+                experiment.status != newExperiment.status {
                     // call rollout change with status changed.
                     featureToggleNotifications[feature.key] = newExperiment.status == .running ? FeatureFlagToggle.on : FeatureFlagToggle.off
-                }
             }
-            
         }
         
         return featureToggleNotifications

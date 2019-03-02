@@ -18,17 +18,45 @@ open class OptimizelyManager: NSObject {
     
     // MARK: - Customizable Services
 
-    let logger: OPTLogger
-    let eventDispatcher: OPTEventDispatcher
-    public let userProfileService: OPTUserProfileService
+    var logger: OPTLogger {
+        get {
+            return HandlerRegistryService.shared.injectLogger(sdkKey: self.sdkKey)!
+        }
+    }
+    var eventDispatcher: OPTEventDispatcher {
+        get {
+            return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!
+        }
+    }
+    public var userProfileService: OPTUserProfileService {
+        get {
+            return HandlerRegistryService.shared.injectUserProfileService(sdkKey: self.sdkKey)!
+        }
+    }
     let periodicDownloadInterval: Int
 
     // MARK: - Default Services
 
-    var bucketer: OPTBucketer
-    var decisionService: OPTDecisionService
-    let datafileHandler: OPTDatafileHandler
-    public let notificationCenter: OPTNotificationCenter
+    var bucketer: OPTBucketer {
+        get {
+            return HandlerRegistryService.shared.injectBucketer(sdkKey: self.sdkKey)!
+        }
+    }
+    var decisionService: OPTDecisionService {
+        get {
+            return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
+        }
+    }
+    var datafileHandler: OPTDatafileHandler {
+        get {
+            return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
+        }
+    }
+    public var notificationCenter: OPTNotificationCenter {
+        get {
+            return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)!
+        }
+    }
     
     // MARK: - Public interfaces
     
@@ -46,22 +74,19 @@ open class OptimizelyManager: NSObject {
                 periodicDownloadInterval:Int? = nil) {
         
         self.sdkKey = sdkKey
+        self.periodicDownloadInterval = periodicDownloadInterval ?? (10 * 60)
         
-        self.logger = logger ?? DefaultLogger()
-
-        self.eventDispatcher = eventDispatcher ?? DefaultEventDispatcher()
-        self.userProfileService = userProfileService ?? DefaultUserProfileService()
-        self.periodicDownloadInterval = periodicDownloadInterval ?? (5 * 60)
-
-        
-        self.datafileHandler = DefaultDatafileHandler()
-        self.notificationCenter = DefaultNotificationCenter()
-        self.bucketer = DefaultBucketer()
-        self.decisionService = DefaultDecisionService()
-
         super.init()
-        
-        self.registerServices(sdkKey:sdkKey)
+
+        self.registerServices(sdkKey: sdkKey,
+                              logger: logger ?? DefaultLogger(),
+                              eventDispatcher: eventDispatcher ?? DefaultEventDispatcher(),
+                              userProfileService: userProfileService ?? DefaultUserProfileService(),
+                              datafileHandler: DefaultDatafileHandler(),
+                              bucketer: DefaultBucketer(),
+                              decisionService: DefaultDecisionService(),
+                              notificationCenter: DefaultNotificationCenter())
+
     }
     
     /// Initialize Optimizely Manager (Asynchronous)
@@ -127,22 +152,19 @@ open class OptimizelyManager: NSObject {
                 datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
                     // new datafile came in...
                     if let config = try? ProjectConfig(datafile: data) {
-                        var featureToggleNotifications:[String:FeatureFlagToggle] = [String:FeatureFlagToggle]()
-                        for feature in self.config.project.featureFlags {
-                            if let experiment = self.config.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first,
-                                let newExperiment = config.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first {
-                                if experiment.status != newExperiment.status {
-                                    // call rollout change with status changed.
-                                    featureToggleNotifications[feature.key] = newExperiment.status == .running ? FeatureFlagToggle.on : FeatureFlagToggle.off
-                                }
-                            }
-                            
-                        }
+                        var featureToggleNotifications:[String:FeatureFlagToggle] = self.getFeatureFlagChanges(newConfig:config)
+                        
                         self.config = config
                         
-                        self.bucketer = HandlerRegistryService.shared.injectComponent(service: OPTBucketer.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTBucketer
-                        self.decisionService = HandlerRegistryService.shared.injectComponent(service: OPTDecisionService.self, sdkKey: self.sdkKey, isReintialize: true) as! OPTDecisionService
+                        // call reinit on the services we know we are reinitializing.
+                        HandlerRegistryService.shared.reInitializeComponent(
+                            service:OPTBucketer.self,
+                            sdkKey: self.sdkKey)
+                         HandlerRegistryService.shared.reInitializeComponent(
+                            service: OPTDecisionService.self,
+                            sdkKey: self.sdkKey)
                         
+                        // now reinitialize with the new config.
                         self.bucketer.initialize(config: self.config)
                         self.decisionService.initialize(config: self.config,
                                                    bucketer: self.bucketer,
@@ -169,6 +191,23 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.dataFileInvalid
         }
      }
+    
+    func getFeatureFlagChanges(newConfig:ProjectConfig) -> [String:FeatureFlagToggle] {
+        var featureToggleNotifications:[String:FeatureFlagToggle] =
+        [String:FeatureFlagToggle]()
+        for feature in self.config.project.featureFlags {
+            if let experiment = self.config.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first,
+                let newExperiment = newConfig.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first {
+                if experiment.status != newExperiment.status {
+                    // call rollout change with status changed.
+                    featureToggleNotifications[feature.key] = newExperiment.status == .running ? FeatureFlagToggle.on : FeatureFlagToggle.off
+                }
+            }
+            
+        }
+        
+        return featureToggleNotifications
+    }
     
     func fetchDatafileBackground(completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         
@@ -602,59 +641,66 @@ open class OptimizelyManager: NSObject {
 }
 
 extension HandlerRegistryService {
-    func injectNotificationCenter() -> OPTNotificationCenter? {
-        return injectComponent(service: OPTNotificationCenter.self) as! OPTNotificationCenter?
+    func injectNotificationCenter(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTNotificationCenter? {
+        return injectComponent(service: OPTNotificationCenter.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTNotificationCenter?
     }
-    func injectDecisionService() -> OPTDecisionService? {
-        return injectComponent(service: OPTDecisionService.self) as! OPTDecisionService?
+    func injectDecisionService(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTDecisionService? {
+        return injectComponent(service: OPTDecisionService.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDecisionService?
     }
-    func injectBucketer() -> OPTBucketer? {
-        return injectComponent(service: OPTBucketer.self) as! OPTBucketer?
+    func injectBucketer(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTBucketer? {
+        return injectComponent(service: OPTBucketer.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTBucketer?
     }
 
-    func injectLogger() -> OPTLogger? {
-        return injectComponent(service: OPTLogger.self) as! OPTLogger?
+    func injectLogger(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTLogger? {
+        return injectComponent(service: OPTLogger.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTLogger?
     }
     
-    func injectEventDispatcher() -> OPTEventDispatcher? {
-        return injectComponent(service: OPTEventDispatcher.self) as! OPTEventDispatcher?
+    func injectEventDispatcher(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTEventDispatcher? {
+        return injectComponent(service: OPTEventDispatcher.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTEventDispatcher?
     }
     
-    func injectDatafileHandler() -> OPTDatafileHandler? {
-        return injectComponent(service: OPTDatafileHandler.self) as! OPTDatafileHandler?
+    func injectDatafileHandler(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTDatafileHandler? {
+        return injectComponent(service: OPTDatafileHandler.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDatafileHandler?
     }
     
-    func injectUserProfileService() -> OPTUserProfileService? {
-        return injectComponent(service: OPTUserProfileService.self) as! OPTUserProfileService?
+    func injectUserProfileService(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTUserProfileService? {
+        return injectComponent(service: OPTUserProfileService.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTUserProfileService?
     }
 
 }
 extension OptimizelyManager {
-    func registerServices(sdkKey:String) {
+    func registerServices(sdkKey:String,
+                          logger:OPTLogger,
+                          eventDispatcher:OPTEventDispatcher,
+                          userProfileService:OPTUserProfileService,
+                          datafileHandler:OPTDatafileHandler,
+                          bucketer:OPTBucketer,
+                          decisionService:OPTDecisionService,
+                          notificationCenter:OPTNotificationCenter) {
         // bind it as a non-singleton.  so, we will create an instance anytime injected.
-        let binder:Binder = Binder<OPTLogger>(service: OPTLogger.self).to(factory: type(of:self.logger).init)
+        let binder:Binder = Binder<OPTLogger>(service: OPTLogger.self).to(factory: type(of:logger).init).sdkKey(key: sdkKey)
         //Register my logger service.
         try? HandlerRegistryService.shared.registerBinding(binder: binder)
 
         // this is bound a reusable singleton. so, if we re-initalize, we will keep this.
-        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTNotificationCenter>(service: OPTNotificationCenter.self).singetlon().reInitializeStategy(strategy: .reUse).using(instance:self.notificationCenter))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTNotificationCenter>(service: OPTNotificationCenter.self).singetlon().reInitializeStategy(strategy: .reUse).using(instance:notificationCenter).sdkKey(key: sdkKey))
 
         // this is a singleton but it has a reIntializeStrategy of reCreate.  So, we create a new
         // instance on re-initialize.
-        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTBucketer>(service: OPTBucketer.self).singetlon().using(instance:self.bucketer).sdkKey(key: self.sdkKey))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTBucketer>(service: OPTBucketer.self).singetlon().using(instance:bucketer).sdkKey(key: sdkKey))
 
         // the decision service is also a singleton that will reCreate on re-initalize
-        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance:self.decisionService).sdkKey(key: self.sdkKey))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance:decisionService).sdkKey(key: sdkKey))
         
         // An event dispatcher.  We rely on the factory to create and mantain. Again, recreate on re-initalize.
-        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().reInitializeStategy(strategy: .reUse).to(factory: type(of:self.eventDispatcher).init))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().reInitializeStategy(strategy: .reUse).using(instance: eventDispatcher).sdkKey(key: sdkKey))
         
         // This is a singleton and might be a good candidate for reuse.  The handler supports mulitple
         // sdk keys without having to be created for every key.
-        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStategy(strategy: .reUse).to(factory: type(of:self.datafileHandler).init))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStategy(strategy: .reUse).to(factory: type(of:datafileHandler).init).using(instance: datafileHandler).sdkKey(key: sdkKey))
 
         // the user profile service is also a singleton using eh passed in version.
-        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTUserProfileService>(service: OPTUserProfileService.self).singetlon().reInitializeStategy(strategy:.reUse).using(instance:self.userProfileService).to(factory: type(of:self.userProfileService).init))
+        try? HandlerRegistryService.shared.registerBinding(binder:Binder<OPTUserProfileService>(service: OPTUserProfileService.self).singetlon().reInitializeStategy(strategy:.reUse).using(instance:userProfileService).to(factory: type(of:userProfileService).init).sdkKey(key: sdkKey))
 
     }
 }

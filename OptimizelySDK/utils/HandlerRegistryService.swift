@@ -67,6 +67,10 @@ class HandlerRegistryService {
         return result
     }
     
+    func reInitializeComponent(service:Any, sdkKey:String? = nil) {
+            let _ = injectComponent(service: service, sdkKey: sdkKey, isReintialize: true)
+    }
+    
     func lookupComponents(sdkKey:String)->[Any?]? {
         var value:[Any]?
         

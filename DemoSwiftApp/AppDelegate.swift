@@ -65,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         optimizely = OptimizelyManager(sdkKey: sdkKey,
                                        logger: customLogger,
-                                       periodicDownloadInterval:60)
+                                       periodicDownloadInterval:30)
 
         
         _ = optimizely?.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in
@@ -79,6 +79,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             DispatchQueue.main.async {
                 let alert = UIAlertView(title: "Feature flag \(featurekey) changed", message: "toggled to \(toggle)", delegate: nil, cancelButtonTitle: "cancel")
                 alert.show()
+                if let controller = self.window?.rootViewController as? VariationViewController {
+                    controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
+                }
             }
 
         })
@@ -199,6 +202,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func openVariationView(optimizelyManager: OptimizelyManager?, variationKey: String?) {
         let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as! VariationViewController
+        
+        if let showCoupon = try? optimizelyManager?.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
+            variationViewController.showCoupon = showCoupon
+        }
         
         variationViewController.eventKey = eventKey
         variationViewController.userId = userId

@@ -193,7 +193,7 @@ class DefaultDecisionService : OPTDecisionService {
         guard featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces) != "" else {
             return nil
         }
-        guard let rollout = config.project.rollouts.filter({$0.id == featureFlag.rolloutId}).first else {
+        guard let rollout = config.project.rollouts?.filter({$0.id == featureFlag.rolloutId}).first else {
             return nil
         }
         let rolloutRules = rollout.experiments

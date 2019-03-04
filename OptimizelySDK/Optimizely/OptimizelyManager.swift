@@ -340,7 +340,7 @@ open class OptimizelyManager: NSObject {
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
                                  attributes: Dictionary<String,Any>?=nil) throws -> Bool {
-        guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first  else {
+        guard let featureFlag = config.project.featureFlags?.filter({$0.key == featureKey}).first  else {
             return false
         }
         
@@ -469,7 +469,7 @@ open class OptimizelyManager: NSObject {
                                attributes: Dictionary<String, Any>?=nil) throws -> T {
         
         // fix config to throw errors
-        guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first else {
+        guard let featureFlag = config.project.featureFlags?.filter({$0.key == featureKey}).first else {
             throw OptimizelyError.featureUnknown
         }
         
@@ -519,8 +519,11 @@ open class OptimizelyManager: NSObject {
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId:String,
                                    attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
+        guard let featureFlags = config.project.featureFlags else {
+            return [String]()
+        }
         
-        let enabledFeatures = config.project.featureFlags.filter{
+        let enabledFeatures = featureFlags.filter{
             do {
                 return try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
             } catch {
@@ -528,7 +531,7 @@ open class OptimizelyManager: NSObject {
             }
         }
         
-        return enabledFeatures.map{$0.key} ?? []
+        return enabledFeatures.map{$0.key}
     }
     
     /// Track an event

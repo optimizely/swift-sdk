@@ -37,6 +37,35 @@ struct UserAttribute: Codable, Equatable {
     var type: ConditionType
     var match: ConditionMatch?
     var value: AttributeValue?
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case type
+        case match
+        case value
+    }
+    
+    init(from decoder: Decoder) throws {
+        // no need for this custom decoder. only for debugging support for parse error
+        
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        do {
+            self.name = try container.decode(String.self, forKey: .name)
+            self.type = try container.decode(ConditionType.self, forKey: .type)
+            self.match = try container.decodeIfPresent(ConditionMatch.self, forKey: .match)
+            self.value = try container.decodeIfPresent(AttributeValue.self, forKey: .value)
+        } catch {
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: container.codingPath, debugDescription: "Faild to decode User Attribute)"))
+        }
+    }
+    
+    init(name: String, type: ConditionType, match: ConditionMatch?, value: AttributeValue?) {
+        self.name = name
+        self.type = type
+        self.match = match
+        self.value = value
+    }
 }
 
 extension UserAttribute {

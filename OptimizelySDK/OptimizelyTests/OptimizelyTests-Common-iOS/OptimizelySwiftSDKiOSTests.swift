@@ -44,7 +44,7 @@ class OptimizelySDKTests: XCTestCase {
             return
         }
 
-        for audience in config.project.typedAudiences {
+        for audience in config.project.typedAudiences! {
             var attr = ["integerKey":1, "doubleKey": 99.0, "booleanKey": true, "nationality":"English"] as [String : Any]
             // all user attributes equate to true at this point.  so, all conditions should pass.
             if audience.name == "INT" {

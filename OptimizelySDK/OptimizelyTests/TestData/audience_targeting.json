@@ -1509,17 +1509,17 @@
     },
     {
       "id": "20413101831",
-      "conditions": [ "and", [ "or", [ "or", { "type": "unknown", "name": "s_foo", "match": "exact" } ] ] ],
+      "conditions": [ "and", [ "or", [ "or", { "type": "custom_attribute", "name": "s_foo", "match": "exact" } ] ] ],
       "name": "single_condition_exact_match_string_unknown_attribute_type"
     },
     {
       "id": "20413101832",
-      "conditions": [ "and", [ "or", [ "or", { "name": "s_foo", "match": "exact" } ] ] ],
+      "conditions": [ "and", [ "or", [ "or", { "name": "s_foo", "type": "custom_attribute", "match": "exact" } ] ] ],
       "name": "single_condition_exact_match_string_missing_attribute_type"
     },
     {
       "id": "20413101833",
-      "conditions": [ "and", [ "or", [ "or", { "type": "custom_attribute", "name": "s_foo", "match": "unknown" } ] ] ],
+      "conditions": [ "and", [ "or", [ "or", { "type": "custom_attribute", "name": "s_foo", "match": "invalid" } ] ] ],
       "name": "single_condition_unknown_match_string"
     },
     {

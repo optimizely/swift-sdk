@@ -25,20 +25,27 @@ struct Project: Codable, Equatable {
     var events: [Event]
     var revision: String
     // V3
-    var anonymizeIP: Bool
-    var variables: [Variable]
+    // TODO: [Jae] exist test files missing this. not requried?
+    //       Should return this in the event (what value return if missing datafile
+    var anonymizeIP: Bool?
+    // TODO: [Jae] exist test files missing this. not requried?
+    var variables: [FeatureVariable]?
     // V4
-    var rollouts: [Rollout]
-    var typedAudiences: [Audience]
-    var featureFlags: [FeatureFlag]
-    var botFiltering: Bool
+    // TODO: [Jae] exist test files missing this. not requried?
+    var rollouts: [Rollout]?
+    // TODO: [Jae] exist test files missing this. not requried?
+    var typedAudiences: [Audience]?
+    // TODO: [Jae] exist test files missing this. not requried?
+    var featureFlags: [FeatureFlag]?
+    // TODO: [Jae] exist test files missing this. not requried?
+    var botFiltering: Bool?
     
 }
 
 extension Project: ProjectProtocol {
     
     func evaluateAudience(audienceId: String, attributes: [String: Any]?) throws -> Bool {
-        let audienceMatch = typedAudiences.filter{$0.id == audienceId}.first ??
+        let audienceMatch = typedAudiences?.filter{$0.id == audienceId}.first ??
                             audiences.filter{$0.id == audienceId}.first
         
         guard let audience = audienceMatch else {

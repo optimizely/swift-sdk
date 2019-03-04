@@ -184,7 +184,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101810", "20413101811", "20413101812", "20413101813"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101810", "20413101811", "20413101812", "20413101813"],
       "variations": [
         {
           "variables": [],
@@ -562,7 +563,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101831", "20413101832"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101831", "20413101832"],
       "variations": [
         {
           "variables": [],
@@ -583,7 +585,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101833"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101833"],
       "variations": [
         {
           "variables": [],
@@ -625,7 +628,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101835"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101835"],
       "variations": [
         {
           "variables": [],
@@ -646,7 +650,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101836"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101836"],
       "variations": [
         {
           "variables": [],
@@ -667,7 +672,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101837"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101837"],
       "variations": [
         {
           "variables": [],
@@ -688,7 +694,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101838"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101838"],
       "variations": [
         {
           "variables": [],
@@ -709,7 +716,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101839"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101839"],
       "variations": [
         {
           "variables": [],
@@ -730,7 +738,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101840"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101840"],
       "variations": [
         {
           "variables": [],
@@ -751,7 +760,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101841"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101841"],
       "variations": [
         {
           "variables": [],
@@ -772,7 +782,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101842"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101842"],
       "variations": [
         {
           "variables": [],
@@ -793,7 +804,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101843"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101843"],
       "variations": [
         {
           "variables": [],
@@ -814,7 +826,8 @@
           "endOfRange": 10000
         }
       ],
-      "audienceIds": ["20413101844"],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "20413101844"],
       "variations": [
         {
           "variables": [],
@@ -1284,6 +1297,292 @@
       ],
       "forcedVariations": {},
       "id": "10390977731"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_exact_match_missing_value",
+      "layerId": "10420273895",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523128",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", ["or", "20413101810", "20413101811", "20413101812", "20413101813"]],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523128",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977732"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_lt_match_null_value",
+      "layerId": "10420273916",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523149",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101835"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523149",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977733"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_lt_match_string_value",
+      "layerId": "10420273917",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523150",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101836"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523150",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977734"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_lt_match_missing_value",
+      "layerId": "10420273918",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523151",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101837"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523151",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977735"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_gt_match_null_value",
+      "layerId": "10420273919",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523152",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101838"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523151",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977736"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_gt_match_string_value",
+      "layerId": "10420273920",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523153",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101839"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523153",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977737"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_gt_match_missing_value",
+      "layerId": "10420273921",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523154",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101840"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523154",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977738"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_substring_match_missing_value",
+      "layerId": "10420273922",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523155",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101841"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523155",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977739"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_substring_match_null_value",
+      "layerId": "10420273923",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523156",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101842"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523156",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977740"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_substring_match_boolean_value",
+      "layerId": "10420273924",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523157",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101843"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523157",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977741"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_substring_match_number_value",
+      "layerId": "10420273925",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523158",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101844"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523158",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977742"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_invalid_attribute_type",
+      "layerId": "10420273913",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523146",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", ["or", "20413101831", "20413101832"]],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523146",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977743"
+    },
+    {
+      "status": "Running",
+      "key": "negated_ab_running_exp_typed_audiences_unknown_match_type",
+      "layerId": "10420273914",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523147",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["not", "20413101833"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523147",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977744"
     }
   ],
   "audiences": [
@@ -1509,17 +1808,17 @@
     },
     {
       "id": "20413101831",
-      "conditions": [ "and", [ "or", [ "or", { "type": "custom_attribute", "name": "s_foo", "match": "exact" } ] ] ],
+      "conditions": [ "and", [ "or", [ "or", { "type": "unknown", "name": "s_foo", "match": "exact" } ] ] ],
       "name": "single_condition_exact_match_string_unknown_attribute_type"
     },
     {
       "id": "20413101832",
-      "conditions": [ "and", [ "or", [ "or", { "name": "s_foo", "type": "custom_attribute", "match": "exact" } ] ] ],
+      "conditions": [ "and", [ "or", [ "or", { "name": "s_foo", "match": "exact" } ] ] ],
       "name": "single_condition_exact_match_string_missing_attribute_type"
     },
     {
       "id": "20413101833",
-      "conditions": [ "and", [ "or", [ "or", { "type": "custom_attribute", "name": "s_foo", "match": "invalid" } ] ] ],
+      "conditions": [ "and", [ "or", [ "or", { "type": "custom_attribute", "name": "s_foo", "match": "unknown" } ] ] ],
       "name": "single_condition_unknown_match_string"
     },
     {

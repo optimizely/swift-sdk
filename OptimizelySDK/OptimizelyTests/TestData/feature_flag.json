@@ -1,0 +1,76 @@
+{
+  "accountId": "3321510822",
+  "anonymizeIP": true,
+  "attributes": [],
+  "audiences": [],
+  "events": [],
+  "experiments": [],
+  "featureFlags": [
+    {
+      "experimentIds": [],
+      "id": "3319590479",
+      "key": "feature_flag",
+      "rolloutId": "3319450668",
+      "variables": [
+        {
+          "defaultValue": "true",
+          "id": "3321680886",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "3",
+          "id": "3323790746",
+          "key": "i",
+          "type": "integer"
+        },
+        {
+          "defaultValue": "10.5",
+          "id": "3331590078",
+          "key": "d",
+          "type": "double"
+        },
+        {
+          "defaultValue": "s",
+          "id": "3331600005",
+          "key": "s",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "groups": [],
+  "projectId": "3321510822",
+  "revision": "3",
+  "rollouts": [
+    {
+      "experiments": [
+        {
+          "audienceIds": [],
+          "forcedVariations": {},
+          "id": "3332020494",
+          "key": "3332020494",
+          "layerId": "3319450668",
+          "status": "Not started",
+          "trafficAllocation": [
+            {
+              "endOfRange": 10000,
+              "entityId": "3324490562"
+            }
+          ],
+          "variations": [
+            {
+              "featureEnabled": true,
+              "id": "3324490562",
+              "key": "3324490562",
+              "variables": []
+            }
+          ]
+        }
+      ],
+      "id": "3319450668"
+    }
+  ],
+  "variables": [],
+  "version": "4"
+}

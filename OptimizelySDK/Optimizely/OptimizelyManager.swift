@@ -20,7 +20,7 @@ open class OptimizelyManager: NSObject {
 
     var logger: OPTLogger {
         get {
-            return HandlerRegistryService.shared.injectLogger(sdkKey: self.sdkKey)!
+            return HandlerRegistryService.shared.injectLogger()!
         }
     }
     var eventDispatcher: OPTEventDispatcher {

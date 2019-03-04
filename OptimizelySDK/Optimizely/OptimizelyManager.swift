@@ -645,6 +645,10 @@ open class OptimizelyManager: NSObject {
 }
 
 extension HandlerRegistryService {
+    func injectLogger(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTLogger? {
+        return injectComponent(service: OPTLogger.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTLogger?
+    }
+
     func injectNotificationCenter(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTNotificationCenter? {
         return injectComponent(service: OPTNotificationCenter.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTNotificationCenter?
     }
@@ -653,10 +657,6 @@ extension HandlerRegistryService {
     }
     func injectBucketer(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTBucketer? {
         return injectComponent(service: OPTBucketer.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTBucketer?
-    }
-
-    func injectLogger(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTLogger? {
-        return injectComponent(service: OPTLogger.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTLogger?
     }
     
     func injectEventDispatcher(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTEventDispatcher? {
@@ -682,7 +682,8 @@ extension OptimizelyManager {
                           decisionService:OPTDecisionService,
                           notificationCenter:OPTNotificationCenter) {
         // bind it as a non-singleton.  so, we will create an instance anytime injected.
-        let binder:Binder = Binder<OPTLogger>(service: OPTLogger.self).to(factory: type(of:logger).init).sdkKey(key: sdkKey)
+        // we don't associate the logger with a sdkKey at this time because not all components are sdkKey specific.
+        let binder:Binder = Binder<OPTLogger>(service: OPTLogger.self).to(factory: type(of:logger).init)
         //Register my logger service.
         try? HandlerRegistryService.shared.registerBinding(binder: binder)
 

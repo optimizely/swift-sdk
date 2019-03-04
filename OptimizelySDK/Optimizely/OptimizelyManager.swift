@@ -600,7 +600,7 @@ open class OptimizelyManager: NSObject {
             }
         }
         
-        return enabledFeatures.map{$0.key} ?? []
+        return enabledFeatures.map{$0.key} 
     }
     
     /// Track an event

@@ -36,7 +36,7 @@ class BatchEventBuilder {
                                     visitors: [visitor],
                                     projectID: config.project.projectId,
                                     clientName: "swift-sdk",
-                                    anonymizeIP: config.project.anonymizeIP ?? false,
+                                    anonymizeIP: config.project.anonymizeIP ,
                                     enrichDecisions: true)
         
         if let data = try? JSONEncoder().encode(batchEvent) {

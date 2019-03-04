@@ -40,12 +40,6 @@ class DefaultBucketer : OPTBucketer {
         self.config = config
     }
 
-    
-    
-    static func createInstance(config: ProjectConfig) -> OPTBucketer? {
-        return DefaultBucketer(config: config)
-    }
-    
     func bucketToExperiment(group: Group, bucketingId: String) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)

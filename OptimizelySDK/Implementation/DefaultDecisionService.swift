@@ -36,12 +36,6 @@ class DefaultDecisionService : OPTDecisionService {
         self.userProfileService = userProfileService
     }
     
-    
-    
-    static func createInstance(config: ProjectConfig, bucketer: OPTBucketer, userProfileService:OPTUserProfileService) -> OPTDecisionService? {
-        return DefaultDecisionService(config: config, bucketer: bucketer, userProfileService: userProfileService)
-    }
-    
     func getVariation(userId:String, experiment: Experiment, attributes: Dictionary<String, Any>) -> Variation? {
         let experimentId = experiment.id;
         
@@ -121,19 +115,7 @@ class DefaultDecisionService : OPTDecisionService {
      func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
         //Evaluate in this order:
         
-        
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // TODO: JSON schema does not have groupId, so removed from model. check it out.
-        //
-        //1. Attempt to check if the feature is in a mutex group.
-//        if let groupId = featureFlag.groupId, let variation = getVariationForFeatureGroup(featureFlag: featureFlag, groupId: groupId, userId: userId, attributes: attributes) {
-//            return variation
-//        }
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-        
-        
-        //2. Attempt to bucket user into experiment using feature flag.
+        //1. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
         if let variation = getVariationForFeatureExperiment(featureFlag: featureFlag, userId:userId, attributes:attributes) {
             return variation

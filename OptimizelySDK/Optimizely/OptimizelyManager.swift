@@ -58,6 +58,8 @@ open class OptimizelyManager: NSObject {
         }
     }
     
+    private let reInitLock = Dispatch.DispatchSemaphore(value: 1)
+    
     // MARK: - Public interfaces
     
     /// Optimizely Manager
@@ -151,6 +153,7 @@ open class OptimizelyManager: NSObject {
                 datafileHandler.stopPeriodicUpdates(sdkKey: self.sdkKey)
                 datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
                     // new datafile came in...
+                    self.reInitLock.wait(); defer { self.reInitLock.signal() }
                     if let config = try? ProjectConfig(datafile: data) {
                         var featureToggleNotifications:[String:FeatureFlagToggle] = self.getFeatureFlagChanges(newConfig:config)
                         
@@ -178,7 +181,6 @@ open class OptimizelyManager: NSObject {
                             self.notificationCenter.sendNotifications(type: NotificationType.FeatureFlagRolloutToggle.rawValue, args: [notify, featureToggleNotifications[notify]])
                         }
                     }
-                    
                 }
                 
             }

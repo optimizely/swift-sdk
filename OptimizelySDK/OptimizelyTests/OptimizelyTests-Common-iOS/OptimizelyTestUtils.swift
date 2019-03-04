@@ -41,5 +41,3 @@ func loadJSONDatafileIntoDataObject(datafile:String) -> Data? {
     return try? Data(contentsOf: URL(fileURLWithPath: filePath!, isDirectory: false))
 }
 
-
-

@@ -1,0 +1,74 @@
+{
+  "version": "4",
+  "rollouts": [],
+  "anonymizeIP": true,
+  "projectId": "10431130345",
+  "variables": [],
+  "featureFlags": [],
+  "experiments": [
+    {
+      "status": "Running",
+      "key": "the_experiment",
+      "layerId": "10418820769",
+      "trafficAllocation": [
+        {
+          "entityId": "10373549841",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": [],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10373549841",
+          "key": "enabled_variation"
+        },
+        {
+          "variables": [],
+          "id": "10373549842",
+          "key": "hidden_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10373259356"
+    },
+    {
+      "status": "Running",
+      "key": "the_targeted_experiment",
+      "layerId": "10418820768",
+      "trafficAllocation": [
+        {
+          "entityId": "10373549851",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["2698010096"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10373549851",
+          "key": "enabled_variation"
+        },
+        {
+          "variables": [],
+          "id": "10373549852",
+          "key": "hidden_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10373259357"
+    }
+  ],
+  "audiences": [
+    {
+      "conditions": "[\"and\", {\"type\": \"custom_attribute\", \"name\": \"customattr\", \"value\": \"yes\"}]",
+      "id": "2698010096",
+      "name": "feature_audience"
+    }
+  ],
+  "groups": [],
+  "attributes": [],
+  "accountId": "10367498574",
+  "events": [],
+  "revision": "241"
+}

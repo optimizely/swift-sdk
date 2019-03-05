@@ -33,7 +33,7 @@ jobs:
       env:
         - SDK=swift
         - BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
-        - TESTAPP_TAG=master
+        - TESTAPP_TAG=yasir-test-travis-build
       cache: false
       before_install: skip
       install:

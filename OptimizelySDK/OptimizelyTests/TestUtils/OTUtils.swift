@@ -37,14 +37,7 @@ class OTUtils {
         return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
     }
     
-    static func loadJSONDatafile(_ filename: String) -> [String: Any] {
-        let data = loadJSONDatafileIntoData(filename)!
-
-        let result = try! JSONSerialization.jsonObject(with: data, options: [])
-        return result as! [String: Any]
-    }
-    
-    static func loadJSONDatafileIntoData(_ filename: String) -> Data? {
+    static func loadJSONDatafile(_ filename: String) -> Data? {
         guard let filePath = Bundle(for: self).path(forResource: filename, ofType: "json") else {
             XCTAssert(false, "file not available: \(filename).json")
             return nil

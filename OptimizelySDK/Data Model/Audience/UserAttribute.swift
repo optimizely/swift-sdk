@@ -71,10 +71,16 @@ struct UserAttribute: Codable, Equatable {
 extension UserAttribute {
     
     func evaluate(attributes: [String: Any]?) throws -> Bool {
-        guard let attributes = attributes, !attributes.isEmpty else {
+        guard let attributes = attributes else {
             // TODO: [Jae] confirm this
             return false
         }
+        
+        guard !attributes.isEmpty else {
+            // TODO: [Jae] confirm this
+            throw OptimizelyError.conditionInvalidFormat("empty attribute")
+        }
+
         
         let attributeValue = attributes[name]
         

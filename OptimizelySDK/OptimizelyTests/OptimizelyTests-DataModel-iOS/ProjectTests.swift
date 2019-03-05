@@ -21,7 +21,7 @@ class ProjectTests: XCTestCase {
                                             "events": [EventTests.sampleData],
                                             "revision": "5",
                                             "anonymizeIP": true,
-                                            "variables": [VariableTests.sampleData],
+                                            "variables": [FeatureVariableTests.sampleData],
                                             "rollouts": [RolloutTests.sampleData],
                                             "typedAudiences": [AudienceTests.sampleData],
                                             "featureFlags": [FeatureFlagTests.sampleData],
@@ -47,7 +47,7 @@ extension ProjectTests {
         XCTAssert(model.events == [try! OTUtils.model(from: EventTests.sampleData)])
         XCTAssert(model.revision == "5")
         XCTAssert(model.anonymizeIP == true)
-        XCTAssert(model.variables == [try! OTUtils.model(from: VariableTests.sampleData)])
+        XCTAssert(model.variables == [try! OTUtils.model(from: FeatureVariableTests.sampleData)])
         XCTAssert(model.rollouts == [try! OTUtils.model(from: RolloutTests.sampleData)])
         XCTAssert(model.typedAudiences == [try! OTUtils.model(from: AudienceTests.sampleData)])
         XCTAssert(model.featureFlags == [try OTUtils.model(from: FeatureFlagTests.sampleData)])
@@ -125,57 +125,59 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
+    
+    //MARK: - Optional Fields
 
-    func testDecodeFailWithMissingAnonymizeIP() {
+    func testDecodeSuccessWithMissingAnonymizeIP() {
         var data: [String: Any] = ProjectTests.sampleData
         data["anonymizeIP"] = nil
         
-        let model: Project? = try? OTUtils.model(from: data)
-        XCTAssertNil(model)
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssert(model.projectId == "11111")
     }
-
-    func testDecodeFailWithMissingVariables() {
+    
+    func testDecodeSuccessWithMissingVariables() {
         var data: [String: Any] = ProjectTests.sampleData
         data["variables"] = nil
         
-        let model: Project? = try? OTUtils.model(from: data)
-        XCTAssertNil(model)
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssert(model.projectId == "11111")
     }
-
-    func testDecodeFailWithMissingRollouts() {
+    
+    func testDecodeSuccessWithMissingRollouts() {
         var data: [String: Any] = ProjectTests.sampleData
         data["rollouts"] = nil
         
-        let model: Project? = try? OTUtils.model(from: data)
-        XCTAssertNil(model)
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssert(model.projectId == "11111")
     }
-
-    func testDecodeFailWithMissingTypedAudiences() {
+    
+    func testDecodeSuccessWithMissingTypedAudiences() {
         var data: [String: Any] = ProjectTests.sampleData
         data["typedAudiences"] = nil
         
-        let model: Project? = try? OTUtils.model(from: data)
-        XCTAssertNil(model)
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssert(model.projectId == "11111")
     }
     
-
-    func testDecodeFailWithMissingFeatureFlags() {
+    
+    func testDecodeSuccessWithMissingFeatureFlags() {
         var data: [String: Any] = ProjectTests.sampleData
         data["featureFlags"] = nil
         
-        let model: Project? = try? OTUtils.model(from: data)
-        XCTAssertNil(model)
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssert(model.projectId == "11111")
     }
     
-
-    func testDecodeFailWithMissingBotFiltering() {
+    
+    func testDecodeSuccessWithMissingBotFiltering() {
         var data: [String: Any] = ProjectTests.sampleData
         data["botFiltering"] = nil
         
-        let model: Project? = try? OTUtils.model(from: data)
-        XCTAssertNil(model)
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssert(model.projectId == "11111")
     }
-    
+
 }
 
 // MARK: - Encode

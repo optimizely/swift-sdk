@@ -69,15 +69,20 @@ class UserAttributeTests_Evaluate: XCTestCase {
     func testEvaluateExactDifferentTypeNil() {
         let attributes = ["country": "us"]
         let model = UserAttribute(name: "country", type: .customAttribute, match: .exact, value: .int(100))
-        XCTAssertFalse(try! model.evaluate(attributes: attributes))
-    }
-    
-    func testEvaluateExactMissingAttributeNil() {
-        let attributes = ["country": "us"]
-        let model = UserAttribute(name: "h", type: .customAttribute, match: .exact, value: .string("us"))
         XCTAssertNil(try? model.evaluate(attributes: attributes))
     }
     
+    func testEvaluateExactSameValueButDifferentName() {
+        let attributes = ["address": "us"]
+        let model = UserAttribute(name: "country", type: .customAttribute, match: .exact, value: .string("us"))
+        XCTAssertNil(try? model.evaluate(attributes: attributes))
+    }
+    
+    func testEvaluateExactSameValueButDifferentName2() {
+        let attributes = ["country": "ca", "address": "us"]
+        let model = UserAttribute(name: "country", type: .customAttribute, match: .exact, value: .string("us"))
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
 }
 
 // MARK: - Evaluate (Substring)

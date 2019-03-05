@@ -101,16 +101,14 @@ extension UserAttributeTests {
         }
     }
     
-    func testDecodeFailWithMissingValue() {
+    func testDecodeSuccessWithMissingValue() {
         let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+
+        XCTAssert(model.name == "geo")
+        XCTAssert(model.type == .customAttribute)
+        XCTAssert(model.match == .exact)
     }
     
     func testDecodeFailWithInvalidType() {

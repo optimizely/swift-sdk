@@ -85,7 +85,13 @@ enum AttributeValue: Codable, Equatable {
 extension AttributeValue {
     
     func isExactMatch(with target: Any?) throws -> Bool {
+        try checkValidAttributeNumber(target)
+
         guard let targetValue = AttributeValue(value: target) else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
+        
+        guard self.isComparable(with: targetValue) else {
             throw OptimizelyError.conditionInvalidValueType(#function)
         }
         
@@ -115,6 +121,8 @@ extension AttributeValue {
     }
     
     func isGreater(than target: Any?) throws -> Bool {
+        try checkValidAttributeNumber(target)
+
         guard let targetValue = AttributeValue(value: target) else {
             throw OptimizelyError.conditionInvalidValueType(#function)
         }
@@ -131,6 +139,8 @@ extension AttributeValue {
     }
     
     func isLess(than target: Any?) throws -> Bool {
+        try checkValidAttributeNumber(target)
+
         guard let targetValue = AttributeValue(value: target) else {
             throw OptimizelyError.conditionInvalidValueType(#function)
         }
@@ -153,4 +163,30 @@ extension AttributeValue {
         default: return nil
         }
     }
+    
+    func isComparable(with target: AttributeValue) -> Bool {
+        switch (self, target) {
+        case (.string, .string): return true
+        case (.int, .double): return true
+        case (.int, .int): return true
+        case (.double, .int): return true
+        case (.double, .double): return true
+        case (.bool, .bool): return true
+        default: return false
+        }
+    }
+    
+    func checkValidAttributeNumber(_ number: Any?) throws {
+        guard let number = number as? Double else {
+            // do not check infinity if it's not a number
+            return
+        }
+        
+        // inifinity is not accepted as a valid user attribute value
+        // TODO: [Jae] do we need more strict range check?
+        if number.isInfinite {
+            throw OptimizelyError.attributeValueInvalid
+        }
+    }
+
 }

@@ -27,6 +27,7 @@ public enum OptimizelyError: Error {
     case eventKeyInvalid(_ key: String)
     case eventUnknown
     case attributesKeyInvalid(_ key: String)
+    case attributeValueInvalid
     case attributeFormatInvalid
     case groupKeyInvalid(_ key: String)
     case groupUnknown

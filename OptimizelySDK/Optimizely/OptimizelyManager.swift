@@ -128,9 +128,14 @@ open class OptimizelyManager: NSObject {
                     // new datafile came in...
                     if let config = try? ProjectConfig(datafile: data) {
                         var featureToggleNotifications:[String:FeatureFlagToggle] = [String:FeatureFlagToggle]()
-                        for feature in self.config.project.featureFlags {
-                            if let experiment = self.config.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first,
-                                let newExperiment = config.project.rollouts.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first {
+                        
+                        guard let featureFlags = self.config.project?.featureFlags else {
+                            fatalError("check this out")
+                        }
+                        
+                        for feature in featureFlags {
+                            if let experiment = self.config.project.rollouts?.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first,
+                                let newExperiment = config.project.rollouts?.filter({$0.id == feature.rolloutId }).first?.experiments.filter({$0.layerId == feature.rolloutId}).first {
                                 if experiment.status != newExperiment.status {
                                     // call rollout change with status changed.
                                     featureToggleNotifications[feature.key] = newExperiment.status == .running ? FeatureFlagToggle.on : FeatureFlagToggle.off
@@ -506,8 +511,8 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variableUnknown
         }
         
-        // TODO: check if non-optional is OK
-        let defaultValueString = variable.defaultValue
+        // TODO: [Jae] optional? fallback to empty string is OK?
+        let defaultValueString = variable.defaultValue ?? ""
 
         var typeName: String?
         var valueParsed: T?

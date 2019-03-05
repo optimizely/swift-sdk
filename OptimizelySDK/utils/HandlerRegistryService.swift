@@ -30,27 +30,21 @@ class HandlerRegistryService {
         
     }
     
-    func registerBinding(binder:BinderProtocol) throws {
-        var shouldThrow = false
+    func registerBinding(binder:BinderProtocol) {
         dispatchQueue.sync {
             if let _ = binders.filter({(type(of: $0.service) == type(of: binder.service)) && $0.sdkKey == binder.sdkKey}).first {
-                shouldThrow = true
             }
             else {
                 binders.append(binder)
             }
-        }
-        
-        if shouldThrow {
-            throw HandlerRegistryServiceError.alreadyRegistered
-        }
+        }        
     }
     
     func injectComponent(service:Any, sdkKey:String? = nil, isReintialize:Bool=false) -> Any? {
         var result:Any?
         dispatchQueue.sync {
             if var binder = binders.filter({(type(of: $0.service) == type(of: service)) && $0.sdkKey == sdkKey}).first {
-                if isReintialize && binder.stategy == .reCreate {
+                if isReintialize && binder.strategy == .reCreate {
                     binder.instance = binder.factory()
                     result = binder.instance
                 }
@@ -81,14 +75,14 @@ class HandlerRegistryService {
     }
 }
 
-enum reInitializeStrategy {
+enum ReInitializeStrategy {
     case reCreate
     case reUse
 }
 
 protocol BinderProtocol {
     var sdkKey:String? { get }
-    var stategy:reInitializeStrategy { get }
+    var strategy:ReInitializeStrategy { get }
     var service:Any { get }
     var isSingleton:Bool { get }
     var factory:()->Any? { get }
@@ -99,7 +93,7 @@ protocol BinderProtocol {
 class Binder<T> : BinderProtocol {
     var sdkKey:String?
     var service: Any
-    var stategy: reInitializeStrategy = .reCreate
+    var strategy: ReInitializeStrategy = .reCreate
     var factory: (() -> Any?) = { ()->Any? in { return nil as Any? }}
     //var configure: ((Any?) -> Any?) = { (_)->Any? in { return nil as Any? }}
     var isSingleton = false
@@ -130,8 +124,8 @@ class Binder<T> : BinderProtocol {
         return self
     }
     
-    func reInitializeStategy(strategy:reInitializeStrategy) -> Binder {
-        self.stategy = strategy
+    func reInitializeStrategy(strategy:ReInitializeStrategy) -> Binder {
+        self.strategy = strategy
         
         return self
     }

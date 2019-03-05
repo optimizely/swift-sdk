@@ -18,6 +18,7 @@
 import Foundation
 
 protocol OPTDecisionService {
+    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     /**
      Initializer for the Decision Service.
      
@@ -25,10 +26,6 @@ protocol OPTDecisionService {
      - Parameter bucketer: The bucketer.
      - Returns: An instance of the decision service.
      */
-    static func createInstance(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService) -> OPTDecisionService?
-    
-    
-    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     func initialize(config:ProjectConfig, bucketer:OPTBucketer, userProfileService:OPTUserProfileService)
 
     

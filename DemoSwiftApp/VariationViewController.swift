@@ -23,7 +23,24 @@ class VariationViewController: UIViewController {
     var userId: String!
     var variationKey: String?
     var optimizelyManager: OptimizelyManager?
+    var showCoupon:Bool? {
+        didSet  {
+            if let show = showCoupon {
+                if show {
+                    DispatchQueue.main.async {
+                        self.couponView.isHidden = false
+                    }
+                }
+                else {
+                    DispatchQueue.main.async {
+                        self.couponView.isHidden = true
+                    }
+                }
+            }
+        }
+    }
 
+    @IBOutlet weak var couponView:UIView!
     @IBOutlet weak var variationLetterLabel: UILabel!
     @IBOutlet weak var variationSubheaderLabel: UILabel!
     @IBOutlet weak var variationBackgroundImage: UIImageView!

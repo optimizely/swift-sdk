@@ -82,8 +82,7 @@ class BatchEventBuilder {
                                     visitors: [visitor],
                                     projectID: config.project.projectId,
                                     clientName: "swift-sdk",
-            // TODO: [Jae] what should we do if anonymiseIP is missing (optional)
-                                    anonymizeIP: config.project.anonymizeIP ?? true,
+                                    anonymizeIP: config.project.anonymizeIP ?? false,
                                     enrichDecisions:true)
         
         if let data = try? JSONEncoder().encode(batchEvent) {

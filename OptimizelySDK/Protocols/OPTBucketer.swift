@@ -17,14 +17,12 @@
 import Foundation
 
 protocol OPTBucketer {
+    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     /**
      Initialize the default bucketer with the project config.
      - Parameter config: The project config that the bucketer will use for reference.
      - Returns: The bucketer that has been created.
      */
-    static func createInstance(config:ProjectConfig) -> OPTBucketer?
-
-    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     func initialize(config:ProjectConfig)
 
     /**

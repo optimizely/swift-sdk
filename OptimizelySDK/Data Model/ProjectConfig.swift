@@ -73,3 +73,152 @@ extension ProjectConfig {
     }
 }
 
+// MARK: - Project Access
+
+extension ProjectConfig {
+    
+    /**
+     * Get an Experiment object for a key.
+     */
+    func getExperiment(key: String) -> Experiment? {
+        return project.experiments.filter { $0.key == key }.first
+    }
+    
+    /**
+     * Get an Experiment object for an Id.
+     */
+    func getExperiment(id: String) -> Experiment? {
+        return project.experiments.filter { $0.id == id }.first
+    }
+    
+    /**
+     * Get an experiment Id for the human readable experiment key
+     **/
+    func getExperimentId(key: String) -> String? {
+        return getExperiment(key: key)?.id
+    }
+    
+    /**
+     * Get a Group object for an Id.
+     */
+    func getGroup(id: String) -> Group? {
+        return project.groups.filter{ $0.id == id }.first
+    }
+    
+    /**
+     * Get a Feature Flag object for a key.
+     */
+    func getFeatureFlag(key: String) -> FeatureFlag? {
+        return project.featureFlags.filter{ $0.key == key }.first
+    }
+    
+    /**
+     * Get a Rollout object for an Id.
+     */
+    func getRollout(id: String) -> Rollout? {
+        return project.rollouts.filter{ $0.id == id }.first
+    }
+    
+    /**
+     * Gets an event for a corresponding event key
+     */
+    func getEvent(key: String) -> Event? {
+        return project.events.filter{ $0.key == key }.first
+    }
+    
+    /**
+     * Gets an event id for a corresponding event key
+     */
+    func getEventId(key: String) -> String? {
+        return getEvent(key: key)?.id
+    }
+    
+    
+    /**
+     * Get an attribute for a given key.
+     */
+    func getAttribute(key: String) -> Attribute? {
+        return project.attributes.filter{ $0.key == key }.first
+    }
+    
+    /**
+     * Get an attribute Id for a given key.
+     **/
+    func getAttributeId(key: String) -> String? {
+        return getAttribute(key: key)?.id
+    }
+    
+    /**
+     * Get an audience for a given audience id.
+     */
+    func getAudience(id: String) -> Audience? {
+        return project.audiences.filter{ $0.id == id }.first
+    }
+    
+    /**
+     * Get forced variation for a given experiment key and user id.
+     */
+    func getForcedVariation(experimentKey: String, userId: String) throws -> Variation? {
+        guard let experiment = project.experiments.filter({$0.key == experimentKey}).first else {
+            throw OptimizelyError.experimentUnknown
+        }
+        
+        guard let dict = whitelistUsers[userId],
+            let variationKey = dict[experimentKey] else
+        {
+            return nil
+        }
+        
+        guard let variation = experiment.variations.filter({$0.key == variationKey}).first else {
+            throw OptimizelyError.variationUnknown
+        }
+        
+        return variation
+    }
+    
+    /**
+     * Set forced variation for a given experiment key and user id according to a given variation key.
+     */
+    func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) throws {
+        guard let _ = project.experiments.filter({$0.key == experimentKey}).first else {
+            throw OptimizelyError.experimentUnknown
+        }
+        
+        guard var variationKey = variationKey else {
+            self.whitelistUsers[userId]?.removeValue(forKey: experimentKey)
+            return
+        }
+        
+        // TODO: common function to trim all keys
+        variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
+        
+        guard !variationKey.isEmpty else {
+            throw OptimizelyError.variationKeyInvalid(variationKey)
+        }
+        
+        var whitelist = self.whitelistUsers[userId] ?? [:]
+        whitelist[experimentKey] = variationKey
+        self.whitelistUsers[userId] = whitelist
+    }
+    
+    /**
+     * Get variation for experiment and user ID with user attributes.
+     */
+    func getVariation(experimentKey: String,
+                      userId: String,
+                      attributes: [String: Any]? = nil,
+                      decisionService: OPTDecisionService) throws -> Variation
+    {
+        guard let experiment = project.experiments.filter({$0.key == experimentKey}).first else {
+            throw OptimizelyError.experimentUnknown
+        }
+        
+        // fix DecisionService to throw error
+        guard let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) else {
+            throw OptimizelyError.variationUnknown
+        }
+
+        return variation
+    }
+
+}

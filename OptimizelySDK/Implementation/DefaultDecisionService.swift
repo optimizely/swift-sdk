@@ -158,7 +158,7 @@ class DefaultDecisionService : OPTDecisionService {
         // Check if there are any experiment IDs inside feature flag
         // Evaluate each experiment ID and return the first bucketed experiment variation
         for experimentId in experimentIds {
-            if let experiment = config.project.experiments.filter({$0.id == experimentId }).first {
+            if let experiment = config.getExperiment(id: experimentId) {
                 let variation = getVariation(userId: userId, experiment: experiment, attributes: attributes)
                 return (experiment,variation)
             }
@@ -172,12 +172,12 @@ class DefaultDecisionService : OPTDecisionService {
     
         let bucketingId = getBucketingId(userId: userId, attributes:attributes)
         
-        guard featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces) != "" else {
-            return nil
-        }
-        guard let rollout = config.project.rollouts.filter({$0.id == featureFlag.rolloutId}).first else {
-            return nil
-        }
+        let rolloutId = featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces)
+        
+        guard rolloutId != "" else { return nil }
+        
+        guard let rollout = config.getRollout(id: rolloutId) else { return nil }
+                  
         let rolloutRules = rollout.experiments
         // Evaluate all rollout rules except for last one
         for experiment in rolloutRules[0..<rolloutRules.count.advanced(by: -1)] {

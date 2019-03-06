@@ -319,16 +319,10 @@ open class OptimizelyManager: NSObject {
                       userId:String,
                       attributes:Dictionary<String, Any>?=nil) throws -> Variation {
         
-        guard let experiment = config.project.experiments.filter({$0.key == experimentKey}).first else {
-            throw OptimizelyError.experimentUnknown
-        }
-
-        // fix DecisionService to throw error
-        guard let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) else {
-            throw OptimizelyError.variationUnknown
-        }
-        
-        return variation
+        return try config.getVariation(experimentKey: experimentKey,
+                                       userId: userId,
+                                       attributes: attributes,
+                                       decisionService: self.decisionService)
     }
 
     
@@ -351,21 +345,8 @@ open class OptimizelyManager: NSObject {
     /// - Returns: forced variation key if it exists, otherwise return nil.
     /// - Throws: `OptimizelyError` if error is detected
     public func getForcedVariation(experimentKey:String, userId:String) throws -> String? {
-        guard let experiment = config.project.experiments.filter({$0.key == experimentKey}).first else {
-            throw OptimizelyError.experimentUnknown
-        }
-        
-        guard let dict = config.whitelistUsers[userId],
-            let variationKey = dict[experimentKey] else
-        {
-            return nil
-        }
-        
-        guard let variation = experiment.variations.filter({$0.key == variationKey}).first else {
-            throw OptimizelyError.variationUnknown
-        }
-        
-        return variation.key
+        let variaion = try config.getForcedVariation(experimentKey: experimentKey, userId: userId)
+        return variaion?.key
     }
         
 
@@ -381,25 +362,9 @@ open class OptimizelyManager: NSObject {
                                    userId:String,
                                    variationKey:String?) throws {
         
-        guard let _ = config.project.experiments.filter({$0.key == experimentKey}).first else {
-            throw OptimizelyError.experimentUnknown
-        }
-        
-        guard var variationKey = variationKey else {
-            config.whitelistUsers[userId]?.removeValue(forKey: experimentKey)
-            return
-        }
-        
-        // TODO: common function to trim all keys
-        variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
-        
-        guard !variationKey.isEmpty else {
-            throw OptimizelyError.variationKeyInvalid(variationKey)
-        }
-
-        var whitelist = config.whitelistUsers[userId] ?? [:]
-        whitelist[experimentKey] = variationKey
-        config.whitelistUsers[userId] = whitelist
+        try config.setForcedVariation(experimentKey: experimentKey,
+                                      userId: userId,
+                                      variationKey: variationKey)
     }
     
     /// Determine whether a feature is enabled.

@@ -198,12 +198,12 @@ open class OptimizelyManager: NSObject {
         var featureToggleNotifications:[String:FeatureFlagToggle] =
         [String:FeatureFlagToggle]()
         
-        if let featureFlags = self.config.project.featureFlags {
+        if let featureFlags = self.config?.project?.featureFlags {
             for feature in featureFlags {
-                if let experiment = self.config.project.rollouts?.filter(
+                if let experiment = self.config.project.rollouts.filter(
                     {$0.id == feature.rolloutId }).first?.experiments.filter(
                         {$0.layerId == feature.rolloutId}).first,
-                    let newExperiment = newConfig.project.rollouts?.filter(
+                    let newExperiment = newConfig.project.rollouts.filter(
                     {$0.id == feature.rolloutId }).first?.experiments.filter(
                         {$0.layerId == feature.rolloutId}).first,
                     experiment.status != newExperiment.status {
@@ -413,7 +413,7 @@ open class OptimizelyManager: NSObject {
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
                                  attributes: Dictionary<String,Any>?=nil) throws -> Bool {
-        guard let featureFlag = config.project.featureFlags?.filter({$0.key == featureKey}).first  else {
+        guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first  else {
             return false
         }
         
@@ -544,7 +544,7 @@ open class OptimizelyManager: NSObject {
                                attributes: Dictionary<String, Any>?=nil) throws -> T {
         
         // fix config to throw errors
-        guard let featureFlag = config.project.featureFlags?.filter({$0.key == featureKey}).first else {
+        guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first else {
             throw OptimizelyError.featureUnknown
         }
         
@@ -594,7 +594,7 @@ open class OptimizelyManager: NSObject {
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId:String,
                                    attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
-        guard let featureFlags = config.project.featureFlags else {
+        guard let featureFlags = config?.project?.featureFlags else {
             return [String]()
         }
         

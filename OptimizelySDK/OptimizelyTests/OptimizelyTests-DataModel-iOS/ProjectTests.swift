@@ -126,32 +126,40 @@ extension ProjectTests {
         XCTAssertNil(model)
     }
     
-    //MARK: - Optional Fields
-
-    func testDecodeSuccessWithMissingAnonymizeIP() {
+    func testDecodeFailWithMissingAnonymizeIP() {
         var data: [String: Any] = ProjectTests.sampleData
         data["anonymizeIP"] = nil
         
-        let model: Project = try! OTUtils.model(from: data)
-        XCTAssert(model.projectId == "11111")
+        let model: Project? = try? OTUtils.model(from: data)
+        XCTAssertNil(model)
     }
     
-    func testDecodeSuccessWithMissingVariables() {
+    func testDecodeFailWithMissingVariables() {
         var data: [String: Any] = ProjectTests.sampleData
         data["variables"] = nil
         
-        let model: Project = try! OTUtils.model(from: data)
-        XCTAssert(model.projectId == "11111")
+        let model: Project? = try? OTUtils.model(from: data)
+        XCTAssertNil(model)
     }
     
-    func testDecodeSuccessWithMissingRollouts() {
+    func testDecodeFailWithMissingRollouts() {
         var data: [String: Any] = ProjectTests.sampleData
         data["rollouts"] = nil
         
-        let model: Project = try! OTUtils.model(from: data)
-        XCTAssert(model.projectId == "11111")
+        let model: Project? = try? OTUtils.model(from: data)
+        XCTAssertNil(model)
     }
     
+    func testDecodeFailWithMissingFeatureFlags() {
+        var data: [String: Any] = ProjectTests.sampleData
+        data["featureFlags"] = nil
+        
+        let model: Project? = try? OTUtils.model(from: data)
+        XCTAssertNil(model)
+    }
+    
+    //MARK: - Optional Fields
+
     func testDecodeSuccessWithMissingTypedAudiences() {
         var data: [String: Any] = ProjectTests.sampleData
         data["typedAudiences"] = nil
@@ -160,24 +168,14 @@ extension ProjectTests {
         XCTAssert(model.projectId == "11111")
     }
     
-    
-    func testDecodeSuccessWithMissingFeatureFlags() {
-        var data: [String: Any] = ProjectTests.sampleData
-        data["featureFlags"] = nil
-        
-        let model: Project = try! OTUtils.model(from: data)
-        XCTAssert(model.projectId == "11111")
-    }
-    
-    
-    func testDecodeSuccessWithMissingBotFiltering() {
+    func testDecodeFailWithMissingBotFiltering() {
         var data: [String: Any] = ProjectTests.sampleData
         data["botFiltering"] = nil
         
         let model: Project = try! OTUtils.model(from: data)
         XCTAssert(model.projectId == "11111")
     }
-
+    
 }
 
 // MARK: - Encode

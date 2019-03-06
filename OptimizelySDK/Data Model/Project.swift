@@ -25,21 +25,13 @@ struct Project: Codable, Equatable {
     var events: [Event]
     var revision: String
     // V3
-    // TODO: [Jae] exist test files missing this. not requried?
-    //       Should return this in the event (what value return if missing datafile
-    var anonymizeIP: Bool?
-    // TODO: [Jae] exist test files missing this. not requried?
-    var variables: [FeatureVariable]?
+    var anonymizeIP: Bool
+    var variables: [FeatureVariable]
     // V4
-    // TODO: [Jae] exist test files missing this. not requried?
-    var rollouts: [Rollout]?
-    // TODO: [Jae] exist test files missing this. not requried?
+    var rollouts: [Rollout]
     var typedAudiences: [Audience]?
-    // TODO: [Jae] exist test files missing this. not requried?
-    var featureFlags: [FeatureFlag]?
-    // TODO: [Jae] exist test files missing this. not requried?
+    var featureFlags: [FeatureFlag]
     var botFiltering: Bool?
-    
 }
 
 extension Project: ProjectProtocol {

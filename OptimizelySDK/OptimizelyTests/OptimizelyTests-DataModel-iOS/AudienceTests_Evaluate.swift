@@ -50,28 +50,7 @@ class AudienceTests_Evaluate: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        //self.typedAudienceDatafile = loadJSONDatafile("typed_audience_datafile")
-        
-        /*
-  x      BucketerTestsDatafile
-  x      UnsupportedVersionDatafile
-  -->      audience_targeting
-  x      optimizely_6372300739_v4
-  x      test_data_10_experiments
-  x      test_data_25_experiments
-  x      typed_audience_datafile
-  x      BucketerTestsDatafile2
-  x      V2TestDatafile
-  x      optimizely_6372300739
-  x      optimizely_7519590183
-  x      test_data_10_experimentsV3
-  x      test_data_50_experiments
- */
-        
         self.typedAudienceDatafile = OTUtils.loadJSONDatafile("typed_audience_datafile")
-
-        
-        
         self.optimizely = OptimizelyManager(sdkKey: "12345")
         try! self.optimizely.initializeSDK(datafile: typedAudienceDatafile)
     }

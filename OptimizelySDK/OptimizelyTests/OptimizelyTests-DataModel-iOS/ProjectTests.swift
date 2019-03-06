@@ -47,7 +47,6 @@ extension ProjectTests {
         XCTAssert(model.events == [try! OTUtils.model(from: EventTests.sampleData)])
         XCTAssert(model.revision == "5")
         XCTAssert(model.anonymizeIP == true)
-        XCTAssert(model.variables == [try! OTUtils.model(from: FeatureVariableTests.sampleData)])
         XCTAssert(model.rollouts == [try! OTUtils.model(from: RolloutTests.sampleData)])
         XCTAssert(model.typedAudiences == [try! OTUtils.model(from: AudienceTests.sampleData)])
         XCTAssert(model.featureFlags == [try OTUtils.model(from: FeatureFlagTests.sampleData)])
@@ -133,15 +132,7 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-    
-    func testDecodeFailWithMissingVariables() {
-        var data: [String: Any] = ProjectTests.sampleData
-        data["variables"] = nil
         
-        let model: Project? = try? OTUtils.model(from: data)
-        XCTAssertNil(model)
-    }
-    
     func testDecodeFailWithMissingRollouts() {
         var data: [String: Any] = ProjectTests.sampleData
         data["rollouts"] = nil

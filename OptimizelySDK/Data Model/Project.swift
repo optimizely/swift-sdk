@@ -12,6 +12,9 @@ protocol ProjectProtocol {
     func evaluateAudience(audienceId: String, attributes: [String: Any]?) throws -> Bool
 }
 
+//[REF]: datafile schema
+//       https://github.com/optimizely/optimizely/blob/43454b726a2a8aab7dcd953999cf8e1902b09d4d/src/www/services/datafile_generator/schema.json
+
 struct Project: Codable, Equatable {
     
     // V2
@@ -26,7 +29,6 @@ struct Project: Codable, Equatable {
     var revision: String
     // V3
     var anonymizeIP: Bool
-    var variables: [FeatureVariable]
     // V4
     var rollouts: [Rollout]
     var typedAudiences: [Audience]?

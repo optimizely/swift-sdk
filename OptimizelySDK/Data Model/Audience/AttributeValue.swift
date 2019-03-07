@@ -13,6 +13,8 @@ enum AttributeValue: Codable, Equatable {
     case int(Int)
     case double(Double)
     case bool(Bool)
+    // not defined in datafile schema, but required for forward compatiblity (see Nikhil's doc)
+    case others
     
     init?(value: Any?) {
         if value is String {
@@ -60,8 +62,9 @@ enum AttributeValue: Codable, Equatable {
             self = .bool(value)
             return
         }
-
-        throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
+        
+        // accept all other types (null, {}, []) for forward compatibility support
+        self = .others
     }
     
     func encode(to encoder: Encoder) throws {
@@ -76,6 +79,8 @@ enum AttributeValue: Codable, Equatable {
             try container.encode(value)
         case .bool(let value):
             try container.encode(value)
+        case .others:
+            return
         }
     }
 }

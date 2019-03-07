@@ -37,14 +37,9 @@ class AttributeValueTests: XCTestCase {
     }
     
     func testDecodeSuccessWithInvalidType() {
-        do {
-            _ = try OTUtils.getAttributeValueFromNative(["invalid type"])
-            XCTAssert(false)
-        } catch is DecodingError {
-            XCTAssert(true)
-        } catch {
-            XCTAssert(false)
-        }
+        let model = try! OTUtils.getAttributeValueFromNative(["invalid type"])
+        
+        XCTAssert(model == AttributeValue.others)
     }
 }
 

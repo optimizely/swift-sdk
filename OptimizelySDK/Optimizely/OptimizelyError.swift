@@ -45,7 +45,9 @@ public enum OptimizelyError: Error {
     case conditionInvalidValueType(_ hint: String)
     case conditionInvalidFormat(_ hint: String)
     case conditionCannotBeEvaluated(_ hint: String)
-    
+    case conditionInvalidAttributeType(_ hint: String)
+    case conditionInvalidAttributeMatch(_ hint: String)
+
     // MARK: - Bucketing
     
     case userIdInvalid

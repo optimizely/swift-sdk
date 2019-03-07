@@ -51,6 +51,7 @@ class AudienceTests_Evaluate: XCTestCase {
         super.setUp()
         
         self.typedAudienceDatafile = OTUtils.loadJSONDatafile("typed_audience_datafile")
+        
         self.optimizely = OptimizelyManager(sdkKey: "12345")
         try! self.optimizely.initializeSDK(datafile: typedAudienceDatafile)
     }
@@ -134,46 +135,40 @@ class AudienceTests_Evaluate: XCTestCase {
     // MARK: - Invalid Base Condition Tests
     
     func testEvaluateReturnsNullWithInvalidBaseCondition() {
-        // these tests redundant with validation check in the UserAudience model tests
-        // TODO: [Jae] confirm: may need for logging checking (Nikhil's doc), not happens because datafile rejected at the beginning
+        let attributesPassOrValue = ["device_type" : "iPhone"]
 
-//        let attributesPassOrValue = ["device_type" : "iPhone"]
-//
-//        var condition = ["name": "device_type"]
-//        var userAttribute: UserAttribute = try! OTUtils.model(from: condition)
-//        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
-//
-//        condition = ["name": "device_type", "value": "iPhone"]
-//        userAttribute = try! OTUtils.model(from: condition)
-//        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
-//
-//        condition = ["name": "device_type", "match": "exact"]
-//        userAttribute = try! OTUtils.model(from: condition)
-//        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
-//
-//        condition = ["name": "device_type", "type": "invalid"]
-//        userAttribute = try! OTUtils.model(from: condition)
-//        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
-//
-//        condition = ["name": "device_type", "type": "custom_attribute"]
-//        userAttribute = try! OTUtils.model(from: condition)
-//        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        var condition = ["name": "device_type"]
+        var userAttribute: UserAttribute = try! OTUtils.model(from: condition)
+        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+
+        condition = ["name": "device_type", "value": "iPhone"]
+        userAttribute = try! OTUtils.model(from: condition)
+        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+
+        condition = ["name": "device_type", "match": "exact"]
+        userAttribute = try! OTUtils.model(from: condition)
+        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+
+        condition = ["name": "device_type", "type": "invalid"]
+        userAttribute = try! OTUtils.model(from: condition)
+        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+
+        condition = ["name": "device_type", "type": "custom_attribute"]
+        userAttribute = try! OTUtils.model(from: condition)
+        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
     }
 
     //MARK: - Invalid input Tests
     
     func testEvaluateReturnsNullWithInvalidConditionType() {
-        // these tests redundant with validation check in the UserAudience model tests
-        // TODO: [Jae] confirm: may need for logging checking (Nikhil's doc), not happens because datafile rejected at the beginning
+        let condition = ["name": "device_type",
+                         "value": "iPhone",
+                         "type": "invalid",
+                         "match": "exact"]
 
-//        let condition = ["name": "device_type",
-//                         "value": "iPhone",
-//                         "type": "invalid",
-//                         "match": "exact"]
-//
-//        let attributesPassOrValue = ["device_type" : "iPhone"];
-//        let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
-//        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        let attributesPassOrValue = ["device_type" : "iPhone"];
+        let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
+        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
     }
     
     func testEvaluateReturnsNullWithNullValueTypeAndNonExistMatchType() {
@@ -217,18 +212,15 @@ class AudienceTests_Evaluate: XCTestCase {
     }
         
     func testEvaluateReturnsNullWithInvalidMatchType() {
-        // these tests redundant with validation check in the UserAudience model tests
-        // TODO: [Jae] confirm: may need for logging checking (Nikhil's doc), not happens because datafile rejected at the beginning
+        let condition = ["name": "device_type",
+                         "value": "iPhone",
+                         "type": "custom_attribute",
+                         "match": "invalid"]
 
-//        let condition = ["name": "device_type",
-//                         "value": "iPhone",
-//                         "type": "custom_attribute",
-//                         "match": "invalid"]
-//
-//        let attributesPassOrValue = ["device_type" : "iPhone"]
-//
-//        let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
-//        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        let attributesPassOrValue = ["device_type" : "iPhone"]
+
+        let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
+        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
     }
 
     func testEvaluateReturnsNullWithInvalidValueForMatchType() {
@@ -246,18 +238,15 @@ class AudienceTests_Evaluate: XCTestCase {
     //MARK: - ExactMatcher Tests
     
     func testExactMatcherReturnsNullWhenUnsupportedConditionValue() {
-        // these tests redundant with validation check in the UserAudience model tests
-        // TODO: [Jae] confirm: may need for logging checking (Nikhil's doc), not happens because datafile rejected at the beginning
-        
-//        let condition: [String: Any] = ["name": "device_type",
-//                                        "value": [],
-//                                        "type": "custom_attribute",
-//                                        "match": "exact"]
-//
-//        let attributesPassOrValue = ["device_type" : "iPhone"]
-//
-//        let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
-//        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        let condition: [String: Any] = ["name": "device_type",
+                                        "value": [],
+                                        "type": "custom_attribute",
+                                        "match": "exact"]
+
+        let attributesPassOrValue = ["device_type" : "iPhone"]
+
+        let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
+        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
     }
     
     func testExactMatcherReturnsNullWhenNoUserProvidedValue() {
@@ -399,15 +388,15 @@ class AudienceTests_Evaluate: XCTestCase {
         
         // TODO: [Jae] confirm: filtered by type checking, so not valid UserAttribute
 
-//        let condition: [String: Any] = ["name": "device_type",
-//                                        "value": [],
-//                                        "type": "custom_attribute",
-//                                        "match": "substring"]
-//
-//        let attributesPassOrValue = ["device_type" : "iPhone"]
-//
-//        let userAttribute: ConditionHolder = try! OTUtils.model(from: condition)
-//        XCTAssertTrue(try! userAttribute.evaluate(project: nil, attributes: attributesPassOrValue))
+        let condition: [String: Any] = ["name": "device_type",
+                                        "value": [],
+                                        "type": "custom_attribute",
+                                        "match": "substring"]
+
+        let attributesPassOrValue = ["device_type" : "iPhone"]
+
+        let userAttribute: ConditionHolder = try! OTUtils.model(from: condition)
+        XCTAssertNil(try? userAttribute.evaluate(project: nil, attributes: attributesPassOrValue))
     }
     
     func testSubstringMatcherReturnsFalseWhenConditionValueIsNotSubstringOfUserValue() {

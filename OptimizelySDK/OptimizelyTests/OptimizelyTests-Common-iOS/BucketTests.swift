@@ -22,7 +22,7 @@ class BucketTests: XCTestCase {
     // This is an example of a functional test case.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
         let experimentId = "1886780721"
-        let bucketer = DefaultBucketer.createInstance(config: ProjectConfig())
+        let bucketer = DefaultBucketer(config: ProjectConfig())
         // These test inputs/outputs should be reproduced exactly in all clients to make sure that they behave
         // consistently.
         let tests = [["userId": "ppid1", "experimentId": experimentId, "expect": 5254],
@@ -33,10 +33,10 @@ class BucketTests: XCTestCase {
         ["userId": "a very very very very very very very very very very very very very very very long ppd string", "experimentId": experimentId, "expect": 6128]];
         
         for test in tests {
-            let hashId = bucketer?.makeHashIdFromBucketingId(bucketingId:test["userId"] as! String, entityId:test["experimentId"] as! String)
-            let bucketingValue = bucketer?.generateBucketValue(bucketingId: hashId!)
+            let hashId = bucketer.makeHashIdFromBucketingId(bucketingId:test["userId"] as! String, entityId:test["experimentId"] as! String)
+            let bucketingValue = bucketer.generateBucketValue(bucketingId: hashId)
             
-            XCTAssertEqual(test["expect"] as! Int, bucketingValue!);
+            XCTAssertEqual(test["expect"] as! Int, bucketingValue);
         }
     }
 

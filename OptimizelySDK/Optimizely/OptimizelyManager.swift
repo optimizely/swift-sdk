@@ -197,16 +197,19 @@ open class OptimizelyManager: NSObject {
     func getFeatureFlagChanges(newConfig:ProjectConfig) -> [String:FeatureFlagToggle] {
         var featureToggleNotifications:[String:FeatureFlagToggle] =
         [String:FeatureFlagToggle]()
-        for feature in self.config.project.featureFlags {
-            if let experiment = self.config.project.rollouts.filter(
-                {$0.id == feature.rolloutId }).first?.experiments.filter(
-                    {$0.layerId == feature.rolloutId}).first,
-                let newExperiment = newConfig.project.rollouts.filter(
-                {$0.id == feature.rolloutId }).first?.experiments.filter(
-                    {$0.layerId == feature.rolloutId}).first,
-                experiment.status != newExperiment.status {
+        
+        if let featureFlags = self.config?.project?.featureFlags {
+            for feature in featureFlags {
+                if let experiment = self.config.project.rollouts.filter(
+                    {$0.id == feature.rolloutId }).first?.experiments.filter(
+                        {$0.layerId == feature.rolloutId}).first,
+                    let newExperiment = newConfig.project.rollouts.filter(
+                    {$0.id == feature.rolloutId }).first?.experiments.filter(
+                        {$0.layerId == feature.rolloutId}).first,
+                    experiment.status != newExperiment.status {
                     // call rollout change with status changed.
                     featureToggleNotifications[feature.key] = newExperiment.status == .running ? FeatureFlagToggle.on : FeatureFlagToggle.off
+                }
             }
         }
         
@@ -549,8 +552,8 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variableUnknown
         }
         
-        // TODO: check if non-optional is OK
-        let defaultValueString = variable.defaultValue
+        // TODO: [Jae] optional? fallback to empty string is OK?
+        let defaultValue = variable.defaultValue ?? ""
 
         var typeName: String?
         var valueParsed: T?
@@ -558,16 +561,16 @@ open class OptimizelyManager: NSObject {
         switch T.self {
         case is String.Type:
             typeName = "string"
-            valueParsed = defaultValueString as? T
+            valueParsed = defaultValue as? T
         case is Int.Type:
             typeName = "integer"
-            valueParsed = Int(defaultValueString) as? T
+            valueParsed = Int(defaultValue) as? T
         case is Double.Type:
             typeName = "double"
-            valueParsed = Double(defaultValueString) as? T
+            valueParsed = Double(defaultValue) as? T
         case is Bool.Type:
             typeName = "boolean"
-            valueParsed = Bool(defaultValueString) as? T
+            valueParsed = Bool(defaultValue) as? T
         default:
             break
         }
@@ -591,8 +594,11 @@ open class OptimizelyManager: NSObject {
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId:String,
                                    attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
+        guard let featureFlags = config?.project?.featureFlags else {
+            return [String]()
+        }
         
-        let enabledFeatures = config.project.featureFlags.filter{
+        let enabledFeatures = featureFlags.filter{
             do {
                 return try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
             } catch {
@@ -600,7 +606,7 @@ open class OptimizelyManager: NSObject {
             }
         }
         
-        return enabledFeatures.map{$0.key} 
+        return enabledFeatures.map{$0.key}
     }
     
     /// Track an event

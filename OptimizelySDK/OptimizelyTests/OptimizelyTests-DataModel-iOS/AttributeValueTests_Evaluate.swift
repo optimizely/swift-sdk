@@ -13,52 +13,52 @@ import XCTest
 class AttributeValueTests_Evaluate: XCTestCase {
     
     func testIsExactMatchString() {
-        let model = try! getAttributeValueFromNative("us")
+        let model = try! OTUtils.getAttributeValueFromNative("us")
         XCTAssertTrue(try! model.isExactMatch(with: "us"))
     }
     
     func testIsExactMatchInt() {
-        let model = try! getAttributeValueFromNative(10)
+        let model = try! OTUtils.getAttributeValueFromNative(10)
         XCTAssertTrue(try! model.isExactMatch(with: 10))
     }
 
     func testIsExactMatchDouble() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertTrue(try! model.isExactMatch(with: 13.5))
     }
 
     func testIsExactMatchDoubleWithInt() {
-        let model = try! getAttributeValueFromNative(Double(13))
+        let model = try! OTUtils.getAttributeValueFromNative(Double(13))
         XCTAssertTrue(try! model.isExactMatch(with: Int(13)))
     }
 
     func testIsExactMatchBool() {
-        let model = try! getAttributeValueFromNative(true)
+        let model = try! OTUtils.getAttributeValueFromNative(true)
         XCTAssertTrue(try! model.isExactMatch(with: true))
     }
 
     func testIsExactMatchBool2() {
-        let model = try! getAttributeValueFromNative(false)
+        let model = try! OTUtils.getAttributeValueFromNative(false)
         XCTAssertTrue(try! model.isExactMatch(with: false))
     }
 
     func testIsExactMatchStringFail() {
-        let model = try! getAttributeValueFromNative("us")
+        let model = try! OTUtils.getAttributeValueFromNative("us")
         XCTAssertFalse(try! model.isExactMatch(with: "ca"))
     }
 
     func testIsExactMatchIntFail() {
-        let model = try! getAttributeValueFromNative(10)
+        let model = try! OTUtils.getAttributeValueFromNative(10)
         XCTAssertFalse(try! model.isExactMatch(with: 20))
     }
 
     func testIsExactMatchDoubleFail() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertFalse(try! model.isExactMatch(with: 20.1))
     }
 
     func testIsExactMatchBoolFail() {
-        let model = try! getAttributeValueFromNative(true)
+        let model = try! OTUtils.getAttributeValueFromNative(true)
         XCTAssertFalse(try! model.isExactMatch(with: false))
     }
 }
@@ -68,32 +68,32 @@ class AttributeValueTests_Evaluate: XCTestCase {
 extension AttributeValueTests_Evaluate {
 
     func testIsSubstringSuccessSame() {
-        let model = try! getAttributeValueFromNative("us")
+        let model = try! OTUtils.getAttributeValueFromNative("us")
         XCTAssertTrue(try! model.isSubstring(of: "us"))
     }
 
     func testIsSubstringSuccessContains() {
-        let model = try! getAttributeValueFromNative("us")
+        let model = try! OTUtils.getAttributeValueFromNative("us")
         XCTAssertTrue(try! model.isSubstring(of: "us-ca"))
     }
 
     func testIsSubstringFail() {
-        let model = try! getAttributeValueFromNative("us-ca")
+        let model = try! OTUtils.getAttributeValueFromNative("us-ca")
         XCTAssertFalse(try! model.isSubstring(of: "us"))
     }
     
     func testIsSubstringFailWithInt() {
-        let model = try! getAttributeValueFromNative("us")
+        let model = try! OTUtils.getAttributeValueFromNative("us")
         XCTAssertNil(try? model.isSubstring(of: 10))
     }
 
     func testIsSubstringFailWithBool() {
-        let model = try! getAttributeValueFromNative("true")
+        let model = try! OTUtils.getAttributeValueFromNative("true")
         XCTAssertNil(try? model.isSubstring(of: true))
     }
 
     func testIsSubstringFailForWrongType() {
-        let model = try! getAttributeValueFromNative(10)
+        let model = try! OTUtils.getAttributeValueFromNative(10)
         XCTAssertNil(try? model.isSubstring(of: "us"))
     }
 
@@ -104,22 +104,22 @@ extension AttributeValueTests_Evaluate {
 extension AttributeValueTests_Evaluate {
 
     func testIsGreaterSuccess() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertTrue(try! model.isGreater(than: 10.0))
     }
     
     func testIsGreaterSuccessWithInt() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertTrue(try! model.isGreater(than: Int(10)))
     }
 
     func testIsGreaterFail() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertFalse(try! model.isGreater(than: 20.0))
     }
     
     func testIsGreaterFailSame() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertFalse(try! model.isGreater(than: 13.5))
     }
     
@@ -130,22 +130,22 @@ extension AttributeValueTests_Evaluate {
 extension AttributeValueTests_Evaluate {
     
     func testIsLessSuccess() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertTrue(try! model.isLess(than: 20.0))
     }
     
     func testisLessSuccessWithInt() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertTrue(try! model.isLess(than: Int(20)))
     }
     
     func testisLessFail() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertFalse(try! model.isLess(than: 10.0))
     }
     
     func testisLessFailSame() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertFalse(try! model.isLess(than: 13.5))
     }
     

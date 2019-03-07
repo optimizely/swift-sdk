@@ -9,8 +9,11 @@
 import Foundation
 
 protocol ProjectProtocol {
-    func evaluateAudience(audienceId: String, attributes: [String: Any]) throws -> Bool
+    func evaluateAudience(audienceId: String, attributes: [String: Any]?) throws -> Bool
 }
+
+//[REF]: datafile schema
+//       https://github.com/optimizely/optimizely/blob/43454b726a2a8aab7dcd953999cf8e1902b09d4d/src/www/services/datafile_generator/schema.json
 
 struct Project: Codable, Equatable {
     
@@ -26,19 +29,17 @@ struct Project: Codable, Equatable {
     var revision: String
     // V3
     var anonymizeIP: Bool
-    var variables: [Variable]
     // V4
     var rollouts: [Rollout]
-    var typedAudiences: [Audience]
+    var typedAudiences: [Audience]?
     var featureFlags: [FeatureFlag]
-    var botFiltering: Bool
-    
+    var botFiltering: Bool?
 }
 
 extension Project: ProjectProtocol {
     
-    func evaluateAudience(audienceId: String, attributes: [String: Any]) throws -> Bool {
-        let audienceMatch = typedAudiences.filter{$0.id == audienceId}.first ??
+    func evaluateAudience(audienceId: String, attributes: [String: Any]?) throws -> Bool {
+        let audienceMatch = typedAudiences?.filter{$0.id == audienceId}.first ??
                             audiences.filter{$0.id == audienceId}.first
         
         guard let audience = audienceMatch else {

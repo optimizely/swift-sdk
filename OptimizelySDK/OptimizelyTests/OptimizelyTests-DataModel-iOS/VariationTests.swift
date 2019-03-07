@@ -26,7 +26,7 @@ extension VariationTests {
                                    "key": "house",
                                    "featureEnabled": true,
                                    "variables": [["id": "123450", "value": "100"], ["id": "123451", "value": "200"]]]
-        let model: Variation = try! modelFromNative(data)
+        let model: Variation = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -42,7 +42,7 @@ extension VariationTests {
                                    "key": "house",
                                    "featureEnabled": false,
                                    "variables": []]
-        let model: Variation = try! modelFromNative(data)
+        let model: Variation = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -54,7 +54,7 @@ extension VariationTests {
         let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
                                    "featureEnabled": true]
-        let model: Variation = try! modelFromNative(data)
+        let model: Variation = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -66,7 +66,7 @@ extension VariationTests {
         let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
                                    "variables": []]
-        let model: Variation = try! modelFromNative(data)
+        let model: Variation = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -77,7 +77,7 @@ extension VariationTests {
     func testDecodeSuccessWithJSONValid5() {
         let data: [String: Any] = ["id": "553339214",
                                    "key": "house"]
-        let model: Variation = try! modelFromNative(data)
+        let model: Variation = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -88,19 +88,19 @@ extension VariationTests {
 
     func testDecodeFailWithMissingId() {
         let data: [String: Any] = ["key": "house"]
-        let model: Variation? = try? modelFromNative(data)
+        let model: Variation? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingKey() {
         let data: [String: Any] = ["id": "553339214"]
-        let model: Variation? = try? modelFromNative(data)
+        let model: Variation? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
     func testDecodeFailWithJSONEmpty() {
         let data: [String: Any] = [:]
-        let model: Variation? = try? modelFromNative(data)
+        let model: Variation? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 }
@@ -116,7 +116,7 @@ extension VariationTests {
                                    variables: [
                                     Variable(id: "123450", value: "100"),
                                     Variable(id: "123451", value: "200")])
-        XCTAssert(isEqualWithEncodeThenDecode(model))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(model))
     }
     
 }

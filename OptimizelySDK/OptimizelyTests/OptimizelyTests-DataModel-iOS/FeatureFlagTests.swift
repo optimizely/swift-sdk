@@ -24,13 +24,13 @@ extension FeatureFlagTests {
     
     func testDecodeSuccessWithJSONValid() {
         let data: [String: Any] = FeatureFlagTests.sampleData
-        let model: FeatureFlag = try! modelFromNative(data)
+        let model: FeatureFlag = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
         XCTAssert(model.experimentIds == ["12345", "12346"])
         XCTAssert(model.rolloutId == "34567")
-        XCTAssert(model.variables == [try! modelFromNative(FeatureVariableTests.sampleData)])
+        XCTAssert(model.variables == [try! OTUtils.model(from: FeatureVariableTests.sampleData)])
     }
     
     func testDecodeSuccessWithJSONValid2() {
@@ -39,7 +39,7 @@ extension FeatureFlagTests {
                                    "experimentIds":[],
                                    "rolloutId":"34567",
                                    "variables":[]]
-        let model: FeatureFlag = try! modelFromNative(data)
+        let model: FeatureFlag = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
@@ -53,7 +53,7 @@ extension FeatureFlagTests {
                                    "experimentIds":[],
                                    "rolloutId":"34567",
                                    "variables":[]]
-        let model: FeatureFlag? = try? modelFromNative(data)
+        let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -62,7 +62,7 @@ extension FeatureFlagTests {
                                    "experimentIds":[],
                                    "rolloutId":"34567",
                                    "variables":[]]
-        let model: FeatureFlag? = try? modelFromNative(data)
+        let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -71,7 +71,7 @@ extension FeatureFlagTests {
                                    "key": "house",
                                    "experimentIds":[],
                                    "variables":[]]
-        let model: FeatureFlag? = try? modelFromNative(data)
+        let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -80,7 +80,7 @@ extension FeatureFlagTests {
                                    "key": "house",
                                    "rolloutId":"34567",
                                    "variables":[]]
-        let model: FeatureFlag? = try? modelFromNative(data)
+        let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -89,7 +89,7 @@ extension FeatureFlagTests {
                                    "key": "house",
                                    "rolloutId":"34567",
                                    "experimentIds":[]]
-        let model: FeatureFlag? = try? modelFromNative(data)
+        let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -101,8 +101,8 @@ extension FeatureFlagTests {
     
     func testEncodeJSON() {
         let data: [String: Any] = FeatureFlagTests.sampleData
-        let modelGiven: FeatureFlag = try! modelFromNative(data)
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        let modelGiven: FeatureFlag = try! OTUtils.model(from: data)
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
 
 }

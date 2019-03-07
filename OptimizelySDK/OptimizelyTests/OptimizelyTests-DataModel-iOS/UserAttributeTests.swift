@@ -29,8 +29,8 @@ extension UserAttributeTests {
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
         XCTAssert(model.name == "geo")
-        XCTAssert(model.type == "custom_attribute")
-        XCTAssert(model.match == "exact")
+        XCTAssert(model.typeSupported == .customAttribute)
+        XCTAssert(model.matchSupported == .exact)
         XCTAssert(model.value == .int(30))
     }
     
@@ -40,8 +40,8 @@ extension UserAttributeTests {
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
         XCTAssert(model.name == "geo")
-        XCTAssert(model.type == "custom_attribute")
-        XCTAssert(model.match == "gt")
+        XCTAssert(model.typeSupported == .customAttribute)
+        XCTAssert(model.matchSupported == .gt)
         XCTAssert(model.value == .double(30.5))
     }
 
@@ -51,8 +51,8 @@ extension UserAttributeTests {
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
         XCTAssert(model.name == "geo")
-        XCTAssert(model.type == "custom_attribute")
-        XCTAssert(model.match == "exists")
+        XCTAssert(model.typeSupported == .customAttribute)
+        XCTAssert(model.matchSupported == .exists)
         XCTAssert(model.value == .bool(true))
     }
 
@@ -62,8 +62,8 @@ extension UserAttributeTests {
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
         XCTAssert(model.name == "geo")
-        XCTAssert(model.type == "custom_attribute")
-        XCTAssert(model.match == "substring")
+        XCTAssert(model.typeSupported == .customAttribute)
+        XCTAssert(model.matchSupported == .substring)
         XCTAssert(model.value == .string("us"))
     }
     
@@ -73,57 +73,73 @@ extension UserAttributeTests {
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
         XCTAssert(model.name == "geo")
-        XCTAssert(model.type == "custom_attribute")
+        XCTAssert(model.typeSupported == .customAttribute)
         XCTAssert(model.value == .string("us"))
     }
 
-    func testDecodeFailWithMissingName() {
+    func testDecodeSuccessWithMissingName() {
         let json: [String: Any] = ["type":"custom_attribute", "match":"exact", "value":"us"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
 
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        XCTAssert(model.typeSupported == .customAttribute)
+        XCTAssert(model.matchSupported == .exact)
+        XCTAssert(model.value == .string("us"))
     }
 
-    func testDecodeFailWithMissingType() {
+    func testDecodeSuccessWithMissingType() {
         let json: [String: Any] = ["name":"geo", "match":"exact", "value":"us"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+
+        XCTAssert(model.name == "geo")
+        XCTAssert(model.matchSupported == .exact)
+        XCTAssert(model.value == .string("us"))
     }
     
-    func testDecodeFailWithMissingValue() {
+    func testDecodeSuccessWithMissingValue() {
         let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+
+        XCTAssert(model.name == "geo")
+        XCTAssert(model.typeSupported == .customAttribute)
+        XCTAssert(model.matchSupported == .exact)
     }
     
-    func testDecodeFailWithWrongValueType() {
+    func testDecodeSuccessWithWrongValueType() {
         let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact", "value": ["a1", "a2"]]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        
-        do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+
+        XCTAssert(model.name == "geo")
+        XCTAssert(model.typeSupported == .customAttribute)
+        XCTAssert(model.matchSupported == .exact)
+        XCTAssert(model.value == .others)
     }
+    
+    // MARK: - Forward Compatibility
+    
+    func testDecodeSuccessWithInvalidType() {
+        let json: [String: Any] = ["name":"geo", "type":"invalid", "match":"exact", "value": 10]
+        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+        
+        XCTAssert(model.name == "geo")
+        XCTAssertNil(model.typeSupported)
+        XCTAssert(model.matchSupported == .exact)
+    }
+    
+    func testDecodeSuccessWithInvalidMatch() {
+        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"invalid", "value": 10]
+        let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
+        let model = try! JSONDecoder().decode(modelType, from: jsonData)
+        
+        XCTAssert(model.name == "geo")
+        XCTAssert(model.typeSupported == .customAttribute)
+        XCTAssertNil(model.matchSupported)
+    }
+    
 }
 
 // MARK: - Encode
@@ -131,7 +147,7 @@ extension UserAttributeTests {
 extension UserAttributeTests {
     func testEncodeJSON() {
         let modelGiven = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: .string("us"))
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
 }
 

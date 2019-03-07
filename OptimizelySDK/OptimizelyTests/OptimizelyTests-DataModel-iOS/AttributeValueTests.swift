@@ -13,38 +13,33 @@ class AttributeValueTests: XCTestCase {
     // MARK: - Decode
     
     func testDecodeSuccessWithString() {
-        let model = try! getAttributeValueFromNative("geo")
+        let model = try! OTUtils.getAttributeValueFromNative("geo")
         
         XCTAssert(model == AttributeValue.string("geo"))
     }
     
     func testDecodeSuccessWithInt() {
-        let model = try! getAttributeValueFromNative(10)
+        let model = try! OTUtils.getAttributeValueFromNative(10)
         
         XCTAssert(model == AttributeValue.int(10))
     }
 
     func testDecodeSuccessWithDouble() {
-        let model = try! getAttributeValueFromNative(13.5)
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
         
         XCTAssert(model == AttributeValue.double(13.5))
     }
 
     func testDecodeSuccessWithBool() {
-        let model = try! getAttributeValueFromNative(true)
+        let model = try! OTUtils.getAttributeValueFromNative(true)
         
         XCTAssert(model == AttributeValue.bool(true))
     }
     
     func testDecodeSuccessWithInvalidType() {
-        do {
-            _ = try getAttributeValueFromNative(["invalid type"])
-            XCTAssert(false)
-        } catch is DecodingError {
-            XCTAssert(true)
-        } catch {
-            XCTAssert(false)
-        }
+        let model = try! OTUtils.getAttributeValueFromNative(["invalid type"])
+        
+        XCTAssert(model == AttributeValue.others)
     }
 }
 
@@ -53,22 +48,22 @@ class AttributeValueTests: XCTestCase {
 extension AttributeValueTests {
     func testEncodeJSON() {
         let modelGiven = [AttributeValue.string("us")]
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
     func testEncodeJSON2() {
         let modelGiven = [AttributeValue.int(10)]
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
     func testEncodeJSON3() {
         let modelGiven = [AttributeValue.double(13.5)]
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
     func testEncodeJSON4() {
         let modelGiven = [AttributeValue.bool(true)]
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
 }
 

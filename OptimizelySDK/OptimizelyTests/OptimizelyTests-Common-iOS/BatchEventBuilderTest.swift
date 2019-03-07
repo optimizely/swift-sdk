@@ -20,7 +20,7 @@ class BatchEventBuilderTest: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         optimizely = OptimizelyManager(sdkKey: "", periodicDownloadInterval: 0)
         
-        let datafile = loadJSONDatafileIntoDataObject(datafile: datafileName)
+        let datafile = OTUtils.loadJSONDatafile(datafileName)
         do {
             try optimizely?.initializeSDK(datafile: datafile!)
         }

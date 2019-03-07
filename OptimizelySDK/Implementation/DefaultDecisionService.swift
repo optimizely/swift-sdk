@@ -84,10 +84,10 @@ class DefaultDecisionService : OPTDecisionService {
     }
     
     func isInExperiment(experiment:Experiment, userId:String, attributes:Dictionary<String, Any>) -> Bool? {
-        if let _ = experiment.audienceConditions {
+        if let conditions = experiment.audienceConditions {
             
             // TODO: [Jae] fix with OptimizelyError
-            return try! experiment.audienceConditions?.evaluate(project: config.project, attributes: attributes)
+            return try? conditions.evaluate(project: config.project, attributes: attributes)
         }
         else if experiment.audienceIds.count > 0 {
             var holder = [ConditionHolder]()

@@ -24,19 +24,19 @@ extension GroupTests {
     func testDecodeSuccessWithJSONValid() {
         let data: [String: Any] = GroupTests.sampleData
         
-        let model: Group = try! modelFromNative(data)
+        let model: Group = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "11111")
         XCTAssert(model.policy == .random)
-        XCTAssert(model.trafficAllocation == [try! modelFromNative(TrafficAllocationTests.sampleData)])
-        XCTAssert(model.experiments == [try! modelFromNative(ExperimentTests.sampleData)])
+        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: TrafficAllocationTests.sampleData)])
+        XCTAssert(model.experiments == [try! OTUtils.model(from: ExperimentTests.sampleData)])
     }
     
     func testDecodeFailWithMissingId() {
         var data: [String: Any] = GroupTests.sampleData
         data["id"] = nil
         
-        let model: Group? = try? modelFromNative(data)
+        let model: Group? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -44,7 +44,7 @@ extension GroupTests {
         var data: [String: Any] = GroupTests.sampleData
         data["experiments"] = nil
         
-        let model: Group? = try? modelFromNative(data)
+        let model: Group? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -56,9 +56,9 @@ extension GroupTests {
     
     func testEncodeJSON() {
         let data: [String: Any] = GroupTests.sampleData
-        let modelGiven: Group = try! modelFromNative(data)
+        let modelGiven: Group = try! OTUtils.model(from: data)
         
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
 }

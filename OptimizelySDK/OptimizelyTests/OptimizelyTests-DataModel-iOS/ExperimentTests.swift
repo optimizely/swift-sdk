@@ -29,16 +29,16 @@ extension ExperimentTests {
     func testDecodeSuccessWithJSONValid() {
         let data: [String: Any] = ExperimentTests.sampleData
         
-        let model: Experiment = try! modelFromNative(data)
+        let model: Experiment = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "11111")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
         XCTAssert(model.layerId == "22222")
-        XCTAssert(model.variations == [try! modelFromNative(VariationTests.sampleData)])
-        XCTAssert(model.trafficAllocation == [try! modelFromNative(TrafficAllocationTests.sampleData)])
+        XCTAssert(model.variations == [try! OTUtils.model(from: VariationTests.sampleData)])
+        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: TrafficAllocationTests.sampleData)])
         XCTAssert(model.audienceIds == ["33333"])
-        XCTAssert(model.audienceConditions == (try! modelFromNative(ConditionHolderTests.sampleData)))
+        XCTAssert(model.audienceConditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
         XCTAssert(model.forcedVariations == ["12345": "1234567890"])
     }
     
@@ -46,14 +46,14 @@ extension ExperimentTests {
         var data: [String: Any] = ExperimentTests.sampleData
         data["audienceConditions"] = nil
         
-        let model: Experiment = try! modelFromNative(data)
+        let model: Experiment = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "11111")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
         XCTAssert(model.layerId == "22222")
-        XCTAssert(model.variations == [try! modelFromNative(VariationTests.sampleData)])
-        XCTAssert(model.trafficAllocation == [try! modelFromNative(TrafficAllocationTests.sampleData)])
+        XCTAssert(model.variations == [try! OTUtils.model(from: VariationTests.sampleData)])
+        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: TrafficAllocationTests.sampleData)])
         XCTAssert(model.audienceIds == ["33333"])
         XCTAssert(model.forcedVariations == ["12345": "1234567890"])
     }
@@ -62,7 +62,7 @@ extension ExperimentTests {
         var data: [String: Any] = ExperimentTests.sampleData
         data["id"] = nil
         
-        let model: Experiment? = try? modelFromNative(data)
+        let model: Experiment? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -70,7 +70,7 @@ extension ExperimentTests {
         var data: [String: Any] = ExperimentTests.sampleData
         data["key"] = nil
         
-        let model: Experiment? = try? modelFromNative(data)
+        let model: Experiment? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -78,7 +78,7 @@ extension ExperimentTests {
         var data: [String: Any] = ExperimentTests.sampleData
         data["status"] = nil
         
-        let model: Experiment? = try? modelFromNative(data)
+        let model: Experiment? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -86,7 +86,7 @@ extension ExperimentTests {
         var data: [String: Any] = ExperimentTests.sampleData
         data["layerId"] = nil
         
-        let model: Experiment? = try? modelFromNative(data)
+        let model: Experiment? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -94,7 +94,7 @@ extension ExperimentTests {
         var data: [String: Any] = ExperimentTests.sampleData
         data["variations"] = nil
         
-        let model: Experiment? = try? modelFromNative(data)
+        let model: Experiment? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -102,7 +102,7 @@ extension ExperimentTests {
         var data: [String: Any] = ExperimentTests.sampleData
         data["trafficAllocation"] = nil
         
-        let model: Experiment? = try? modelFromNative(data)
+        let model: Experiment? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -110,7 +110,7 @@ extension ExperimentTests {
         var data: [String: Any] = ExperimentTests.sampleData
         data["forcedVariations"] = nil
         
-        let model: Experiment? = try? modelFromNative(data)
+        let model: Experiment? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
@@ -122,9 +122,9 @@ extension ExperimentTests {
     
     func testEncodeJSON() {
         let data: [String: Any] = ExperimentTests.sampleData
-        let modelGiven: Experiment = try! modelFromNative(data)
+        let modelGiven: Experiment = try! OTUtils.model(from: data)
 
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
 }

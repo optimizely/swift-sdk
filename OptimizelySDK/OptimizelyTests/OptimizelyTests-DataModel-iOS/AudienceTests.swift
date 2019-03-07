@@ -27,16 +27,16 @@ extension AudienceTests {
         // - "[\"or\",{\"value\":30,\"type\":\"custom_attribute\",\"match\":\"exact\",\"name\":\"geo\"}]"
         // Audience will decode it to recover to typedAudience formats
         
-        let legacyConditionString = jsonStringFromNative(ConditionHolderTests.sampleData)
+        let legacyConditionString = OTUtils.jsonStringFromNative(ConditionHolderTests.sampleData)
         
         let data: [String: Any] = ["id": "553339214",
                                    "name": "america",
                                    "conditions": legacyConditionString]
-        let model: Audience = try! modelFromNative(data)
+        let model: Audience = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! modelFromNative(ConditionHolderTests.sampleData)))
+        XCTAssert(model.conditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
     }
     
 }
@@ -49,31 +49,31 @@ extension AudienceTests {
         let data: [String: Any] = ["id": "553339214",
                                    "name": "america",
                                    "conditions": ConditionHolderTests.sampleData]
-        let model: Audience = try! modelFromNative(data)
+        let model: Audience = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! modelFromNative(ConditionHolderTests.sampleData)))
+        XCTAssert(model.conditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
     }
     
     func testDecodeFailWithMissingId() {
         let data: [String: Any] = ["name": "america",
                                    "conditions": ConditionHolderTests.sampleData]
-        let model: Audience? = try? modelFromNative(data)
+        let model: Audience? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingName() {
         let data: [String: Any] = ["id": "553339214",
                                    "conditions": ConditionHolderTests.sampleData]
-        let model: Audience? = try? modelFromNative(data)
+        let model: Audience? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingConditions() {
         let data: [String: Any] = ["id": "553339214",
                                    "name": "america"]
-        let model: Audience? = try? modelFromNative(data)
+        let model: Audience? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
@@ -83,11 +83,11 @@ extension AudienceTests {
         let data: [String: Any] = ["id": "553339214",
                                    "name": "america",
                                    "conditions": UserAttributeTests.sampleData]
-        let model: Audience = try! modelFromNative(data)
+        let model: Audience = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! modelFromNative(UserAttributeTests.sampleData)))
+        XCTAssert(model.conditions == (try! OTUtils.model(from: UserAttributeTests.sampleData)))
     }
     
 }
@@ -100,9 +100,9 @@ extension AudienceTests {
         let data: [String: Any] = ["id": "553339214",
                                    "name": "america",
                                    "conditions": ConditionHolderTests.sampleData]
-        let modelGiven: Audience = try! modelFromNative(data)
+        let modelGiven: Audience = try! OTUtils.model(from: data)
 
-        XCTAssert(isEqualWithEncodeThenDecode(modelGiven))
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
 
 }

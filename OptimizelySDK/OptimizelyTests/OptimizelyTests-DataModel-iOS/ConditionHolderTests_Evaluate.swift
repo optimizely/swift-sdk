@@ -14,7 +14,7 @@ import XCTest
 class ConditionHolderTests_Evaluate: XCTestCase {
 
     struct ProjectMock: ProjectProtocol {
-        func evaluateAudience(audienceId: String, attributes: [String : Any]) throws -> Bool {
+        func evaluateAudience(audienceId: String, attributes: [String : Any]?) throws -> Bool {
             return Int(audienceId)! < 20000
         }
     }
@@ -133,17 +133,17 @@ class ConditionHolderTests_Evaluate: XCTestCase {
 extension ConditionHolderTests_Evaluate {
 
     func testEvaluate_U() {
-        let model: ConditionHolder = try! modelFromNative(userAttributeData)
+        let model: ConditionHolder = try! OTUtils.model(from: userAttributeData)
         XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
     }
 
     func testEvaluate_AU() {
-        let model: ConditionHolder = try! modelFromNative(["and", userAttributeData])
+        let model: ConditionHolder = try! OTUtils.model(from: ["and", userAttributeData])
         XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
     }
 
     func testEvaluate_NU() {
-        let model: ConditionHolder = try! modelFromNative(["not", userAttributeData])
+        let model: ConditionHolder = try! OTUtils.model(from: ["not", userAttributeData])
         XCTAssertFalse(try! model.evaluate(project: project, attributes: attributeData))
     }
 

@@ -30,7 +30,7 @@ open class DefaultEventDispatcher : OPTEventDispatcher {
     lazy var logger = HandlerRegistryService.shared.injectLogger()
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
-    let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: "OPTEventQueue"))
+    let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: "OPTEventQueue"))
     let notify = DispatchGroup()
     
     required public init() {

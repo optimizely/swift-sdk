@@ -14,7 +14,7 @@ open class OptimizelyManager: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
-    var config:ProjectConfig!
+    var config:ProjectConfig! = nil
     
     // MARK: - Customizable Services
 
@@ -145,8 +145,8 @@ open class OptimizelyManager: NSObject {
             self.config = try ProjectConfig(datafile: datafile)
             
             // TODO: fix these to throw errors
-            bucketer.initialize(config: self.config)
-            decisionService.initialize(config: self.config,
+            bucketer.initialize(config: self.config!)
+            decisionService.initialize(config: self.config!,
                                        bucketer: self.bucketer,
                                        userProfileService: self.userProfileService)
             if periodicDownloadInterval > 0 {
@@ -168,8 +168,8 @@ open class OptimizelyManager: NSObject {
                             sdkKey: self.sdkKey)
                         
                         // now reinitialize with the new config.
-                        self.bucketer.initialize(config: self.config)
-                        self.decisionService.initialize(config: self.config,
+                        self.bucketer.initialize(config: self.config!)
+                        self.decisionService.initialize(config: self.config!,
                                                    bucketer: self.bucketer,
                                                    userProfileService: self.userProfileService)
 
@@ -198,9 +198,9 @@ open class OptimizelyManager: NSObject {
         var featureToggleNotifications:[String:FeatureFlagToggle] =
         [String:FeatureFlagToggle]()
         
-        if let featureFlags = self.config?.project?.featureFlags {
+        if let config = self.config, let featureFlags = config.project?.featureFlags {
             for feature in featureFlags {
-                if let experiment = self.config.project.rollouts.filter(
+                if let experiment = config.project.rollouts.filter(
                     {$0.id == feature.rolloutId }).first?.experiments.filter(
                         {$0.layerId == feature.rolloutId}).first,
                     let newExperiment = newConfig.project.rollouts.filter(
@@ -268,6 +268,8 @@ open class OptimizelyManager: NSObject {
                          userId:String,
                          attributes:Dictionary<String, Any>?=nil) throws -> String {
         
+        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+
         // TODO: fix config to throw common errors (.experimentUnknown, .experimentKeyInvalid, ...)
         guard let experiment = config.project.experiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
@@ -319,6 +321,8 @@ open class OptimizelyManager: NSObject {
                       userId:String,
                       attributes:Dictionary<String, Any>?=nil) throws -> Variation {
         
+        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        
         return try config.getVariation(experimentKey: experimentKey,
                                        userId: userId,
                                        attributes: attributes,
@@ -345,6 +349,8 @@ open class OptimizelyManager: NSObject {
     /// - Returns: forced variation key if it exists, otherwise return nil.
     /// - Throws: `OptimizelyError` if error is detected
     public func getForcedVariation(experimentKey:String, userId:String) throws -> String? {
+        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+
         let variaion = try config.getForcedVariation(experimentKey: experimentKey, userId: userId)
         return variaion?.key
     }
@@ -362,6 +368,8 @@ open class OptimizelyManager: NSObject {
                                    userId:String,
                                    variationKey:String?) throws {
         
+        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+
         try config.setForcedVariation(experimentKey: experimentKey,
                                       userId: userId,
                                       variationKey: variationKey)
@@ -378,6 +386,9 @@ open class OptimizelyManager: NSObject {
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
                                  attributes: Dictionary<String,Any>?=nil) throws -> Bool {
+        
+        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+
         guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first  else {
             return false
         }
@@ -508,6 +519,8 @@ open class OptimizelyManager: NSObject {
                                userId: String,
                                attributes: Dictionary<String, Any>?=nil) throws -> T {
         
+        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+
         // fix config to throw errors
         guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first else {
             throw OptimizelyError.featureUnknown
@@ -559,7 +572,10 @@ open class OptimizelyManager: NSObject {
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId:String,
                                    attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
-        guard let featureFlags = config?.project?.featureFlags else {
+        
+        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+
+        guard let featureFlags = config.project?.featureFlags else {
             return [String]()
         }
         
@@ -586,6 +602,8 @@ open class OptimizelyManager: NSObject {
                       // right now we are still passing in attributes.  But, there is a jira ticket open to use easy event tracking in which case passing in attributes to track will be removed.
         attributes:Dictionary<String,Any>?=nil,
         eventTags:Dictionary<String,Any>?=nil) throws {
+        
+        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
         
         // TODO: fix to throw errors
         guard let body = BatchEventBuilder.createConversionEvent(config: config,

@@ -114,13 +114,13 @@ class DecisionServiceTests_OC: XCTestCase {
         super.setUp()
         
         let userProfileService = DefaultUserProfileService()
-        let datafile = OTUtils.loadJSONDatafile(kDatafileName)
+        let datafile = OTUtils.loadJSONDatafile(kDatafileName)!
         optimizely = OptimizelyManager(sdkKey: kSdkKey, userProfileService: userProfileService)
-        optimizely.initializeSDK(datafile: datafile)
+        try! optimizely.initializeSDK(datafile: datafile)
         
-        let typedAudienceDatafile = OTUtils.loadJSONDatafile(ktypeAudienceDatafileName)
+        let typedAudienceDatafile = OTUtils.loadJSONDatafile(ktypeAudienceDatafileName)!
         optimizelyTypedAudience = OptimizelyManager(sdkKey: kSdkKey)
-        optimizelyTypedAudience.initializeSDK(datafile: datafile)
+        try! optimizelyTypedAudience.initializeSDK(datafile: typedAudienceDatafile)
 
         self.config = self.optimizely.config
         self.configTypedAudience = self.optimizelyTypedAudience.config
@@ -141,14 +141,14 @@ class DecisionServiceTests_OC: XCTestCase {
     // MARK: - Validate Preconditions
 
     // experiment is running, user is in experiment
-    func testValidatePreconditions() {
-        let experiment = self.config.getExperiment(key: kExperimentWithAudienceKey)
-    BOOL isValid = [self.decisionService userPassesTargeting:self.config
-    experiment:experiment
-    userId:kUserId
-    attributes:self.attributes];
-    NSAssert(isValid == true, "Experiment running with user in experiment should pass validation.");
-    }
+//    func testValidatePreconditions() {
+//        let experiment = self.config.getExperiment(key: kExperimentWithAudienceKey)
+//    BOOL isValid = [self.decisionService userPassesTargeting:self.config
+//    experiment:experiment
+//    userId:kUserId
+//    attributes:self.attributes];
+//    NSAssert(isValid == true, "Experiment running with user in experiment should pass validation.");
+//    }
 //
 //    // experiment is not running, validator should return false
 //    - (void)testValidatePreconditionsExperimentNotRunning

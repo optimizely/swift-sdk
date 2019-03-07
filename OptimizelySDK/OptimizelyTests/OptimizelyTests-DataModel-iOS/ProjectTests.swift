@@ -21,7 +21,6 @@ class ProjectTests: XCTestCase {
                                             "events": [EventTests.sampleData],
                                             "revision": "5",
                                             "anonymizeIP": true,
-                                            "variables": [FeatureVariableTests.sampleData],
                                             "rollouts": [RolloutTests.sampleData],
                                             "typedAudiences": [AudienceTests.sampleData],
                                             "featureFlags": [FeatureFlagTests.sampleData],

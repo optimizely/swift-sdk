@@ -553,7 +553,7 @@ open class OptimizelyManager: NSObject {
         }
         
         // TODO: [Jae] optional? fallback to empty string is OK?
-        let defaultValueString = variable.defaultValue ?? ""
+        let defaultValue = variable.defaultValue ?? ""
 
         var typeName: String?
         var valueParsed: T?
@@ -561,16 +561,16 @@ open class OptimizelyManager: NSObject {
         switch T.self {
         case is String.Type:
             typeName = "string"
-            valueParsed = defaultValueString as? T
+            valueParsed = defaultValue as? T
         case is Int.Type:
             typeName = "integer"
-            valueParsed = Int(defaultValueString) as? T
+            valueParsed = Int(defaultValue) as? T
         case is Double.Type:
             typeName = "double"
-            valueParsed = Double(defaultValueString) as? T
+            valueParsed = Double(defaultValue) as? T
         case is Bool.Type:
             typeName = "boolean"
-            valueParsed = Bool(defaultValueString) as? T
+            valueParsed = Bool(defaultValue) as? T
         default:
             break
         }

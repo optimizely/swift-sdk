@@ -42,8 +42,7 @@ class OptimizelyManagerTests: XCTestCase {
     
     func testLoadingTestJson() {
         let files = ["ab_experiments",
-            //// TODO: [Jae] this test includes several invalid datafile format (UserAttribute). do we need to support this?
-            //// "audience_targeting",
+            "audience_targeting",
             "bot_filtering_enabled",
             "bucketing_id",
             "empty_datafile",

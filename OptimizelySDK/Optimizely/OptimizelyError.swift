@@ -10,6 +10,7 @@ import Foundation
 
 public enum OptimizelyError: Error {
     case generic
+    case sdkNotConfigured
     
     // MARK: - Experiment
     

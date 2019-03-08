@@ -14,7 +14,7 @@ open class OptimizelyManager: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
-    var config:ProjectConfig! = nil
+    var config:ProjectConfig?
     
     // MARK: - Customizable Services
 
@@ -144,9 +144,12 @@ open class OptimizelyManager: NSObject {
         do {
             self.config = try ProjectConfig(datafile: datafile)
             
+            // this isn't really necessary because the try would throw if there is a problem.  But, we want to avoid using bang so we do another let binding.
+            guard let config = self.config else { throw OptimizelyError.dataFileInvalid }
+            
             // TODO: fix these to throw errors
-            bucketer.initialize(config: self.config!)
-            decisionService.initialize(config: self.config!,
+            bucketer.initialize(config: config)
+            decisionService.initialize(config: config,
                                        bucketer: self.bucketer,
                                        userProfileService: self.userProfileService)
             if periodicDownloadInterval > 0 {
@@ -168,8 +171,8 @@ open class OptimizelyManager: NSObject {
                             sdkKey: self.sdkKey)
                         
                         // now reinitialize with the new config.
-                        self.bucketer.initialize(config: self.config!)
-                        self.decisionService.initialize(config: self.config!,
+                        self.bucketer.initialize(config: config)
+                        self.decisionService.initialize(config: config,
                                                    bucketer: self.bucketer,
                                                    userProfileService: self.userProfileService)
 

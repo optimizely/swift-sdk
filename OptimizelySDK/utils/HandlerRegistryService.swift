@@ -140,3 +140,33 @@ class Binder<T> : BinderProtocol {
         return self
     }
 }
+
+extension HandlerRegistryService {
+    func injectLogger(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTLogger? {
+        return injectComponent(service: OPTLogger.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTLogger?
+    }
+    
+    func injectNotificationCenter(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTNotificationCenter? {
+        return injectComponent(service: OPTNotificationCenter.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTNotificationCenter?
+    }
+    func injectDecisionService(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTDecisionService? {
+        return injectComponent(service: OPTDecisionService.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDecisionService?
+    }
+    func injectBucketer(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTBucketer? {
+        return injectComponent(service: OPTBucketer.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTBucketer?
+    }
+    
+    func injectEventDispatcher(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTEventDispatcher? {
+        return injectComponent(service: OPTEventDispatcher.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTEventDispatcher?
+    }
+    
+    func injectDatafileHandler(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTDatafileHandler? {
+        return injectComponent(service: OPTDatafileHandler.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDatafileHandler?
+    }
+    
+    func injectUserProfileService(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTUserProfileService? {
+        return injectComponent(service: OPTUserProfileService.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTUserProfileService?
+    }
+    
+}
+

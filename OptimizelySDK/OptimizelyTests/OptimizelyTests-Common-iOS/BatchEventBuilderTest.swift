@@ -49,7 +49,7 @@ class BatchEventBuilderTest: XCTestCase {
     }
 
     func testImpressionEventWithNoExperiment() {
-        let experiment = optimizely?.config.project.experiments.filter({$0.key == featureExperimentKey}).first
+        let experiment = optimizely?.config?.project.experiments.filter({$0.key == featureExperimentKey}).first
         let variation = experiment?.variations[0]
         
         let impression = BatchEventBuilder.createImpressionEvent(config: (optimizely?.config)!, decisionService: (optimizely?.decisionService)!, experiment: experiment!, varionation: variation!, userId: userId, attributes: ["customattr": "yes" ])

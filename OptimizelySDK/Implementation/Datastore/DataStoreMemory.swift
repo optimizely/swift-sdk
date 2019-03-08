@@ -13,13 +13,13 @@ import UIKit
 /// the file is saved.
 /// This class should be used as a singleton per storeName and type (T)
 public class DataStoreMemory<T> : OPTDataStore where T:Codable {
-    let datafileName:String
+    let dataStoreName:String
     let lock:DispatchQueue
     let url:URL
     var data:T?
     
     init(storeName:String) {
-        datafileName = storeName
+        dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             self.url = url.appendingPathComponent(storeName, isDirectory: false)
@@ -110,11 +110,11 @@ public class DataStoreMemory<T> : OPTDataStore where T:Codable {
     
     @objc private func applicationDidEnterBackground() {
         if let data = data {
-            save(forKey: datafileName, value: data as Any)
+            save(forKey: dataStoreName, value: data as Any)
         }
     }
     
     @objc private func applicationDidBecomeActive() {
-        load(forKey: datafileName)
+        load(forKey: dataStoreName)
     }
 }

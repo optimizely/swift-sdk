@@ -11,12 +11,12 @@ import Foundation
 /// Implementation of OPTDataStore as a generic for per type storeage in a flat file.
 /// This class should be used as a singleton per storeName and type (T)
 public class DataStoreFile<T> : OPTDataStore where T:Codable {
-    let datafileName:String
+    let dataStoreName:String
     let lock:DispatchQueue
     let url:URL
     
     init(storeName:String) {
-        datafileName = storeName
+        dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             self.url = url.appendingPathComponent(storeName, isDirectory: false)

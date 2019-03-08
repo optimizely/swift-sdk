@@ -17,7 +17,7 @@ class OptimizelyManagerTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         optimizely = OptimizelyManager(sdkKey: "SDKKEY")
         
-  //      try! optimizely?.initializeSDK(datafile:json)
+       try! optimizely?.initializeSDK(datafile:json)
     }
 
     override func tearDown() {
@@ -26,11 +26,13 @@ class OptimizelyManagerTests: XCTestCase {
         
     }
 
-//    func testTypedAudience() {
+    func testTypedAudience() {
 //        let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
-//        XCTAssertNotNil(variation!, "no variation found")
-//
-//    }
+        let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment_with_and", userId: "userId")
+
+        XCTAssertNil(variation, "no variation found")
+
+    }
 //
 //    func testBasicExperiment() {
 //        let basicVariation = try? optimizely?.activate(experimentKey: "basic_experiment", userId: "userId")
@@ -87,12 +89,14 @@ class OptimizelyManagerTests: XCTestCase {
 //            testBasicExperiment()
 //        }
 //    }
-//    func testPerformanceTypedAudience() {
-//        // This is an example of a performance test case.
-//        self.measure {
-//            // Put the code you want to measure the time of here.
-//            testTypedAudience()
-//        }
-//    }
+    func testPerformanceTypedAudience() {
+        // This is an example of a performance test case.
+        self.measure {
+            // Put the code you want to measure the time of here.
+            for _ in 0...100 {
+              testTypedAudience()
+            }
+        }
+    }
 
 }

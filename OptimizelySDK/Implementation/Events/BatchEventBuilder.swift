@@ -57,7 +57,7 @@ class BatchEventBuilder {
         let early = Date.timeIntervalBetween1970AndReferenceDate * 1000
         let after = Date.timeIntervalSinceReferenceDate * 1000
         let fullNumber:Int64 = Int64(early + after)
-        let tags = eventTags?.mapValues({AttributeValue(value:$0)}).filter({$0.value != nil}) as? Dictionary<String, AttributeValue>
+        let tags = eventTags?.mapValues({AttributeValue(value:$0)}).filter({$0.value != nil}) as? Dictionary<String, AttributeValue> ?? [:]
         var value:AttributeValue?
         var revenue:AttributeValue?
         
@@ -101,7 +101,7 @@ class BatchEventBuilder {
                     if let eventValue = AttributeValue(value:attributes[attr]) {
                         let eventAttribute = EventAttribute(value: eventValue,
                                                             key: attr,
-                                                            type: "custom_attribute",
+                                                            type: "custom",
                                                             entityID: attributeId)
                         eventAttributes.append(eventAttribute)
                     }

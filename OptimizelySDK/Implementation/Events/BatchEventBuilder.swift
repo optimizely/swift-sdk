@@ -101,7 +101,7 @@ class BatchEventBuilder {
                     if let eventValue = AttributeValue(value:attributes[attr]) {
                         let eventAttribute = EventAttribute(value: eventValue,
                                                             key: attr,
-                                                            type: "custom_attribute",
+                                                            type: "custom",
                                                             entityID: attributeId)
                         eventAttributes.append(eventAttribute)
                     }

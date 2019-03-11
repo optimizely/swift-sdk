@@ -34,7 +34,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     let notify = DispatchGroup()
     
     var timer:Timer?
-    open var timerInterval:TimeInterval = 60 // every five minutes
+    open var timerInterval:TimeInterval = 60 * 5 // every five minutes
     
     required public init() {
         subscribe()

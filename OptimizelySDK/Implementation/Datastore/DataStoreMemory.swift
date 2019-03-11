@@ -12,7 +12,7 @@ import UIKit
 /// Implementation of OPTDataStore as a generic for per type storeage in memory. On background and foreground
 /// the file is saved.
 /// This class should be used as a singleton per storeName and type (T)
-public class DataStoreMemory<T> : OPTDataStore where T:Codable {
+public class DataStoreMemory<T> : BackgroundingCallbacks, OPTDataStore where T:Codable {
     let dataStoreName:String
     let lock:DispatchQueue
     let url:URL
@@ -87,34 +87,14 @@ public class DataStoreMemory<T> : OPTDataStore where T:Codable {
             }
         }
     }
-
-    private func subscribe() {
-        #if swift(>=4.2)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-        #else
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: .UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
-        #endif
-    }
     
-    private func unsubscribe()  {
-        #if swift(>=4.2)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
-        #else
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: nil)
-        #endif
-    }
-    
-    @objc private func applicationDidEnterBackground() {
+    @objc func applicationDidEnterBackground() {
         if let data = data {
             save(forKey: dataStoreName, value: data as Any)
         }
     }
-    
-    @objc private func applicationDidBecomeActive() {
+
+    @objc func applicationDidBecomeActive() {
         load(forKey: dataStoreName)
     }
 }

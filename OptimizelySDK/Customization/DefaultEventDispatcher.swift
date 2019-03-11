@@ -16,13 +16,13 @@
 
 import Foundation
 
-open class DefaultEventDispatcher : OPTEventDispatcher {
+open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     // the max failure count.  there is no backoff timer.
     static let MAX_FAILURE_COUNT = 3
     
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
-    open var batchSize:Int = 4
+    open var batchSize:Int = 10
     // start trimming the front of the queue when we get to over maxQueueSize
     // TODO: implement
     open var maxQueueSize:Int = 3000
@@ -33,15 +33,25 @@ open class DefaultEventDispatcher : OPTEventDispatcher {
     let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: "OPTEventQueue"))
     let notify = DispatchGroup()
     
+    var timer:Timer?
+    open var timerInterval:TimeInterval = 60 // every five minutes
+    
     required public init() {
-        
+        subscribe()
+    }
+    
+    deinit {
+        if let timer = timer {
+            timer.invalidate()
+        }
+        unsubscribe()
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         
         dataStore.save(item: event)
         
-        flushEvents()
+        setTimer()
     }
     
     open func flushEvents() {
@@ -130,8 +140,9 @@ open class DefaultEventDispatcher : OPTEventDispatcher {
                             // batch worked
                         }
                     }
-                    // our send it done.
-                    self.notify.leave()
+                    // our send is done.
+                    defer { self.notify.leave() }
+                    
                 }
                 // wait for send
                 self.notify.wait()
@@ -164,4 +175,41 @@ open class DefaultEventDispatcher : OPTEventDispatcher {
         
     }
     
+    func applicationDidEnterBackground() {
+        if let timer = timer {
+            timer.invalidate()
+        }
+        timer = nil
+        
+        flushEvents()
+    }
+    
+    func applicationDidBecomeActive() {
+        // do nothing...
+    }
+    
+    func setTimer() {
+        if let _ = timer {
+            return // already set....
+        }
+        
+        if timerInterval == 0 { return }
+        
+        if #available(iOS 10.0, *) {
+            DispatchQueue.main.async {
+                self.timer = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
+                    if self.dataStore.count == 0 {
+                        self.timer?.invalidate()
+                        self.timer = nil
+                    }
+                    else {
+                        self.flushEvents()
+                    }
+                }
+            }
+        } else {
+            // Fallback on earlier versions
+            flushEvents()
+        }
+    }
 }

@@ -53,7 +53,7 @@ class DefaultBucketer : OPTBucketer {
         for trafficAllocation in group.trafficAllocation {
             if bucketValue <= trafficAllocation.endOfRange {
                 let experimentId = trafficAllocation.entityId;
-                let experiment = config.project.experiments.filter({$0.id == experimentId}).first
+                let experiment = config.allExperiments.filter({$0.id == experimentId}).first
                 
                 // propagate errors and logs for unknown experiment
                 if let _ = experiment

@@ -301,7 +301,7 @@ open class OptimizelyManager: NSObject {
         }
         
         let event = EventForDispatch(body: body)
-        // because we are batching events, we cannot garuantee that the completion handler will be
+        // because we are batching events, we cannot guarantee that the completion handler will be
         // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
         // onActivate only means the event has been queued and not necessarily sent.
         eventDispatcher.dispatchEvent(event: event) { result in
@@ -435,6 +435,9 @@ open class OptimizelyManager: NSObject {
 
             let event = EventForDispatch(body: body)
             
+            // because we are batching events, we cannot guarantee that the completion handler will be
+            // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
+            // onActivate only means the event has been queued and not necessarily sent.
             eventDispatcher.dispatchEvent(event: event) { result in
                 switch result {
                 case .failure:
@@ -632,18 +635,19 @@ open class OptimizelyManager: NSObject {
         }
         
         let event = EventForDispatch(body: body)
+        // because we are batching events, we cannot guarantee that the completion handler will be
+        // called.  So, for now, we are queuing and calling onTrack.  Maybe we should mention that
+        // onTrack only means the event has been queued and not necessarily sent.
         eventDispatcher.dispatchEvent(event: event) { result in
             switch result {
             case .failure:
                 break
             case .success( _):
-                
-                // TODO: clean up notification
-                print("fix notification")
-                // self.notificationCenter?.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":eventForDispatch.url as Any, "body":eventForDispatch.body as Any]])
+                    break
             }
         }
-        
+        self.notificationCenter.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":event.url as Any, "body":event.body as Any]])
+
     }
     
 }

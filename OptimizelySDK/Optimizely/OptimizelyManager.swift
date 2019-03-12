@@ -129,7 +129,16 @@ open class OptimizelyManager: NSObject {
         try initializeSDK(datafile: datafileData)
     }
     
-    public func initializeSDK(datafile: Data) throws {
+    /// Initialize Optimizely Manager (Synchronous)
+    ///
+    /// - Parameters:
+    ///   - datafile: when given, this datafile will be used when cached copy is not available (fresh start)
+    ///                       a cached copy from previous download is used if it's available
+    ///                       the datafile will be updated from the server in the background thread
+    ///   - doFetchDatafileBackground: default to true.  This is really here for debugging purposes when
+    ///                       you don't want to download the datafile.  In practice, you should allow the
+    ///                       background thread to update the cache copy.
+    public func initializeSDK(datafile: Data, doFetchDatafileBackground:Bool = true) throws {
         let cachedDatafile = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey)
 
         let selectedDatafile = cachedDatafile ?? datafile
@@ -137,7 +146,7 @@ open class OptimizelyManager: NSObject {
         try configSDK(datafile: selectedDatafile)
         
         // continue to fetch updated datafile from the server in background and cache it for next sessions
-        fetchDatafileBackground()
+        if doFetchDatafileBackground { fetchDatafileBackground() }
     }
     
     func configSDK(datafile: Data) throws {

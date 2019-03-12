@@ -41,7 +41,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
         return incrementNotificationId()
     }
     
-    public func addActivateNotificationListener(activateListener: @escaping (OptimizelyExperimentData, String, Dictionary<String, Any>?, OptimizelyVariationData, Dictionary<String, Any>) -> Void) -> Int? {
+    public func addActivateNotificationListener(activateListener: @escaping (OptimizelyExperimentData, String, OptimizelyAttributes?, OptimizelyVariationData, [String: Any]) -> Void) -> Int? {
         notificationListeners[notificationId] = (NotificationType.Activate.rawValue,  { (args:Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
@@ -49,9 +49,11 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             if myArgs.count < 5 {
                 return
             }
-            if let experiment = myArgs[0] as? Experiment, let userId = myArgs[1] as? String,
-                let variation = myArgs[3] as? Variation {
-                let attributes = myArgs[2] as? Dictionary<String, Any>
+            if let _ = myArgs[0] as? Experiment,
+                let userId = myArgs[1] as? String,
+                let _ = myArgs[3] as? Variation
+            {
+                let attributes = myArgs[2] as? OptimizelyAttributes
                 let event = myArgs[4] as! Dictionary<String,Any>
                 
                 // TODO: fix this temp data type for internal data model issueus
@@ -64,7 +66,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
         return incrementNotificationId()
     }
     
-    public func addTrackNotificationListener(trackListener: @escaping (String, String, Dictionary<String, Any>?, Dictionary<String, Any>?, Dictionary<String, Any>) -> Void) -> Int? {
+    public func addTrackNotificationListener(trackListener: @escaping (String, String, OptimizelyAttributes?, [String: Any]?, [String: Any]) -> Void) -> Int? {
         notificationListeners[notificationId] = (NotificationType.Track.rawValue,  { (args:Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
@@ -72,8 +74,9 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             if myArgs.count < 5 {
                 return
             }
-            if let eventKey = myArgs[0] as? String, let userId = myArgs[1] as? String,
-                let attributes = myArgs[2] as? Dictionary<String, Any>,
+            if let eventKey = myArgs[0] as? String,
+                let userId = myArgs[1] as? String,
+                let attributes = myArgs[2] as? OptimizelyAttributes,
                 let eventTags = myArgs[3] as? Dictionary<String,Any>,
                 let event = myArgs[4] as? Dictionary<String,Any>
                 {

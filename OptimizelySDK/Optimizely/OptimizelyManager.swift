@@ -8,9 +8,11 @@
 
 import Foundation
 
+public typealias OptimizelyAttributes = [String: Any?]
+public typealias OptimizelyEventTags = [String: Any]
 
 open class OptimizelyManager: NSObject {
-    
+
     // MARK: - Properties
     
     var sdkKey: String
@@ -276,9 +278,9 @@ open class OptimizelyManager: NSObject {
     ///   - attributes: A map of attribute names to current user attribute values.
     /// - Returns: The variation key the user was bucketed into
     /// - Throws: `OptimizelyError` if error is detected
-    public func activate(experimentKey:String,
-                         userId:String,
-                         attributes:Dictionary<String, Any>?=nil) throws -> String {
+    public func activate(experimentKey: String,
+                         userId: String,
+                         attributes: OptimizelyAttributes?=nil) throws -> String {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
 
@@ -326,17 +328,17 @@ open class OptimizelyManager: NSObject {
     ///   - attributes: A map of attribute names to current user attribute values.
     /// - Returns: The variation key the user was bucketed into
     /// - Throws: `OptimizelyError` if error is detected
-    public func getVariationKey(experimentKey:String,
-                                userId:String,
-                                attributes:Dictionary<String, Any>?=nil) throws -> String {
+    public func getVariationKey(experimentKey: String,
+                                userId: String,
+                                attributes: OptimizelyAttributes?=nil) throws -> String {
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
         return variation.key
     }
     
-    func getVariation(experimentKey:String,
-                      userId:String,
-                      attributes:Dictionary<String, Any>?=nil) throws -> Variation {
+    func getVariation(experimentKey: String,
+                      userId: String,
+                      attributes: OptimizelyAttributes?=nil) throws -> Variation {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
         
@@ -402,7 +404,7 @@ open class OptimizelyManager: NSObject {
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
-                                 attributes: Dictionary<String,Any>?=nil) throws -> Bool {
+                                 attributes: OptimizelyAttributes?=nil) throws -> Bool {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
 
@@ -411,7 +413,7 @@ open class OptimizelyManager: NSObject {
         }
         
         // fix DecisionService to throw error
-        let pair = decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? [:])
+        let pair = decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? OptimizelyAttributes())
         
         guard let variation = pair?.variation else {
             throw OptimizelyError.variationUnknown
@@ -461,10 +463,10 @@ open class OptimizelyManager: NSObject {
     ///   - attributes The user's attributes.
     /// - Returns: feature variable value of type boolean.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
-    public func getFeatureVariableBoolean(featureKey:String,
-                                          variableKey:String,
-                                          userId:String,
-                                          attributes:Dictionary<String, Any>?=nil) throws -> Bool {
+    public func getFeatureVariableBoolean(featureKey: String,
+                                          variableKey: String,
+                                          userId: String,
+                                          attributes: OptimizelyAttributes?=nil) throws -> Bool {
         
         return try getFeatureVariable(featureKey: featureKey,
                                       variableKey: variableKey,
@@ -481,10 +483,10 @@ open class OptimizelyManager: NSObject {
     ///   - attributes The user's attributes.
     /// - Returns: feature variable value of type double.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
-    public func getFeatureVariableDouble(featureKey:String,
-                                         variableKey:String,
-                                         userId:String,
-                                         attributes:Dictionary<String, Any>?=nil) throws -> Double {
+    public func getFeatureVariableDouble(featureKey: String,
+                                         variableKey: String,
+                                         userId: String,
+                                         attributes: OptimizelyAttributes?=nil) throws -> Double {
         
         return try getFeatureVariable(featureKey: featureKey,
                                       variableKey: variableKey,
@@ -501,10 +503,10 @@ open class OptimizelyManager: NSObject {
     ///   - attributes The user's attributes.
     /// - Returns: feature variable value of type integer.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
-    public func getFeatureVariableInteger(featureKey:String,
-                                          variableKey:String,
-                                          userId:String,
-                                          attributes:Dictionary<String, Any>?=nil) throws -> Int {
+    public func getFeatureVariableInteger(featureKey: String,
+                                          variableKey: String,
+                                          userId: String,
+                                          attributes: OptimizelyAttributes?=nil) throws -> Int {
         
         return try getFeatureVariable(featureKey: featureKey,
                                       variableKey: variableKey,
@@ -524,7 +526,7 @@ open class OptimizelyManager: NSObject {
     public func getFeatureVariableString(featureKey: String,
                                          variableKey: String,
                                          userId: String,
-                                         attributes: Dictionary<String, Any>?=nil) throws -> String {
+                                         attributes: OptimizelyAttributes?=nil) throws -> String {
         
         return try getFeatureVariable(featureKey: featureKey,
                                       variableKey: variableKey,
@@ -535,7 +537,7 @@ open class OptimizelyManager: NSObject {
     func getFeatureVariable<T>(featureKey: String,
                                variableKey: String,
                                userId: String,
-                               attributes: Dictionary<String, Any>?=nil) throws -> T {
+                               attributes: OptimizelyAttributes?=nil) throws -> T {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
 
@@ -588,8 +590,8 @@ open class OptimizelyManager: NSObject {
     ///   - attributes: The user's attributes.
     /// - Returns: Array of feature keys that are enabled for the user.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
-    public func getEnabledFeatures(userId:String,
-                                   attributes:Dictionary<String,Any>?=nil) throws -> Array<String> {
+    public func getEnabledFeatures(userId: String,
+                                   attributes: OptimizelyAttributes?=nil) throws -> Array<String> {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
 
@@ -615,11 +617,10 @@ open class OptimizelyManager: NSObject {
     ///   - userId: The user ID associated with the event to track
     ///   - eventTags: A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean)
     /// - Throws: `OptimizelyError` if event parameter is not valid
-    public func track(eventKey:String,
-                      userId:String,
-                      // right now we are still passing in attributes.  But, there is a jira ticket open to use easy event tracking in which case passing in attributes to track will be removed.
-        attributes:Dictionary<String,Any>?=nil,
-        eventTags:Dictionary<String,Any>?=nil) throws {
+    public func track(eventKey: String,
+                      userId: String,
+                      attributes: OptimizelyAttributes?=nil,
+                      eventTags: OptimizelyEventTags?=nil) throws {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
         

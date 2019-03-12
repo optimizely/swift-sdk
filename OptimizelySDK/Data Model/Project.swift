@@ -9,7 +9,7 @@
 import Foundation
 
 protocol ProjectProtocol {
-    func evaluateAudience(audienceId: String, attributes: [String: Any]?) throws -> Bool
+    func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool
 }
 
 //[REF]: datafile schema
@@ -38,7 +38,7 @@ struct Project: Codable, Equatable {
 
 extension Project: ProjectProtocol {
     
-    func evaluateAudience(audienceId: String, attributes: [String: Any]?) throws -> Bool {
+    func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool {
         let audienceMatch = typedAudiences?.filter{$0.id == audienceId}.first ??
                             audiences.filter{$0.id == audienceId}.first
         

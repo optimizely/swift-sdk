@@ -95,20 +95,17 @@ class AudienceTests_Evaluate: XCTestCase {
         XCTAssertFalse(try! audience.evaluate(project: nil, attributes: attributesPassOrValue))
     }
 
-    
-    // TODO: [Jae] this is not consistent with "testExactMatcherReturnsNullWhenTypeMismatch" returns nil for empty attribute
-    //
-//    func testEvaluateEmptyUserAttributes() {
-//        let audience = makeAudienceLegacy(conditions: kAudienceConditions)
-//
-//        let attributesPassOrValue = [String: String]()
-//        XCTAssertFalse(try! audience.evaluate(project: nil, attributes: attributesPassOrValue))
-//    }
+    func testEvaluateEmptyUserAttributes() {
+        let audience = makeAudienceLegacy(conditions: kAudienceConditions)
+
+        let attributesPassOrValue = [String: String]()
+        XCTAssertNil(try? audience.evaluate(project: nil, attributes: attributesPassOrValue))
+    }
     
     func testEvaluateNullUserAttributes() {
         let audience = makeAudienceLegacy(conditions: kAudienceConditions)
         
-        XCTAssertFalse(try! audience.evaluate(project: nil, attributes: nil))
+        XCTAssertNil(try? audience.evaluate(project: nil, attributes: nil))
     }
 
     func testTypedUserAttributesEvaluateTrue() {
@@ -350,21 +347,16 @@ class AudienceTests_Evaluate: XCTestCase {
     
     //MARK: - ExistsMatcher Tests
     
-    // TODO: [Jae] this is not consistent with "testExactMatcherReturnsNullWhenTypeMismatch" returns nil for empty attribute
-    //
-//    func testExistsMatcherReturnsFalseWhenAttributeIsNotProvided() {
-//        let attributesPassOrValue = [String: String]()
-//        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
-//        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
-//    }
+    func testExistsMatcherReturnsFalseWhenAttributeIsNotProvided() {
+        let attributesPassOrValue = [String: String]()
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
+        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+    }
     
    func testExistsMatcherReturnsFalseWhenAttributeIsNull() {
-    
-    // TODO: [Jae] confirm: filtered by type checking [String: Any], so not valid input
-
-//        let attributesPassOrValue = ["attr_value" : nil]
-//        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
-//        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+    let attributesPassOrValue: [String: Any?] = ["attr_value" : nil]
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
+        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
     }
     
     func testExistsMatcherReturnsTrueWhenAttributeValueIsProvided() {
@@ -416,9 +408,7 @@ class AudienceTests_Evaluate: XCTestCase {
     
     func testSubstringMatcherReturnsNullWhenAttributeValueIsNotAString() {
         let attributesPassOrValue1 = ["attr_value" : 10.5]
-        let attributesPassOrValue2: [String: Any] = [:]
-        // TODO: [Jae] confirm: filtered by type checking, so not valid attribute
-        //let attributesPassOrValue3: [String: Any] = ["attr_value" : nil]
+        let attributesPassOrValue2: [String: Any?] = ["attr_value" : nil]
 
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithSubstringMatchType)
         XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
@@ -426,14 +416,15 @@ class AudienceTests_Evaluate: XCTestCase {
     }
     
     func testSubstringMatcherReturnsNullWhenAttributeIsNotProvided() {
-        // same test as above
+        let attributesPassOrValue1: [String: Any] = [:]
+        let attributesPassOrValue2: [String: Any]? = nil
+
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithSubstringMatchType)
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
     }
     
     //MARK:- GTMatcher Tests
-    
-    func testGTMatcherReturnsNullWhenUnsupportedConditionValue() {
-        // TODO: [Jae] confirm: filtered by type checking, so not valid UserAttribute
-    }
     
     func testGTMatcherReturnsFalseWhenAttributeValueIsLessThanOrEqualToConditionValue() {
         let attributesPassOrValue1 = ["attr_value" : 5]

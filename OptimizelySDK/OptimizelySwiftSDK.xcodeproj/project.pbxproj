@@ -446,6 +446,8 @@
 		6E636C5C2236E08C00AF3CEF /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E636C522236E08B00AF3CEF /* api_datafile.json */; };
 		6E636C5E223708B000AF3CEF /* OptimizelyManagerTests_ForcedVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E636C5D223708B000AF3CEF /* OptimizelyManagerTests_ForcedVariation.swift */; };
 		6E636C622237182000AF3CEF /* OptimizelyManagerTests_Evaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E636C612237182000AF3CEF /* OptimizelyManagerTests_Evaluation.swift */; };
+		6E6D6684223812F700E04486 /* iOSOnlyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6D6683223812F700E04486 /* iOSOnlyTests.swift */; };
+		6E6D66862238132300E04486 /* tvOSOnlyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6D66852238132300E04486 /* tvOSOnlyTests.swift */; };
 		6E7C0B7421F1372100ECFF34 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */; };
 		6E7C0B7521F1372500ECFF34 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */; };
 		6E7C0B7621F1372600ECFF34 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */; };
@@ -1135,6 +1137,8 @@
 		6E636C5D223708B000AF3CEF /* OptimizelyManagerTests_ForcedVariation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyManagerTests_ForcedVariation.swift; sourceTree = "<group>"; };
 		6E636C612237182000AF3CEF /* OptimizelyManagerTests_Evaluation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyManagerTests_Evaluation.swift; sourceTree = "<group>"; };
 		6E65E55A220B8B0C0048081D /* AttributeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeTests.swift; sourceTree = "<group>"; };
+		6E6D6683223812F700E04486 /* iOSOnlyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSOnlyTests.swift; sourceTree = "<group>"; };
+		6E6D66852238132300E04486 /* tvOSOnlyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSOnlyTests.swift; sourceTree = "<group>"; };
 		6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyLogLevel.swift; sourceTree = "<group>"; };
 		6E7D3EE6220BA39000410FDE /* VariableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableTests.swift; sourceTree = "<group>"; };
 		6E7D3EE8220BAB0800410FDE /* FeatureVariableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureVariableTests.swift; sourceTree = "<group>"; };
@@ -1469,6 +1473,7 @@
 		6E4DD99021E6BAA700B0C2C7 /* OptimizelyTests-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				6E6D6683223812F700E04486 /* iOSOnlyTests.swift */,
 			);
 			path = "OptimizelyTests-iOS";
 			sourceTree = "<group>";
@@ -1506,6 +1511,7 @@
 		6E614DD921E3F38A005982A1 /* OptimizelyTests-tvOS */ = {
 			isa = PBXGroup;
 			children = (
+				6E6D66852238132300E04486 /* tvOSOnlyTests.swift */,
 			);
 			path = "OptimizelyTests-tvOS";
 			sourceTree = "<group>";
@@ -2351,6 +2357,7 @@
 				6E4DD8D821E5274600B0C2C7 /* ConditionHolder.swift in Sources */,
 				6E4DD88821E525F600B0C2C7 /* BatchEventBuilder.swift in Sources */,
 				6E4DD89521E525FD00B0C2C7 /* DefaultUserProfileService.swift in Sources */,
+				6E6D66862238132300E04486 /* tvOSOnlyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3008,6 +3015,7 @@
 				6E4DD88C21E525FC00B0C2C7 /* DefaultUserProfileService.swift in Sources */,
 				6E4F0D992213A4EF00DD13A5 /* Project.swift in Sources */,
 				6E4DD8C021E5261500B0C2C7 /* Experiment.swift in Sources */,
+				6E6D6684223812F700E04486 /* iOSOnlyTests.swift in Sources */,
 				6E4DD88F21E525FC00B0C2C7 /* DefaultEventDispatcher.swift in Sources */,
 				6E4DD88921E525FC00B0C2C7 /* DefaultBucketer.swift in Sources */,
 				6E4DD8B721E5260A00B0C2C7 /* EventForDispatch.swift in Sources */,

@@ -32,8 +32,9 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     // using a datastore queue with a backing file
     let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: "OPTEventQueue"))
     let notify = DispatchGroup()
+
+    var timer:AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    var timer:Timer?
     open var timerInterval:TimeInterval = 60 * 5 // every five minutes
     
     required public init() {
@@ -41,7 +42,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     deinit {
-        if let timer = timer {
+        if let timer = timer.property {
             timer.invalidate()
         }
         unsubscribe()
@@ -176,20 +177,22 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func applicationDidEnterBackground() {
-        if let timer = timer {
+        if let timer = timer.property {
             timer.invalidate()
         }
-        timer = nil
+        timer.property = nil
         
         flushEvents()
     }
     
     func applicationDidBecomeActive() {
-        // do nothing...
+        if dataStore.count > 0 {
+            setTimer()
+        }
     }
     
     func setTimer() {
-        if let _ = timer {
+        if let _ = timer.property {
             return // already set....
         }
         
@@ -197,10 +200,10 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
         
         if #available(iOS 10.0, *) {
             DispatchQueue.main.async {
-                self.timer = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
+                self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
                     if self.dataStore.count == 0 {
-                        self.timer?.invalidate()
-                        self.timer = nil
+                        self.timer.property?.invalidate()
+                        self.timer.property = nil
                     }
                     else {
                         self.flushEvents()

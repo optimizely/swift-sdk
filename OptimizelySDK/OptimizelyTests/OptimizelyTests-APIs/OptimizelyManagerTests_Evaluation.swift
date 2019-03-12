@@ -37,12 +37,8 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
             "d_4_2": nil
             ]
         
-        do {
-            let variationKey = try optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
-            XCTAssertNil(variationKey)
-        } catch {
-            print(error)
-        }
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+        XCTAssertNil(variationKey)
     }
     
     func testActivateWithExactCombo() {

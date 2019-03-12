@@ -85,6 +85,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
 
         })
+        
+        _ = optimizely?.notificationCenter.addActivateNotificationListener(activateListener: { (experiment, userId, attributes, variation, event) in
+            print("got activate notification")
+        })
         // initialize Optimizely Client from a datafile download
         optimizely!.initializeSDK { result in
             switch result {

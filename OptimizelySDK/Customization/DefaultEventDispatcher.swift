@@ -28,13 +28,16 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     open var maxQueueSize:Int = 3000
     
     lazy var logger = HandlerRegistryService.shared.injectLogger()
+    
+    // for dispatching events
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
     let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: "OPTEventQueue"))
-    let notify = DispatchGroup()
 
+    // timer as a atomic property.
     var timer:AtomicProperty<Timer> = AtomicProperty<Timer>()
     
+    // default timerInterval
     open var timerInterval:TimeInterval = 60 * 5 // every five minutes
     
     required public init() {
@@ -54,6 +57,10 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
         
         setTimer()
     }
+
+    // notify group used to ensure that the sendEvent is synchronous.
+    // used in flushEvents
+    let notify = DispatchGroup()
     
     open func flushEvents() {
         dispatcher.async {

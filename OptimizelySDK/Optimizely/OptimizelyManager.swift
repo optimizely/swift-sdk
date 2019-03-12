@@ -301,15 +301,20 @@ open class OptimizelyManager: NSObject {
         }
         
         let event = EventForDispatch(body: body)
+        // because we are batching events, we cannot garuantee that the completion handler will be
+        // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
+        // onActivate only means the event has been queued and not necessarily sent.
         eventDispatcher.dispatchEvent(event: event) { result in
             switch result {
             case .failure:
                 break
             case .success( _):
-                self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+                break
             }
         }
-        
+
+        self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+
         return variation.key
     }
     
@@ -435,9 +440,10 @@ open class OptimizelyManager: NSObject {
                 case .failure:
                     break
                 case .success(_):
-                    self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+                    break
                 }
             }
+            self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
         }
         
         return featureEnabled

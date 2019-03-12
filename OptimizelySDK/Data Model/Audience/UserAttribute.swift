@@ -86,7 +86,7 @@ struct UserAttribute: Codable, Equatable {
 
 extension UserAttribute {
     
-    func evaluate(attributes: [String: Any]?) throws -> Bool {
+    func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         guard let _ = typeSupported else {

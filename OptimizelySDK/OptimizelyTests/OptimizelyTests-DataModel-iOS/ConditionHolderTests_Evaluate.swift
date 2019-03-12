@@ -14,7 +14,7 @@ import XCTest
 class ConditionHolderTests_Evaluate: XCTestCase {
 
     struct ProjectMock: ProjectProtocol {
-        func evaluateAudience(audienceId: String, attributes: [String : Any]?) throws -> Bool {
+        func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool {
             return Int(audienceId)! < 20000
         }
     }

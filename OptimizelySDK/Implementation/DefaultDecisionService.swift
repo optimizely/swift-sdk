@@ -36,7 +36,7 @@ class DefaultDecisionService : OPTDecisionService {
         self.userProfileService = userProfileService
     }
     
-    func getVariation(userId:String, experiment: Experiment, attributes: Dictionary<String, Any>) -> Variation? {
+    func getVariation(userId:String, experiment: Experiment, attributes: OptimizelyAttributes) -> Variation? {
         let experimentId = experiment.id;
         
         // Acquire bucketingId .
@@ -83,7 +83,7 @@ class DefaultDecisionService : OPTDecisionService {
 
     }
     
-    func isInExperiment(experiment:Experiment, userId:String, attributes:Dictionary<String, Any>) -> Bool? {
+    func isInExperiment(experiment:Experiment, userId:String, attributes: OptimizelyAttributes) -> Bool? {
         if let conditions = experiment.audienceConditions {
             
             // TODO: [Jae] fix with OptimizelyError
@@ -112,7 +112,7 @@ class DefaultDecisionService : OPTDecisionService {
         return experiment;
     }
     
-     func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
+     func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
         //Evaluate in this order:
         
         //1. Attempt to bucket user into experiment using feature flag.
@@ -131,7 +131,10 @@ class DefaultDecisionService : OPTDecisionService {
 
     }
     
-    func getVariationForFeatureGroup(featureFlag:FeatureFlag, groupId:String, userId:String,                attributes:Dictionary<String, Any>) -> (experiment:Experiment?, variation:Variation?)? {
+    func getVariationForFeatureGroup(featureFlag: FeatureFlag,
+                                     groupId: String,
+                                     userId: String,
+                                     attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
         
         let bucketing_id = getBucketingId(userId:userId, attributes:attributes)
         if let group = config.project.groups.filter({$0.id == groupId}).first {
@@ -150,9 +153,9 @@ class DefaultDecisionService : OPTDecisionService {
         return nil
     }
     
-    func getVariationForFeatureExperiment(featureFlag:FeatureFlag,
-                                          userId:String,
-                                          attributes:Dictionary<String,Any>) -> (experiment:Experiment?, variation:Variation?)? {
+    func getVariationForFeatureExperiment(featureFlag: FeatureFlag,
+                                          userId: String,
+                                          attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
         
         let experimentIds = featureFlag.experimentIds;
         // Check if there are any experiment IDs inside feature flag
@@ -166,9 +169,9 @@ class DefaultDecisionService : OPTDecisionService {
         return nil;
     }
     
-    func getVariationForFeatureRollout(featureFlag:FeatureFlag,
-                                       userId:String,
-                                       attributes:Dictionary<String, Any>) -> Variation? {
+    func getVariationForFeatureRollout(featureFlag: FeatureFlag,
+                                       userId: String,
+                                       attributes: OptimizelyAttributes) -> Variation? {
     
         let bucketingId = getBucketingId(userId: userId, attributes:attributes)
         
@@ -196,7 +199,7 @@ class DefaultDecisionService : OPTDecisionService {
         return nil
     }
     
-    func getBucketingId(userId:String, attributes:Dictionary<String, Any>) -> String {
+    func getBucketingId(userId: String, attributes: OptimizelyAttributes) -> String {
         
         // By default, the bucketing ID should be the user ID .
         var bucketingId = userId

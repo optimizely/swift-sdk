@@ -42,7 +42,7 @@ enum ConditionLeaf: Codable, Equatable {
         }
     }
     
-    func evaluate(project: ProjectProtocol?, attributes: [String: Any]?) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
         switch self {
         case .audienceId(let id):
             guard let project = project else {

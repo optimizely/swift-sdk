@@ -206,7 +206,7 @@ extension ProjectConfig {
      */
     func getVariation(experimentKey: String,
                       userId: String,
-                      attributes: [String: Any]? = nil,
+                      attributes: OptimizelyAttributes? = nil,
                       decisionService: OPTDecisionService) throws -> Variation
     {
         guard let experiment = project.experiments.filter({$0.key == experimentKey}).first else {
@@ -214,7 +214,7 @@ extension ProjectConfig {
         }
         
         // fix DecisionService to throw error
-        guard let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? [:]) else {
+        guard let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
             throw OptimizelyError.variationUnknown
         }
 

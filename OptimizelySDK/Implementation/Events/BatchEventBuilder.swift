@@ -10,7 +10,13 @@ import Foundation
 
 class BatchEventBuilder {
     static private var logger = HandlerRegistryService.shared.injectLogger()
-    static func createImpressionEvent(config:ProjectConfig, decisionService:OPTDecisionService, experiment:Experiment, varionation:Variation, userId:String, attributes:Dictionary<String,Any>?) -> Data? {
+    
+    static func createImpressionEvent(config:ProjectConfig,
+                                      decisionService:OPTDecisionService,
+                                      experiment:Experiment,
+                                      varionation:Variation,
+                                      userId:String,
+                                      attributes:OptimizelyAttributes?) -> Data? {
         var decisions = [Decision]()
         
         let decision = Decision(variationID: varionation.id, campaignID: experiment.layerId, experimentID: experiment.id)
@@ -47,7 +53,12 @@ class BatchEventBuilder {
 
     }
     
-    static func createConversionEvent(config:ProjectConfig, decisionService:OPTDecisionService, eventKey:String, userId:String, attributes:Dictionary<String,Any>?, eventTags:Dictionary<String, Any>?) -> Data? {
+    static func createConversionEvent(config:ProjectConfig,
+                                      decisionService:OPTDecisionService,
+                                      eventKey:String,
+                                      userId:String,
+                                      attributes:OptimizelyAttributes?,
+                                      eventTags:Dictionary<String, Any>?) -> Data? {
         
         guard let event = config.project.events.filter({$0.key == eventKey}).first  else {
             return nil
@@ -92,7 +103,8 @@ class BatchEventBuilder {
         return nil
     }
     
-    static func getEventAttributes(config:ProjectConfig, attributes:Dictionary<String,Any>?)-> [EventAttribute] {
+    static func getEventAttributes(config:ProjectConfig,
+                                   attributes:OptimizelyAttributes?)-> [EventAttribute] {
         var eventAttributes = [EventAttribute]()
         
         if let attributes = attributes {

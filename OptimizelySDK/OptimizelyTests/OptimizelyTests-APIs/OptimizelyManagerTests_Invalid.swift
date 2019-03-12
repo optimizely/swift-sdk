@@ -44,7 +44,7 @@ class OptimizelyManagerTests_Invalid: XCTestCase {
         XCTAssertNil(variationKey)
     }
     
-    func testSetVariationKey_WhenManagerNonInitialized() {
+    func testSetForcedVariationKey_WhenManagerNonInitialized() {
         do {
             try self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
                                                              userId: kUserId,

@@ -9,6 +9,7 @@
 import Foundation
 
 public typealias OptimizelyAttributes = [String: Any?]
+public typealias OptimizelyEventTags = [String: Any]
 
 open class OptimizelyManager: NSObject {
 
@@ -609,9 +610,8 @@ open class OptimizelyManager: NSObject {
     /// - Throws: `OptimizelyError` if event parameter is not valid
     public func track(eventKey: String,
                       userId: String,
-                      // right now we are still passing in attributes.  But, there is a jira ticket open to use easy event tracking in which case passing in attributes to track will be removed.
-        attributes: OptimizelyAttributes?=nil,
-        eventTags: [String: Any]?=nil) throws {
+                      attributes: OptimizelyAttributes?=nil,
+                      eventTags: OptimizelyEventTags?=nil) throws {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
         

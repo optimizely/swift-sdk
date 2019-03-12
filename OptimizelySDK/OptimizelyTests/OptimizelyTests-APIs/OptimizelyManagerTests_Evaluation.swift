@@ -28,20 +28,20 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
     }
 
     func testActivateWithNilAttributeValues() {
-        let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_42"
-        let expectedVariationKey = "all_traffic_variation"
+        let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_42"
         
-        // FIX this to test nil values
-        let attributes: [String: Any] = [
-            "s_foo": "not_foo",
-            "i_42": 42
-        ]
+        let attributes: [String : Any?] = [
+            "s_foo": "foo",
+            "b_true": nil,
+            "i_42": 44,
+            "d_4_2": nil
+            ]
         
         do {
             let variationKey = try optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
-            XCTAssert(variationKey == expectedVariationKey)
+            XCTAssertNil(variationKey)
         } catch {
-            XCTAssert(false)
+            print(error)
         }
     }
     

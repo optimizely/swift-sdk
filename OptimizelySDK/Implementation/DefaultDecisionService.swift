@@ -180,7 +180,7 @@ class DefaultDecisionService : OPTDecisionService {
         guard rolloutId != "" else { return nil }
         
         guard let rollout = config.getRollout(id: rolloutId) else { return nil }
-                  
+        
         let rolloutRules = rollout.experiments
         // Evaluate all rollout rules except for last one
         for experiment in rolloutRules[0..<rolloutRules.count.advanced(by: -1)] {

@@ -99,24 +99,16 @@ extension UserAttribute {
         }
         
         guard let nameFinal = name else {
-            throw OptimizelyError.conditionInvalidFormat("empty name")
+            throw OptimizelyError.conditionInvalidFormat("empty name in condition")
         }
         
         if matchFinal != .exists, value == nil {
-            throw OptimizelyError.conditionInvalidFormat("missing value (\(nameFinal)))")
+            throw OptimizelyError.conditionInvalidFormat("missing value (\(nameFinal)) in condition)")
         }
         
-        guard let attributes = attributes else {
-            // TODO: [Jae] confirm this
-            return false
-        }
+        let attributes = attributes ?? OptimizelyAttributes()
         
-        guard !attributes.isEmpty else {
-            // TODO: [Jae] confirm this
-            throw OptimizelyError.conditionInvalidFormat("empty attribute")
-        }
-        
-        let attributeValue = attributes[nameFinal]
+        let attributeValue = attributes[nameFinal] ?? nil  // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
         
         switch matchFinal {
         case .exists:

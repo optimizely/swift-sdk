@@ -103,14 +103,15 @@ class BatchEventBuilder {
         return nil
     }
     
-    static func getEventAttributes(config:ProjectConfig,
-                                   attributes:OptimizelyAttributes?)-> [EventAttribute] {
+    static func getEventAttributes(config: ProjectConfig,
+                                   attributes: OptimizelyAttributes?) -> [EventAttribute] {
         var eventAttributes = [EventAttribute]()
         
         if let attributes = attributes {
             for attr in attributes.keys {
                 if let attributeId = config.project.attributes.filter({$0.key == attr}).first?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
-                    if let eventValue = AttributeValue(value:attributes[attr]) {
+                    let attrValue = attributes[attr] ?? nil    // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
+                    if let eventValue = AttributeValue(value: attrValue) {
                         let eventAttribute = EventAttribute(value: eventValue,
                                                             key: attr,
                                                             type: "custom",

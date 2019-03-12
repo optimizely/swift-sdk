@@ -412,10 +412,7 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variationUnknown
         }
         
-        guard let featureEnabled = variation.featureEnabled else {
-            // TODO: do we need to handle this error?
-            throw OptimizelyError.featureUnknown
-        }
+        let featureEnabled = variation.featureEnabled ?? false
     
         // we came from an experiment if experiment is not nil
         if let experiment = pair?.experiment {

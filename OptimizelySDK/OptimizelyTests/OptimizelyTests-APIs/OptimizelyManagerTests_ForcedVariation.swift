@@ -1,0 +1,65 @@
+//
+//  OptimizelyManagerTests_ForcedVariation.swift
+//  OptimizelyTests-APIs-iOS
+//
+//  Created by Jae Kim on 3/11/19.
+//  Copyright © 2019 Optimizely. All rights reserved.
+//
+
+import XCTest
+
+class OptimizelyManagerTests_ForcedVariation: XCTestCase {
+    
+    let kExperimentKey = "exp_with_audience"
+    let kVariationKey = "a"
+    let kVariationOtherKey = "b"
+    let kUserId = "11111"
+    
+    var datafile: Data!
+    var optimizely: OptimizelyManager!
+    
+    override func setUp() {
+        super.setUp()
+        
+        self.datafile = OTUtils.loadJSONDatafile("api_datafile")
+        
+        self.optimizely = OptimizelyManager(sdkKey: "12345",
+                                            userProfileService: OTUtils.createClearUserProfileService())
+        try! self.optimizely.initializeSDK(datafile: datafile)
+    }
+    
+    func testForcedVariation_NotPersistent() {
+        
+        // get - initially empty
+        
+        do {
+            let variationKey: String? = try self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
+            XCTAssertNil(variationKey)
+        } catch {
+            XCTAssert(false)
+        }
+
+        // set local forced variation
+        
+        try! self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+                                                userId: kUserId,
+                                                variationKey: kVariationOtherKey)
+        
+        // get must return forced variation
+        
+        let variationKey: String = try! self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
+        XCTAssert(variationKey == kVariationOtherKey)
+        
+        // reload ProjectConfig (whitelist must NOT be sustained)
+        
+        try! self.optimizely.initializeSDK(datafile: datafile)
+        do {
+            let variationKey: String? = try self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
+            XCTAssertNil(variationKey)
+        } catch {
+            XCTAssert(false)
+        }
+    }
+    
+    
+}

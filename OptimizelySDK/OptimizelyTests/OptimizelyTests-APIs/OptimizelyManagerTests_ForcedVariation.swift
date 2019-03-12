@@ -28,6 +28,30 @@ class OptimizelyManagerTests_ForcedVariation: XCTestCase {
         try! self.optimizely.initializeSDK(datafile: datafile)
     }
     
+    func testForcedVariation_ThenActivate() {
+        
+        // get - initially empty
+        
+        var variationKey: String = try! self.optimizely.activate(experimentKey: kExperimentKey, userId: kUserId)
+        XCTAssert(variationKey == kVariationKey)
+        
+        // set local forced variation
+        
+        try! self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+                                                userId: kUserId,
+                                                variationKey: kVariationOtherKey)
+
+        // get must return forced variation
+
+        variationKey = try! self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
+        XCTAssert(variationKey == kVariationOtherKey)
+        
+        // active must be deterimined by forced variation
+        
+        variationKey = try! self.optimizely.activate(experimentKey: kExperimentKey, userId: kUserId)
+        XCTAssert(variationKey == kVariationOtherKey)
+    }
+
     func testForcedVariation_NotPersistent() {
         
         // get - initially empty

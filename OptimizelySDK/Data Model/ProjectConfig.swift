@@ -20,6 +20,9 @@ class ProjectConfig : Codable {
     
     var project: Project!
     
+    // local forced variations [UserId: [ExperimentId: VariationId]]
+    // NOTE: remove experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
+    
     var whitelistUsers = [String: [String: String]]()
     
     init(datafile: Data) throws {
@@ -55,7 +58,7 @@ class ProjectConfig : Codable {
 }
 
 extension ProjectConfig {
-    func whitelistUser(userId:String, experimentId:String, variationId:String) {
+    func whitelistUser(userId: String, experimentId: String, variationId: String) {
         if var dic = whitelistUsers[userId] {
             dic[experimentId] = variationId
         }
@@ -65,7 +68,12 @@ extension ProjectConfig {
             whitelistUsers[userId] = dic
         }
     }
-    func getWhitelistedVariationId(userId:String, experimentId:String) -> String? {
+    
+    func removeFromWhitelist(userId: String, experimentId: String) {
+        self.whitelistUsers[userId]?.removeValue(forKey: experimentId)
+    }
+    
+    func getWhitelistedVariationId(userId: String, experimentId: String) -> String? {
         if var dic = whitelistUsers[userId] {
             return dic[experimentId]
         }
@@ -164,12 +172,12 @@ extension ProjectConfig {
         }
         
         guard let dict = whitelistUsers[userId],
-            let variationKey = dict[experimentKey] else
+            let variationId = dict[experiment.id] else
         {
             return nil
         }
         
-        guard let variation = experiment.variations.filter({$0.key == variationKey}).first else {
+        guard let variation = experiment.variations.filter({$0.id == variationId}).first else {
             throw OptimizelyError.variationUnknown
         }
         
@@ -180,24 +188,28 @@ extension ProjectConfig {
      * Set forced variation for a given experiment key and user id according to a given variation key.
      */
     func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) throws {
-        guard let _ = project.experiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = project.experiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
         }
         
         guard var variationKey = variationKey else {
-            self.whitelistUsers[userId]?.removeValue(forKey: experimentKey)
+            self.removeFromWhitelist(userId: userId, experimentId: experiment.id)
             return
         }
         
         // TODO: common function to trim all keys
         variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
-        
+
         guard !variationKey.isEmpty else {
             throw OptimizelyError.variationKeyInvalid(variationKey)
         }
+
+        guard let variation = experiment.variations.filter({$0.key == variationKey }).first else {
+            throw OptimizelyError.variationUnknown
+        }
         
         var whitelist = self.whitelistUsers[userId] ?? [:]
-        whitelist[experimentKey] = variationKey
+        whitelist[experiment.id] = variation.id
         self.whitelistUsers[userId] = whitelist
     }
     

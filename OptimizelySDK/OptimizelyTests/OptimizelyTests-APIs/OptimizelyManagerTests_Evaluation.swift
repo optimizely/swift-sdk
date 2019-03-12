@@ -15,20 +15,11 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
     var datafile: Data!
     var optimizely: OptimizelyManager!
     
-    // MARK: - SetUp
-    
-    override func setUp() {
-        super.setUp()
-        
-        self.datafile = OTUtils.loadJSONDatafile("audience_targeting")
-        
-        self.optimizely = OptimizelyManager(sdkKey: "12345",
-                                            userProfileService: OTUtils.createClearUserProfileService())
-        try! self.optimizely.initializeSDK(datafile: datafile)
-    }
-
     func testActivateWithNilAttributeValues() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)!
+        
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_42"
+        let expectedVariationKey = "all_traffic_variation"
         
         let attributes: [String : Any?] = [
             "s_foo": "foo",
@@ -42,6 +33,8 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
     }
     
     func testActivateWithExactCombo() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)!
+
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_true__or__42_and_4_2"
         let expectedVariationKey = "all_traffic_variation"
 
@@ -58,6 +51,74 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         } catch {
             XCTAssert(false)
         }
+    }
+    
+    func testBucketWithOptBucketId() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id", clearUserProfileService: true)!
+        
+        let experimentKey = "ab_running_exp_untargeted"
+        let expectedVariationKey = "variation_10000"
+        
+        let attributes: [String: Any] = ["$opt_bucketing_id": "ppid21886780721"]
+        
+        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
+    }
+
+    // TODO: [Jae] FSC reports different results. check it out 
+    
+//    func testBucketWithOptBucketId2() {
+//        let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id", clearUserProfileService: true)!
+//
+//        let experimentKey = "ab_running_exp_untargeted"
+//        let expectedVariationKey = "variation_7500"
+//
+//        let attributes: [String: Any] = ["$opt_bucketing_id": "ppid21886780722"]
+//
+//        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+//        XCTAssert(variationKey == expectedVariationKey)
+//    }
+//
+//    func testBucketWithOptBucketIdEmpty() {
+//        let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id", clearUserProfileService: true)!
+//
+//        let experimentKey = "ab_running_exp_untargeted"
+//        let userIdForThisTestOnly = "11111"
+//        let expectedVariationKey = "variation_7500"
+//
+//        let attributes: [String: Any] = ["$opt_bucketing_id": ""]
+//
+//        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: userIdForThisTestOnly, attributes: attributes)
+//        XCTAssert(variationKey == expectedVariationKey)
+//    }
+
+    func testBucketWithGroup() {
+        
+        // TODO: [Jae] empty experiments[] cause trouble for current "activate" implementation
+        //             experiments are defined only in group.
+        
+//        let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments", clearUserProfileService: true)!
+//
+//        let experimentKey = "experiment_4000"
+//        let userIdForThisTestOnly = "ppid31886780721"
+//        let expectedVariationKey = "variation_7500"
+//
+//        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: userIdForThisTestOnly)
+//        XCTAssert(variationKey == expectedVariationKey)
+    }
+    
+    func testForcedVariation() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "ab_experiments", clearUserProfileService: true)!
+        
+        let experimentKey = "ab_running_exp_untargeted"
+        let expectedVariationKey = "no_traffic_variation"
+        
+        let attributes: [String: Any] = ["customattr": "does_not_matter"]
+        
+        try! optimizely.setForcedVariation(experimentKey: experimentKey, userId: kUserId, variationKey: expectedVariationKey)
+        
+        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
     }
 
 }

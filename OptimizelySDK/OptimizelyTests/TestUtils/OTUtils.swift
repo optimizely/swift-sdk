@@ -57,5 +57,20 @@ class OTUtils {
         ups.save(userProfile: DefaultUserProfileService.UserProfileData())
         return ups
     }
+    
+    static func createOptimizely(datafileName: String, clearUserProfileService: Bool) -> OptimizelyManager? {
+        let arbitrarySdkKey = "12345"
+        
+        guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
+        let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
+        
+        let optimizely = OptimizelyManager(sdkKey: arbitrarySdkKey, userProfileService: userProfileService)
+        do {
+            try optimizely.initializeSDK(datafile: datafile)
+            return optimizely
+        } catch {
+            return nil
+        }
+    }
 
 }

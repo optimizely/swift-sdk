@@ -366,11 +366,10 @@ open class OptimizelyManager: NSObject {
     ///   - experimentKey: The key for the experiment.
     ///   - userId: The user ID to be used for bucketing.
     /// - Returns: forced variation key if it exists, otherwise return nil.
-    /// - Throws: `OptimizelyError` if error is detected
-    public func getForcedVariation(experimentKey:String, userId:String) throws -> String? {
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+    public func getForcedVariation(experimentKey:String, userId:String) -> String? {
+        guard let config = self.config else { return nil }
 
-        let variaion = try config.getForcedVariation(experimentKey: experimentKey, userId: userId)
+        let variaion = config.getForcedVariation(experimentKey: experimentKey, userId: userId)
         return variaion?.key
     }
         
@@ -385,13 +384,13 @@ open class OptimizelyManager: NSObject {
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func setForcedVariation(experimentKey:String,
                                    userId:String,
-                                   variationKey:String?) throws {
+                                   variationKey:String?) -> Bool {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { return false }
 
-        try config.setForcedVariation(experimentKey: experimentKey,
-                                      userId: userId,
-                                      variationKey: variationKey)
+        return config.setForcedVariation(experimentKey: experimentKey,
+                                         userId: userId,
+                                         variationKey: variationKey)
     }
     
     /// Determine whether a feature is enabled.

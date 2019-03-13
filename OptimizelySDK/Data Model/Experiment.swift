@@ -34,6 +34,6 @@ struct Experiment: Codable, Equatable {
     var trafficAllocation: [TrafficAllocation]
     var audienceIds: [String]
     var audienceConditions: ConditionHolder?
-    // TODO: datafile spec defines this as [String: Any]. check it out
+    // datafile spec defines this as [String: Any]. Supposed to be [ExperimentKey: VariationKey]
     var forcedVariations: [String: String]
 }

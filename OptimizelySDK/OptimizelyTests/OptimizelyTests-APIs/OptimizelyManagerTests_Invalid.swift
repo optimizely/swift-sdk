@@ -39,20 +39,16 @@ class OptimizelyManagerTests_Invalid: XCTestCase {
     }
     
     func testGetForcedVariation_WhenManagerNonInitialized() {
-        let variationKey: String? = try? self.optimizely.getForcedVariation(experimentKey: kExperimentKey,
-                                                                            userId: kUserId)!
+        let variationKey: String? = self.optimizely.getForcedVariation(experimentKey: kExperimentKey,
+                                                                            userId: kUserId)
         XCTAssertNil(variationKey)
     }
     
     func testSetForcedVariationKey_WhenManagerNonInitialized() {
-        do {
-            try self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
-                                                             userId: kUserId,
-                                                             variationKey: kVariationKey)
-            XCTAssert(false)
-        } catch {
-            XCTAssert(true)
-        }
+        let result = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+                                                                userId: kUserId,
+                                                                variationKey: kVariationKey)
+        XCTAssertFalse(result)
     }
 
     func testIsFeatureEnabled_WhenManagerNonInitialized() {

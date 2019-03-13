@@ -48,7 +48,7 @@ class DefaultDecisionService : OPTDecisionService {
         }
         
         // ---- check for whitelisted variation registered at runtime ----
-        if let variationId = config.whitelistUsers[userId]?[experimentId],
+        if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
             let variation = experiment.variations.filter({$0.id == variationId }).first {
             return variation;
         }

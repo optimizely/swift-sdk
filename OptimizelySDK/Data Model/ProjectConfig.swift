@@ -20,8 +20,8 @@ class ProjectConfig : Codable {
     
     var project: Project!
     
-    // local forced variations [UserId: [ExperimentId: VariationId]]
-    // NOTE: remove experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
+    // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
+    // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
     
     private var whitelistUsers = [String: [String: String]]()
     

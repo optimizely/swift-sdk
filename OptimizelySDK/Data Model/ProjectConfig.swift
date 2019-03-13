@@ -89,14 +89,14 @@ extension ProjectConfig {
      * Get an Experiment object for a key.
      */
     func getExperiment(key: String) -> Experiment? {
-        return project.experiments.filter { $0.key == key }.first
+        return allExperiments.filter { $0.key == key }.first
     }
     
     /**
      * Get an Experiment object for an Id.
      */
     func getExperiment(id: String) -> Experiment? {
-        return project.experiments.filter { $0.id == id }.first
+        return allExperiments.filter { $0.id == id }.first
     }
     
     /**
@@ -167,7 +167,7 @@ extension ProjectConfig {
      * Get forced variation for a given experiment key and user id.
      */
     func getForcedVariation(experimentKey: String, userId: String) throws -> Variation? {
-        guard let experiment = project.experiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = allExperiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
         }
         
@@ -188,7 +188,7 @@ extension ProjectConfig {
      * Set forced variation for a given experiment key and user id according to a given variation key.
      */
     func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) throws {
-        guard let experiment = project.experiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = allExperiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
         }
         
@@ -221,7 +221,7 @@ extension ProjectConfig {
                       attributes: OptimizelyAttributes? = nil,
                       decisionService: OPTDecisionService) throws -> Variation
     {
-        guard let experiment = project.experiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = allExperiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
         }
         
@@ -231,6 +231,13 @@ extension ProjectConfig {
         }
 
         return variation
+    }
+    
+    var allExperiments:[Experiment] {
+        get {
+            return  project.experiments +
+                 project.groups.map({$0.experiments}).flatMap({$0})
+        }
     }
 
 }

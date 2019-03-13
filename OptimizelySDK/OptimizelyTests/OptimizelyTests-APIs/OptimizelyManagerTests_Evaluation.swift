@@ -12,14 +12,15 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
 
     let kUserId = "11111"
     
-    var datafile: Data!
-    var optimizely: OptimizelyManager!
+    var datafile: Data?
+    var optimizely: OptimizelyManager?
+    var eventDispatcher:FakeEventDispatcher?
     
     func testActivateWithNilAttributeValues() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true)!
         
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_42"
-        let expectedVariationKey = "all_traffic_variation"
         
         let attributes: [String : Any?] = [
             "s_foo": "foo",
@@ -31,9 +32,30 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
         XCTAssertNil(variationKey)
     }
-    
+
+    func testActivateDispatchWithAttributeValues() {
+        let eventDispatcher = FakeEventDispatcher()
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true,
+                                                  eventDispatcher: eventDispatcher)!
+
+        let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_42"
+        
+        let attributes: [String : Any?] = [
+            "s_foo": "foo",
+            "b_true": nil,
+            "i_42": 44,
+            "d_4_2": nil
+        ]
+        
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+        XCTAssertNotNil(variationKey)
+        XCTAssertNotNil(eventDispatcher.events.first)
+    }
+
     func testActivateWithExactCombo() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_true__or__42_and_4_2"
         let expectedVariationKey = "all_traffic_variation"
@@ -46,7 +68,9 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         ]
         
         do {
-            let variationKey = try optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+            let variationKey = try optimizely.activate(experimentKey: experimentKey,
+                                                       userId: kUserId,
+                                                       attributes: attributes)
             XCTAssert(variationKey == expectedVariationKey)
         } catch {
             XCTAssert(false)
@@ -54,14 +78,17 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
     }
     
     func testBucketWithOptBucketId() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id",
+                                                  clearUserProfileService: true)!
         
         let experimentKey = "ab_running_exp_untargeted"
         let expectedVariationKey = "variation_10000"
         
         let attributes: [String: Any] = ["$opt_bucketing_id": "ppid21886780721"]
         
-        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+        let variationKey = try! optimizely.activate(experimentKey: experimentKey,
+                                                    userId: kUserId,
+                                                    attributes: attributes)
         XCTAssert(variationKey == expectedVariationKey)
     }
 
@@ -115,10 +142,33 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         
         let attributes: [String: Any] = ["customattr": "does_not_matter"]
         
-        try! optimizely.setForcedVariation(experimentKey: experimentKey, userId: kUserId, variationKey: expectedVariationKey)
+        try! optimizely.setForcedVariation(experimentKey: experimentKey,
+                                           userId: kUserId,
+                                           variationKey: expectedVariationKey)
         
-        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+        let variationKey = try! optimizely.activate(experimentKey: experimentKey,
+                                                    userId: kUserId,
+                                                    attributes: attributes)
         XCTAssert(variationKey == expectedVariationKey)
+    }
+
+}
+
+class FakeEventDispatcher : OPTEventDispatcher {
+
+    public var events:[EventForDispatch] = [EventForDispatch]()
+    required init() {
+        
+    }
+
+    func dispatchEvent(event:EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+        events.append(event)
+        //completionHandler(event)
+    }
+    
+    /// Attempts to flush the event queue if there are any events to process.
+    func flushEvents() {
+        
     }
 
 }

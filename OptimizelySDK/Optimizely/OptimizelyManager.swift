@@ -285,7 +285,7 @@ open class OptimizelyManager: NSObject {
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
 
         // TODO: fix config to throw common errors (.experimentUnknown, .experimentKeyInvalid, ...)
-        guard let experiment = config.project.experiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = config.allExperiments.filter({$0.key == experimentKey}).first else {
             throw OptimizelyError.experimentUnknown
         }
         

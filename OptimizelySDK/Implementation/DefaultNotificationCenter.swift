@@ -49,16 +49,17 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             if myArgs.count < 5 {
                 return
             }
-            if let _ = myArgs[0] as? Experiment,
+            if let experiement = myArgs[0] as? Experiment,
                 let userId = myArgs[1] as? String,
-                let _ = myArgs[3] as? Variation
+                let variation = myArgs[3] as? Variation
             {
                 let attributes = myArgs[2] as? OptimizelyAttributes
                 let event = myArgs[4] as! Dictionary<String,Any>
                 
-                // TODO: fix this temp data type for internal data model issueus
-                let experimentData = [String: Any]()
-                let variationData = [String: Any]()
+                let experimentData = ["key": experiement.key, "id": experiement.id]
+                
+                let variationData = ["key": variation.key, "id": variation.id]
+                
                 activateListener(experimentData, userId, attributes, variationData, event)
             }
         })

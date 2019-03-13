@@ -68,7 +68,7 @@ class DefaultBucketer : OPTBucketer {
         }
         
         // log error if invalid bucketing id
-        logger?.log(level: .error, message: String(format:"Bucketing value %@ not in traffic allocation", bucketValue))
+        logger?.log(level: .error, message: String(format:"Bucketing value %d not in traffic allocation", bucketValue))
 
         return nil
     }
@@ -85,6 +85,9 @@ class DefaultBucketer : OPTBucketer {
             case .random:
                 let mutexExperiment = bucketToExperiment(group: group, bucketingId: bucketingId)
                 if let mutexExperiment = mutexExperiment, mutexExperiment.id == experiment.id {
+                    ok = true
+                }
+                else {
                     ok = false
                 }
             }

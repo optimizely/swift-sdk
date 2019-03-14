@@ -30,10 +30,11 @@ stages:
 jobs:
   include:
     - stage: 'Integration tests'
+      if: NOT env(RUN_COMPAT_SUITE) = false
       env:
         - SDK=swift
         - BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
-        - TESTAPP_TAG=yasir-test-travis-build
+        - TESTAPP_TAG=master
       cache: false
       before_install: skip
       install:
@@ -41,7 +42,6 @@ jobs:
       before_script:
         - "aws s3 cp s3://optimizely-travisci-artifacts/ci/trigger_fullstack-sdk-compat.sh ci/ && chmod u+x ci/trigger_fullstack-sdk-compat.sh"
       script:
-        # todo: remove sohail/swift-support once swift support added in master
-        - "ci/trigger_fullstack-sdk-compat.sh sohail/swift-support"
+        - "ci/trigger_fullstack-sdk-compat.sh"
       # travis_terminate not supported by darwin
       after_success: skip

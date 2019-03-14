@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let datafileName = "demoTestDatafile"
     let experimentKey = "background_experiment"
     let eventKey = "sample_conversion"
-    let attributes = ["browser_type": "safari"]
+    let attributes = ["browser_type": "safari", "bool_attr": false] as [String : Any?]
     let sdkKey = "FCnSegiEkRry9rhVMroit4"
     
     var storyboard: UIStoryboard {

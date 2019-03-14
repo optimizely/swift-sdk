@@ -78,3 +78,22 @@ class OTUtils {
     }
 
 }
+
+class FakeEventDispatcher : OPTEventDispatcher {
+    
+    public var events:[EventForDispatch] = [EventForDispatch]()
+    required init() {
+        
+    }
+    
+    func dispatchEvent(event:EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+        events.append(event)
+        //completionHandler(event)
+    }
+    
+    /// Attempts to flush the event queue if there are any events to process.
+    func flushEvents() {
+        
+    }
+}
+

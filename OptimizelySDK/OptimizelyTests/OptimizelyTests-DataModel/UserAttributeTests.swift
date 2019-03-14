@@ -31,7 +31,8 @@ extension UserAttributeTests {
         XCTAssert(model.name == "geo")
         XCTAssert(model.typeSupported == .customAttribute)
         XCTAssert(model.matchSupported == .exact)
-        XCTAssert(model.value == .int(30))
+        // integer can be parsed as int or double (we catch as double first)
+        XCTAssert(model.value == .double(30.0))
     }
     
     func testDecodeSuccessWithJSONValid2() {

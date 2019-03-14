@@ -84,8 +84,11 @@ class DefaultDecisionService : OPTDecisionService {
     }
     
     func isInExperiment(experiment:Experiment, userId:String, attributes: OptimizelyAttributes) -> Bool? {
-        if let conditions = experiment.audienceConditions {
-            
+        if let conditions = experiment.audienceConditions, case .array(let arrConditions) = conditions, arrConditions.count > 0  {
+            // TODO: [Jae] fix with OptimizelyError
+            return try? conditions.evaluate(project: config.project, attributes: attributes)
+        }
+        else if let conditions = experiment.audienceConditions, case .leaf(_) = conditions {
             // TODO: [Jae] fix with OptimizelyError
             return try? conditions.evaluate(project: config.project, attributes: attributes)
         }

@@ -71,6 +71,49 @@ class OptimizelyManagerTests: XCTestCase {
             }
         }
     }
+    
+    func testActivateWithInvalidAttribute() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
+        
+        /*
+         experiment_key: ab_running_exp_typed_audiences_gt_41_and_lt_43
+         user_id: test_user_1
+         attributes:
+         i_42: false
+         */
+        let variation = try? optimizely?.activate(experimentKey:
+            "ab_running_exp_typed_audiences_gt_41_and_lt_43",
+                                                  userId: "test_user_1",
+                                                  attributes:
+            ["i_42": false])
+        
+        XCTAssertNil(variation as Any?)
+    }
+
+    func testActivateWithEmptyConditions() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
+        
+        /*
+         "experiment_key": "ab_running_exp_audience_combo_empty_conditions",
+         "user_id": "test_user_1",
+         "attributes": {
+         "s_foo": "foo",
+         "b_true": "N/A",
+         "i_42": 44,
+         "d_4_2": "N/A"
+
+         */
+        let variation = try? optimizely?.activate(experimentKey:
+            "ab_running_exp_audience_combo_empty_conditions",
+                                                  userId: "test_user_1",
+                                                  attributes:
+            ["s_foo": "foo",
+             "b_true": "N/A",
+             "i_42": 44,
+             "d_4_2": "N/A"])
+        
+        XCTAssertEqual(variation, "all_traffic_variation")
+    }
 
     func testPerformanceInitialize() {
         // This is an example of a performance test case.

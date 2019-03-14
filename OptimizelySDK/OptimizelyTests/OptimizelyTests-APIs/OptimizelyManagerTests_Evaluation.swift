@@ -16,12 +16,68 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
     var optimizely: OptimizelyManager?
     var eventDispatcher:FakeEventDispatcher?
     
+    func testActivateCondtions_MissingOperator() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true)!
+
+        let experimentKey = "ab_running_exp_audience_combo_missing_operand_exact_foo_or_42"
+        let userId = "test_user_1"
+        let expectedVariationKey = "all_traffic_variation"
+
+        let attributes: [String : Any?] = [
+            "s_foo": "not_foo",
+            "b_true": "N/A",
+            "i_42": 42,
+            "d_4_2": "N/A"
+        ]
+        
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
+    }
+    
+    func testActivateCondtions_AudienceIdsIgnoredWhenConditionExists() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true)!
+        
+        let experimentKey = "ab_running_exp_audience_combo_with_exact_foo_match_audience_id_and_empty_audience_conditions"
+        let userId = "test_user_1"
+        let expectedVariationKey = "all_traffic_variation"
+        
+        let attributes: [String : Any?] = [
+            "string_attribute": "no_match"
+        ]
+        
+        // [audienceIds] should be ignored since [audienceCondtions] exists (empty)
+        
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
+    }
+    
+    func testActivateCondtions_MissingOperator_xx() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true)!
+        
+        let experimentKey = "negated_ab_running_exp_typed_audiences_s_foo_exists_match"
+        let userId = "test_user_1"
+        let expectedVariationKey = "all_traffic_variation"
+        
+        let attributes: [String : Any?] = [
+            "s_foo": nil
+        ]
+        
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
+    }
+
+
     func testActivateWithNilAttributeValues() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true)!
         
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_42"
-        
+        let userId = "test_user_1"
+        let expectedVariationKey = "all_traffic_variation"
+
         let attributes: [String : Any?] = [
             "s_foo": "foo",
             "b_true": nil,
@@ -29,7 +85,7 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
             "d_4_2": nil
             ]
         
-        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
         XCTAssertNil(variationKey)
     }
 
@@ -40,7 +96,9 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
                                                   eventDispatcher: eventDispatcher)!
 
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_42"
-        
+        let userId = "test_user_1"
+        let expectedVariationKey = "all_traffic_variation"
+
         let attributes: [String : Any?] = [
             "s_foo": "foo",
             "b_true": nil,
@@ -142,7 +200,7 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         
         let attributes: [String: Any] = ["customattr": "does_not_matter"]
         
-        try! optimizely.setForcedVariation(experimentKey: experimentKey,
+        _ = optimizely.setForcedVariation(experimentKey: experimentKey,
                                            userId: kUserId,
                                            variationKey: expectedVariationKey)
         

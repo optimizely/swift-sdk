@@ -16,6 +16,21 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
     var optimizely: OptimizelyManager?
     var eventDispatcher:FakeEventDispatcher?
     
+    func testActivateConditions_ConditionInvalid() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true)!
+        
+        let experimentKey = "ab_running_exp_typed_audiences_lt_43_match"
+        let userId = "test_user_1"
+        
+        let attributes: [String : Any?] = [
+            "i_42": -9007199254740994.0
+       ]
+        
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        XCTAssertNil(variationKey)
+    }
+
     func testActivateWithNilAttributeValues() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true)!

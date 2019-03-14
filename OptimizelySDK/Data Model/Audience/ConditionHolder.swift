@@ -86,12 +86,9 @@ extension Array where Element == ConditionHolder {
         case .logicalOp(let op):
             return try evaluate(op: op, project: project, attributes: attributes)
         case .leaf:
-            // special case - array has a single ConditionLeaf
-            guard self.count == 1 else {
-                throw OptimizelyError.conditionInvalidFormat("invalid condition array format")
-            }
-            
-            return try firstItem.evaluate(project: project, attributes: attributes)
+            // special case - no logical operator
+            // implicit or
+            return try [[ConditionHolder.logicalOp(.or)],self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, attributes: attributes)
         default:
             throw OptimizelyError.conditionInvalidFormat("invalid first item")
         }

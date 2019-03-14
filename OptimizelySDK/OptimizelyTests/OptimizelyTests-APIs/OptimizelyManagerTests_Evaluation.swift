@@ -53,7 +53,7 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         XCTAssert(variationKey == expectedVariationKey)
     }
     
-    func testActivateCondtions_MissingOperator_xx() {
+    func testActivateCondtions_ExistStringNil() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true)!
         
@@ -68,6 +68,55 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
         XCTAssert(variationKey == expectedVariationKey)
     }
+    
+    func testActivateCondtions_ExistBoolNil() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true)!
+        
+        let experimentKey = "negated_ab_running_exp_typed_audiences_b_true_exists_match"
+        let userId = "test_user_1"
+        let expectedVariationKey = "all_traffic_variation"
+        
+        let attributes: [String : Any?] = [
+            "b_true": nil
+        ]
+        
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
+    }
+
+    func testActivateCondtions_ExistIntNil() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true)!
+        
+        let experimentKey = "negated_ab_running_exp_typed_audiences_i_42_exists_match"
+        let userId = "test_user_1"
+        let expectedVariationKey = "all_traffic_variation"
+        
+        let attributes: [String : Any?] = [
+            "i_42": nil
+        ]
+        
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
+    }
+
+    func testActivateCondtions_ExistDoubleNil() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true)!
+        
+        let experimentKey = "negated_ab_running_exp_typed_audiences_d_4_2_exists_match"
+        let userId = "test_user_1"
+        let expectedVariationKey = "all_traffic_variation"
+        
+        let attributes: [String : Any?] = [
+            "d_4_2": nil
+        ]
+        
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
+    }
+
 
 
     func testActivateWithNilAttributeValues() {
@@ -76,7 +125,6 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_42"
         let userId = "test_user_1"
-        let expectedVariationKey = "all_traffic_variation"
 
         let attributes: [String : Any?] = [
             "s_foo": "foo",
@@ -97,7 +145,6 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
 
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_42"
         let userId = "test_user_1"
-        let expectedVariationKey = "all_traffic_variation"
 
         let attributes: [String : Any?] = [
             "s_foo": "foo",
@@ -106,7 +153,7 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
             "d_4_2": nil
         ]
         
-        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+        let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
         XCTAssertNotNil(variationKey)
         XCTAssertNotNil(eventDispatcher.events.first)
     }

@@ -61,8 +61,9 @@ class OTUtils {
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
                                  eventDispatcher: OPTEventDispatcher?=nil) -> OptimizelyManager? {
-        let arbitrarySdkKey = "12345"
-        
+        // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
+        let arbitrarySdkKey = String(arc4random())
+
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         

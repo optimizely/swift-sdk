@@ -93,5 +93,29 @@ class BatchEventBuilderTests_Corners: XCTestCase {
         XCTAssert(dict["i_42"] as! Int == 42)
         
     }
-
+    
+    func testBotFiltering() {
+        let eventDispatcher = FakeEventDispatcher()
+        let optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled", clearUserProfileService: true, eventDispatcher: eventDispatcher)
+        
+        let variation = try? optimizely?.activate(experimentKey: "ab_running_exp_untargeted", userId: "test_user_1")
+        
+        XCTAssertNotNil(variation)
+        
+        let event = eventDispatcher.events.first
+        XCTAssertNotNil(event)
+        
+        let json = try? JSONDecoder().decode(BatchEvent.self, from: (event?.body)!)
+        let array = json?.visitors[0].attributes
+        var assert = true
+        for item in array! {
+            if item.entityID == Constants.Attributes.OptimizelyBotFilteringAttribute {
+                assert = false
+            }
+        }
+        
+        XCTAssertFalse(assert)
+        
+        
+    }
 }

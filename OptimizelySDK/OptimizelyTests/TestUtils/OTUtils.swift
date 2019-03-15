@@ -60,13 +60,13 @@ class OTUtils {
     
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
-                                 eventDispatcher: OPTEventDispatcher?=nil) -> OptimizelyManager? {
-        let arbitrarySdkKey = "12345"
+                                 eventDispatcher: OPTEventDispatcher?=nil, sdkKey:String = "12345") -> OptimizelyManager? {
+
         
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
-        let optimizely = OptimizelyManager(sdkKey: arbitrarySdkKey,
+        let optimizely = OptimizelyManager(sdkKey: sdkKey,
                                            eventDispatcher: eventDispatcher,
                                            userProfileService: userProfileService)
         do {

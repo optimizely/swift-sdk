@@ -205,7 +205,7 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         let eventDispatcher = FakeEventDispatcher()
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true,
-                                                  eventDispatcher: eventDispatcher)!
+                                                  eventDispatcher: eventDispatcher, sdkKey: "123456")!
 
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_42"
         let userId = "test_user_1"

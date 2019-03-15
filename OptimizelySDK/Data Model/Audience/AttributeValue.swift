@@ -17,22 +17,25 @@ enum AttributeValue: Codable, Equatable {
     case others
     
     init?(value: Any?) {
+        guard let value = value else { return nil }
+        
         if value is String {
             self = .string(value as! String)
             return
         }
         
-        if value is Int {
-            self = .int(value as! Int)
-            return
-        }
-        
-        if value is Double {
+        // NOTE: keep Double before Int checking for testing consistency
+        if Utils.isDoubleType(value) {
             self = .double(value as! Double)
             return
         }
         
-        if value is Bool {
+        if Utils.isIntType(value) {
+            self = .int(value as! Int)
+            return
+        }
+        
+        if Utils.isBoolType(value) {
             self = .bool(value as! Bool)
             return
         }
@@ -48,13 +51,14 @@ enum AttributeValue: Codable, Equatable {
             return
         }
         
-        if let value = try? container.decode(Int.self) {
-            self = .int(value)
+        // NOTE: keep Double before Int checking for testing consistency
+        if let value = try? container.decode(Double.self) {
+            self = .double(value)
             return
         }
         
-        if let value = try? container.decode(Double.self) {
-            self = .double(value)
+        if let value = try? container.decode(Int.self) {
+            self = .int(value)
             return
         }
         
@@ -199,3 +203,4 @@ extension AttributeValue {
     }
 
 }
+

@@ -26,7 +26,7 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         let userId = "test_user_1"
         
         let attributes: [String : Any?] = [
-            "i_42": -9007199254740994.0
+            "i_42": -9007199254740994
        ]
         
         let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
@@ -323,21 +323,3 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
 
 }
 
-class FakeEventDispatcher : OPTEventDispatcher {
-
-    public var events:[EventForDispatch] = [EventForDispatch]()
-    required init() {
-        
-    }
-
-    func dispatchEvent(event:EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
-        events.append(event)
-        //completionHandler(event)
-    }
-    
-    /// Attempts to flush the event queue if there are any events to process.
-    func flushEvents() {
-        
-    }
-
-}

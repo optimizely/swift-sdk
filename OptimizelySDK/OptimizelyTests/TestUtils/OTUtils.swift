@@ -61,8 +61,9 @@ class OTUtils {
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
                                  eventDispatcher: OPTEventDispatcher?=nil) -> OptimizelyManager? {
-        let arbitrarySdkKey = "12345"
-        
+        // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
+        let arbitrarySdkKey = String(arc4random())
+
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
@@ -78,3 +79,22 @@ class OTUtils {
     }
 
 }
+
+class FakeEventDispatcher : OPTEventDispatcher {
+    
+    public var events:[EventForDispatch] = [EventForDispatch]()
+    required init() {
+        
+    }
+    
+    func dispatchEvent(event:EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+        events.append(event)
+        //completionHandler(event)
+    }
+    
+    /// Attempts to flush the event queue if there are any events to process.
+    func flushEvents() {
+        
+    }
+}
+

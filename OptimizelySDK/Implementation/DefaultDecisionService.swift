@@ -84,14 +84,25 @@ class DefaultDecisionService : OPTDecisionService {
     }
     
     func isInExperiment(experiment:Experiment, userId:String, attributes: OptimizelyAttributes) -> Bool? {
-        if let conditions = experiment.audienceConditions, case .array(let arrConditions) = conditions, arrConditions.count > 0  {
-            // TODO: [Jae] fix with OptimizelyError
-            return try? conditions.evaluate(project: config.project, attributes: attributes)
+        
+        if let conditions = experiment.audienceConditions {
+            switch conditions {
+            case .array(let arrConditions):
+                if arrConditions.count > 0 {
+                    // TODO: [Jae] fix with OptimizelyError
+                    return try? conditions.evaluate(project: config.project, attributes: attributes)
+                } else {
+                    // empty conditions (backward compatibility with "audienceIds" is ignored if exists even though empty
+                    return true
+                }
+            case .leaf:
+                // TODO: [Jae] fix with OptimizelyError
+                return try? conditions.evaluate(project: config.project, attributes: attributes)
+            default:
+                return true
+            }
         }
-        else if let conditions = experiment.audienceConditions, case .leaf(_) = conditions {
-            // TODO: [Jae] fix with OptimizelyError
-            return try? conditions.evaluate(project: config.project, attributes: attributes)
-        }
+        // backward compatibility with audiencIds list
         else if experiment.audienceIds.count > 0 {
             var holder = [ConditionHolder]()
             holder.append(.logicalOp(.or))

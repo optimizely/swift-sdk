@@ -54,7 +54,7 @@ class DefaultDecisionService : OPTDecisionService {
         }
 
         // ---- check if the experiment has forced variation ----
-        if let variationId = experiment.forcedVariations[userId], let variation = experiment.variations.filter({$0.id == variationId}).first {
+        if let variationId = experiment.forcedVariations[userId], let variation = experiment.variations.filter({$0.key == variationId}).first {
             return variation
         }
         

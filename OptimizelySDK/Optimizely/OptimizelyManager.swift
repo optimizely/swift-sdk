@@ -550,7 +550,17 @@ open class OptimizelyManager: NSObject {
         }
         
         // TODO: [Jae] optional? fallback to empty string is OK?
-        let defaultValue = variable.defaultValue ?? ""
+        var defaultValue = variable.defaultValue ?? ""
+        
+        var _attributes = OptimizelyAttributes()
+        if attributes != nil {
+            _attributes = attributes!
+        }
+        if let decision = self.decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: _attributes) {
+            if let featureVariableUsage = decision.variation?.variables?.filter({$0.id == variable.id}).first {
+                defaultValue = featureVariableUsage.value
+            }
+        }
 
         var typeName: String?
         var valueParsed: T?

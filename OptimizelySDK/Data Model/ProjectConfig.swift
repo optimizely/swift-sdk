@@ -33,6 +33,9 @@ class ProjectConfig : Codable {
             print(">>>>> Project Decode Error: \(error)")
             throw OptimizelyError.dataFileInvalid
         }
+        if !isValidVersion(version: self.project.version) {
+            throw OptimizelyError.dataFileVersionInvalid(self.project.version)
+        }
     }
     
     convenience init(datafile: String) throws {
@@ -78,6 +81,10 @@ extension ProjectConfig {
             return dic[experimentId]
         }
         return nil
+    }
+    
+    private func isValidVersion(version: String) -> Bool {
+        return ["2","3","4"].contains(version)
     }
 }
 

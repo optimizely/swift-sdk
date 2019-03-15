@@ -214,11 +214,9 @@ open class OptimizelyManager: NSObject {
         
         if let config = self.config, let featureFlags = config.project?.featureFlags {
             for feature in featureFlags {
-                if let experiment = config.project.rollouts.filter(
-                    {$0.id == feature.rolloutId }).first?.experiments.filter(
+                if let experiment = config.getRollout(id: feature.rolloutId)?.experiments.filter(
                         {$0.layerId == feature.rolloutId}).first,
-                    let newExperiment = newConfig.project.rollouts.filter(
-                    {$0.id == feature.rolloutId }).first?.experiments.filter(
+                    let newExperiment = newConfig.getRollout(id: feature.rolloutId)?.experiments.filter(
                         {$0.layerId == feature.rolloutId}).first,
                     experiment.status != newExperiment.status {
                     // call rollout change with status changed.
@@ -285,7 +283,7 @@ open class OptimizelyManager: NSObject {
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
 
         // TODO: fix config to throw common errors (.experimentUnknown, .experimentKeyInvalid, ...)
-        guard let experiment = config.allExperiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = config.getExperiment(key: experimentKey) else {
             throw OptimizelyError.experimentUnknown
         }
         
@@ -407,7 +405,7 @@ open class OptimizelyManager: NSObject {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
 
-        guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first  else {
+        guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
             return false
         }
         
@@ -541,7 +539,7 @@ open class OptimizelyManager: NSObject {
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
 
         // fix config to throw errors
-        guard let featureFlag = config.project.featureFlags.filter({$0.key == featureKey}).first else {
+        guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
             throw OptimizelyError.featureUnknown
         }
         

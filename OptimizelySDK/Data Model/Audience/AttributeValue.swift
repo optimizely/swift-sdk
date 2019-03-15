@@ -182,14 +182,18 @@ extension AttributeValue {
     }
     
     func checkValidAttributeNumber(_ number: Any?) throws {
-        guard let number = number as? Double else {
-            // do not check infinity if it's not a number
+        var num: Double
+        if let number = number as? Int {
+            num = Double(number)
+        } else if let number = number as? Double {
+            num = number
+        } else {
+            // do not check range if it's not a number
             return
         }
         
-        // inifinity is not accepted as a valid user attribute value
-        // TODO: [Jae] do we need more strict range check?
-        if number.isInfinite {
+        // valid range: [-2^53, 2^53] i
+        if abs(num) > pow(2, 32) {
             throw OptimizelyError.attributeValueInvalid
         }
     }

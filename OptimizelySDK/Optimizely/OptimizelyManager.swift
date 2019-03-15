@@ -381,7 +381,7 @@ open class OptimizelyManager: NSObject {
     ///   - userId The user ID to be used for bucketing.
     ///   - variationKey The variation the user should be forced into.
     ///                  This value can be nil, in which case, the forced variation is cleared.
-    /// - Throws: `OptimizelyError` if feature parameter is not valid
+    /// - Returns: true if forced variation set successfully
     public func setForcedVariation(experimentKey:String,
                                    userId:String,
                                    variationKey:String?) -> Bool {

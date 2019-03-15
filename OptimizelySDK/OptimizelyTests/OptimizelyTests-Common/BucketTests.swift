@@ -69,9 +69,7 @@ class BucketTests: XCTestCase {
         
     }
 
-    func testExample() {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testHashIsCompliant() {
         let experimentId = "1886780721"
         let bucketer = DefaultBucketer(config: ProjectConfig())
         // These test inputs/outputs should be reproduced exactly in all clients to make sure that they behave
@@ -92,11 +90,13 @@ class BucketTests: XCTestCase {
         }
     }
 
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testBucketToExperimentInGroup() {
+    }
+    
+    func testBucketToVariationInExperiment() {
+    }
+    
+    func testBucketExperiment() {
     }
 
 }

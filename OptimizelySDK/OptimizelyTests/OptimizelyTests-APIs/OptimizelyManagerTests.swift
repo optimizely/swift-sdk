@@ -41,7 +41,7 @@ class OptimizelyManagerTests: XCTestCase {
 //    }
     
     func testLoadingTestJson() {
-        let files = ["ab_experiments",
+        let filesSupported = ["ab_experiments",
             "audience_targeting",
             "bot_filtering_enabled",
             "bucketing_id",
@@ -55,20 +55,21 @@ class OptimizelyManagerTests: XCTestCase {
             "forced_variation",
             "grouped_experiments",
             "rollout_bucketing",
-            "simple_datafile",
-            "unsupported_datafile"]
+            "simple_datafile"
+        ]
         
-        for file in files {
-            print("loading datafaile: \(file)")
-            let data = OTUtils.loadJSONDatafile(file)
-            let opt = OptimizelyManager(sdkKey: "nothgin", periodicDownloadInterval: 0)
-            do {
-                try opt.initializeSDK(datafile: data!)
-            }
-            catch {
-                print(error)
-                XCTAssert(false, "problem loading datafile \(file)")
-            }
+        let filesNotSupported = [
+            "unsupported_datafile"
+        ]
+
+        for file in filesSupported {
+            let optimizely = OTUtils.createOptimizely(datafileName: file, clearUserProfileService: true)
+            XCTAssertNotNil(optimizely)
+        }
+        
+        for file in filesNotSupported {
+            let optimizely = OTUtils.createOptimizely(datafileName: file, clearUserProfileService: true)
+            XCTAssertNil(optimizely)
         }
     }
     

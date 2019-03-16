@@ -633,6 +633,10 @@ open class OptimizelyManager: NSObject {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
         
+        guard let _ = config.getEvent(key: eventKey) else {
+            throw OptimizelyError.eventUnknown
+        }
+        
         // TODO: fix to throw errors
         guard let body = BatchEventBuilder.createConversionEvent(config: config,
                                                                  decisionService: decisionService,

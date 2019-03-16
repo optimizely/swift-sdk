@@ -176,8 +176,9 @@ class DefaultDecisionService : OPTDecisionService {
         // Evaluate each experiment ID and return the first bucketed experiment variation
         for experimentId in experimentIds {
             if let experiment = config.getExperiment(id: experimentId) {
-                let variation = getVariation(userId: userId, experiment: experiment, attributes: attributes)
-                return (experiment,variation)
+                if let variation = getVariation(userId: userId, experiment: experiment, attributes: attributes) {
+                    return (experiment,variation)
+                }
             }
         }
         return nil;

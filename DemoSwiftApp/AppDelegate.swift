@@ -93,6 +93,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = optimizely?.notificationCenter.addActivateNotificationListener(activateListener: { (experiment, userId, attributes, variation, event) in
             print("got activate notification")
         })
+        
+        _ = optimizely?.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
+            print(eventKey)
+            print(userId)
+            print(attributes)
+            print(eventTags)
+            print(event)
+            print("got track notification")
+        })
+        
         // initialize Optimizely Client from a datafile download
         optimizely!.initializeSDK { result in
             switch result {

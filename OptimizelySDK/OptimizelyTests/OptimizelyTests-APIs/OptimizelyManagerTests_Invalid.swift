@@ -97,5 +97,14 @@ class OptimizelyManagerTests_Invalid: XCTestCase {
             XCTAssert(true)
         }
     }
-    
+
+    func testTrack_WhenEventNotInDatafile() {
+        do {
+            try self.optimizely.track(eventKey: "somecrazytrackingidthatdoesntexist", userId: kUserId)
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+
 }

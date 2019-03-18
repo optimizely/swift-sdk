@@ -10,6 +10,7 @@ import Foundation
 
 enum AttributeValue: Codable, Equatable {
     case string(String)
+    // TODO: [Jae] fix these to Int64 to support full value range
     case int(Int)
     case double(Double)
     case bool(Bool)

@@ -339,10 +339,10 @@ open class OptimizelyManager: NSObject {
                       userId: String,
                       attributes: OptimizelyAttributes?=nil) throws -> Variation {
         
-        guard let _ = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
         
         
-        guard let experiment = self.config?.allExperiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = config.getExperiment(key: experimentKey) else {
             throw OptimizelyError.experimentUnknown
         }
         

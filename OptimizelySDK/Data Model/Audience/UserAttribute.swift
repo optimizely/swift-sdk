@@ -112,7 +112,7 @@ extension UserAttribute {
         
         switch matchFinal {
         case .exists:
-            return attributeValue != nil
+            return !(attributeValue is NSNull || attributeValue == nil)
         case .exact:
             return try value!.isExactMatch(with: attributeValue)
         case .substring:

@@ -80,7 +80,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let alert = UIAlertView(title: "Feature flag \(featurekey) changed", message: "toggled to \(toggle)", delegate: nil, cancelButtonTitle: "cancel")
                 alert.show()
                 if let controller = self.window?.rootViewController as? VariationViewController {
-                    controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
+                    //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
+                    if let showCoupon = try? self.optimizely?.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
+                        controller.showCoupon = showCoupon
+                    }
+
                 }
             }
 

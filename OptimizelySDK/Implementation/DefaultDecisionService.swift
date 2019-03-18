@@ -219,7 +219,7 @@ class DefaultDecisionService : OPTDecisionService {
         var bucketingId = userId
         // If the bucketing ID key is defined in attributes, then use that
         // in place of the userID for the murmur hash key
-        if let newBucketingId = attributes[Constants.Attributes.OptimizelyBucketIdAttribute] as? String, newBucketingId != "" {
+        if let newBucketingId = attributes[Constants.Attributes.OptimizelyBucketIdAttribute] as? String {
             bucketingId = newBucketingId
         }
         

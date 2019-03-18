@@ -56,6 +56,11 @@ class OptimizelyManagerTests_Valid: XCTestCase {
         XCTAssert(variationKey == kVariationKey)
     }
     
+    func testActivateEmptyUserId() {
+        let variationKey: String = try! self.optimizely.activate(experimentKey: kExperimentKey, userId: "")
+        XCTAssert(variationKey == kVariationKey)
+    }
+
     func testGetVariationKey() {
         let variationKey: String = try! self.optimizely.getVariationKey(experimentKey: kExperimentKey, userId: kUserId)
         XCTAssert(variationKey == kVariationKey)

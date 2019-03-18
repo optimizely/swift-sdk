@@ -77,8 +77,8 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             }
             if let eventKey = myArgs[0] as? String,
                 let userId = myArgs[1] as? String,
-                let attributes = myArgs[2] as? OptimizelyAttributes,
-                let eventTags = myArgs[3] as? Dictionary<String,Any>,
+                let attributes = myArgs[2] as? OptimizelyAttributes?,
+                let eventTags = myArgs[3] as? Dictionary<String,Any>?,
                 let event = myArgs[4] as? Dictionary<String,Any>
                 {
                 trackListener(eventKey, userId, attributes, eventTags, event)

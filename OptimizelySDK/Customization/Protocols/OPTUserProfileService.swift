@@ -78,7 +78,7 @@ public protocol OPTUserProfileService {
     typealias UPExperimentMap = [String: String]
     typealias UPBucketMap = [String: UPExperimentMap]
     typealias UPProfile = [String: Any]   // {"experiment_bucket_map", "user_id"}
-    typealias UserProfileData = [String: UPProfile]
+    typealias UserProfileData = [String: UPProfile]     
 
     init()
 
@@ -93,21 +93,6 @@ public protocol OPTUserProfileService {
      Saves the user profile.
      - Parameter userProfile: The user profile.
      **/
-    func save(userProfile: UserProfileData)
- 
-    /**
-    Get a variation id for a experiment id for a user
-    - Parameter userId: The user id to lookup the map.
-     - Parameter experimentId: experiment id to lookup variation id in the "experiment_bucket_map"
-     - Returns: the variation id if one is saved for this user.
-    **/
-    func variationId(userId: String, experimentId: String) -> String?
+    func save(userProfile: UPProfile)
     
-    /**
-     Save entry for a user in the experiment_bucket_map for experiment.
-     - Parameter userId: The user id to lookup the map.
-     - Parameter experimentId: experiment id to lookup variation id in the "experiment_bucket_map"
-     - Parameter variationId: variation id that the user was bucketed into for the experiment.
-     **/
-    func saveProfile(userId: String, experimentId: String, variationId: String)
 }

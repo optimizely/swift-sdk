@@ -358,7 +358,13 @@ class AudienceTests_Evaluate: XCTestCase {
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
         XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
     }
-    
+
+    func testExistsMatcherReturnsFalseWhenAttributeIsNSNull() {
+        let attributesPassOrValue: [String: Any?] = ["attr_value" : NSNull()]
+        let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
+        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+    }
+
     func testExistsMatcherReturnsTrueWhenAttributeValueIsProvided() {
         let attributesPassOrValue1 = ["attr_value" : ""]
         let attributesPassOrValue2 = ["attr_value" : "iPhone"]

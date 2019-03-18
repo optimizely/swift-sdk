@@ -171,23 +171,24 @@ open class OptimizelyManager: NSObject {
                     if let config = try? ProjectConfig(datafile: data) {
                         var featureToggleNotifications:[String:FeatureFlagToggle] = self.getFeatureFlagChanges(newConfig:config)
                         
-                        self.config = config
-                        
-                        // call reinit on the services we know we are reinitializing.
-                        HandlerRegistryService.shared.reInitializeComponent(
-                            service:OPTBucketer.self,
-                            sdkKey: self.sdkKey)
-                         HandlerRegistryService.shared.reInitializeComponent(
-                            service: OPTDecisionService.self,
-                            sdkKey: self.sdkKey)
-                        
-                        // now reinitialize with the new config.
-                        self.bucketer.initialize(config: config)
-                        self.decisionService.initialize(config: config,
-                                                   bucketer: self.bucketer,
-                                                   userProfileService: self.userProfileService)
+                        do {
+                            self.config = config
+                            
+                            // call reinit on the services we know we are reinitializing.
+                            
+                            for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
+                                guard let component = component else { continue }
+                                HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
+                            }
 
+                            // now reinitialize with the new config.
+                            self.bucketer.initialize(config: config)
+                            self.decisionService.initialize(config: config,
+                                                       bucketer: self.bucketer,
+                                                       userProfileService: self.userProfileService)
 
+                        }
+                        
                         self.notificationCenter.sendNotifications(type:
                             NotificationType.DatafileChange.rawValue, args: [data])
                         
@@ -340,12 +341,18 @@ open class OptimizelyManager: NSObject {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
         
-        return try config.getVariation(experimentKey: experimentKey,
-                                       userId: userId,
-                                       attributes: attributes,
-                                       decisionService: self.decisionService)
+        
+        guard let experiment = self.config?.allExperiments.filter({$0.key == experimentKey}).first else {
+            throw OptimizelyError.experimentUnknown
+        }
+        
+        // fix DecisionService to throw error
+        guard let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
+            throw OptimizelyError.variationUnknown
+        }
+        
+        return variation
     }
-
     
     /**
      * Use the setForcedVariation method to force an experimentKey-userId

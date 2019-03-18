@@ -53,7 +53,7 @@ class DefaultBucketer : OPTBucketer {
         for trafficAllocation in group.trafficAllocation {
             if bucketValue <= trafficAllocation.endOfRange {
                 let experimentId = trafficAllocation.entityId;
-                let experiment = config.allExperiments.filter({$0.id == experimentId}).first
+                let experiment = config.getExperiment(id: experimentId)
                 
                 // propagate errors and logs for unknown experiment
                 if let _ = experiment
@@ -120,7 +120,7 @@ class DefaultBucketer : OPTBucketer {
             if (bucketValue <= trafficAllocation.endOfRange) {
                 
                 let variationId = trafficAllocation.entityId;
-                let variation = experiment.variations.filter({$0.id == variationId }).first
+                let variation = experiment.getVariation(id: variationId)
                 // propagate errors and logs for unknown variation
                 if let variation = variation {
                    // log we got a variation

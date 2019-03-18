@@ -37,3 +37,15 @@ struct Experiment: Codable, Equatable {
     // datafile spec defines this as [String: Any]. Supposed to be [ExperimentKey: VariationKey]
     var forcedVariations: [String: String]
 }
+
+extension Experiment {
+    
+    func getVariation(id: String) -> Variation? {
+        return variations.filter { $0.id == id }.first
+    }
+    
+    func getVariation(key: String) -> Variation? {
+        return variations.filter { $0.key == key }.first
+    }
+
+}

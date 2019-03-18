@@ -263,44 +263,40 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
 
     // TODO: [Jae] FSC reports different results. check it out 
     
-//    func testBucketWithOptBucketId2() {
-//        let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id", clearUserProfileService: true)!
-//
-//        let experimentKey = "ab_running_exp_untargeted"
-//        let expectedVariationKey = "variation_7500"
-//
-//        let attributes: [String: Any] = ["$opt_bucketing_id": "ppid21886780722"]
-//
-//        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
-//        XCTAssert(variationKey == expectedVariationKey)
-//    }
-//
-//    func testBucketWithOptBucketIdEmpty() {
-//        let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id", clearUserProfileService: true)!
-//
-//        let experimentKey = "ab_running_exp_untargeted"
-//        let userIdForThisTestOnly = "11111"
-//        let expectedVariationKey = "variation_7500"
-//
-//        let attributes: [String: Any] = ["$opt_bucketing_id": ""]
-//
-//        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: userIdForThisTestOnly, attributes: attributes)
-//        XCTAssert(variationKey == expectedVariationKey)
-//    }
+    func testBucketWithOptBucketId2() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id", clearUserProfileService: true)!
+
+        let experimentKey = "ab_running_exp_untargeted"
+        let expectedVariationKey = "variation_7500"
+
+        let attributes: [String: Any] = ["$opt_bucketing_id": "ppid21886780722"]
+
+        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: kUserId, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
+    }
+
+    func testBucketWithOptBucketIdEmpty() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id", clearUserProfileService: true)!
+
+        let experimentKey = "ab_running_exp_untargeted"
+        let userIdForThisTestOnly = "11111"
+        let expectedVariationKey = "variation_7500"
+
+        let attributes: [String: Any] = ["$opt_bucketing_id": ""]
+
+        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: userIdForThisTestOnly, attributes: attributes)
+        XCTAssert(variationKey == expectedVariationKey)
+    }
 
     func testBucketWithGroup() {
-        
-        // TODO: [Jae] empty experiments[] cause trouble for current "activate" implementation
-        //             experiments are defined only in group.
-        
-//        let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments", clearUserProfileService: true)!
-//
-//        let experimentKey = "experiment_4000"
-//        let userIdForThisTestOnly = "ppid31886780721"
-//        let expectedVariationKey = "variation_7500"
-//
-//        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: userIdForThisTestOnly)
-//        XCTAssert(variationKey == expectedVariationKey)
+        let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments", clearUserProfileService: true)!
+
+        let experimentKey = "experiment_4000"
+        let userIdForThisTestOnly = "ppid31886780721"
+        let expectedVariationKey = "all_traffic_variation_exp_1"
+
+        let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: userIdForThisTestOnly)
+        XCTAssert(variationKey == expectedVariationKey)
     }
     
     func testForcedVariation() {

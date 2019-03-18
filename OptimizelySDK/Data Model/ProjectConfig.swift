@@ -84,7 +84,8 @@ extension ProjectConfig {
     }
     
     private func isValidVersion(version: String) -> Bool {
-        return ["2","3","4"].contains(version)
+        // old versions (< 4) of datafiles not supported
+        return ["4"].contains(version)
     }
 }
 

@@ -17,9 +17,9 @@ class OTUtils {
         return modelExp == model
     }
     
-    static func getAttributeValueFromNative(_ value: Any) throws -> AttributeValue {
+    static func getAttributeValueFromNative(_ value: Any?) throws -> AttributeValue {
         // JSONEncoder does not support fragmented JSON format (string alone), so wrap in an array
-        let json = [value]
+        let json: [Any?] = [value]
         let jsonData = try JSONSerialization.data(withJSONObject: json, options: [])
         let modelArray = try JSONDecoder().decode([AttributeValue].self, from: jsonData)
         return modelArray[0]

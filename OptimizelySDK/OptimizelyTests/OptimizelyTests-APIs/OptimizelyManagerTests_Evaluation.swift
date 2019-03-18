@@ -280,7 +280,7 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
 
         let experimentKey = "ab_running_exp_untargeted"
         let userIdForThisTestOnly = "11111"
-        let expectedVariationKey = "variation_7500"
+        let expectedVariationKey = "variation_10000"
 
         let attributes: [String: Any] = ["$opt_bucketing_id": ""]
 

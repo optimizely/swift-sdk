@@ -25,9 +25,14 @@ enum AttributeValue: Codable, Equatable {
             return
         }
         
-        // NOTE: keep Double before Int checking for testing consistency
+        // NOTE: keep {Double, Float} before Int checking for testing consistency
         if Utils.isDoubleType(value) {
             self = .double(value as! Double)
+            return
+        }
+        
+        if Utils.isFloatType(value) {
+            self = .double(Double(value as! Float))
             return
         }
         
@@ -52,7 +57,7 @@ enum AttributeValue: Codable, Equatable {
             return
         }
         
-        // NOTE: keep Double before Int checking for testing consistency
+        // NOTE: keep {Double, Float} before Int checking for testing consistency
         if let value = try? container.decode(Double.self) {
             self = .double(value)
             return

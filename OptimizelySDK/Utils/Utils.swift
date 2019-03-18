@@ -25,4 +25,8 @@ class Utils {
         return (value is Double) && type(of: value) != type(of: NSNumber(value: true))
     }
     
+    static func isFloatType(_ value: Any) -> Bool {
+        return (value is Float) && type(of: value) != type(of: NSNumber(value: true))
+    }
+
 }

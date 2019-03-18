@@ -7,14 +7,6 @@
 //
 
 import Foundation
-//
-//  OptimizelyManagerTests_Evaluation.swift
-//  OptimizelyTests-APIs-iOS
-//
-//  Created by Jae Kim on 3/11/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
-
 import XCTest
 
 class OptimizelyManagerTests_Group: XCTestCase {

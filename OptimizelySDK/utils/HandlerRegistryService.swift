@@ -8,16 +8,6 @@
 
 import Foundation
 
-enum HandlerRegistryServiceError: Error {
-    case alreadyRegistered
-    
-    var localizedDescription: String {
-        get {
-            return "Already registered Service"
-        }
-    }
-}
-
 class HandlerRegistryService {
     
     static let shared = HandlerRegistryService()

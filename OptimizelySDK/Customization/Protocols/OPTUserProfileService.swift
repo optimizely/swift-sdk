@@ -73,13 +73,18 @@
 
 import Foundation
 
+struct UserProfileKeys {
+    static let kBucketMap = "experiment_bucket_map"
+    static let kVariationId = "variation_id"
+    static let kUserId = "user_id"
+}
+
 public protocol OPTUserProfileService {
     
-    typealias UPExperimentMap = [String: String]
-    typealias UPBucketMap = [String: UPExperimentMap]
     typealias UPProfile = [String: Any]   // {"experiment_bucket_map", "user_id"}
-    typealias UserProfileData = [String: UPProfile]     
-
+    typealias UPBucketMap = [String: UPExperimentMap]
+    typealias UPExperimentMap = [String: String]
+    
     init()
 
     /**

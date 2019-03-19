@@ -236,10 +236,10 @@ extension DefaultDecisionService {
     
     func variationId(ups: OPTUserProfileService, userId: String, experimentId: String) -> String? {
         if let profile = ups.lookup(userId: userId),
-            let bucketMap = profile[DefaultUserProfileService.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
             let experimentMap = bucketMap[experimentId]
         {
-            return experimentMap[DefaultUserProfileService.kVariationId]
+            return experimentMap[UserProfileKeys.kVariationId]
         } else {
             return nil
         }
@@ -247,15 +247,15 @@ extension DefaultDecisionService {
     
     func saveProfile(ups: OPTUserProfileService, userId: String, experimentId: String, variationId: String) {
         var profile = ups.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
-            
-        var bucketMap = profile[DefaultUserProfileService.kBucketMap] as? OPTUserProfileService.UPBucketMap ??
-            OPTUserProfileService.UPBucketMap()
-        bucketMap[experimentId] = [DefaultUserProfileService.kVariationId: variationId]
-            
-        profile[DefaultUserProfileService.kBucketMap] = bucketMap
-        profile[DefaultUserProfileService.kUserId] = userId
-            
+        
+        var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
+        bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
+        
+        profile[UserProfileKeys.kBucketMap] = bucketMap
+        profile[UserProfileKeys.kUserId] = userId
+        
         ups.save(userProfile: profile)
     }
     
 }
+

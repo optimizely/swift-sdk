@@ -60,7 +60,7 @@ class DefaultDecisionService : OPTDecisionService {
         }
         
         // ---- check if a valid variation is stored in the user profile ----
-        if let variationId = self.variationId(ups: userProfileService, userId: userId, experimentId: experimentId),
+        if let variationId = self.variationId(userId: userId, experimentId: experimentId),
             let variation = experiment.getVariation(id: variationId) {
             return variation
         }
@@ -77,7 +77,7 @@ class DefaultDecisionService : OPTDecisionService {
             
             if let bucketedVariation = bucketedVariation {
                 // save to user profile
-                self.saveProfile(ups: userProfileService, userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+                self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
             }
         }
         
@@ -234,8 +234,8 @@ class DefaultDecisionService : OPTDecisionService {
 
 extension DefaultDecisionService {
     
-    func variationId(ups: OPTUserProfileService, userId: String, experimentId: String) -> String? {
-        if let profile = ups.lookup(userId: userId),
+    func variationId(userId: String, experimentId: String) -> String? {
+        if let profile = userProfileService.lookup(userId: userId),
             let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
             let experimentMap = bucketMap[experimentId]
         {
@@ -245,8 +245,8 @@ extension DefaultDecisionService {
         }
     }
     
-    func saveProfile(ups: OPTUserProfileService, userId: String, experimentId: String, variationId: String) {
-        var profile = ups.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
+    func saveProfile(userId: String, experimentId: String, variationId: String) {
+        var profile = userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
         
         var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
         bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
@@ -254,7 +254,7 @@ extension DefaultDecisionService {
         profile[UserProfileKeys.kBucketMap] = bucketMap
         profile[UserProfileKeys.kUserId] = userId
         
-        ups.save(userProfile: profile)
+        userProfileService.save(userProfile: profile)
     }
     
 }

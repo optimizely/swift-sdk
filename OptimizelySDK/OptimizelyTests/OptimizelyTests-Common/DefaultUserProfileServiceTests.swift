@@ -28,12 +28,14 @@ class DefaultUserProfileServiceTests: XCTestCase {
     override func setUp() {
         ups = DefaultUserProfileService()
         ups.reset()
+        
         decisionService = DefaultDecisionService()
+        decisionService.userProfileService = ups
     }
     
     func testSave() {
         ups.save(userProfile: sampleProfile)
-        let variationId = decisionService.variationId(ups: ups, userId: "11", experimentId: "21")
+        let variationId = decisionService.variationId(userId: "11", experimentId: "21")
         XCTAssert(variationId == "31")
     }
 
@@ -52,40 +54,40 @@ class DefaultUserProfileServiceTests: XCTestCase {
 
     func testVariationId_Found() {
         ups.save(userProfile: sampleProfile)
-        let variationId = decisionService.variationId(ups: ups, userId: "11", experimentId: "22")
+        let variationId = decisionService.variationId(userId: "11", experimentId: "22")
         XCTAssert(variationId == "32")
     }
     
     func testVariationId_WrongUserId() {
         ups.save(userProfile: sampleProfile)
-        let variationId = decisionService.variationId(ups: ups, userId: "99999", experimentId: "21")
+        let variationId = decisionService.variationId(userId: "99999", experimentId: "21")
         XCTAssertNil(variationId)
     }
 
     func testVariationId_WrongExperimentId() {
         ups.save(userProfile: sampleProfile)
-        let variationId = decisionService.variationId(ups: ups, userId: "11", experimentId: "99999")
+        let variationId = decisionService.variationId(userId: "11", experimentId: "99999")
         XCTAssertNil(variationId)
     }
 
     func testSaveProfile_NewUserId() {
         ups.save(userProfile: sampleProfile)
-        decisionService.saveProfile(ups: ups, userId: "19999", experimentId: "29999", variationId: "39999")
-        let variationId = decisionService.variationId(ups: ups, userId: "19999", experimentId: "29999")
+        decisionService.saveProfile(userId: "19999", experimentId: "29999", variationId: "39999")
+        let variationId = decisionService.variationId(userId: "19999", experimentId: "29999")
         XCTAssert(variationId == "39999")
     }
     
     func testSaveProfile_OldUserIdWithNewExperiment() {
         ups.save(userProfile: sampleProfile)
-        decisionService.saveProfile(ups: ups, userId: "11", experimentId: "29999", variationId: "39999")
-        let variationId = decisionService.variationId(ups: ups, userId: "11", experimentId: "29999")
+        decisionService.saveProfile(userId: "11", experimentId: "29999", variationId: "39999")
+        let variationId = decisionService.variationId(userId: "11", experimentId: "29999")
         XCTAssert(variationId == "39999")
     }
 
     func testSaveProfile_OldUserIdWithOldExperimentWithNewVariation() {
         ups.save(userProfile: sampleProfile)
-        decisionService.saveProfile(ups: ups, userId: "11", experimentId: "21", variationId: "39999")
-        let variationId = decisionService.variationId(ups: ups, userId: "11", experimentId: "21")
+        decisionService.saveProfile(userId: "11", experimentId: "21", variationId: "39999")
+        let variationId = decisionService.variationId(userId: "11", experimentId: "21")
         XCTAssert(variationId == "39999")
     }
 

@@ -27,6 +27,17 @@ class OptimizelySDKTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
     
+    func testProjectConfigInvalidDatafile() {
+        var gotError = false
+        do {
+            let _ = try ProjectConfig(datafile: "{revision:1}")
+        }
+        catch {
+            gotError = true
+        }
+        XCTAssertTrue(gotError)
+    }
+    
     func testExample2() {
         let json = "{\"version\": \"4\", \"rollouts\": [{\"experiments\": [{\"status\": \"Running\", \"key\": \"11214290043\", \"layerId\": \"11216280045\", \"trafficAllocation\": [{\"entityId\": \"11196890101\", \"endOfRange\": 0}], \"audienceIds\": [], \"variations\": [{\"variables\": [{\"id\": \"11196660143\", \"value\": \"\"}], \"id\": \"11196890101\", \"key\": \"11196890101\", \"featureEnabled\": true}], \"forcedVariations\": {}, \"id\": \"11214290043\"}], \"id\": \"11216280045\"}], \"typedAudiences\": [], \"anonymizeIP\": true, \"projectId\": \"11102097459\", \"variables\": [], \"featureFlags\": [{\"experimentIds\": [\"11174010269\"], \"rolloutId\": \"11216280045\", \"variables\": [{\"defaultValue\": \"\", \"type\": \"string\", \"id\": \"11196660143\", \"key\": \"string_variable\"}], \"id\": \"11216320075\", \"key\": \"my_feature\"}], \"experiments\": [{\"status\": \"Running\", \"key\": \"my_experiment\", \"layerId\": \"11186120103\", \"trafficAllocation\": [{\"entityId\": \"11193600046\", \"endOfRange\": 5000}, {\"entityId\": \"11198460034\", \"endOfRange\": 10000}], \"audienceIds\": [], \"variations\": [{\"variables\": [{\"id\": \"11196660143\", \"value\": \"\"}], \"id\": \"11193600046\", \"key\": \"variation_1\", \"featureEnabled\": true}, {\"variables\": [], \"id\": \"11198460034\", \"key\": \"variation_2\", \"featureEnabled\": false}], \"forcedVariations\": {}, \"id\": \"11174010269\"}, {\"status\": \"Running\", \"key\": \"background_experiment\", \"layerId\": \"11150133482\", \"trafficAllocation\": [{\"entityId\": \"11146534908\", \"endOfRange\": 5000}, {\"entityId\": \"11192561814\", \"endOfRange\": 10000}], \"audienceIds\": [\"12097998496\"], \"variations\": [{\"variables\": [], \"id\": \"11146534908\", \"key\": \"variation_a\"}, {\"variables\": [], \"id\": \"11192561814\", \"key\": \"variation_b\"}], \"forcedVariations\": {}, \"id\": \"11178792174\"}], \"audiences\": [{\"id\": \"12097998496\", \"conditions\": \"[\\\"and\\\", [\\\"or\\\", [\\\"not\\\", [\\\"or\\\", {\\\"name\\\": \\\"testAttr\\\", \\\"type\\\": \\\"custom_attribute\\\", \\\"value\\\": \\\"some\\\"}]]]]\", \"name\": \"testAudience\"}], \"groups\": [], \"attributes\": [{\"id\": \"12248392446\", \"key\": \"testAttr\"}], \"botFiltering\": false, \"accountId\": \"8362480420\", \"events\": [{\"experimentIds\": [\"11174010269\", \"11178792174\"], \"id\": \"11173400866\", \"key\": \"sample_conversion\"}, {\"experimentIds\": [\"11174010269\"], \"id\": \"11196870086\", \"key\": \"my_conversion\"}, {\"experimentIds\": [], \"id\": \"12115533234\", \"key\": \"newevent\"}], \"revision\": \"12\"}"
         

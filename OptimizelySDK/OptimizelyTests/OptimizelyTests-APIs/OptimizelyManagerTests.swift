@@ -33,6 +33,14 @@ class OptimizelyManagerTests: XCTestCase {
         XCTAssertNil(variation, "no variation found")
 
     }
+    
+    func testTypedAudienceThroughProject() {
+        //        let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
+        let answer = try? optimizely?.config?.project.evaluateAudience(audienceId: "3468206643", attributes: ["booleanKey":true])
+        XCTAssertTrue(answer!!)
+        
+    }
+
 //
 //    func testBasicExperiment() {
 //        let basicVariation = try? optimizely?.activate(experimentKey: "basic_experiment", userId: "userId")
@@ -114,6 +122,17 @@ class OptimizelyManagerTests: XCTestCase {
              "d_4_2": "N/A"])
         
         XCTAssertEqual(variation, "all_traffic_variation")
+    }
+
+    func testGetExperimentGetVariation() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
+        
+        let experiment:Experiment? = optimizely?.config?.getExperiment(key: "ab_running_exp_audience_combo_empty_conditions")
+        
+        XCTAssertNotNil(experiment)
+        
+        let variation = experiment?.getVariation(key: "all_traffic_variation")
+        XCTAssertNotNil(variation)
     }
 
     func testPerformanceInitialize() {

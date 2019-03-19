@@ -16,10 +16,16 @@
 
 import Foundation
 
+public enum DataStoreType {
+    case file, memory, userDefaults
+}
+
 open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     // the max failure count.  there is no backoff timer.
     static let MAX_FAILURE_COUNT = 3
     
+    // default timerInterval
+    open var timerInterval:TimeInterval = 60 * 5 // every five minutes
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
     open var batchSize:Int = 10
@@ -28,22 +34,48 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     open var maxQueueSize:Int = 3000
     
     lazy var logger = HandlerRegistryService.shared.injectLogger()
+    var backingStore:DataStoreType = .file
+    var backingStoreName:String = "OPTEventQueue"
     
     // for dispatching events
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
-    let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: "OPTEventQueue"))
-
+    let dataStore:DataStoreQueuStackImpl<EventForDispatch>
     // timer as a atomic property.
     var timer:AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    // default timerInterval
-    open var timerInterval:TimeInterval = 60 * 5 // every five minutes
-    
     required public init() {
+        switch backingStore {
+        case .file:
+            self.dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: backingStoreName))
+        case .memory:
+            self.dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: backingStoreName))
+        case .userDefaults:
+            self.dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreUserDefaults())
+        }
+
         subscribe()
     }
-    
+
+    public init(batchSize:Int = 10, maxQueueSize:Int = 3000, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*5 ) {
+        self.batchSize = batchSize
+        self.maxQueueSize = maxQueueSize
+        self.backingStore = backingStore
+        self.backingStoreName = dataStoreName
+        self.timerInterval = timerInterval
+        
+        switch backingStore {
+        case .file:
+            self.dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: backingStoreName))
+        case .memory:
+            self.dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: backingStoreName))
+        case .userDefaults:
+            self.dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreUserDefaults())
+        }
+        
+        subscribe()
+    }
+
     deinit {
         if let timer = timer.property {
             timer.invalidate()

@@ -18,34 +18,30 @@ enum AttributeValue: Codable, Equatable {
     case others
     
     init?(value: Any?) {
+
         guard let value = value else { return nil }
-        
-        if value is String {
-            self = .string(value as! String)
+
+        if let stringValue = Utils.getStringValue(value) {
+            self = .string(stringValue)
             return
         }
-        
+
         // NOTE: keep {Double, Float} before Int checking for testing consistency
-        if Utils.isDoubleType(value) {
-            self = .double(value as! Double)
+        if let doubleValue = Utils.getDoubleValue(value) {
+            self = .double(doubleValue)
             return
         }
         
-        if Utils.isFloatType(value) {
-            self = .double(Double(value as! Float))
+        if let intValue = Utils.getIntValue(value) {
+            self = .int(intValue)
             return
         }
         
-        if Utils.isIntType(value) {
-            self = .int(value as! Int)
+        if let boolValue = Utils.getBoolValue(value) {
+            self = .bool(boolValue)
             return
         }
-        
-        if Utils.isBoolType(value) {
-            self = .bool(value as! Bool)
-            return
-        }
-        
+
         return nil
     }
     

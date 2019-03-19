@@ -54,7 +54,7 @@ class OTUtils {
     
     static func createClearUserProfileService() -> DefaultUserProfileService {
         let ups = DefaultUserProfileService()
-        ups.save(userProfile: DefaultUserProfileService.UserProfileData())
+        ups.reset()
         return ups
     }
     

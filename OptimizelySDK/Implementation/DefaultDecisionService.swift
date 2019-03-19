@@ -49,17 +49,19 @@ class DefaultDecisionService : OPTDecisionService {
         
         // ---- check for whitelisted variation registered at runtime ----
         if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
-            let variation = experiment.variations.filter({$0.id == variationId }).first {
+            let variation = experiment.getVariation(id: variationId) {
             return variation;
         }
 
         // ---- check if the experiment has forced variation ----
-        if let variationKey = experiment.forcedVariations[userId], let variation = experiment.variations.filter({$0.key == variationKey}).first {
+        if let variationKey = experiment.forcedVariations[userId],
+            let variation = experiment.getVariation(key: variationKey) {
             return variation
         }
         
         // ---- check if a valid variation is stored in the user profile ----
-        if let variationId = userProfileService.variationId(userId: userId, experimentId: experimentId), let variation = experiment.variations.filter({$0.id == variationId}).first {
+        if let variationId = self.getVariationIdFromProfile(userId: userId, experimentId: experimentId),
+            let variation = experiment.getVariation(id: variationId) {
             return variation
         }
         
@@ -75,7 +77,7 @@ class DefaultDecisionService : OPTDecisionService {
             
             if let bucketedVariation = bucketedVariation {
                 // save to user profile
-                userProfileService.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+                self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
             }
         }
         
@@ -226,5 +228,34 @@ class DefaultDecisionService : OPTDecisionService {
         return bucketingId;
     }
     
+}
+
+// MARK: - UserProfileService Helpers
+
+extension DefaultDecisionService {
+    
+    func getVariationIdFromProfile(userId: String, experimentId: String) -> String? {
+        if let profile = userProfileService.lookup(userId: userId),
+            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+            let experimentMap = bucketMap[experimentId]
+        {
+            return experimentMap[UserProfileKeys.kVariationId]
+        } else {
+            return nil
+        }
+    }
+    
+    func saveProfile(userId: String, experimentId: String, variationId: String) {
+        var profile = userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
+        
+        var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
+        bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
+        
+        profile[UserProfileKeys.kBucketMap] = bucketMap
+        profile[UserProfileKeys.kUserId] = userId
+        
+        userProfileService.save(userProfile: profile)
+    }
     
 }
+

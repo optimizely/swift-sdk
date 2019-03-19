@@ -84,7 +84,7 @@ open class OptimizelyManager: NSObject {
 
         self.registerServices(sdkKey: sdkKey,
                               logger: logger ?? DefaultLogger(),
-                              eventDispatcher: eventDispatcher ?? DefaultEventDispatcher(),
+                              eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               userProfileService: userProfileService ?? DefaultUserProfileService(),
                               datafileHandler: DefaultDatafileHandler(),
                               bucketer: DefaultBucketer(),

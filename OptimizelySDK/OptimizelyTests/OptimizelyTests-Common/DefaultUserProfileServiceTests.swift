@@ -22,6 +22,19 @@ class DefaultUserProfileServiceTests: XCTestCase {
         "user_id": "11"
     ]
     
+    let sampleProfile2: [String: Any] = [
+        "experiment_bucket_map": [
+            "61": [
+                "variation_id": "71"
+            ],
+            "62": [
+                "variation_id": "72"
+            ]
+        ],
+        "user_id": "51"
+    ]
+
+    
     var ups: DefaultUserProfileService!
     var decisionService: DefaultDecisionService!
     
@@ -68,6 +81,34 @@ class DefaultUserProfileServiceTests: XCTestCase {
         ups.save(userProfile: sampleProfile)
         let variationId = decisionService.variationId(userId: "11", experimentId: "99999")
         XCTAssertNil(variationId)
+    }
+    
+    func testSaveProfile_MultipleProfiels() {
+        ups.save(userProfile: sampleProfile)
+        
+        var profile = ups.lookup(userId: "11")
+        XCTAssertNotNil(profile)
+        profile = ups.lookup(userId: "51")
+        XCTAssertNil(profile)
+
+        ups.save(userProfile: sampleProfile2)
+        
+        profile = ups.lookup(userId: "51")
+        XCTAssertNotNil(profile)
+    }
+
+    func testSaveProfile_MultipleProfiels2() {
+        ups.save(userProfile: sampleProfile)
+        
+        var variationId = decisionService.variationId(userId: "11", experimentId: "21")
+        XCTAssert(variationId == "31")
+        variationId = decisionService.variationId(userId: "51", experimentId: "61")
+        XCTAssertNil(variationId)
+
+        ups.save(userProfile: sampleProfile2)
+        
+        variationId = decisionService.variationId(userId: "51", experimentId: "61")
+        XCTAssert(variationId == "71")
     }
 
     func testSaveProfile_NewUserId() {

@@ -60,7 +60,7 @@ class DefaultDecisionService : OPTDecisionService {
         }
         
         // ---- check if a valid variation is stored in the user profile ----
-        if let variationId = self.variationId(userId: userId, experimentId: experimentId),
+        if let variationId = self.getVariationIdFromProfile(userId: userId, experimentId: experimentId),
             let variation = experiment.getVariation(id: variationId) {
             return variation
         }
@@ -234,7 +234,7 @@ class DefaultDecisionService : OPTDecisionService {
 
 extension DefaultDecisionService {
     
-    func variationId(userId: String, experimentId: String) -> String? {
+    func getVariationIdFromProfile(userId: String, experimentId: String) -> String? {
         if let profile = userProfileService.lookup(userId: userId),
             let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
             let experimentMap = bucketMap[experimentId]

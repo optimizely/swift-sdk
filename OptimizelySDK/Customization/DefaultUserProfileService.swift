@@ -94,14 +94,14 @@ open class DefaultUserProfileService: OPTUserProfileService {
 
     open func variationId(userId: String, experimentId: String) -> String? {
         var retVal:String?
-        lock.sync {
-            if let profile =  profiles[userId],
-                let bucketMap = profile[DefaultUserProfileService.bucketMap] as? UPBucketMap,
-                let experimentMap = bucketMap[experimentId]
-            {
-                retVal = experimentMap[DefaultUserProfileService.variationId]
-            }
+        
+        if let profile =  self.lookup(userId: userId),
+            let bucketMap = profile[DefaultUserProfileService.bucketMap] as? UPBucketMap,
+            let experimentMap = bucketMap[experimentId]
+        {
+            retVal = experimentMap[DefaultUserProfileService.variationId]
         }
+
         return retVal
     }
 

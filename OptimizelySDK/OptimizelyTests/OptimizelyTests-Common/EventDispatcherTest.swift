@@ -266,6 +266,35 @@ class EventDispatcherTest: XCTestCase {
 
     }
     
+    func testDataStoreQueue() {
+        let queue = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: "backingStoreName"))
+        
+        queue.save(item: EventForDispatch(body: "Blah".data(using: .utf8)!))
+        
+        let event = queue.getFirstItem()
+        let str = String(data: (event?.body)!, encoding: .utf8)
+        
+        XCTAssert(str == "Blah")
+        
+        XCTAssert(queue.count == 1)
+        
+        let event2 = queue.getLastItem()
+
+        let str2 = String(data: (event2?.body)!, encoding: .utf8)
+        
+        XCTAssert(str2 == "Blah")
+        
+        XCTAssert(queue.count == 1)
+        
+        let _ = queue.removeFirstItem()
+        
+        XCTAssert(queue.count == 0)
+        
+        let _ = queue.removeLastItem()
+        
+        XCTAssert(queue.count == 0)
+    }
+    
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {

@@ -42,16 +42,16 @@ class Utils {
     
     // MARK: - Type Conversion
     
-    static func getIntValue(_ value: Any) -> Int? {
+    static func getInt64Value(_ value: Any) -> Int64? {
         guard isIntType(value) else { return nil }
         
-        var finalValue: Int
+        var finalValue: Int64
         switch value {
-        case is Int8: finalValue = Int(value as! Int8)
-        case is Int16: finalValue = Int(value as! Int16)
-        case is Int32: finalValue = Int(value as! Int32)
-        case is Int64: finalValue = Int(value as! Int64)
-        default: finalValue = Int(value as! Int)
+        case is Int8: finalValue = Int64(value as! Int8)
+        case is Int16: finalValue = Int64(value as! Int16)
+        case is Int32: finalValue = Int64(value as! Int32)
+        case is Int64: finalValue = Int64(value as! Int64)
+        default: finalValue = Int64(value as! Int)
         }
         
         return finalValue

@@ -31,7 +31,7 @@ class AttributeValueTests: XCTestCase {
         XCTAssert(model == AttributeValue.double(Double(value)))
         
         let model2 = AttributeValue(value: value)
-        XCTAssert(model2 == AttributeValue.int(value))
+        XCTAssert(model2 == AttributeValue.int(Int64(value)))
     }
     
     func testDecodeSuccessWithInt8() {
@@ -41,7 +41,7 @@ class AttributeValueTests: XCTestCase {
         XCTAssert(model == AttributeValue.double(Double(value)))
         
         let model2 = AttributeValue(value: Int8(value))
-        XCTAssert(model2 == AttributeValue.int(value))
+        XCTAssert(model2 == AttributeValue.int(Int64(value)))
     }
 
     func testDecodeSuccessWithInt16() {
@@ -51,7 +51,7 @@ class AttributeValueTests: XCTestCase {
         XCTAssert(model == AttributeValue.double(Double(value)))
         
         let model2 = AttributeValue(value: Int16(value))
-        XCTAssert(model2 == AttributeValue.int(value))
+        XCTAssert(model2 == AttributeValue.int(Int64(value)))
     }
 
     func testDecodeSuccessWithInt32() {
@@ -61,7 +61,7 @@ class AttributeValueTests: XCTestCase {
         XCTAssert(model == AttributeValue.double(Double(value)))
         
         let model2 = AttributeValue(value: Int32(value))
-        XCTAssert(model2 == AttributeValue.int(value))
+        XCTAssert(model2 == AttributeValue.int(Int64(value)))
     }
 
     func testDecodeSuccessWithInt64() {
@@ -71,7 +71,7 @@ class AttributeValueTests: XCTestCase {
         XCTAssert(model == AttributeValue.double(Double(value)))
         
         let model2 = AttributeValue(value: Int64(value))
-        XCTAssert(model2 == AttributeValue.int(value))
+        XCTAssert(model2 == AttributeValue.int(Int64(value)))
     }
     
     func testDecodeSuccessWithInt64_LargeValue() {
@@ -81,7 +81,7 @@ class AttributeValueTests: XCTestCase {
         XCTAssert(model == AttributeValue.double(Double(value)))
         
         let model2 = AttributeValue(value: value)
-        XCTAssert(model2 == AttributeValue.int(Int(value)))
+        XCTAssert(model2 == AttributeValue.int(Int64(value)))
     }
 
 

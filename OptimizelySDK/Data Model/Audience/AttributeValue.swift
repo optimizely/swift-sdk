@@ -10,8 +10,7 @@ import Foundation
 
 enum AttributeValue: Codable, Equatable {
     case string(String)
-    // TODO: [Jae] fix these to Int64 to support full value range
-    case int(Int)
+    case int(Int64)         // supported value range [-2^53, 2^53]
     case double(Double)
     case bool(Bool)
     // not defined in datafile schema, but required for forward compatiblity (see Nikhil's doc)
@@ -32,8 +31,8 @@ enum AttributeValue: Codable, Equatable {
             return
         }
         
-        if let intValue = Utils.getIntValue(value) {
-            self = .int(intValue)
+        if let int64Value = Utils.getInt64Value(value) {
+            self = .int(int64Value)
             return
         }
         
@@ -59,7 +58,7 @@ enum AttributeValue: Codable, Equatable {
             return
         }
         
-        if let value = try? container.decode(Int.self) {
+        if let value = try? container.decode(Int64.self) {
             self = .int(value)
             return
         }

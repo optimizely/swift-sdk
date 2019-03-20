@@ -101,7 +101,7 @@ open class DefaultUserProfileService: OPTUserProfileService {
         }
     }
     
-    func reset(userProfiles: UserProfileData? = nil) {
+    open func reset(userProfiles: UserProfileData? = nil) {
         lock.async {
             self.profiles = userProfiles ?? UserProfileData()
             let defaults = UserDefaults.standard

@@ -201,7 +201,7 @@ extension AttributeValue {
         }
         
         // valid range: [-2^53, 2^53] i
-        if abs(num) > pow(2, 32) {
+        if abs(num) > pow(2, 53) {
             throw OptimizelyError.attributeValueInvalid
         }
     }

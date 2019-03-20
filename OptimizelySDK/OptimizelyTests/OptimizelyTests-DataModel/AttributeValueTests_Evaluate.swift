@@ -149,23 +149,29 @@ extension AttributeValueTests_Evaluate {
     
     func testIsGreaterSuccessWithDouble_LargeValue() {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertNil(try? model.isGreater(than: pow(2, 61) as Double))
+        XCTAssertFalse(try! model.isGreater(than: positiveMaxValueAllowed as Double))
+        XCTAssertNil(try? model.isGreater(than: positiveMaxValueAllowed + 100.0 as Double))
     }
     
     func testIsGreaterSuccessWithDouble_NegativeLargeValue() {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertNil(try? model.isGreater(than: -pow(2, 61) as Double))
+        XCTAssertTrue(try! model.isGreater(than: negativeMaxValueAllowed as Double))
+        XCTAssertNil(try? model.isGreater(than: negativeMaxValueAllowed - 100.0 as Double))
     }
     
     func testIsGreaterSuccessWithFloat_LargeValue() {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertNil(try? model.isGreater(than: pow(2, 61) as Float))
+        XCTAssertFalse(try! model.isGreater(than: Float(positiveMaxValueAllowed)))
+        // precision issue; adding 100 is not big enough for overflow
+        XCTAssertNil(try? model.isGreater(than: Float(positiveMaxValueAllowed * 2.0)))
     }
     
     func testIsGreaterSuccessWithInt64_LargeValue() {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertNil(try? model.isGreater(than: Int64(pow(2, 61) as Double)))
+        XCTAssertFalse(try! model.isGreater(than: Int64(positiveMaxValueAllowed)))
+        XCTAssertNil(try? model.isGreater(than: Int64(positiveMaxValueAllowed + 100.0)))
     }
+
 }
 
 // MARK: - Evaluate (LessThan)
@@ -218,23 +224,36 @@ extension AttributeValueTests_Evaluate {
     
     func testIsLessSuccessWithDouble_LargeValue() {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertNil(try? model.isLess(than: pow(2, 61) as Double))
+        XCTAssertTrue(try! model.isLess(than: positiveMaxValueAllowed as Double))
+        XCTAssertNil(try? model.isLess(than: positiveMaxValueAllowed + 100.0 as Double))
     }
     
     func testIsLessSuccessWithDouble_NegativeLargeValue() {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertNil(try? model.isLess(than: -pow(2, 61) as Double))
+        XCTAssertFalse(try! model.isLess(than: negativeMaxValueAllowed as Double))
+        XCTAssertNil(try? model.isLess(than: negativeMaxValueAllowed - 100.0 as Double))
     }
     
     func testIsLessSuccessWithFloat_LargeValue() {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertNil(try? model.isLess(than: pow(2, 61) as Float))
+        XCTAssertTrue(try! model.isLess(than: Float(positiveMaxValueAllowed)))
+        XCTAssertNil(try? model.isLess(than: Float(positiveMaxValueAllowed * 2.0)))
     }
     
     func testIsLessSuccessWithInt64_LargeValue() {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertNil(try? model.isLess(than: Int64(pow(2, 61) as Double)))
+        XCTAssertTrue(try! model.isLess(than: Int64(positiveMaxValueAllowed)))
+        XCTAssertNil(try? model.isLess(than: Int64(positiveMaxValueAllowed + 100.0)))
+    }
+    
+    // MARK: - Utils
+    
+    var positiveMaxValueAllowed: Double {
+        return pow(2, 53)
+    }
+    
+    var negativeMaxValueAllowed: Double {
+        return -pow(2, 53)
     }
 
-    
 }

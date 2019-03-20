@@ -110,7 +110,10 @@ class AttributeValueTests: XCTestCase {
      }
     
     func testDecodeSuccessWithInt64_LargeValue() {
-        let value = Int64(pow(2, 60) as Double)
+        // big numbers (larer than 2^53 max valid range) allowed to parse ok
+        // only filtered as invalid when evaluated
+        
+        let value = Int64(pow(2, 53) as Double)
         
         let model = try! OTUtils.getAttributeValueFromNative(value)
         XCTAssert(model == AttributeValue.double(Double(value)))

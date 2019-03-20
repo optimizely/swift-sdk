@@ -72,7 +72,7 @@ import Foundation
 //}
 
 open class DefaultUserProfileService: OPTUserProfileService {
-    typealias UserProfileData = [String: UPProfile]
+    public typealias UserProfileData = [String: UPProfile]
 
     var profiles: UserProfileData
     let lock = DispatchQueue(label: "com.optimizely.UserProfileService")
@@ -101,7 +101,7 @@ open class DefaultUserProfileService: OPTUserProfileService {
         }
     }
     
-    func reset(userProfiles: UserProfileData? = nil) {
+    open func reset(userProfiles: UserProfileData? = nil) {
         lock.async {
             self.profiles = userProfiles ?? UserProfileData()
             let defaults = UserDefaults.standard

@@ -30,7 +30,7 @@ class OptimizelyManagerTests: XCTestCase {
 //        let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
         let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment_with_and", userId: "userId")
 
-        XCTAssertNil(variation, "no variation found")
+        XCTAssertNil(variation as Any?, "no variation found")
 
     }
     

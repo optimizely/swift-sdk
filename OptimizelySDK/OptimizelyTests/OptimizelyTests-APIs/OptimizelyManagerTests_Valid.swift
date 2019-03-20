@@ -67,19 +67,15 @@ class OptimizelyManagerTests_Valid: XCTestCase {
     }
     
     func testGetForcedVariation() {
-        do {
-            let variationKey: String? = try self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
-            XCTAssertNil(variationKey)
-        } catch {
-            XCTAssert(false)
-        }
+        let variationKey: String? = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
+        XCTAssertNil(variationKey)
     }
     
     func testSetForcedVariationKey() {
-        try! self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+        let _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
                                                 userId: kUserId,
                                                 variationKey: kVariationOtherKey)
-        let variationKey: String = try! self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
+        let variationKey: String? = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
         XCTAssert(variationKey == kVariationOtherKey)
     }
     

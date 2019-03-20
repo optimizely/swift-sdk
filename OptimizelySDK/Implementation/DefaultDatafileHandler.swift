@@ -39,7 +39,8 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         if let url = URL(string: str) {
             let task = session.downloadTask(with: url){ (url, response, error) in
                 self.logger?.log(level: .debug, message: response.debugDescription)
-                if let url = url, let projectConfig = try? Data(contentsOf: url) {
+                if let response = response as? HTTPURLResponse, response.statusCode == 200,
+                    let url = url, let projectConfig = try? Data(contentsOf: url) {
                     result = projectConfig
                     self.saveDatafile(sdkKey: sdkKey, dataFile: projectConfig)
                 }
@@ -156,7 +157,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func saveDatafile(sdkKey: String, dataFile: Data) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             
-            let fileURL = dir.appendingPathComponent(sdkKey)
+            let fileURL = dir.appendingPathComponent(sdkKey, isDirectory: false)
             
             //writing
             do {
@@ -189,7 +190,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func isDatafileSaved(sdkKey: String) -> Bool {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let fileURL = dir.appendingPathComponent(sdkKey)
-            return FileManager.default.fileExists(atPath:fileURL.absoluteString)
+            return FileManager.default.fileExists(atPath:fileURL.path)
         }
         
         return false
@@ -198,7 +199,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func removeSavedDatafile(sdkKey: String) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let fileURL = dir.appendingPathComponent(sdkKey)
-            if FileManager.default.fileExists(atPath:fileURL.absoluteString) {
+            if FileManager.default.fileExists(atPath:fileURL.path) {
                 try? FileManager.default.removeItem(at: fileURL)
             }
         }

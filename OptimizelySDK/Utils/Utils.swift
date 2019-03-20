@@ -21,12 +21,12 @@ class Utils {
     
     static func isIntType(_ value: Any) -> Bool {
         let allSwiftIntTypes: [Any.Type] = [Int.self, Int8.self, Int16.self, Int32.self, Int64.self,
-                                       UInt.self, UInt8.self, UInt16.self, UInt32.self, UInt64.self]
-
+                                            UInt.self, UInt8.self, UInt16.self, UInt32.self, UInt64.self]
+        
         let isSwiftIntType = allSwiftIntTypes.contains{ $0 == type(of: value) }
-        let isNSNumberIntType = (value is Int)
-
-        return (isSwiftIntType || isNSNumberIntType) && !isNSNumberBoolType(value)
+        let isNSNumberIntType = (value is Int) && !isNSNumberBoolType(value)
+        
+        return isSwiftIntType || isNSNumberIntType
     }
     
     static func isDoubleType(_ value: Any) -> Bool {
@@ -35,9 +35,9 @@ class Utils {
                                             Float.self, Float80.self]
         
         let isSwiftNumType = allSwiftNumTypes.contains{ $0 == type(of: value) }
-        let isNSNumberNumType = (value is Double)
-
-        return (isSwiftNumType || isNSNumberNumType) && !isNSNumberBoolType(value)
+        let isNSNumberNumType = (value is Double) && !isNSNumberBoolType(value)
+        
+        return isSwiftNumType || isNSNumberNumType
     }
     
     static func isNSNumberBoolType(_ value: Any) -> Bool {

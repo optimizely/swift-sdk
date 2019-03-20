@@ -187,10 +187,13 @@ extension AttributeValue {
     }
     
     func checkValidAttributeNumber(_ number: Any?) throws {
+        guard let number = number else { return }
+        
         var num: Double
-        if let number = number as? Int {
+        
+        if let number = Utils.getInt64Value(number) {
             num = Double(number)
-        } else if let number = number as? Double {
+        } else if let number = Utils.getDoubleValue(number) {
             num = number
         } else {
             // do not check range if it's not a number

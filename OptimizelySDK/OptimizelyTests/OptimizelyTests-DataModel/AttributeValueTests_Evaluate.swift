@@ -123,6 +123,49 @@ extension AttributeValueTests_Evaluate {
         XCTAssertFalse(try! model.isGreater(than: 13.5))
     }
     
+    // MARK: - Int8/16/32/64
+    
+    func testIsGreaterSuccessWithInt8() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertTrue(try! model.isGreater(than: Int8(10)))
+    }
+
+    func testIsGreaterSuccessWithInt16() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertTrue(try! model.isGreater(than: Int16(10)))
+    }
+
+    func testIsGreaterSuccessWithInt32() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertTrue(try! model.isGreater(than: Int32(10)))
+    }
+
+    func testIsGreaterSuccessWithInt64() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertTrue(try! model.isGreater(than: Int64(10)))
+    }
+
+    // MARK: - Large numbers
+    
+    func testIsGreaterSuccessWithDouble_LargeValue() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertNil(try? model.isGreater(than: pow(2, 61) as Double))
+    }
+    
+    func testIsGreaterSuccessWithDouble_NegativeLargeValue() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertNil(try? model.isGreater(than: -pow(2, 61) as Double))
+    }
+    
+    func testIsGreaterSuccessWithFloat_LargeValue() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertNil(try? model.isGreater(than: pow(2, 61) as Float))
+    }
+    
+    func testIsGreaterSuccessWithInt64_LargeValue() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertNil(try? model.isGreater(than: Int64(pow(2, 61) as Double)))
+    }
 }
 
 // MARK: - Evaluate (LessThan)
@@ -148,5 +191,50 @@ extension AttributeValueTests_Evaluate {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertFalse(try! model.isLess(than: 13.5))
     }
+    
+    // MARK: - Int8/16/32/64
+    
+    func testIsLessSuccessWithInt8() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertTrue(try! model.isLess(than: Int8(20)))
+    }
+    
+    func testIsLessSuccessWithInt16() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertTrue(try! model.isLess(than: Int16(20)))
+    }
+    
+    func testIsLessSuccessWithInt32() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertTrue(try! model.isLess(than: Int32(20)))
+    }
+    
+    func testIsLessSuccessWithInt64() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertTrue(try! model.isLess(than: Int64(20)))
+    }
+    
+    // MARK: - Large numbers
+    
+    func testIsLessSuccessWithDouble_LargeValue() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertNil(try? model.isLess(than: pow(2, 61) as Double))
+    }
+    
+    func testIsLessSuccessWithDouble_NegativeLargeValue() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertNil(try? model.isLess(than: -pow(2, 61) as Double))
+    }
+    
+    func testIsLessSuccessWithFloat_LargeValue() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertNil(try? model.isLess(than: pow(2, 61) as Float))
+    }
+    
+    func testIsLessSuccessWithInt64_LargeValue() {
+        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        XCTAssertNil(try? model.isLess(than: Int64(pow(2, 61) as Double)))
+    }
+
     
 }

@@ -267,7 +267,7 @@ class EventDispatcherTest: XCTestCase {
     }
     
     func testDataStoreQueue() {
-        let queue = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: "backingStoreName"))
+        let queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: "backingStoreName"))
         
         queue.save(item: EventForDispatch(body: "Blah".data(using: .utf8)!))
         

@@ -14,6 +14,7 @@
 		0B0590192209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B05901A2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B05901B2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
+		0B11272E2242D817002A9C20 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		0B4AE9FA22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
 		0B4AE9FB22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
 		0B4AEA112228A6430047B75D /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9FC2228A6410047B75D /* bucketing_id.json */; };
@@ -58,6 +59,8 @@
 		0B4E11FA21EE8FF400D5B370 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		0B4E11FC21EE90F600D5B370 /* DataStoreUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11FB21EE90F600D5B370 /* DataStoreUserDefaults.swift */; };
 		0B4E11FD21EE90F600D5B370 /* DataStoreUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11FB21EE90F600D5B370 /* DataStoreUserDefaults.swift */; };
+		0B626D612242B98E00E4F7DA /* NotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B626D602242B98D00E4F7DA /* NotificationCenterTests.swift */; };
+		0B626D622242B98E00E4F7DA /* NotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B626D602242B98D00E4F7DA /* NotificationCenterTests.swift */; };
 		0B77D04022331D1E005AA83F /* OptimizelyManager+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77D03F22331D1E005AA83F /* OptimizelyManager+Extension.swift */; };
 		0B77D04122331E0D005AA83F /* OptimizelyManager+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77D03F22331D1E005AA83F /* OptimizelyManager+Extension.swift */; };
 		0B77D04222331E0E005AA83F /* OptimizelyManager+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77D03F22331D1E005AA83F /* OptimizelyManager+Extension.swift */; };
@@ -127,7 +130,7 @@
 		0BE644F4223821D3009A5D1D /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
 		0BE644F5223821D3009A5D1D /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
 		0BE644F6223821D3009A5D1D /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
-		5BB8F7BE9083EE6B10B7F6F5 /* Pods_OptimizelyTests_Common_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8B9DE7C938C3A76F4ED228 /* Pods_OptimizelyTests_Common_iOS.framework */; };
+		5BB8F7BE9083EE6B10B7F6F5 /* Pods_OptimizelyTests_Common_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8B9DE7C938C3A76F4ED228 /* Pods_OptimizelyTests_Common_iOS.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		6E1A1B8F223C484B0070160A /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */; };
 		6E1A1B90223C484B0070160A /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */; };
 		6E1A1B91223C484B0070160A /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */; };
@@ -586,7 +589,7 @@
 		6EA425562218E4DB00B074B5 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A222121D27009A171F /* OTUtils.swift */; };
 		6EA425602218E58400B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6EA4256F2218E60A00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
-		6EA4257E2218E61F00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
+		6EA4257E2218E61F00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		6EA425842218E69700B074B5 /* OptimizelySwiftSDKiOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99121E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests.swift */; };
 		6EA425852218E69700B074B5 /* DecisionServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99221E6BAA700B0C2C7 /* DecisionServiceTest.swift */; };
 		6EA425872218E69700B074B5 /* BucketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99421E6BAA700B0C2C7 /* BucketTests.swift */; };
@@ -1012,7 +1015,6 @@
 		6EAE8F2222306D45007D4A37 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AEA092228A6420047B75D /* rollout_bucketing.json */; };
 		6EAE8F2322306D45007D4A37 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AEA0F2228A6430047B75D /* simple_datafile.json */; };
 		6EAE8F2422306D45007D4A37 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AEA102228A6430047B75D /* unsupported_datafile.json */; };
-		6EBAEB7521E3FEF900D13AA9 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EBAEB7C21E3FEF900D13AA9 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EC126172218D97E00C1FC97 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A222121D27009A171F /* OTUtils.swift */; };
 		6EC126182218D97F00C1FC97 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A222121D27009A171F /* OTUtils.swift */; };
@@ -1166,6 +1168,7 @@
 		0B61625921B870C6000D7A28 /* DefaultUserProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultUserProfileService.swift; sourceTree = "<group>"; };
 		0B61625C21B8B82A000D7A28 /* JSONParse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONParse.swift; sourceTree = "<group>"; };
 		0B61625E21B8C3A9000D7A28 /* DefaultLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
+		0B626D602242B98D00E4F7DA /* NotificationCenterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationCenterTests.swift; sourceTree = "<group>"; };
 		0B77D03F22331D1E005AA83F /* OptimizelyManager+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OptimizelyManager+Extension.swift"; sourceTree = "<group>"; };
 		0B77D05722370526005AA83F /* BackgroundingCallbacks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundingCallbacks.swift; sourceTree = "<group>"; };
 		0B7B18842231D8B800A1F85D /* DataStoreMemory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreMemory.swift; sourceTree = "<group>"; };
@@ -1263,6 +1266,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0B11272D2242D80A002A9C20 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B11272E2242D817002A9C20 /* Optimizely.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E614DCA21E3F389005982A1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1347,14 +1358,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6EBAEB7121E3FEF900D13AA9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6EBAEB7521E3FEF900D13AA9 /* Optimizely.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1650,6 +1653,7 @@
 		6EA4256B2218E60A00B074B5 /* OptimizelyTests-Common */ = {
 			isa = PBXGroup;
 			children = (
+				0B626D602242B98D00E4F7DA /* NotificationCenterTests.swift */,
 				6EF4B51B2239C7D9002DE8B6 /* BatchEventBuilderTests_Corners.swift */,
 				6ED1B8F92225AA6500C4C774 /* DefaultUserProfileServiceTests.swift */,
 				6E4DD99121E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests.swift */,
@@ -1957,8 +1961,8 @@
 			buildConfigurationList = 6EBAEB8221E3FEF900D13AA9 /* Build configuration list for PBXNativeTarget "OptimizelyTests-iOS" */;
 			buildPhases = (
 				6EBAEB7021E3FEF900D13AA9 /* Sources */,
-				6EBAEB7121E3FEF900D13AA9 /* Frameworks */,
 				6EBAEB7221E3FEF900D13AA9 /* Resources */,
+				0B11272D2242D80A002A9C20 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2755,6 +2759,7 @@
 				6EA425422218E4A300B074B5 /* AttributeValue.swift in Sources */,
 				6EA4253D2218E4A300B074B5 /* BatchEvent.swift in Sources */,
 				6EA4253A2218E4A300B074B5 /* DataStoreQueueStack.swift in Sources */,
+				0B626D622242B98E00E4F7DA /* NotificationCenterTests.swift in Sources */,
 				6EA425402218E4A300B074B5 /* ConditionLeaf.swift in Sources */,
 				6EA4253E2218E4A300B074B5 /* Audience.swift in Sources */,
 				6EA425532218E4A300B074B5 /* Result.swift in Sources */,
@@ -2921,6 +2926,7 @@
 				6EA425BA2218E74D00B074B5 /* BatchEventBuilder.swift in Sources */,
 				6EA425AE2218E74D00B074B5 /* OptimizelyResult.swift in Sources */,
 				6EA425CA2218E74D00B074B5 /* ConditionHolder.swift in Sources */,
+				0B626D612242B98E00E4F7DA /* NotificationCenterTests.swift in Sources */,
 				6EA4258C2218E6A000B074B5 /* OTUtils.swift in Sources */,
 				0B77D05B22370526005AA83F /* BackgroundingCallbacks.swift in Sources */,
 				6EA425B42218E74D00B074B5 /* OPTLogger.swift in Sources */,

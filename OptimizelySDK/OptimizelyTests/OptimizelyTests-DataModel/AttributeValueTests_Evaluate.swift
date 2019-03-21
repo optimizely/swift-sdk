@@ -61,6 +61,29 @@ class AttributeValueTests_Evaluate: XCTestCase {
         }
     }
     
+    // MARK: - Bool compared with Numbers
+    
+    func testIsExactMatchFailWhenBoolComparedWithNumbers() {
+        let modelTrue = try! OTUtils.getAttributeValueFromNative(true)
+        XCTAssertNil(try? modelTrue.isExactMatch(with: Int(1)))
+        XCTAssertNil(try? modelTrue.isExactMatch(with: Double(1)))
+
+        let modelFalse = try! OTUtils.getAttributeValueFromNative(false)
+        XCTAssertNil(try? modelFalse.isExactMatch(with: Int(0)))
+        XCTAssertNil(try? modelFalse.isExactMatch(with: Double(0)))
+
+        let modelInt1 = try! OTUtils.getAttributeValueFromNative(Int(1))
+        XCTAssertNil(try? modelInt1.isExactMatch(with: true))
+        let modelInt0 = try! OTUtils.getAttributeValueFromNative(Int(0))
+        XCTAssertNil(try? modelInt0.isExactMatch(with: false))
+
+        let modelDouble1 = try! OTUtils.getAttributeValueFromNative(Double(1))
+        XCTAssertNil(try? modelDouble1.isExactMatch(with: true))
+        let modelDouble0 = try! OTUtils.getAttributeValueFromNative(Double(0))
+        XCTAssertNil(try? modelDouble0.isExactMatch(with: false))
+
+    }
+    
 }
 
 // MARK: - Evaluate (Substring)

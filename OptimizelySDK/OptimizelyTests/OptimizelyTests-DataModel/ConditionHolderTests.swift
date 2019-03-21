@@ -91,7 +91,6 @@ import XCTest
  
  */
 
-
 // MARK: - Sample Data
 
 class ConditionHolderTests: XCTestCase {
@@ -104,6 +103,27 @@ class ConditionHolderTests: XCTestCase {
         XCTAssert(model == ConditionHolder.array([
             .logicalOp(.or),
             .leaf(.attribute(userAttribute))]))
+    }
+    
+    func testDecodeFailure() {
+        var value = 3
+        let data = Data(bytes: &value,
+                             count: MemoryLayout.size(ofValue: value))
+        
+        let holder = try? JSONDecoder().decode(ConditionHolder.self, from: data)
+        XCTAssertNil(holder)
+    }
+    
+    func testEvaluateFail() {
+        let holder:ConditionHolder = ConditionHolder.array([ConditionHolder.logicalOp(.and)])
+        var data:Data?
+    
+        data = try? JSONEncoder().encode(holder)
+
+        XCTAssertNotNil(data)
+        let testHolder = try? JSONDecoder().decode(ConditionHolder.self, from: data!)
+        let bool = try? testHolder!.evaluate(project: nil, attributes: nil)
+        XCTAssertNil(bool)
     }
 }
 

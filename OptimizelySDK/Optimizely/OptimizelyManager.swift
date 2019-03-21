@@ -690,7 +690,6 @@ extension OptimizelyManager {
     //                                  userProfileService:OPTUserProfileService?,
     //                                  periodicDownloadInterval:Int? = nil) {
     
-    
     @objc public func initializeSDK(completion: ((NSError?, Data?) -> Void)?) {
         initializeSDK { result in
             switch result {
@@ -702,6 +701,29 @@ extension OptimizelyManager {
             }
             
         }
+    }
+    
+    @objc public func initializeSDKWith(datafile:String) throws {
+        try self.initializeSDK(datafile: datafile)
+    }
+    
+    @objc public func activate(experimentKey: String,
+                         userId: String,
+                         attributes: [String:Any]?) throws -> String {
+        return try self.activate(experimentKey: experimentKey, userId: userId, attributes: attributes as OptimizelyAttributes?)
+    }
+
+    @objc public func activate(experimentKey: String,
+                               userId: String) throws -> String {
+        return try self.activate(experimentKey: experimentKey, userId: userId, attributes: nil)
+    }
+
+    
+    @objc public func trackWithEventKey(eventKey:String,
+                      userId: String,
+                      attributes: [String:Any]?,
+                      eventTags: [String:Any]?) throws {
+        try self.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
     }
     
     func convertErrorForObjc(_ error: Error) -> NSError {

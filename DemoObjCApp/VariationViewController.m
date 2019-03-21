@@ -40,10 +40,7 @@
 
 - (IBAction)attemptTrackAndShowSuccessOrFailure:(id)sender {
     NSError *error;
-    BOOL status = [self.optimizely trackWithEventKey:self.eventKey
-                                                     userId:self.userId
-                                                 attributes:nil eventTags:nil
-                                                      error:&error];
+    BOOL status = [self.optimizely trackWithEventKeyWithEventKey:self.eventKey userId:self.userId attributes:nil eventTags:nil error:&error];
     
     if (status) {
         [self performSegueWithIdentifier:@"ConversionSuccessSegue" sender:self];

@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum AttributeValue: Codable, Equatable {
+enum AttributeValue: Codable, Equatable, CustomStringConvertible {
     case string(String)
     // TODO: [Jae] fix these to Int64 to support full value range
     case int(Int)
@@ -16,6 +16,21 @@ enum AttributeValue: Codable, Equatable {
     case bool(Bool)
     // not defined in datafile schema, but required for forward compatiblity (see Nikhil's doc)
     case others
+    
+    var description: String {
+        switch self {
+        case .string(let value):
+            return "string(\(value))"
+        case .double(let value):
+            return "double(\(value))"
+        case .int(let value):
+            return "int(\(value))"
+        case .bool(let value):
+            return "bool(\(value))"
+        case .others:
+            return "others"
+        }
+    }
     
     init?(value: Any?) {
         guard let value = value else { return nil }
@@ -99,15 +114,15 @@ enum AttributeValue: Codable, Equatable {
 
 extension AttributeValue {
     
-    func isExactMatch(with target: Any?) throws -> Bool {
+    func isExactMatch(with target: Any) throws -> Bool {
         try checkValidAttributeNumber(target)
 
         guard let targetValue = AttributeValue(value: target) else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
         guard self.isComparable(with: targetValue) else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
         // same type and same value
@@ -123,49 +138,49 @@ extension AttributeValue {
         return false
     }
 
-    func isSubstring(of target: Any?) throws -> Bool {
+    func isSubstring(of target: Any) throws -> Bool {
         guard case .string(let value) = self else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
-        guard let target = target as? String else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+        guard let targetStr = target as? String else {
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
-        return target.contains(value)
+        return targetStr.contains(value)
     }
     
-    func isGreater(than target: Any?) throws -> Bool {
+    func isGreater(than target: Any) throws -> Bool {
         try checkValidAttributeNumber(target)
 
         guard let targetValue = AttributeValue(value: target) else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
         guard let currentDouble = self.doubleValue else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
         guard let targetDouble = targetValue.doubleValue else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
         return currentDouble > targetDouble
     }
     
-    func isLess(than target: Any?) throws -> Bool {
+    func isLess(than target: Any) throws -> Bool {
         try checkValidAttributeNumber(target)
 
         guard let targetValue = AttributeValue(value: target) else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
         guard let currentDouble = self.doubleValue else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
         guard let targetDouble = targetValue.doubleValue else {
-            throw OptimizelyError.conditionInvalidValueType(#function)
+            throw OptimizelyError.conditionInvalidValueType(prettySrc(#function, target: target))
         }
         
         return currentDouble < targetDouble
@@ -191,7 +206,7 @@ extension AttributeValue {
         }
     }
     
-    func checkValidAttributeNumber(_ number: Any?) throws {
+    func checkValidAttributeNumber(_ number: Any) throws {
         var num: Double
         if let number = number as? Int {
             num = Double(number)
@@ -208,5 +223,9 @@ extension AttributeValue {
         }
     }
 
+    func prettySrc(_ src: String, target: Any? = nil) -> String {
+        return "(\(src)): \(self) target: " + (target != nil ? "\(target!)" : "nil")
+    }
+    
 }
 

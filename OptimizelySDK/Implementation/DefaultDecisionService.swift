@@ -43,9 +43,7 @@ class DefaultDecisionService : OPTDecisionService {
         let bucketingId = getBucketingId(userId:userId, attributes:attributes)
         
         // ---- check if the experiment is running ----
-        if experiment.status != Experiment.Status.running {
-            return nil;
-        }
+        if !experiment.isActivated { return nil }
         
         // ---- check for whitelisted variation registered at runtime ----
         if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
@@ -67,39 +65,37 @@ class DefaultDecisionService : OPTDecisionService {
         
         var bucketedVariation:Variation?
         // ---- check if the user passes audience targeting before bucketing ----
-        if let result = isInExperiment(
-            experiment:experiment,
-            userId:userId,
-            attributes:attributes), result == true {
-            
-            // bucket user into a variation
-            bucketedVariation = bucketer.bucketExperiment(experiment: experiment, bucketingId:bucketingId)
-            
-            if let bucketedVariation = bucketedVariation {
-                // save to user profile
-                self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+        do {
+            if try isInExperiment(experiment:experiment, userId:userId, attributes:attributes) {
+                // bucket user into a variation
+                bucketedVariation = bucketer.bucketExperiment(experiment: experiment, bucketingId:bucketingId)
+                
+                if let bucketedVariation = bucketedVariation {
+                    // save to user profile
+                    self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+                }
             }
+        } catch {
+            // TODO: fix to forward throw
         }
         
         return bucketedVariation;
 
     }
     
-    func isInExperiment(experiment:Experiment, userId:String, attributes: OptimizelyAttributes) -> Bool? {
+    func isInExperiment(experiment:Experiment, userId:String, attributes: OptimizelyAttributes) throws -> Bool {
         
         if let conditions = experiment.audienceConditions {
             switch conditions {
             case .array(let arrConditions):
                 if arrConditions.count > 0 {
-                    // TODO: [Jae] fix with OptimizelyError
-                    return try? conditions.evaluate(project: config.project, attributes: attributes)
+                    return try conditions.evaluate(project: config.project, attributes: attributes)
                 } else {
                     // empty conditions (backward compatibility with "audienceIds" is ignored if exists even though empty
                     return true
                 }
             case .leaf:
-                // TODO: [Jae] fix with OptimizelyError
-                return try? conditions.evaluate(project: config.project, attributes: attributes)
+                return try conditions.evaluate(project: config.project, attributes: attributes)
             default:
                 return true
             }
@@ -112,8 +108,7 @@ class DefaultDecisionService : OPTDecisionService {
               holder.append(.leaf(.audienceId(id)))
             }
             
-            // TODO: [Jae] fix with OptimizelyError
-            return try? holder.evaluate(project: config.project, attributes: attributes)
+            return try holder.evaluate(project: config.project, attributes: attributes)
         }
         
         return true
@@ -200,16 +195,25 @@ class DefaultDecisionService : OPTDecisionService {
         let rolloutRules = rollout.experiments
         // Evaluate all rollout rules except for last one
         for experiment in rolloutRules[0..<rolloutRules.count.advanced(by: -1)] {
-            if isInExperiment(experiment: experiment, userId: userId, attributes: attributes) ?? false {
-                if let variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: bucketingId) {
-                    return variation
+            do {
+                if try isInExperiment(experiment: experiment, userId: userId, attributes: attributes) {
+                    if let variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: bucketingId) {
+                        return variation
+                    }
                 }
+            } catch {
+                // TODO: fix to forward throw
             }
         }
         // Evaluate fall back rule / last rule now
         let experiment = rolloutRules[rolloutRules.count - 1];
-        if isInExperiment(experiment: experiment, userId: userId, attributes: attributes) ?? false {
-            return bucketer.bucketExperiment(experiment: experiment, bucketingId: bucketingId)
+        
+        do {
+            if try isInExperiment(experiment: experiment, userId: userId, attributes: attributes) {
+                return bucketer.bucketExperiment(experiment: experiment, bucketingId: bucketingId)
+            }
+        } catch {
+            // TODO: fix to forward throw
         }
         
         return nil

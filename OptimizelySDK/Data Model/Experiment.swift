@@ -47,5 +47,9 @@ extension Experiment {
     func getVariation(key: String) -> Variation? {
         return variations.filter { $0.key == key }.first
     }
+    
+    var isActivated: Bool {
+        return status == .running
+    }
 
 }

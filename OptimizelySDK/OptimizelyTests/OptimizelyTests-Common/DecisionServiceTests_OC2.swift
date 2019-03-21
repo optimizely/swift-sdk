@@ -1,5 +1,5 @@
 //
-//  DecisionServiceTests-OC.swift
+//  DecisionServiceTests-OC2.swift
 //  OptimizelySwiftSDK
 //
 //  Created by Jae Kim on 3/5/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DecisionServiceTests_OC: XCTestCase {
+class DecisionServiceTests_OC2: XCTestCase {
 
     let kSdkKey = "12345"
     
@@ -78,19 +78,14 @@ class DecisionServiceTests_OC: XCTestCase {
     let kFeatureFlagNoBucketedRuleRolloutKey = "booleanSingleVariableFeature"
 
     class TestDecisionService: OPTDecisionService {
-        static func createInstance(config: ProjectConfig, bucketer: OPTBucketer, userProfileService: OPTUserProfileService) -> OPTDecisionService? {
-            return nil
-        }
-        
         func initialize(config: ProjectConfig, bucketer: OPTBucketer, userProfileService: OPTUserProfileService) {
-            //
         }
         
-        func getVariation(userId: String, experiment: Experiment, attributes: Dictionary<String, Any>) -> Variation? {
+        func getVariation(userId: String, experiment: Experiment, attributes: OptimizelyAttributes) -> Variation? {
             return nil
         }
         
-        func getVariationForFeature(featureFlag: FeatureFlag, userId: String, attributes: Dictionary<String, Any>) -> (experiment: Experiment?, variation: Variation?)? {
+        func getVariationForFeature(featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment?, variation: Variation?)? {
             return nil
         }
     }
@@ -99,11 +94,11 @@ class DecisionServiceTests_OC: XCTestCase {
     var optimizelyTypedAudience: OptimizelyManager!
     
     var config: ProjectConfig!
-    var decisionService: OPTDecisionService!
+    var decisionService: DefaultDecisionService!
     var bucketer: OPTBucketer!
     
     var configTypedAudience: ProjectConfig!
-    var decisionServiceTypedAudience: OPTDecisionService!
+    var decisionServiceTypedAudience: DefaultDecisionService!
     var bucketerTypedAudience: OPTBucketer!
     
     var attributes: [String: Any]!
@@ -115,7 +110,8 @@ class DecisionServiceTests_OC: XCTestCase {
         
         let userProfileService = DefaultUserProfileService()
         let datafile = OTUtils.loadJSONDatafile(kDatafileName)!
-        optimizely = OptimizelyManager(sdkKey: kSdkKey, userProfileService: userProfileService)
+        optimizely = OptimizelyManager(sdkKey: kSdkKey,
+                                       userProfileService: userProfileService)
         try! optimizely.initializeSDK(datafile: datafile)
         
         let typedAudienceDatafile = OTUtils.loadJSONDatafile(ktypeAudienceDatafileName)!
@@ -126,29 +122,31 @@ class DecisionServiceTests_OC: XCTestCase {
         self.configTypedAudience = self.optimizelyTypedAudience.config
         
         self.bucketer = optimizely.bucketer
-        self.decisionService = optimizely.decisionService
+        self.decisionService = (optimizely.decisionService as! DefaultDecisionService)
         
         self.bucketerTypedAudience = optimizelyTypedAudience.bucketer
-        self.decisionServiceTypedAudience = optimizelyTypedAudience.decisionService
+        self.decisionServiceTypedAudience = (optimizelyTypedAudience.decisionService as! DefaultDecisionService)
         
         self.attributes = [kAttributeKey : kAttributeValue]
-        self.userProfileWithFirefoxAudience = [DefaultUserProfileService.userId : kUserId,
-                                               DefaultUserProfileService.bucketMap :
-                                                    [kExperimentWithAudienceId :
-                                                        [DefaultUserProfileService.variationId : kExperimentWithAudienceVariationId]]]
+        
+        decisionService.saveProfile(userId: kUserId,
+                                    experimentId: kExperimentWithAudienceId,
+                                    variationId: kExperimentWithAudienceVariationId)
+        self.userProfileWithFirefoxAudience = userProfileService.lookup(userId: kUserId)
     }
 
     // MARK: - Validate Preconditions
 
     // experiment is running, user is in experiment
-//    func testValidatePreconditions() {
-//        let experiment = self.config.getExperiment(key: kExperimentWithAudienceKey)
-//    BOOL isValid = [self.decisionService userPassesTargeting:self.config
-//    experiment:experiment
-//    userId:kUserId
-//    attributes:self.attributes];
-//    NSAssert(isValid == true, "Experiment running with user in experiment should pass validation.");
-//    }
+    func testValidatePreconditions() {
+        let experiment = self.config.getExperiment(key: kExperimentWithAudienceKey)!
+        do {
+            let isValid = try self.decisionService.isInExperiment(experiment: experiment, userId: self.kUserId, attributes: self.attributes)
+            XCTAssert(isValid, "Experiment running with user in experiment should pass validation.")
+        } catch {
+            XCTAssert(false, "\(error)")
+        }
+    }
 //
 //    // experiment is not running, validator should return false
 //    - (void)testValidatePreconditionsExperimentNotRunning

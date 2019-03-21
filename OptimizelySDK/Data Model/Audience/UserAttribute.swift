@@ -102,29 +102,35 @@ extension UserAttribute {
             throw OptimizelyError.conditionInvalidFormat("empty name in condition")
         }
         
-        if matchFinal != .exists, value == nil {
-            throw OptimizelyError.conditionInvalidFormat("missing value (\(nameFinal)) in condition)")
-        }
-        
         let attributes = attributes ?? OptimizelyAttributes()
         
         let attributeValue = attributes[nameFinal] ?? nil  // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
+        
+        if matchFinal != .exists {
+            if value == nil {
+                throw OptimizelyError.conditionInvalidFormat("missing value (\(nameFinal)) in condition)")
+            }
+            
+            if attributeValue == nil {
+                throw OptimizelyError.conditionNoAttributeValue("no attribute value for (\(nameFinal))")
+            }
+        }
         
         switch matchFinal {
         case .exists:
             return !(attributeValue is NSNull || attributeValue == nil)
         case .exact:
-            return try value!.isExactMatch(with: attributeValue)
+            return try value!.isExactMatch(with: attributeValue!)
         case .substring:
-            return try value!.isSubstring(of: attributeValue)
+            return try value!.isSubstring(of: attributeValue!)
         case .lt:
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
-            return try value!.isGreater(than: attributeValue)
+            return try value!.isGreater(than: attributeValue!)
         case .gt:
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
-            return try value!.isLess(than: attributeValue)
+            return try value!.isLess(than: attributeValue!)
         }
     }
     

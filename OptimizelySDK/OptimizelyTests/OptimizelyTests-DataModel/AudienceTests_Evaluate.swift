@@ -95,6 +95,18 @@ class AudienceTests_Evaluate: XCTestCase {
         XCTAssertFalse(try! audience.evaluate(project: nil, attributes: attributesPassOrValue))
     }
 
+    func testEvaluateSingleLeaf() {
+        let config = self.optimizely.config
+        
+        let holder = ConditionHolder.array([ConditionHolder.leaf(ConditionLeaf.audienceId("3468206642"))])
+        
+        let attributes = ["house": "Gryffindor"]
+        
+        let bool = try? holder.evaluate(project: config?.project, attributes: attributes)
+        
+        XCTAssertTrue(bool!)
+    }
+    
     func testEvaluateEmptyUserAttributes() {
         let audience = makeAudienceLegacy(conditions: kAudienceConditions)
 

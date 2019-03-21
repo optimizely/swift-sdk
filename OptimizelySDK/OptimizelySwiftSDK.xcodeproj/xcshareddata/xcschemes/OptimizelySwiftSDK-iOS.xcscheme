@@ -26,8 +26,60 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      systemAttachmentLifetime = "keepNever"
+      codeCoverageEnabled = "YES"
+      onlyGenerateCoverageForSpecifiedTargets = "YES"
       shouldUseLaunchSchemeArgsEnv = "YES">
+      <CodeCoverageTargets>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6EBAEB7321E3FEF900D13AA9"
+            BuildableName = "OptimizelyTests-iOS.xctest"
+            BlueprintName = "OptimizelyTests-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6E636B9A2236C96700AF3CEF"
+            BuildableName = "OptimizelyTests-Legacy-iOS.xctest"
+            BlueprintName = "OptimizelyTests-Legacy-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6EA425782218E61E00B074B5"
+            BuildableName = "OptimizelyTests-DataModel-iOS.xctest"
+            BlueprintName = "OptimizelyTests-DataModel-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6EA425692218E60A00B074B5"
+            BuildableName = "OptimizelyTests-Common-iOS.xctest"
+            BlueprintName = "OptimizelyTests-Common-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6E636B8B2236C91F00AF3CEF"
+            BuildableName = "OptimizelyTests-APIs-iOS.xctest"
+            BlueprintName = "OptimizelyTests-APIs-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6EBAEB6B21E3FEF800D13AA9"
+            BuildableName = "Optimizely.framework"
+            BlueprintName = "OptimizelySwiftSDK-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+         </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6EA4265A2219242100B074B5"
+            BuildableName = "OptimizelyTests-Others-iOS.xctest"
+            BlueprintName = "OptimizelyTests-Others-iOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+         </BuildableReference>
+      </CodeCoverageTargets>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -101,7 +153,7 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "NO">
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"

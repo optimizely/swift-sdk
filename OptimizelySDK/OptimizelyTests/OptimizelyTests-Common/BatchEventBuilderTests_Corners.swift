@@ -100,7 +100,7 @@ class BatchEventBuilderTests_Corners: XCTestCase {
         
         let variation = try? optimizely?.activate(experimentKey: "ab_running_exp_untargeted", userId: "test_user_1")
         
-        XCTAssertNotNil(variation)
+        XCTAssertNotNil(variation as Any?)
         
         let event = eventDispatcher.events.first
         XCTAssertNotNil(event)

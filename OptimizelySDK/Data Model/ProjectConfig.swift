@@ -179,17 +179,11 @@ extension ProjectConfig {
             return nil
         }
         
-        guard let dict = whitelistUsers[userId],
-            let variationId = dict[experiment.id] else
-        {
-            return nil
+        if let id = getWhitelistedVariationId(userId: userId, experimentId: experiment.id) {
+            return experiment.getVariation(id:id)
         }
         
-        guard let variation = experiment.variations.filter({$0.id == variationId}).first else {
-            return nil
-        }
-        
-        return variation
+        return nil
     }
     
     /**
@@ -216,9 +210,7 @@ extension ProjectConfig {
             return false
         }
         
-        var whitelist = self.whitelistUsers[userId] ?? [:]
-        whitelist[experiment.id] = variation.id
-        self.whitelistUsers[userId] = whitelist
+        self.whitelistUser(userId: userId, experimentId: experiment.id, variationId: variation.id)
         
         return true
     }

@@ -29,15 +29,10 @@ class EventDispatcherTest: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        let group = DispatchGroup()
-        group.enter()
-        
         if let dispatcher = eventDispatcher {
             dispatcher.flushEvents()
             dispatcher.dispatcher.sync {
-                group.leave()
             }
-            group.wait()
         }
         
         eventDispatcher = nil
@@ -48,42 +43,26 @@ class EventDispatcherTest: XCTestCase {
         eventDispatcher = DefaultEventDispatcher()
         let pEventD:OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
-        let group = DispatchGroup()
-        
+
         pEventD.flushEvents()
         
-        group.enter()
-        
         eventDispatcher?.dispatcher.sync {
-            group.leave()
         }
-        
-        group.wait()
         
         pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
             
         }
         
-        group.enter()
-        
         eventDispatcher?.dispatcher.sync {
-            group.leave()
         }
         
-        group.wait()
-
         XCTAssert(eventDispatcher?.dataStore.count == 1)
         
         eventDispatcher?.flushEvents()
         
-        group.enter()
-        
         eventDispatcher?.dispatcher.sync {
-            group.leave()
         }
         
-        group.wait()
-
         XCTAssert(eventDispatcher?.dataStore.count == 0)
         
         // This is an example of a functional test case.
@@ -94,38 +73,22 @@ class EventDispatcherTest: XCTestCase {
         eventDispatcher = DefaultEventDispatcher( backingStore: .file)
         let pEventD:OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
-        let group = DispatchGroup()
-        let enter = { () in
-            group.enter()
-        }
         let wait = {() in
-            self.eventDispatcher?.dispatcher.async {
-                group.leave()
+            self.eventDispatcher?.dispatcher.sync {
             }
-            
-            group.wait()
         }
 
-        enter()
-        
         pEventD.flushEvents()
-        
         wait()
-        
-        enter()
         
         pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
             
         }
-
         wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 1)
         
-        enter()
-        
         eventDispatcher?.flushEvents()
-        
         wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 0)
@@ -138,38 +101,22 @@ class EventDispatcherTest: XCTestCase {
         eventDispatcher = DefaultEventDispatcher( backingStore: .userDefaults)
         let pEventD:OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
-        let group = DispatchGroup()
-        let enter = { () in
-            group.enter()
-        }
         let wait = {() in
-            self.eventDispatcher?.dispatcher.async {
-                group.leave()
+            self.eventDispatcher?.dispatcher.sync {
             }
-            
-            group.wait()
         }
 
-        enter()
-        
         pEventD.flushEvents()
-        
         wait()
-        
-        enter()
         
         pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
             
         }
-        
         wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 1)
         
-        enter()
-        
         eventDispatcher?.flushEvents()
-        
         wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 0)
@@ -182,38 +129,21 @@ class EventDispatcherTest: XCTestCase {
         eventDispatcher = DefaultEventDispatcher( backingStore: .memory)
         let pEventD:OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
-        let group = DispatchGroup()
-        let enter = { () in
-            group.enter()
-        }
         let wait = {() in
-            self.eventDispatcher?.dispatcher.async {
-                group.leave()
+            self.eventDispatcher?.dispatcher.sync {
             }
-            
-            group.wait()
         }
 
-        enter()
-        
         pEventD.flushEvents()
-        
         wait()
         
-        enter()
-
         pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
-            
         }
-        
         wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 1)
         
-        enter()
-        
         eventDispatcher?.flushEvents()
-        
         wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 0)
@@ -253,33 +183,26 @@ class EventDispatcherTest: XCTestCase {
     }
     
     func testDispatcherMethods() {
-        eventDispatcher = DefaultEventDispatcher()
-        let group = DispatchGroup()
+        eventDispatcher = DefaultEventDispatcher(timerInterval: 1)
         
-        group.enter()
         eventDispatcher?.flushEvents()
         eventDispatcher?.dispatcher.sync {
-            group.leave()
         }
-        group.wait()
-        
-        group.enter()
         
         eventDispatcher?.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
         }
         
         eventDispatcher?.dispatcher.sync {
-            group.leave()
         }
         
-        group.wait()
-        
         eventDispatcher?.applicationDidBecomeActive()
-
         eventDispatcher?.applicationDidEnterBackground()
         
         XCTAssert(eventDispatcher?.timer.property == nil)
         var sent = false
+        
+        let group = DispatchGroup()
+        
         group.enter()
         
         eventDispatcher?.sendEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
@@ -289,9 +212,14 @@ class EventDispatcherTest: XCTestCase {
         group.wait()
         XCTAssert(sent)
         
+        group.enter()
+        
         eventDispatcher?.setTimer()
         
-        sleep(4)
+        DispatchQueue.global(qos: .background).async {
+            group.leave()
+        }
+        group.wait()
         
         // we are on the main thread and set timer on async main thread
         // so, must be nil here

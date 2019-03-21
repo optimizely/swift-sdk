@@ -17,21 +17,6 @@ class AttributeValueTests_Evaluate: XCTestCase {
         XCTAssertTrue(try! model.isExactMatch(with: "us"))
     }
     
-    func testIsExactMatchInt() {
-        let model = try! OTUtils.getAttributeValueFromNative(10)
-        XCTAssertTrue(try! model.isExactMatch(with: 10))
-    }
-
-    func testIsExactMatchDouble() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isExactMatch(with: 13.5))
-    }
-
-    func testIsExactMatchDoubleWithInt() {
-        let model = try! OTUtils.getAttributeValueFromNative(Double(13))
-        XCTAssertTrue(try! model.isExactMatch(with: Int(13)))
-    }
-
     func testIsExactMatchBool() {
         let model = try! OTUtils.getAttributeValueFromNative(true)
         XCTAssertTrue(try! model.isExactMatch(with: true))
@@ -47,20 +32,35 @@ class AttributeValueTests_Evaluate: XCTestCase {
         XCTAssertFalse(try! model.isExactMatch(with: "ca"))
     }
 
-    func testIsExactMatchIntFail() {
-        let model = try! OTUtils.getAttributeValueFromNative(10)
-        XCTAssertFalse(try! model.isExactMatch(with: 20))
-    }
-
-    func testIsExactMatchDoubleFail() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertFalse(try! model.isExactMatch(with: 20.1))
-    }
-
     func testIsExactMatchBoolFail() {
         let model = try! OTUtils.getAttributeValueFromNative(true)
         XCTAssertFalse(try! model.isExactMatch(with: false))
     }
+    
+    // MARK: - All value types
+    
+    func testIsExactMatchWithAllNumTypes() {
+        let valueInt = 30
+        
+        let modelInt = try! OTUtils.getAttributeValueFromNative(valueInt)
+        for (idx, test) in allValueTypes(value: Double(valueInt)).enumerated() {
+            XCTAssertTrue(try! modelInt.isExactMatch(with: test), "error with index = \(idx)")
+        }
+        for (idx, test) in allValueTypes(value: Double(99)).enumerated() {
+            XCTAssertFalse(try! modelInt.isExactMatch(with: test), "error with index = \(idx)")
+        }
+        
+        let valueDouble = 13.0
+        
+        let modelDouble = try! OTUtils.getAttributeValueFromNative(Double(valueDouble))
+        for (idx, test) in allValueTypes(value: Double(valueDouble)).enumerated() {
+            XCTAssertTrue(try! modelDouble.isExactMatch(with: test), "error with index = \(idx)")
+        }
+        for (idx, test) in allValueTypes(value: Double(99)).enumerated() {
+            XCTAssertFalse(try! modelDouble.isExactMatch(with: test), "error with index = \(idx)")
+        }
+    }
+    
 }
 
 // MARK: - Evaluate (Substring)
@@ -102,47 +102,30 @@ extension AttributeValueTests_Evaluate {
 // MARK: - Evaluate (GreaterThan)
 
 extension AttributeValueTests_Evaluate {
-
-    func testIsGreaterSuccess() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isGreater(than: 10.0))
-    }
     
-    func testIsGreaterSuccessWithInt() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isGreater(than: Int(10)))
-    }
-
-    func testIsGreaterFail() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertFalse(try! model.isGreater(than: 20.0))
-    }
+    // MARK: - All value types
     
-    func testIsGreaterFailSame() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertFalse(try! model.isGreater(than: 13.5))
-    }
-    
-    // MARK: - Int8/16/32/64
-    
-    func testIsGreaterSuccessWithInt8() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isGreater(than: Int8(10)))
-    }
+    func testIsGreaterWithAllNumTypes() {
+        let value = 13.5
+        let smallerValue = 10.0
+        let biggerValue = 20.0
+        
+        let model = try! OTUtils.getAttributeValueFromNative(value)
 
-    func testIsGreaterSuccessWithInt16() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isGreater(than: Int16(10)))
-    }
+        for (idx, test) in allValueTypes(value: smallerValue).enumerated() {
+            XCTAssertTrue(try! model.isGreater(than: test), "error with index = \(idx)")
+        }
 
-    func testIsGreaterSuccessWithInt32() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isGreater(than: Int32(10)))
-    }
+        for (idx, test) in allValueTypes(value: biggerValue).enumerated() {
+            XCTAssertFalse(try! model.isGreater(than: test), "error with index = \(idx)")
+        }
 
-    func testIsGreaterSuccessWithInt64() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isGreater(than: Int64(10)))
+        // false for equal values
+        let valueInt = 30
+        let modelInt = try! OTUtils.getAttributeValueFromNative(valueInt)
+        for (idx, test) in allValueTypes(value: Double(valueInt)).enumerated() {
+            XCTAssertFalse(try! modelInt.isGreater(than: test), "error with index = \(idx)")
+        }
     }
 
     // MARK: - Large numbers
@@ -178,48 +161,31 @@ extension AttributeValueTests_Evaluate {
 
 extension AttributeValueTests_Evaluate {
     
-    func testIsLessSuccess() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isLess(than: 20.0))
+    // MARK: - All value types
+    
+    func testIsLessWithAllNumTypes() {
+        let value = 13.5
+        let smallerValue = 10.0
+        let biggerValue = 20.0
+        
+        let model = try! OTUtils.getAttributeValueFromNative(value)
+        
+        for (idx, test) in allValueTypes(value: smallerValue).enumerated() {
+            XCTAssertFalse(try! model.isLess(than: test), "error with index = \(idx)")
+        }
+        
+        for (idx, test) in allValueTypes(value: biggerValue).enumerated() {
+            XCTAssertTrue(try! model.isLess(than: test), "error with index = \(idx)")
+        }
+        
+        // false for equal values
+        let valueInt = 30
+        let modelInt = try! OTUtils.getAttributeValueFromNative(valueInt)
+        for (idx, test) in allValueTypes(value: Double(valueInt)).enumerated() {
+            XCTAssertFalse(try! modelInt.isLess(than: test), "error with index = \(idx)")
+        }
     }
-    
-    func testisLessSuccessWithInt() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isLess(than: Int(20)))
-    }
-    
-    func testisLessFail() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertFalse(try! model.isLess(than: 10.0))
-    }
-    
-    func testisLessFailSame() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertFalse(try! model.isLess(than: 13.5))
-    }
-    
-    // MARK: - Int8/16/32/64
-    
-    func testIsLessSuccessWithInt8() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isLess(than: Int8(20)))
-    }
-    
-    func testIsLessSuccessWithInt16() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isLess(than: Int16(20)))
-    }
-    
-    func testIsLessSuccessWithInt32() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isLess(than: Int32(20)))
-    }
-    
-    func testIsLessSuccessWithInt64() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
-        XCTAssertTrue(try! model.isLess(than: Int64(20)))
-    }
-    
+
     // MARK: - Large numbers
     
     func testIsLessSuccessWithDouble_LargeValue() {
@@ -254,6 +220,19 @@ extension AttributeValueTests_Evaluate {
     
     var negativeMaxValueAllowed: Double {
         return -pow(2, 53)
+    }
+    
+    func allIntTypes(value: Double) -> [Any] {
+        return [Int(value), Int8(value), Int16(value), Int32(value), Int64(value),
+                UInt(value), UInt8(value), UInt16(value), UInt32(value), UInt64(value)]
+    }
+
+    func allNumTypes(value: Double) -> [Any] {
+        return [Double(value), Float(value), Float32(value), Float64(value), Float80(value)]
+    }
+    
+    func allValueTypes(value: Double) -> [Any] {
+        return allIntTypes(value: value) + allNumTypes(value: value)
     }
 
 }

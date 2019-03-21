@@ -719,7 +719,7 @@ extension OptimizelyManager {
     }
 
     
-    @objc public func trackWithEventKey(eventKey:String,
+    @objc public func trackWith(eventKey:String,
                       userId: String,
                       attributes: [String:Any]?,
                       eventTags: [String:Any]?) throws {

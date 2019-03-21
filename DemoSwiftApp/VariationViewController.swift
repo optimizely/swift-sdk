@@ -28,12 +28,17 @@ class VariationViewController: UIViewController {
             if let show = showCoupon {
                 if show {
                     DispatchQueue.main.async {
-                        self.couponView.isHidden = false
+                        if self.couponView != nil {
+                            self.couponView.isHidden = false
+                        }
+                        
                     }
                 }
                 else {
                     DispatchQueue.main.async {
-                        self.couponView.isHidden = true
+                        if self.couponView != nil {
+                            self.couponView.isHidden = true
+                        }
                     }
                 }
             }

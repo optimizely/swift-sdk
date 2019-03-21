@@ -227,7 +227,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
         
         if timerInterval == 0 { return }
         
-        if #available(iOS 10.0, *) {
+        if #available(iOS 10.0, tvOS 10.0, *) {
             DispatchQueue.main.async {
                 self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
                     if self.dataStore.count == 0 {

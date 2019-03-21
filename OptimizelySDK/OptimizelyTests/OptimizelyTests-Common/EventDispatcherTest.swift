@@ -94,24 +94,39 @@ class EventDispatcherTest: XCTestCase {
         eventDispatcher = DefaultEventDispatcher( backingStore: .file)
         let pEventD:OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
+        let group = DispatchGroup()
+        let enter = { () in
+            group.enter()
+        }
+        let wait = {() in
+            self.eventDispatcher?.dispatcher.async {
+                group.leave()
+            }
+            
+            group.wait()
+        }
+
+        enter()
         
         pEventD.flushEvents()
         
-        sleep(3)
+        wait()
+        
+        enter()
         
         pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
             
         }
-        
-        sleep(2)
+
+        wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 1)
         
-        sleep(2)
+        enter()
         
         eventDispatcher?.flushEvents()
         
-        sleep(3)
+        wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 0)
         
@@ -123,24 +138,39 @@ class EventDispatcherTest: XCTestCase {
         eventDispatcher = DefaultEventDispatcher( backingStore: .userDefaults)
         let pEventD:OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
+        let group = DispatchGroup()
+        let enter = { () in
+            group.enter()
+        }
+        let wait = {() in
+            self.eventDispatcher?.dispatcher.async {
+                group.leave()
+            }
+            
+            group.wait()
+        }
+
+        enter()
         
         pEventD.flushEvents()
         
-        sleep(3)
+        wait()
+        
+        enter()
         
         pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
             
         }
         
-        sleep(2)
+        wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 1)
         
-        sleep(2)
+        enter()
         
         eventDispatcher?.flushEvents()
         
-        sleep(3)
+        wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 0)
         
@@ -152,36 +182,39 @@ class EventDispatcherTest: XCTestCase {
         eventDispatcher = DefaultEventDispatcher( backingStore: .memory)
         let pEventD:OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
+        let group = DispatchGroup()
+        let enter = { () in
+            group.enter()
+        }
+        let wait = {() in
+            self.eventDispatcher?.dispatcher.async {
+                group.leave()
+            }
+            
+            group.wait()
+        }
+
+        enter()
         
         pEventD.flushEvents()
         
-        sleep(3)
+        wait()
         
+        enter()
+
         pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
             
         }
         
-        let group = DispatchGroup()
-        
-        group.enter()
-        
-        eventDispatcher?.dispatcher.sync {
-            group.leave()
-        }
-        
-        group.wait()
+        wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 1)
         
+        enter()
         
-        group.enter()
         eventDispatcher?.flushEvents()
         
-        eventDispatcher?.dispatcher.async {
-            group.leave()
-        }
-        
-        group.wait()
+        wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 0)
         

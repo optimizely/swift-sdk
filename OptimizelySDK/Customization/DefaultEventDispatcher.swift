@@ -44,19 +44,6 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     // timer as a atomic property.
     var timer:AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    required public init() {
-        switch backingStore {
-        case .file:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: backingStoreName))
-        case .memory:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: backingStoreName))
-        case .userDefaults:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreUserDefaults())
-        }
-
-        subscribe()
-    }
-
     public init(batchSize:Int = 10, maxQueueSize:Int = 3000, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*5 ) {
         self.batchSize = batchSize
         self.maxQueueSize = maxQueueSize

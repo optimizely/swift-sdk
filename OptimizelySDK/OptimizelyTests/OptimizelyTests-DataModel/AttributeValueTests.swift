@@ -13,54 +13,133 @@ class AttributeValueTests: XCTestCase {
     // MARK: - Decode
     
     func testDecodeSuccessWithString() {
-        let model = try! OTUtils.getAttributeValueFromNative("geo")
+        let value = "geo"
         
-        XCTAssert(model == AttributeValue.string("geo"))
+        let model = try! OTUtils.getAttributeValueFromNative(value)
+        XCTAssert(model == AttributeValue.string(value))
+        
+        let model2 = AttributeValue(value: value)
+        XCTAssert(model2 == AttributeValue.string(value))
     }
     
-    func testDecodeSuccessWithInt() {
-        // integer can be parsed as int or double (we catch as double first)
-        let model = try! OTUtils.getAttributeValueFromNative(10)
+    func testDocodeSuccessWithAllIntTypes() {
+        let value = 10
         
-        XCTAssert(model == AttributeValue.double(10.0))
-    }
-
-    func testDecodeSuccessWithDouble() {
-        let model = try! OTUtils.getAttributeValueFromNative(13.5)
+        let tests = [
+            [Int(value), Double(value), Int64(value)],
+            [Int8(value), Double(value), Int64(value)],
+            [Int16(value), Double(value), Int64(value)],
+            [Int32(value), Double(value), Int64(value)],
+            [Int64(value), Double(value), Int64(value)],
+            [UInt(value), Double(value), Int64(value)],
+            [UInt8(value), Double(value), Int64(value)],
+            [UInt16(value), Double(value), Int64(value)],
+            [UInt32(value), Double(value), Int64(value)],
+            [UInt64(value), Double(value), Int64(value)]
+        ]
         
-        XCTAssert(model == AttributeValue.double(13.5))
-    }
-    
-    func testDecodeSuccessWithDouble2() {
-        let model = try! OTUtils.getAttributeValueFromNative(Double(13.5))
-        
-        XCTAssert(model == AttributeValue.double(13.5))
-    }
-
-    func testDecodeSuccessWithFloat() {
-        // Float automatically parsed to Double OK
-        let model = try! OTUtils.getAttributeValueFromNative(Float(13.5))
-        
-        XCTAssert(model == AttributeValue.double(13.5))
-    }
-
-    func testDecodeSuccessWithBool() {
-        let model = try! OTUtils.getAttributeValueFromNative(true)
-        
-        XCTAssert(model == AttributeValue.bool(true))
+        for (idx, test) in tests.enumerated() {
+            let inputValue = test[0]
+            let expModelValue = test[1] as! Double
+            let expModel2Value = test[2] as! Int64
+            
+            // integer can be parsed as int or double (we catch as double first)
+            let model = try! OTUtils.getAttributeValueFromNative(inputValue)
+            XCTAssert(model == AttributeValue.double(expModelValue), "int type error with index = \(idx)")
+            
+            let model2 = AttributeValue(value: inputValue)
+            XCTAssert(model2 == AttributeValue.int(expModel2Value), "int type error with index = \(idx)")
+        }
     }
     
+    func testDocodeSuccessWithAllNumberTypes() {
+        let value = 13.5
+        
+        let tests = [
+            [Double(value), Double(value), Double(value)],
+            [Float(value), Double(value), Double(value)],
+            [Float32(value), Double(value), Double(value)],
+            [Float64(value), Double(value), Double(value)]
+        ]
+        
+        for (idx, test) in tests.enumerated() {
+            let inputValue = test[0]
+            let expModelValue = test[1] as! Double
+            let expModel2Value = test[2] as! Double
+            
+            let model = try! OTUtils.getAttributeValueFromNative(inputValue)
+            XCTAssert(model == AttributeValue.double(expModelValue), "num type error with index = \(idx)")
+
+            let model2 = AttributeValue(value: inputValue)
+            XCTAssert(model2 == AttributeValue.double(expModel2Value), "num type error with index = \(idx)")
+        }
+        
+        // Float80 is not supported JSON parser (it's not expected to see this from datafile, but it still
+        // can be passed as attribute values from client app
+        let testsAttributesOnly = [
+            [Float80(value), Double(value)]
+        ]
+        
+        for (idx, test) in testsAttributesOnly.enumerated() {
+            let inputValue = test[0]
+            let expModel2Value = test[1] as! Double
+            
+            let model2 = AttributeValue(value: inputValue)
+            XCTAssert(model2 == AttributeValue.double(expModel2Value), "num type error with index = \(idx)")
+        }
+    }
+    
+    func testDecodeSuccessWithAllBoolTypes() {
+        let tests = [
+            [true, true, true],
+            [false, false, false]
+        ]
+        
+        for (idx, test) in tests.enumerated() {
+            let inputValue = test[0]
+            let expModelValue = test[1]
+            let expModel2Value = test[2]
+            
+            // integer can be parsed as int or double (we catch as double first)
+            let model = try! OTUtils.getAttributeValueFromNative(inputValue)
+            XCTAssert(model == AttributeValue.bool(expModelValue), "bool type error with index = \(idx)")
+            
+            let model2 = AttributeValue(value: inputValue)
+            XCTAssert(model2 == AttributeValue.bool(expModel2Value), "bool type error with index = \(idx)")
+        }
+     }
+    
+    func testDecodeSuccessWithInt64_LargeValue() {
+        // big numbers (larer than 2^53 max valid range) allowed to parse ok
+        // only filtered as invalid when evaluated
+        
+        let value = Int64(pow(2, 53) as Double)
+        
+        let model = try! OTUtils.getAttributeValueFromNative(value)
+        XCTAssert(model == AttributeValue.double(Double(value)))
+        
+        let model2 = AttributeValue(value: value)
+        XCTAssert(model2 == AttributeValue.int(Int64(value)))
+    }
+
     func testDecodeSuccessWithInvalidType() {
-        let model = try! OTUtils.getAttributeValueFromNative(["invalid type"])
+        let value = ["invalid type"]
+
+        let model = try! OTUtils.getAttributeValueFromNative(value)
         
         XCTAssert(model == AttributeValue.others)
+        
+        let model2 = AttributeValue(value: value)
+        XCTAssertNil(model2)
     }
     
     func testDecodeSuccessWithInvalidTypeNil() {
         let anyNil: Any? = nil
         let model = try! OTUtils.getAttributeValueFromNative(anyNil)
-        
         XCTAssert(model == AttributeValue.others)
+        
+        let model2 = AttributeValue(value: anyNil)
+        XCTAssertNil(model2)
     }
     
     // MARK: - NSNumber
@@ -72,6 +151,9 @@ class AttributeValueTests: XCTestCase {
 
         let model = try! OTUtils.getAttributeValueFromNative(value)
         XCTAssert(model == expValue)
+        
+        let model2 = AttributeValue(value: value)
+        XCTAssert(model2 == expValue)
     }
     
     func testDecodeSuccessWithNSNumberFalse() {
@@ -80,6 +162,9 @@ class AttributeValueTests: XCTestCase {
 
         let model = try! OTUtils.getAttributeValueFromNative(value)
         XCTAssert(model == expValue)
+        
+        let model2 = AttributeValue(value: value)
+        XCTAssert(model2 == expValue)
     }
 
     func testDecodeSuccessWithNSNumber0() {
@@ -89,6 +174,9 @@ class AttributeValueTests: XCTestCase {
         
         let model = try! OTUtils.getAttributeValueFromNative(value)
         XCTAssert(model == expValue)
+        
+        let model2 = AttributeValue(value: value)
+        XCTAssert(model2 == expValue)
     }
     
     func testDecodeSuccessWithNSNumber1() {
@@ -98,6 +186,9 @@ class AttributeValueTests: XCTestCase {
 
         let model = try! OTUtils.getAttributeValueFromNative(value)
         XCTAssert(model == expValue)
+        
+        let model2 = AttributeValue(value: value)
+        XCTAssert(model2 == expValue)
     }
 
     func testDecodeSuccessWithNSNumber0_0() {
@@ -107,6 +198,9 @@ class AttributeValueTests: XCTestCase {
 
         let model = try! OTUtils.getAttributeValueFromNative(value)
         XCTAssert(model == expValue)
+        
+        let model2 = AttributeValue(value: value)
+        XCTAssert(model2 == expValue)
     }
 
     func testDecodeSuccessWithNSNumber1_0() {
@@ -116,6 +210,9 @@ class AttributeValueTests: XCTestCase {
 
         let model = try! OTUtils.getAttributeValueFromNative(value)
         XCTAssert(model == expValue)
+        
+        let model2 = AttributeValue(value: value)
+        XCTAssert(model2 == expValue)
     }
     
     func testDecodeSuccessWithNSNumber1_5() {
@@ -124,6 +221,9 @@ class AttributeValueTests: XCTestCase {
 
         let model = try! OTUtils.getAttributeValueFromNative(value)
         XCTAssert(model == expValue)
+
+        let model2 = AttributeValue(value: value)
+        XCTAssert(model2 == expValue)
     }
 
     // MARK: - NSNull
@@ -133,6 +233,10 @@ class AttributeValueTests: XCTestCase {
 
         // NSNull as Attribu
         XCTAssert(model == AttributeValue.others)
+        
+        // NSNull parsed same as nil
+        let model2 = AttributeValue(value: NSNull())
+        XCTAssertNil(model2)
     }
     
 }
@@ -162,120 +266,3 @@ extension AttributeValueTests {
     }
 }
 
-// MARK: - Init
-
-extension AttributeValueTests {
-    func testInitSuccessWithString() {
-        let model = AttributeValue(value: "geo")
-        XCTAssert(model == AttributeValue.string("geo"))
-    }
-    
-    func testIntSuccessWithInt() {
-        // Int -> Int, Double -> Double
-        let model = AttributeValue(value: 10)
-        XCTAssert(model == AttributeValue.int(10))
-    }
-    
-    func testInitSuccessWithDouble() {
-        let model = AttributeValue(value: 13.5)
-        XCTAssert(model == AttributeValue.double(13.5))
-    }
-    
-    func testInitSuccessWithDouble2() {
-        let model = AttributeValue(value: Double(13.5))
-        XCTAssert(model == AttributeValue.double(13.5))
-    }
-    
-    func testInitSuccessWithFloat() {
-        // Float is converted to Double
-        let model = AttributeValue(value: Float(13.5))
-        XCTAssert(model == AttributeValue.double(13.5))
-    }
-    
-    func testInitSuccessWithBool() {
-        let model = AttributeValue(value: true)
-        XCTAssert(model == AttributeValue.bool(true))
-    }
-    
-    func testInitSuccessWithInvalidType() {
-        let model = AttributeValue(value: ["invalid type"])
-        XCTAssertNil(model)
-    }
-    
-    func testInitSuccessWithInvalidTypeNil() {
-        let anyNil: Any? = nil
-        let model = AttributeValue(value: anyNil)
-
-        XCTAssertNil(model)
-    }
-    
-    // MARK: - Init with NSNumber
-    
-    func testInitSuccessWithNSNumberTrue() {
-        let value = NSNumber(value: true)
-        let expValue = AttributeValue.bool(true)
-        
-        let model = AttributeValue(value: value)
-        XCTAssert(model == expValue)
-    }
-    
-    func testInitSuccessWithNSNumberFalse() {
-        let value = NSNumber(value: false)
-        let expValue = AttributeValue.bool(false)
-        
-        let model = AttributeValue(value: value)
-        XCTAssert(model == expValue)
-    }
-    
-    func testInitSuccessWithNSNumber0() {
-        let value = NSNumber(value: 0)
-        // can be either int or double (we catch as double first)
-        let expValue = AttributeValue.double(0.0)
-        
-        let model = AttributeValue(value: value)
-        XCTAssert(model == expValue)
-    }
-    
-    func testInitSuccessWithNSNumber1() {
-        let value = NSNumber(value: 1)
-        // can be either int or double (we catch as double first)
-        let expValue = AttributeValue.double(1.0)
-        
-        let model = AttributeValue(value: value)
-        XCTAssert(model == expValue)
-    }
-    
-    func testInitSuccessWithNSNumber0_0() {
-        let value = NSNumber(value: 0.0)
-        // can be either int or double (we catch as double first)
-        let expValue = AttributeValue.double(0.0)
-        
-        let model = AttributeValue(value: value)
-        XCTAssert(model == expValue)
-    }
-    
-    func testInitSuccessWithNSNumber1_0() {
-        let value = NSNumber(value: 1.0)
-        // can be either int or double (we catch as double first)
-        let expValue = AttributeValue.double(1.0)
-        
-        let model = AttributeValue(value: value)
-        XCTAssert(model == expValue)
-    }
-    
-    func testInitSuccessWithNSNumber1_5() {
-        let value = NSNumber(floatLiteral: 1.5)
-        let expValue = AttributeValue.double(1.5)
-        
-        let model = AttributeValue(value: value)
-        XCTAssert(model == expValue)
-    }
-    
-    // MARK: - Init with NSNull
-    
-    func testInitSuccessWithInvalidTypeNSNull() {
-        // NSNull parsed same as nil
-        let model = AttributeValue(value: NSNull())
-        XCTAssertNil(model)
-    }
-}

@@ -37,13 +37,13 @@ class OptimizelyManagerTests_ForcedVariation: XCTestCase {
         
         // set local forced variation
         
-        try! self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+        let _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
                                                 userId: kUserId,
                                                 variationKey: kVariationOtherKey)
 
         // get must return forced variation
 
-        variationKey = try! self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
+        variationKey = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
         XCTAssert(variationKey == kVariationOtherKey)
         
         // active must be deterimined by forced variation
@@ -55,34 +55,25 @@ class OptimizelyManagerTests_ForcedVariation: XCTestCase {
     func testForcedVariation_NotPersistent() {
         
         // get - initially empty
-        
-        do {
-            let variationKey: String? = try self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
-            XCTAssertNil(variationKey)
-        } catch {
-            XCTAssert(false)
-        }
+        var variationKey: String? =  self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
+        XCTAssertNil(variationKey)
 
         // set local forced variation
         
-        try! self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+        let _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
                                                 userId: kUserId,
                                                 variationKey: kVariationOtherKey)
         
         // get must return forced variation
         
-        let variationKey: String = try! self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
+        variationKey = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
         XCTAssert(variationKey == kVariationOtherKey)
         
         // reload ProjectConfig (whitelist must NOT be sustained)
         
         try! self.optimizely.initializeSDK(datafile: datafile)
-        do {
-            let variationKey: String? = try self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
-            XCTAssertNil(variationKey)
-        } catch {
-            XCTAssert(false)
-        }
+        variationKey = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
+        XCTAssertNil(variationKey)
     }
     
     

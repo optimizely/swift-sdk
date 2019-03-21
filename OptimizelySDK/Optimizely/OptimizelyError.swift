@@ -129,7 +129,6 @@ extension OptimizelyError: CustomStringConvertible {
             
         case .notificationCallbackInvalid:  message += " (notificationCallbackInvalid) "
 
-        default: message += "TO BE DEFINED"
         }
         
         return message

@@ -9,7 +9,7 @@
 import Foundation
 
 /// Implementation of DataStoreQueueStack that takes a DataStore as a instance variable allowing for different datastore imlementations.  It is a generic and will work with any data type that supports Codable.  Keep in mind that whichever data store you use, this class stores it as Array<Data>.  Instances of DataStoreQueueStackImpl should be singletons per queueStackName (which usually corrolates to the data type as well depending on producer/consumer).
-public class DataStoreQueuStackImpl<T> : DataStoreQueueStack where T:Codable {
+public class DataStoreQueueStackImpl<T> : DataStoreQueueStack where T:Codable {
     let queueStackName:String
     let lock:DispatchQueue
     let dataStore:OPTDataStore

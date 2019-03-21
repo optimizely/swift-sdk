@@ -21,11 +21,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
     public var notificationId: Int = 1
     var notificationListeners = [Int:(Int,GenericListener)]()
     
-    public static func createInstance() -> OPTNotificationCenter? {
-            return DefaultNotificationCenter()
-    }
-    
-    internal init() {
+    required public init() {
         
     }
     

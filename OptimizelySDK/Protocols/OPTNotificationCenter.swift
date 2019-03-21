@@ -46,8 +46,7 @@ public typealias DatafileChangeListener = (_ datafile:Data) -> Void
 public typealias FeatureFlagRolloutChangeListener = (_ featureFlagKey:String, _ toggle:FeatureFlagToggle ) -> Void
 
 public protocol OPTNotificationCenter {
-
-    static func createInstance() -> OPTNotificationCenter?
+    init()
 
 // Notification Id represeting id of notification.
     var notificationId:Int { get set }

@@ -16,7 +16,7 @@ class CustomNotificationCenter: OPTNotificationCenter {
     
     var notificationId: Int
     
-    init() {
+    required init() {
         notificationId = 0
     }
     

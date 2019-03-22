@@ -42,5 +42,4 @@ jobs:
         - mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git && popd
       script:
         - "$HOME/travisci-tools/fsc-trigger/trigger_fullstack-sdk-compat.sh"
-      # travis_terminate not supported by darwin
-      after_success: skip
+      after_success: travis_terminate 0

@@ -43,4 +43,6 @@ jobs:
       script:
         - "$HOME/travisci-tools/fsc-trigger/trigger_fullstack-sdk-compat.sh"
       # travis_terminate not supported by darwin
+      addons:
+        srcclr: false
       after_success: skip

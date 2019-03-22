@@ -75,6 +75,7 @@ open class OptimizelyManager: NSObject {
                 logger:OPTLogger? = nil,
                 eventDispatcher:OPTEventDispatcher? = nil,
                 userProfileService:OPTUserProfileService? = nil,
+                datafileHandler:OPTDatafileHandler? = nil,
                 periodicDownloadInterval:Int? = nil) {
         
         self.sdkKey = sdkKey
@@ -86,7 +87,7 @@ open class OptimizelyManager: NSObject {
                               logger: logger ?? DefaultLogger(),
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               userProfileService: userProfileService ?? DefaultUserProfileService(),
-                              datafileHandler: DefaultDatafileHandler(),
+                              datafileHandler: datafileHandler ?? DefaultDatafileHandler(),
                               bucketer: DefaultBucketer(),
                               decisionService: DefaultDecisionService(),
                               notificationCenter: DefaultNotificationCenter())

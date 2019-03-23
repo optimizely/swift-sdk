@@ -74,6 +74,43 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         wait(for: [expectation], timeout: 100.0)
     }
 
+    func testTwoInstances() {
+        let datafile = OTUtils.loadJSONDatafile("typed_audience_datafile")
+        
+        let optimizely2 = OptimizelyManager(sdkKey: "123123",
+                                            //userProfileService: OTUtils.createClearUserProfileService(),
+                                            //datafileHandler:makeDatafileHandler(),
+                                            periodicDownloadInterval:0
+        )
+        try? optimizely2.initializeSDK(datafile: datafile!)
+        
+        let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
+        XCTAssertTrue(enabled!)
+    }
+
+    func testThreeInstances() {
+        
+        let datafile = OTUtils.loadJSONDatafile("typed_audience_datafile")
+        
+        let optimizely2 = OptimizelyManager(sdkKey: "123123",
+                                            //userProfileService: OTUtils.createClearUserProfileService(),
+            //datafileHandler:makeDatafileHandler(),
+            periodicDownloadInterval:0
+        )
+        let optimizely3 = OptimizelyManager(sdkKey: "999999",
+                                            //userProfileService: OTUtils.createClearUserProfileService(),
+            //datafileHandler:makeDatafileHandler(),
+            periodicDownloadInterval:0
+        )
+        try? optimizely2.initializeSDK(datafile: datafile!)
+        try? optimizely3.initializeSDK(datafile: OTUtils.loadJSONDatafile("ab_experiments")!)
+        
+        let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
+        let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
+        XCTAssertTrue(enabled!)
+        XCTAssertNotNil(variation)
+    }
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {

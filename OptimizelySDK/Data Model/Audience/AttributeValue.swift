@@ -10,31 +10,37 @@ import Foundation
 
 enum AttributeValue: Codable, Equatable {
     case string(String)
-    case int(Int)
+    case int(Int64)         // supported value range [-2^53, 2^53]
     case double(Double)
     case bool(Bool)
+    // not defined in datafile schema, but required for forward compatiblity (see Nikhil's doc)
+    case others
     
     init?(value: Any?) {
-        if value is String {
-            self = .string(value as! String)
+
+        guard let value = value else { return nil }
+
+        if let stringValue = Utils.getStringValue(value) {
+            self = .string(stringValue)
+            return
+        }
+
+        // NOTE: keep {Double, Float} before Int checking for testing consistency
+        if let doubleValue = Utils.getDoubleValue(value) {
+            self = .double(doubleValue)
             return
         }
         
-        if value is Int {
-            self = .int(value as! Int)
+        if let int64Value = Utils.getInt64Value(value) {
+            self = .int(int64Value)
             return
         }
         
-        if value is Double {
-            self = .double(value as! Double)
+        if let boolValue = Utils.getBoolValue(value) {
+            self = .bool(boolValue)
             return
         }
-        
-        if value is Bool {
-            self = .bool(value as! Bool)
-            return
-        }
-        
+
         return nil
     }
     
@@ -46,13 +52,14 @@ enum AttributeValue: Codable, Equatable {
             return
         }
         
-        if let value = try? container.decode(Int.self) {
-            self = .int(value)
+        // NOTE: keep {Double, Float} before Int checking for testing consistency
+        if let value = try? container.decode(Double.self) {
+            self = .double(value)
             return
         }
         
-        if let value = try? container.decode(Double.self) {
-            self = .double(value)
+        if let value = try? container.decode(Int64.self) {
+            self = .int(value)
             return
         }
         
@@ -60,8 +67,9 @@ enum AttributeValue: Codable, Equatable {
             self = .bool(value)
             return
         }
-
-        throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode Condition"))
+        
+        // accept all other types (null, {}, []) for forward compatibility support
+        self = .others
     }
     
     func encode(to encoder: Encoder) throws {
@@ -76,6 +84,8 @@ enum AttributeValue: Codable, Equatable {
             try container.encode(value)
         case .bool(let value):
             try container.encode(value)
+        case .others:
+            return
         }
     }
 }
@@ -85,7 +95,13 @@ enum AttributeValue: Codable, Equatable {
 extension AttributeValue {
     
     func isExactMatch(with target: Any?) throws -> Bool {
+        try checkValidAttributeNumber(target)
+
         guard let targetValue = AttributeValue(value: target) else {
+            throw OptimizelyError.conditionInvalidValueType(#function)
+        }
+        
+        guard self.isComparable(with: targetValue) else {
             throw OptimizelyError.conditionInvalidValueType(#function)
         }
         
@@ -115,6 +131,8 @@ extension AttributeValue {
     }
     
     func isGreater(than target: Any?) throws -> Bool {
+        try checkValidAttributeNumber(target)
+
         guard let targetValue = AttributeValue(value: target) else {
             throw OptimizelyError.conditionInvalidValueType(#function)
         }
@@ -131,6 +149,8 @@ extension AttributeValue {
     }
     
     func isLess(than target: Any?) throws -> Bool {
+        try checkValidAttributeNumber(target)
+
         guard let targetValue = AttributeValue(value: target) else {
             throw OptimizelyError.conditionInvalidValueType(#function)
         }
@@ -153,4 +173,38 @@ extension AttributeValue {
         default: return nil
         }
     }
+    
+    func isComparable(with target: AttributeValue) -> Bool {
+        switch (self, target) {
+        case (.string, .string): return true
+        case (.int, .double): return true
+        case (.int, .int): return true
+        case (.double, .int): return true
+        case (.double, .double): return true
+        case (.bool, .bool): return true
+        default: return false
+        }
+    }
+    
+    func checkValidAttributeNumber(_ number: Any?) throws {
+        guard let number = number else { return }
+        
+        var num: Double
+        
+        if let number = Utils.getInt64Value(number) {
+            num = Double(number)
+        } else if let number = Utils.getDoubleValue(number) {
+            num = number
+        } else {
+            // do not check range if it's not a number
+            return
+        }
+        
+        // valid range: [-2^53, 2^53] i
+        if abs(num) > pow(2, 53) {
+            throw OptimizelyError.attributeValueInvalid
+        }
+    }
+
 }
+

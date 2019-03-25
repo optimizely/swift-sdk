@@ -37,17 +37,16 @@ public typealias OptimizelyVariationData = [String: Any]
 
 public typealias GenericListener = (Any...) -> Void
 
-public typealias ActivateListener = (_ experiment:OptimizelyExperimentData, _ userId:String, _ attributes:Dictionary<String,Any>?, _ variation:OptimizelyVariationData, _ event:Dictionary<String, Any>) -> Void
+public typealias ActivateListener = (_ experiment:OptimizelyExperimentData, _ userId:String, _ attributes: OptimizelyAttributes?, _ variation:OptimizelyVariationData, _ event:Dictionary<String, Any>) -> Void
 
-public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes:Dictionary<String, Any>?, _ eventTags:Dictionary<String, Any>?, _ event:Dictionary<String, Any>) -> Void
+public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes: OptimizelyAttributes?, _ eventTags:Dictionary<String, Any>?, _ event:Dictionary<String, Any>) -> Void
 
 public typealias DatafileChangeListener = (_ datafile:Data) -> Void
 
 public typealias FeatureFlagRolloutChangeListener = (_ featureFlagKey:String, _ toggle:FeatureFlagToggle ) -> Void
 
 public protocol OPTNotificationCenter {
-
-    static func createInstance() -> OPTNotificationCenter?
+    init()
 
 // Notification Id represeting id of notification.
     var notificationId:Int { get set }

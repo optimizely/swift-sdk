@@ -52,7 +52,7 @@ struct Audience: Codable, Equatable {
 
         } else {
             let hint = "id: \(self.id), name: \(self.name)"
-            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: container.codingPath, debugDescription: "Faield to decode Audience Condition (\(hint))"))
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: container.codingPath, debugDescription: "Failed to decode Audience Condition (\(hint))"))
         }
     }
     
@@ -63,7 +63,7 @@ struct Audience: Codable, Equatable {
         try container.encode(conditions, forKey: .conditions)
     }
     
-    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
         return try conditions.evaluate(project: project, attributes: attributes)
     }
 }

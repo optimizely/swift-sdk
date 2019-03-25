@@ -16,33 +16,73 @@
 
 import Foundation
 
-open class DefaultEventDispatcher : OPTEventDispatcher {
+public enum DataStoreType {
+    case file, memory, userDefaults
+}
+
+open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
+    
+    static let sharedInstance = DefaultEventDispatcher()
+    
     // the max failure count.  there is no backoff timer.
     static let MAX_FAILURE_COUNT = 3
     
+    // default timerInterval
+    open var timerInterval:TimeInterval = 60 * 5 // every five minutes
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
-    open var batchSize:Int = 4
+    open var batchSize:Int = 10
     // start trimming the front of the queue when we get to over maxQueueSize
     // TODO: implement
     open var maxQueueSize:Int = 3000
     
     lazy var logger = HandlerRegistryService.shared.injectLogger()
+    var backingStore:DataStoreType = .file
+    var backingStoreName:String = "OPTEventQueue"
+    
+    // for dispatching events
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
-    let dataStore = DataStoreQueuStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: "OPTEventQueue"))
-    let notify = DispatchGroup()
+    let dataStore:DataStoreQueueStackImpl<EventForDispatch>
+    // timer as a atomic property.
+    var timer:AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    required public init() {
+    public init(batchSize:Int = 10, maxQueueSize:Int = 3000, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*5 ) {
+        self.batchSize = batchSize
+        self.maxQueueSize = maxQueueSize
+        self.backingStore = backingStore
+        self.backingStoreName = dataStoreName
+        self.timerInterval = timerInterval
         
+        switch backingStore {
+        case .file:
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: backingStoreName))
+        case .memory:
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: backingStoreName))
+        case .userDefaults:
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreUserDefaults())
+        }
+        
+        subscribe()
+    }
+    
+    deinit {
+        if let timer = timer.property {
+            timer.invalidate()
+        }
+        unsubscribe()
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         
         dataStore.save(item: event)
         
-        flushEvents()
+        setTimer()
     }
+
+    // notify group used to ensure that the sendEvent is synchronous.
+    // used in flushEvents
+    let notify = DispatchGroup()
     
     open func flushEvents() {
         dispatcher.async {
@@ -130,8 +170,9 @@ open class DefaultEventDispatcher : OPTEventDispatcher {
                             // batch worked
                         }
                     }
-                    // our send it done.
-                    self.notify.leave()
+                    // our send is done.
+                    defer { self.notify.leave() }
+                    
                 }
                 // wait for send
                 self.notify.wait()
@@ -164,4 +205,43 @@ open class DefaultEventDispatcher : OPTEventDispatcher {
         
     }
     
+    func applicationDidEnterBackground() {
+        if let timer = timer.property {
+            timer.invalidate()
+        }
+        timer.property = nil
+        
+        flushEvents()
+    }
+    
+    func applicationDidBecomeActive() {
+        if dataStore.count > 0 {
+            setTimer()
+        }
+    }
+    
+    func setTimer() {
+        if let _ = timer.property {
+            return // already set....
+        }
+        
+        if timerInterval == 0 { return }
+        
+        if #available(iOS 10.0, tvOS 10.0, *) {
+            DispatchQueue.main.async {
+                self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
+                    if self.dataStore.count == 0 {
+                        self.timer.property?.invalidate()
+                        self.timer.property = nil
+                    }
+                    else {
+                        self.flushEvents()
+                    }
+                }
+            }
+        } else {
+            // Fallback on earlier versions
+            flushEvents()
+        }
+    }
 }

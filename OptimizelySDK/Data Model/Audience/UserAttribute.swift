@@ -17,31 +17,114 @@
 import Foundation
 
 struct UserAttribute: Codable, Equatable {
-    var name: String
-    var type: String
-    var match: String?
-    var value: AttributeValue
     
-    func evaluate(attributes: [String: Any]) throws -> Bool {
-        let attributeValue = attributes[name]
+    // MARK: - JSON parse
+    
+    var name: String?
+    var type: String?
+    var match: String?
+    var value: AttributeValue?
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case type
+        case match
+        case value
+    }
+    
+    // MARK: - Forward compatable evaluation support
+    
+    enum ConditionType: String, Codable {
+        case customAttribute = "custom_attribute"
+    }
+    
+    enum ConditionMatch: String, Codable {
+        case exact
+        case exists
+        case substring
+        case lt
+        case gt
+    }
+    
+    var typeSupported: ConditionType? {
+        guard let rawType = type else { return nil }
         
-        switch match {
-        case "exists":
-            return attributeValue != nil
-        case "exact":
-            return try value.isExactMatch(with: attributeValue)
-        case "substring":
-            return try value.isSubstring(of: attributeValue)
-        case "lt":
+        return ConditionType(rawValue: rawType)
+    }
+    
+    var matchSupported: ConditionMatch? {
+        // legacy audience (default = "exact")
+        guard let rawMatch = match else { return .exact }
+        
+        return ConditionMatch(rawValue: rawMatch)
+    }
+
+    // MARK: - init
+    
+    init(from decoder: Decoder) throws {
+        // forward compatibility support: accept all string values for {type, match} not defined in enum
+        
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        do {
+            self.name = try container.decodeIfPresent(String.self, forKey: .name)
+            self.type = try container.decodeIfPresent(String.self, forKey: .type)
+            self.match = try container.decodeIfPresent(String.self, forKey: .match)
+            self.value = try container.decodeIfPresent(AttributeValue.self, forKey: .value)
+        } catch {
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: container.codingPath, debugDescription: "Faild to decode User Attribute)"))
+        }
+    }
+    
+    init(name: String, type: String, match: String?, value: AttributeValue?) {
+        self.name = name
+        self.type = type
+        self.match = match
+        self.value = value
+    }
+}
+
+extension UserAttribute {
+    
+    func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {
+        
+        // invalid type - parsed for forward compatibility only (but evaluation fails)
+        guard let _ = typeSupported else {
+            throw OptimizelyError.conditionInvalidAttributeType(self.type ?? "empty")
+        }
+
+        // invalid match - parsed for forward compatibility only (but evaluation fails)
+        guard let matchFinal = matchSupported else {
+            throw OptimizelyError.conditionInvalidAttributeMatch(self.match ?? "empty")
+        }
+        
+        guard let nameFinal = name else {
+            throw OptimizelyError.conditionInvalidFormat("empty name in condition")
+        }
+        
+        if matchFinal != .exists, value == nil {
+            throw OptimizelyError.conditionInvalidFormat("missing value (\(nameFinal)) in condition)")
+        }
+        
+        let attributes = attributes ?? OptimizelyAttributes()
+        
+        let attributeValue = attributes[nameFinal] ?? nil  // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
+        
+        switch matchFinal {
+        case .exists:
+            return !(attributeValue is NSNull || attributeValue == nil)
+        case .exact:
+            return try value!.isExactMatch(with: attributeValue)
+        case .substring:
+            return try value!.isSubstring(of: attributeValue)
+        case .lt:
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
-            return try value.isGreater(than: attributeValue)
-        case "gt":
+            return try value!.isGreater(than: attributeValue)
+        case .gt:
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
-            return try value.isLess(than: attributeValue)
-        default:
-            return try value.isExactMatch(with: attributeValue)
+            return try value!.isLess(than: attributeValue)
         }
     }
     

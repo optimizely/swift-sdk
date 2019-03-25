@@ -61,7 +61,7 @@ enum ConditionHolder: Codable, Equatable {
         }
     }
     
-    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
         switch self {
         case .logicalOp:
             throw OptimizelyError.conditionInvalidFormat("logical op not evaluated")
@@ -77,7 +77,7 @@ enum ConditionHolder: Codable, Equatable {
 
 extension Array where Element == ConditionHolder {
     
-    func evaluate(project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
         guard let firstItem = self.first else {
             throw OptimizelyError.conditionInvalidFormat("empty condition array")
         }
@@ -86,18 +86,15 @@ extension Array where Element == ConditionHolder {
         case .logicalOp(let op):
             return try evaluate(op: op, project: project, attributes: attributes)
         case .leaf:
-            // special case - array has a single ConditionLeaf
-            guard self.count == 1 else {
-                throw OptimizelyError.conditionInvalidFormat("invalid condition array format")
-            }
-            
-            return try firstItem.evaluate(project: project, attributes: attributes)
+            // special case - no logical operator
+            // implicit or
+            return try [[ConditionHolder.logicalOp(.or)],self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, attributes: attributes)
         default:
             throw OptimizelyError.conditionInvalidFormat("invalid first item")
         }
     }
     
-    func evaluate(op: LogicalOp, project: ProjectProtocol, attributes: [String: Any]) throws -> Bool {
+    func evaluate(op: LogicalOp, project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
         guard self.count > 0 else {
             throw OptimizelyError.conditionInvalidFormat(#function)
         }

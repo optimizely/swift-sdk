@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let datafileName = "demoTestDatafile"
     let experimentKey = "background_experiment"
     let eventKey = "sample_conversion"
-    let attributes = ["browser_type": "safari"]
+    let attributes = ["browser_type": "safari", "bool_attr": false] as [String : Any?]
     let sdkKey = "FCnSegiEkRry9rhVMroit4"
     
     var storyboard: UIStoryboard {
@@ -70,21 +70,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         _ = optimizely?.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in
             DispatchQueue.main.async {
+            #if os(iOS)
                 let alert = UIAlertView(title: "Datafile change", message: "something changed.", delegate: nil, cancelButtonTitle: "cancel")
                 alert.show()
+            #else
+                print("Datafile changed")
+            #endif
             }
         })
         
         _ = optimizely?.notificationCenter.addFeatureFlagRolloutChangeListener(featureListener: { (featurekey, toggle) in
             DispatchQueue.main.async {
+            #if os(iOS)
                 let alert = UIAlertView(title: "Feature flag \(featurekey) changed", message: "toggled to \(toggle)", delegate: nil, cancelButtonTitle: "cancel")
                 alert.show()
+            #else
+                print("Feature flag \(featurekey) changed toggled to \(toggle)")
+            #endif
                 if let controller = self.window?.rootViewController as? VariationViewController {
-                    controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
+                    //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
+                    if let showCoupon = try? self.optimizely?.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
+                        controller.showCoupon = showCoupon
+                    }
+
                 }
             }
 
         })
+        
+        _ = optimizely?.notificationCenter.addActivateNotificationListener(activateListener: { (experiment, userId, attributes, variation, event) in
+            print("got activate notification")
+        })
+        
+        _ = optimizely?.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
+            print(eventKey)
+            print(userId)
+            print(attributes)
+            print(eventTags)
+            print(event)
+            print("got track notification")
+        })
+        
         // initialize Optimizely Client from a datafile download
         optimizely!.initializeSDK { result in
             switch result {

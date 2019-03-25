@@ -72,16 +72,14 @@ import Foundation
 //}
 
 open class DefaultUserProfileService: OPTUserProfileService {
-    static let variationId = "variation_id"
-    static let userId = "user_id"
-    static let bucketMap = "experiment_bucket_map"
-    static let storageName = "user-profile-service"
-    
+    public typealias UserProfileData = [String: UPProfile]
+
     var profiles: UserProfileData
     let lock = DispatchQueue(label: "com.optimizely.UserProfileService")
-    
+    let kStorageName = "user-profile-service"
+
     public required init() {
-        profiles = UserDefaults.standard.dictionary(forKey: DefaultUserProfileService.storageName) as? UserProfileData ?? UserProfileData()
+        profiles = UserDefaults.standard.dictionary(forKey: kStorageName) as? UserProfileData ?? UserProfileData()
     }
 
     open func lookup(userId: String) -> UPProfile? {
@@ -92,41 +90,24 @@ open class DefaultUserProfileService: OPTUserProfileService {
         return retVal
     }
 
-    open func variationId(userId: String, experimentId: String) -> String? {
-        var retVal:String?
-        lock.sync {
-            if let profile =  profiles[userId],
-                let bucketMap = profile[DefaultUserProfileService.bucketMap] as? UPBucketMap,
-                let experimentMap = bucketMap[experimentId]
-            {
-                retVal = experimentMap[DefaultUserProfileService.variationId]
-            }
-        }
-        return retVal
-    }
-
-    open func save(userProfile: UserProfileData) {
+    open func save(userProfile: UPProfile) {
+        guard let userId = userProfile[UserProfileKeys.kUserId] as? String else { return }
+            
         lock.async {
-            self.profiles = userProfile
+            self.profiles[userId] = userProfile
             let defaults = UserDefaults.standard
-            defaults.set(self.profiles, forKey: DefaultUserProfileService.storageName)
+            defaults.set(self.profiles, forKey: self.kStorageName)
             defaults.synchronize()
         }
     }
     
-    open func saveProfile(userId: String, experimentId: String, variationId: String) {
+    open func reset(userProfiles: UserProfileData? = nil) {
         lock.async {
-            var profile = self.profiles[userId] ?? UPProfile()
-            
-            var bucketMap = profile[DefaultUserProfileService.bucketMap] as? UPBucketMap ?? UPBucketMap()
-            bucketMap[experimentId] = [DefaultUserProfileService.variationId: variationId]
-            
-            profile[DefaultUserProfileService.bucketMap] = bucketMap
-            profile[DefaultUserProfileService.userId] = userId
-            
-            self.profiles[userId] = profile
-            self.save(userProfile: self.profiles)
+            self.profiles = userProfiles ?? UserProfileData()
+            let defaults = UserDefaults.standard
+            defaults.set(self.profiles, forKey: self.kStorageName)
+            defaults.synchronize()
         }
     }
-    
 }
+

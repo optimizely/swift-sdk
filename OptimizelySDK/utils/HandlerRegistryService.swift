@@ -8,16 +8,6 @@
 
 import Foundation
 
-enum HandlerRegistryServiceError: Error {
-    case alreadyRegistered
-    
-    var localizedDescription: String {
-        get {
-            return "Already registered Service"
-        }
-    }
-}
-
 class HandlerRegistryService {
     
     static let shared = HandlerRegistryService()
@@ -30,27 +20,21 @@ class HandlerRegistryService {
         
     }
     
-    func registerBinding(binder:BinderProtocol) throws {
-        var shouldThrow = false
+    func registerBinding(binder:BinderProtocol) {
         dispatchQueue.sync {
             if let _ = binders.filter({(type(of: $0.service) == type(of: binder.service)) && $0.sdkKey == binder.sdkKey}).first {
-                shouldThrow = true
             }
             else {
                 binders.append(binder)
             }
-        }
-        
-        if shouldThrow {
-            throw HandlerRegistryServiceError.alreadyRegistered
-        }
+        }        
     }
     
     func injectComponent(service:Any, sdkKey:String? = nil, isReintialize:Bool=false) -> Any? {
         var result:Any?
         dispatchQueue.sync {
             if var binder = binders.filter({(type(of: $0.service) == type(of: service)) && $0.sdkKey == sdkKey}).first {
-                if isReintialize && binder.stategy == .reCreate {
+                if isReintialize && binder.strategy == .reCreate {
                     binder.instance = binder.factory()
                     result = binder.instance
                 }
@@ -67,24 +51,27 @@ class HandlerRegistryService {
         return result
     }
     
+    func reInitializeComponent(service:Any, sdkKey:String? = nil) {
+            let _ = injectComponent(service: service, sdkKey: sdkKey, isReintialize: true)
+    }
+    
     func lookupComponents(sdkKey:String)->[Any?]? {
         var value:[Any]?
         
-        dispatchQueue.sync {
-            value = self.binders.filter({$0.sdkKey == sdkKey}).map({ self.injectComponent(service: $0.service) as Any })
-        }
+        value = self.binders.filter({$0.sdkKey == sdkKey}).map({ self.injectComponent(service: $0.service) as Any })
+
         return value
     }
 }
 
-enum reInitializeStrategy {
+enum ReInitializeStrategy {
     case reCreate
     case reUse
 }
 
 protocol BinderProtocol {
     var sdkKey:String? { get }
-    var stategy:reInitializeStrategy { get }
+    var strategy:ReInitializeStrategy { get }
     var service:Any { get }
     var isSingleton:Bool { get }
     var factory:()->Any? { get }
@@ -95,7 +82,7 @@ protocol BinderProtocol {
 class Binder<T> : BinderProtocol {
     var sdkKey:String?
     var service: Any
-    var stategy: reInitializeStrategy = .reCreate
+    var strategy: ReInitializeStrategy = .reCreate
     var factory: (() -> Any?) = { ()->Any? in { return nil as Any? }}
     //var configure: ((Any?) -> Any?) = { (_)->Any? in { return nil as Any? }}
     var isSingleton = false
@@ -126,8 +113,8 @@ class Binder<T> : BinderProtocol {
         return self
     }
     
-    func reInitializeStategy(strategy:reInitializeStrategy) -> Binder {
-        self.stategy = strategy
+    func reInitializeStrategy(strategy:ReInitializeStrategy) -> Binder {
+        self.strategy = strategy
         
         return self
     }
@@ -142,3 +129,33 @@ class Binder<T> : BinderProtocol {
         return self
     }
 }
+
+extension HandlerRegistryService {
+    func injectLogger(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTLogger? {
+        return injectComponent(service: OPTLogger.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTLogger?
+    }
+    
+    func injectNotificationCenter(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTNotificationCenter? {
+        return injectComponent(service: OPTNotificationCenter.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTNotificationCenter?
+    }
+    func injectDecisionService(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTDecisionService? {
+        return injectComponent(service: OPTDecisionService.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDecisionService?
+    }
+    func injectBucketer(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTBucketer? {
+        return injectComponent(service: OPTBucketer.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTBucketer?
+    }
+    
+    func injectEventDispatcher(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTEventDispatcher? {
+        return injectComponent(service: OPTEventDispatcher.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTEventDispatcher?
+    }
+    
+    func injectDatafileHandler(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTDatafileHandler? {
+        return injectComponent(service: OPTDatafileHandler.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDatafileHandler?
+    }
+    
+    func injectUserProfileService(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTUserProfileService? {
+        return injectComponent(service: OPTUserProfileService.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTUserProfileService?
+    }
+    
+}
+

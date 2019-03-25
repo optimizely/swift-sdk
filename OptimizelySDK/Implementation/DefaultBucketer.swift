@@ -40,26 +40,20 @@ class DefaultBucketer : OPTBucketer {
         self.config = config
     }
 
-    
-    
-    static func createInstance(config: ProjectConfig) -> OPTBucketer? {
-        return DefaultBucketer(config: config)
-    }
-    
     func bucketToExperiment(group: Group, bucketingId: String) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
         
         if group.trafficAllocation.count == 0 {
             // log error if there are no traffic allocation values
-            logger?.log(level: .error, message: String(format:"Group %@ has no traffic allocation", group.id))
+            logger?.log(level: .error, message: "Group \(group.id) has no traffic allocation")
             return nil;
         }
         
         for trafficAllocation in group.trafficAllocation {
             if bucketValue <= trafficAllocation.endOfRange {
                 let experimentId = trafficAllocation.entityId;
-                let experiment = config.project.experiments.filter({$0.id == experimentId}).first
+                let experiment = config.getExperiment(id: experimentId)
                 
                 // propagate errors and logs for unknown experiment
                 if let _ = experiment
@@ -67,14 +61,14 @@ class DefaultBucketer : OPTBucketer {
                 }
                 else {
                     // log problem with experiment id
-                    logger?.log(level: .error, message: String(format:"Experiment Id %@ for experiment not in datafile", experimentId))
+                    logger?.log(level: .error, message: "Experiment Id \(experimentId) for experiment not in datafile")
                 }
                 return experiment;
             }
         }
         
         // log error if invalid bucketing id
-        logger?.log(level: .error, message: String(format:"Bucketing value %@ not in traffic allocation", bucketValue))
+        logger?.log(level: .error, message: "Bucketing value \(bucketValue) not in traffic allocation")
 
         return nil
     }
@@ -91,6 +85,9 @@ class DefaultBucketer : OPTBucketer {
             case .random:
                 let mutexExperiment = bucketToExperiment(group: group, bucketingId: bucketingId)
                 if let mutexExperiment = mutexExperiment, mutexExperiment.id == experiment.id {
+                    ok = true
+                }
+                else {
                     ok = false
                 }
             }
@@ -102,7 +99,7 @@ class DefaultBucketer : OPTBucketer {
         }
         else {
             // log message if the user is mutually excluded
-            logger?.log(level: .error, message: String(format:"User not bucketed into variation. Mutually excluded via group %@", group?.id ?? "unknown"))
+            logger?.log(level: .error, message: "User not bucketed into variation. Mutually excluded via group \(group?.id ?? "unknown")")
 
             return nil;
         }
@@ -114,7 +111,7 @@ class DefaultBucketer : OPTBucketer {
         
         if experiment.trafficAllocation.count == 0 {
             // log error if there are no traffic allocation values
-            logger?.log(level: .error, message: String(format:"Experiment %@ has no traffic allocation", experiment.key))
+            logger?.log(level: .error, message: "Experiment \(experiment.key) has no traffic allocation")
 
             return nil
         }
@@ -123,16 +120,16 @@ class DefaultBucketer : OPTBucketer {
             if (bucketValue <= trafficAllocation.endOfRange) {
                 
                 let variationId = trafficAllocation.entityId;
-                let variation = experiment.variations.filter({$0.id == variationId }).first
+                let variation = experiment.getVariation(id: variationId)
                 // propagate errors and logs for unknown variation
                 if let variation = variation {
                    // log we got a variation
-                    logger?.log(level: .info, message: String(format:"Got variation %@ for experiment %@", variation.key, experiment.key))
+                    logger?.log(level: .info, message: "Got variation \(variation.key) for experiment \(experiment.key)")
 
                 }
                 else {
                     // log error
-                    logger?.log(level: .error, message: String(format:"Not bucketed into variation experiment %@", experiment.key))
+                    logger?.log(level: .error, message: "Not bucketed into variation experiment \(experiment.key)")
 
                 }
                 return variation;
@@ -140,7 +137,7 @@ class DefaultBucketer : OPTBucketer {
         }
         
         // log error if invalid bucketing id
-        logger?.log(level: .error, message: String(format:"Invalid bucketing value for experiment %@", experiment.key))
+        logger?.log(level: .error, message: "Invalid bucketing value for experiment \(experiment.key)")
 
         return nil;
 

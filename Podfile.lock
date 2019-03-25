@@ -21,12 +21,14 @@ PODS:
   - Mixpanel-swift (2.5.7):
     - Mixpanel-swift/Complete (= 2.5.7)
   - Mixpanel-swift/Complete (2.5.7)
+  - SwiftyJSON (4.2.0)
 
 DEPENDENCIES:
   - Amplitude-iOS
   - Google/Analytics
   - Localytics
   - Mixpanel-swift
+  - SwiftyJSON (~> 4.0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -39,6 +41,7 @@ SPEC REPOS:
     - GoogleToolboxForMac
     - Localytics
     - Mixpanel-swift
+    - SwiftyJSON
 
 SPEC CHECKSUMS:
   Amplitude-iOS: 1de49103125f9b816ca11df924652e5a303e2c33
@@ -50,7 +53,8 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
   Localytics: 578987f2f1d5cbc66719255b88c590430e5680dd
   Mixpanel-swift: d4de197db883e9dbba162fee6751db5e7766971b
+  SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
 
-PODFILE CHECKSUM: 351b6ae87aab91085d4cf7aa7e3a3540f6226b54
+PODFILE CHECKSUM: 4f4ce5504801dbc19d61fee45d7740aa732a995c
 
 COCOAPODS: 1.6.1

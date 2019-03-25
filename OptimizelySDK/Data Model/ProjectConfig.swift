@@ -20,7 +20,10 @@ class ProjectConfig : Codable {
     
     var project: Project!
     
-    var whitelistUsers = [String: [String: String]]()
+    // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
+    // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
+    
+    private var whitelistUsers = [String: [String: String]]()
     
     init(datafile: Data) throws {
         do {
@@ -29,6 +32,9 @@ class ProjectConfig : Codable {
             // TODO: clean up (debug only)
             print(">>>>> Project Decode Error: \(error)")
             throw OptimizelyError.dataFileInvalid
+        }
+        if !isValidVersion(version: self.project.version) {
+            throw OptimizelyError.dataFileVersionInvalid(self.project.version)
         }
     }
     
@@ -55,7 +61,7 @@ class ProjectConfig : Codable {
 }
 
 extension ProjectConfig {
-    func whitelistUser(userId:String, experimentId:String, variationId:String) {
+    private func whitelistUser(userId: String, experimentId: String, variationId: String) {
         if var dic = whitelistUsers[userId] {
             dic[experimentId] = variationId
         }
@@ -65,11 +71,155 @@ extension ProjectConfig {
             whitelistUsers[userId] = dic
         }
     }
-    func getWhitelistedVariationId(userId:String, experimentId:String) -> String? {
+    
+    private func removeFromWhitelist(userId: String, experimentId: String) {
+        self.whitelistUsers[userId]?.removeValue(forKey: experimentId)
+    }
+    
+    private func getWhitelistedVariationId(userId: String, experimentId: String) -> String? {
         if var dic = whitelistUsers[userId] {
             return dic[experimentId]
         }
         return nil
     }
+    
+    private func isValidVersion(version: String) -> Bool {
+        // old versions (< 4) of datafiles not supported
+        return ["4"].contains(version)
+    }
 }
 
+// MARK: - Project Access
+
+extension ProjectConfig {
+    
+    /**
+     * Get an Experiment object for a key.
+     */
+    func getExperiment(key: String) -> Experiment? {
+        return allExperiments.filter { $0.key == key }.first
+    }
+    
+    /**
+     * Get an Experiment object for an Id.
+     */
+    func getExperiment(id: String) -> Experiment? {
+        return allExperiments.filter { $0.id == id }.first
+    }
+    
+    /**
+     * Get an experiment Id for the human readable experiment key
+     **/
+    func getExperimentId(key: String) -> String? {
+        return getExperiment(key: key)?.id
+    }
+    
+    /**
+     * Get a Group object for an Id.
+     */
+    func getGroup(id: String) -> Group? {
+        return project.groups.filter{ $0.id == id }.first
+    }
+    
+    /**
+     * Get a Feature Flag object for a key.
+     */
+    func getFeatureFlag(key: String) -> FeatureFlag? {
+        return project.featureFlags.filter{ $0.key == key }.first
+    }
+    
+    /**
+     * Get a Rollout object for an Id.
+     */
+    func getRollout(id: String) -> Rollout? {
+        return project.rollouts.filter{ $0.id == id }.first
+    }
+    
+    /**
+     * Gets an event for a corresponding event key
+     */
+    func getEvent(key: String) -> Event? {
+        return project.events.filter{ $0.key == key }.first
+    }
+    
+    /**
+     * Gets an event id for a corresponding event key
+     */
+    func getEventId(key: String) -> String? {
+        return getEvent(key: key)?.id
+    }
+    
+    
+    /**
+     * Get an attribute for a given key.
+     */
+    func getAttribute(key: String) -> Attribute? {
+        return project.attributes.filter{ $0.key == key }.first
+    }
+    
+    /**
+     * Get an attribute Id for a given key.
+     **/
+    func getAttributeId(key: String) -> String? {
+        return getAttribute(key: key)?.id
+    }
+    
+    /**
+     * Get an audience for a given audience id.
+     */
+    func getAudience(id: String) -> Audience? {
+        return project.audiences.filter{ $0.id == id }.first
+    }
+    
+    /**
+     * Get forced variation for a given experiment key and user id.
+     */
+    func getForcedVariation(experimentKey: String, userId: String) -> Variation? {
+        guard let experiment = allExperiments.filter({$0.key == experimentKey}).first else {
+            return nil
+        }
+        
+        if let id = getWhitelistedVariationId(userId: userId, experimentId: experiment.id) {
+            return experiment.getVariation(id:id)
+        }
+        
+        return nil
+    }
+    
+    /**
+     * Set forced variation for a given experiment key and user id according to a given variation key.
+     */
+    func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) -> Bool {
+        guard let experiment = allExperiments.filter({$0.key == experimentKey}).first else {
+            return false
+        }
+        
+        guard var variationKey = variationKey else {
+            self.removeFromWhitelist(userId: userId, experimentId: experiment.id)
+            return true
+        }
+        
+        // TODO: common function to trim all keys
+        variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
+
+        guard !variationKey.isEmpty else {
+            return false
+        }
+
+        guard let variation = experiment.variations.filter({$0.key == variationKey }).first else {
+            return false
+        }
+        
+        self.whitelistUser(userId: userId, experimentId: experiment.id, variationId: variation.id)
+        
+        return true
+    }
+    
+    var allExperiments:[Experiment] {
+        get {
+            return  project.experiments +
+                 project.groups.map({$0.experiments}).flatMap({$0})
+        }
+    }
+
+}

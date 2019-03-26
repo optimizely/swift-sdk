@@ -13,16 +13,19 @@ class OptimizelyManagerTests_Threading: XCTestCase {
     var datafileOn: Data!
     var datafileOff: Data!
     var optimizely: OptimizelyManager!
-    var userId = "11111"
+    let userId = "11111"
+    let sdkKey = "12345"
 
     override func setUp() {
         self.datafileOn = OTUtils.loadJSONDatafile("feature_rollout_toggle_on")
         
         self.datafileOff = OTUtils.loadJSONDatafile("feature_rollout_toggle_off")
+
+        let datafileHandler = makeDatafileHandler()
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStrategy(strategy: .reUse).to(factory: type(of:datafileHandler).init).using(instance: datafileHandler).sdkKey(key: "12345"))
         
         self.optimizely = OptimizelyManager(sdkKey: "12345",
                                             userProfileService: OTUtils.createClearUserProfileService(),
-                                            datafileHandler:makeDatafileHandler(),
                                             periodicDownloadInterval:1
         )
         do {
@@ -79,7 +82,6 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         
         let optimizely2 = OptimizelyManager(sdkKey: "123123",
                                             //userProfileService: OTUtils.createClearUserProfileService(),
-                                            //datafileHandler:makeDatafileHandler(),
                                             periodicDownloadInterval:0
         )
         try? optimizely2.initializeSDK(datafile: datafile!)
@@ -105,12 +107,10 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         
         let optimizely2 = OptimizelyManager(sdkKey: "123123",
                                             userProfileService: NoOpUserProfileService(),
-            //datafileHandler:makeDatafileHandler(),
             periodicDownloadInterval:0
         )
         let optimizely3 = OptimizelyManager(sdkKey: "999999",
                                             userProfileService: NoOpUserProfileService(),
-            //datafileHandler:makeDatafileHandler(),
             periodicDownloadInterval:0
         )
         try? optimizely2.initializeSDK(datafile: datafile!)
@@ -139,12 +139,10 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         
         let optimizely2 = OptimizelyManager(sdkKey: "123123",
                                             userProfileService: NoOpUserProfileService(),
-            //datafileHandler:makeDatafileHandler(),
             periodicDownloadInterval:0
         )
         let optimizely3 = OptimizelyManager(sdkKey: "999999",
                                             userProfileService: NoOpUserProfileService(),
-            //datafileHandler:makeDatafileHandler(),
             periodicDownloadInterval:0
         )
         try? optimizely2.initializeSDK(datafile: datafile!)
@@ -237,13 +235,11 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         let optimizely2 = OptimizelyManager(sdkKey: "concurrent1",
                                             eventDispatcher: makeEventHandler(),
                                             userProfileService: NoOpUserProfileService(),
-                                            datafileHandler:makeDatafileHandler(),
             periodicDownloadInterval:0
         )
         let optimizely3 = OptimizelyManager(sdkKey: "concurrent2",
                                             eventDispatcher: makeEventHandler(),
                                             userProfileService: NoOpUserProfileService(),
-                                            datafileHandler:makeDatafileHandler(),
             periodicDownloadInterval:0
         )
         try? optimizely2.initializeSDK(datafile: datafile!)

@@ -16,12 +16,15 @@ class OptimizelyManagerTests_Threading: XCTestCase {
     let userId = "11111"
     let sdkKey = "12345"
 
+    /// Setup a local datafile handler that uses a timer to constantly switch datafiles
+    /// toggling feature flag on or off.
     override func setUp() {
         self.datafileOn = OTUtils.loadJSONDatafile("feature_rollout_toggle_on")
         
         self.datafileOff = OTUtils.loadJSONDatafile("feature_rollout_toggle_off")
-
+        // datafile handler that uses two datafiles on/off
         let datafileHandler = makeDatafileHandler()
+        // register our datafile handler for this sdk key
         HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStrategy(strategy: .reUse).to(factory: type(of:datafileHandler).init).using(instance: datafileHandler).sdkKey(key: "12345"))
         
         self.optimizely = OptimizelyManager(sdkKey: "12345",
@@ -44,6 +47,9 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         self.optimizely = nil
     }
 
+    /// This test is testing the feature flag rollout toggle.  It uses a custom datafile handler
+    /// that switches between datafiles with the same project and feature.  one has the feature flag
+    /// toggled on, another has it toggled off.
     func testFeatureToggle() {
         let _ = self.optimizely.notificationCenter.addFeatureFlagRolloutChangeListener { (featureKey, toggle) in
             do {
@@ -77,6 +83,8 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         wait(for: [expectation], timeout: 100.0)
     }
 
+    /// Here we are testing two instances, the default instance created in setup is getting updates at 1
+    /// second intervals.  Our second is just calling features and is a different project.
     func testTwoInstances() {
         let datafile = OTUtils.loadJSONDatafile("typed_audience_datafile")
         
@@ -90,6 +98,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         XCTAssertTrue(enabled!)
     }
 
+    /// Here we are testing 3 instances and calling activate and isFeature enabled on those instances.
     func testThreeInstances() {
         class NoOpUserProfileService :OPTUserProfileService {
             required init() {
@@ -122,6 +131,8 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         XCTAssertNotNil(variation)
     }
 
+    /// Here we are creating 3 instances and calling activate/isFeatureEnabled 101 times on each using
+    /// a dispatch queue for each.
     func testThreeInstancesThreads() {
         class NoOpUserProfileService :OPTUserProfileService {
             required init() {
@@ -217,6 +228,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         }
     }
 
+    /// Concurrent testing.  We don't wrap all our entities so concurrent testing is not approved.  However, we should not crash.  We might want a concurrent option in which case we wrap every method with a lock
     func testConcurrentThreads() {
         class NoOpUserProfileService :OPTUserProfileService {
             required init() {
@@ -245,17 +257,26 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         try? optimizely2.initializeSDK(datafile: datafile!)
         try? optimizely3.initializeSDK(datafile: OTUtils.loadJSONDatafile("ab_experiments")!)
         
-        let expectationBackground = XCTestExpectation(description: "waiting for background thread")
+        //let expectationBackground = XCTestExpectation(description: "waiting for background thread")
         let backgroundQueue = DispatchQueue(label: "mybackground", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent)
         let atomicBackground = AtomicProperty<[(enabled:Bool?, variation:String?)]>(property: [(enabled:Bool?, variation:String?)]())
+        let appendLock = DispatchQueue(label: "appendLock")
+        
+        let dispatchGroup = DispatchGroup()
         
         for _ in 0...100 {
+            dispatchGroup.enter()
             backgroundQueue.async  {
                 let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
                 let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
                 
-                atomicBackground.property!.append((enabled: enabled!, variation: variation!))
+                appendLock.async {
+                    atomicBackground.property!.append((enabled: enabled!, variation: variation!))
+                }
                 
+                defer {
+                    dispatchGroup.leave()
+                }
                 //XCTAssertTrue(enabled!)
                 //XCTAssertNotNil(variation)
             }
@@ -267,13 +288,9 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         XCTAssertTrue(enabled!)
         XCTAssertNotNil(variation)
 
-        backgroundQueue.asyncAfter(deadline: .now() + 30.0) {
-            expectationBackground.fulfill()
-        }
+        dispatchGroup.wait()
         
-        wait(for: [expectationBackground], timeout: 90.0)
-        
-        //XCTAssert(atomicBackground.property!.count == 101)
+        XCTAssertTrue(atomicBackground.property!.count == 101)
         
         for index in 0...100 where index < atomicBackground.property!.count {
             XCTAssertTrue(atomicBackground.property![index].enabled!)

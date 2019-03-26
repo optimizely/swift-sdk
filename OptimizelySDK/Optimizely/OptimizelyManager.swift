@@ -605,7 +605,7 @@ open class OptimizelyManager: NSObject {
         var args = Array<Any?>()
         args.append(Constants.NotificationKeys.OptimizelyDecisionTypeFeatureVariable)
         args.append(userId)
-        args.append(attributes)
+        args.append(_attributes)
         
         decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeature] = featureKey
         decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeatureEnabled] = decision?.variation?.featureEnabled ?? false

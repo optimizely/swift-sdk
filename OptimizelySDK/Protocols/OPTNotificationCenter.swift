@@ -22,6 +22,7 @@ public enum NotificationType : Int {
     case Track
     case DatafileChange
     case FeatureFlagRolloutToggle
+    case Decision
 }
 
 public enum FeatureFlagToggle {
@@ -40,6 +41,8 @@ public typealias GenericListener = (Any...) -> Void
 public typealias ActivateListener = (_ experiment:OptimizelyExperimentData, _ userId:String, _ attributes: OptimizelyAttributes?, _ variation:OptimizelyVariationData, _ event:Dictionary<String, Any>) -> Void
 
 public typealias TrackListener = (_ eventKey:String, _ userId:String, _ attributes: OptimizelyAttributes?, _ eventTags:Dictionary<String, Any>?, _ event:Dictionary<String, Any>) -> Void
+
+public typealias DecisionListener = (_ type:String, _ userId:String, _ attributes: OptimizelyAttributes?, _ decisionInfo:Dictionary<String, Any>) -> Void
 
 public typealias DatafileChangeListener = (_ datafile:Data) -> Void
 
@@ -72,6 +75,13 @@ func addActivateNotificationListener(activateListener:@escaping ActivateListener
  */
 func addTrackNotificationListener(trackListener:@escaping TrackListener) -> Int?
 
+/**
+ Add a decision notification listener to the notification center.
+ - Parameter decisionListener: Notification to add.
+ - Returns: the notification id used to remove the notification. It is greater than 0 on success.
+ */
+func addDecisionNotificationListener(decisionListener:@escaping DecisionListener) -> Int?
+    
 /**
  Add a datafile change notification listener
  - Parameter datafileChangeListener: Notification to add.

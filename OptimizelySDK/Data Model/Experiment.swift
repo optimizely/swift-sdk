@@ -38,6 +38,8 @@ struct Experiment: Codable, Equatable {
     var forcedVariations: [String: String]
 }
 
+// MARK: - Utils
+
 extension Experiment {
     
     func getVariation(id: String) -> Variation? {

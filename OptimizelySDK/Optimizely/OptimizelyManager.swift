@@ -550,7 +550,7 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.featureUnknown
         }
         
-        guard let variable = featureFlag.variables.filter({$0.key == variableKey}).first else {
+        guard let variable = featureFlag.getVariable(key: variableKey) else {
             throw OptimizelyError.variableUnknown
         }
         
@@ -562,7 +562,7 @@ open class OptimizelyManager: NSObject {
             _attributes = attributes!
         }
         if let decision = self.decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: _attributes) {
-            if let featureVariableUsage = decision.variation?.variables?.filter({$0.id == variable.id}).first {
+            if let featureVariableUsage = decision.variation?.getVariable(id: variable.id) {
                 defaultValue = featureVariableUsage.value
             }
         }

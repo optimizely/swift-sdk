@@ -77,6 +77,7 @@ class DefaultDecisionService : OPTDecisionService {
             }
         } catch {
             // TODO: fix to forward throw
+            print("decision error: \(error)")
         }
         
         return bucketedVariation;
@@ -114,22 +115,13 @@ class DefaultDecisionService : OPTDecisionService {
         return true
     }
     
-    func getExperimentInGroup(group:Group, bucketingId:String) -> Experiment? {
-        let experiment = bucketer.bucketToExperiment(group:group, bucketingId:bucketingId)
-        if let _ = experiment {
-            // log
-        }
-
-        return experiment;
-    }
-    
      func getVariationForFeature(featureFlag:FeatureFlag, userId:String, attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
         //Evaluate in this order:
         
         //1. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
-        if let variation = getVariationForFeatureExperiment(featureFlag: featureFlag, userId:userId, attributes:attributes) {
-            return variation
+        if let pair = getVariationForFeatureExperiment(featureFlag: featureFlag, userId:userId, attributes:attributes) {
+            return pair
         }
         
         //2. Attempt to bucket user into rollout using the feature flag.
@@ -140,28 +132,6 @@ class DefaultDecisionService : OPTDecisionService {
         
         return nil;
 
-    }
-    
-    func getVariationForFeatureGroup(featureFlag: FeatureFlag,
-                                     groupId: String,
-                                     userId: String,
-                                     attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
-        
-        let bucketing_id = getBucketingId(userId:userId, attributes:attributes)
-        if let group = config.project.groups.filter({$0.id == groupId}).first {
-            
-            if let experiment = getExperimentInGroup(group: group, bucketingId:bucketing_id),
-                featureFlag.experimentIds.contains(experiment.id),
-                let variation = getVariation(userId:userId, experiment:experiment, attributes:attributes) {
-                  // log
-                    return (experiment,variation)
-            }
-        }
-        else {
-            // log unknown group
-        }
-    
-        return nil
     }
     
     func getVariationForFeatureExperiment(featureFlag: FeatureFlag,
@@ -230,6 +200,38 @@ class DefaultDecisionService : OPTDecisionService {
         }
         
         return bucketingId;
+    }
+    
+    // [TODO] these two not used anywhere. Can we clean up?
+    
+    func getVariationForFeatureGroup(featureFlag: FeatureFlag,
+                                     groupId: String,
+                                     userId: String,
+                                     attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
+        
+        let bucketing_id = getBucketingId(userId:userId, attributes:attributes)
+        if let group = config.getGroup(id: groupId) {
+            if let experiment = getExperimentInGroup(group: group, bucketingId:bucketing_id),
+                featureFlag.experimentIds.contains(experiment.id),
+                let variation = getVariation(userId:userId, experiment:experiment, attributes:attributes) {
+                // log
+                return (experiment,variation)
+            }
+        }
+        else {
+            // log unknown group
+        }
+        
+        return nil
+    }
+    
+    func getExperimentInGroup(group:Group, bucketingId:String) -> Experiment? {
+        let experiment = bucketer.bucketToExperiment(group:group, bucketingId:bucketingId)
+        if let _ = experiment {
+            // log
+        }
+        
+        return experiment;
     }
     
 }

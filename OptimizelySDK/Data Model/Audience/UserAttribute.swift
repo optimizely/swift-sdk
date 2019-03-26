@@ -84,6 +84,8 @@ struct UserAttribute: Codable, Equatable {
     }
 }
 
+// MARK: - Evaluate
+
 extension UserAttribute {
     
     func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {

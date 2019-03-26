@@ -39,10 +39,7 @@ struct Project: Codable, Equatable {
 extension Project: ProjectProtocol {
     
     func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool {
-        let audienceMatch = typedAudiences?.filter{$0.id == audienceId}.first ??
-                            audiences.filter{$0.id == audienceId}.first
-        
-        guard let audience = audienceMatch else {
+        guard let audience = getAudience(id: audienceId) else {
             throw OptimizelyError.conditionNoMatchingAudience(audienceId)
         }
         
@@ -50,3 +47,16 @@ extension Project: ProjectProtocol {
     }
     
 }
+
+// MARK: - Utils
+
+extension Project {
+    
+    func getAudience(id: String) -> Audience? {
+        return typedAudiences?.filter{ $0.id == id }.first ??
+            audiences.filter{ $0.id == id }.first
+    }
+    
+}
+
+

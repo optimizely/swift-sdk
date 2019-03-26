@@ -76,7 +76,7 @@ class DefaultBucketer : OPTBucketer {
     func bucketExperiment(experiment: Experiment, bucketingId: String) -> Variation? {
         var ok = true
         // check for mutex
-        let group = config.project.groups.filter({ if let _ = $0.experiments.filter({$0.id == experiment.id }).first { return true } else { return false }}).first
+        let group = config.project.groups.filter{ $0.getExperiemnt(id: experiment.id) != nil }.first
         
         if let group = group {
             switch group.policy {

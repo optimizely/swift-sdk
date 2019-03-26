@@ -154,11 +154,20 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         let expectationBackground = XCTestExpectation(description: "waiting for background thread")
         let expectationMyQueue = XCTestExpectation(description: "waiting for my queue")
         let myQueue = DispatchQueue(label: "myQueue")
-        let backgroundQueue = DispatchQueue(label: "mybackground", qos: DispatchQoS.background, attributes: DispatchQueue.Attributes(), autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.never, target: nil)
+        let backgroundQueue = DispatchQueue(label: "mybackground", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes(), autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
         var mainResponse = [(enabled:Bool, variation:String)]()
         var backgroundResponse = [(enabled:Bool, variation:String)]()
         var myResponse = [(enabled:Bool, variation:String)]()
         for _ in 0...100 {
+            backgroundQueue.async  {
+                let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
+                let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
+                
+                backgroundResponse.append((enabled: enabled!, variation: variation!))
+                XCTAssertTrue(enabled!)
+                XCTAssertNotNil(variation)
+            }
+            
             DispatchQueue.main.async {
                 let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
                 let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
@@ -166,18 +175,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
                 XCTAssertTrue(enabled!)
                 XCTAssertNotNil(variation)
             }
-        }
-        for _ in 0...100 {
-            backgroundQueue.async  {
-                let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
-                let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
-                backgroundResponse.append((enabled: enabled!, variation: variation!))
-                XCTAssertTrue(enabled!)
-                XCTAssertNotNil(variation)
-            }
-        }
 
-        for _ in 0...100 {
             myQueue.async  {
                 let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
                 let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
@@ -195,16 +193,16 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         DispatchQueue.main.async {
             expectation.fulfill()
         }
+
+        myQueue.async {
+            expectationMyQueue.fulfill()
+        }
         
         backgroundQueue.async {
             expectationBackground.fulfill()
         }
         
-        myQueue.async {
-            expectationMyQueue.fulfill()
-        }
-
-        wait(for: [expectation, expectationBackground, expectationMyQueue], timeout: 1000.0)
+        wait(for: [expectation, expectationBackground, expectationMyQueue], timeout: 220.0)
 
         XCTAssertTrue(myResponse.count == 101)
         XCTAssertTrue(backgroundResponse.count == 101)
@@ -220,6 +218,74 @@ class OptimizelyManagerTests_Threading: XCTestCase {
 
         }
     }
+
+    func testConcurrentThreads() {
+        class NoOpUserProfileService :OPTUserProfileService {
+            required init() {
+                
+            }
+            func lookup(userId: String) -> NoOpUserProfileService.UPProfile? {
+                return nil
+            }
+            
+            func save(userProfile: NoOpUserProfileService.UPProfile) {
+            }
+        }
+        
+        let datafile = OTUtils.loadJSONDatafile("typed_audience_datafile")
+        
+        let optimizely2 = OptimizelyManager(sdkKey: "concurrent1",
+                                            eventDispatcher: makeEventHandler(),
+                                            userProfileService: NoOpUserProfileService(),
+                                            datafileHandler:makeDatafileHandler(),
+            periodicDownloadInterval:0
+        )
+        let optimizely3 = OptimizelyManager(sdkKey: "concurrent2",
+                                            eventDispatcher: makeEventHandler(),
+                                            userProfileService: NoOpUserProfileService(),
+                                            datafileHandler:makeDatafileHandler(),
+            periodicDownloadInterval:0
+        )
+        try? optimizely2.initializeSDK(datafile: datafile!)
+        try? optimizely3.initializeSDK(datafile: OTUtils.loadJSONDatafile("ab_experiments")!)
+        
+        let expectationBackground = XCTestExpectation(description: "waiting for background thread")
+        let backgroundQueue = DispatchQueue(label: "mybackground", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent)
+        let atomicBackground = AtomicProperty<[(enabled:Bool?, variation:String?)]>(property: [(enabled:Bool?, variation:String?)]())
+        
+        for _ in 0...100 {
+            backgroundQueue.async  {
+                let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
+                let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
+                
+                atomicBackground.property!.append((enabled: enabled!, variation: variation!))
+                
+                //XCTAssertTrue(enabled!)
+                //XCTAssertNotNil(variation)
+            }
+            
+        }
+        
+        let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
+        let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
+        XCTAssertTrue(enabled!)
+        XCTAssertNotNil(variation)
+
+        backgroundQueue.asyncAfter(deadline: .now() + 30.0) {
+            expectationBackground.fulfill()
+        }
+        
+        wait(for: [expectationBackground], timeout: 90.0)
+        
+        //XCTAssert(atomicBackground.property!.count == 101)
+        
+        for index in 0...100 where index < atomicBackground.property!.count {
+            XCTAssertTrue(atomicBackground.property![index].enabled!)
+            XCTAssertNotNil(atomicBackground.property![index].variation)
+        }
+    }
+
+    
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
@@ -255,5 +321,21 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         }
         
         return DatafileHandler(on: self.datafileOn, off: self.datafileOff)
+    }
+    
+    func makeEventHandler() -> OPTEventDispatcher {
+        class NoOpEventHandler : OPTEventDispatcher {
+            func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+                
+            }
+            
+            func flushEvents() {
+                
+            }
+            
+            
+        }
+        
+        return NoOpEventHandler()
     }
 }

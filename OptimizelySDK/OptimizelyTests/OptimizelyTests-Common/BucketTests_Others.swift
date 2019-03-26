@@ -1,14 +1,14 @@
 //
-//  BucketTests.swift
-//  OptimizelySDKTests
+//  BucketTests_Others.swift
+//  OptimizelySwiftSDK
 //
-//  Created by Thomas Zurkan on 12/4/18.
-//  Copyright © 2018 Optimizely. All rights reserved.
+//  Created by Jae Kim on 3/26/19.
+//  Copyright © 2019 Optimizely. All rights reserved.
 //
 
 import XCTest
 
-class BucketTests: XCTestCase {
+class BucketTests_Others: XCTestCase {
 
     var config:ProjectConfig?
     
@@ -31,46 +31,11 @@ class BucketTests: XCTestCase {
         config = nil
     }
     
-    func testBucketGroupWithOneAllocation() {
-        let groupId = "12115595439"
-        let bucketer = DefaultBucketer(config: config!)
-        
-        let tests = [["userId": "ppid1","expect": "all_traffic_experiment"],
-        ["userId": "ppid2", "expect": "all_traffic_experiment"],
-        ["userId": "ppid3", "expect": "all_traffic_experiment"],
-        ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": "all_traffic_experiment"]]
-        
-        let group = config?.getGroup(id: groupId)
-        
-        for test in tests {
-            let experiment = bucketer.bucketToExperiment(group: group!, bucketingId: test["userId"]!)
-            if let _ = test["expect"] {
-                XCTAssertEqual(test["expect"]!, experiment?.key)
-            }
-            else {
-                XCTAssertNil(experiment);
-            }
-        }
-        
-    }
+}
 
-    func testBucketGroupWithNoAllocation() {
-        let groupId = "12250460410"
-        let bucketer = DefaultBucketer(config: config!)
-        
-        let tests = [["userId": "ppid1"],
-                     ["userId": "ppid2"],
-                     ["userId": "ppid3"],
-                     ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
-        
-        let group = config?.getGroup(id: groupId)
-        
-        for test in tests {
-            let experiment = bucketer.bucketToExperiment(group: group!, bucketingId: test["userId"]!)
-            XCTAssertNil(experiment);
-        }
-        
-    }
+// MARK: - murmur-hash compliant
+
+extension BucketTests_Others {
 
     func testHashIsCompliant() {
         let experimentId = "1886780721"
@@ -92,9 +57,56 @@ class BucketTests: XCTestCase {
             XCTAssertEqual(test["expect"] as! Int, bucketingValue);
         }
     }
+    
+}
+
+// MARK: - bucket to experiment (group)
+
+extension BucketTests_Others {
+    
+    func testBucketGroupWithOneAllocation() {
+        let groupId = "12115595439"
+        let bucketer = DefaultBucketer(config: config!)
+        
+        let tests = [["userId": "ppid1","expect": "all_traffic_experiment"],
+                     ["userId": "ppid2", "expect": "all_traffic_experiment"],
+                     ["userId": "ppid3", "expect": "all_traffic_experiment"],
+                     ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": "all_traffic_experiment"]]
+        
+        let group = config?.getGroup(id: groupId)
+        
+        for test in tests {
+            let experiment = bucketer.bucketToExperiment(group: group!, bucketingId: test["userId"]!)
+            if let _ = test["expect"] {
+                XCTAssertEqual(test["expect"]!, experiment?.key)
+            }
+            else {
+                XCTAssertNil(experiment);
+            }
+        }
+    }
+    
+    func testBucketGroupWithNoTrafficAllocation() {
+        // this group has no traffic allocation
+        let groupId = "12250460410"
+        let bucketer = DefaultBucketer(config: config!)
+        
+        let tests = [["userId": "ppid1"],
+                     ["userId": "ppid2"],
+                     ["userId": "ppid3"],
+                     ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
+        
+        let group = config?.getGroup(id: groupId)
+        
+        for test in tests {
+            let experiment = bucketer.bucketToExperiment(group: group!, bucketingId: test["userId"]!)
+            XCTAssertNil(experiment);
+        }
+    }
 
     func testBucketToExperimentInGroup() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments",
+                                                  clearUserProfileService: true)!
         
         let experimentKey = "experiment_4000"
         let userIdForThisTestOnly = "ppid31886780721"
@@ -108,8 +120,14 @@ class BucketTests: XCTestCase {
         
         let variationKey = try! optimizely.activate(experimentKey: experimentKey, userId: userIdForThisTestOnly)
         XCTAssert(variationKey == expectedVariationKey)
-
+        
     }
+    
+}
+
+// MARK: - bucket to variation (experiment)
+
+extension BucketTests_Others {
     
     func testBucketToVariationInExperiment() {
     }
@@ -157,6 +175,12 @@ class BucketTests: XCTestCase {
             XCTAssert(variation.key == test["expect"])
         }
     }
+    
+}
+
+// MARK: - bucket to experiment (group) + variation (experiment)
+
+extension BucketTests_Others {
 
     func testBucketExperimentInMutexGroup() {        
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!

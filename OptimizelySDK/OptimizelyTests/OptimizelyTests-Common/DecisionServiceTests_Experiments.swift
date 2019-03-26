@@ -234,7 +234,7 @@ extension DecisionServiceTests_Experiments {
     
 }
 
-// MARK: - Test getVariation()
+// MARK: - Test getIsInExperiment()
 
 extension DecisionServiceTests_Experiments {
 

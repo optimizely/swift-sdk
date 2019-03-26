@@ -202,38 +202,6 @@ class DefaultDecisionService : OPTDecisionService {
         return bucketingId;
     }
     
-    // [TODO] these two not used anywhere. Can we clean up?
-    
-    func getVariationForFeatureGroup(featureFlag: FeatureFlag,
-                                     groupId: String,
-                                     userId: String,
-                                     attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
-        
-        let bucketing_id = getBucketingId(userId:userId, attributes:attributes)
-        if let group = config.getGroup(id: groupId) {
-            if let experiment = getExperimentInGroup(group: group, bucketingId:bucketing_id),
-                featureFlag.experimentIds.contains(experiment.id),
-                let variation = getVariation(userId:userId, experiment:experiment, attributes:attributes) {
-                // log
-                return (experiment,variation)
-            }
-        }
-        else {
-            // log unknown group
-        }
-        
-        return nil
-    }
-    
-    func getExperimentInGroup(group:Group, bucketingId:String) -> Experiment? {
-        let experiment = bucketer.bucketToExperiment(group:group, bucketingId:bucketingId)
-        if let _ = experiment {
-            // log
-        }
-        
-        return experiment;
-    }
-    
 }
 
 // MARK: - UserProfileService Helpers

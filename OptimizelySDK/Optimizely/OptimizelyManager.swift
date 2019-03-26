@@ -351,6 +351,18 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variationUnknown
         }
         
+        var args = Array<Any?>()
+        args.append(Constants.NotificationKeys.OptimizelyDecisionTypeExperiment)
+        args.append(userId)
+        args.append(attributes ?? OptimizelyAttributes())
+        
+        var decisionInfo = Dictionary<String,Any>()
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationExperiment] = experimentKey
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationVariation] = variation.key
+        args.append(decisionInfo)
+        
+        self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
+        
         return variation
     }
     

@@ -17,16 +17,6 @@ struct Constants {
     struct NotificationKeys {
         static let OptimizelyNotificationExperiment = "experiment"
         static let OptimizelyNotificationVariation = "variation"
-        static let OptimizelyNotificationUserId = "userId"
-        static let OptimizelyNotificationAttributes = "attributes"
-        static let OptimizelyNotificationEvent = "eventKey"
-        static let OptimizelyNotificationEventTags = "eventTags"
-        static let OptimizelyNotificationLogEventParams = "logEventParams"
-        static let OptimizelyNotificationDecisionInfoFeature = "featureKey"
-        static let OptimizelyNotificationDecisionInfo = "decisionInfo"
-        static let OptimizelyNotificationDecisionInfoSource = "source"
-        static let OptimizelyNotificationDecisionInfoVariable = "variableKey"
-        static let OptimizelyNotificationDecisionType = "type"
         static let OptimizelyDecisionTypeExperiment = "experiment"
     }
     struct DecisionSource {

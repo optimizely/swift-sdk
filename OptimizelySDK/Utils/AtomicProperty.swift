@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct AtomicProperty<T> {
+class AtomicProperty<T> {
     private var _property:T?
     var property:T? {
         get {
@@ -30,4 +30,13 @@ struct AtomicProperty<T> {
         name += clzzName
         return DispatchQueue(label: name)
     }()
+
+    init(property:T) {
+        self.property = property
+    }
+
+    init() {
+
+    }
+
 }

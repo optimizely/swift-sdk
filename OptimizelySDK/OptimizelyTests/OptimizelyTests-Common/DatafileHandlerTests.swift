@@ -37,9 +37,17 @@ class DatafileHandlerTests: XCTestCase {
         let data = handler.downloadDatafile(sdkKey: "fakeSDKKey")
         XCTAssertNil(data)
         
-        handler.saveDatafile(sdkKey: "fakeSDKKey", dataFile: "{}".data(using: .utf8)!)
+        let notLoaded = handler.loadSavedDatafile(sdkKey: "asdfdasfafafsafdsadf")
+        
+        XCTAssertNil(notLoaded)
         
         var saved = handler.isDatafileSaved(sdkKey: "fakeSDKKey")
+        
+        XCTAssertFalse(saved)
+        
+        handler.saveDatafile(sdkKey: "fakeSDKKey", dataFile: "{}".data(using: .utf8)!)
+        
+        saved = handler.isDatafileSaved(sdkKey: "fakeSDKKey")
         
         XCTAssertTrue(saved)
         

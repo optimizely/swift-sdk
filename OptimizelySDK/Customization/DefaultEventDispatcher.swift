@@ -67,7 +67,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     deinit {
-        if let timer = timer.property {
+        timer.performAtomic() { (timer) in
             timer.invalidate()
         }
         unsubscribe()

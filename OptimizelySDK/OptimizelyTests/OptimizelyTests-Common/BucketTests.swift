@@ -33,7 +33,7 @@ class BucketTests: XCTestCase {
     
     func testBucketGroupWithOneAllocation() {
         let groupId = "12115595439"
-        let bucketer = DefaultBucketer(config: config!)
+        let bucketer = DefaultBucketer()
         
         let tests = [["userId": "ppid1","expect": "all_traffic_experiment"],
         ["userId": "ppid2", "expect": "all_traffic_experiment"],
@@ -43,7 +43,7 @@ class BucketTests: XCTestCase {
         let group = config?.getGroup(id: groupId)
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(group: group!, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: config!, group: group!, bucketingId: test["userId"]!)
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"]!, experiment?.key)
             }
@@ -56,7 +56,7 @@ class BucketTests: XCTestCase {
 
     func testBucketGroupWithNoAllocation() {
         let groupId = "12250460410"
-        let bucketer = DefaultBucketer(config: config!)
+        let bucketer = DefaultBucketer()
         
         let tests = [["userId": "ppid1"],
                      ["userId": "ppid2"],
@@ -66,7 +66,7 @@ class BucketTests: XCTestCase {
         let group = config?.getGroup(id: groupId)
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(group: group!, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: config!, group: group!, bucketingId: test["userId"]!)
             XCTAssertNil(experiment);
         }
         
@@ -74,7 +74,7 @@ class BucketTests: XCTestCase {
 
     func testHashIsCompliant() {
         let experimentId = "1886780721"
-        let bucketer = DefaultBucketer(config: ProjectConfig())
+        let bucketer = DefaultBucketer()
         // These test inputs/outputs should be reproduced exactly in all clients to make sure that they behave
         // consistently.
         let tests = [
@@ -143,7 +143,7 @@ class BucketTests: XCTestCase {
         
         let experiment: Experiment = try! OTUtils.model(from: experimentData)
         
-        let bucketer = DefaultBucketer(config: ProjectConfig())
+        let bucketer = DefaultBucketer()
         
         // These test inputs/outputs should be reproduced exactly in all clients to make sure that they behave
         // consistently.
@@ -162,7 +162,7 @@ class BucketTests: XCTestCase {
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
         let group = optimizely.config!.getGroup(id: "1886780721")!
 
-        let bucketer = optimizely.bucketer
+        let bucketer = DefaultBucketer()
 
         // These test inputs/outputs should be reproduced exactly in all clients to make sure that they behave
         // consistently.
@@ -172,7 +172,7 @@ class BucketTests: XCTestCase {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": "null"]]
 
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(group: group, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: optimizely.config!, group: group, bucketingId: test["userId"]!)
             let expected = test["expect"]
             if expected != "null" {
                 XCTAssert(experiment!.key == expected)
@@ -185,7 +185,7 @@ class BucketTests: XCTestCase {
     func testBucketReturnsNilWhenExperimentIsExcludedFromMutex() {
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
         let config = optimizely.config!
-        let bucketer = optimizely.bucketer as! DefaultBucketer
+        let bucketer = DefaultBucketer()
 
         // These test inputs/outputs should be reproduced exactly in all clients to make sure that they behave
         // consistently.
@@ -199,21 +199,21 @@ class BucketTests: XCTestCase {
 
         for test in tests {
             if test["experiment"] == "experiment1" {
-                var variation = bucketer.bucketExperiment(experiment: experiment1, bucketingId: test["userId"]!)
+                var variation = bucketer.bucketExperiment(config: config, experiment: experiment1, bucketingId: test["userId"]!)
                 XCTAssertNotNil(variation)
                 XCTAssert(variation!.key == test["expect"])
-                variation = bucketer.bucketExperiment(experiment: experiment2, bucketingId: test["userId"]!)
+                variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!)
                 XCTAssertNil(variation);
             } else if test["experiment"] == "experiment2" {
-                var variation = bucketer.bucketExperiment(experiment: experiment2, bucketingId: test["userId"]!)
+                var variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!)
                 XCTAssertNotNil(variation)
                 XCTAssert(variation!.key == test["expect"])
-                variation = bucketer.bucketExperiment(experiment: experiment1, bucketingId: test["userId"]!)
+                variation = bucketer.bucketExperiment(config: config, experiment: experiment1, bucketingId: test["userId"]!)
                 XCTAssertNil(variation)
             } else {
-                var variation = bucketer.bucketExperiment(experiment: experiment1, bucketingId: test["userId"]!)
+                var variation = bucketer.bucketExperiment(config: config, experiment: experiment1, bucketingId: test["userId"]!)
                 XCTAssertNil(variation)
-                variation = bucketer.bucketExperiment(experiment: experiment2, bucketingId: test["userId"]!)
+                variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!)
                 XCTAssertNil(variation)
             }
         }
@@ -222,29 +222,29 @@ class BucketTests: XCTestCase {
     func testBucketExperimentWithMutexDoesNotChangeExperimentReference() {
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
         let config = optimizely.config!
-        let bucketer = optimizely.bucketer as! DefaultBucketer
+        let bucketer = DefaultBucketer()
 
         let experiment = config.getExperiment(key: "experiment2")!
         XCTAssertNotNil(experiment)
-        let variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: "user")
+        let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: "user")
         XCTAssertNil(variation)
     }
 
     func testBucketWithBucketingId() {
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2", clearUserProfileService: true)!
         let config = optimizely.config!
-        let bucketer = optimizely.bucketer as! DefaultBucketer
+        let bucketer = DefaultBucketer()
         
         let experiment = config.getExperiment(key: "test_experiment")!
         XCTAssertNotNil(experiment);
     
         // check testBucketingIdControl is bucketed into "control" variation
-        var variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: testBucketingIdControl)
+        var variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdControl)
         XCTAssertNotNil(variation)
         XCTAssert(variation!.key == "control",  "Unexpected variationKey")
         
         // check testBucketingIdVariation is bucketed into "variation" variation
-        variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: testBucketingIdVariation)
+        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation)
         XCTAssertNotNil(variation);
         XCTAssert(variation!.key == "variation", "Unexpected variationKey")
     }
@@ -254,28 +254,28 @@ class BucketTests: XCTestCase {
         
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2", clearUserProfileService: true)!
         let config = optimizely.config!
-        let bucketer = optimizely.bucketer as! DefaultBucketer
+        let bucketer = DefaultBucketer()
 
         var experiment = config.getExperiment(key: "group_experiment_2")!
         XCTAssertNotNil(experiment)
-        var variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: testBucketingIdVariation)
+        var variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation)
         XCTAssertNotNil(variation)
         XCTAssert(variation!.key == "group_exp_2_var_2")
     
         experiment = config.getExperiment(key: "group_experiment_1")!
         XCTAssertNotNil(experiment)
-        variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: testBucketingIdVariation)
+        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation)
         XCTAssertNil(variation)
 
         experiment = config.getExperiment(key: "group_experiment_2")!
         XCTAssertNotNil(experiment)
-        variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: "testUserId")
+        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: "testUserId")
         XCTAssertNotNil(variation)
         XCTAssert(variation!.key == "group_exp_2_var_1")
 
         experiment = config.getExperiment(key: "group_experiment_1")!
         XCTAssertNotNil(experiment)
-        variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: "testUserId")
+        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: "testUserId")
         XCTAssertNil(variation)
     }
 

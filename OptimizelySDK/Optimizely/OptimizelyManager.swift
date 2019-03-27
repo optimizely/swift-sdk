@@ -30,20 +30,10 @@ open class OptimizelyManager: NSObject {
             return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!
         }
     }
-    var userProfileService: OPTUserProfileService {
-        get {
-            return HandlerRegistryService.shared.injectUserProfileService(sdkKey: self.sdkKey)!
-        }
-    }
     let periodicDownloadInterval: Int
 
     // MARK: - Default Services
 
-    var bucketer: OPTBucketer {
-        get {
-            return HandlerRegistryService.shared.injectBucketer(sdkKey: self.sdkKey)!
-        }
-    }
     var decisionService: OPTDecisionService {
         get {
             return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
@@ -82,13 +72,12 @@ open class OptimizelyManager: NSObject {
         
         super.init()
 
+        let userProfileService = userProfileService ?? DefaultUserProfileService()
         self.registerServices(sdkKey: sdkKey,
                               logger: logger ?? DefaultLogger(),
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
-                              userProfileService: userProfileService ?? DefaultUserProfileService(),
                               datafileHandler: DefaultDatafileHandler(),
-                              bucketer: DefaultBucketer(),
-                              decisionService: DefaultDecisionService(),
+                              decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
 
     }
@@ -158,11 +147,6 @@ open class OptimizelyManager: NSObject {
             // this isn't really necessary because the try would throw if there is a problem.  But, we want to avoid using bang so we do another let binding.
             guard let config = self.config else { throw OptimizelyError.dataFileInvalid }
             
-            // TODO: fix these to throw errors
-            bucketer.initialize(config: config)
-            decisionService.initialize(config: config,
-                                       bucketer: self.bucketer,
-                                       userProfileService: self.userProfileService)
             if periodicDownloadInterval > 0 {
                 datafileHandler.stopPeriodicUpdates(sdkKey: self.sdkKey)
                 datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
@@ -180,12 +164,6 @@ open class OptimizelyManager: NSObject {
                                 guard let component = component else { continue }
                                 HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
                             }
-
-                            // now reinitialize with the new config.
-                            self.bucketer.initialize(config: config)
-                            self.decisionService.initialize(config: config,
-                                                       bucketer: self.bucketer,
-                                                       userProfileService: self.userProfileService)
 
                         }
                         
@@ -347,7 +325,7 @@ open class OptimizelyManager: NSObject {
         }
         
         // fix DecisionService to throw error
-        guard let variation = decisionService.getVariation(userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
+        guard let variation = decisionService.getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
             throw OptimizelyError.variationUnknown
         }
         
@@ -417,7 +395,7 @@ open class OptimizelyManager: NSObject {
         }
         
         // fix DecisionService to throw error
-        let pair = decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: attributes ?? OptimizelyAttributes())
+        let pair = decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes ?? OptimizelyAttributes())
         
         guard let variation = pair?.variation else {
             throw OptimizelyError.variationUnknown
@@ -561,7 +539,7 @@ open class OptimizelyManager: NSObject {
         if attributes != nil {
             _attributes = attributes!
         }
-        if let decision = self.decisionService.getVariationForFeature(featureFlag: featureFlag, userId: userId, attributes: _attributes) {
+        if let decision = self.decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: _attributes) {
             if let featureVariableUsage = decision.variation?.getVariable(id: variable.id) {
                 defaultValue = featureVariableUsage.value
             }

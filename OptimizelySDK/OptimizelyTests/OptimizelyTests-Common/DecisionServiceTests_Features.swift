@@ -9,18 +9,17 @@
 import XCTest
 
 class DecisionServiceTests_Features: XCTestCase {
-
+    
     var optimizely: OptimizelyManager!
     var config: ProjectConfig!
     var decisionService: DefaultDecisionService!
-    var bucketer: OPTBucketer!
     
     var kUserId = "12345"
     var kExperimentKey = "countryExperiment"
     var kExperimentId = "country11"
     var kRolloutId = "rollout11"
     var kRolloutExperimentId = "rolloutExp11"
-
+    
     var kVariationKeyA = "a"
     var kVariationKeyB = "b"
     var kVariationKeyC = "c"
@@ -29,13 +28,13 @@ class DecisionServiceTests_Features: XCTestCase {
     var kAudienceIdCountry = "10"
     var kAudienceIdAge = "20"
     var kAudienceIdInvalid = "9999999"
-
+    
     var kAttributesCountryMatch: [String: Any] = ["country": "us"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
     var kAttributesAgeMatch: [String: Any] = ["age": 30]
     var kAttributesAgeNotMatch: [String: Any] = ["age": 10]
     var kAttributesEmpty: [String: Any] = [:]
-
+    
     var experiment: Experiment!
     var variation: Variation!
     var featureFlag: FeatureFlag!
@@ -56,40 +55,40 @@ class DecisionServiceTests_Features: XCTestCase {
     
     var sampleExperimentData: [String: Any] { return
         [
-        "status": "Running",
-        "id": kExperimentId,
-        "key": kExperimentKey,
-        "layerId": "10420273888",
-        "trafficAllocation": [
-            [
-                "entityId": "16456523121",
-                "endOfRange": 10000
-            ]
-        ],
-        "audienceIds": [kAudienceIdCountry],
-        "variations": [
-            [
-                "variables": [],
-                "id": "10389729780",
-                "key": kVariationKeyA
+            "status": "Running",
+            "id": kExperimentId,
+            "key": kExperimentKey,
+            "layerId": "10420273888",
+            "trafficAllocation": [
+                [
+                    "entityId": "16456523121",
+                    "endOfRange": 10000
+                ]
             ],
-            [
-                "variables": [],
-                "id": "10416523121",
-                "key": kVariationKeyB
+            "audienceIds": [kAudienceIdCountry],
+            "variations": [
+                [
+                    "variables": [],
+                    "id": "10389729780",
+                    "key": kVariationKeyA
+                ],
+                [
+                    "variables": [],
+                    "id": "10416523121",
+                    "key": kVariationKeyB
+                ],
+                [
+                    "variables": [],
+                    "id": "13456523121",
+                    "key": kVariationKeyC
+                ],
+                [
+                    "variables": [],
+                    "id": "16456523121",
+                    "key": kVariationKeyD
+                ]
             ],
-            [
-                "variables": [],
-                "id": "13456523121",
-                "key": kVariationKeyC
-            ],
-            [
-                "variables": [],
-                "id": "16456523121",
-                "key": kVariationKeyD
-            ]
-        ],
-        "forcedVariations":[:]
+            "forcedVariations":[:]
         ]
     }
     
@@ -149,7 +148,7 @@ class DecisionServiceTests_Features: XCTestCase {
             "forcedVariations":[:]
         ]
     }
-
+    
     
     // MARK: - Setup
     
@@ -157,9 +156,8 @@ class DecisionServiceTests_Features: XCTestCase {
         super.setUp()
         
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
-                                                  clearUserProfileService: true)
+                                                   clearUserProfileService: true)
         self.config = self.optimizely.config!
-        self.bucketer = optimizely.bucketer
         self.decisionService = (optimizely.decisionService as! DefaultDecisionService)
         
         // project config
@@ -179,19 +177,21 @@ class DecisionServiceTests_Features: XCTestCase {
 // MARK: - Test getVariationForFeatureExperiment()
 
 extension DecisionServiceTests_Features {
-
+    
     func testGetVariationForFeatureExperimentWhenMatched() {
-        let pair = self.decisionService.getVariationForFeatureExperiment(featureFlag: featureFlag,
-                                                                              userId: kUserId,
-                                                                              attributes: kAttributesCountryMatch)
+        let pair = self.decisionService.getVariationForFeatureExperiment(config: config,
+                                                                         featureFlag: featureFlag,
+                                                                         userId: kUserId,
+                                                                         attributes: kAttributesCountryMatch)
         XCTAssert(pair!.experiment!.key == kExperimentKey)
         XCTAssert(pair!.variation!.key == kVariationKeyD)
     }
-        
+    
     func testGetVariationForFeatureExperimentWhenNotMatched() {
-        let pair = self.decisionService.getVariationForFeatureExperiment(featureFlag: featureFlag,
-                                                                              userId: kUserId,
-                                                                              attributes: kAttributesCountryNotMatch)
+        let pair = self.decisionService.getVariationForFeatureExperiment(config: config,
+                                                                         featureFlag: featureFlag,
+                                                                         userId: kUserId,
+                                                                         attributes: kAttributesCountryNotMatch)
         XCTAssertNil(pair)
     }
     
@@ -199,8 +199,9 @@ extension DecisionServiceTests_Features {
         featureFlag = try! OTUtils.model(from: sampleFeatureFlagData)
         featureFlag.experimentIds = ["99999"]   // not-existing experiment
         self.config.project.featureFlags = [featureFlag]
-
-        let pair = self.decisionService.getVariationForFeatureExperiment(featureFlag: featureFlag,
+        
+        let pair = self.decisionService.getVariationForFeatureExperiment(config: config,
+                                                                         featureFlag: featureFlag,
                                                                          userId: kUserId,
                                                                          attributes: kAttributesCountryMatch)
         XCTAssertNil(pair)
@@ -211,33 +212,36 @@ extension DecisionServiceTests_Features {
 // MARK: - Test getVariationForFeatureRollout()
 
 extension DecisionServiceTests_Features {
-
+    
     func testGetVariationForFeatureRollout() {
         // rollout set
         self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
         featureFlag.rolloutId = kRolloutId
         self.config.project.featureFlags = [featureFlag]
-
-        let variation = self.decisionService.getVariationForFeatureRollout(featureFlag: featureFlag,
+        
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesEmpty)
         XCTAssert(variation!.key == kVariationKeyA)
     }
     
     func testGetVariationForFeatureRolloutEmpty() {
-        let variation = self.decisionService.getVariationForFeatureRollout(featureFlag: featureFlag,
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesEmpty)
         XCTAssertNil(variation)
     }
-
+    
     func testGetVariationForFeatureRolloutNotFound() {
         // rollout set
         self.config.project.rollouts = []
         featureFlag.rolloutId = kRolloutId
         self.config.project.featureFlags = [featureFlag]
-
-        let variation = self.decisionService.getVariationForFeatureRollout(featureFlag: featureFlag,
+        
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesEmpty)
         XCTAssertNil(variation)
@@ -246,7 +250,7 @@ extension DecisionServiceTests_Features {
     func testGetVariationForFeatureRolloutMultiple() {
         // TODO: [Jae] last rollout handling ??
     }
-
+    
 }
 
 // MARK: - Test getVariationForFeatureERollout()
@@ -254,7 +258,8 @@ extension DecisionServiceTests_Features {
 extension DecisionServiceTests_Features {
     
     func testGetVariationForFeatureWhenExperimentMatch() {
-        let pair = self.decisionService.getVariationForFeature(featureFlag: featureFlag,
+        let pair = self.decisionService.getVariationForFeature(config: config,
+                                                               featureFlag: featureFlag,
                                                                userId: kUserId,
                                                                attributes: kAttributesCountryMatch)
         XCTAssertNotNil(pair)
@@ -263,7 +268,8 @@ extension DecisionServiceTests_Features {
     }
     
     func testGetVariationForFeatureWhenExperimentNotMatchAndRolloutNotExist() {
-        let pair = self.decisionService.getVariationForFeature(featureFlag: featureFlag,
+        let pair = self.decisionService.getVariationForFeature(config: config,
+                                                               featureFlag: featureFlag,
                                                                userId: kUserId,
                                                                attributes: kAttributesCountryNotMatch)
         XCTAssertNil(pair)
@@ -274,8 +280,9 @@ extension DecisionServiceTests_Features {
         self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
         featureFlag.rolloutId = kRolloutId
         self.config.project.featureFlags = [featureFlag]
-
-        let pair = self.decisionService.getVariationForFeature(featureFlag: featureFlag,
+        
+        let pair = self.decisionService.getVariationForFeature(config: config,
+                                                               featureFlag: featureFlag,
                                                                userId: kUserId,
                                                                attributes: kAttributesCountryNotMatch)
         XCTAssertNotNil(pair)

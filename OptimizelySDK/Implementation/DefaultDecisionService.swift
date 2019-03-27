@@ -25,7 +25,7 @@ class DefaultDecisionService : OPTDecisionService {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
     }
-
+    
     func getVariation(config:ProjectConfig, userId:String, experiment: Experiment, attributes: OptimizelyAttributes) -> Variation? {
         let experimentId = experiment.id;
         
@@ -40,7 +40,7 @@ class DefaultDecisionService : OPTDecisionService {
             let variation = experiment.getVariation(id: variationId) {
             return variation;
         }
-
+        
         // ---- check if the experiment has forced variation ----
         if let variationKey = experiment.forcedVariations[userId],
             let variation = experiment.getVariation(key: variationKey) {
@@ -56,7 +56,7 @@ class DefaultDecisionService : OPTDecisionService {
         var bucketedVariation:Variation?
         // ---- check if the user passes audience targeting before bucketing ----
         do {
-            if try isInExperiment(experiment:experiment, userId:userId, attributes:attributes) {
+            if try isInExperiment(config: config, experiment:experiment, userId:userId, attributes:attributes) {
                 // bucket user into a variation
                 bucketedVariation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId:bucketingId)
                 
@@ -71,7 +71,7 @@ class DefaultDecisionService : OPTDecisionService {
         }
         
         return bucketedVariation;
-
+        
     }
     
     func isInExperiment(config:ProjectConfig, experiment:Experiment, userId:String, attributes: OptimizelyAttributes) throws -> Bool {
@@ -91,12 +91,12 @@ class DefaultDecisionService : OPTDecisionService {
                 return true
             }
         }
-        // backward compatibility with audiencIds list
+            // backward compatibility with audiencIds list
         else if experiment.audienceIds.count > 0 {
             var holder = [ConditionHolder]()
             holder.append(.logicalOp(.or))
             for id in experiment.audienceIds {
-              holder.append(.leaf(.audienceId(id)))
+                holder.append(.leaf(.audienceId(id)))
             }
             
             return try holder.evaluate(project: config.project, attributes: attributes)
@@ -105,7 +105,7 @@ class DefaultDecisionService : OPTDecisionService {
         return true
     }
     
-     func getVariationForFeature(onfig:ProjectConfig, featureFlag:FeatureFlag, userId:String, attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
+    func getVariationForFeature(config:ProjectConfig, featureFlag:FeatureFlag, userId:String, attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
         //Evaluate in this order:
         
         //1. Attempt to bucket user into experiment using feature flag.
@@ -121,7 +121,7 @@ class DefaultDecisionService : OPTDecisionService {
         }
         
         return nil;
-
+        
     }
     
     func getVariationForFeatureExperiment(config:ProjectConfig,
@@ -135,7 +135,7 @@ class DefaultDecisionService : OPTDecisionService {
         for experimentId in experimentIds {
             if let experiment = config.getExperiment(id: experimentId),
                 let variation = getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes) {
-                    return (experiment,variation)
+                return (experiment,variation)
             }
         }
         return nil;
@@ -145,7 +145,7 @@ class DefaultDecisionService : OPTDecisionService {
                                        featureFlag: FeatureFlag,
                                        userId: String,
                                        attributes: OptimizelyAttributes) -> Variation? {
-    
+        
         let bucketingId = getBucketingId(userId: userId, attributes:attributes)
         
         let rolloutId = featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces)
@@ -169,9 +169,9 @@ class DefaultDecisionService : OPTDecisionService {
         }
         // Evaluate fall back rule / last rule now
         let experiment = rolloutRules[rolloutRules.count - 1];
-
+        
         do {
-            if try isInExperiment(experiment: experiment, userId: userId, attributes: attributes) {
+            if try isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
                 return bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId)
             }
         } catch {
@@ -192,38 +192,6 @@ class DefaultDecisionService : OPTDecisionService {
         }
         
         return bucketingId;
-    }
-    
-    // [TODO] these two not used anywhere. Can we clean up?
-    
-    func getVariationForFeatureGroup(featureFlag: FeatureFlag,
-                                     groupId: String,
-                                     userId: String,
-                                     attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
-        
-        let bucketing_id = getBucketingId(userId:userId, attributes:attributes)
-        if let group = config.getGroup(id: groupId) {
-            if let experiment = getExperimentInGroup(group: group, bucketingId:bucketing_id),
-                featureFlag.experimentIds.contains(experiment.id),
-                let variation = getVariation(userId:userId, experiment:experiment, attributes:attributes) {
-                // log
-                return (experiment,variation)
-            }
-        }
-        else {
-            // log unknown group
-        }
-        
-        return nil
-    }
-    
-    func getExperimentInGroup(group:Group, bucketingId:String) -> Experiment? {
-        let experiment = bucketer.bucketToExperiment(group:group, bucketingId:bucketingId)
-        if let _ = experiment {
-            // log
-        }
-        
-        return experiment;
     }
     
 }

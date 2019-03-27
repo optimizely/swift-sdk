@@ -9,7 +9,7 @@
 import XCTest
 
 class DecisionServiceTests_UserProfiles: XCTestCase {
-
+    
     var optimizely: OptimizelyManager!
     var config: ProjectConfig!
     var decisionService: DefaultDecisionService!
@@ -32,12 +32,12 @@ class DecisionServiceTests_UserProfiles: XCTestCase {
     
     var sampleProfile: [String: Any] { return
         [
-        "user_id": kUserId,
-        "experiment_bucket_map": [
-            kExperimentId: [
-                "variation_id": kVariationId
+            "user_id": kUserId,
+            "experiment_bucket_map": [
+                kExperimentId: [
+                    "variation_id": kVariationId
+                ]
             ]
-        ]
         ]
     }
     
@@ -47,7 +47,7 @@ class DecisionServiceTests_UserProfiles: XCTestCase {
         super.setUp()
         
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
-                                                  clearUserProfileService: true)
+                                                   clearUserProfileService: true)
         self.config = self.optimizely.config!
         self.decisionService = (optimizely.decisionService as! DefaultDecisionService)
     }
@@ -59,11 +59,10 @@ class DecisionServiceTests_UserProfiles: XCTestCase {
 extension DecisionServiceTests_UserProfiles {
     
     func testGetVariationIdFromProfile() {
-
         var variatonId = self.decisionService.getVariationIdFromProfile(userId: kUserId, experimentId: kExperimentId)
         XCTAssertNil(variatonId)
         
-        self.optimizely.userProfileService.save(userProfile: sampleProfile)
+        self.decisionService.userProfileService.save(userProfile: sampleProfile)
         variatonId = self.decisionService.getVariationIdFromProfile(userId: kUserId, experimentId: kExperimentId)
         XCTAssert(variatonId! == kVariationId)
     }
@@ -76,6 +75,6 @@ extension DecisionServiceTests_UserProfiles {
         variationId = self.decisionService.getVariationIdFromProfile(userId: kUserId, experimentId: kExperimentId)
         XCTAssert(variationId! == kVariationId)
     }
-
+    
 }
 

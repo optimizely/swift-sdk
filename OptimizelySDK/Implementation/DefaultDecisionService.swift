@@ -18,8 +18,8 @@ import Foundation
 
 class DefaultDecisionService : OPTDecisionService {
     
-    var bucketer:OPTBucketer
-    var userProfileService:OPTUserProfileService
+    let bucketer:OPTBucketer
+    let userProfileService:OPTUserProfileService
     
     init(bucketer: OPTBucketer, userProfileService:OPTUserProfileService) {
         self.bucketer = bucketer

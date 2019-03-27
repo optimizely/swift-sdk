@@ -22,25 +22,14 @@ class DefaultBucketer : OPTBucketer {
     let MAX_HASH_SEED:UInt64 = 1
     var MAX_HASH_VALUE:UInt64?
     
-    private var config:ProjectConfig!
     private lazy var logger = HandlerRegistryService.shared.injectLogger()
-    
-    internal required init(config:ProjectConfig) {
-        self.config = config
-
-        MAX_HASH_VALUE = MAX_HASH_SEED << 32
-    }
     
     // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     init() {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
     }
 
-    func initialize(config:ProjectConfig) {
-        self.config = config
-    }
-
-    func bucketToExperiment(group: Group, bucketingId: String) -> Experiment? {
+    func bucketToExperiment(config:ProjectConfig, group: Group, bucketingId: String) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
         
@@ -73,7 +62,7 @@ class DefaultBucketer : OPTBucketer {
         return nil
     }
     
-    func bucketExperiment(experiment: Experiment, bucketingId: String) -> Variation? {
+    func bucketExperiment(config:ProjectConfig, experiment: Experiment, bucketingId: String) -> Variation? {
         var ok = true
         // check for mutex
         let group = config.project.groups.filter{ $0.getExperiemnt(id: experiment.id) != nil }.first
@@ -83,7 +72,7 @@ class DefaultBucketer : OPTBucketer {
             case .overlapping:
                 break;
             case .random:
-                let mutexExperiment = bucketToExperiment(group: group, bucketingId: bucketingId)
+                let mutexExperiment = bucketToExperiment(config: config, group: group, bucketingId: bucketingId)
                 if let mutexExperiment = mutexExperiment, mutexExperiment.id == experiment.id {
                     ok = true
                 }

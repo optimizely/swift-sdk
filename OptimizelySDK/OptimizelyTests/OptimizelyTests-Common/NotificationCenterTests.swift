@@ -54,6 +54,11 @@ class NotificationCenterTests: XCTestCase {
         notificationCenter.sendNotifications(type: NotificationType.Track.rawValue, args: ["eventKey", "userId", nil, nil, ["url":"https://url.com/", "body": Data()]])
         
     }
+    
+    func sendDecision() {
+        notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: [Constants.NotificationKeys.OptimizelyDecisionTypeIsFeatureEnabled, "userId", nil, ["url":"https://url.com/", "body": Data()]])
+        
+    }
 
     func sendDatafileChange() {
         notificationCenter.sendNotifications(type: NotificationType.DatafileChange.rawValue, args: [Data()])
@@ -129,6 +134,40 @@ class NotificationCenterTests: XCTestCase {
         }
 
         sendTrack()
+        
+        XCTAssertTrue(called)
+    }
+
+    func testNotificationCenterAddRemoveDecision() {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        var called = false
+        
+        let _ = notificationCenter.addDecisionNotificationListener { (type, userId, attr, decisionInfo) in
+            called = true
+        }
+        
+        notificationCenter.clearNotificationListeners(type: .Decision)
+        
+        sendDecision()
+        
+        XCTAssertFalse(called)
+        
+        let id = notificationCenter.addDecisionNotificationListener { (type, userId, attr, decisionInfo) in
+            called = true
+        }
+        
+        notificationCenter.removeNotificationListener(notificationId: id!)
+        
+        sendDecision()
+        
+        XCTAssertFalse(called)
+        
+        let _ = notificationCenter.addDecisionNotificationListener { (type, userId, attr, decisionInfo) in
+            called = true
+        }
+        
+        sendDecision()
         
         XCTAssertTrue(called)
     }

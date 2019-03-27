@@ -56,7 +56,7 @@ class NotificationCenterTests: XCTestCase {
     }
     
     func sendDecision() {
-        notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: [Constants.NotificationKeys.OptimizelyDecisionTypeIsFeatureEnabled, "userId", nil, ["url":"https://url.com/", "body": Data()]])
+        notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: [Constants.NotificationKeys.OptimizelyDecisionTypeExperiment, "userId", nil, ["url":"https://url.com/", "body": Data()]])
         
     }
 

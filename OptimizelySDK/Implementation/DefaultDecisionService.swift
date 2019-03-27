@@ -21,8 +21,8 @@ class DefaultDecisionService : OPTDecisionService {
     let bucketer:OPTBucketer
     let userProfileService:OPTUserProfileService
     
-    init(bucketer: OPTBucketer, userProfileService:OPTUserProfileService) {
-        self.bucketer = bucketer
+    init(userProfileService:OPTUserProfileService) {
+        self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
     }
 

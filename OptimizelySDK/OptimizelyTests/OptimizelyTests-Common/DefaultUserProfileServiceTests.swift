@@ -42,7 +42,7 @@ class DefaultUserProfileServiceTests: XCTestCase {
         ups = DefaultUserProfileService()
         ups.reset()
         
-        decisionService = DefaultDecisionService(bucketer: DefaultBucketer(), userProfileService: ups)
+        decisionService = DefaultDecisionService(userProfileService: ups)
     }
     
     func testSave() {

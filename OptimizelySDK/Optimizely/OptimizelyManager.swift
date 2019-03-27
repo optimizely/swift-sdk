@@ -72,13 +72,12 @@ open class OptimizelyManager: NSObject {
         
         super.init()
 
-        let bucketer = DefaultBucketer()
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         self.registerServices(sdkKey: sdkKey,
                               logger: logger ?? DefaultLogger(),
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               datafileHandler: DefaultDatafileHandler(),
-                              decisionService: DefaultDecisionService(bucketer: bucketer, userProfileService: userProfileService),
+                              decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
 
     }

@@ -423,10 +423,19 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variationUnknown
         }
         
+        var args = Array<Any?>()
+        var decisionInfo = Dictionary<String,Any>()
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceExperiment] = nil
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceVariation] = nil
+        
         let featureEnabled = variation.featureEnabled ?? false
     
         // we came from an experiment if experiment is not nil
         if let experiment = pair?.experiment {
+            
+            decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceExperiment] = experiment.key
+            decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceVariation] = variation.key
+            
         // TODO: fix to throw errors
             guard let body = BatchEventBuilder.createImpressionEvent(config: config,
                                                                  decisionService: decisionService,
@@ -454,6 +463,17 @@ open class OptimizelyManager: NSObject {
             }
             self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
         }
+        
+        args.append(Constants.NotificationKeys.OptimizelyDecisionTypeIsFeatureEnabled)
+        args.append(userId)
+        args.append(attributes ?? OptimizelyAttributes())
+        
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeature] = featureKey
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeatureEnabled] = featureEnabled
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSource] = (pair?.experiment != nil ? Constants.DecisionSource.Experiment : Constants.DecisionSource.Rollout)
+        args.append(decisionInfo)
+        
+        self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
         
         return featureEnabled
     }

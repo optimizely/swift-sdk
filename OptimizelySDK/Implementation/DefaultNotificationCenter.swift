@@ -84,6 +84,26 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
         return incrementNotificationId()
     }
     
+    public func addDecisionNotificationListener(decisionListener: @escaping (String, String, OptimizelyAttributes?, [String: Any]) -> Void) -> Int? {
+        notificationListeners[notificationId] = (NotificationType.Decision.rawValue,  { (args:Any...) in
+            guard let myArgs = args[0] as? [Any?] else {
+                return
+            }
+            if myArgs.count < 4 {
+                return
+            }
+            if let type = myArgs[0] as? String,
+                let userId = myArgs[1] as? String,
+                let attributes = myArgs[2] as? OptimizelyAttributes?,
+                let decisionInfo = myArgs[3] as? Dictionary<String,Any>
+            {
+                decisionListener(type, userId, attributes, decisionInfo)
+            }
+        })
+        
+        return incrementNotificationId()
+    }
+    
     public func addDatafileChangeNotificationListener(datafileListener: @escaping DatafileChangeListener) -> Int? {
         notificationListeners[notificationId] = (NotificationType.DatafileChange.rawValue,  { (args:Any...) in
             guard let myArgs = args[0] as? [Any?] else {

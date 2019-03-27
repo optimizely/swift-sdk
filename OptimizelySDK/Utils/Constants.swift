@@ -14,4 +14,16 @@ struct Constants {
         static let OptimizelyBotFilteringAttribute = "$opt_bot_filtering";
         static let OptimizelyUserAgent = "$opt_user_agent";
     }
+    struct NotificationKeys {
+        static let OptimizelyNotificationDecisionInfoFeature = "featureKey"
+        static let OptimizelyNotificationDecisionInfoFeatureEnabled = "featureEnabled"
+        static let OptimizelyNotificationDecisionInfoSourceExperiment = "sourceExperimentKey"
+        static let OptimizelyNotificationDecisionInfoSourceVariation = "sourceVariationKey"
+        static let OptimizelyNotificationDecisionInfoSource = "source"
+        static let OptimizelyDecisionTypeIsFeatureEnabled  = "feature"
+    }
+    struct DecisionSource {
+        static let Experiment = "EXPERIMENT"
+        static let Rollout = "ROLLOUT"
+    }
 }

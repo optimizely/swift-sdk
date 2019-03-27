@@ -270,7 +270,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
                 let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
                 let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
                 
-                appendLock.async {
+                appendLock.sync {
                     atomicBackground.property!.append((enabled: enabled!, variation: variation!))
                 }
                 

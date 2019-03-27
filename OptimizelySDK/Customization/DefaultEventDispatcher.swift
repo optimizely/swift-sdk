@@ -206,7 +206,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func applicationDidEnterBackground() {
-        if let timer = timer.property {
+        timer.performAtomic() { (timer) in
             timer.invalidate()
         }
         timer.property = nil
@@ -231,7 +231,9 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
             DispatchQueue.main.async {
                 self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
                     if self.dataStore.count == 0 {
-                        self.timer.property?.invalidate()
+                        self.timer.performAtomic() { (timer) in
+                            timer.invalidate()
+                        }
                         self.timer.property = nil
                     }
                     else {

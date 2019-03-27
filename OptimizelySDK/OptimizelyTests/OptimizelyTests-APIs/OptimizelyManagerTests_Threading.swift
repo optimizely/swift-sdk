@@ -260,7 +260,6 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         //let expectationBackground = XCTestExpectation(description: "waiting for background thread")
         let backgroundQueue = DispatchQueue(label: "mybackground", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent)
         let atomicBackground = AtomicProperty<[(enabled:Bool?, variation:String?)]>(property: [(enabled:Bool?, variation:String?)]())
-        let appendLock = DispatchQueue(label: "appendLock")
         
         let dispatchGroup = DispatchGroup()
         
@@ -270,8 +269,8 @@ class OptimizelyManagerTests_Threading: XCTestCase {
                 let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
                 let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
                 
-                appendLock.sync {
-                    atomicBackground.property!.append((enabled: enabled!, variation: variation!))
+                atomicBackground.performAtomic() { (array) in
+                    array.append((enabled: enabled!, variation: variation!))
                 }
                 
                 defer {

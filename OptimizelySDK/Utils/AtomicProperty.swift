@@ -38,5 +38,16 @@ class AtomicProperty<T> {
     init() {
 
     }
+    
+    // perform an atomic operation on the atomic property
+    // the operation will not run if the property is nil.
+    public func performAtomic(atomicOperation:((_ prop:inout T)->Void)) {
+        lock.sync {
+            if var prop = _property {
+                atomicOperation(&prop)
+                _property = prop
+            }
+        }
+    }
 
 }

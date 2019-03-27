@@ -1684,13 +1684,6 @@
 			path = "OptimizelyTests-APIs";
 			sourceTree = "<group>";
 		};
-		6E636B9C2236C96700AF3CEF /* OptimizelyTests-Legacy */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "OptimizelyTests-Legacy";
-			sourceTree = "<group>";
-		};
 		6EA4256B2218E60A00B074B5 /* OptimizelyTests-Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -1741,7 +1734,6 @@
 				6E636B8D2236C91F00AF3CEF /* OptimizelyTests-APIs */,
 				6EA4257A2218E61E00B074B5 /* OptimizelyTests-DataModel */,
 				6EA4265C2219242100B074B5 /* OptimizelyTests-Others */,
-				6E636B9C2236C96700AF3CEF /* OptimizelyTests-Legacy */,
 				6E4DD99021E6BAA700B0C2C7 /* OptimizelyTests-iOS */,
 				6E614DD921E3F38A005982A1 /* OptimizelyTests-tvOS */,
 				0B4AE9E622289A830047B75D /* TestData */,
@@ -3606,7 +3598,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.OptimizelySwiftSDK;
 				PRODUCT_NAME = Optimizely;
@@ -3633,7 +3624,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.OptimizelySwiftSDK;
 				PRODUCT_NAME = Optimizely;
@@ -3999,7 +3989,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.OptimizelySwiftSDK;
 				PRODUCT_NAME = Optimizely;
@@ -4025,7 +4014,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-					"$(FRAMEWORK_SEARCH_PATHS)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.OptimizelySwiftSDK;
 				PRODUCT_NAME = Optimizely;

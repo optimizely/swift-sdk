@@ -32,7 +32,7 @@ class Utils {
     static func isDoubleType(_ value: Any) -> Bool {
         // Float32 === Float, Float64 ==== Double
         let allSwiftNumTypes: [Any.Type] = [Double.self,
-                                            Float.self, Float80.self]
+                                            Float.self, CLongDouble.self]
         
         let isSwiftNumType = allSwiftNumTypes.contains{ $0 == type(of: value) }
         let isNSNumberNumType = (value is Double) && !isNSNumberBoolType(value)
@@ -78,7 +78,7 @@ class Utils {
         switch value {
         case is Double: finalValue = Double(value as! Double)
         case is Float: finalValue = Double(value as! Float)
-        case is Float80: finalValue = Double(value as! Float80)
+        case is CLongDouble: finalValue = Double(value as! CLongDouble)
         default: finalValue = nil
         }
         

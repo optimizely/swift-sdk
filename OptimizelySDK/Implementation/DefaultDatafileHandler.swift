@@ -55,7 +55,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         return result
     }
     
-    func downloadDatafile(sdkKey: String, completionHandler: @escaping (Result<Data?, DatafileDownloadError>) -> Void) {
+    open func downloadDatafile(sdkKey: String, completionHandler: @escaping (Result<Data?, DatafileDownloadError>) -> Void) {
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)

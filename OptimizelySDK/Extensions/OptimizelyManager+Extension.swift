@@ -25,7 +25,7 @@ extension OptimizelyManager {
         HandlerRegistryService.shared.registerBinding(binder:Binder<OPTNotificationCenter>(service: OPTNotificationCenter.self).singetlon().reInitializeStrategy(strategy: .reUse).using(instance:notificationCenter).sdkKey(key: sdkKey))
         
         // the decision service is also a singleton that will reCreate on re-initalize
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance:decisionService).sdkKey(key: sdkKey))
+        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance:decisionService).reInitializeStrategy(strategy: .reUse).sdkKey(key: sdkKey))
         
         // An event dispatcher.  We rely on the factory to create and mantain. Again, recreate on re-initalize.
         HandlerRegistryService.shared.registerBinding(binder:Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().reInitializeStrategy(strategy: .reUse).using(instance: eventDispatcher).sdkKey(key: sdkKey))

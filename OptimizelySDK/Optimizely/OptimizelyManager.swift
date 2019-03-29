@@ -532,16 +532,21 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variableUnknown
         }
         
-        // TODO: [Jae] optional? fallback to empty string is OK?
-        var defaultValue = variable.defaultValue ?? ""
+        var featureValue = variable.defaultValue ?? ""
         
         var _attributes = OptimizelyAttributes()
         if attributes != nil {
             _attributes = attributes!
         }
         if let decision = self.decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: _attributes) {
-            if let featureVariableUsage = decision.variation?.getVariable(id: variable.id) {
-                defaultValue = featureVariableUsage.value
+            if let variation = decision.variation,
+                let featureVariableUsage = variation.variables?.filter({$0.id == variable.id}).first
+            {
+                if let featureEnabled = variation.featureEnabled, featureEnabled {
+                    featureValue = featureVariableUsage.value
+                } else {
+                    // add standard log message here
+                }
             }
         }
 
@@ -551,16 +556,16 @@ open class OptimizelyManager: NSObject {
         switch T.self {
         case is String.Type:
             typeName = "string"
-            valueParsed = defaultValue as? T
+            valueParsed = featureValue as? T
         case is Int.Type:
             typeName = "integer"
-            valueParsed = Int(defaultValue) as? T
+            valueParsed = Int(featureValue) as? T
         case is Double.Type:
             typeName = "double"
-            valueParsed = Double(defaultValue) as? T
+            valueParsed = Double(featureValue) as? T
         case is Bool.Type:
             typeName = "boolean"
-            valueParsed = Bool(defaultValue) as? T
+            valueParsed = Bool(featureValue) as? T
         default:
             break
         }

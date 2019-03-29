@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct AtomicProperty<T> {
+class AtomicProperty<T> {
     private var _property:T?
     var property:T? {
         get {
@@ -30,4 +30,24 @@ struct AtomicProperty<T> {
         name += clzzName
         return DispatchQueue(label: name)
     }()
+
+    init(property:T) {
+        self.property = property
+    }
+
+    init() {
+
+    }
+    
+    // perform an atomic operation on the atomic property
+    // the operation will not run if the property is nil.
+    public func performAtomic(atomicOperation:((_ prop:inout T)->Void)) {
+        lock.sync {
+            if var prop = _property {
+                atomicOperation(&prop)
+                _property = prop
+            }
+        }
+    }
+
 }

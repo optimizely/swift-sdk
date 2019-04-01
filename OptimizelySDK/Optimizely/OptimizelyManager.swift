@@ -324,21 +324,24 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.experimentUnknown
         }
         
-        // fix DecisionService to throw error
-        guard let variation = decisionService.getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
-            throw OptimizelyError.variationUnknown
-        }
-        
         var args = Array<Any?>()
         args.append(Constants.NotificationKeys.OptimizelyDecisionTypeExperiment)
         args.append(userId)
         args.append(attributes ?? OptimizelyAttributes())
-        
         var decisionInfo = Dictionary<String,Any>()
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationExperiment] = nil
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationVariation] = nil
+        
+        // fix DecisionService to throw error
+        guard let variation = decisionService.getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
+            args.append(decisionInfo)
+            self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
+            throw OptimizelyError.variationUnknown
+        }
+        
         decisionInfo[Constants.NotificationKeys.OptimizelyNotificationExperiment] = experimentKey
         decisionInfo[Constants.NotificationKeys.OptimizelyNotificationVariation] = variation.key
         args.append(decisionInfo)
-        
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
         
         return variation

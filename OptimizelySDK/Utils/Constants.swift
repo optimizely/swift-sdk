@@ -21,6 +21,9 @@ struct Constants {
         static let OptimizelyNotificationDecisionInfoSourceVariation = "sourceVariationKey"
         static let OptimizelyNotificationDecisionInfoSource = "source"
         static let OptimizelyDecisionTypeIsFeatureEnabled  = "feature"
+        static let OptimizelyNotificationExperiment = "experiment"
+        static let OptimizelyNotificationVariation = "variation"
+        static let OptimizelyDecisionTypeExperiment = "experiment"
     }
     struct DecisionSource {
         static let Experiment = "EXPERIMENT"

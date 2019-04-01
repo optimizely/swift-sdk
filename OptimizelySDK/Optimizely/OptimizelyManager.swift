@@ -397,14 +397,21 @@ open class OptimizelyManager: NSObject {
         // fix DecisionService to throw error
         let pair = decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes ?? OptimizelyAttributes())
         
+        var args = Array<Any?>()
+        args.append(Constants.NotificationKeys.OptimizelyDecisionTypeIsFeatureEnabled)
+        args.append(userId)
+        args.append(attributes ?? OptimizelyAttributes())
+        
+        var decisionInfo = Dictionary<String,Any>()
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeature] = featureKey
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSource] = Constants.DecisionSource.Rollout
+        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeatureEnabled] = false
+
         guard let variation = pair?.variation else {
+            args.append(decisionInfo)
+            self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
             throw OptimizelyError.variationUnknown
         }
-        
-        var args = Array<Any?>()
-        var decisionInfo = Dictionary<String,Any>()
-        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceExperiment] = nil
-        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceVariation] = nil
         
         let featureEnabled = variation.featureEnabled ?? false
     
@@ -441,16 +448,10 @@ open class OptimizelyManager: NSObject {
             }
             self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
         }
-        
-        args.append(Constants.NotificationKeys.OptimizelyDecisionTypeIsFeatureEnabled)
-        args.append(userId)
-        args.append(attributes ?? OptimizelyAttributes())
-        
-        decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeature] = featureKey
+
         decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeatureEnabled] = featureEnabled
         decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSource] = (pair?.experiment != nil ? Constants.DecisionSource.Experiment : Constants.DecisionSource.Rollout)
         args.append(decisionInfo)
-        
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
         
         return featureEnabled

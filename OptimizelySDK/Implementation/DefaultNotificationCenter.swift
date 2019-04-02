@@ -103,7 +103,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
         
         return incrementNotificationId()
     }
-    
+
     public func addDatafileChangeNotificationListener(datafileListener: @escaping DatafileChangeListener) -> Int? {
         notificationListeners[notificationId] = (NotificationType.DatafileChange.rawValue,  { (args:Any...) in
             guard let myArgs = args[0] as? [Any?] else {
@@ -156,5 +156,6 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             }
         }
     }
+    
     
 }

@@ -23,7 +23,11 @@ struct Constants {
         static let OptimizelyNotificationDecisionInfoVariable = "variableKey"
         static let OptimizelyNotificationDecisionInfoVariableType = "variableType"
         static let OptimizelyNotificationDecisionInfoVariableValue = "variableValue"
+        static let OptimizelyNotificationExperiment = "experiment"
+        static let OptimizelyNotificationVariation = "variation"
         static let OptimizelyDecisionTypeFeatureVariable  = "feature_variable"
+        static let OptimizelyDecisionTypeIsFeatureEnabled  = "feature"
+        static let OptimizelyDecisionTypeExperiment = "experiment"
     }
     struct DecisionSource {
         static let Experiment = "EXPERIMENT"

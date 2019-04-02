@@ -81,7 +81,7 @@ func addTrackNotificationListener(trackListener:@escaping TrackListener) -> Int?
  - Returns: the notification id used to remove the notification. It is greater than 0 on success.
  */
 func addDecisionNotificationListener(decisionListener:@escaping DecisionListener) -> Int?
-    
+
 /**
  Add a datafile change notification listener
  - Parameter datafileChangeListener: Notification to add.

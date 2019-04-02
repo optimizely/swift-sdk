@@ -533,116 +533,6 @@
 		6E8B6A49221CBBC5006EA8A6 /* GroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A47221CBBC5006EA8A6 /* GroupTests.swift */; };
 		6E8B6A4B221CC2D6006EA8A6 /* ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */; };
 		6E8B6A4C221CC2D6006EA8A6 /* ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */; };
-		6E8CB52A224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB52B224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB52C224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB52D224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB52E224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB52F224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB530224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB531224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB532224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB533224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */; };
-		6E8CB534224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB535224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB536224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB537224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB538224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB539224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB53A224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB53B224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB53C224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB53D224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */; };
-		6E8CB53E224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB53F224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB540224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB541224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB542224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB543224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB544224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB545224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB546224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB547224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */; };
-		6E8CB548224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB549224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB54A224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB54B224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB54C224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB54D224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB54E224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB54F224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB550224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB551224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */; };
-		6E8CB552224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB553224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB554224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB555224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB556224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB557224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB558224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB559224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB55A224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB55B224BF44B00B8CB7A /* x-audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */; };
-		6E8CB55C224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB55D224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB55E224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB55F224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB560224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB561224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB562224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB563224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB564224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB565224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */; };
-		6E8CB566224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB567224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB568224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB569224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB56A224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB56B224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB56C224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB56D224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB56E224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB56F224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */; };
-		6E8CB570224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB571224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB572224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB573224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB574224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB575224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB576224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB577224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB578224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB579224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */; };
-		6E8CB57A224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB57B224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB57C224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB57D224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB57E224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB57F224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB580224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB581224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB582224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB583224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */; };
-		6E8CB584224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB585224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB586224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB587224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB588224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB589224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB58A224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB58B224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB58C224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB58D224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */; };
-		6E8CB58E224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
-		6E8CB58F224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
-		6E8CB590224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
-		6E8CB591224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
-		6E8CB592224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
-		6E8CB593224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
-		6E8CB594224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
-		6E8CB595224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
-		6E8CB596224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
-		6E8CB597224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */; };
 		6E8CB59E224BF4BE00B8CB7A /* DecisionServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB598224BF4BE00B8CB7A /* DecisionServiceTest.swift */; };
 		6E8CB59F224BF4BE00B8CB7A /* DecisionServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB598224BF4BE00B8CB7A /* DecisionServiceTest.swift */; };
 		6E8CB5A0224BF4BE00B8CB7A /* DecisionServiceTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB599224BF4BE00B8CB7A /* DecisionServiceTests_Others.swift */; };
@@ -1379,17 +1269,6 @@
 		6E852C69221A7E3300C41F94 /* ExperimentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentTests.swift; sourceTree = "<group>"; };
 		6E8B6A47221CBBC5006EA8A6 /* GroupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTests.swift; sourceTree = "<group>"; };
 		6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTests.swift; sourceTree = "<group>"; };
-		6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-V2TestDatafile.json"; sourceTree = "<group>"; };
-		6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_7519590183.json; sourceTree = "<group>"; };
-		6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-typed_audience_datafile.json"; sourceTree = "<group>"; };
-		6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-optimizely_6372300739.json"; sourceTree = "<group>"; };
-		6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-audience_targeting.json"; sourceTree = "<group>"; };
-		6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-test_data_25_experiments.json"; sourceTree = "<group>"; };
-		6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-test_data_50_experiments.json"; sourceTree = "<group>"; };
-		6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-test_data_10_experimentsV3.json"; sourceTree = "<group>"; };
-		6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-UnsupportedVersionDatafile.json"; sourceTree = "<group>"; };
-		6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-optimizely_6372300739_v4.json"; sourceTree = "<group>"; };
-		6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test_data_10_experiments.json; sourceTree = "<group>"; };
 		6E8CB598224BF4BE00B8CB7A /* DecisionServiceTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionServiceTest.swift; sourceTree = "<group>"; };
 		6E8CB599224BF4BE00B8CB7A /* DecisionServiceTests_Others.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_Others.swift; sourceTree = "<group>"; };
 		6E8CB59A224BF4BE00B8CB7A /* DecisionServiceTests_Features.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_Features.swift; sourceTree = "<group>"; };
@@ -1589,6 +1468,8 @@
 				6E636C522236E08B00AF3CEF /* api_datafile.json */,
 				0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */,
 				0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */,
+				6E1A1B8E223C484B0070160A /* BucketerTestsDatafile.json */,
+				6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */,
 			);
 			path = TestData;
 			sourceTree = "<group>";
@@ -1729,26 +1610,6 @@
 			path = ../Pods;
 			sourceTree = "<group>";
 		};
-		6E1A1B8C223C47EA0070160A /* TestData-ObjcSDK */ = {
-			isa = PBXGroup;
-			children = (
-				6E1A1B8E223C484B0070160A /* BucketerTestsDatafile.json */,
-				6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */,
-				6E8CB520224BF44B00B8CB7A /* optimizely_7519590183.json */,
-				6E8CB529224BF44B00B8CB7A /* test_data_10_experiments.json */,
-				6E8CB523224BF44B00B8CB7A /* x-audience_targeting.json */,
-				6E8CB528224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json */,
-				6E8CB522224BF44B00B8CB7A /* x-optimizely_6372300739.json */,
-				6E8CB526224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json */,
-				6E8CB524224BF44B00B8CB7A /* x-test_data_25_experiments.json */,
-				6E8CB525224BF44B00B8CB7A /* x-test_data_50_experiments.json */,
-				6E8CB521224BF44B00B8CB7A /* x-typed_audience_datafile.json */,
-				6E8CB527224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json */,
-				6E8CB51F224BF44B00B8CB7A /* x-V2TestDatafile.json */,
-			);
-			path = "TestData-ObjcSDK";
-			sourceTree = "<group>";
-		};
 		6E4DD8ED21E530A900B0C2C7 /* Optimizely */ = {
 			isa = PBXGroup;
 			children = (
@@ -1886,7 +1747,6 @@
 				6E4DD99021E6BAA700B0C2C7 /* OptimizelyTests-iOS */,
 				6E614DD921E3F38A005982A1 /* OptimizelyTests-tvOS */,
 				0B4AE9E622289A830047B75D /* TestData */,
-				6E1A1B8C223C47EA0070160A /* TestData-ObjcSDK */,
 				6EDE920D22273EC600840112 /* TestUtils */,
 				6E4DD99521E6BAA700B0C2C7 /* Info.plist */,
 			);
@@ -2249,29 +2109,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E8CB530224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				6EAE8EFD22306D43007D4A37 /* feature_flag.json in Resources */,
 				6EAE8EFC22306D43007D4A37 /* feature_experiments.json in Resources */,
-				6E8CB576224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
-				6E8CB54E224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				6EAE8EFB22306D43007D4A37 /* feature_exp.json in Resources */,
 				6EAE8EB722306D20007D4A37 /* ab_experiments.json in Resources */,
 				6E636C592236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920922273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
-				6E8CB558224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
 				6EDE91F122273DD800840112 /* typed_audience_datafile.json in Resources */,
 				0B2D4909224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B95223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
-				6E8CB562224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
 				6EAE8F0522306D43007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8F0022306D43007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC322306D35007D4A37 /* 50_entities.json in Resources */,
-				6E8CB544224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				6EAE8EF922306D43007D4A37 /* bucketing_id.json in Resources */,
-				6E8CB56C224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				6EDE91A922273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
 				0B2D4913224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB58A224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				6E636C4D2236D13000AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8EC822306D3A007D4A37 /* 100_entities.json in Resources */,
 				6EAE8F0622306D43007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2279,13 +2131,10 @@
 				6EAE8F0422306D43007D4A37 /* rollout_bucketing.json in Resources */,
 				6EAE8EF822306D43007D4A37 /* bot_filtering_enabled.json in Resources */,
 				6EAE8EFF22306D43007D4A37 /* feature_rollouts.json in Resources */,
-				6E8CB580224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
 				6E1A1B9F223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				6EAE8EFE22306D43007D4A37 /* feature_management_experiment_bucketing.json in Resources */,
-				6E8CB594224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6EAE8EBD22306D2F007D4A37 /* 10_entities.json in Resources */,
 				6EAE8F0222306D43007D4A37 /* grouped_experiments.json in Resources */,
-				6E8CB53A224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
 				6EAE8EFA22306D43007D4A37 /* empty_datafile.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2294,29 +2143,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E8CB52C224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				6E636C292236CBFD00AF3CEF /* forced_variation.json in Resources */,
 				6E636C282236CBFD00AF3CEF /* feature_variables.json in Resources */,
-				6E8CB572224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
-				6E8CB54A224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				6E636C1F2236CBFD00AF3CEF /* ab_experiments.json in Resources */,
 				6E636C1C2236CBFD00AF3CEF /* typed_audience_datafile.json in Resources */,
 				6E636C552236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6E636C212236CBFD00AF3CEF /* bucketing_id.json in Resources */,
-				6E8CB554224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
 				6E636C412236CC0500AF3CEF /* 10_entities.json in Resources */,
 				0B2D4905224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B91223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
-				6E8CB55E224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
 				6E636C262236CBFD00AF3CEF /* feature_management_experiment_bucketing.json in Resources */,
 				6E636C222236CBFD00AF3CEF /* empty_datafile.json in Resources */,
 				6E636C242236CBFD00AF3CEF /* feature_experiments.json in Resources */,
-				6E8CB540224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				6E636C432236CC0500AF3CEF /* 100_entities.json in Resources */,
-				6E8CB568224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				6E636C2A2236CBFD00AF3CEF /* grouped_experiments.json in Resources */,
 				0B2D490F224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB586224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				6E636C492236D12C00AF3CEF /* audience_targeting.json in Resources */,
 				6E636C422236CC0500AF3CEF /* 50_entities.json in Resources */,
 				6E636C1B2236CBFD00AF3CEF /* UnsupportedVersionDatafile.json in Resources */,
@@ -2324,13 +2165,10 @@
 				6E636C202236CBFD00AF3CEF /* bot_filtering_enabled.json in Resources */,
 				6E636C1D2236CBFD00AF3CEF /* optimizely_6372300739_v4.json in Resources */,
 				6E636C252236CBFD00AF3CEF /* feature_flag.json in Resources */,
-				6E8CB57C224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
 				6E1A1B9B223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				6E636C2C2236CBFD00AF3CEF /* simple_datafile.json in Resources */,
-				6E8CB590224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6E636C2B2236CBFD00AF3CEF /* rollout_bucketing.json in Resources */,
 				6E636C2D2236CBFD00AF3CEF /* unsupported_datafile.json in Resources */,
-				6E8CB536224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
 				6E636C272236CBFD00AF3CEF /* feature_rollouts.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2339,29 +2177,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E8CB52F224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				6E636C3C2236CBFE00AF3CEF /* forced_variation.json in Resources */,
 				6E636C3B2236CBFE00AF3CEF /* feature_variables.json in Resources */,
-				6E8CB575224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
-				6E8CB54D224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				6E636C322236CBFE00AF3CEF /* ab_experiments.json in Resources */,
 				6E636C2F2236CBFE00AF3CEF /* typed_audience_datafile.json in Resources */,
 				6E636C582236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6E636C342236CBFE00AF3CEF /* bucketing_id.json in Resources */,
-				6E8CB557224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
 				6E636C442236CC0600AF3CEF /* 10_entities.json in Resources */,
 				0B2D4908224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B94223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
-				6E8CB561224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
 				6E636C392236CBFE00AF3CEF /* feature_management_experiment_bucketing.json in Resources */,
 				6E636C352236CBFE00AF3CEF /* empty_datafile.json in Resources */,
 				6E636C372236CBFE00AF3CEF /* feature_experiments.json in Resources */,
-				6E8CB543224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				6E636C462236CC0600AF3CEF /* 100_entities.json in Resources */,
-				6E8CB56B224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				6E636C3D2236CBFE00AF3CEF /* grouped_experiments.json in Resources */,
 				0B2D4912224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB589224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				6E636C4C2236D12E00AF3CEF /* audience_targeting.json in Resources */,
 				6E636C452236CC0600AF3CEF /* 50_entities.json in Resources */,
 				6E636C2E2236CBFE00AF3CEF /* UnsupportedVersionDatafile.json in Resources */,
@@ -2369,13 +2199,10 @@
 				6E636C332236CBFE00AF3CEF /* bot_filtering_enabled.json in Resources */,
 				6E636C302236CBFE00AF3CEF /* optimizely_6372300739_v4.json in Resources */,
 				6E636C382236CBFE00AF3CEF /* feature_flag.json in Resources */,
-				6E8CB57F224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
 				6E1A1B9E223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				6E636C3F2236CBFE00AF3CEF /* simple_datafile.json in Resources */,
-				6E8CB593224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6E636C3E2236CBFE00AF3CEF /* rollout_bucketing.json in Resources */,
 				6E636C402236CBFE00AF3CEF /* unsupported_datafile.json in Resources */,
-				6E8CB539224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
 				6E636C3A2236CBFE00AF3CEF /* feature_rollouts.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2384,29 +2211,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E8CB531224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				0B4AEA302228A6430047B75D /* feature_rollouts.json in Resources */,
 				0B4AEA2E2228A6430047B75D /* feature_exp.json in Resources */,
-				6E8CB577224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
-				6E8CB54F224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				0B4AEA2A2228A6430047B75D /* rollout_bucketing.json in Resources */,
 				0B4AEA262228A6430047B75D /* forced_variation.json in Resources */,
 				6E636C5A2236E08C00AF3CEF /* api_datafile.json in Resources */,
 				0B4AEA1C2228A6430047B75D /* ab_experiments.json in Resources */,
-				6E8CB559224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
 				0B4AEA382228A6430047B75D /* unsupported_datafile.json in Resources */,
 				0B2D490A224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B96223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
-				6E8CB563224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
 				6EAE8EAF22306CFA007D4A37 /* UnsupportedVersionDatafile.json in Resources */,
 				0B4AEA182228A6430047B75D /* 100_entities.json in Resources */,
 				6EAE8EB222306D0D007D4A37 /* typed_audience_datafile.json in Resources */,
-				6E8CB545224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				0B4AEA202228A6430047B75D /* audience_targeting.json in Resources */,
-				6E8CB56D224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				0B4AEA282228A6430047B75D /* grouped_experiments.json in Resources */,
 				0B2D4914224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB58B224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				0B4AEA162228A6430047B75D /* 50_entities.json in Resources */,
 				0B4AEA242228A6430047B75D /* feature_experiments.json in Resources */,
 				0B4AEA362228A6430047B75D /* simple_datafile.json in Resources */,
@@ -2414,13 +2233,10 @@
 				0B4AEA222228A6430047B75D /* empty_datafile.json in Resources */,
 				0B4AEA1A2228A6430047B75D /* feature_management_experiment_bucketing.json in Resources */,
 				0B4AEA122228A6430047B75D /* bucketing_id.json in Resources */,
-				6E8CB581224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
 				6E1A1BA0223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				0B4AEA1E2228A6430047B75D /* feature_flag.json in Resources */,
-				6E8CB595224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6EAE8EB422306D18007D4A37 /* optimizely_6372300739_v4.json in Resources */,
 				0B4AEA322228A6430047B75D /* bot_filtering_enabled.json in Resources */,
-				6E8CB53B224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
 				0B4AEA142228A6430047B75D /* 10_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2429,29 +2245,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E8CB532224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				6EAE8F0C22306D44007D4A37 /* feature_flag.json in Resources */,
 				6EAE8F0B22306D44007D4A37 /* feature_experiments.json in Resources */,
-				6E8CB578224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
-				6E8CB550224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				6EAE8F0A22306D44007D4A37 /* feature_exp.json in Resources */,
 				6EAE8EB822306D21007D4A37 /* ab_experiments.json in Resources */,
 				6E636C5B2236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920B22273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
-				6E8CB55A224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
 				6EDE91F322273DD800840112 /* typed_audience_datafile.json in Resources */,
 				0B2D490B224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B97223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
-				6E8CB564224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
 				6EAE8F1422306D44007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8F0F22306D44007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC422306D36007D4A37 /* 50_entities.json in Resources */,
-				6E8CB546224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				6EAE8F0822306D44007D4A37 /* bucketing_id.json in Resources */,
-				6E8CB56E224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				6EDE91AB22273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
 				0B2D4915224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB58C224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				6E636C4E2236D13100AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8EC922306D3B007D4A37 /* 100_entities.json in Resources */,
 				6EAE8F1522306D44007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2459,13 +2267,10 @@
 				6EAE8F1322306D44007D4A37 /* rollout_bucketing.json in Resources */,
 				6EAE8F0722306D44007D4A37 /* bot_filtering_enabled.json in Resources */,
 				6EAE8F0E22306D44007D4A37 /* feature_rollouts.json in Resources */,
-				6E8CB582224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
 				6E1A1BA1223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				6EAE8F0D22306D44007D4A37 /* feature_management_experiment_bucketing.json in Resources */,
-				6E8CB596224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6EAE8EBE22306D2F007D4A37 /* 10_entities.json in Resources */,
 				6EAE8F1122306D44007D4A37 /* grouped_experiments.json in Resources */,
-				6E8CB53C224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
 				6EAE8F0922306D44007D4A37 /* empty_datafile.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2474,29 +2279,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E8CB52B224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				0B4AEA2F2228A6430047B75D /* feature_rollouts.json in Resources */,
 				0B4AEA2D2228A6430047B75D /* feature_exp.json in Resources */,
-				6E8CB571224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
-				6E8CB549224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				0B4AEA292228A6430047B75D /* rollout_bucketing.json in Resources */,
 				0B4AEA252228A6430047B75D /* forced_variation.json in Resources */,
 				6E636C542236E08C00AF3CEF /* api_datafile.json in Resources */,
 				0B4AEA1B2228A6430047B75D /* ab_experiments.json in Resources */,
-				6E8CB553224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
 				0B4AEA372228A6430047B75D /* unsupported_datafile.json in Resources */,
 				0B2D4904224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B90223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
-				6E8CB55D224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
 				6EAE8EB022306CFB007D4A37 /* UnsupportedVersionDatafile.json in Resources */,
 				0B4AEA172228A6430047B75D /* 100_entities.json in Resources */,
 				6EAE8EB122306D0C007D4A37 /* typed_audience_datafile.json in Resources */,
-				6E8CB53F224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				0B4AEA1F2228A6430047B75D /* audience_targeting.json in Resources */,
-				6E8CB567224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				0B4AEA272228A6430047B75D /* grouped_experiments.json in Resources */,
 				0B2D490E224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB585224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				0B4AEA152228A6430047B75D /* 50_entities.json in Resources */,
 				0B4AEA232228A6430047B75D /* feature_experiments.json in Resources */,
 				0B4AEA352228A6430047B75D /* simple_datafile.json in Resources */,
@@ -2504,13 +2301,10 @@
 				0B4AEA212228A6430047B75D /* empty_datafile.json in Resources */,
 				0B4AEA192228A6430047B75D /* feature_management_experiment_bucketing.json in Resources */,
 				0B4AEA112228A6430047B75D /* bucketing_id.json in Resources */,
-				6E8CB57B224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
 				6E1A1B9A223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				0B4AEA1D2228A6430047B75D /* feature_flag.json in Resources */,
-				6E8CB58F224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6EAE8EB322306D16007D4A37 /* optimizely_6372300739_v4.json in Resources */,
 				0B4AEA312228A6430047B75D /* bot_filtering_enabled.json in Resources */,
-				6E8CB535224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
 				0B4AEA132228A6430047B75D /* 10_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2519,29 +2313,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E8CB52D224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				6EAE8EDF22306D42007D4A37 /* feature_flag.json in Resources */,
 				6EAE8EDE22306D42007D4A37 /* feature_experiments.json in Resources */,
-				6E8CB573224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
-				6E8CB54B224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				6EAE8EDD22306D42007D4A37 /* feature_exp.json in Resources */,
 				6EAE8EB522306D1F007D4A37 /* ab_experiments.json in Resources */,
 				6E636C562236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920722273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
-				6E8CB555224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
 				6EDE91EF22273DD800840112 /* typed_audience_datafile.json in Resources */,
 				0B2D4906224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B92223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
-				6E8CB55F224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
 				6EAE8EE722306D42007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8EE222306D42007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC122306D34007D4A37 /* 50_entities.json in Resources */,
-				6E8CB541224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				6EAE8EDB22306D42007D4A37 /* bucketing_id.json in Resources */,
-				6E8CB569224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				6EDE91A722273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
 				0B2D4910224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB587224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				6E636C4A2236D12C00AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8EC622306D39007D4A37 /* 100_entities.json in Resources */,
 				6EAE8EE822306D42007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2549,13 +2335,10 @@
 				6EAE8EE622306D42007D4A37 /* rollout_bucketing.json in Resources */,
 				6EAE8EDA22306D42007D4A37 /* bot_filtering_enabled.json in Resources */,
 				6EAE8EE122306D42007D4A37 /* feature_rollouts.json in Resources */,
-				6E8CB57D224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
 				6E1A1B9C223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				6EAE8EE022306D42007D4A37 /* feature_management_experiment_bucketing.json in Resources */,
-				6E8CB591224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6EAE8EBA22306D2D007D4A37 /* 10_entities.json in Resources */,
 				6EAE8EE422306D42007D4A37 /* grouped_experiments.json in Resources */,
-				6E8CB537224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
 				6EAE8EDC22306D42007D4A37 /* empty_datafile.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2564,29 +2347,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E8CB52E224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				6EAE8EEE22306D43007D4A37 /* feature_flag.json in Resources */,
 				6EAE8EED22306D43007D4A37 /* feature_experiments.json in Resources */,
-				6E8CB574224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
-				6E8CB54C224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				6EAE8EEC22306D43007D4A37 /* feature_exp.json in Resources */,
 				6EAE8EB622306D1F007D4A37 /* ab_experiments.json in Resources */,
 				6E636C572236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920822273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
-				6E8CB556224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
 				6EDE91F022273DD800840112 /* typed_audience_datafile.json in Resources */,
 				0B2D4907224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B93223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
-				6E8CB560224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
 				6EAE8EF622306D43007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8EF122306D43007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC222306D35007D4A37 /* 50_entities.json in Resources */,
-				6E8CB542224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				6EAE8EEA22306D43007D4A37 /* bucketing_id.json in Resources */,
-				6E8CB56A224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				6EDE91A822273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
 				0B2D4911224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB588224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				6E636C4B2236D12D00AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8EC722306D3A007D4A37 /* 100_entities.json in Resources */,
 				6EAE8EF722306D43007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2594,13 +2369,10 @@
 				6EAE8EF522306D43007D4A37 /* rollout_bucketing.json in Resources */,
 				6EAE8EE922306D43007D4A37 /* bot_filtering_enabled.json in Resources */,
 				6EAE8EF022306D43007D4A37 /* feature_rollouts.json in Resources */,
-				6E8CB57E224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
 				6E1A1B9D223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				6EAE8EEF22306D43007D4A37 /* feature_management_experiment_bucketing.json in Resources */,
-				6E8CB592224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6EAE8EBB22306D2D007D4A37 /* 10_entities.json in Resources */,
 				6EAE8EF322306D43007D4A37 /* grouped_experiments.json in Resources */,
-				6E8CB538224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
 				6EAE8EEB22306D43007D4A37 /* empty_datafile.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2609,29 +2381,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E8CB533224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				6EAE8F1B22306D45007D4A37 /* feature_flag.json in Resources */,
 				6EAE8F1A22306D45007D4A37 /* feature_experiments.json in Resources */,
-				6E8CB579224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
-				6E8CB551224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				6EAE8F1922306D45007D4A37 /* feature_exp.json in Resources */,
 				6EAE8EB922306D21007D4A37 /* ab_experiments.json in Resources */,
 				6E636C5C2236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920C22273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
-				6E8CB55B224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
 				6EDE91F422273DD800840112 /* typed_audience_datafile.json in Resources */,
 				0B2D490C224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B98223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
-				6E8CB565224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
 				6EAE8F2322306D45007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8F1E22306D45007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC522306D36007D4A37 /* 50_entities.json in Resources */,
-				6E8CB547224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				6EAE8F1722306D45007D4A37 /* bucketing_id.json in Resources */,
-				6E8CB56F224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				6EDE91AC22273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
 				0B2D4916224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB58D224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				6E636C4F2236D13100AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8ECA22306D3B007D4A37 /* 100_entities.json in Resources */,
 				6EAE8F2422306D45007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2639,13 +2403,10 @@
 				6EAE8F2222306D45007D4A37 /* rollout_bucketing.json in Resources */,
 				6EAE8F1622306D45007D4A37 /* bot_filtering_enabled.json in Resources */,
 				6EAE8F1D22306D45007D4A37 /* feature_rollouts.json in Resources */,
-				6E8CB583224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
 				6E1A1BA2223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				6EAE8F1C22306D45007D4A37 /* feature_management_experiment_bucketing.json in Resources */,
-				6E8CB597224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6EAE8EBF22306D30007D4A37 /* 10_entities.json in Resources */,
 				6EAE8F2022306D45007D4A37 /* grouped_experiments.json in Resources */,
-				6E8CB53D224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
 				6EAE8F1822306D45007D4A37 /* empty_datafile.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2670,33 +2431,22 @@
 				6EAE8ED922306D42007D4A37 /* unsupported_datafile.json in Resources */,
 				6EAE8ECE22306D42007D4A37 /* feature_exp.json in Resources */,
 				0B2D490D224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
-				6E8CB570224BF44B00B8CB7A /* x-test_data_10_experimentsV3.json in Resources */,
 				6E636C472236CFDF00AF3CEF /* ab_experiments.json in Resources */,
 				6EAE8ECF22306D42007D4A37 /* feature_experiments.json in Resources */,
 				6EAE8ED122306D42007D4A37 /* feature_management_experiment_bucketing.json in Resources */,
 				6E1A1B8F223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6EAE8ECD22306D42007D4A37 /* empty_datafile.json in Resources */,
 				6EAE8ED722306D42007D4A37 /* rollout_bucketing.json in Resources */,
-				6E8CB534224BF44B00B8CB7A /* optimizely_7519590183.json in Resources */,
-				6E8CB548224BF44B00B8CB7A /* x-optimizely_6372300739.json in Resources */,
 				6EAE8ED822306D42007D4A37 /* simple_datafile.json in Resources */,
-				6E8CB58E224BF44B00B8CB7A /* test_data_10_experiments.json in Resources */,
 				6E636C532236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EAE8ED322306D42007D4A37 /* feature_variables.json in Resources */,
 				6EDE91ED22273DD800840112 /* typed_audience_datafile.json in Resources */,
-				6E8CB552224BF44B00B8CB7A /* x-audience_targeting.json in Resources */,
-				6E8CB53E224BF44B00B8CB7A /* x-typed_audience_datafile.json in Resources */,
 				6EAE8ED422306D42007D4A37 /* forced_variation.json in Resources */,
-				6E8CB52A224BF44B00B8CB7A /* x-V2TestDatafile.json in Resources */,
 				6EDE91A522273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
-				6E8CB566224BF44B00B8CB7A /* x-test_data_50_experiments.json in Resources */,
 				0B2D4903224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B99223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				6EAE8ED522306D42007D4A37 /* grouped_experiments.json in Resources */,
 				6EAE8ED022306D42007D4A37 /* feature_flag.json in Resources */,
-				6E8CB57A224BF44B00B8CB7A /* x-UnsupportedVersionDatafile.json in Resources */,
-				6E8CB55C224BF44B00B8CB7A /* x-test_data_25_experiments.json in Resources */,
-				6E8CB584224BF44B00B8CB7A /* x-optimizely_6372300739_v4.json in Resources */,
 				6EAE8EC022306D33007D4A37 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

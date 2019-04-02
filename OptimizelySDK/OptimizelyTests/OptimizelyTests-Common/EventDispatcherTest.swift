@@ -55,9 +55,13 @@ class EventDispatcherTest: XCTestCase {
         
         eventDispatcher?.dispatcher.sync {
         }
-        
-        XCTAssert(eventDispatcher?.dataStore.count == 1)
-        
+ 
+        if #available(iOS 10.0, tvOS 10.0, *) {
+            XCTAssert(eventDispatcher?.dataStore.count == 1)
+        }
+        else {
+            XCTAssert(eventDispatcher?.dataStore.count == 0)
+        }
         eventDispatcher?.flushEvents()
         
         eventDispatcher?.dispatcher.sync {
@@ -86,8 +90,13 @@ class EventDispatcherTest: XCTestCase {
         }
         wait()
         
-        XCTAssert(eventDispatcher?.dataStore.count == 1)
-        
+        if #available(iOS 10.0, tvOS 10.0, *) {
+            XCTAssert(eventDispatcher?.dataStore.count == 1)
+        }
+        else {
+            XCTAssert(eventDispatcher?.dataStore.count == 0)
+        }
+
         eventDispatcher?.flushEvents()
         wait()
         
@@ -114,8 +123,13 @@ class EventDispatcherTest: XCTestCase {
         }
         wait()
         
-        XCTAssert(eventDispatcher?.dataStore.count == 1)
-        
+        if #available(iOS 10.0, tvOS 10.0, *) {
+            XCTAssert(eventDispatcher?.dataStore.count == 1)
+        }
+        else {
+            XCTAssert(eventDispatcher?.dataStore.count == 0)
+        }
+
         eventDispatcher?.flushEvents()
         wait()
         
@@ -141,8 +155,13 @@ class EventDispatcherTest: XCTestCase {
         }
         wait()
         
-        XCTAssert(eventDispatcher?.dataStore.count == 1)
-        
+        if #available(iOS 10.0, tvOS 10.0, *) {
+            XCTAssert(eventDispatcher?.dataStore.count == 1)
+        }
+        else {
+            XCTAssert(eventDispatcher?.dataStore.count == 0)
+        }
+
         eventDispatcher?.flushEvents()
         wait()
         

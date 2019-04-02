@@ -139,7 +139,6 @@
 		0B8F5385223FFB0500C56082 /* OptimizelyManagerTests_Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8F537B223FFB0500C56082 /* OptimizelyManagerTests_Group.swift */; };
 		0B8F5386223FFE2C00C56082 /* OptimizelyManagerTests_Invalid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC5D3612231C19200BF9D77 /* OptimizelyManagerTests_Invalid.swift */; };
 		0B8F5387223FFF9600C56082 /* OptimizelyManagerTests_Valid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E636C162236CB6D00AF3CEF /* OptimizelyManagerTests_Valid.swift */; };
-		0BB5889D22399FC200B6D274 /* OptimizelyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99321E6BAA700B0C2C7 /* OptimizelyManagerTests.swift */; };
 		0BC47BD62242F7EF00E5C2CD /* DatafileHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC47BD52242F7EF00E5C2CD /* DatafileHandlerTests.swift */; };
 		0BC47BD72242F7EF00E5C2CD /* DatafileHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC47BD52242F7EF00E5C2CD /* DatafileHandlerTests.swift */; };
 		0BC47BE52243012E00E5C2CD /* MurmurTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC47BE42243012E00E5C2CD /* MurmurTests.swift */; };
@@ -3055,7 +3054,6 @@
 				6EA425BE2218E74D00B074B5 /* DefaultDatafileHandler.swift in Sources */,
 				6EA425C22218E74D00B074B5 /* OPTDatafileHandler.swift in Sources */,
 				6EA425BB2218E74D00B074B5 /* DefaultBucketer.swift in Sources */,
-				0BB5889D22399FC200B6D274 /* OptimizelyManagerTests.swift in Sources */,
 				6EA425D52218E74D00B074B5 /* Variation.swift in Sources */,
 				6EA425C42218E74D00B074B5 /* JSONParse.swift in Sources */,
 				6ED1B8FA2225AA6500C4C774 /* DefaultUserProfileServiceTests.swift in Sources */,

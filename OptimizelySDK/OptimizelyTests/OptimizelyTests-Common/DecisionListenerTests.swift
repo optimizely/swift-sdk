@@ -44,19 +44,19 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerForGetEnabledFeatures() {
     
-        let _datafile = OTUtils.loadJSONDatafile("api_datafile")
+        let tmpDatafile = OTUtils.loadJSONDatafile("api_datafile")
         
-        let _optimizely = OptimizelyManager(sdkKey: "12345",
+        let tmpOptimizely = OptimizelyManager(sdkKey: "12345",
                                             userProfileService: OTUtils.createClearUserProfileService())
-        try! _optimizely.initializeSDK(datafile: _datafile!)
+        try! tmpOptimizely.initializeSDK(datafile: tmpDatafile!)
         
         var count = 0
-        _optimizely.notificationCenter.clearAllNotificationListeners()
-        _ = _optimizely.notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+        tmpOptimizely.notificationCenter.clearAllNotificationListeners()
+        _ = tmpOptimizely.notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
             count += 1
         }
         
-        _ = try! _optimizely.getEnabledFeatures(userId: kUserId)
+        _ = try! tmpOptimizely.getEnabledFeatures(userId: kUserId)
         XCTAssertEqual(count, 2)
     }
     
@@ -65,10 +65,10 @@ class DecisionListenerTests: XCTestCase {
         self.optimizely.setDecisionServiceData(experiment: nil, variation: nil)
         self.optimizely.notificationCenter.clearAllNotificationListeners()
         _ = self.optimizely.notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeatureEnabled] as! Bool, false)
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSource] as! String, Constants.DecisionSource.Rollout)
-            XCTAssertNil(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceExperiment])
-            XCTAssertNil(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceVariation])
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.Rollout)
+            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.sourceExperiment])
+            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.sourceVariation])
         }
         _ = try? self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
     }
@@ -80,10 +80,10 @@ class DecisionListenerTests: XCTestCase {
         self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
         self.optimizely.notificationCenter.clearAllNotificationListeners()
         _ = self.optimizely.notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeatureEnabled] as! Bool, true)
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSource] as! String, Constants.DecisionSource.Rollout)
-            XCTAssertNil(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceExperiment])
-            XCTAssertNil(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceVariation])
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.Rollout)
+            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.sourceExperiment])
+            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.sourceVariation])
         }
         _ = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         
@@ -91,10 +91,10 @@ class DecisionListenerTests: XCTestCase {
         self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
         self.optimizely.notificationCenter.clearAllNotificationListeners()
         _ = self.optimizely.notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeatureEnabled] as! Bool, false)
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSource] as! String, Constants.DecisionSource.Rollout)
-            XCTAssertNil(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceExperiment])
-            XCTAssertNil(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceVariation])
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.Rollout)
+            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.sourceExperiment])
+            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.sourceVariation])
         }
         _ = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
     }
@@ -107,10 +107,10 @@ class DecisionListenerTests: XCTestCase {
         self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation)
         self.optimizely.notificationCenter.clearAllNotificationListeners()
         _ = self.optimizely.notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeatureEnabled] as! Bool, true)
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSource] as! String, Constants.DecisionSource.Experiment)
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceExperiment] as! String, experiment.key)
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceVariation] as! String, variation.key)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.Experiment)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] as! String, experiment.key)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sourceVariation] as! String, variation.key)
         }
         _ = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         
@@ -118,10 +118,10 @@ class DecisionListenerTests: XCTestCase {
         self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation)
         self.optimizely.notificationCenter.clearAllNotificationListeners()
         _ = self.optimizely.notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoFeatureEnabled] as! Bool, false)
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSource] as! String, Constants.DecisionSource.Experiment)
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceExperiment] as! String, experiment.key)
-            XCTAssertEqual(decisionInfo[Constants.NotificationKeys.OptimizelyNotificationDecisionInfoSourceVariation] as! String, variation.key)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.Experiment)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] as! String, experiment.key)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sourceVariation] as! String, variation.key)
         }
         _ = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
     }

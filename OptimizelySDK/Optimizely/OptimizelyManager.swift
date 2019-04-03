@@ -323,11 +323,9 @@ open class OptimizelyManager: NSObject {
         guard let experiment = config.getExperiment(key: experimentKey) else {
             throw OptimizelyError.experimentUnknown
         }
-        
-        var args = Array<Any?>()
-        args.append(Constants.DecisionTypeKeys.experiment)
-        args.append(userId)
-        args.append(attributes ?? OptimizelyAttributes())
+    
+        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.experiment, userId: userId, attributes: attributes)
+
         var decisionInfo = Dictionary<String,Any>()
         decisionInfo[Constants.NotificationKeys.experiment] = nil
         decisionInfo[Constants.NotificationKeys.variation] = nil

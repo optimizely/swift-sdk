@@ -5,7 +5,7 @@ def analytics_pods
     pod 'Amplitude-iOS'
     pod 'Google/Analytics'
     pod 'Localytics'
-    pod 'Mixpanel-swift'
+    pod 'Mixpanel-swift', '2.5.7'
 end
 
 # OptimizelyTests-Common-iOS target

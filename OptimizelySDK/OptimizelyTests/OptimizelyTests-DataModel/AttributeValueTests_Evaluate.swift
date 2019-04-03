@@ -251,7 +251,7 @@ extension AttributeValueTests_Evaluate {
     }
 
     func allNumTypes(value: Double) -> [Any] {
-        return [Double(value), Float(value), Float32(value), Float64(value), Float80(value)]
+        return [Double(value), Float(value), Float32(value), Float64(value), CLongDouble(value)]
     }
     
     func allValueTypes(value: Double) -> [Any] {

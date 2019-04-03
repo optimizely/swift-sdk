@@ -530,6 +530,7 @@
 		6E8B6A49221CBBC5006EA8A6 /* GroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A47221CBBC5006EA8A6 /* GroupTests.swift */; };
 		6E8B6A4B221CC2D6006EA8A6 /* ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */; };
 		6E8B6A4C221CC2D6006EA8A6 /* ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */; };
+		6E8CB5C9224C461A00B8CB7A /* OptimizelyManagerTests_Variables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB5C8224C461A00B8CB7A /* OptimizelyManagerTests_Variables.swift */; };
 		6E95C8B62217F10800B6EE06 /* ConditionLeaf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95C8B52217F10800B6EE06 /* ConditionLeaf.swift */; };
 		6E95C8B92217F9B100B6EE06 /* ConditionLeaf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95C8B52217F10800B6EE06 /* ConditionLeaf.swift */; };
 		6E95C8BA2217F9B200B6EE06 /* ConditionLeaf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95C8B52217F10800B6EE06 /* ConditionLeaf.swift */; };
@@ -1258,6 +1259,7 @@
 		6E852C69221A7E3300C41F94 /* ExperimentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentTests.swift; sourceTree = "<group>"; };
 		6E8B6A47221CBBC5006EA8A6 /* GroupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTests.swift; sourceTree = "<group>"; };
 		6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTests.swift; sourceTree = "<group>"; };
+		6E8CB5C8224C461A00B8CB7A /* OptimizelyManagerTests_Variables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyManagerTests_Variables.swift; sourceTree = "<group>"; };
 		6E95C8A822176EA500B6EE06 /* AudienceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudienceTests.swift; sourceTree = "<group>"; };
 		6E95C8AA2217736000B6EE06 /* ConditionHolderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionHolderTests.swift; sourceTree = "<group>"; };
 		6E95C8B12217C92E00B6EE06 /* ConditionHolderTests_Evaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionHolderTests_Evaluate.swift; sourceTree = "<group>"; };
@@ -1665,6 +1667,7 @@
 				6E636C162236CB6D00AF3CEF /* OptimizelyManagerTests_Valid.swift */,
 				6EC5D3612231C19200BF9D77 /* OptimizelyManagerTests_Invalid.swift */,
 				6E636C5D223708B000AF3CEF /* OptimizelyManagerTests_ForcedVariation.swift */,
+				6E8CB5C8224C461A00B8CB7A /* OptimizelyManagerTests_Variables.swift */,
 				0B8F537B223FFB0500C56082 /* OptimizelyManagerTests_Group.swift */,
 				0B2D48FE2245670C0024A661 /* OptimizelyManagerTests_Threading.swift */,
 			);
@@ -2637,6 +2640,7 @@
 				6E636BF32236C9BC00AF3CEF /* Variable.swift in Sources */,
 				6E636BBC2236C99300AF3CEF /* DataStoreFile.swift in Sources */,
 				6E636BAF2236C98300AF3CEF /* DefaultEventDispatcher.swift in Sources */,
+				6E8CB5C9224C461A00B8CB7A /* OptimizelyManagerTests_Variables.swift in Sources */,
 				6E636BA92236C97E00AF3CEF /* OptimizelyLogLevel.swift in Sources */,
 				6E636BE02236C9B700AF3CEF /* Audience.swift in Sources */,
 				6E636C022236C9C500AF3CEF /* EventForDispatch+Extension.swift in Sources */,
@@ -3602,6 +3606,7 @@
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};
@@ -3629,6 +3634,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = OptimizelyTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3665,6 +3671,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = OptimizelyTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

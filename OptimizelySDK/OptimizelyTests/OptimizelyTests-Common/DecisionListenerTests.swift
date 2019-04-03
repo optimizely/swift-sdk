@@ -31,8 +31,8 @@ class DecisionListenerTests: XCTestCase {
         var notificationType: String?
         
         _ = optimizely?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
-            notificationExperiment = decisionInfo[Constants.NotificationKeys.OptimizelyNotificationExperiment] as? String
-            notificationVariation = decisionInfo[Constants.NotificationKeys.OptimizelyNotificationVariation] as? String
+            notificationExperiment = decisionInfo[Constants.NotificationKeys.experiment] as? String
+            notificationVariation = decisionInfo[Constants.NotificationKeys.variation] as? String
             notificationType = type
         })
         
@@ -44,7 +44,7 @@ class DecisionListenerTests: XCTestCase {
         XCTAssertEqual(variation, "all_traffic_variation")
         XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_empty_conditions")
         XCTAssertEqual(notificationVariation, "all_traffic_variation")
-        XCTAssertEqual(notificationType, Constants.NotificationKeys.OptimizelyDecisionTypeExperiment)
+        XCTAssertEqual(notificationType, Constants.DecisionTypeKeys.experiment)
     }
 
     func testDecisionListenerWithActivateWhenUserNotInExperiment() {
@@ -54,8 +54,8 @@ class DecisionListenerTests: XCTestCase {
         var notificationType: String?
         
         _ = optimizely?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
-            notificationExperiment = decisionInfo[Constants.NotificationKeys.OptimizelyNotificationExperiment] as? String
-            notificationVariation = decisionInfo[Constants.NotificationKeys.OptimizelyNotificationVariation] as? String
+            notificationExperiment = decisionInfo[Constants.NotificationKeys.experiment] as? String
+            notificationVariation = decisionInfo[Constants.NotificationKeys.variation] as? String
             notificationType = type
         })
     
@@ -66,7 +66,7 @@ class DecisionListenerTests: XCTestCase {
         
         XCTAssertEqual(notificationExperiment, nil)
         XCTAssertEqual(notificationVariation, nil)
-        XCTAssertEqual(notificationType, Constants.NotificationKeys.OptimizelyDecisionTypeExperiment)
+        XCTAssertEqual(notificationType, Constants.DecisionTypeKeys.experiment)
     }
     
     func testDecisionListenerWithGetVariationWhenUserInExperiment() {
@@ -80,8 +80,8 @@ class DecisionListenerTests: XCTestCase {
         var notificationType: String?
         
         _ = optimizely?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, _attributes, decisionInfo) in
-            notificationExperiment = decisionInfo[Constants.NotificationKeys.OptimizelyNotificationExperiment] as? String
-            notificationVariation = decisionInfo[Constants.NotificationKeys.OptimizelyNotificationVariation] as? String
+            notificationExperiment = decisionInfo[Constants.NotificationKeys.experiment] as? String
+            notificationVariation = decisionInfo[Constants.NotificationKeys.variation] as? String
             notificationType = type
         })
         
@@ -91,7 +91,7 @@ class DecisionListenerTests: XCTestCase {
         
         XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_empty_conditions")
         XCTAssertEqual(notificationVariation, "all_traffic_variation")
-        XCTAssertEqual(notificationType, Constants.NotificationKeys.OptimizelyDecisionTypeExperiment)
+        XCTAssertEqual(notificationType, Constants.DecisionTypeKeys.experiment)
     }
     
     func testDecisionListenerWithGetVariationWhenUserNotInExperiment() {
@@ -101,8 +101,8 @@ class DecisionListenerTests: XCTestCase {
         var notificationType: String?
         
         _ = optimizely?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
-            notificationExperiment = decisionInfo[Constants.NotificationKeys.OptimizelyNotificationExperiment] as? String
-            notificationVariation = decisionInfo[Constants.NotificationKeys.OptimizelyNotificationVariation] as? String
+            notificationExperiment = decisionInfo[Constants.NotificationKeys.experiment] as? String
+            notificationVariation = decisionInfo[Constants.NotificationKeys.variation] as? String
             notificationType = type
         })
         
@@ -110,7 +110,7 @@ class DecisionListenerTests: XCTestCase {
         
         XCTAssertEqual(notificationExperiment, nil)
         XCTAssertEqual(notificationVariation, nil)
-        XCTAssertEqual(notificationType, Constants.NotificationKeys.OptimizelyDecisionTypeExperiment)
+        XCTAssertEqual(notificationType, Constants.DecisionTypeKeys.experiment)
     }
 
 }

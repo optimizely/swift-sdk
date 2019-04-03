@@ -33,7 +33,7 @@ jobs:
       env:
         - SDK=swift
         - BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
-        - TESTAPP_TAG=yasir/test-travis-swiftsdk
+        - TESTAPP_TAG=master
       cache: false
       language: minimal
       os: linux

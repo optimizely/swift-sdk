@@ -397,10 +397,7 @@ open class OptimizelyManager: NSObject {
         // fix DecisionService to throw error
         let pair = decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes ?? OptimizelyAttributes())
         
-        var args = Array<Any?>()
-        args.append(Constants.DecisionTypeKeys.isFeatureEnabled)
-        args.append(userId)
-        args.append(attributes ?? OptimizelyAttributes())
+        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.isFeatureEnabled, userId: userId, attributes: attributes)
         
         var decisionInfo = Dictionary<String,Any>()
         decisionInfo[Constants.DecisionInfoKeys.feature] = featureKey

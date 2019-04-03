@@ -13,7 +13,7 @@ target 'OptimizelyTests-Common-iOS' do
   project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
   platform :ios, '10.0'
   #use_frameworks!
-  pod 'SwiftyJSON', '~> 4.0'
+  pod 'SwiftyJSON', '4.0'
   
   # use local SDK framework
   #pod 'OptimizelySwiftSDK', :path => '.'
@@ -24,7 +24,7 @@ target 'OptimizelyTests-Common-tvOS' do
   project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
   platform :tvos, '10.0'
 #  use_frameworks!
-  pod 'SwiftyJSON', '~> 4.0'
+  pod 'SwiftyJSON', '4.0'
   
   # use local SDK framework
   #pod 'OptimizelySwiftSDK', :path => '.'
@@ -66,4 +66,15 @@ target 'DemoObjctvOS' do
     platform :tvos, '10.0'
     
     ##pod 'OptimizelySDKTVOS', '2.1.4'
+end
+post_install do |installer|
+        installer.pods_project.build_configurations.each do |config|
+            config.build_settings.delete('CODE_SIGNING_ALLOWED')
+            config.build_settings.delete('CODE_SIGNING_REQUIRED')
+        end
+        installer.pods_project.targets.each do |target|
+            target.build_configurations.each do |config|
+                config.build_settings['SWIFT_VERSION'] = '4.2'
+            end
+        end
 end

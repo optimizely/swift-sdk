@@ -77,7 +77,7 @@ class AttributeValueTests: XCTestCase {
         // Float80 is not supported JSON parser (it's not expected to see this from datafile, but it still
         // can be passed as attribute values from client app
         let testsAttributesOnly = [
-            [Float80(value), Double(value)]
+            [CLongDouble(value), Double(value)]
         ]
         
         for (idx, test) in testsAttributesOnly.enumerated() {

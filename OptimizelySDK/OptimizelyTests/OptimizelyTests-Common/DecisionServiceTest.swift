@@ -26,12 +26,11 @@ class DecisionServiceTest: XCTestCase {
             return
         }
         
-        let bucketer = DefaultBucketer(config: config)
-        let decisionService = DefaultDecisionService(config: config, bucketer: bucketer, userProfileService: DefaultUserProfileService())
+        let decisionService = DefaultDecisionService(userProfileService: DefaultUserProfileService())
         
         let experiment = config.project.experiments.filter({$0.key == "typed_audience_experiment"}).first
         let attr = ["integerKey":1, "doubleKey": 99.0, "booleanKey": true, "nationality":"English"] as [String : Any]
-        let variation = decisionService.getVariation(userId: "1234", experiment: experiment!, attributes: attr)
+        let variation = decisionService.getVariation(config: config, userId: "1234", experiment: experiment!, attributes: attr)
         
         XCTAssertNotNil(variation)
         

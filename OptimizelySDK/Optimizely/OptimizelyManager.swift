@@ -584,10 +584,7 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variableValueInvalid(variableKey)
         }
         
-        var args = Array<Any?>()
-        args.append(Constants.DecisionTypeKeys.featureVariable)
-        args.append(userId)
-        args.append(_attributes)
+        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.featureVariable, userId: userId, attributes: _attributes)
         
         decisionInfo[Constants.DecisionInfoKeys.feature] = featureKey
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = decision?.variation?.featureEnabled ?? false

@@ -290,7 +290,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
 
         dispatchGroup.wait()
         
-        XCTAssertTrue(atomicBackground.property!.count == 101)
+        XCTAssertTrue(atomicBackground.property!.count == 101, "Count should be 101 but was \(atomicBackground.property!.count)")
         
         for index in 0...100 where index < atomicBackground.property!.count {
             XCTAssertTrue(atomicBackground.property![index].enabled!)

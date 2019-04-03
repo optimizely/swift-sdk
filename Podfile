@@ -8,13 +8,11 @@ def analytics_pods
     pod 'Mixpanel-swift'
 end
 
-use_frameworks!
-
 # OptimizelyTests-Common-iOS target
 target 'OptimizelyTests-Common-iOS' do
   project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
   platform :ios, '10.0'
-  use_frameworks!
+  #use_frameworks!
   pod 'SwiftyJSON', '~> 4.0'
   
   # use local SDK framework
@@ -25,7 +23,7 @@ end
 target 'OptimizelyTests-Common-tvOS' do
   project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
   platform :tvos, '10.0'
-  use_frameworks!
+#  use_frameworks!
   pod 'SwiftyJSON', '~> 4.0'
   
   # use local SDK framework

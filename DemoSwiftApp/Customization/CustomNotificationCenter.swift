@@ -10,6 +10,7 @@ import Foundation
 import Optimizely
 
 class CustomNotificationCenter: OPTNotificationCenter {
+    
     func addFeatureFlagRolloutChangeListener(featureListener: @escaping FeatureFlagRolloutChangeListener) -> Int? {
         return nil
     }
@@ -53,6 +54,12 @@ class CustomNotificationCenter: OPTNotificationCenter {
         //
         return nil
     }
+    
+    func addDecisionNotificationListener(decisionListener: @escaping DecisionListener) -> Int? {
+        //
+        return nil
+    }
+    
     func addDatafileChangeNotificationListener(datafileListener: @escaping DatafileChangeListener) -> Int? {
         return nil
     }

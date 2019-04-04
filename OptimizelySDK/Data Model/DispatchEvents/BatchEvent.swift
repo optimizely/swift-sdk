@@ -85,10 +85,6 @@ struct DispatchEvent: Codable, Equatable {
     var revenue: AttributeValue?
     var value: AttributeValue?
 
-    // TODO: [Tom] these two in spec, not used here. is it ok?
-    // quantity: MISSING
-    // type: MISSING
-
     enum CodingKeys: String, CodingKey {
         case entityID = "entity_id"
         case key

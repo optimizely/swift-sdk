@@ -541,7 +541,7 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.featureUnknown
         }
         
-        guard let variable = featureFlag.variables.filter({$0.key == variableKey}).first else {
+        guard let variable = featureFlag.getVariable(key: variableKey) else {
             throw OptimizelyError.variableUnknown
         }
         

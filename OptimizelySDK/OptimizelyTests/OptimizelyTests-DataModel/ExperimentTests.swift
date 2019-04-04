@@ -20,6 +20,15 @@ class ExperimentTests: XCTestCase {
                                             "audienceIds": ["33333"],
                                             "audienceConditions": ConditionHolderTests.sampleData,
                                             "forcedVariations": ["12345": "1234567890"]]
+    
+    static var emptyExperimentData: [String: Any] = ["id": "11111",
+                                                     "key": "empty",
+                                                     "status": "Running",
+                                                     "layerId": "22222",
+                                                     "variations": [],
+                                                     "trafficAllocation": [],
+                                                     "audienceIds": [],
+                                                     "forcedVariations": []]
 }
 
 // MARK: - Decode
@@ -28,7 +37,6 @@ extension ExperimentTests {
     
     func testDecodeSuccessWithJSONValid() {
         let data: [String: Any] = ExperimentTests.sampleData
-        
         let model: Experiment = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "11111")
@@ -127,4 +135,25 @@ extension ExperimentTests {
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
+}
+
+// MARK: - Test Utils
+
+extension ExperimentTests {
+    
+    func testIsActivated() {
+        let data: [String: Any] = ExperimentTests.sampleData
+        var model: Experiment = try! OTUtils.model(from: data)
+        
+        XCTAssertTrue(model.isActivated)
+
+        let allNotActiveStates: [Experiment.Status] = [.launched, .paused, .notStarted, .archived]
+        for status in allNotActiveStates {
+            model.status = status
+            XCTAssertFalse(model.isActivated)
+        }
+        
+        model.status = .running
+        XCTAssertTrue(model.isActivated)
+    }
 }

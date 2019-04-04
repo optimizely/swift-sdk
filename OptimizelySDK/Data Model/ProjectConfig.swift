@@ -168,7 +168,7 @@ extension ProjectConfig {
      * Get an audience for a given audience id.
      */
     func getAudience(id: String) -> Audience? {
-        return project.audiences.filter{ $0.id == id }.first
+        return project.getAudience(id: id)
     }
     
     /**

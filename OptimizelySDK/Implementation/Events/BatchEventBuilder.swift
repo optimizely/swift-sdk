@@ -60,7 +60,7 @@ class BatchEventBuilder {
                                       attributes:OptimizelyAttributes?,
                                       eventTags:Dictionary<String, Any>?) -> Data? {
         
-        guard let event = config.project.events.filter({$0.key == eventKey}).first  else {
+        guard let event = config.getEvent(key: eventKey) else {
             return nil
         }
 
@@ -109,7 +109,7 @@ class BatchEventBuilder {
         
         if let attributes = attributes {
             for attr in attributes.keys {
-                if let attributeId = config.project.attributes.filter({$0.key == attr}).first?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
+                if let attributeId = config.getAttribute(key: attr)?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
                     let attrValue = attributes[attr] ?? nil    // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
                     if let eventValue = AttributeValue(value: attrValue) {
                         let eventAttribute = EventAttribute(value: eventValue,

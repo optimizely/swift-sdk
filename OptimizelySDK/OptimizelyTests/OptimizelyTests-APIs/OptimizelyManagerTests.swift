@@ -135,30 +135,30 @@ class OptimizelyManagerTests: XCTestCase {
         XCTAssertNotNil(variation)
     }
 
-    func testPerformanceInitialize() {
-        // This is an example of a performance test case.
-        measure {
-            let optimizely = OptimizelyManager(sdkKey: "SDKKEY")
-            
-            try? optimizely.initializeSDK(datafile:json)
-        }
-    }
-
-//    func testPerformanceBasicExperiment() {
+//    func testPerformanceInitialize() {
+//        // This is an example of a performance test case.
+//        measure {
+//            let optimizely = OptimizelyManager(sdkKey: "SDKKEY")
+//            
+//            try? optimizely.initializeSDK(datafile:json)
+//        }
+//    }
+//
+////    func testPerformanceBasicExperiment() {
+////        // This is an example of a performance test case.
+////        self.measure {
+////            // Put the code you want to measure the time of here.
+////            testBasicExperiment()
+////        }
+////    }
+//    func testPerformanceTypedAudience() {
 //        // This is an example of a performance test case.
 //        self.measure {
 //            // Put the code you want to measure the time of here.
-//            testBasicExperiment()
+//            for _ in 0...100 {
+//              testTypedAudience()
+//            }
 //        }
 //    }
-    func testPerformanceTypedAudience() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-            for _ in 0...100 {
-              testTypedAudience()
-            }
-        }
-    }
 
 }

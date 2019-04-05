@@ -30,3 +30,13 @@ struct Group: Codable, Equatable {
     var trafficAllocation: [TrafficAllocation]
     var experiments: [Experiment]
 }
+
+// MARK: - Utils
+
+extension Group {
+    
+    func getExperiemnt(id: String) -> Experiment? {
+        return experiments.filter { $0.id == id }.first
+    }
+    
+}

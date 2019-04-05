@@ -26,3 +26,13 @@ struct Variation: Codable, Equatable {
     var featureEnabled: Bool?
     var variables: [Variable]?
 }
+
+// MARK: - Utils
+
+extension Variation {
+    
+    func getVariable(id: String) -> Variable? {
+        return variables?.filter { $0.id == id }.first
+    }
+    
+}

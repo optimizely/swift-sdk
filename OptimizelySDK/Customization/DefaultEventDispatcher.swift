@@ -73,10 +73,11 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
         unsubscribe()
     }
     
-    open func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
-        
+    open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         dataStore.save(item: event)
         
+        // TODO: use or clean up completionHandler
+
         setTimer()
     }
 
@@ -229,6 +230,9 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
         
         if #available(iOS 10.0, tvOS 10.0, *) {
             DispatchQueue.main.async {
+                // should check here again
+                guard self.timer.property == nil else { return }
+                
                 self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
                     if self.dataStore.count == 0 {
                         self.timer.performAtomic() { (timer) in

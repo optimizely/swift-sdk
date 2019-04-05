@@ -9,14 +9,14 @@
 import Foundation
 
 struct BatchEvent: Codable, Equatable {
-    let revision: String
-    let accountID: String
-    let clientVersion: String
-    let visitors: [Visitor]
-    let projectID: String
-    let clientName: String
-    let anonymizeIP: Bool
-    let enrichDecisions: Bool
+    var revision: String
+    var accountID: String
+    var clientVersion: String
+    var visitors: [Visitor]
+    var projectID: String
+    var clientName: String
+    var anonymizeIP: Bool
+    var enrichDecisions: Bool
     
     enum CodingKeys: String, CodingKey {
         case revision
@@ -31,9 +31,9 @@ struct BatchEvent: Codable, Equatable {
 }
 
 struct Visitor: Codable, Equatable {
-    let attributes: [EventAttribute]
-    let snapshots: [Snapshot]
-    let visitorID: String
+    var attributes: [EventAttribute]
+    var snapshots: [Snapshot]
+    var visitorID: String
     
     enum CodingKeys: String, CodingKey {
         case attributes
@@ -43,10 +43,10 @@ struct Visitor: Codable, Equatable {
 }
 
 struct EventAttribute: Codable, Equatable {
-    let value: AttributeValue
-    let key: String
-    let type: String
-    let entityID: String
+    var value: AttributeValue
+    var key: String
+    var type: String
+    var entityID: String
     
     enum CodingKeys: String, CodingKey {
         case value
@@ -57,12 +57,12 @@ struct EventAttribute: Codable, Equatable {
 }
 
 struct Snapshot: Codable, Equatable {
-    let decisions: [Decision]?
-    let events: [DispatchEvent]
+    var decisions: [Decision]?
+    var events: [DispatchEvent]
 }
 
 struct Decision: Codable, Equatable {
-    let variationID, campaignID, experimentID: String
+    var variationID, campaignID, experimentID: String
     
     enum CodingKeys: String, CodingKey {
         case variationID = "variation_id"
@@ -77,13 +77,17 @@ struct DispatchEvent: Codable, Equatable {
     static let activateEventKey = "campaign_activated"
     
     // entityID is the layer id for impression events.
-    let entityID: String
-    let key: String
-    let timestamp: Int64
-    let uuid: String
+    var entityID: String
+    var key: String
+    var timestamp: Int64
+    var uuid: String
     var tags: [String: AttributeValue]?
     var revenue: AttributeValue?
     var value: AttributeValue?
+
+    // TODO: [Tom] these two in spec, not used here. is it ok?
+    // quantity: MISSING
+    // type: MISSING
 
     enum CodingKeys: String, CodingKey {
         case entityID = "entity_id"

@@ -160,6 +160,8 @@
 		6E24C4B42257F5E600DF3D71 /* BatchEventBuilderTests_Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E24C4AE2257F5E500DF3D71 /* BatchEventBuilderTests_Attributes.swift */; };
 		6E24C4B72257F5E600DF3D71 /* BatchEventBuilderTests_Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E24C4B02257F5E500DF3D71 /* BatchEventBuilderTests_Events.swift */; };
 		6E24C4B82257F5E600DF3D71 /* BatchEventBuilderTests_Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E24C4B02257F5E500DF3D71 /* BatchEventBuilderTests_Events.swift */; };
+		6E2B8D652257C5F6003C4799 /* DecisionServiceTests_Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB59B224BF4BE00B8CB7A /* DecisionServiceTests_Experiments.swift */; };
+		6E2B8D662257C612003C4799 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79F9D852251F58F002B0BC9 /* DecisionListenerTests.swift */; };
 		6E30A070224DA4D3005EFA1D /* AudienceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30A06F224DA4D3005EFA1D /* AudienceTests.swift */; };
 		6E30A071224DA4D3005EFA1D /* AudienceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30A06F224DA4D3005EFA1D /* AudienceTests.swift */; };
 		6E4DD83121E524E300B0C2C7 /* EventForDispatch+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2A21CC739E0049BC2C /* EventForDispatch+Extension.swift */; };

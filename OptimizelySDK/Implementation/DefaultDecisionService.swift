@@ -20,12 +20,13 @@ class DefaultDecisionService : OPTDecisionService {
     
     let bucketer:OPTBucketer
     let userProfileService:OPTUserProfileService
-    
+    lazy var logger = HandlerRegistryService.shared.injectLogger()
+
     init(userProfileService:OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
     }
-
+    
     func getVariation(config:ProjectConfig, userId:String, experiment: Experiment, attributes: OptimizelyAttributes) -> Variation? {
         let experimentId = experiment.id;
         
@@ -33,16 +34,14 @@ class DefaultDecisionService : OPTDecisionService {
         let bucketingId = getBucketingId(userId:userId, attributes:attributes)
         
         // ---- check if the experiment is running ----
-        if experiment.status != Experiment.Status.running {
-            return nil;
-        }
+        if !experiment.isActivated { return nil }
         
         // ---- check for whitelisted variation registered at runtime ----
         if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
             let variation = experiment.getVariation(id: variationId) {
             return variation;
         }
-
+        
         // ---- check if the experiment has forced variation ----
         if let variationKey = experiment.forcedVariations[userId],
             let variation = experiment.getVariation(key: variationKey) {
@@ -57,66 +56,54 @@ class DefaultDecisionService : OPTDecisionService {
         
         var bucketedVariation:Variation?
         // ---- check if the user passes audience targeting before bucketing ----
-        if let result = isInExperiment(
-            config: config,
-            experiment:experiment,
-            userId:userId,
-            attributes:attributes), result == true {
-            
-            // bucket user into a variation
-            bucketedVariation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId:bucketingId)
-            
-            if let bucketedVariation = bucketedVariation {
-                // save to user profile
-                self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+        do {
+            if try isInExperiment(config: config, experiment:experiment, userId:userId, attributes:attributes) {
+                // bucket user into a variation
+                bucketedVariation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId:bucketingId)
+                
+                if let bucketedVariation = bucketedVariation {
+                    // save to user profile
+                    self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+                }
             }
+        } catch {
+            // TODO: fix to forward throw
+            self.logger?.log(level: .debug, message: "decision error: \(error)")
         }
         
         return bucketedVariation;
-
+        
     }
     
-    func isInExperiment(config:ProjectConfig, experiment:Experiment, userId:String, attributes: OptimizelyAttributes) -> Bool? {
+    func isInExperiment(config:ProjectConfig, experiment:Experiment, userId:String, attributes: OptimizelyAttributes) throws -> Bool {
         
         if let conditions = experiment.audienceConditions {
             switch conditions {
             case .array(let arrConditions):
                 if arrConditions.count > 0 {
-                    // TODO: [Jae] fix with OptimizelyError
-                    return try? conditions.evaluate(project: config.project, attributes: attributes)
+                    return try conditions.evaluate(project: config.project, attributes: attributes)
                 } else {
                     // empty conditions (backward compatibility with "audienceIds" is ignored if exists even though empty
                     return true
                 }
             case .leaf:
-                // TODO: [Jae] fix with OptimizelyError
-                return try? conditions.evaluate(project: config.project, attributes: attributes)
+                return try conditions.evaluate(project: config.project, attributes: attributes)
             default:
                 return true
             }
         }
-        // backward compatibility with audiencIds list
+            // backward compatibility with audiencIds list
         else if experiment.audienceIds.count > 0 {
             var holder = [ConditionHolder]()
             holder.append(.logicalOp(.or))
             for id in experiment.audienceIds {
-              holder.append(.leaf(.audienceId(id)))
+                holder.append(.leaf(.audienceId(id)))
             }
             
-            // TODO: [Jae] fix with OptimizelyError
-            return try? holder.evaluate(project: config.project, attributes: attributes)
+            return try holder.evaluate(project: config.project, attributes: attributes)
         }
         
         return true
-    }
-    
-    func getExperimentInGroup(config:ProjectConfig, group:Group, bucketingId:String) -> Experiment? {
-        let experiment = bucketer.bucketToExperiment(config: config, group:group, bucketingId:bucketingId)
-        if let _ = experiment {
-            // log
-        }
-
-        return experiment;
     }
     
     func getVariationForFeature(config:ProjectConfig, featureFlag:FeatureFlag, userId:String, attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
@@ -124,8 +111,8 @@ class DefaultDecisionService : OPTDecisionService {
         
         //1. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
-        if let variation = getVariationForFeatureExperiment(config: config, featureFlag: featureFlag, userId:userId, attributes:attributes) {
-            return variation
+        if let pair = getVariationForFeatureExperiment(config: config, featureFlag: featureFlag, userId:userId, attributes:attributes) {
+            return pair
         }
         
         //2. Attempt to bucket user into rollout using the feature flag.
@@ -135,30 +122,7 @@ class DefaultDecisionService : OPTDecisionService {
         }
         
         return nil;
-
-    }
-    
-    func getVariationForFeatureGroup(config:ProjectConfig,
-                                     featureFlag: FeatureFlag,
-                                     groupId: String,
-                                     userId: String,
-                                     attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
         
-        let bucketing_id = getBucketingId(userId:userId, attributes:attributes)
-        if let group = config.project.groups.filter({$0.id == groupId}).first {
-            
-            if let experiment = getExperimentInGroup(config: config, group: group, bucketingId:bucketing_id),
-                featureFlag.experimentIds.contains(experiment.id),
-                let variation = getVariation(config: config, userId:userId, experiment:experiment, attributes:attributes) {
-                  // log
-                    return (experiment,variation)
-            }
-        }
-        else {
-            // log unknown group
-        }
-    
-        return nil
     }
     
     func getVariationForFeatureExperiment(config:ProjectConfig,
@@ -172,7 +136,7 @@ class DefaultDecisionService : OPTDecisionService {
         for experimentId in experimentIds {
             if let experiment = config.getExperiment(id: experimentId),
                 let variation = getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes) {
-                    return (experiment,variation)
+                return (experiment,variation)
             }
         }
         return nil;
@@ -182,7 +146,7 @@ class DefaultDecisionService : OPTDecisionService {
                                        featureFlag: FeatureFlag,
                                        userId: String,
                                        attributes: OptimizelyAttributes) -> Variation? {
-    
+        
         let bucketingId = getBucketingId(userId: userId, attributes:attributes)
         
         let rolloutId = featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces)
@@ -194,16 +158,27 @@ class DefaultDecisionService : OPTDecisionService {
         let rolloutRules = rollout.experiments
         // Evaluate all rollout rules except for last one
         for experiment in rolloutRules[0..<rolloutRules.count.advanced(by: -1)] {
-            if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) ?? false {
-                if let variation = bucketer.bucketExperiment(config:config, experiment: experiment, bucketingId: bucketingId) {
-                    return variation
+            do {
+                if try isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
+                    if let variation = bucketer.bucketExperiment(config:config, experiment: experiment, bucketingId: bucketingId) {
+                        return variation
+                    }
                 }
+            } catch {
+                // TODO: fix to forward throw
+                self.logger?.log(level: .info, message: "decision error: \(error)")
             }
         }
         // Evaluate fall back rule / last rule now
         let experiment = rolloutRules[rolloutRules.count - 1];
-        if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) ?? false {
-            return bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId)
+        
+        do {
+            if try isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
+                return bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId)
+            }
+        } catch {
+            // TODO: fix to forward throw
+            self.logger?.log(level: .info, message: "decision error: \(error)")
         }
         
         return nil

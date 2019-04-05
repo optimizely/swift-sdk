@@ -41,5 +41,5 @@ struct Constants {
         static let Experiment = "EXPERIMENT"
         static let Rollout = "ROLLOUT"
     }
-    
+
 }

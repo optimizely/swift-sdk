@@ -74,6 +74,7 @@ class OTUtils {
             try optimizely.initializeSDK(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely
         } catch {
+            print("\(error)")
             return nil
         }
     }

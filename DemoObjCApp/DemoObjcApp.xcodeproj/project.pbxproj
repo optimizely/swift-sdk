@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		361EF872CB7D0F6C8202145F /* Pods_DemoObjciOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8E188D7982AFD9C7F1C7FE6 /* Pods_DemoObjciOS.framework */; };
+		6923C05F4FFD7394581F4361 /* libPods-DemoObjctvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CE090EEBD47E05884C417C0 /* libPods-DemoObjctvOS.a */; };
 		6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
 		6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
 		6E4DD97C21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; };
@@ -36,7 +37,6 @@
 		6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9681D721EFA5B2009B7FEC /* CustomLogger.m */; };
 		6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
 		6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
-		DDB0B21C9FF18EAEA9E5F676 /* Pods_DemoObjctvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3822AD03E75EF61F9556BA6 /* Pods_DemoObjctvOS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +110,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2CE090EEBD47E05884C417C0 /* libPods-DemoObjctvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DemoObjctvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EFD1578D8AB431E6FD4B8FE /* Pods-DemoObjctvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjctvOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		4BE4886BF950708C866FA8F2 /* Pods-DemoObjciOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjciOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS.debug.xcconfig"; sourceTree = "<group>"; };
 		6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySDK/OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
@@ -137,7 +138,6 @@
 		6EF7498E21E404BB008B22A0 /* DemoObjciOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoObjciOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF7499F21E404BC008B22A0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6EF749A821E404D6008B22A0 /* DemoObjctvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoObjctvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3822AD03E75EF61F9556BA6 /* Pods_DemoObjctvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoObjctvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D58542E1B5771327083E56E2 /* Pods-DemoObjctvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjctvOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS.release.xcconfig"; sourceTree = "<group>"; };
 		D66FA87FA967DCE9F1972546 /* Pods-DemoObjciOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjciOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS.release.xcconfig"; sourceTree = "<group>"; };
 		F8E188D7982AFD9C7F1C7FE6 /* Pods_DemoObjciOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoObjciOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,8 +157,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDB0B21C9FF18EAEA9E5F676 /* Pods_DemoObjctvOS.framework in Frameworks */,
 				6E4DD98021E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */,
+				6923C05F4FFD7394581F4361 /* libPods-DemoObjctvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,7 +278,7 @@
 			children = (
 				6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */,
 				F8E188D7982AFD9C7F1C7FE6 /* Pods_DemoObjciOS.framework */,
-				B3822AD03E75EF61F9556BA6 /* Pods_DemoObjctvOS.framework */,
+				2CE090EEBD47E05884C417C0 /* libPods-DemoObjctvOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

@@ -22,7 +22,14 @@ struct FeatureFlag: Codable, Equatable {
     var experimentIds: [String]
     var rolloutId: String
     var variables: [FeatureVariable]
+}
+
+// MARK: - Utils
+
+extension FeatureFlag {
     
-    // TODO: this will be removed. clean up existing code using this
-    //var groupId: String?
+    func getVariable(key: String) -> FeatureVariable? {
+        return variables.filter { $0.key == key }.first
+    }
+    
 }

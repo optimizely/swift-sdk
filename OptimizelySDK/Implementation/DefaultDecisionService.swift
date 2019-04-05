@@ -20,7 +20,8 @@ class DefaultDecisionService : OPTDecisionService {
     
     let bucketer:OPTBucketer
     let userProfileService:OPTUserProfileService
-    
+    lazy var logger = HandlerRegistryService.shared.injectLogger()
+
     init(userProfileService:OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
@@ -67,7 +68,7 @@ class DefaultDecisionService : OPTDecisionService {
             }
         } catch {
             // TODO: fix to forward throw
-            print("decision error: \(error)")
+            self.logger?.log(level: .debug, message: "decision error: \(error)")
         }
         
         return bucketedVariation;
@@ -165,6 +166,7 @@ class DefaultDecisionService : OPTDecisionService {
                 }
             } catch {
                 // TODO: fix to forward throw
+                self.logger?.log(level: .info, message: "decision error: \(error)")
             }
         }
         // Evaluate fall back rule / last rule now
@@ -176,6 +178,7 @@ class DefaultDecisionService : OPTDecisionService {
             }
         } catch {
             // TODO: fix to forward throw
+            self.logger?.log(level: .info, message: "decision error: \(error)")
         }
         
         return nil

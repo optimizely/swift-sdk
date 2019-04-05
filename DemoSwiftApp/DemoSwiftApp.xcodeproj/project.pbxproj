@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2330F864C8154595434F8799 /* libPods-DemoSwifttvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA2E0408D86A53942A6E2145 /* libPods-DemoSwifttvOS.a */; };
 		25C6F3B621C95D1700C2EBDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE21E55313B00931399 /* AppDelegate.swift */; };
 		25C6F3B721C95D1800C2EBDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE21E55313B00931399 /* AppDelegate.swift */; };
 		25C6F3B821C95D1A00C2EBDD /* FailureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE31E55313B00931399 /* FailureViewController.swift */; };
@@ -17,7 +18,6 @@
 		25C6F3BD21C95D2100C2EBDD /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE51E55313B00931399 /* VariationViewController.swift */; };
 		25C6F3BF21C95D4800C2EBDD /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA299EDD1E55312200931399 /* iOSMain.storyboard */; };
 		3480ABB656D79B1C566F6E18 /* Pods_DemoSwiftiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC1D11D1794467F59480327F /* Pods_DemoSwiftiOS.framework */; };
-		44BDBF4043EC53F85AF3D3DC /* Pods_DemoSwifttvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEB087C410B6A1210A021BC5 /* Pods_DemoSwifttvOS.framework */; };
 		6E4DD95F21E679D500B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95821E679B900B0C2C7 /* OptimizelySwiftSDK.framework */; };
 		6E4DD96021E679D500B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95821E679B900B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E4DD96721E67A3A00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95A21E679B900B0C2C7 /* OptimizelySwiftSDK.framework */; };
@@ -118,7 +118,7 @@
 		6EF2CF1C21E4158A00A5D78D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/tvOSMain.storyboard; sourceTree = "<group>"; };
 		9C185BE70FBE51067CFD104E /* Pods-DemoSwiftiOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoSwiftiOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoSwiftiOS/Pods-DemoSwiftiOS.release.xcconfig"; sourceTree = "<group>"; };
 		B301A636D5072557B288E62C /* Pods-DemoSwifttvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoSwifttvOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoSwifttvOS/Pods-DemoSwifttvOS.release.xcconfig"; sourceTree = "<group>"; };
-		CEB087C410B6A1210A021BC5 /* Pods_DemoSwifttvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoSwifttvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA2E0408D86A53942A6E2145 /* libPods-DemoSwifttvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DemoSwifttvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4A4D2A6EBCC93081556F7A5 /* Pods-DemoSwiftiOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoSwiftiOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoSwiftiOS/Pods-DemoSwiftiOS.debug.xcconfig"; sourceTree = "<group>"; };
 		EA1E4AA51E5FD1C100BDDABD /* DemoSwiftApp-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DemoSwiftApp-Bridging-Header.h"; sourceTree = "<group>"; };
 		EA299ED81E5530B800931399 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -146,8 +146,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44BDBF4043EC53F85AF3D3DC /* Pods_DemoSwifttvOS.framework in Frameworks */,
 				6E4DD96721E67A3A00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */,
+				2330F864C8154595434F8799 /* libPods-DemoSwifttvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,7 +270,7 @@
 			children = (
 				6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */,
 				EC1D11D1794467F59480327F /* Pods_DemoSwiftiOS.framework */,
-				CEB087C410B6A1210A021BC5 /* Pods_DemoSwifttvOS.framework */,
+				DA2E0408D86A53942A6E2145 /* libPods-DemoSwifttvOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

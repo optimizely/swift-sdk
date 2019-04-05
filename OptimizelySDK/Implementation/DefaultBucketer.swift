@@ -24,44 +24,10 @@ class DefaultBucketer : OPTBucketer {
     
     private lazy var logger = HandlerRegistryService.shared.injectLogger()
     
-    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     init() {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
     }
 
-    func bucketToExperiment(config:ProjectConfig, group: Group, bucketingId: String) -> Experiment? {
-        let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
-        let bucketValue = self.generateBucketValue(bucketingId: hashId)
-        
-        if group.trafficAllocation.count == 0 {
-            // log error if there are no traffic allocation values
-            logger?.log(level: .error, message: "Group \(group.id) has no traffic allocation")
-            return nil;
-        }
-        
-        for trafficAllocation in group.trafficAllocation {
-            if bucketValue <= trafficAllocation.endOfRange {
-                let experimentId = trafficAllocation.entityId;
-                let experiment = config.getExperiment(id: experimentId)
-                
-                // propagate errors and logs for unknown experiment
-                if let _ = experiment
-                {
-                }
-                else {
-                    // log problem with experiment id
-                    logger?.log(level: .error, message: "Experiment Id \(experimentId) for experiment not in datafile")
-                }
-                return experiment;
-            }
-        }
-        
-        // log error if invalid bucketing id
-        logger?.log(level: .error, message: "Bucketing value \(bucketValue) not in traffic allocation")
-
-        return nil
-    }
-    
     func bucketExperiment(config:ProjectConfig, experiment: Experiment, bucketingId: String) -> Variation? {
         var ok = true
         // check for mutex
@@ -89,9 +55,39 @@ class DefaultBucketer : OPTBucketer {
         else {
             // log message if the user is mutually excluded
             logger?.log(level: .error, message: "User not bucketed into variation. Mutually excluded via group \(group?.id ?? "unknown")")
-
+            
             return nil;
         }
+    }
+    
+    func bucketToExperiment(config:ProjectConfig, group: Group, bucketingId: String) -> Experiment? {
+        let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
+        let bucketValue = self.generateBucketValue(bucketingId: hashId)
+        
+        if group.trafficAllocation.count == 0 {
+            // log error if there are no traffic allocation values
+            logger?.log(level: .error, message: "Group \(group.id) has no traffic allocation")
+            return nil;
+        }
+        
+        for trafficAllocation in group.trafficAllocation {
+            if bucketValue <= trafficAllocation.endOfRange {
+                let experimentId = trafficAllocation.entityId;
+                let experiment = config.getExperiment(id: experimentId)
+                
+                // propagate errors and logs for unknown experiment
+                if experiment == nil {
+                    // log problem with experiment id
+                    logger?.log(level: .error, message: "Experiment Id \(experimentId) for experiment not in datafile")
+                }
+                return experiment;
+            }
+        }
+        
+        // log error if invalid bucketing id
+        logger?.log(level: .error, message: "Bucketing value \(bucketValue) not in traffic allocation")
+
+        return nil
     }
     
     func bucketToVariation(experiment:Experiment, bucketingId:String) -> Variation? {

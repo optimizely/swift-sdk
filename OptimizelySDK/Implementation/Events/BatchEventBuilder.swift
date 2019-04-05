@@ -9,79 +9,77 @@
 import Foundation
 
 class BatchEventBuilder {
+    static private let swiftSdkClientName = "swift-sdk"
+    static private var swiftSdkClientVersion = {
+        // TODO: fix this version controlled via xcode settings
+        return "3.0.0"
+    }()
+    
     static private var logger = HandlerRegistryService.shared.injectLogger()
     
-    static func createImpressionEvent(config:ProjectConfig,
-                                      decisionService:OPTDecisionService,
-                                      experiment:Experiment,
-                                      varionation:Variation,
-                                      userId:String,
-                                      attributes:OptimizelyAttributes?) -> Data? {
-        var decisions = [Decision]()
+    // MARK: - Impression Event
+    
+    static func createImpressionEvent(config: ProjectConfig,
+                                      experiment: Experiment,
+                                      varionation: Variation,
+                                      userId: String,
+                                      attributes: OptimizelyAttributes?) -> Data? {
         
-        let decision = Decision(variationID: varionation.id, campaignID: experiment.layerId, experimentID: experiment.id)
+        let decision = Decision(variationID: varionation.id,
+                                campaignID: experiment.layerId,
+                                experimentID: experiment.id)
         
-        decisions.append(decision)
-        
-        // create batch event.
-        let early = Date.timeIntervalBetween1970AndReferenceDate * 1000
-        let after = Date.timeIntervalSinceReferenceDate * 1000
-        let fullNumber:Int64 = Int64(early + after)
-        let dispatchEvent = DispatchEvent(timestamp: fullNumber,
+        let dispatchEvent = DispatchEvent(timestamp: timestampSince1970,
                                           key: DispatchEvent.activateEventKey,
                                           entityID: experiment.layerId,
-                                          uuid: UUID().uuidString)
-        let snapShot = Snapshot(decisions: decisions, events: [dispatchEvent])
+                                          uuid: uuid)
         
-        let eventAttributes = getEventAttributes(config: config, attributes: attributes)
-        
-        let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
-        let batchEvent = BatchEvent(revision: config.project.revision,
-                                    accountID: config.project.accountId,
-                                    clientVersion: "3.0",
-                                    visitors: [visitor],
-                                    projectID: config.project.projectId,
-                                    clientName: "swift-sdk",
-                                    anonymizeIP: config.project.anonymizeIP,
-                                    enrichDecisions: true)
-        
-        if let data = try? JSONEncoder().encode(batchEvent) {
-            return data
-        }
-        
-        return nil
-
+        return createBatchEvent(config: config,
+                                userId: userId,
+                                attributes: attributes,
+                                decisions: [decision],
+                                dispatchEvents: [dispatchEvent])
     }
     
-    static func createConversionEvent(config:ProjectConfig,
-                                      decisionService:OPTDecisionService,
-                                      eventKey:String,
-                                      userId:String,
-                                      attributes:OptimizelyAttributes?,
-                                      eventTags:Dictionary<String, Any>?) -> Data? {
+    // MARK: - Converison Event
+    
+    static func createConversionEvent(config: ProjectConfig,
+                                      eventKey: String,
+                                      userId: String,
+                                      attributes: OptimizelyAttributes?,
+                                      eventTags: [String: Any]?) -> Data? {
         
         guard let event = config.getEvent(key: eventKey) else {
             return nil
         }
-
-        // create batch event.
-        let early = Date.timeIntervalBetween1970AndReferenceDate * 1000
-        let after = Date.timeIntervalSinceReferenceDate * 1000
-        let fullNumber:Int64 = Int64(early + after)
-        let tags = eventTags?.mapValues({AttributeValue(value:$0)}).filter({$0.value != nil}) as? Dictionary<String, AttributeValue> ?? [:]
-        var value:AttributeValue?
-        var revenue:AttributeValue?
         
-        if let val = eventTags?[DispatchEvent.valueKey], let v = AttributeValue(value: val) {
-            value = v
-        }
-        if let rev = eventTags?[DispatchEvent.revenueKey], let r = AttributeValue(value: rev) {
-            revenue = r
-        }
+        // filter and convert event tags
+        let (tags, value, revenue) = filterEventTags(eventTags)
         
-        let dispatchEvent = DispatchEvent(timestamp: fullNumber, key: event.key, entityID: event.id, uuid: UUID().uuidString, tags: tags, value:value, revenue:revenue)
+        let dispatchEvent = DispatchEvent(timestamp: timestampSince1970,
+                                          key: event.key,
+                                          entityID: event.id,
+                                          uuid: uuid,
+                                          tags: tags,
+                                          value: value,
+                                          revenue: revenue)
         
-        let snapShot = Snapshot(decisions: nil, events: [dispatchEvent])
+        return createBatchEvent(config: config,
+                                userId: userId,
+                                attributes: attributes,
+                                decisions: nil,
+                                dispatchEvents: [dispatchEvent])
+    }
+    
+    // MARK: - Create Event
+    
+    static func createBatchEvent(config: ProjectConfig,
+                                 userId: String,
+                                 attributes: OptimizelyAttributes?,
+                                 decisions: [Decision]?,
+                                 dispatchEvents: [DispatchEvent]) -> Data?
+    {
+        let snapShot = Snapshot(decisions: decisions, events: dispatchEvents)
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
@@ -89,19 +87,68 @@ class BatchEventBuilder {
         
         let batchEvent = BatchEvent(revision: config.project.revision,
                                     accountID: config.project.accountId,
-                                    clientVersion: "3.0",
+                                    clientVersion: swiftSdkClientVersion,
                                     visitors: [visitor],
                                     projectID: config.project.projectId,
-                                    clientName: "swift-sdk",
+                                    clientName: swiftSdkClientName,
                                     anonymizeIP: config.project.anonymizeIP,
-                                    enrichDecisions:true)
+                                    enrichDecisions: true)
         
-        if let data = try? JSONEncoder().encode(batchEvent) {
-            return data
+        return try? JSONEncoder().encode(batchEvent)
+    }
+            
+    // MARK: - Event Tags
+    
+    static func filterEventTags(_ eventTags: [String: Any]?) -> ([String: AttributeValue]?, AttributeValue?, AttributeValue?) {
+        guard let eventTags = eventTags else {
+            return ([:], nil, nil)
+        }
+        
+        let tags = eventTags.mapValues{AttributeValue(value:$0)}.filter{$0.value != nil} as? [String: AttributeValue] ?? [:]
+        var value = tags[DispatchEvent.valueKey]
+        var revenue = tags[DispatchEvent.revenueKey]
+        
+        // export {value, revenue} only for {double, int64} types
+        
+        if let _value = value {
+            switch _value {
+            case .double:
+                // valid value type
+                break
+            case .int(let int64Value):
+                value = AttributeValue(value: Double(int64Value))
+            default:
+                value = nil
+            }
+        }
+        
+        if let _revenue = revenue {
+            switch _revenue {
+            case .int:
+                // valid revenue type
+                break
+            case .double(let doubleValue):
+                
+                // TODO: [Jae] is this double-to-integer conversion safe?
+                
+                // - special integer types ("NSNumber(intValue: )", ...) are parsed as .double()
+                //   since double has higher pririorty when cannot tell from {integer, double}
+                // - check if integer value
+                if doubleValue == Double(Int64(doubleValue)){
+                    revenue = AttributeValue(value: Int64(doubleValue))
+                } else {
+                    revenue = nil
+                }
+            default:
+                revenue = nil
+            }
         }
 
-        return nil
+        return (tags, value, revenue)
     }
+    
+    
+    // MARK: - Event Attributes
     
     static func getEventAttributes(config: ProjectConfig,
                                    attributes: OptimizelyAttributes?) -> [EventAttribute] {
@@ -109,7 +156,7 @@ class BatchEventBuilder {
         
         if let attributes = attributes {
             for attr in attributes.keys {
-                if let attributeId = config.getAttribute(key: attr)?.id ?? (attr.hasPrefix("$opt_") ? attr : nil) {
+                if let attributeId = config.getAttributeId(key: attr) ?? (attr.hasPrefix("$opt_") ? attr : nil) {
                     let attrValue = attributes[attr] ?? nil    // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
                     if let eventValue = AttributeValue(value: attrValue) {
                         let eventAttribute = EventAttribute(value: eventValue,
@@ -125,14 +172,27 @@ class BatchEventBuilder {
             }
         }
         
-        if let botFiltering = config.project.botFiltering, let attrValue = AttributeValue(value: botFiltering) {
-            let botAttr = EventAttribute(value: attrValue,
+        if let botFiltering = config.project.botFiltering, let eventValue = AttributeValue(value: botFiltering) {
+            let botAttr = EventAttribute(value: eventValue,
                                          key: Constants.Attributes.OptimizelyBotFilteringAttribute,
                                          type:"custom",
                                          entityID: Constants.Attributes.OptimizelyBotFilteringAttribute)
             eventAttributes.append(botAttr)
         }
+        
         return eventAttributes
     }
-
+    
+    // MARK: - Utils
+    
+    static var timestampSince1970: Int64 {
+        let early = Date.timeIntervalBetween1970AndReferenceDate * 1000
+        let after = Date.timeIntervalSinceReferenceDate * 1000
+        return Int64(early + after)
+    }
+    
+    static var uuid: String {
+        return UUID().uuidString
+    }
+    
 }

@@ -39,7 +39,7 @@ extension BucketTests_Others {
 
     func testHashIsCompliant() {
         let experimentId = "1886780721"
-        let bucketer = DefaultBucketer(config: ProjectConfig())
+        let bucketer = DefaultBucketer()
         // These test inputs/outputs should be reproduced exactly in all clients to make sure that they behave
         // consistently.
         let tests = [

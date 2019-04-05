@@ -98,7 +98,7 @@ class BucketTests_GroupToExp: XCTestCase {
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
         self.config = self.optimizely.config!
-        self.bucketer = optimizely.bucketer
+        self.bucketer = ((optimizely.decisionService as! DefaultDecisionService).bucketer as! DefaultBucketer)
     }
     
 }
@@ -118,7 +118,7 @@ extension BucketTests_GroupToExp {
         let group = self.config.getGroup(id: kGroupId)
         
         for (idx, test) in tests.enumerated() {
-            let experiment = bucketer.bucketToExperiment(group: group!, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: self.config, group: group!, bucketingId: test["userId"]!)
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"], experiment?.key, "test[\(idx)] failed")
             } else {
@@ -138,7 +138,7 @@ extension BucketTests_GroupToExp {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(group: group, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!)
             XCTAssertNil(experiment);
         }
     }
@@ -155,7 +155,7 @@ extension BucketTests_GroupToExp {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(group: group, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!)
             XCTAssertNil(experiment);
         }
     }
@@ -173,7 +173,7 @@ extension BucketTests_GroupToExp {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(group: group, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!)
             XCTAssertNil(experiment);
         }
     }

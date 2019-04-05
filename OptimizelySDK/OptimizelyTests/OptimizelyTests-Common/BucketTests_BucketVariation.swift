@@ -104,7 +104,7 @@ class BucketTests_BucketVariation: XCTestCase {
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
         self.config = self.optimizely.config!
-        self.bucketer = (optimizely.bucketer as! DefaultBucketer)
+        self.bucketer = ((optimizely.decisionService as! DefaultDecisionService).bucketer as! DefaultBucketer)
     }
     
 }
@@ -125,7 +125,7 @@ extension BucketTests_BucketVariation {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": kVariationKeyC]]
 
         for (idx, test) in tests.enumerated() {
-            variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: test["userId"]!)
+            variation = bucketer.bucketExperiment(config: self.config, experiment: experiment, bucketingId: test["userId"]!)
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
             } else {
@@ -148,7 +148,7 @@ extension BucketTests_BucketVariation {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": kVariationKeyC]]
 
         for (idx, test) in tests.enumerated() {
-            variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: test["userId"]!)
+            variation = bucketer.bucketExperiment(config: self.config, experiment: experiment, bucketingId: test["userId"]!)
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
             } else {
@@ -171,7 +171,7 @@ extension BucketTests_BucketVariation {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": kVariationKeyD]]
         
         for test in tests {
-            variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: test["userId"]!)
+            variation = bucketer.bucketExperiment(config: self.config, experiment: experiment, bucketingId: test["userId"]!)
             XCTAssertNil(variation)
         }
     }
@@ -191,7 +191,7 @@ extension BucketTests_BucketVariation {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": kVariationKeyC]]
 
         for (idx, test) in tests.enumerated() {
-            variation = bucketer.bucketExperiment(experiment: experiment, bucketingId: test["userId"]!)
+            variation = bucketer.bucketExperiment(config: self.config, experiment: experiment, bucketingId: test["userId"]!)
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
             } else {

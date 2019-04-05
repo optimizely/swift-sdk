@@ -60,7 +60,7 @@ class DefaultBucketer : OPTBucketer {
         }
     }
     
-    func bucketToExperiment(group: Group, bucketingId: String) -> Experiment? {
+    func bucketToExperiment(config:ProjectConfig, group: Group, bucketingId: String) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
         

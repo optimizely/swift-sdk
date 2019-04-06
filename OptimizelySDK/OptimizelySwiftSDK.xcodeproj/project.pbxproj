@@ -15,26 +15,6 @@
 		0B05901A2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B05901B2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B11272E2242D817002A9C20 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
-		0B2D4903224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D4904224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D4905224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D4906224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D4907224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D4908224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D4909224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D490A224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D490B224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D490C224571340024A661 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */; };
-		0B2D490D224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
-		0B2D490E224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
-		0B2D490F224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
-		0B2D4910224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
-		0B2D4911224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
-		0B2D4912224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
-		0B2D4913224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
-		0B2D4914224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
-		0B2D4915224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
-		0B2D4916224571340024A661 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */; };
 		0B4AE9FA22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
 		0B4AE9FB22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
 		0B4AEA112228A6430047B75D /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9FC2228A6410047B75D /* bucketing_id.json */; };
@@ -126,7 +106,7 @@
 		0B8F537E223FFB0500C56082 /* OptimizelyManagerTests_Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8F537B223FFB0500C56082 /* OptimizelyManagerTests_Group.swift */; };
 		0BAB9AFE22567E21000DC388 /* EventDispatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B894EBB224163FF004A2ADB /* EventDispatcherTest.swift */; };
 		0BAB9AFF22567E24000DC388 /* EventDispatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B894EBB224163FF004A2ADB /* EventDispatcherTest.swift */; };
-		0BAB9B0122567E34000DC388 /* OptimizelyManagerTests_Threading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2D48FE2245670C0024A661 /* OptimizelyManagerTests_Threading.swift */; };
+		0BAB9B0122567E34000DC388 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		0BC47BD62242F7EF00E5C2CD /* DatafileHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC47BD52242F7EF00E5C2CD /* DatafileHandlerTests.swift */; };
 		0BC47BD72242F7EF00E5C2CD /* DatafileHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC47BD52242F7EF00E5C2CD /* DatafileHandlerTests.swift */; };
 		0BC47BE52243012E00E5C2CD /* MurmurTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC47BE42243012E00E5C2CD /* MurmurTests.swift */; };
@@ -144,6 +124,16 @@
 		0BE644F5223821D3009A5D1D /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
 		0BE644F6223821D3009A5D1D /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
 		52E08AFF34D0A4A9ACB187EF /* libPods-OptimizelyTests-Common-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 307963A587A4D8DF0CFBF45E /* libPods-OptimizelyTests-Common-tvOS.a */; };
+		6E0AFBBD2257C49800BC7665 /* BucketTests_ExpToVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBB82257C49700BC7665 /* BucketTests_ExpToVariation.swift */; };
+		6E0AFBBE2257C49800BC7665 /* BucketTests_ExpToVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBB82257C49700BC7665 /* BucketTests_ExpToVariation.swift */; };
+		6E0AFBBF2257C49800BC7665 /* BucketTests_Base.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBB92257C49800BC7665 /* BucketTests_Base.swift */; };
+		6E0AFBC02257C49800BC7665 /* BucketTests_Base.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBB92257C49800BC7665 /* BucketTests_Base.swift */; };
+		6E0AFBC12257C49800BC7665 /* BucketTests_GroupToExp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBBA2257C49800BC7665 /* BucketTests_GroupToExp.swift */; };
+		6E0AFBC22257C49800BC7665 /* BucketTests_GroupToExp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBBA2257C49800BC7665 /* BucketTests_GroupToExp.swift */; };
+		6E0AFBC32257C49800BC7665 /* BucketTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBBB2257C49800BC7665 /* BucketTests_Others.swift */; };
+		6E0AFBC42257C49800BC7665 /* BucketTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBBB2257C49800BC7665 /* BucketTests_Others.swift */; };
+		6E0AFBC52257C49800BC7665 /* BucketTests_BucketVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBBC2257C49800BC7665 /* BucketTests_BucketVariation.swift */; };
+		6E0AFBC62257C49800BC7665 /* BucketTests_BucketVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBBC2257C49800BC7665 /* BucketTests_BucketVariation.swift */; };
 		6E1A1B8F223C484B0070160A /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */; };
 		6E1A1B90223C484B0070160A /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */; };
 		6E1A1B91223C484B0070160A /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */; };
@@ -164,6 +154,8 @@
 		6E1A1BA0223C484B0070160A /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E1A1B8E223C484B0070160A /* BucketerTestsDatafile.json */; };
 		6E1A1BA1223C484B0070160A /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E1A1B8E223C484B0070160A /* BucketerTestsDatafile.json */; };
 		6E1A1BA2223C484B0070160A /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E1A1B8E223C484B0070160A /* BucketerTestsDatafile.json */; };
+		6E2B8D652257C5F6003C4799 /* DecisionServiceTests_Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB59B224BF4BE00B8CB7A /* DecisionServiceTests_Experiments.swift */; };
+		6E2B8D662257C612003C4799 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79F9D852251F58F002B0BC9 /* DecisionListenerTests.swift */; };
 		6E30A070224DA4D3005EFA1D /* AudienceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30A06F224DA4D3005EFA1D /* AudienceTests.swift */; };
 		6E30A071224DA4D3005EFA1D /* AudienceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30A06F224DA4D3005EFA1D /* AudienceTests.swift */; };
 		6E4DD83121E524E300B0C2C7 /* EventForDispatch+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2A21CC739E0049BC2C /* EventForDispatch+Extension.swift */; };
@@ -539,7 +531,6 @@
 		6E8CB5A2224BF4BE00B8CB7A /* DecisionServiceTests_Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB59A224BF4BE00B8CB7A /* DecisionServiceTests_Features.swift */; };
 		6E8CB5A3224BF4BE00B8CB7A /* DecisionServiceTests_Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB59A224BF4BE00B8CB7A /* DecisionServiceTests_Features.swift */; };
 		6E8CB5A4224BF4BE00B8CB7A /* DecisionServiceTests_Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB59B224BF4BE00B8CB7A /* DecisionServiceTests_Experiments.swift */; };
-		6E8CB5A5224BF4BE00B8CB7A /* DecisionServiceTests_Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB59B224BF4BE00B8CB7A /* DecisionServiceTests_Experiments.swift */; };
 		6E8CB5A8224BF4BE00B8CB7A /* DecisionServiceTests_UserProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB59D224BF4BE00B8CB7A /* DecisionServiceTests_UserProfiles.swift */; };
 		6E8CB5A9224BF4BE00B8CB7A /* DecisionServiceTests_UserProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB59D224BF4BE00B8CB7A /* DecisionServiceTests_UserProfiles.swift */; };
 		6E8CB5C9224C461A00B8CB7A /* OptimizelyManagerTests_Variables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CB5C8224C461A00B8CB7A /* OptimizelyManagerTests_Variables.swift */; };
@@ -617,9 +608,7 @@
 		6EA4256F2218E60A00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EA4257E2218E61F00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		6EA425842218E69700B074B5 /* OptimizelySwiftSDKiOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99121E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests.swift */; };
-		6EA425872218E69700B074B5 /* BucketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99421E6BAA700B0C2C7 /* BucketTests.swift */; };
 		6EA425882218E69800B074B5 /* OptimizelySwiftSDKiOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99121E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests.swift */; };
-		6EA4258B2218E69800B074B5 /* BucketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD99421E6BAA700B0C2C7 /* BucketTests.swift */; };
 		6EA4258C2218E6A000B074B5 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A222121D27009A171F /* OTUtils.swift */; };
 		6EA4258D2218E6A100B074B5 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A222121D27009A171F /* OTUtils.swift */; };
 		6EA4258E2218E6A200B074B5 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7FC6A222121D27009A171F /* OTUtils.swift */; };
@@ -1073,8 +1062,6 @@
 		6EF4B51C2239C7D9002DE8B6 /* BatchEventBuilderTests_Corners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF4B51B2239C7D9002DE8B6 /* BatchEventBuilderTests_Corners.swift */; };
 		6EF4B51D2239C7D9002DE8B6 /* BatchEventBuilderTests_Corners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF4B51B2239C7D9002DE8B6 /* BatchEventBuilderTests_Corners.swift */; };
 		74057EF39C18F2B508F4661E /* libPods-OptimizelyTests-Common-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 644A30DA4805286E7F8A1530 /* libPods-OptimizelyTests-Common-iOS.a */; };
-		825A305DA92576A5327962F4 /* Pods_OptimizelyTests_Common_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8093F8A983E68BDB49E29737 /* Pods_OptimizelyTests_Common_tvOS.framework */; };
-		C79F9D862251F58F002B0BC9 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79F9D852251F58F002B0BC9 /* DecisionListenerTests.swift */; };
 		C79F9D872251F597002B0BC9 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79F9D852251F58F002B0BC9 /* DecisionListenerTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -1160,9 +1147,6 @@
 		0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventForDispatch.swift; sourceTree = "<group>"; };
 		0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTEventDispatcher.swift; sourceTree = "<group>"; };
 		0B124BCA21B5DF39001BE0FA /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
-		0B2D48FE2245670C0024A661 /* OptimizelyManagerTests_Threading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyManagerTests_Threading.swift; sourceTree = "<group>"; };
-		0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = feature_rollout_toggle_on.json; sourceTree = "<group>"; };
-		0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = feature_rollout_toggle_off.json; sourceTree = "<group>"; };
 		0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchEventBuilderTest.swift; sourceTree = "<group>"; };
 		0B4AE9FC2228A6410047B75D /* bucketing_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bucketing_id.json; sourceTree = "<group>"; };
 		0B4AE9FE2228A6410047B75D /* 10_entities.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = 10_entities.json; sourceTree = "<group>"; };
@@ -1233,6 +1217,11 @@
 		307963A587A4D8DF0CFBF45E /* libPods-OptimizelyTests-Common-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OptimizelyTests-Common-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		644A30DA4805286E7F8A1530 /* libPods-OptimizelyTests-Common-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OptimizelyTests-Common-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B36F1F60444A8511E8DCC10 /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Common-tvOS.release.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Common-tvOS/Pods-OptimizelyTests-Common-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		6E0AFBB82257C49700BC7665 /* BucketTests_ExpToVariation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests_ExpToVariation.swift; sourceTree = "<group>"; };
+		6E0AFBB92257C49800BC7665 /* BucketTests_Base.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests_Base.swift; sourceTree = "<group>"; };
+		6E0AFBBA2257C49800BC7665 /* BucketTests_GroupToExp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests_GroupToExp.swift; sourceTree = "<group>"; };
+		6E0AFBBB2257C49800BC7665 /* BucketTests_Others.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests_Others.swift; sourceTree = "<group>"; };
+		6E0AFBBC2257C49800BC7665 /* BucketTests_BucketVariation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests_BucketVariation.swift; sourceTree = "<group>"; };
 		6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = BucketerTestsDatafile2.json; sourceTree = "<group>"; };
 		6E1A1B8E223C484B0070160A /* BucketerTestsDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = BucketerTestsDatafile.json; sourceTree = "<group>"; };
 		6E30A06F224DA4D3005EFA1D /* AudienceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudienceTests.swift; sourceTree = "<group>"; };
@@ -1241,7 +1230,6 @@
 		6E4DD8F021E530A900B0C2C7 /* OptimizelyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyManager.swift; sourceTree = "<group>"; };
 		6E4DD99121E6BAA700B0C2C7 /* OptimizelySwiftSDKiOSTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelySwiftSDKiOSTests.swift; sourceTree = "<group>"; };
 		6E4DD99321E6BAA700B0C2C7 /* OptimizelyManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyManagerTests.swift; sourceTree = "<group>"; };
-		6E4DD99421E6BAA700B0C2C7 /* BucketTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests.swift; sourceTree = "<group>"; };
 		6E4DD99521E6BAA700B0C2C7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E4F0D7822133C5A00DD13A5 /* AttributeValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AttributeValue.swift; path = "Data Model/audience/AttributeValue.swift"; sourceTree = SOURCE_ROOT; };
 		6E4F0D7D2213536F00DD13A5 /* AttributeValueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeValueTests.swift; sourceTree = "<group>"; };
@@ -1290,10 +1278,25 @@
 		6EA4265B2219242100B074B5 /* OptimizelyTests-Others-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Others-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EA4266A2219243D00B074B5 /* OptimizelyTests-Others-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Others-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EA426DF2219266600B074B5 /* ThrowableConditionListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrowableConditionListTest.swift; sourceTree = "<group>"; };
+		6EA69C0F22498995003040B5 /* DecisionServiceTests_Experiments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_Experiments.swift; sourceTree = "<group>"; };
+		6EA69C1022498995003040B5 /* DecisionServiceTests_UserProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_UserProfiles.swift; sourceTree = "<group>"; };
+		6EA69C1122498995003040B5 /* DecisionServiceTests_Others.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_Others.swift; sourceTree = "<group>"; };
+		6EA69C1222498995003040B5 /* DecisionServiceTests_Features.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_Features.swift; sourceTree = "<group>"; };
 		6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EBAEB6E21E3FEF800D13AA9 /* Optimizely.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Optimizely.h; sourceTree = "<group>"; };
 		6EBAEB6F21E3FEF800D13AA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EBAEB7421E3FEF900D13AA9 /* OptimizelyTests-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EC2FE952243F727005A94F7 /* x-V2TestDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-V2TestDatafile.json"; sourceTree = "<group>"; };
+		6EC2FE962243F728005A94F7 /* x-test_data_25_experiments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-test_data_25_experiments.json"; sourceTree = "<group>"; };
+		6EC2FE972243F728005A94F7 /* x-UnsupportedVersionDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-UnsupportedVersionDatafile.json"; sourceTree = "<group>"; };
+		6EC2FE982243F728005A94F7 /* optimizely_7519590183.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_7519590183.json; sourceTree = "<group>"; };
+		6EC2FE992243F728005A94F7 /* x-test_data_10_experimentsV3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-test_data_10_experimentsV3.json"; sourceTree = "<group>"; };
+		6EC2FE9A2243F728005A94F7 /* x-optimizely_6372300739_v4.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-optimizely_6372300739_v4.json"; sourceTree = "<group>"; };
+		6EC2FE9B2243F729005A94F7 /* x-typed_audience_datafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-typed_audience_datafile.json"; sourceTree = "<group>"; };
+		6EC2FE9C2243F729005A94F7 /* test_data_10_experiments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test_data_10_experiments.json; sourceTree = "<group>"; };
+		6EC2FE9D2243F729005A94F7 /* x-audience_targeting.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-audience_targeting.json"; sourceTree = "<group>"; };
+		6EC2FE9E2243F729005A94F7 /* x-optimizely_6372300739.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-optimizely_6372300739.json"; sourceTree = "<group>"; };
+		6EC2FE9F2243F729005A94F7 /* x-test_data_50_experiments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "x-test_data_50_experiments.json"; sourceTree = "<group>"; };
 		6EC5D3612231C19200BF9D77 /* OptimizelyManagerTests_Invalid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyManagerTests_Invalid.swift; sourceTree = "<group>"; };
 		6ED1B8F92225AA6500C4C774 /* DefaultUserProfileServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultUserProfileServiceTests.swift; sourceTree = "<group>"; };
 		6EDE910A2225F7DB00840112 /* AudienceTests_Evaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceTests_Evaluate.swift; sourceTree = "<group>"; };
@@ -1469,8 +1472,6 @@
 				0B4AEA0F2228A6430047B75D /* simple_datafile.json */,
 				0B4AEA102228A6430047B75D /* unsupported_datafile.json */,
 				6E636C522236E08B00AF3CEF /* api_datafile.json */,
-				0B2D4901224571330024A661 /* feature_rollout_toggle_on.json */,
-				0B2D4902224571340024A661 /* feature_rollout_toggle_off.json */,
 				6E1A1B8E223C484B0070160A /* BucketerTestsDatafile.json */,
 				6E1A1B8D223C484B0070160A /* BucketerTestsDatafile2.json */,
 			);
@@ -1538,6 +1539,7 @@
 				0B7CB0C321AC5FE2007B77E5 /* Products */,
 				31730BC1208D0F4F90406681 /* Pods */,
 				F364860608A0EA795D78C49A /* Frameworks */,
+				6E0AFBB52257BEFB00BC7665 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1613,6 +1615,28 @@
 			path = ../Pods;
 			sourceTree = "<group>";
 		};
+		6E0AFBB52257BEFB00BC7665 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				6EC2FE952243F727005A94F7 /* x-V2TestDatafile.json */,
+				6EC2FE9F2243F729005A94F7 /* x-test_data_50_experiments.json */,
+				6EC2FE982243F728005A94F7 /* optimizely_7519590183.json */,
+				6EC2FE9E2243F729005A94F7 /* x-optimizely_6372300739.json */,
+				6EC2FE9A2243F728005A94F7 /* x-optimizely_6372300739_v4.json */,
+				6EC2FE962243F728005A94F7 /* x-test_data_25_experiments.json */,
+				6EC2FE9B2243F729005A94F7 /* x-typed_audience_datafile.json */,
+				6EC2FE9D2243F729005A94F7 /* x-audience_targeting.json */,
+				6EC2FE992243F728005A94F7 /* x-test_data_10_experimentsV3.json */,
+				6EC2FE9C2243F729005A94F7 /* test_data_10_experiments.json */,
+				6EC2FE972243F728005A94F7 /* x-UnsupportedVersionDatafile.json */,
+				6EA69C0F22498995003040B5 /* DecisionServiceTests_Experiments.swift */,
+				6EA69C1122498995003040B5 /* DecisionServiceTests_Others.swift */,
+				6EA69C1222498995003040B5 /* DecisionServiceTests_Features.swift */,
+				6EA69C1022498995003040B5 /* DecisionServiceTests_UserProfiles.swift */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		6E4DD8ED21E530A900B0C2C7 /* Optimizely */ = {
 			isa = PBXGroup;
 			children = (
@@ -1680,7 +1704,6 @@
 				6E636C5D223708B000AF3CEF /* OptimizelyManagerTests_ForcedVariation.swift */,
 				6E8CB5C8224C461A00B8CB7A /* OptimizelyManagerTests_Variables.swift */,
 				0B8F537B223FFB0500C56082 /* OptimizelyManagerTests_Group.swift */,
-				0B2D48FE2245670C0024A661 /* OptimizelyManagerTests_Threading.swift */,
 			);
 			path = "OptimizelyTests-APIs";
 			sourceTree = "<group>";
@@ -1697,7 +1720,11 @@
 				6E8CB59A224BF4BE00B8CB7A /* DecisionServiceTests_Features.swift */,
 				6E8CB599224BF4BE00B8CB7A /* DecisionServiceTests_Others.swift */,
 				6E8CB59D224BF4BE00B8CB7A /* DecisionServiceTests_UserProfiles.swift */,
-				6E4DD99421E6BAA700B0C2C7 /* BucketTests.swift */,
+				6E0AFBB92257C49800BC7665 /* BucketTests_Base.swift */,
+				6E0AFBBC2257C49800BC7665 /* BucketTests_BucketVariation.swift */,
+				6E0AFBB82257C49700BC7665 /* BucketTests_ExpToVariation.swift */,
+				6E0AFBBA2257C49800BC7665 /* BucketTests_GroupToExp.swift */,
+				6E0AFBBB2257C49800BC7665 /* BucketTests_Others.swift */,
 				0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */,
 				0B894EBB224163FF004A2ADB /* EventDispatcherTest.swift */,
 				0BC47BD52242F7EF00E5C2CD /* DatafileHandlerTests.swift */,
@@ -2110,14 +2137,12 @@
 				6E636C592236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920922273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
 				6EDE91F122273DD800840112 /* typed_audience_datafile.json in Resources */,
-				0B2D4909224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B95223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6EAE8F0522306D43007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8F0022306D43007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC322306D35007D4A37 /* 50_entities.json in Resources */,
 				6EAE8EF922306D43007D4A37 /* bucketing_id.json in Resources */,
 				6EDE91A922273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
-				0B2D4913224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				6E636C4D2236D13000AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8EC822306D3A007D4A37 /* 100_entities.json in Resources */,
 				6EAE8F0622306D43007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2144,14 +2169,12 @@
 				6E636C552236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6E636C212236CBFD00AF3CEF /* bucketing_id.json in Resources */,
 				6E636C412236CC0500AF3CEF /* 10_entities.json in Resources */,
-				0B2D4905224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B91223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6E636C262236CBFD00AF3CEF /* feature_management_experiment_bucketing.json in Resources */,
 				6E636C222236CBFD00AF3CEF /* empty_datafile.json in Resources */,
 				6E636C242236CBFD00AF3CEF /* feature_experiments.json in Resources */,
 				6E636C432236CC0500AF3CEF /* 100_entities.json in Resources */,
 				6E636C2A2236CBFD00AF3CEF /* grouped_experiments.json in Resources */,
-				0B2D490F224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				6E636C492236D12C00AF3CEF /* audience_targeting.json in Resources */,
 				6E636C422236CC0500AF3CEF /* 50_entities.json in Resources */,
 				6E636C1B2236CBFD00AF3CEF /* UnsupportedVersionDatafile.json in Resources */,
@@ -2178,14 +2201,12 @@
 				6E636C582236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6E636C342236CBFE00AF3CEF /* bucketing_id.json in Resources */,
 				6E636C442236CC0600AF3CEF /* 10_entities.json in Resources */,
-				0B2D4908224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B94223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6E636C392236CBFE00AF3CEF /* feature_management_experiment_bucketing.json in Resources */,
 				6E636C352236CBFE00AF3CEF /* empty_datafile.json in Resources */,
 				6E636C372236CBFE00AF3CEF /* feature_experiments.json in Resources */,
 				6E636C462236CC0600AF3CEF /* 100_entities.json in Resources */,
 				6E636C3D2236CBFE00AF3CEF /* grouped_experiments.json in Resources */,
-				0B2D4912224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				6E636C4C2236D12E00AF3CEF /* audience_targeting.json in Resources */,
 				6E636C452236CC0600AF3CEF /* 50_entities.json in Resources */,
 				6E636C2E2236CBFE00AF3CEF /* UnsupportedVersionDatafile.json in Resources */,
@@ -2212,14 +2233,12 @@
 				6E636C5A2236E08C00AF3CEF /* api_datafile.json in Resources */,
 				0B4AEA1C2228A6430047B75D /* ab_experiments.json in Resources */,
 				0B4AEA382228A6430047B75D /* unsupported_datafile.json in Resources */,
-				0B2D490A224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B96223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6EAE8EAF22306CFA007D4A37 /* UnsupportedVersionDatafile.json in Resources */,
 				0B4AEA182228A6430047B75D /* 100_entities.json in Resources */,
 				6EAE8EB222306D0D007D4A37 /* typed_audience_datafile.json in Resources */,
 				0B4AEA202228A6430047B75D /* audience_targeting.json in Resources */,
 				0B4AEA282228A6430047B75D /* grouped_experiments.json in Resources */,
-				0B2D4914224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				0B4AEA162228A6430047B75D /* 50_entities.json in Resources */,
 				0B4AEA242228A6430047B75D /* feature_experiments.json in Resources */,
 				0B4AEA362228A6430047B75D /* simple_datafile.json in Resources */,
@@ -2246,14 +2265,12 @@
 				6E636C5B2236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920B22273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
 				6EDE91F322273DD800840112 /* typed_audience_datafile.json in Resources */,
-				0B2D490B224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B97223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6EAE8F1422306D44007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8F0F22306D44007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC422306D36007D4A37 /* 50_entities.json in Resources */,
 				6EAE8F0822306D44007D4A37 /* bucketing_id.json in Resources */,
 				6EDE91AB22273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
-				0B2D4915224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				6E636C4E2236D13100AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8EC922306D3B007D4A37 /* 100_entities.json in Resources */,
 				6EAE8F1522306D44007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2280,14 +2297,12 @@
 				6E636C542236E08C00AF3CEF /* api_datafile.json in Resources */,
 				0B4AEA1B2228A6430047B75D /* ab_experiments.json in Resources */,
 				0B4AEA372228A6430047B75D /* unsupported_datafile.json in Resources */,
-				0B2D4904224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B90223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6EAE8EB022306CFB007D4A37 /* UnsupportedVersionDatafile.json in Resources */,
 				0B4AEA172228A6430047B75D /* 100_entities.json in Resources */,
 				6EAE8EB122306D0C007D4A37 /* typed_audience_datafile.json in Resources */,
 				0B4AEA1F2228A6430047B75D /* audience_targeting.json in Resources */,
 				0B4AEA272228A6430047B75D /* grouped_experiments.json in Resources */,
-				0B2D490E224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				0B4AEA152228A6430047B75D /* 50_entities.json in Resources */,
 				0B4AEA232228A6430047B75D /* feature_experiments.json in Resources */,
 				0B4AEA352228A6430047B75D /* simple_datafile.json in Resources */,
@@ -2314,14 +2329,12 @@
 				6E636C562236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920722273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
 				6EDE91EF22273DD800840112 /* typed_audience_datafile.json in Resources */,
-				0B2D4906224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B92223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6EAE8EE722306D42007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8EE222306D42007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC122306D34007D4A37 /* 50_entities.json in Resources */,
 				6EAE8EDB22306D42007D4A37 /* bucketing_id.json in Resources */,
 				6EDE91A722273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
-				0B2D4910224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				6E636C4A2236D12C00AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8EC622306D39007D4A37 /* 100_entities.json in Resources */,
 				6EAE8EE822306D42007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2348,14 +2361,12 @@
 				6E636C572236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920822273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
 				6EDE91F022273DD800840112 /* typed_audience_datafile.json in Resources */,
-				0B2D4907224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B93223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6EAE8EF622306D43007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8EF122306D43007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC222306D35007D4A37 /* 50_entities.json in Resources */,
 				6EAE8EEA22306D43007D4A37 /* bucketing_id.json in Resources */,
 				6EDE91A822273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
-				0B2D4911224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				6E636C4B2236D12D00AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8EC722306D3A007D4A37 /* 100_entities.json in Resources */,
 				6EAE8EF722306D43007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2382,14 +2393,12 @@
 				6E636C5C2236E08C00AF3CEF /* api_datafile.json in Resources */,
 				6EDE920C22273DD800840112 /* UnsupportedVersionDatafile.json in Resources */,
 				6EDE91F422273DD800840112 /* typed_audience_datafile.json in Resources */,
-				0B2D490C224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B98223C484B0070160A /* BucketerTestsDatafile2.json in Resources */,
 				6EAE8F2322306D45007D4A37 /* simple_datafile.json in Resources */,
 				6EAE8F1E22306D45007D4A37 /* feature_variables.json in Resources */,
 				6EAE8EC522306D36007D4A37 /* 50_entities.json in Resources */,
 				6EAE8F1722306D45007D4A37 /* bucketing_id.json in Resources */,
 				6EDE91AC22273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
-				0B2D4916224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				6E636C4F2236D13100AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8ECA22306D3B007D4A37 /* 100_entities.json in Resources */,
 				6EAE8F2422306D45007D4A37 /* unsupported_datafile.json in Resources */,
@@ -2424,7 +2433,6 @@
 				6E636C482236D12700AF3CEF /* audience_targeting.json in Resources */,
 				6EAE8ED922306D42007D4A37 /* unsupported_datafile.json in Resources */,
 				6EAE8ECE22306D42007D4A37 /* feature_exp.json in Resources */,
-				0B2D490D224571340024A661 /* feature_rollout_toggle_off.json in Resources */,
 				6E636C472236CFDF00AF3CEF /* ab_experiments.json in Resources */,
 				6EAE8ECF22306D42007D4A37 /* feature_experiments.json in Resources */,
 				6EAE8ED122306D42007D4A37 /* feature_management_experiment_bucketing.json in Resources */,
@@ -2437,7 +2445,6 @@
 				6EDE91ED22273DD800840112 /* typed_audience_datafile.json in Resources */,
 				6EAE8ED422306D42007D4A37 /* forced_variation.json in Resources */,
 				6EDE91A522273DD800840112 /* optimizely_6372300739_v4.json in Resources */,
-				0B2D4903224571340024A661 /* feature_rollout_toggle_on.json in Resources */,
 				6E1A1B99223C484B0070160A /* BucketerTestsDatafile.json in Resources */,
 				6EAE8ED522306D42007D4A37 /* grouped_experiments.json in Resources */,
 				6EAE8ED022306D42007D4A37 /* feature_flag.json in Resources */,
@@ -2632,7 +2639,7 @@
 				6E636C0D2236C9CA00AF3CEF /* Result.swift in Sources */,
 				6E636BB02236C98300AF3CEF /* DefaultUserProfileService.swift in Sources */,
 				6E636BE22236C9B700AF3CEF /* ConditionLeaf.swift in Sources */,
-				0BAB9B0122567E34000DC388 /* OptimizelyManagerTests_Threading.swift in Sources */,
+				0BAB9B0122567E34000DC388 /* (null) in Sources */,
 				6E636BA82236C97E00AF3CEF /* OptimizelyError.swift in Sources */,
 				6E636BC62236C99D00AF3CEF /* DefaultDecisionService.swift in Sources */,
 				6E636BB62236C98A00AF3CEF /* OPTUserProfileService.swift in Sources */,
@@ -2771,6 +2778,7 @@
 			files = (
 				6EA425362218E4A300B074B5 /* OPTErrorHandler.swift in Sources */,
 				0B4AE9FB22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */,
+				6E0AFBBE2257C49800BC7665 /* BucketTests_ExpToVariation.swift in Sources */,
 				6EA4265522191EEC00B074B5 /* Array+Extension.swift in Sources */,
 				6EA425522218E4A300B074B5 /* MurmurHash3.swift in Sources */,
 				6EA425322218E4A300B074B5 /* DefaultDecisionService.swift in Sources */,
@@ -2783,6 +2791,7 @@
 				6EA425302218E4A300B074B5 /* DefaultBucketer.swift in Sources */,
 				0BE644F4223821D3009A5D1D /* AtomicProperty.swift in Sources */,
 				6EA425542218E4A300B074B5 /* Constants.swift in Sources */,
+				6E0AFBC22257C49800BC7665 /* BucketTests_GroupToExp.swift in Sources */,
 				6EA425252218E46C00B074B5 /* OptimizelyLogLevel.swift in Sources */,
 				6EA425462218E4A300B074B5 /* Variable.swift in Sources */,
 				6EA4254A2218E4A300B074B5 /* Variation.swift in Sources */,
@@ -2791,6 +2800,7 @@
 				6EA425312218E4A300B074B5 /* DefaultNotificationCenter.swift in Sources */,
 				6EA425472218E4A300B074B5 /* FeatureVariable.swift in Sources */,
 				6EA425222218E46C00B074B5 /* OptimizelyManager.swift in Sources */,
+				6E0AFBC42257C49800BC7665 /* BucketTests_Others.swift in Sources */,
 				6EA425482218E4A300B074B5 /* TrafficAllocation.swift in Sources */,
 				6EA425502218E4A300B074B5 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6EA425442218E4A300B074B5 /* Project.swift in Sources */,
@@ -2807,22 +2817,23 @@
 				0BC47BE62243012E00E5C2CD /* MurmurTests.swift in Sources */,
 				0BC47BD72242F7EF00E5C2CD /* DatafileHandlerTests.swift in Sources */,
 				6EA4252D2218E4A300B074B5 /* DataStoreQueueStackImpl.swift in Sources */,
-				6E8CB5A5224BF4BE00B8CB7A /* DecisionServiceTests_Experiments.swift in Sources */,
 				6EA425382218E4A300B074B5 /* OPTNotificationCenter.swift in Sources */,
 				6EA425272218E4A300B074B5 /* DefaultEventDispatcher.swift in Sources */,
 				6E8CB5A3224BF4BE00B8CB7A /* DecisionServiceTests_Features.swift in Sources */,
 				6EA425352218E4A300B074B5 /* OPTDecisionService.swift in Sources */,
+				6E2B8D652257C5F6003C4799 /* DecisionServiceTests_Experiments.swift in Sources */,
 				6EA425342218E4A300B074B5 /* OPTBucketer.swift in Sources */,
 				6EA425232218E46C00B074B5 /* OptimizelyResult.swift in Sources */,
+				6E0AFBC62257C49800BC7665 /* BucketTests_BucketVariation.swift in Sources */,
 				6EA4253C2218E4A300B074B5 /* EventForDispatch.swift in Sources */,
 				6EA4254E2218E4A300B074B5 /* Group.swift in Sources */,
 				6EA425392218E4A300B074B5 /* JSONParse.swift in Sources */,
-				6EA4258B2218E69800B074B5 /* BucketTests.swift in Sources */,
 				6EA4254D2218E4A300B074B5 /* Rollout.swift in Sources */,
 				6EA425492218E4A300B074B5 /* Event.swift in Sources */,
 				6EA4254B2218E4A300B074B5 /* FeatureFlag.swift in Sources */,
 				6EA425422218E4A300B074B5 /* AttributeValue.swift in Sources */,
 				6EA4253D2218E4A300B074B5 /* BatchEvent.swift in Sources */,
+				6E0AFBC02257C49800BC7665 /* BucketTests_Base.swift in Sources */,
 				6EA4253A2218E4A300B074B5 /* DataStoreQueueStack.swift in Sources */,
 				0B626D622242B98E00E4F7DA /* NotificationCenterTests.swift in Sources */,
 				6EA425402218E4A300B074B5 /* ConditionLeaf.swift in Sources */,
@@ -2833,7 +2844,6 @@
 				6EA4254F2218E4A300B074B5 /* EventForDispatch+Extension.swift in Sources */,
 				6EA425262218E4A300B074B5 /* DefaultLogger.swift in Sources */,
 				6EA425282218E4A300B074B5 /* DefaultUserProfileService.swift in Sources */,
-				0B894EBD224163FF004A2ADB /* EventDispatcherTest.swift in Sources */,
 				6E8CB5A1224BF4BE00B8CB7A /* DecisionServiceTests_Others.swift in Sources */,
 				6EF4B51D2239C7D9002DE8B6 /* BatchEventBuilderTests_Corners.swift in Sources */,
 				6E8CB59F224BF4BE00B8CB7A /* DecisionServiceTest.swift in Sources */,
@@ -2946,6 +2956,7 @@
 				6EA425D92218E74D00B074B5 /* Group.swift in Sources */,
 				6EA425D32218E74D00B074B5 /* TrafficAllocation.swift in Sources */,
 				0B7B18892232DB8400A1F85D /* DataStoreMemory.swift in Sources */,
+				6E0AFBC52257C49800BC7665 /* BucketTests_BucketVariation.swift in Sources */,
 				6EA425DA2218E74D00B074B5 /* EventForDispatch+Extension.swift in Sources */,
 				6EA425CD2218E74D00B074B5 /* AttributeValue.swift in Sources */,
 				0BE644F0223821D3009A5D1D /* AtomicProperty.swift in Sources */,
@@ -2953,6 +2964,7 @@
 				6EA425C62218E74D00B074B5 /* OPTDataStore.swift in Sources */,
 				6EA425BD2218E74D00B074B5 /* DefaultDecisionService.swift in Sources */,
 				6EA425D02218E74D00B074B5 /* Attribute.swift in Sources */,
+				6E0AFBBF2257C49800BC7665 /* BucketTests_Base.swift in Sources */,
 				6EA425B32218E74D00B074B5 /* DefaultUserProfileService.swift in Sources */,
 				6E8CB5A4224BF4BE00B8CB7A /* DecisionServiceTests_Experiments.swift in Sources */,
 				6EA425AF2218E74D00B074B5 /* OptimizelyError.swift in Sources */,
@@ -2969,6 +2981,7 @@
 				6EA425B82218E74D00B074B5 /* DataStoreQueueStackImpl.swift in Sources */,
 				6EA425C72218E74D00B074B5 /* EventForDispatch.swift in Sources */,
 				0BC47BD62242F7EF00E5C2CD /* DatafileHandlerTests.swift in Sources */,
+				6E0AFBC12257C49800BC7665 /* BucketTests_GroupToExp.swift in Sources */,
 				6E8CB5A2224BF4BE00B8CB7A /* DecisionServiceTests_Features.swift in Sources */,
 				6EA425D42218E74D00B074B5 /* Event.swift in Sources */,
 				6EA425C02218E74D00B074B5 /* OPTDecisionService.swift in Sources */,
@@ -2981,7 +2994,6 @@
 				6EA425DB2218E74D00B074B5 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6EA425D82218E74D00B074B5 /* Rollout.swift in Sources */,
 				6E8CB5A0224BF4BE00B8CB7A /* DecisionServiceTests_Others.swift in Sources */,
-				6EA425872218E69700B074B5 /* BucketTests.swift in Sources */,
 				6EA425B02218E74D00B074B5 /* OptimizelyLogLevel.swift in Sources */,
 				6EA425DD2218E74D00B074B5 /* MurmurHash3.swift in Sources */,
 				6EA425CF2218E74D00B074B5 /* Project.swift in Sources */,
@@ -3001,13 +3013,16 @@
 				6EA425B42218E74D00B074B5 /* OPTLogger.swift in Sources */,
 				6EA425B52218E74D00B074B5 /* OPTEventDispatcher.swift in Sources */,
 				6E8CB5A8224BF4BE00B8CB7A /* DecisionServiceTests_UserProfiles.swift in Sources */,
+				6E0AFBBD2257C49800BC7665 /* BucketTests_ExpToVariation.swift in Sources */,
 				6EF4B51C2239C7D9002DE8B6 /* BatchEventBuilderTests_Corners.swift in Sources */,
 				6EA425BE2218E74D00B074B5 /* DefaultDatafileHandler.swift in Sources */,
+				6E0AFBC32257C49800BC7665 /* BucketTests_Others.swift in Sources */,
 				6EA425C22218E74D00B074B5 /* OPTDatafileHandler.swift in Sources */,
 				0BAB9AFE22567E21000DC388 /* EventDispatcherTest.swift in Sources */,
 				6EA425BB2218E74D00B074B5 /* DefaultBucketer.swift in Sources */,
 				6EA425D52218E74D00B074B5 /* Variation.swift in Sources */,
 				6EA425C42218E74D00B074B5 /* JSONParse.swift in Sources */,
+				6E2B8D662257C612003C4799 /* DecisionListenerTests.swift in Sources */,
 				6ED1B8FA2225AA6500C4C774 /* DefaultUserProfileServiceTests.swift in Sources */,
 				6EA425AD2218E74D00B074B5 /* OptimizelyManager.swift in Sources */,
 			);
@@ -3305,7 +3320,6 @@
 				6E4DD8F321E530A900B0C2C7 /* OptimizelyResult.swift in Sources */,
 				6E4DD8A721E5260600B0C2C7 /* OPTUserProfileService.swift in Sources */,
 				6E4DD8A521E5260600B0C2C7 /* OPTEventDispatcher.swift in Sources */,
-				C79F9D862251F58F002B0BC9 /* DecisionListenerTests.swift in Sources */,
 				6E4DD8BD21E5261500B0C2C7 /* TrafficAllocation.swift in Sources */,
 				0B7B18882232DB8300A1F85D /* DataStoreMemory.swift in Sources */,
 				6EA4265122191EEC00B074B5 /* Array+Extension.swift in Sources */,

@@ -410,7 +410,16 @@ open class OptimizelyManager: NSObject {
         // fix DecisionService to throw error
         let pair = decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes ?? OptimizelyAttributes())
         
+        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.isFeatureEnabled, userId: userId, attributes: attributes)
+        
+        var decisionInfo = Dictionary<String,Any>()
+        decisionInfo[Constants.DecisionInfoKeys.feature] = featureKey
+        decisionInfo[Constants.DecisionInfoKeys.source] = Constants.DecisionSource.Rollout
+        decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = false
+
         guard let variation = pair?.variation else {
+            args.append(decisionInfo)
+            self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
             throw OptimizelyError.variationUnknown
         }
         
@@ -418,6 +427,10 @@ open class OptimizelyManager: NSObject {
     
         // we came from an experiment if experiment is not nil
         if let experiment = pair?.experiment {
+            
+            decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = experiment.key
+            decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = variation.key
+            
         // TODO: fix to throw errors
             guard let body = BatchEventBuilder.createImpressionEvent(config: config,
                                                                  decisionService: decisionService,
@@ -445,6 +458,11 @@ open class OptimizelyManager: NSObject {
             }
             self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
         }
+
+        decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
+        decisionInfo[Constants.DecisionInfoKeys.source] = (pair?.experiment != nil ? Constants.DecisionSource.Experiment : Constants.DecisionSource.Rollout)
+        args.append(decisionInfo)
+        self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
         
         return featureEnabled
     }

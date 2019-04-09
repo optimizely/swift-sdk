@@ -270,7 +270,6 @@ open class OptimizelyManager: NSObject {
         
         // TODO: fix to throw errors
         guard let body = BatchEventBuilder.createImpressionEvent(config: config,
-                                                                 decisionService: decisionService,
                                                                  experiment: experiment,
                                                                  varionation: variation,
                                                                  userId: userId,
@@ -433,7 +432,6 @@ open class OptimizelyManager: NSObject {
             
         // TODO: fix to throw errors
             guard let body = BatchEventBuilder.createImpressionEvent(config: config,
-                                                                 decisionService: decisionService,
                                                                  experiment: experiment,
                                                                  varionation: variation,
                                                                  userId: userId,
@@ -658,7 +656,6 @@ open class OptimizelyManager: NSObject {
         
         // TODO: fix to throw errors
         guard let body = BatchEventBuilder.createConversionEvent(config: config,
-                                                                 decisionService: decisionService,
                                                                  eventKey:eventKey,
                                                                  userId:userId,
                                                                  attributes:attributes,

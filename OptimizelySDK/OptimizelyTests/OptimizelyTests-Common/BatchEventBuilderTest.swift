@@ -14,7 +14,7 @@ class BatchEventBuilderTest: XCTestCase {
     let featureExperimentKey = "feature_targeted_exp"
     let eventWithNoExperimentKey = "unused_event"
     let userId = "userId"
-    var optimizely:OptimizelyManager?
+    var optimizely: OptimizelyManager?
     
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -36,7 +36,7 @@ class BatchEventBuilderTest: XCTestCase {
     }
 
     func testConversionEventWithNoExperiment() {
-        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!, decisionService: (optimizely?.decisionService)!, eventKey: eventWithNoExperimentKey, userId: userId, attributes: ["anyattribute":"value", "broswer_type":"firefox"], eventTags: nil)
+        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!,  eventKey: eventWithNoExperimentKey, userId: userId, attributes: ["anyattribute":"value", "broswer_type":"firefox"], eventTags: nil)
         
         XCTAssertNotNil(conversion)
         
@@ -52,7 +52,7 @@ class BatchEventBuilderTest: XCTestCase {
         let experiment = optimizely?.config?.project.experiments.filter({$0.key == featureExperimentKey}).first
         let variation = experiment?.variations[0]
         
-        let impression = BatchEventBuilder.createImpressionEvent(config: (optimizely?.config)!, decisionService: (optimizely?.decisionService)!, experiment: experiment!, varionation: variation!, userId: userId, attributes: ["customattr": "yes" ])
+        let impression = BatchEventBuilder.createImpressionEvent(config: (optimizely?.config)!, experiment: experiment!, varionation: variation!, userId: userId, attributes: ["customattr": "yes" ])
         
         XCTAssertNotNil(impression)
         let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: impression!)

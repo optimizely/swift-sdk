@@ -28,6 +28,16 @@ struct BatchEvent: Codable, Equatable {
         case anonymizeIP = "anonymize_ip"
         case enrichDecisions = "enrich_decisions"
     }
+    
+    func getEventAttribute(key: String) -> EventAttribute? {
+        for visitor in visitors {
+            if let attribute = visitor.attributes.filter({ $0.key == key }).first {
+                return attribute
+            }
+        }
+        
+        return nil
+    }
 }
 
 struct Visitor: Codable, Equatable {
@@ -99,7 +109,7 @@ struct DispatchEvent: Codable, Equatable {
          key: String,
          entityID: String,
          uuid: String,
-         tags: Dictionary<String,AttributeValue>? = [:],
+         tags: [String: AttributeValue]? = [:],
          value: AttributeValue? = nil,
          revenue: AttributeValue? = nil)
     {

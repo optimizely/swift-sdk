@@ -42,6 +42,10 @@ class DecisionListenerTests: XCTestCase {
         try! self.optimizely.initializeSDK(datafile: datafile)
     }
     
+    override func tearDown() {
+        self.optimizely.notificationCenter.clearAllNotificationListeners()
+    }
+    
     func testDecisionListenerForGetEnabledFeatures() {
     
         let tmpDatafile = OTUtils.loadJSONDatafile("api_datafile")

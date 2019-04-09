@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B8FB365225BE7A30013715B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8FB364225BE7A30013715B /* AppDelegate.swift */; };
+		0B8FB367225BE7A30013715B /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8FB366225BE7A30013715B /* VariationViewController.swift */; };
+		0B8FB369225BE7A60013715B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B8FB368225BE7A60013715B /* Assets.xcassets */; };
+		0B8FB36C225BE7A60013715B /* macMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B8FB36A225BE7A60013715B /* macMain.storyboard */; };
+		0B8FB378225BE7A60013715B /* DemoSwiftMacTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8FB377225BE7A60013715B /* DemoSwiftMacTests.swift */; };
+		0B8FB383225BE7A60013715B /* DemoSwiftMacUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8FB382225BE7A60013715B /* DemoSwiftMacUITests.swift */; };
+		0B8FB3AE225BE82F0013715B /* OptimizelySwiftSDK_mac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8FB3A8225BE7A60013715B /* OptimizelySwiftSDK_mac.framework */; };
+		0B8FB3AF225BE82F0013715B /* OptimizelySwiftSDK_mac.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8FB3A8225BE7A60013715B /* OptimizelySwiftSDK_mac.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2330F864C8154595434F8799 /* libPods-DemoSwifttvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA2E0408D86A53942A6E2145 /* libPods-DemoSwifttvOS.a */; };
 		25C6F3B621C95D1700C2EBDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE21E55313B00931399 /* AppDelegate.swift */; };
 		25C6F3B721C95D1800C2EBDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE21E55313B00931399 /* AppDelegate.swift */; };
@@ -18,10 +26,10 @@
 		25C6F3BD21C95D2100C2EBDD /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE51E55313B00931399 /* VariationViewController.swift */; };
 		25C6F3BF21C95D4800C2EBDD /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA299EDD1E55312200931399 /* iOSMain.storyboard */; };
 		3480ABB656D79B1C566F6E18 /* Pods_DemoSwiftiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC1D11D1794467F59480327F /* Pods_DemoSwiftiOS.framework */; };
-		6E4DD95F21E679D500B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95821E679B900B0C2C7 /* OptimizelySwiftSDK.framework */; };
-		6E4DD96021E679D500B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95821E679B900B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E4DD96721E67A3A00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95A21E679B900B0C2C7 /* OptimizelySwiftSDK.framework */; };
-		6E4DD96821E67A3A00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95A21E679B900B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E4DD95F21E679D500B0C2C7 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95821E679B900B0C2C7 /* Optimizely.framework */; };
+		6E4DD96021E679D500B0C2C7 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95821E679B900B0C2C7 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E4DD96721E67A3A00B0C2C7 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95A21E679B900B0C2C7 /* Optimizely.framework */; };
+		6E4DD96821E67A3A00B0C2C7 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95A21E679B900B0C2C7 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E96811E21EE9552009B7FEC /* CustomNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E96811B21EE9552009B7FEC /* CustomNotificationCenter.swift */; };
 		6E96811F21EE9552009B7FEC /* CustomNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E96811B21EE9552009B7FEC /* CustomNotificationCenter.swift */; };
 		6E96819921EEA391009B7FEC /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E96819221EEA391009B7FEC /* Roboto-Medium.ttf */; };
@@ -36,6 +44,97 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0B8FB374225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EA5246B51DC7186800AF6685 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0B8FB361225BE7A30013715B;
+			remoteInfo = DemoSwiftMac;
+		};
+		0B8FB37F225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EA5246B51DC7186800AF6685 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0B8FB361225BE7A30013715B;
+			remoteInfo = DemoSwiftMac;
+		};
+		0B8FB397225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA4256A2218E60A00B074B5;
+			remoteInfo = "OptimizelyTests-Common-iOS";
+		};
+		0B8FB399225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E636B8C2236C91F00AF3CEF;
+			remoteInfo = "OptimizelyTests-APIs-iOS";
+		};
+		0B8FB39B225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA425792218E61E00B074B5;
+			remoteInfo = "OptimizelyTests-DataModel-iOS";
+		};
+		0B8FB39D225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA4265B2219242100B074B5;
+			remoteInfo = "OptimizelyTests-Others-iOS";
+		};
+		0B8FB39F225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E636B9B2236C96700AF3CEF;
+			remoteInfo = "OptimizelyTests-Legacy-iOS";
+		};
+		0B8FB3A1225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA425082218E41500B074B5;
+			remoteInfo = "OptimizelyTests-Common-tvOS";
+		};
+		0B8FB3A3225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA4255B2218E58400B074B5;
+			remoteInfo = "OptimizelyTests-DataModel-tvOS";
+		};
+		0B8FB3A5225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA4266A2219243D00B074B5;
+			remoteInfo = "OptimizelyTests-Others-tvOS";
+		};
+		0B8FB3A7225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0B8FB30D225BC53D0013715B;
+			remoteInfo = "OptimizelySwiftSDK-mac";
+		};
+		0B8FB3A9225BE7A60013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0B8FB315225BC53D0013715B;
+			remoteInfo = "OptimizelySwiftSDK-macTests";
+		};
+		0B8FB3B0225BE82F0013715B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0B8FB30C225BC53D0013715B;
+			remoteInfo = "OptimizelySwiftSDK-mac";
+		};
 		6E4DD95721E679B900B0C2C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
@@ -81,13 +180,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		0B8FB3B2225BE82F0013715B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0B8FB3AF225BE82F0013715B /* OptimizelySwiftSDK_mac.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E4DD93321E66FB400B0C2C7 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6E4DD96021E679D500B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */,
+				6E4DD96021E679D500B0C2C7 /* Optimizely.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,7 +208,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6E4DD96821E67A3A00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */,
+				6E4DD96821E67A3A00B0C2C7 /* Optimizely.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -106,6 +216,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0B8FB362225BE7A30013715B /* DemoSwiftMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwiftMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B8FB364225BE7A30013715B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0B8FB366225BE7A30013715B /* VariationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariationViewController.swift; sourceTree = "<group>"; };
+		0B8FB368225BE7A60013715B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0B8FB36B225BE7A60013715B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/macMain.storyboard; sourceTree = "<group>"; };
+		0B8FB36D225BE7A60013715B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0B8FB36E225BE7A60013715B /* DemoSwiftMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DemoSwiftMac.entitlements; sourceTree = "<group>"; };
+		0B8FB373225BE7A60013715B /* DemoSwiftMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoSwiftMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B8FB377225BE7A60013715B /* DemoSwiftMacTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSwiftMacTests.swift; sourceTree = "<group>"; };
+		0B8FB379225BE7A60013715B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0B8FB37E225BE7A60013715B /* DemoSwiftMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoSwiftMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B8FB382225BE7A60013715B /* DemoSwiftMacUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSwiftMacUITests.swift; sourceTree = "<group>"; };
+		0B8FB384225BE7A60013715B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		252D7DED21C8800800134A7A /* DemoSwiftiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwiftiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwifttvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySDK/OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
@@ -133,12 +256,34 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0B8FB35F225BE7A30013715B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8FB3AE225BE82F0013715B /* OptimizelySwiftSDK_mac.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0B8FB370225BE7A60013715B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0B8FB37B225BE7A60013715B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		252D7DEA21C8800800134A7A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				3480ABB656D79B1C566F6E18 /* Pods_DemoSwiftiOS.framework in Frameworks */,
-				6E4DD95F21E679D500B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */,
+				6E4DD95F21E679D500B0C2C7 /* Optimizely.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,7 +291,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E4DD96721E67A3A00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */,
+				6E4DD96721E67A3A00B0C2C7 /* Optimizely.framework in Frameworks */,
 				2330F864C8154595434F8799 /* libPods-DemoSwifttvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -154,6 +299,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0B8FB363225BE7A30013715B /* DemoSwiftMac */ = {
+			isa = PBXGroup;
+			children = (
+				0B8FB364225BE7A30013715B /* AppDelegate.swift */,
+				0B8FB366225BE7A30013715B /* VariationViewController.swift */,
+				0B8FB368225BE7A60013715B /* Assets.xcassets */,
+				0B8FB36A225BE7A60013715B /* macMain.storyboard */,
+				0B8FB36D225BE7A60013715B /* Info.plist */,
+				0B8FB36E225BE7A60013715B /* DemoSwiftMac.entitlements */,
+			);
+			path = DemoSwiftMac;
+			sourceTree = "<group>";
+		};
+		0B8FB376225BE7A60013715B /* DemoSwiftMacTests */ = {
+			isa = PBXGroup;
+			children = (
+				0B8FB377225BE7A60013715B /* DemoSwiftMacTests.swift */,
+				0B8FB379225BE7A60013715B /* Info.plist */,
+			);
+			path = DemoSwiftMacTests;
+			sourceTree = "<group>";
+		};
+		0B8FB381225BE7A60013715B /* DemoSwiftMacUITests */ = {
+			isa = PBXGroup;
+			children = (
+				0B8FB382225BE7A60013715B /* DemoSwiftMacUITests.swift */,
+				0B8FB384225BE7A60013715B /* Info.plist */,
+			);
+			path = DemoSwiftMacUITests;
+			sourceTree = "<group>";
+		};
 		5D9DAC78D3124F03BF2A7CC8 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -168,10 +344,20 @@
 		6E4DD95121E679B900B0C2C7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6E4DD95821E679B900B0C2C7 /* OptimizelySwiftSDK.framework */,
-				6E4DD95A21E679B900B0C2C7 /* OptimizelySwiftSDK.framework */,
-				6E4DD95C21E679B900B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */,
-				6E4DD95E21E679B900B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */,
+				6E4DD95821E679B900B0C2C7 /* Optimizely.framework */,
+				6E4DD95A21E679B900B0C2C7 /* Optimizely.framework */,
+				6E4DD95C21E679B900B0C2C7 /* OptimizelyTests-iOS.xctest */,
+				0B8FB398225BE7A60013715B /* OptimizelyTests-Common-iOS.xctest */,
+				0B8FB39A225BE7A60013715B /* OptimizelyTests-APIs-iOS.xctest */,
+				0B8FB39C225BE7A60013715B /* OptimizelyTests-DataModel-iOS.xctest */,
+				0B8FB39E225BE7A60013715B /* OptimizelyTests-Others-iOS.xctest */,
+				0B8FB3A0225BE7A60013715B /* OptimizelyTests-Legacy-iOS.xctest */,
+				6E4DD95E21E679B900B0C2C7 /* OptimizelyTests-tvOS.xctest */,
+				0B8FB3A2225BE7A60013715B /* OptimizelyTests-Common-tvOS.xctest */,
+				0B8FB3A4225BE7A60013715B /* OptimizelyTests-DataModel-tvOS.xctest */,
+				0B8FB3A6225BE7A60013715B /* OptimizelyTests-Others-tvOS.xctest */,
+				0B8FB3A8225BE7A60013715B /* OptimizelySwiftSDK_mac.framework */,
+				0B8FB3AA225BE7A60013715B /* OptimizelySwiftSDK-macTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -241,6 +427,9 @@
 				EA5246BF1DC7186800AF6685 /* DemoSwiftiOS */,
 				EA299ED51E5530A400931399 /* DemoSwifttvOS */,
 				6E96818C21EEA391009B7FEC /* SharedResources */,
+				0B8FB363225BE7A30013715B /* DemoSwiftMac */,
+				0B8FB376225BE7A60013715B /* DemoSwiftMacTests */,
+				0B8FB381225BE7A60013715B /* DemoSwiftMacUITests */,
 				EA5246BE1DC7186800AF6685 /* Products */,
 				EA5248C31DC72E8300AF6685 /* Frameworks */,
 				5D9DAC78D3124F03BF2A7CC8 /* Pods */,
@@ -252,6 +441,9 @@
 			children = (
 				252D7DED21C8800800134A7A /* DemoSwiftiOS.app */,
 				252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */,
+				0B8FB362225BE7A30013715B /* DemoSwiftMac.app */,
+				0B8FB373225BE7A60013715B /* DemoSwiftMacTests.xctest */,
+				0B8FB37E225BE7A60013715B /* DemoSwiftMacUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -278,6 +470,61 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0B8FB361225BE7A30013715B /* DemoSwiftMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0B8FB3AB225BE7A60013715B /* Build configuration list for PBXNativeTarget "DemoSwiftMac" */;
+			buildPhases = (
+				0B8FB35E225BE7A30013715B /* Sources */,
+				0B8FB35F225BE7A30013715B /* Frameworks */,
+				0B8FB360225BE7A30013715B /* Resources */,
+				0B8FB3B2225BE82F0013715B /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0B8FB3B1225BE82F0013715B /* PBXTargetDependency */,
+			);
+			name = DemoSwiftMac;
+			productName = DemoSwiftMac;
+			productReference = 0B8FB362225BE7A30013715B /* DemoSwiftMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0B8FB372225BE7A60013715B /* DemoSwiftMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0B8FB3AC225BE7A60013715B /* Build configuration list for PBXNativeTarget "DemoSwiftMacTests" */;
+			buildPhases = (
+				0B8FB36F225BE7A60013715B /* Sources */,
+				0B8FB370225BE7A60013715B /* Frameworks */,
+				0B8FB371225BE7A60013715B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0B8FB375225BE7A60013715B /* PBXTargetDependency */,
+			);
+			name = DemoSwiftMacTests;
+			productName = DemoSwiftMacTests;
+			productReference = 0B8FB373225BE7A60013715B /* DemoSwiftMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0B8FB37D225BE7A60013715B /* DemoSwiftMacUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0B8FB3AD225BE7A60013715B /* Build configuration list for PBXNativeTarget "DemoSwiftMacUITests" */;
+			buildPhases = (
+				0B8FB37A225BE7A60013715B /* Sources */,
+				0B8FB37B225BE7A60013715B /* Frameworks */,
+				0B8FB37C225BE7A60013715B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0B8FB380225BE7A60013715B /* PBXTargetDependency */,
+			);
+			name = DemoSwiftMacUITests;
+			productName = DemoSwiftMacUITests;
+			productReference = 0B8FB37E225BE7A60013715B /* DemoSwiftMacUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		252D7DEC21C8800800134A7A /* DemoSwiftiOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 252D7E0721C8800900134A7A /* Build configuration list for PBXNativeTarget "DemoSwiftiOS" */;
@@ -329,6 +576,20 @@
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
+					0B8FB361225BE7A30013715B = {
+						CreatedOnToolsVersion = 10.1;
+						ProvisioningStyle = Automatic;
+					};
+					0B8FB372225BE7A60013715B = {
+						CreatedOnToolsVersion = 10.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 0B8FB361225BE7A30013715B;
+					};
+					0B8FB37D225BE7A60013715B = {
+						CreatedOnToolsVersion = 10.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 0B8FB361225BE7A30013715B;
+					};
 					252D7DEC21C8800800134A7A = {
 						CreatedOnToolsVersion = 10.1;
 						ProvisioningStyle = Automatic;
@@ -370,42 +631,138 @@
 			targets = (
 				252D7DEC21C8800800134A7A /* DemoSwiftiOS */,
 				252D7E1021C8804E00134A7A /* DemoSwifttvOS */,
+				0B8FB361225BE7A30013715B /* DemoSwiftMac */,
+				0B8FB372225BE7A60013715B /* DemoSwiftMacTests */,
+				0B8FB37D225BE7A60013715B /* DemoSwiftMacUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		6E4DD95821E679B900B0C2C7 /* OptimizelySwiftSDK.framework */ = {
+		0B8FB398225BE7A60013715B /* OptimizelyTests-Common-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Common-iOS.xctest";
+			remoteRef = 0B8FB397225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8FB39A225BE7A60013715B /* OptimizelyTests-APIs-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-APIs-iOS.xctest";
+			remoteRef = 0B8FB399225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8FB39C225BE7A60013715B /* OptimizelyTests-DataModel-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-DataModel-iOS.xctest";
+			remoteRef = 0B8FB39B225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8FB39E225BE7A60013715B /* OptimizelyTests-Others-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Others-iOS.xctest";
+			remoteRef = 0B8FB39D225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8FB3A0225BE7A60013715B /* OptimizelyTests-Legacy-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Legacy-iOS.xctest";
+			remoteRef = 0B8FB39F225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8FB3A2225BE7A60013715B /* OptimizelyTests-Common-tvOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Common-tvOS.xctest";
+			remoteRef = 0B8FB3A1225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8FB3A4225BE7A60013715B /* OptimizelyTests-DataModel-tvOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-DataModel-tvOS.xctest";
+			remoteRef = 0B8FB3A3225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8FB3A6225BE7A60013715B /* OptimizelyTests-Others-tvOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Others-tvOS.xctest";
+			remoteRef = 0B8FB3A5225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8FB3A8225BE7A60013715B /* OptimizelySwiftSDK_mac.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = OptimizelySwiftSDK.framework;
+			path = OptimizelySwiftSDK_mac.framework;
+			remoteRef = 0B8FB3A7225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0B8FB3AA225BE7A60013715B /* OptimizelySwiftSDK-macTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelySwiftSDK-macTests.xctest";
+			remoteRef = 0B8FB3A9225BE7A60013715B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E4DD95821E679B900B0C2C7 /* Optimizely.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Optimizely.framework;
 			remoteRef = 6E4DD95721E679B900B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD95A21E679B900B0C2C7 /* OptimizelySwiftSDK.framework */ = {
+		6E4DD95A21E679B900B0C2C7 /* Optimizely.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = OptimizelySwiftSDK.framework;
+			path = Optimizely.framework;
 			remoteRef = 6E4DD95921E679B900B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD95C21E679B900B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */ = {
+		6E4DD95C21E679B900B0C2C7 /* OptimizelyTests-iOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = "OptimizelySwiftSDK-iOSTests.xctest";
+			path = "OptimizelyTests-iOS.xctest";
 			remoteRef = 6E4DD95B21E679B900B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD95E21E679B900B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */ = {
+		6E4DD95E21E679B900B0C2C7 /* OptimizelyTests-tvOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = "OptimizelySwiftSDK-tvOSTests.xctest";
+			path = "OptimizelyTests-tvOS.xctest";
 			remoteRef = 6E4DD95D21E679B900B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0B8FB360225BE7A30013715B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8FB369225BE7A60013715B /* Assets.xcassets in Resources */,
+				0B8FB36C225BE7A60013715B /* macMain.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0B8FB371225BE7A60013715B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0B8FB37C225BE7A60013715B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		252D7DEB21C8800800134A7A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -508,6 +865,31 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0B8FB35E225BE7A30013715B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8FB367225BE7A30013715B /* VariationViewController.swift in Sources */,
+				0B8FB365225BE7A30013715B /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0B8FB36F225BE7A60013715B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8FB378225BE7A60013715B /* DemoSwiftMacTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0B8FB37A225BE7A60013715B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8FB383225BE7A60013715B /* DemoSwiftMacUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		252D7DE921C8800800134A7A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -535,6 +917,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0B8FB375225BE7A60013715B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0B8FB361225BE7A30013715B /* DemoSwiftMac */;
+			targetProxy = 0B8FB374225BE7A60013715B /* PBXContainerItemProxy */;
+		};
+		0B8FB380225BE7A60013715B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0B8FB361225BE7A30013715B /* DemoSwiftMac */;
+			targetProxy = 0B8FB37F225BE7A60013715B /* PBXContainerItemProxy */;
+		};
+		0B8FB3B1225BE82F0013715B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "OptimizelySwiftSDK-mac";
+			targetProxy = 0B8FB3B0225BE82F0013715B /* PBXContainerItemProxy */;
+		};
 		6E4DD96221E679D500B0C2C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = OptimizelySwiftSDKiOS;
@@ -548,6 +945,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		0B8FB36A225BE7A60013715B /* macMain.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0B8FB36B225BE7A60013715B /* Base */,
+			);
+			name = macMain.storyboard;
+			sourceTree = "<group>";
+		};
 		6EF2CF1B21E4158A00A5D78D /* tvOSMain.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -567,6 +972,173 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0B8FB385225BE7A60013715B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DemoSwiftMac/DemoSwiftMac.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = DemoSwiftMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		0B8FB386225BE7A60013715B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DemoSwiftMac/DemoSwiftMac.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = DemoSwiftMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
+		0B8FB387225BE7A60013715B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = DemoSwiftMacTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 4.2;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DemoSwiftMac.app/Contents/MacOS/DemoSwiftMac";
+			};
+			name = Debug;
+		};
+		0B8FB388225BE7A60013715B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = DemoSwiftMacTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 4.2;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DemoSwiftMac.app/Contents/MacOS/DemoSwiftMac";
+			};
+			name = Release;
+		};
+		0B8FB389225BE7A60013715B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = DemoSwiftMacUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 4.2;
+				TEST_TARGET_NAME = DemoSwiftMac;
+			};
+			name = Debug;
+		};
+		0B8FB38A225BE7A60013715B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = DemoSwiftMacUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 4.2;
+				TEST_TARGET_NAME = DemoSwiftMac;
+			};
+			name = Release;
+		};
 		252D7E0821C8800900134A7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4A4D2A6EBCC93081556F7A5 /* Pods-DemoSwiftiOS.debug.xcconfig */;
@@ -798,6 +1370,33 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0B8FB3AB225BE7A60013715B /* Build configuration list for PBXNativeTarget "DemoSwiftMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B8FB385225BE7A60013715B /* Debug */,
+				0B8FB386225BE7A60013715B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0B8FB3AC225BE7A60013715B /* Build configuration list for PBXNativeTarget "DemoSwiftMacTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B8FB387225BE7A60013715B /* Debug */,
+				0B8FB388225BE7A60013715B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0B8FB3AD225BE7A60013715B /* Build configuration list for PBXNativeTarget "DemoSwiftMacUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B8FB389225BE7A60013715B /* Debug */,
+				0B8FB38A225BE7A60013715B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		252D7E0721C8800900134A7A /* Build configuration list for PBXNativeTarget "DemoSwiftiOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

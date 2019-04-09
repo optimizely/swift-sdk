@@ -46,7 +46,7 @@ class OptimizelyManagerTests_Valid: XCTestCase {
         
         self.datafile = OTUtils.loadJSONDatafile("api_datafile")
         
-        self.optimizely = OptimizelyManager(sdkKey: "12345",
+        self.optimizely = OptimizelyManager(sdkKey: "123456",
                                             userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.initializeSDK(datafile: datafile)
     }

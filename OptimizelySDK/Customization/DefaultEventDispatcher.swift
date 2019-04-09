@@ -221,14 +221,14 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func setTimer() {
-        if let _ = timer.property {
-            return // already set....
-        }
-        
         if timerInterval == 0 { return }
         
         if #available(iOS 10.0, tvOS 10.0, *) {
             DispatchQueue.main.async {
+                if let _ = self.timer.property {
+                    return // already set....
+                }
+                
                 self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
                     if self.dataStore.count == 0 {
                         self.timer.performAtomic() { (timer) in

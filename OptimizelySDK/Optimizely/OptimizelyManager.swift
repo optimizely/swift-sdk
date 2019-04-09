@@ -418,6 +418,8 @@ open class OptimizelyManager: NSObject {
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = false
 
         guard let variation = pair?.variation else {
+            // this looks incorrect.  This is failing decision listener tests on mac.
+            // it should be testing if experiment is nil which means it comes from a rollout.
             args.append(decisionInfo)
             self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
             throw OptimizelyError.variationUnknown

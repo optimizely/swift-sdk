@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import Optimizely
+import OptimizelySwiftSDK_mac
 class OptimizelySDKTests: XCTestCase {
     
     override func setUp() {

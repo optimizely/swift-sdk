@@ -7,7 +7,12 @@
 //
 
 import XCTest
+#if os(macOS)
 import OptimizelySwiftSDK_mac
+#else
+import Optimizely
+#endif
+
 class OptimizelySDKTests: XCTestCase {
     
     override func setUp() {

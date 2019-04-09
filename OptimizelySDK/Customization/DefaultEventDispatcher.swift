@@ -222,32 +222,29 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func setTimer() {
-        if let _ = timer.property {
-            return // already set....
+        // timer is activated only for iOS10+ and non-zero interval value
+        guard #available(iOS 10.0, tvOS 10.0, *), timerInterval > 0 else {
+            flushEvents()
+            return
         }
         
-        if timerInterval == 0 { return }
+        guard self.timer.property == nil else { return }
         
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            DispatchQueue.main.async {
-                // should check here again
-                guard self.timer.property == nil else { return }
-                
-                self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
-                    if self.dataStore.count == 0 {
-                        self.timer.performAtomic() { (timer) in
-                            timer.invalidate()
-                        }
-                        self.timer.property = nil
+        DispatchQueue.main.async {
+            // should check here again
+            guard self.timer.property == nil else { return }
+            
+            self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
+                if self.dataStore.count == 0 {
+                    self.timer.performAtomic() { (timer) in
+                        timer.invalidate()
                     }
-                    else {
-                        self.flushEvents()
-                    }
+                    self.timer.property = nil
+                }
+                else {
+                    self.flushEvents()
                 }
             }
-        } else {
-            // Fallback on earlier versions
-            flushEvents()
         }
     }
 }

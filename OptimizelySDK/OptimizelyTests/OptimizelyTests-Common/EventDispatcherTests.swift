@@ -1,5 +1,5 @@
 //
-//  EventDispatcherTest.swift
+//  EventDispatcherTests.swift
 //  OptimizelySwiftSDK
 //
 //  Created by Thomas Zurkan on 3/19/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class EventDispatcherTest: XCTestCase {
+class EventDispatcherTests: XCTestCase {
     
     var eventDispatcher:DefaultEventDispatcher?
 

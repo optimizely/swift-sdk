@@ -326,7 +326,7 @@ open class OptimizelyManager: NSObject {
     
         var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.experiment, userId: userId, attributes: attributes)
 
-        var decisionInfo = Dictionary<String,Any>()
+        var decisionInfo = [String:Any]()
         decisionInfo[Constants.NotificationKeys.experiment] = nil
         decisionInfo[Constants.NotificationKeys.variation] = nil
         
@@ -412,7 +412,7 @@ open class OptimizelyManager: NSObject {
         
         var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.isFeatureEnabled, userId: userId, attributes: attributes)
         
-        var decisionInfo = Dictionary<String,Any>()
+        var decisionInfo = [String:Any]()
         decisionInfo[Constants.DecisionInfoKeys.feature] = featureKey
         decisionInfo[Constants.DecisionInfoKeys.source] = Constants.DecisionSource.Rollout
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = false
@@ -563,7 +563,7 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variableUnknown
         }
         
-        var decisionInfo = Dictionary<String,Any>()
+        var decisionInfo = [String:Any]()
         decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = nil
         decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = nil
         
@@ -571,18 +571,18 @@ open class OptimizelyManager: NSObject {
         var featureValue = variable.defaultValue ?? ""
         
         var _attributes = OptimizelyAttributes()
-        if attributes != nil {
-            _attributes = attributes!
+        if let attributes = attributes {
+            _attributes = attributes
         }
         let decision = self.decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: _attributes)
-        if decision != nil {
-            if decision?.experiment != nil {
-                decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = decision?.experiment?.key
-                decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = decision?.variation?.key
+        if let decision = decision {
+            if let experiment = decision.experiment {
+                decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = experiment.key
+                decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = decision.variation?.key
             }
-            if let featureVariableUsage = decision?.variation?.variables?.filter({$0.id == variable.id}).first {
-                if let featureEnabled = decision?.variation?.featureEnabled, featureEnabled {
-                    featureValue = featureVariableUsage.value
+            if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
+                if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
+                    featureValue = featureVariable.value
                 } else {
                     // add standard log message here
                 }

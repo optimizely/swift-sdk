@@ -81,9 +81,8 @@ extension EventDispatcherTests_Batch {
     }
 
     func testBatchingEventsWhenProjectIdsNotEqual() {
-        let be1 = batchEventA
-        var be2 = batchEventA
-        be2.projectID = "99999"
+        let be1 = makeTestBatchEvent(projectId: nil, visitor: visitorA)
+        let be2 = makeTestBatchEvent(projectId: "99999", visitor: visitorA)
 
         let events: [EventForDispatch] = [
             makeEventForDispatch(url: kUrlA, event: be1),
@@ -494,33 +493,30 @@ extension EventDispatcherTests_Batch {
         return EventForDispatch(url: URL(string: url), body: data)
     }
     
-    var emptyBatchEvent: BatchEvent {
+    func makeTestBatchEvent(projectId: String?=nil, visitor: Visitor?=nil) -> BatchEvent {
+        let testProjectId = projectId ?? kProjectId
+        let testVisitor = visitor ?? visitorA
+        
         return BatchEvent(revision: kRevision,
                           accountID: kAccountId,
                           clientVersion: kClientVersion,
-                          visitors: [],
-                          projectID: kProjectId,
+                          visitors: [testVisitor],
+                          projectID: testProjectId,
                           clientName: kClientName,
                           anonymizeIP: kAnonymizeIP,
                           enrichDecisions: kEnrichDecision)
     }
     
     var batchEventA: BatchEvent {
-        var event = emptyBatchEvent
-        event.visitors = [visitorA]
-        return event
+        return makeTestBatchEvent(visitor: visitorA)
     }
     
     var batchEventB: BatchEvent {
-        var event = emptyBatchEvent
-        event.visitors = [visitorB]
-        return event
+        return makeTestBatchEvent(visitor: visitorB)
     }
 
     var batchEventC: BatchEvent {
-        var event = emptyBatchEvent
-        event.visitors = [visitorC]
-        return event
+        return makeTestBatchEvent(visitor: visitorC)
     }
 
     var visitorA: Visitor {

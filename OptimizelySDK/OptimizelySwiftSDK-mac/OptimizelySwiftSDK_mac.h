@@ -14,8 +14,14 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
-#if os(macOS)
+
+#ifdef __APPLE__
+#ifdef TARGET_OS_IPHONE
+// iOS
+#elif TARGET_IPHONE_SIMULATOR
+// iOS Simulator
+#elif TARGET_OS_MAC
+// Other kinds of Mac OS
 #import <Cocoa/Cocoa.h>
 //! Project version number for OptimizelySwiftSDK_mac.
 FOUNDATION_EXPORT double OptimizelySwiftSDK_macVersionNumber;
@@ -24,6 +30,9 @@ FOUNDATION_EXPORT double OptimizelySwiftSDK_macVersionNumber;
 FOUNDATION_EXPORT const unsigned char OptimizelySwiftSDK_macVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <OptimizelySwiftSDK_mac/PublicHeader.h>
+#else
+// Unsupported platform
+#endif
 #endif
 
 

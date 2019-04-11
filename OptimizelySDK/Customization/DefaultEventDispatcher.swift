@@ -22,6 +22,8 @@ public enum DataStoreType {
 
 open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     
+    public typealias DispatchCompletionHandler = (Result<Data, OptimizelyError>)->(Void)
+
     static let sharedInstance = DefaultEventDispatcher()
     
     // the max failure count.  there is no backoff timer.
@@ -193,11 +195,11 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
             self.logger?.log(level: .debug, message: response.debugDescription)
             
             if let error = error {
-                completionHandler(Result.failure(OPTEventDispatchError(description: error.localizedDescription)))
+                completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
             }
             else {
                 self.logger?.log(level: .debug, message: "Event Sent")
-                completionHandler(Result.success(event.body))
+                completionHandler(.success(event.body))
             }
         }
         

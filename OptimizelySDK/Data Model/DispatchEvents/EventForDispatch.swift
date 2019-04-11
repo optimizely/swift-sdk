@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class EventForDispatch : Equatable, Codable {
+@objc public class EventForDispatch : NSObject, Codable {
     static let eventEndpoint = "https://logx.optimizely.com/v1/events"
     
     public let url:URL

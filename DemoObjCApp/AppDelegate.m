@@ -102,11 +102,12 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
                                                              attributes:self.attributes
                                                                   error:&error];
     
+    [self.optimizely track]
     if (variationKey == nil) {
         NSLog(@"Optimizely SDK activation failed: %@", error.localizedDescription);
         self.optimizely = nil;
     }
-                              
+
 
     [self setRootViewControllerWithOtimizelyManager:self.optimizely bucketedVariation:variationKey];
 }

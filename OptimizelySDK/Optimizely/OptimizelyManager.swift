@@ -698,120 +698,85 @@ extension OptimizelyManager {
                   periodicDownloadInterval: periodicDownloadInterval?.intValue)
     }
     
-    @objc public func initializeSDK(completion: ((NSError?, Data?) -> Void)?) {
+    @objc(initializeSDKWithCompletion:)
+    public func _objcInitializeSDK(completion: ((NSError?, Data?) -> Void)?) {
         initializeSDK { result in
             switch result {
             case .failure(let error):
-                
                 completion?(self.convertErrorForObjc(error), nil)
             case .success(let data):
                 completion?(nil, data)
             }
-            
         }
     }
     
-    @objc public func initializeSDKWith(datafile: String) {
-        try? self.initializeSDK(datafile: datafile)
+    @objc(initializeSDKWithDatafile:error:)
+    public func _objcInitializeSDKWith(datafile:String) throws {
+        try self.initializeSDK(datafile: datafile)
     }
     
-    @objc public func activate(experimentKey: String,
-                               userId: String,
-                               attributes: [String: Any]?) -> String? {
-        return try? self.activate(experimentKey: experimentKey, userId: userId, attributes: attributes as OptimizelyAttributes?)
+    @objc(activateWithExperimentKey:userId:attributes:error:)
+    public func _objcActivate(experimentKey: String,
+                              userId: String,
+                              attributes: [String:Any]?) throws -> String {
+        return try self.activate(experimentKey: experimentKey, userId: userId, attributes: attributes as OptimizelyAttributes?)
     }
     
-    @objc public func getVariationKey(experimentKey: String,
-                                      userId: String,
-                                      attributes: [String: Any]?) -> String? {
-        return try? self.getVariationKey(experimentKey: experimentKey, userId: userId, attributes: attributes)
+    @objc(trackWithEventKey:userId:attributes:eventTags:error:)
+    public func _objcTrack(eventKey:String,
+                           userId: String,
+                           attributes: [String:Any]?,
+                           eventTags: [String:Any]?) throws {
+        try self.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
     }
     
-    @objc public func getVariationKey(experimentKey: String,
-                                      userId: String) -> String? {
-        return try? self.getVariationKey(experimentKey: experimentKey, userId: userId, attributes: nil)
+    @objc(getFeatureVariableBooleanWithFeatureKey:variableKey:userId:attributes:error:)
+    public func _objcGetFeatureVariableBoolean(featureKey: String,
+                                               variableKey: String,
+                                               userId: String,
+                                               attributes: [String: Any]?) throws -> NSNumber {
+        let value = try self.getFeatureVariableBoolean(featureKey: featureKey,
+                                                       variableKey: variableKey,
+                                                       userId: userId,
+                                                       attributes: attributes)
+        return NSNumber(booleanLiteral: value)
     }
     
-    @objc public func getForcedVariationWith(experimentKey:String, userId:String) -> String? {
-        return self.getForcedVariation(experimentKey: experimentKey, userId: userId)
-    }
-    
-    @objc public func setForcedVariationWith(experimentKey:String,
-                                             userId:String,
-                                             variationKey:String?) -> Bool {
-        return self.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: variationKey)
-    }
-    
-    @objc public func getFeatureVariableBooleanWith(featureKey: String,
-                                                    variableKey: String,
-                                                    userId: String,
-                                                    attributes: [String: Any]?) -> NSNumber? {
-        do {
-            let value = try self.getFeatureVariableBoolean(featureKey: featureKey,
-                                                           variableKey: variableKey,
-                                                           userId: userId,
-                                                           attributes: attributes)
-            return NSNumber(booleanLiteral: value)
-        } catch {
-            return nil
-        }
-    }
-    
-    @objc public func getFeatureVariableDoubleWith(featureKey: String,
+    @objc(getFeatureVariableDoubleWithFeatureKey:variableKey:userId:attributes:error:)
+    public func _objcGetFeatureVariableDouble(featureKey: String,
                                                    variableKey: String,
                                                    userId: String,
-                                                   attributes: [String: Any]?) -> NSNumber? {
-        do {
-            let value = try self.getFeatureVariableDouble(featureKey: featureKey,
-                                                          variableKey: variableKey,
-                                                          userId: userId,
-                                                          attributes: attributes)
-            return NSNumber(value: value)
-        } catch {
-            return nil
-        }
+                                                   attributes: [String: Any]?) throws -> NSNumber {
+        let value = try self.getFeatureVariableDouble(featureKey: featureKey,
+                                                      variableKey: variableKey,
+                                                      userId: userId,
+                                                      attributes: attributes)
+        return NSNumber(value: value)
     }
     
-    @objc public func getFeatureVariableIntegerWith(featureKey: String,
+    @objc(getFeatureVariableIntegerWithFeatureKey:variableKey:userId:attributes:error:)
+    public func _objcGetFeatureVariableInteger(featureKey: String,
                                                     variableKey: String,
                                                     userId: String,
-                                                    attributes: [String: Any]?) -> NSNumber? {
-        do {
-            let value = try self.getFeatureVariableInteger(featureKey: featureKey,
-                                                           variableKey: variableKey,
-                                                           userId: userId,
-                                                           attributes: attributes)
-            return NSNumber(integerLiteral: value)
-        } catch {
-            return nil
-        }
+                                                    attributes: [String: Any]?) throws -> NSNumber {
+        let value = try self.getFeatureVariableInteger(featureKey: featureKey,
+                                                       variableKey: variableKey,
+                                                       userId: userId,
+                                                       attributes: attributes)
+        return NSNumber(integerLiteral: value)
     }
     
-    @objc public func getFeatureVariableStringWith(featureKey: String,
+    @objc(getFeatureVariableStringWithFeatureKey:variableKey:userId:attributes:error:)
+    public func _objcGetFeatureVariableString(featureKey: String,
                                                    variableKey: String,
                                                    userId: String,
-                                                   attributes: [String: Any]?) -> String? {
-        return try? self.getFeatureVariableString(featureKey: featureKey,
+                                                   attributes: [String: Any]?) throws -> String {
+        return try self.getFeatureVariableString(featureKey: featureKey,
                                                   variableKey: variableKey,
                                                   userId: userId,
                                                   attributes: attributes)
     }
     
-    @objc public func getEnabledFeaturesWith(userId: String,
-                                             attributes: [String: Any]?) -> [String] {
-        do {
-            return try self.getEnabledFeatures(userId: userId, attributes: attributes)
-        } catch {
-            return [String]()
-        }
-    }
-    
-    @objc public func trackWith(eventKey:String,
-                                userId: String,
-                                attributes: [String: Any]?,
-                                eventTags: [String: Any]?) {
-        try? self.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
-    }
     
     // MAKR: - ObjC Errors
     

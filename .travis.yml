@@ -17,7 +17,8 @@ addons:
   srcclr: true
 script:
   - pod spec lint --quick
-  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi
+  - if [[ "$TRAVIS_BRANCH" == "master" && "PLATFORM" != "macOS" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi
+  - if [[ "$TRAVIS_BRANCH" == "master" && "PLATFORM" == "macOS" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK  > buildoutput; fi
   - more buildoutput | xcpretty
 after_success:
   - slather

@@ -232,7 +232,7 @@
 		0B83CEC3225C3034001B4686 /* NotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B626D602242B98D00E4F7DA /* NotificationCenterTests.swift */; };
 		0B83CEC5225C303F001B4686 /* DefaultUserProfileServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED1B8F92225AA6500C4C774 /* DefaultUserProfileServiceTests.swift */; };
 		0B8F537E223FFB0500C56082 /* OptimizelyManagerTests_Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8F537B223FFB0500C56082 /* OptimizelyManagerTests_Group.swift */; };
-		0B8FB316225BC53D0013715B /* OptimizelySwiftSDK_mac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8FB30D225BC53D0013715B /* OptimizelySwiftSDK_mac.framework */; };
+		0B8FB316225BC53D0013715B /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8FB30D225BC53D0013715B /* Optimizely.framework */; };
 		0B8FB31B225BC53D0013715B /* OptimizelySwiftSDK_macTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8FB31A225BC53D0013715B /* OptimizelySwiftSDK_macTests.swift */; };
 		0B8FB31D225BC53D0013715B /* OptimizelySwiftSDK_mac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B8FB30F225BC53D0013715B /* OptimizelySwiftSDK_mac.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0B8FB324225BE2320013715B /* OptimizelyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD8F021E530A900B0C2C7 /* OptimizelyManager.swift */; };
@@ -1408,7 +1408,7 @@
 		0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDatafileHandler.swift; sourceTree = "<group>"; };
 		0B894EBB224163FF004A2ADB /* EventDispatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDispatcherTest.swift; sourceTree = "<group>"; };
 		0B8F537B223FFB0500C56082 /* OptimizelyManagerTests_Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyManagerTests_Group.swift; sourceTree = "<group>"; };
-		0B8FB30D225BC53D0013715B /* OptimizelySwiftSDK_mac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OptimizelySwiftSDK_mac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B8FB30D225BC53D0013715B /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B8FB30F225BC53D0013715B /* OptimizelySwiftSDK_mac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptimizelySwiftSDK_mac.h; sourceTree = "<group>"; };
 		0B8FB310225BC53D0013715B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B8FB315225BC53D0013715B /* OptimizelySwiftSDK-macTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelySwiftSDK-macTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1538,7 +1538,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B8FB316225BC53D0013715B /* OptimizelySwiftSDK_mac.framework in Frameworks */,
+				0B8FB316225BC53D0013715B /* Optimizely.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1783,7 +1783,7 @@
 				6EA4266A2219243D00B074B5 /* OptimizelyTests-Others-tvOS.xctest */,
 				6E636B8C2236C91F00AF3CEF /* OptimizelyTests-APIs-iOS.xctest */,
 				6E636B9B2236C96700AF3CEF /* OptimizelyTests-Legacy-iOS.xctest */,
-				0B8FB30D225BC53D0013715B /* OptimizelySwiftSDK_mac.framework */,
+				0B8FB30D225BC53D0013715B /* Optimizely.framework */,
 				0B8FB315225BC53D0013715B /* OptimizelySwiftSDK-macTests.xctest */,
 			);
 			name = Products;
@@ -2094,7 +2094,7 @@
 			);
 			name = "OptimizelySwiftSDK-mac";
 			productName = "OptimizelySwiftSDK-mac";
-			productReference = 0B8FB30D225BC53D0013715B /* OptimizelySwiftSDK_mac.framework */;
+			productReference = 0B8FB30D225BC53D0013715B /* Optimizely.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		0B8FB314225BC53D0013715B /* OptimizelySwiftSDK-macTests */ = {
@@ -4100,7 +4100,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optimizely.OptimizelySwiftSDK-mac";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = Optimizely;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -4127,7 +4127,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optimizely.OptimizelySwiftSDK-mac";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = Optimizely;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;

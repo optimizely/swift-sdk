@@ -11,8 +11,6 @@
 		0B8FB367225BE7A30013715B /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8FB366225BE7A30013715B /* VariationViewController.swift */; };
 		0B8FB369225BE7A60013715B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B8FB368225BE7A60013715B /* Assets.xcassets */; };
 		0B8FB36C225BE7A60013715B /* macMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B8FB36A225BE7A60013715B /* macMain.storyboard */; };
-		0B8FB378225BE7A60013715B /* DemoSwiftMacTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8FB377225BE7A60013715B /* DemoSwiftMacTests.swift */; };
-		0B8FB383225BE7A60013715B /* DemoSwiftMacUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8FB382225BE7A60013715B /* DemoSwiftMacUITests.swift */; };
 		0B8FB3AE225BE82F0013715B /* OptimizelySwiftSDK_mac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8FB3A8225BE7A60013715B /* OptimizelySwiftSDK_mac.framework */; };
 		0B8FB3AF225BE82F0013715B /* OptimizelySwiftSDK_mac.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8FB3A8225BE7A60013715B /* OptimizelySwiftSDK_mac.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2330F864C8154595434F8799 /* libPods-DemoSwifttvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA2E0408D86A53942A6E2145 /* libPods-DemoSwifttvOS.a */; };
@@ -224,11 +222,7 @@
 		0B8FB36D225BE7A60013715B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B8FB36E225BE7A60013715B /* DemoSwiftMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DemoSwiftMac.entitlements; sourceTree = "<group>"; };
 		0B8FB373225BE7A60013715B /* DemoSwiftMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoSwiftMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0B8FB377225BE7A60013715B /* DemoSwiftMacTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSwiftMacTests.swift; sourceTree = "<group>"; };
-		0B8FB379225BE7A60013715B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B8FB37E225BE7A60013715B /* DemoSwiftMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoSwiftMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0B8FB382225BE7A60013715B /* DemoSwiftMacUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSwiftMacUITests.swift; sourceTree = "<group>"; };
-		0B8FB384225BE7A60013715B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		252D7DED21C8800800134A7A /* DemoSwiftiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwiftiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwifttvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySDK/OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
@@ -310,24 +304,6 @@
 				0B8FB36E225BE7A60013715B /* DemoSwiftMac.entitlements */,
 			);
 			path = DemoSwiftMac;
-			sourceTree = "<group>";
-		};
-		0B8FB376225BE7A60013715B /* DemoSwiftMacTests */ = {
-			isa = PBXGroup;
-			children = (
-				0B8FB377225BE7A60013715B /* DemoSwiftMacTests.swift */,
-				0B8FB379225BE7A60013715B /* Info.plist */,
-			);
-			path = DemoSwiftMacTests;
-			sourceTree = "<group>";
-		};
-		0B8FB381225BE7A60013715B /* DemoSwiftMacUITests */ = {
-			isa = PBXGroup;
-			children = (
-				0B8FB382225BE7A60013715B /* DemoSwiftMacUITests.swift */,
-				0B8FB384225BE7A60013715B /* Info.plist */,
-			);
-			path = DemoSwiftMacUITests;
 			sourceTree = "<group>";
 		};
 		5D9DAC78D3124F03BF2A7CC8 /* Pods */ = {
@@ -428,8 +404,6 @@
 				EA299ED51E5530A400931399 /* DemoSwifttvOS */,
 				6E96818C21EEA391009B7FEC /* SharedResources */,
 				0B8FB363225BE7A30013715B /* DemoSwiftMac */,
-				0B8FB376225BE7A60013715B /* DemoSwiftMacTests */,
-				0B8FB381225BE7A60013715B /* DemoSwiftMacUITests */,
 				EA5246BE1DC7186800AF6685 /* Products */,
 				EA5248C31DC72E8300AF6685 /* Frameworks */,
 				5D9DAC78D3124F03BF2A7CC8 /* Pods */,
@@ -878,7 +852,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B8FB378225BE7A60013715B /* DemoSwiftMacTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -886,7 +859,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B8FB383225BE7A60013715B /* DemoSwiftMacUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,9 +15,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-
+#if os(macOS)
 #import <Cocoa/Cocoa.h>
-
 //! Project version number for OptimizelySwiftSDK_mac.
 FOUNDATION_EXPORT double OptimizelySwiftSDK_macVersionNumber;
 
@@ -25,5 +24,6 @@ FOUNDATION_EXPORT double OptimizelySwiftSDK_macVersionNumber;
 FOUNDATION_EXPORT const unsigned char OptimizelySwiftSDK_macVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <OptimizelySwiftSDK_mac/PublicHeader.h>
+#endif
 
 

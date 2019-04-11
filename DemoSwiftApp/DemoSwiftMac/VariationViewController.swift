@@ -17,7 +17,7 @@
     
 
 import Cocoa
-import OptimizelySwiftSDK_mac
+import Optimizely
 
 class VariationViewController: NSViewController {
     

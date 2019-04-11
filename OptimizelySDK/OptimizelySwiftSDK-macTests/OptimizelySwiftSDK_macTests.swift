@@ -17,7 +17,6 @@
     
 
 import XCTest
-@testable import OptimizelySwiftSDK_mac
 
 class OptimizelySwiftSDK_macTests: XCTestCase {
 

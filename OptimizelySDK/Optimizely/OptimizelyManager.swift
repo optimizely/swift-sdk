@@ -108,7 +108,7 @@ open class OptimizelyManager: NSObject {
         guard let datafileData = datafile.data(using: .utf8) else {
             throw OptimizelyError.dataFileInvalid
         }
-    
+        
         try initializeSDK(datafile: datafileData)
     }
     
@@ -694,38 +694,39 @@ open class OptimizelyManager: NSObject {
     
 }
 
-// MARK: - Objective-C Wrappers
+// MARK: - ObjC APIs
 
 extension OptimizelyManager {
     
     @objc public convenience init(sdkKey: String) {
         self.init(sdkKey: sdkKey,
                   logger: nil,
-              ////    eventDispatcher: nil,
+                  eventDispatcher: nil,
                   userProfileService: nil,
                   periodicDownloadInterval: nil as NSNumber?)
     }
     
     @objc public convenience init(sdkKey: String,
                                   logger: OPTLogger?,
-                              /////    eventDispatcher: OPTEventDispatcher?,
+                                  eventDispatcher: _ObjcOPTEventDispatcher?,
                                   userProfileService: OPTUserProfileService?,
                                   periodicDownloadInterval: NSNumber?) {
         self.init(sdkKey: sdkKey,
                   logger: logger,
-             ////     eventDispatcher: nil,
+                  eventDispatcher: SwiftEventDispatcher(eventDispatcher),
                   userProfileService: userProfileService,
                   periodicDownloadInterval: periodicDownloadInterval?.intValue)
+        
     }
     
     @objc(initializeSDKWithCompletion:)
-    public func _objcInitializeSDK(completion: ((NSError?, Data?) -> Void)?) {
+    public func _objcInitializeSDK(completion: ((Data?, NSError?) -> Void)?) {
         initializeSDK { result in
             switch result {
             case .failure(let error):
-                completion?(self.convertErrorForObjc(error), nil)
+                completion?(nil, self.convertErrorForObjc(error))
             case .success(let data):
-                completion?(nil, data)
+                completion?(data, nil)
             }
         }
     }
@@ -742,12 +743,38 @@ extension OptimizelyManager {
         return try self.activate(experimentKey: experimentKey, userId: userId, attributes: attributes as OptimizelyAttributes?)
     }
     
-    @objc(trackWithEventKey:userId:attributes:eventTags:error:)
-    public func _objcTrack(eventKey:String,
-                           userId: String,
-                           attributes: [String:Any]?,
-                           eventTags: [String:Any]?) throws {
-        try self.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
+    @objc(getVariationKeyWithExperimentKey:userId:attributes:error:)
+    public func _objcGetVariationKey(experimentKey: String,
+                                     userId: String,
+                                     attributes: [String:Any]?) throws -> String {
+        return try getVariationKey(experimentKey: experimentKey,
+                                   userId: userId,
+                                   attributes: attributes)
+    }
+    
+    @objc(getForcedVariationWithExperimentKey:userId:)
+    public func _objcGetForcedVariation(experimentKey: String, userId: String) -> String? {
+        return getForcedVariation(experimentKey: experimentKey,
+                                  userId: userId)
+    }
+    
+    @objc(setForcedVariationWithExperimentKey:userId:variationKey:)
+    public func _objcSetForcedVariation(experimentKey: String,
+                                        userId: String,
+                                        variationKey: String?) -> Bool {
+        return setForcedVariation(experimentKey: experimentKey,
+                                  userId: userId,
+                                  variationKey: variationKey)
+    }
+    
+    @objc(isFeatureEnabledWithFeatureKey:userId:attributes:error:)
+    public func _objcIsFeatureEnabled(featureKey: String,
+                                      userId: String,
+                                      attributes: [String:Any]?) throws -> NSNumber {
+        let enabled = try self.isFeatureEnabled(featureKey: featureKey,
+                                                userId: userId,
+                                                attributes: attributes)
+        return NSNumber(booleanLiteral: enabled)
     }
     
     @objc(getFeatureVariableBooleanWithFeatureKey:variableKey:userId:attributes:error:)
@@ -764,9 +791,9 @@ extension OptimizelyManager {
     
     @objc(getFeatureVariableDoubleWithFeatureKey:variableKey:userId:attributes:error:)
     public func _objcGetFeatureVariableDouble(featureKey: String,
-                                                   variableKey: String,
-                                                   userId: String,
-                                                   attributes: [String: Any]?) throws -> NSNumber {
+                                              variableKey: String,
+                                              userId: String,
+                                              attributes: [String: Any]?) throws -> NSNumber {
         let value = try self.getFeatureVariableDouble(featureKey: featureKey,
                                                       variableKey: variableKey,
                                                       userId: userId,
@@ -776,9 +803,9 @@ extension OptimizelyManager {
     
     @objc(getFeatureVariableIntegerWithFeatureKey:variableKey:userId:attributes:error:)
     public func _objcGetFeatureVariableInteger(featureKey: String,
-                                                    variableKey: String,
-                                                    userId: String,
-                                                    attributes: [String: Any]?) throws -> NSNumber {
+                                               variableKey: String,
+                                               userId: String,
+                                               attributes: [String: Any]?) throws -> NSNumber {
         let value = try self.getFeatureVariableInteger(featureKey: featureKey,
                                                        variableKey: variableKey,
                                                        userId: userId,
@@ -788,27 +815,94 @@ extension OptimizelyManager {
     
     @objc(getFeatureVariableStringWithFeatureKey:variableKey:userId:attributes:error:)
     public func _objcGetFeatureVariableString(featureKey: String,
-                                                   variableKey: String,
-                                                   userId: String,
-                                                   attributes: [String: Any]?) throws -> String {
+                                              variableKey: String,
+                                              userId: String,
+                                              attributes: [String: Any]?) throws -> String {
         return try self.getFeatureVariableString(featureKey: featureKey,
-                                                  variableKey: variableKey,
-                                                  userId: userId,
-                                                  attributes: attributes)
+                                                 variableKey: variableKey,
+                                                 userId: userId,
+                                                 attributes: attributes)
     }
     
+    @objc(getEnabledFeaturesWithUserId:attributes:error:)
+    public func _objcGetEnabledFeatures(userId: String,
+                                        attributes: [String: Any]?) throws -> [String] {
+        return try self.getEnabledFeatures(userId:userId, attributes: attributes)
+    }
+    
+    @objc(trackWithEventKey:userId:attributes:eventTags:error:)
+    public func _objcTrack(eventKey:String,
+                           userId: String,
+                           attributes: [String:Any]?,
+                           eventTags: [String:Any]?) throws {
+        try self.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
+    }
+    
+}
+
+// MARK: - ObjC Conversions
+
+extension OptimizelyManager {
+    
+    // MARK: - OPTEventDispatcher protocol wrapper
+
+    class SwiftEventDispatcher: OPTEventDispatcher {
+        let objcEventDispatcher: _ObjcOPTEventDispatcher
+        
+        init?(_ objcEventDispatcher: _ObjcOPTEventDispatcher?) {
+            guard let objcDispatcher = objcEventDispatcher else { return nil }
+            
+            self.objcEventDispatcher = objcDispatcher
+        }
+        
+        func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+            var objcHandler: ((Data?, NSError?) -> Void)? = nil
+            
+            if let completionHandler = completionHandler {
+                objcHandler = { (data, error) in
+                    var result: Result<Data, OptimizelyError>
+                    
+                    if let error = error {
+                        result = .failure(.eventDispatchFailed(error.localizedDescription))
+                    } else {
+                        result = .success(data ?? Data())
+                    }
+                    
+                    completionHandler(result)
+                }
+            }
+            
+            objcEventDispatcher.dispatchEvent(event: event, completionHandler: objcHandler)
+        }
+        
+        func flushEvents() {
+            objcEventDispatcher.flushEvents()
+        }
+    }
     
     // MAKR: - ObjC Errors
     
     func convertErrorForObjc(_ error: Error) -> NSError {
         var errorInObjc: NSError
         
+        // TODO: [Jae] add more details for error types
+        
         switch error {
-            
         default:
-            errorInObjc = NSError(domain: "com.optimizely.OptimizelySwiftSDK", code: 1000, userInfo: nil)
+            errorInObjc = NSError(domain: "com.optimizely.OptimizelySwiftSDK",
+                                  code: 1000,
+                                  userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])
         }
         
         return errorInObjc
     }
+}
+
+// MARK: - ObjC protocols
+
+@objc(OPTEventDispatcher) public protocol _ObjcOPTEventDispatcher {
+    func dispatchEvent(event:EventForDispatch, completionHandler:((Data?, NSError?) -> Void)?)
+    
+    /// Attempts to flush the event queue if there are any events to process.
+    func flushEvents()
 }

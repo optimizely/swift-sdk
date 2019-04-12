@@ -72,7 +72,9 @@ struct Snapshot: Codable, Equatable {
 }
 
 struct Decision: Codable, Equatable {
-    let variationID, campaignID, experimentID: String
+    let variationID: String
+    let campaignID: String
+    let experimentID: String
     
     enum CodingKeys: String, CodingKey {
         case variationID = "variation_id"

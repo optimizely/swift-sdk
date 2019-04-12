@@ -78,7 +78,6 @@ class OTUtils {
             try optimizely.initializeSDK(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely
         } catch {
-            print("\(error)")
             return nil
         }
     }
@@ -110,14 +109,14 @@ class FakeEventDispatcher : OPTEventDispatcher {
         
     }
     
-    func dispatchEvent(event:EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    func dispatchEvent(event:EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         events.append(event)
         //completionHandler(event)
     }
     
     /// Attempts to flush the event queue if there are any events to process.
     func flushEvents() {
-        
+        events.removeAll()
     }
 }
 

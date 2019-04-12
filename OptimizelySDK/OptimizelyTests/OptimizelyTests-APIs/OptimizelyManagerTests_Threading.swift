@@ -289,7 +289,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
 
         dispatchGroup.wait()
         
-        XCTAssertTrue(atomicBackground.property!.count == 101, "Count should be 101 but was \(atomicBackground.property!.count)")
+        XCTAssertTrue(atomicBackground.property!.count == 101)
         
         for index in 0...100 where index < atomicBackground.property!.count {
             XCTAssertTrue(atomicBackground.property![index].enabled!)
@@ -337,7 +337,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
     
     func makeEventHandler() -> OPTEventDispatcher {
         class NoOpEventHandler : OPTEventDispatcher {
-            func dispatchEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+            func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
                 
             }
             

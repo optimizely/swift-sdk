@@ -1,5 +1,5 @@
 //
-//  BatchEventBuilderTest.swift
+//  BatchEventBuilderTests.swift
 //  OptimizelySwiftSDK
 //
 //  Created by Thomas Zurkan on 2/28/19.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class BatchEventBuilderTest: XCTestCase {
+class BatchEventBuilderTests: XCTestCase {
     
     let datafileName = "feature_experiments"
     let featureExperimentKey = "feature_targeted_exp"

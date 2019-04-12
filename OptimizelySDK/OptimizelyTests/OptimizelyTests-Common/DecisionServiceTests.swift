@@ -1,5 +1,5 @@
 //
-//  DecisionServiceTest.swift
+//  DecisionServiceTests.swift
 //  OptimizelySDKTests
 //
 //  Created by Thomas Zurkan on 12/5/18.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class DecisionServiceTest: XCTestCase {
+class DecisionServiceTests: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.

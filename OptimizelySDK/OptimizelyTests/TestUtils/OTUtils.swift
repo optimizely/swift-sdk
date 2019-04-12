@@ -37,6 +37,10 @@ class OTUtils {
         return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
     }
     
+    static func model<T: Codable>(fromData data: Data) throws -> T {
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+    
     static func loadJSONDatafile(_ filename: String) -> Data? {
         guard let filePath = Bundle(for: self).path(forResource: filename, ofType: "json") else {
             XCTAssert(false, "file not available: \(filename).json")
@@ -77,6 +81,24 @@ class OTUtils {
             print("\(error)")
             return nil
         }
+    }
+
+    // MARK: - big numbers
+    
+    static var positiveMaxValueAllowed: Double {
+        return pow(2, 53)
+    }
+    
+    static var negativeMaxValueAllowed: Double {
+        return -pow(2, 53)
+    }
+    
+    static var positiveTooBigValue: Double {
+        return positiveMaxValueAllowed + 100.0
+    }
+    
+    static var negativeTooBigValue: Double {
+        return negativeMaxValueAllowed - 100.0
     }
 
 }

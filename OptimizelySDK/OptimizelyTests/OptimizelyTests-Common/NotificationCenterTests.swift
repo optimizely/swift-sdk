@@ -54,9 +54,9 @@ class NotificationCenterTests: XCTestCase {
         notificationCenter.sendNotifications(type: NotificationType.Track.rawValue, args: ["eventKey", "userId", nil, nil, ["url":"https://url.com/", "body": Data()]])
         
     }
-    
+
     func sendDecision() {
-        notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: [Constants.DecisionTypeKeys.experiment, "userId", nil, ["url":"https://url.com/", "body": Data()]])
+        notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: [Constants.DecisionTypeKeys.featureVariable, "userId", nil, ["url":"https://url.com/", "body": Data()]])
         
     }
 
@@ -137,7 +137,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertTrue(called)
     }
-
+    
     func testNotificationCenterAddRemoveDecision() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.

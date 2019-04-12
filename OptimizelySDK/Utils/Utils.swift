@@ -24,9 +24,8 @@ class Utils {
                                             UInt.self, UInt8.self, UInt16.self, UInt32.self, UInt64.self]
         
         let isSwiftIntType = allSwiftIntTypes.contains{ $0 == type(of: value) }
-        let isNSNumberIntType = (value is Int) && !isNSNumberBoolType(value)
-        
-        return isSwiftIntType || isNSNumberIntType
+
+        return isSwiftIntType || isNSNumberIntegerType(value)
     }
     
     static func isDoubleType(_ value: Any) -> Bool {
@@ -35,10 +34,11 @@ class Utils {
                                             Float.self, CLongDouble.self]
         
         let isSwiftNumType = allSwiftNumTypes.contains{ $0 == type(of: value) }
-        let isNSNumberNumType = (value is Double) && !isNSNumberBoolType(value)
-        
-        return isSwiftNumType || isNSNumberNumType
+
+        return isSwiftNumType || isNSNumberDoubleType(value)
     }
+    
+    // MARK: - NSNumber
     
     static func isNSNumberBoolType(_ value: Any) -> Bool {
         return type(of: value) == type(of: NSNumber(value: true))
@@ -46,6 +46,25 @@ class Utils {
     
     static func isNSNumberValueType(_ value: Any) -> Bool {
         return type(of: value) == type(of: NSNumber(value: 0))
+    }
+    
+    static func isNSNumberIntegerType(_ value: Any) -> Bool {
+        guard isNSNumberValueType(value) else { return false }
+        
+        // Swift cannot tell NSNumber(int) and NSNumber(double), both __NSCFNumber type
+        // Need to look at objCType ("q": integer, "d": decimal
+        
+        let ptr1 = (value as! NSNumber).objCType
+        let ptr2 = NSNumber(integerLiteral: 10).objCType
+        return String(cString: ptr1) == String(cString: ptr2)
+    }
+
+    static func isNSNumberDoubleType(_ value: Any) -> Bool {
+        guard isNSNumberValueType(value) else { return false }
+
+        let ptr1 = (value as! NSNumber).objCType
+        let ptr2 = NSNumber(value: 10.5).objCType
+        return String(cString: ptr1) == String(cString: ptr2)
     }
     
     // MARK: - Type Conversion

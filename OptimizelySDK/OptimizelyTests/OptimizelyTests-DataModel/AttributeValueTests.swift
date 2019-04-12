@@ -74,7 +74,7 @@ class AttributeValueTests: XCTestCase {
             XCTAssert(model2 == AttributeValue.double(expModel2Value), "num type error with index = \(idx)")
         }
         
-        // Float80 is not supported JSON parser (it's not expected to see this from datafile, but it still
+        // Float80 (CLongDouble) is not supported JSON parser (it's not expected to see this from datafile, but it still
         // can be passed as attribute values from client app
         let testsAttributesOnly = [
             [CLongDouble(value), Double(value)]
@@ -169,26 +169,28 @@ class AttributeValueTests: XCTestCase {
 
     func testDecodeSuccessWithNSNumber0() {
         let value = NSNumber(value: 0)
-        // can be either int or double (we catch as double first)
-        let expValue = AttributeValue.double(0.0)
-        
+        // JSONParser() cannot tell {NSNumber(int), NSNumber(double) - catch as double first.
+        let expValueJSON = AttributeValue.double(0.0)
+        let expValueInstance = AttributeValue.int(0)
+
         let model = try! OTUtils.getAttributeValueFromNative(value)
-        XCTAssert(model == expValue)
+        XCTAssert(model == expValueJSON)
         
         let model2 = AttributeValue(value: value)
-        XCTAssert(model2 == expValue)
+        XCTAssert(model2 == expValueInstance)
     }
     
     func testDecodeSuccessWithNSNumber1() {
         let value = NSNumber(value: 1)
-        // can be either int or double (we catch as double first)
-        let expValue = AttributeValue.double(1.0)
+        // JSONParser() cannot tell {NSNumber(int), NSNumber(double) - catch as double first.
+        let expValueJSON = AttributeValue.double(1.0)
+        let expValueInstance = AttributeValue.int(1)
 
         let model = try! OTUtils.getAttributeValueFromNative(value)
-        XCTAssert(model == expValue)
+        XCTAssert(model == expValueJSON)
         
         let model2 = AttributeValue(value: value)
-        XCTAssert(model2 == expValue)
+        XCTAssert(model2 == expValueInstance)
     }
 
     func testDecodeSuccessWithNSNumber0_0() {

@@ -49,6 +49,54 @@ static NSString * const kSdkKey = @"12345";
 @property(nonatomic) NSDictionary * attributes;
 @end
 
+// MARK: - Customization Modules
+
+@interface TestOptLogger: NSObject <OPTLogger>
+@property(nonatomic, assign) OptimizelyLogLevel logLevel;
+@end
+
+@implementation TestOptLogger
++ (enum OptimizelyLogLevel)logLevel {
+    return OptimizelyLogLevelInfo;
+}
+
+- (void)logWithLevel:(enum OptimizelyLogLevel)level message:(NSString * _Nonnull)message {
+    NSLog(@"[LOG] %@", message);
+}
+
++ (void)setLogLevel:(enum OptimizelyLogLevel)newValue {
+    self.logLevel = newValue;
+}
+@end
+
+@interface TestEventDispatcher: NSObject <OPTEventDispatcher>
+@end
+
+@implementation TestEventDispatcher
+- (void)dispatchEventWithEvent:(EventForDispatch * _Nonnull)event completionHandler:(void (^ _Nullable)(NSData * _Nullable, NSError * _Nullable))completionHandler {
+    return;
+}
+
+- (void)flushEvents {
+    return;
+}
+@end
+
+@interface TestUserProfileService: NSObject<OPTUserProfileService>
+@end
+
+@implementation TestUserProfileService
+- (NSDictionary<NSString *,id> * _Nullable)lookupWithUserId:(NSString * _Nonnull)userId {
+    return nil;
+}
+
+- (void)saveWithUserProfile:(NSDictionary<NSString *,id> * _Nonnull)userProfile {
+    return;
+}
+@end
+
+
+
 @implementation OptimizelyManagerTests_ObjcAPIs
 
 - (void)setUp {
@@ -158,4 +206,27 @@ static NSString * const kSdkKey = @"12345";
     XCTAssert(result);
 }
 
+// MARK: - Customization API testing
+
+- (void)testCustomizationAPIs {
+    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
+    NSString *fileContents = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+    
+    TestOptLogger *logger = [[TestOptLogger alloc] init];
+    TestEventDispatcher *eventDispatcher = [[TestEventDispatcher alloc] init];
+    TestUserProfileService *userProfileService = [[TestUserProfileService alloc] init];
+    
+    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kSdkKey
+                                                         logger:logger
+                                                eventDispatcher:eventDispatcher
+                                             userProfileService:userProfileService
+                                       periodicDownloadInterval:@(50)];
+    
+    [self.optimizely initializeSDKWithDatafile:fileContents error:nil];
+    
+    self.attributes = @{ @"name": @"tom", @"age": @21 };
+
+}
+
 @end
+

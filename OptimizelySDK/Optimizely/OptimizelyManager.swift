@@ -38,6 +38,7 @@ open class OptimizelyManager: NSObject {
     var datafileHandler: OPTDatafileHandler {
         return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
     }
+    
     public var notificationCenter: OPTNotificationCenter {
         return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)!
     }
@@ -736,6 +737,11 @@ extension OptimizelyManager {
         try self.initializeSDK(datafile: datafile)
     }
     
+    @objc(initializeSDKWithDatafile:doFetchDatafileBackground:error:)
+    public func _objcInitializeSDK(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
+        try self.initializeSDK(datafile: datafile, doFetchDatafileBackground: doFetchDatafileBackground)
+    }
+
     @objc(activateWithExperimentKey:userId:attributes:error:)
     public func _objcActivate(experimentKey: String,
                               userId: String,

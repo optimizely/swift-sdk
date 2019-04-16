@@ -49,13 +49,13 @@ static NSString * const kSdkKey = @"12345";
 @property(nonatomic) NSDictionary * attributes;
 @end
 
-// MARK: - Customization Modules
+// MARK: - Customization Modules Protocols
 
-@interface TestOptLogger: NSObject <OPTLogger>
+@interface TestOPTLogger: NSObject <OPTLogger>
 @property(nonatomic, assign) OptimizelyLogLevel logLevel;
 @end
 
-@implementation TestOptLogger
+@implementation TestOPTLogger
 + (enum OptimizelyLogLevel)logLevel {
     return OptimizelyLogLevelInfo;
 }
@@ -69,10 +69,10 @@ static NSString * const kSdkKey = @"12345";
 }
 @end
 
-@interface TestEventDispatcher: NSObject <OPTEventDispatcher>
+@interface TestOPTEventDispatcher: NSObject <OPTEventDispatcher>
 @end
 
-@implementation TestEventDispatcher
+@implementation TestOPTEventDispatcher
 - (void)dispatchEventWithEvent:(EventForDispatch * _Nonnull)event completionHandler:(void (^ _Nullable)(NSData * _Nullable, NSError * _Nullable))completionHandler {
     return;
 }
@@ -82,10 +82,10 @@ static NSString * const kSdkKey = @"12345";
 }
 @end
 
-@interface TestUserProfileService: NSObject<OPTUserProfileService>
+@interface TestOPTUserProfileService: NSObject<OPTUserProfileService>
 @end
 
-@implementation TestUserProfileService
+@implementation TestOPTUserProfileService
 - (NSDictionary<NSString *,id> * _Nullable)lookupWithUserId:(NSString * _Nonnull)userId {
     return nil;
 }
@@ -96,6 +96,7 @@ static NSString * const kSdkKey = @"12345";
 @end
 
 
+// AMRK: - tests
 
 @implementation OptimizelyManagerTests_ObjcAPIs
 
@@ -212,9 +213,17 @@ static NSString * const kSdkKey = @"12345";
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
     NSString *fileContents = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
-    TestOptLogger *logger = [[TestOptLogger alloc] init];
-    TestEventDispatcher *eventDispatcher = [[TestEventDispatcher alloc] init];
-    TestUserProfileService *userProfileService = [[TestUserProfileService alloc] init];
+    TestOPTLogger *logger = [[TestOPTLogger alloc] init];
+    TestOPTEventDispatcher *eventDispatcher = [[TestOPTEventDispatcher alloc] init];
+    TestOPTUserProfileService *userProfileService = [[TestOPTUserProfileService alloc] init];
+    
+    // check event init and members avialable to ObjC
+    EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil body:[NSData new]];
+    XCTAssertNotNil(event.url);
+    XCTAssert(event.body.length==0);
+    
+    // check all SDK initialization APIs for ObjC
+    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kSdkKey];
     
     self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kSdkKey
                                                          logger:logger
@@ -222,10 +231,14 @@ static NSString * const kSdkKey = @"12345";
                                              userProfileService:userProfileService
                                        periodicDownloadInterval:@(50)];
     
+    [self.optimizely initializeSDKWithCompletion:^(NSData * _Nullable data, NSError * _Nullable error) {}];
+    
     [self.optimizely initializeSDKWithDatafile:fileContents error:nil];
     
-    self.attributes = @{ @"name": @"tom", @"age": @21 };
-
+    NSData *datafileData = [fileContents dataUsingEncoding:NSUTF8StringEncoding];
+    [self.optimizely initializeSDKWithDatafile:datafileData doFetchDatafileBackground:false error:nil];
+    
+    //[self.optimizely.notifi]
 }
 
 @end

@@ -22,8 +22,6 @@ public enum DataStoreType {
 
 open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     
-    public typealias DispatchCompletionHandler = (Result<Data, OptimizelyError>)->(Void)
-
     static let sharedInstance = DefaultEventDispatcher()
     
     // the max failure count.  there is no backoff timer.

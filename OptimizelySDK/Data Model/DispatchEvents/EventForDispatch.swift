@@ -8,13 +8,13 @@
 
 import Foundation
 
-@objc public class EventForDispatch : NSObject, Codable {
+@objcMembers public class EventForDispatch: NSObject, Codable {
     static let eventEndpoint = "https://logx.optimizely.com/v1/events"
     
-    public let url:URL
-    public let body:Data
-    
-    init(url: URL? = nil, body: Data) {
+    public let url: URL
+    public let body: Data
+
+    public init(url: URL? = nil, body: Data) {
         self.url = url ?? URL(string: EventForDispatch.eventEndpoint)!
         self.body = body
     }

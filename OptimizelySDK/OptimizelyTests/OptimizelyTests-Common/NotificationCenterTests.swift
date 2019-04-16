@@ -65,11 +65,6 @@ class NotificationCenterTests: XCTestCase {
         
     }
 
-    func sendFeatureFlagToggle() {
-        notificationCenter.sendNotifications(type: NotificationType.FeatureFlagRolloutToggle.rawValue, args: ["featureFlagKey", FeatureFlagToggle.on])
-        
-    }
-
     func testNotificationCenterAddRemoveActivate() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
@@ -202,40 +197,6 @@ class NotificationCenterTests: XCTestCase {
         }
 
         sendDatafileChange()
-        
-        XCTAssertTrue(called)
-    }
-
-    func testNotificationCenterAddRemoveFeatureFlagChange() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        var called = false
-        
-        let _ = notificationCenter.addFeatureFlagRolloutChangeListener { (featureKey, toggle) in
-            called = true
-        }
-        
-        notificationCenter.clearNotificationListeners(type: .FeatureFlagRolloutToggle)
-        
-        sendFeatureFlagToggle()
-        
-        XCTAssertFalse(called)
-        
-        let id = notificationCenter.addFeatureFlagRolloutChangeListener { (featureKey, toggle) in
-            called = true
-        }
-
-        notificationCenter.removeNotificationListener(notificationId: id!)
-        
-        sendFeatureFlagToggle()
-        
-        XCTAssertFalse(called)
-        
-        let _ = notificationCenter.addFeatureFlagRolloutChangeListener { (featureKey, toggle) in
-            called = true
-        }
-
-        sendFeatureFlagToggle()
         
         XCTAssertTrue(called)
     }

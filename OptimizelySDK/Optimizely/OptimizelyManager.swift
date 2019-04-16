@@ -49,7 +49,110 @@ open class OptimizelyManager: NSObject {
             return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)!
         }
     }
-    
+
+    @available(swift, obsoleted: 1.0)
+    @objc(notificationCenter) public var objc_notificationCenter: Objc_OPTNotificationCenter {
+        class ObjcCenter : Objc_OPTNotificationCenter {
+            var notifications:OPTNotificationCenter
+            
+            init(notificationCenter:OPTNotificationCenter) {
+                    notifications = notificationCenter
+            }
+            
+            func addActivateNotificationListener(activateListener: @escaping ([String : Any], String, [String : Any]?, [String : Any], Dictionary<String, Any>) -> Void) -> NSNumber? {
+                
+                    let num = notifications.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
+                        
+                        let attrs = attributes?.mapValues({ (val) -> Any in
+                            if let val = val {
+                                return val
+                            }
+                            else {
+                                return NSNull()
+                            }
+                        })
+                        activateListener(experiment, userId, attrs, variation, event)
+                }
+                
+                if let num = num {
+                    return NSNumber(value: num)
+                }
+                
+                return nil
+            }
+            
+            func addTrackNotificationListener(trackListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>?, Dictionary<String, Any>) -> Void) -> NSNumber? {
+                let num = notifications.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
+                    
+                    let attrs = attributes?.mapValues({ (val) -> Any in
+                        if let val = val {
+                            return val
+                        }
+                        else {
+                            return NSNull()
+                        }
+                    })
+
+                    trackListener(eventKey, userId, attrs, eventTags, event)
+
+                }
+
+                if let num = num {
+                    return NSNumber(value: num)
+                }
+                
+                return nil
+            }
+            
+            func addDecisionNotificationListener(decisionListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>) -> Void) -> NSNumber? {
+                
+                let num = notifications.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+                    let attrs = attributes?.mapValues({ (val) -> Any in
+                        if let val = val {
+                            return val
+                        }
+                        else {
+                            return NSNull()
+                        }
+                    })
+                    decisionListener(type, userId, attrs, decisionInfo)
+                }
+                if let num = num {
+                    return NSNumber(value: num)
+                }
+                
+                return nil
+            }
+            
+            func addDatafileChangeNotificationListener(datafileListener: @escaping (Data) -> Void) -> NSNumber? {
+                let num = notifications.addDatafileChangeNotificationListener { (data) in
+                    datafileListener(data)
+                }
+                if let num = num {
+                    return NSNumber(value: num)
+                }
+                
+                return nil
+            }
+            
+            func removeNotificationListener(notificationId: Int) {
+                notifications.removeNotificationListener(notificationId: notificationId)
+            }
+            
+            func clearNotificationListeners(type: NotificationType) {
+                notifications.clearNotificationListeners(type: type)
+            }
+            
+            func clearAllNotificationListeners() {
+                notifications.clearAllNotificationListeners()
+            }
+            
+                
+            }
+        
+        return ObjcCenter(notificationCenter: self.notificationCenter)
+        }
+
     private let reInitLock = Dispatch.DispatchSemaphore(value: 1)
     
     // MARK: - Public interfaces

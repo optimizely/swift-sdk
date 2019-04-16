@@ -108,14 +108,10 @@ class DefaultBucketer : OPTBucketer {
                 let variation = experiment.getVariation(id: variationId)
                 // propagate errors and logs for unknown variation
                 if let variation = variation {
-                   // log we got a variation
-                    logger?.log(level: .info, message: "Got variation \(variation.key) for experiment \(experiment.key)")
-
+                    logger?.log(level: .info, message: LogMessage.userHasVariation(bucketingId, experiment.key, variation.key).description)
                 }
                 else {
-                    // log error
-                    logger?.log(level: .error, message: "Not bucketed into variation experiment \(experiment.key)")
-
+                    logger?.log(level: .error, message: LogMessage.invalidVariationId.description)
                 }
                 return variation;
             }

@@ -50,109 +50,6 @@ open class OptimizelyManager: NSObject {
         }
     }
 
-    @available(swift, obsoleted: 1.0)
-    @objc(notificationCenter) public var objc_notificationCenter: Objc_OPTNotificationCenter {
-        class ObjcCenter : Objc_OPTNotificationCenter {
-            var notifications:OPTNotificationCenter
-            
-            init(notificationCenter:OPTNotificationCenter) {
-                    notifications = notificationCenter
-            }
-            
-            func addActivateNotificationListener(activateListener: @escaping ([String : Any], String, [String : Any]?, [String : Any], Dictionary<String, Any>) -> Void) -> NSNumber? {
-                
-                    let num = notifications.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
-                        
-                        let attrs = attributes?.mapValues({ (val) -> Any in
-                            if let val = val {
-                                return val
-                            }
-                            else {
-                                return NSNull()
-                            }
-                        })
-                        activateListener(experiment, userId, attrs, variation, event)
-                }
-                
-                if let num = num {
-                    return NSNumber(value: num)
-                }
-                
-                return nil
-            }
-            
-            func addTrackNotificationListener(trackListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>?, Dictionary<String, Any>) -> Void) -> NSNumber? {
-                let num = notifications.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
-                    
-                    let attrs = attributes?.mapValues({ (val) -> Any in
-                        if let val = val {
-                            return val
-                        }
-                        else {
-                            return NSNull()
-                        }
-                    })
-
-                    trackListener(eventKey, userId, attrs, eventTags, event)
-
-                }
-
-                if let num = num {
-                    return NSNumber(value: num)
-                }
-                
-                return nil
-            }
-            
-            func addDecisionNotificationListener(decisionListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>) -> Void) -> NSNumber? {
-                
-                let num = notifications.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-                    let attrs = attributes?.mapValues({ (val) -> Any in
-                        if let val = val {
-                            return val
-                        }
-                        else {
-                            return NSNull()
-                        }
-                    })
-                    decisionListener(type, userId, attrs, decisionInfo)
-                }
-                if let num = num {
-                    return NSNumber(value: num)
-                }
-                
-                return nil
-            }
-            
-            func addDatafileChangeNotificationListener(datafileListener: @escaping (Data) -> Void) -> NSNumber? {
-                let num = notifications.addDatafileChangeNotificationListener { (data) in
-                    datafileListener(data)
-                }
-                if let num = num {
-                    return NSNumber(value: num)
-                }
-                
-                return nil
-            }
-            
-            func removeNotificationListener(notificationId: Int) {
-                notifications.removeNotificationListener(notificationId: notificationId)
-            }
-            
-            func clearNotificationListeners(type: NotificationType) {
-                notifications.clearNotificationListeners(type: type)
-            }
-            
-            func clearAllNotificationListeners() {
-                notifications.clearAllNotificationListeners()
-            }
-            
-                
-            }
-        
-        return ObjcCenter(notificationCenter: self.notificationCenter)
-        }
-
     private let reInitLock = Dispatch.DispatchSemaphore(value: 1)
     
     // MARK: - Public interfaces
@@ -782,8 +679,9 @@ open class OptimizelyManager: NSObject {
 }
 
 // MARK: - Objective-C Wrappers (WIP)
+@available(swift, obsoleted: 1.0)
 extension OptimizelyManager {
-    
+    @available(swift, obsoleted: 1.0)
     @objc public convenience init(sdkKey: String) {
         self.init(sdkKey: sdkKey,
                   logger: nil,
@@ -799,7 +697,7 @@ extension OptimizelyManager {
     //                                  eventDispatcher:OPTEventDispatcher?,
     //                                  userProfileService:OPTUserProfileService?,
     //                                  periodicDownloadInterval:Int? = nil) {
-    
+    @available(swift, obsoleted: 1.0)
     @objc public func initializeSDK(completion: ((NSError?, Data?) -> Void)?) {
         initializeSDK { result in
             switch result {
@@ -812,29 +710,134 @@ extension OptimizelyManager {
             
         }
     }
-    
+    @available(swift, obsoleted: 1.0)
     @objc public func initializeSDKWith(datafile:String) throws {
         try self.initializeSDK(datafile: datafile)
     }
-    
+    @available(swift, obsoleted: 1.0)
     @objc public func activate(experimentKey: String,
                          userId: String,
                          attributes: [String:Any]?) throws -> String {
         return try self.activate(experimentKey: experimentKey, userId: userId, attributes: attributes as OptimizelyAttributes?)
     }
-
+    @available(swift, obsoleted: 1.0)
     @objc public func activate(experimentKey: String,
                                userId: String) throws -> String {
         return try self.activate(experimentKey: experimentKey, userId: userId, attributes: nil)
     }
 
-    
+    @available(swift, obsoleted: 1.0)
     @objc public func trackWith(eventKey:String,
                       userId: String,
                       attributes: [String:Any]?,
                       eventTags: [String:Any]?) throws {
         try self.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
     }
+    
+    @available(swift, obsoleted: 1.0)
+    @objc(notificationCenter) public var objc_notificationCenter: Objc_OPTNotificationCenter {
+        class ObjcCenter : Objc_OPTNotificationCenter {
+            var notifications:OPTNotificationCenter
+            
+            init(notificationCenter:OPTNotificationCenter) {
+                notifications = notificationCenter
+            }
+            
+            func addActivateNotificationListener(activateListener: @escaping ([String : Any], String, [String : Any]?, [String : Any], Dictionary<String, Any>) -> Void) -> NSNumber? {
+                
+                let num = notifications.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
+                    
+                    let attrs = attributes?.mapValues({ (val) -> Any in
+                        if let val = val {
+                            return val
+                        }
+                        else {
+                            return NSNull()
+                        }
+                    })
+                    activateListener(experiment, userId, attrs, variation, event)
+                }
+                
+                if let num = num {
+                    return NSNumber(value: num)
+                }
+                
+                return nil
+            }
+            
+            func addTrackNotificationListener(trackListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>?, Dictionary<String, Any>) -> Void) -> NSNumber? {
+                let num = notifications.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
+                    
+                    let attrs = attributes?.mapValues({ (val) -> Any in
+                        if let val = val {
+                            return val
+                        }
+                        else {
+                            return NSNull()
+                        }
+                    })
+                    
+                    trackListener(eventKey, userId, attrs, eventTags, event)
+                    
+                }
+                
+                if let num = num {
+                    return NSNumber(value: num)
+                }
+                
+                return nil
+            }
+            
+            func addDecisionNotificationListener(decisionListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>) -> Void) -> NSNumber? {
+                
+                let num = notifications.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+                    let attrs = attributes?.mapValues({ (val) -> Any in
+                        if let val = val {
+                            return val
+                        }
+                        else {
+                            return NSNull()
+                        }
+                    })
+                    decisionListener(type, userId, attrs, decisionInfo)
+                }
+                if let num = num {
+                    return NSNumber(value: num)
+                }
+                
+                return nil
+            }
+            
+            func addDatafileChangeNotificationListener(datafileListener: @escaping (Data) -> Void) -> NSNumber? {
+                let num = notifications.addDatafileChangeNotificationListener { (data) in
+                    datafileListener(data)
+                }
+                if let num = num {
+                    return NSNumber(value: num)
+                }
+                
+                return nil
+            }
+            
+            func removeNotificationListener(notificationId: Int) {
+                notifications.removeNotificationListener(notificationId: notificationId)
+            }
+            
+            func clearNotificationListeners(type: NotificationType) {
+                notifications.clearNotificationListeners(type: type)
+            }
+            
+            func clearAllNotificationListeners() {
+                notifications.clearAllNotificationListeners()
+            }
+            
+            
+        }
+        
+        return ObjcCenter(notificationCenter: self.notificationCenter)
+    }
+    
+
     
     func convertErrorForObjc(_ error: Error) -> NSError {
         var errorInObjc: NSError

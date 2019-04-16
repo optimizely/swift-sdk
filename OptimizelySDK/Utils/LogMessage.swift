@@ -23,7 +23,7 @@ enum LogMessage {
     case parsedRevenueValue(_ val: String)
     case parsedNumericValue(_ val: String)
     //    RETURNING_STORED_VARIATION: '%s: Returning previously activated variation "%s" of experiment "%s" for user "%s" from user profile.',
-    //    ROLLOUT_HAS_NO_EXPERIMENTS: '%s: Rollout of feature %s has no experiments',
+    case rolloutHasNoExperiments(_ id: String)
     //    SAVED_VARIATION: '%s: Saved variation "%s" of experiment "%s" for user "%s".',
     //    SAVED_VARIATION_NOT_FOUND: '%s: User %s was previously bucketed into variation with ID %s for experiment %s, but no matching variation was found.',
     //    SHOULD_NOT_DISPATCH_ACTIVATE: '%s: Experiment %s is in "Launched" state. Not activating user.',
@@ -32,20 +32,20 @@ enum LogMessage {
     //    USER_ASSIGNED_TO_VARIATION_BUCKET: '%s: Assigned variation bucket %s to user %s.',
     //    USER_ASSIGNED_TO_EXPERIMENT_BUCKET: '%s: Assigned experiment bucket %s to user %s.',
     //    USER_BUCKETED_INTO_EXPERIMENT_IN_GROUP: '%s: User %s is in experiment %s of group %s.',
-    //    USER_BUCKETED_INTO_TARGETING_RULE: '%s: User %s bucketed into targeting rule %s.',
+    case userBucketedIntoTargetingRule(_ userId: String, _ index: Int)
     //    USER_IN_FEATURE_EXPERIMENT: '%s: User %s is in variation %s of experiment %s on the feature %s.',
     //    USER_IN_ROLLOUT: '%s: User %s is in rollout of feature %s.',
-    //    USER_BUCKETED_INTO_EVERYONE_TARGETING_RULE: '%s: User %s bucketed into everyone targeting rule.',
-    //    USER_NOT_BUCKETED_INTO_EVERYONE_TARGETING_RULE: '%s: User %s not bucketed into everyone targeting rule due to traffic allocation.',
+    case userBucketedIntoEveryoneTargetingRule(_ userId: String)
+    case userNotBucketedIntoEveryoneTargetingRule(_ userId: String)
     //    USER_NOT_BUCKETED_INTO_EXPERIMENT_IN_GROUP: '%s: User %s is not in experiment %s of group %s.',
     //    USER_NOT_BUCKETED_INTO_ANY_EXPERIMENT_IN_GROUP: '%s: User %s is not in any experiment of group %s.',
-    //    USER_NOT_BUCKETED_INTO_TARGETING_RULE: '%s User %s not bucketed into targeting rule %s due to traffic allocation. Trying everyone rule.',
+    case userNotBucketedIntoTargetingRule(_ userId: String, _ index: Int)
     //    USER_NOT_IN_FEATURE_EXPERIMENT: '%s: User %s is not in any experiment on the feature %s.',
     //    USER_NOT_IN_ROLLOUT: '%s: User %s is not in rollout of feature %s.',
     case userForcedInVariation(_ key: String, _ userId: String)
     //    USER_MAPPED_TO_FORCED_VARIATION: '%s: Set variation %s for experiment %s and user %s in the forced variation map.',
-    //    USER_DOESNT_MEET_CONDITIONS_FOR_TARGETING_RULE: '%s: User %s does not meet conditions for targeting rule %s.',
-    //    USER_MEETS_CONDITIONS_FOR_TARGETING_RULE: '%s: User %s meets conditions for targeting rule %s.',
+    case userDoesntMeetConditionsForTargetingRule(_ userId: String, index: Int)
+    case userMeetsConditionsForTargetingRule(_ userId: String, index: Int)
     case userHasVariation(_ userId: String, _ expKey: String, _ varKey: String)
     //    USER_HAS_FORCED_VARIATION: '%s: Variation %s is mapped to experiment %s and user %s in the forced variation map.',
     //    USER_HAS_NO_VARIATION: '%s: User %s is in no variation of experiment %s.',
@@ -140,7 +140,7 @@ extension LogMessage: CustomStringConvertible {
             case .parsedRevenueValue(let val):                          message = "Parsed revenue value \(val) from event tags."
             case .parsedNumericValue(let val):                          message = "Parsed event value \(val) from event tags."
             //    RETURNING_STORED_VARIATION: '%s: Returning previously activated variation "%s" of experiment "%s" for user "%s" from user profile.',
-            //    ROLLOUT_HAS_NO_EXPERIMENTS: '%s: Rollout of feature %s has no experiments',
+            case .rolloutHasNoExperiments(let id):                      message = "Rollout of feature \(id) has no experiments"
             //    SAVED_VARIATION: '%s: Saved variation "%s" of experiment "%s" for user "%s".',
             //    SAVED_VARIATION_NOT_FOUND: '%s: User %s was previously bucketed into variation with ID %s for experiment %s, but no matching variation was found.',
             //    SHOULD_NOT_DISPATCH_ACTIVATE: '%s: Experiment %s is in "Launched" state. Not activating user.',
@@ -149,21 +149,21 @@ extension LogMessage: CustomStringConvertible {
             //    USER_ASSIGNED_TO_VARIATION_BUCKET: '%s: Assigned variation bucket %s to user %s.',
             //    USER_ASSIGNED_TO_EXPERIMENT_BUCKET: '%s: Assigned experiment bucket %s to user %s.',
             //    USER_BUCKETED_INTO_EXPERIMENT_IN_GROUP: '%s: User %s is in experiment %s of group %s.',
-            //    USER_BUCKETED_INTO_TARGETING_RULE: '%s: User %s bucketed into targeting rule %s.',
+            case .userBucketedIntoTargetingRule(let userId, let index):  message = "User \(userId) bucketed into targeting rule \(index)."
             //    USER_IN_FEATURE_EXPERIMENT: '%s: User %s is in variation %s of experiment %s on the feature %s.',
             //    USER_IN_ROLLOUT: '%s: User %s is in rollout of feature %s.',
-            //    USER_BUCKETED_INTO_EVERYONE_TARGETING_RULE: '%s: User %s bucketed into everyone targeting rule.',
-            //    USER_NOT_BUCKETED_INTO_EVERYONE_TARGETING_RULE: '%s: User %s not bucketed into everyone targeting rule due to traffic allocation.',
+            case .userBucketedIntoEveryoneTargetingRule(let userId):   message = "User \(userId) bucketed into everyone targeting rule."
+            case .userNotBucketedIntoEveryoneTargetingRule(let userId): message = "User \(userId) not bucketed into everyone targeting rule due to traffic allocation."
             //    USER_NOT_BUCKETED_INTO_EXPERIMENT_IN_GROUP: '%s: User %s is not in experiment %s of group %s.',
             //    USER_NOT_BUCKETED_INTO_ANY_EXPERIMENT_IN_GROUP: '%s: User %s is not in any experiment of group %s.',
-            //    USER_NOT_BUCKETED_INTO_TARGETING_RULE: '%s User %s not bucketed into targeting rule %s due to traffic allocation. Trying everyone rule.',
+            case .userNotBucketedIntoTargetingRule(let userId, let index):  message = "User \(userId) not bucketed into targeting rule \(index) due to traffic allocation. Trying everyone rule."
             //    USER_NOT_IN_FEATURE_EXPERIMENT: '%s: User %s is not in any experiment on the feature %s.',
             //    USER_NOT_IN_ROLLOUT: '%s: User %s is not in rollout of feature %s.',
             case .userForcedInVariation(let key, let userId):           message = "User \(userId) is forced in variation \(key)"
             //    USER_MAPPED_TO_FORCED_VARIATION: '%s: Set variation %s for experiment %s and user %s in the forced variation map.',
-            //    USER_DOESNT_MEET_CONDITIONS_FOR_TARGETING_RULE: '%s: User %s does not meet conditions for targeting rule %s.',
-            //    USER_MEETS_CONDITIONS_FOR_TARGETING_RULE: '%s: User %s meets conditions for targeting rule %s.',
-            case .userHasVariation(_ userId: String, _ expKey: String, _ varKey: String):    message = "User \(userId) is in variation \(varKey) of experiment \(expKey)"
+            case .userDoesntMeetConditionsForTargetingRule(let userId, let index):   message = "User \(userId) does not meet conditions for targeting rule \(index)."
+            case .userMeetsConditionsForTargetingRule(let userId, let index): message = "User \(userId) meets conditions for targeting rule \(index)."
+            case .userHasVariation(let userId, let expKey, let varKey):    message = "User \(userId) is in variation \(varKey) of experiment \(expKey)"
             //    USER_HAS_FORCED_VARIATION: '%s: Variation %s is mapped to experiment %s and user %s in the forced variation map.',
             //    USER_HAS_NO_VARIATION: '%s: User %s is in no variation of experiment %s.',
             //    USER_HAS_NO_FORCED_VARIATION: '%s: User %s is not in the forced variation map.',
@@ -229,7 +229,7 @@ extension LogMessage: CustomStringConvertible {
 //            INVALID_VARIATION_KEY: '%s: Provided variation key is in an invalid format.',
 
             
-        default:  message = "UNKNOWN"
+            default:  message = "UNKNOWN"
         }
         
         return message

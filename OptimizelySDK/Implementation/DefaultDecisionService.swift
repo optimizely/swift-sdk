@@ -110,6 +110,8 @@ class DefaultDecisionService : OPTDecisionService {
             
             return false
         }
+        
+        return true
     }
     
     func getVariationForFeature(config:ProjectConfig, featureFlag:FeatureFlag, userId:String, attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
@@ -167,7 +169,7 @@ class DefaultDecisionService : OPTDecisionService {
         }
         
         guard let rollout = config.getRollout(id: rolloutId) else {
-            logger?.log(level: .debug, message: LogMessage.invalidRolloutId(featureFlag.key).description)
+            logger?.log(level: .debug, message: LogMessage.invalidRolloutId(rolloutId, featureFlag.key).description)
             return nil
         }
         
@@ -177,32 +179,31 @@ class DefaultDecisionService : OPTDecisionService {
         }
 
         // Evaluate all rollout rules except for last one
-        for experiment in rolloutRules[0..<rolloutRules.count.advanced(by: -1)] {
+        for index in 0..<rolloutRules.count.advanced(by: -1) {
+            let experiment = rolloutRules[index]
             if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
-                
-                this.logger.log(LOG_LEVEL.DEBUG, sprintf(LOG_MESSAGES.USER_MEETS_CONDITIONS_FOR_TARGETING_RULE, MODULE_NAME, userId, index + 1));
+                logger?.log(level: .debug, message: LogMessage.userMeetsConditionsForTargetingRule(userId, index: index + 1).description)
                 
                 if let variation = bucketer.bucketExperiment(config:config, experiment: experiment, bucketingId: bucketingId) {
-                    
-                    this.logger.log(LOG_LEVEL.DEBUG, sprintf(LOG_MESSAGES.USER_BUCKETED_INTO_TARGETING_RULE, MODULE_NAME, userId, index + 1));
+                    logger?.log(level: .debug, message: LogMessage.userBucketedIntoTargetingRule(userId, index + 1).description)
                     
                     return variation
                 } else {
-                    this.logger.log(LOG_LEVEL.DEBUG, sprintf(LOG_MESSAGES.USER_NOT_BUCKETED_INTO_TARGETING_RULE, MODULE_NAME, userId, index + 1));
+                    logger?.log(level: .debug, message: LogMessage.userNotBucketedIntoTargetingRule(userId, index + 1).description)
                 }
             } else {
-                this.logger.log(LOG_LEVEL.DEBUG, sprintf(LOG_MESSAGES.USER_DOESNT_MEET_CONDITIONS_FOR_TARGETING_RULE, MODULE_NAME, userId, index + 1));
+                logger?.log(level: .debug, message: LogMessage.userMeetsConditionsForTargetingRule(userId, index: index + 1).description)
             }
         }
         // Evaluate fall back rule / last rule now
         let experiment = rolloutRules[rolloutRules.count - 1];
         
-        if try isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
-            this.logger.log(LOG_LEVEL.DEBUG, sprintf(LOG_MESSAGES.USER_BUCKETED_INTO_EVERYONE_TARGETING_RULE, MODULE_NAME, userId));
-            
-            return bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId)
-        } else {
-            this.logger.log(LOG_LEVEL.DEBUG, sprintf(LOG_MESSAGES.USER_NOT_BUCKETED_INTO_EVERYONE_TARGETING_RULE, MODULE_NAME, userId));
+        if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
+            if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
+                logger?.log(level: .debug, message: LogMessage.userBucketedIntoEveryoneTargetingRule(userId).description)
+            } else {
+                logger?.log(level: .debug, message: LogMessage.userNotBucketedIntoEveryoneTargetingRule(userId).description)
+            }
         }
         
         return nil

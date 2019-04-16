@@ -79,7 +79,7 @@ struct UserProfileKeys {
     static let kUserId = "user_id"
 }
 
-public protocol OPTUserProfileService {
+@objc public protocol OPTUserProfileService {
     
     typealias UPProfile = [String: Any]   // {"experiment_bucket_map", "user_id"}
     typealias UPBucketMap = [String: UPExperimentMap]

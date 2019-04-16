@@ -209,6 +209,7 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[1], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 2)
         
+        // repeated send the same event (3+1 times) when failed all
         XCTAssertEqual(eventDispatcher.sendRequestedEvents[1], eventDispatcher.sendRequestedEvents[0])
         XCTAssertEqual(eventDispatcher.sendRequestedEvents[2], eventDispatcher.sendRequestedEvents[0])
         XCTAssertEqual(eventDispatcher.sendRequestedEvents[3], eventDispatcher.sendRequestedEvents[0])
@@ -562,7 +563,7 @@ class TestEventDispatcher: DefaultEventDispatcher {
         // must call completionHandler to complete synchronization
         super.sendEvent(event: event) { result in
             if self.forceError {
-                completionHandler(.failure(OPTEventDispatchError(description: "error")))
+                completionHandler(.failure(.eventDispatchFailed("forced")))
             } else {
                 // return success to clear store after sending events
                 completionHandler(.success(Data()))

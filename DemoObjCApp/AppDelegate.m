@@ -51,8 +51,8 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 
 -(void)initializeOptimizelySDKAsynchronous {
     self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey];
-    
-    [self.optimizely initializeSDKWithCompletion:^(NSError * _Nullable error, NSData * _Nullable data) {
+
+    [self.optimizely initializeSDKWithCompletion:^(NSData * _Nullable data, NSError * _Nullable error) {
         if (error == nil) {
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
@@ -111,7 +111,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
         NSLog(@"Optimizely SDK activation failed: %@", error.localizedDescription);
         self.optimizely = nil;
     }
-                              
+
 
     [self setRootViewControllerWithOtimizelyManager:self.optimizely bucketedVariation:variationKey];
 }

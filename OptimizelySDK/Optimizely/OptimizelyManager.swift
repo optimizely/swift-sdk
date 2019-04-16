@@ -42,7 +42,7 @@ open class OptimizelyManager: NSObject {
     public var notificationCenter: OPTNotificationCenter {
         return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)!
     }
-    
+
     private let reInitLock = Dispatch.DispatchSemaphore(value: 1)
     
     // MARK: - Public interfaces
@@ -671,10 +671,8 @@ open class OptimizelyManager: NSObject {
     
 }
 
-// MARK: - ObjC APIs
-
 extension OptimizelyManager {
-    
+    @available(swift, obsoleted: 1.0)
     @objc public convenience init(sdkKey: String) {
         self.init(sdkKey: sdkKey,
                   logger: nil,
@@ -696,6 +694,7 @@ extension OptimizelyManager {
         
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(initializeSDKWithCompletion:)
     public func _objcInitializeSDK(completion: ((Data?, NSError?) -> Void)?) {
         initializeSDK { result in
@@ -707,17 +706,102 @@ extension OptimizelyManager {
             }
         }
     }
+
+    @available(swift, obsoleted: 1.0)
+    @objc(notificationCenter) public var objc_notificationCenter: _ObjcOPTNotificationCenter {
+        class ObjcCenter : _ObjcOPTNotificationCenter {
+            var notifications:OPTNotificationCenter
+            
+            init(notificationCenter:OPTNotificationCenter) {
+                notifications = notificationCenter
+            }
+            
+            internal func convertAttribues(attributes:OptimizelyAttributes?) -> [String:Any]? {
+                return attributes?.mapValues({ (val) -> Any in
+                    if let val = val {
+                        return val
+                    }
+                    else {
+                        return NSNull()
+                    }
+                })
+            }
+            
+            internal func returnVal(num:Int?) -> NSNumber? {
+                if let num = num {
+                    return NSNumber(value: num)
+                }
+                
+                return nil
+            }
+            
+            func addActivateNotificationListener(activateListener: @escaping ([String : Any], String, [String : Any]?, [String : Any], Dictionary<String, Any>) -> Void) -> NSNumber? {
+                
+                let num = notifications.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
+                    
+                    activateListener(experiment, userId, self.convertAttribues(attributes: attributes), variation, event)
+                }
+                
+                return returnVal(num: num)
+            }
+            
+            func addTrackNotificationListener(trackListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>?, Dictionary<String, Any>) -> Void) -> NSNumber? {
+                let num = notifications.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
+                    
+                    trackListener(eventKey, userId, self.convertAttribues(attributes: attributes), eventTags, event)
+                }
+                
+                return returnVal(num: num)
+            }
+            
+            func addDecisionNotificationListener(decisionListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>) -> Void) -> NSNumber? {
+                
+                let num = notifications.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+                    decisionListener(type, userId, self.convertAttribues(attributes: attributes), decisionInfo)
+                }
+                return returnVal(num: num)
+            }
+            
+            func addDatafileChangeNotificationListener(datafileListener: @escaping (Data) -> Void) -> NSNumber? {
+                let num = notifications.addDatafileChangeNotificationListener { (data) in
+                    datafileListener(data)
+                }
+                
+                return returnVal(num: num)
+            }
+            
+            func removeNotificationListener(notificationId: Int) {
+                notifications.removeNotificationListener(notificationId: notificationId)
+            }
+            
+            func clearNotificationListeners(type: NotificationType) {
+                notifications.clearNotificationListeners(type: type)
+            }
+            
+            func clearAllNotificationListeners() {
+                notifications.clearAllNotificationListeners()
+            }
+            
+            
+        }
+        
+        return ObjcCenter(notificationCenter: self.notificationCenter)
+    }
     
+
+    @available(swift, obsoleted: 1.0)
     @objc(initializeSDKWithDatafile:error:)
     public func _objcInitializeSDKWith(datafile:String) throws {
         try self.initializeSDK(datafile: datafile)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(initializeSDKWithDatafile:doFetchDatafileBackground:error:)
     public func _objcInitializeSDK(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
         try self.initializeSDK(datafile: datafile, doFetchDatafileBackground: doFetchDatafileBackground)
     }
 
+    @available(swift, obsoleted: 1.0)
     @objc(activateWithExperimentKey:userId:attributes:error:)
     public func _objcActivate(experimentKey: String,
                               userId: String,
@@ -725,6 +809,7 @@ extension OptimizelyManager {
         return try self.activate(experimentKey: experimentKey, userId: userId, attributes: attributes as OptimizelyAttributes?)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(getVariationKeyWithExperimentKey:userId:attributes:error:)
     public func _objcGetVariationKey(experimentKey: String,
                                      userId: String,
@@ -734,12 +819,14 @@ extension OptimizelyManager {
                                    attributes: attributes)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(getForcedVariationWithExperimentKey:userId:)
     public func _objcGetForcedVariation(experimentKey: String, userId: String) -> String? {
         return getForcedVariation(experimentKey: experimentKey,
                                   userId: userId)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(setForcedVariationWithExperimentKey:userId:variationKey:)
     public func _objcSetForcedVariation(experimentKey: String,
                                         userId: String,
@@ -749,6 +836,7 @@ extension OptimizelyManager {
                                   variationKey: variationKey)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(isFeatureEnabledWithFeatureKey:userId:attributes:error:)
     public func _objcIsFeatureEnabled(featureKey: String,
                                       userId: String,
@@ -759,6 +847,8 @@ extension OptimizelyManager {
         return NSNumber(booleanLiteral: enabled)
     }
     
+
+    @available(swift, obsoleted: 1.0)
     @objc(getFeatureVariableBooleanWithFeatureKey:variableKey:userId:attributes:error:)
     public func _objcGetFeatureVariableBoolean(featureKey: String,
                                                variableKey: String,
@@ -771,6 +861,7 @@ extension OptimizelyManager {
         return NSNumber(booleanLiteral: value)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(getFeatureVariableDoubleWithFeatureKey:variableKey:userId:attributes:error:)
     public func _objcGetFeatureVariableDouble(featureKey: String,
                                               variableKey: String,
@@ -783,6 +874,7 @@ extension OptimizelyManager {
         return NSNumber(value: value)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(getFeatureVariableIntegerWithFeatureKey:variableKey:userId:attributes:error:)
     public func _objcGetFeatureVariableInteger(featureKey: String,
                                                variableKey: String,
@@ -795,6 +887,7 @@ extension OptimizelyManager {
         return NSNumber(integerLiteral: value)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(getFeatureVariableStringWithFeatureKey:variableKey:userId:attributes:error:)
     public func _objcGetFeatureVariableString(featureKey: String,
                                               variableKey: String,
@@ -806,12 +899,14 @@ extension OptimizelyManager {
                                                  attributes: attributes)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(getEnabledFeaturesWithUserId:attributes:error:)
     public func _objcGetEnabledFeatures(userId: String,
                                         attributes: [String: Any]?) throws -> [String] {
         return try self.getEnabledFeatures(userId:userId, attributes: attributes)
     }
     
+    @available(swift, obsoleted: 1.0)
     @objc(trackWithEventKey:userId:attributes:eventTags:error:)
     public func _objcTrack(eventKey:String,
                            userId: String,
@@ -881,7 +976,6 @@ extension OptimizelyManager {
 }
 
 // MARK: - ObjC protocols
-
 @objc(OPTEventDispatcher) public protocol _ObjcOPTEventDispatcher {
     func dispatchEvent(event:EventForDispatch, completionHandler:((Data?, NSError?) -> Void)?)
     

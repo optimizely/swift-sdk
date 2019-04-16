@@ -17,7 +17,7 @@
 import Foundation
 
 /// Enum representing notification types.
-public enum NotificationType : Int {
+@objc public enum NotificationType : Int {
     case Activate = 1
     case Track
     case DatafileChange
@@ -76,7 +76,7 @@ func addDecisionNotificationListener(decisionListener:@escaping DecisionListener
 
 /**
  Add a datafile change notification listener
- - Parameter datafileChangeListener: Notification to add.
+ - Parameter datafileListener: Notification to add.
  - Returns: the notification id used to remove the notification. It is greater than 0 on success.
  */
 func addDatafileChangeNotificationListener(datafileListener:@escaping DatafileChangeListener) -> Int?
@@ -107,5 +107,54 @@ func clearAllNotificationListeners()
  */
 func sendNotifications(type:Int, args:Array<Any?>)
     
+}
+
+@objc(OPTNotificationCenter) public protocol _ObjcOPTNotificationCenter {
+    /**
+     Add an activate notification listener to the notification center.
+     - Parameter activateListener: Notification to add.
+     - Returns: the notification id used to remove the notification. It is greater than 0 on success.
+     */
+    func addActivateNotificationListener(activateListener:@escaping (_ experiment:[String:Any], _ userId:String, _ attributes: [String:Any]?, _ variation:[String:Any], _ event:Dictionary<String, Any>) -> Void) -> NSNumber?
+    
+    /**
+     Add a track notification listener to the notification center.
+     - Parameter trackListener: Notification to add.
+     - Returns: the notification id used to remove the notification. It is greater than 0 on success.
+     */
+    func addTrackNotificationListener(trackListener:@escaping (_ eventKey:String, _ userId:String, _ attributes: [String:Any]?, _ eventTags:Dictionary<String, Any>?, _ event:Dictionary<String, Any>) -> Void) -> NSNumber?
+    
+    /**
+     Add a decision notification listener to the notification center.
+     - Parameter decisionListener: Notification to add.
+     - Returns: the notification id used to remove the notification. It is greater than 0 on success.
+     */
+    func addDecisionNotificationListener(decisionListener:@escaping (_ type:String, _ userId:String, _ attributes: [String:Any]?, _ decisionInfo:Dictionary<String, Any>) -> Void) -> NSNumber?
+    
+    /**
+     Add a datafile change notification listener
+     - Parameter datafileListener: Notification to add.
+     - Returns: the notification id used to remove the notification. It is greater than 0 on success.
+     */
+    func addDatafileChangeNotificationListener(datafileListener:@escaping (_ datafile:Data) -> Void) -> NSNumber?
+    
+    /**
+     Remove the notification listener based on the notificationId passed back from addNotification.
+     - Parameter notificationId: the id passed back from add notification.
+     - Returns: true if removed otherwise false (if the notification is already removed, it returns false).
+     */
+    func removeNotificationListener(notificationId:Int)
+    
+    /**
+     Clear notification listeners by notification type.
+     - Parameter type: type of OPTLYNotificationType to remove.
+     */
+    func clearNotificationListeners(type:NotificationType)
+    
+    /**
+     * Clear out all the notification listeners.
+     */
+    func clearAllNotificationListeners()
+
 }
 

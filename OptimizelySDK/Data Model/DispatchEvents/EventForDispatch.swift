@@ -8,14 +8,20 @@
 
 import Foundation
 
-public class EventForDispatch : Equatable, Codable {
+@objcMembers public class EventForDispatch: NSObject, Codable {
     static let eventEndpoint = "https://logx.optimizely.com/v1/events"
     
-    public let url:URL
-    public let body:Data
-    
-    init(url: URL? = nil, body: Data) {
+    public let url: URL
+    public let body: Data
+
+    public init(url: URL? = nil, body: Data) {
         self.url = url ?? URL(string: EventForDispatch.eventEndpoint)!
         self.body = body
+    }
+    
+    // override NSObject Equatable ('==' overriding not working for NSObject)
+    override public func isEqual(_ object: Any?) -> Bool {
+        guard let object = object as? EventForDispatch else { return false }
+        return url == object.url && body == object.body
     }
 }

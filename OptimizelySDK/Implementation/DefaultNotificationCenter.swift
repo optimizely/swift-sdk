@@ -120,23 +120,6 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
         return incrementNotificationId()
     }
     
-    public func addFeatureFlagRolloutChangeListener(featureListener: @escaping FeatureFlagRolloutChangeListener) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.FeatureFlagRolloutToggle.rawValue,  { (args:Any...) in
-            guard let myArgs = args[0] as? [Any?] else {
-                return
-            }
-            if myArgs.count < 2 {
-                return
-            }
-            if let featureKey = myArgs[0] as? String, let toogle = myArgs[1] as? FeatureFlagToggle {
-                featureListener(featureKey, toogle)
-            }
-        })
-        
-        return incrementNotificationId()
-    }
-
-    
     public func removeNotificationListener(notificationId: Int) {
         self.notificationListeners.removeValue(forKey: notificationId)
     }

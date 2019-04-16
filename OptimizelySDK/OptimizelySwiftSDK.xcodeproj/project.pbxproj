@@ -164,18 +164,8 @@
 		6E2B8D662257C612003C4799 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79F9D852251F58F002B0BC9 /* DecisionListenerTests.swift */; };
 		6E30A070224DA4D3005EFA1D /* AudienceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30A06F224DA4D3005EFA1D /* AudienceTests.swift */; };
 		6E30A071224DA4D3005EFA1D /* AudienceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30A06F224DA4D3005EFA1D /* AudienceTests.swift */; };
-		6E341E402265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E412265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E422265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E432265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E442265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E452265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E462265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E472265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E482265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E492265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6E341E4A2265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
 		6E341E4B2265060D005416B7 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
+		6E341E3022615D1F005416B7 /* OptimizelyManagerTests_ObjcAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E2F22615D1F005416B7 /* OptimizelyManagerTests_ObjcAPIs.m */; };
 		6E4DD83121E524E300B0C2C7 /* EventForDispatch+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2A21CC739E0049BC2C /* EventForDispatch+Extension.swift */; };
 		6E4DD83221E524E400B0C2C7 /* EventForDispatch+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2A21CC739E0049BC2C /* EventForDispatch+Extension.swift */; };
 		6E4DD83321E524E900B0C2C7 /* BatchEventBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */; };
@@ -1247,6 +1237,7 @@
 		6E24C4B02257F5E500DF3D71 /* BatchEventBuilderTests_Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatchEventBuilderTests_Events.swift; sourceTree = "<group>"; };
 		6E30A06F224DA4D3005EFA1D /* AudienceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudienceTests.swift; sourceTree = "<group>"; };
 		6E341E3F2265060D005416B7 /* LogMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogMessage.swift; sourceTree = "<group>"; };
+		6E341E2F22615D1F005416B7 /* OptimizelyManagerTests_ObjcAPIs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OptimizelyManagerTests_ObjcAPIs.m; sourceTree = "<group>"; };
 		6E4DD8EE21E530A900B0C2C7 /* OptimizelyResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyResult.swift; sourceTree = "<group>"; };
 		6E4DD8EF21E530A900B0C2C7 /* OptimizelyError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyError.swift; sourceTree = "<group>"; };
 		6E4DD8F021E530A900B0C2C7 /* OptimizelyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyManager.swift; sourceTree = "<group>"; };
@@ -1727,6 +1718,7 @@
 				6E636C5D223708B000AF3CEF /* OptimizelyManagerTests_ForcedVariation.swift */,
 				6E8CB5C8224C461A00B8CB7A /* OptimizelyManagerTests_Variables.swift */,
 				0B8F537B223FFB0500C56082 /* OptimizelyManagerTests_Group.swift */,
+				6E341E2F22615D1F005416B7 /* OptimizelyManagerTests_ObjcAPIs.m */,
 			);
 			path = "OptimizelyTests-APIs";
 			sourceTree = "<group>";
@@ -2086,6 +2078,7 @@
 					};
 					6E636B8B2236C91F00AF3CEF = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1010;
 					};
 					6E636B9A2236C96700AF3CEF = {
 						CreatedOnToolsVersion = 10.1;
@@ -2731,6 +2724,7 @@
 				6E636BED2236C9BC00AF3CEF /* Rollout.swift in Sources */,
 				6E636C0F2236C9CA00AF3CEF /* HandlerRegistryService.swift in Sources */,
 				6E636C142236CA4000AF3CEF /* OptimizelyManagerTests.swift in Sources */,
+				6E341E3022615D1F005416B7 /* OptimizelyManagerTests_ObjcAPIs.m in Sources */,
 				6E636C172236CB6D00AF3CEF /* OptimizelyManagerTests_Valid.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3698,6 +3692,7 @@
 		6E636B952236C91F00AF3CEF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = OptimizelyTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -3708,6 +3703,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optimizely.abcExtended.OptimizelyTests-APIs-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3716,6 +3712,7 @@
 		6E636B962236C91F00AF3CEF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = OptimizelyTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;

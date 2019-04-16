@@ -12,7 +12,7 @@ import Foundation
 /**
  * Any logger must implement these following methods.
  */
-public protocol OPTLogger {
+@objc public protocol OPTLogger {
 
     /// The log level the Logger is initialized with.
     static var logLevel: OptimizelyLogLevel { get set }

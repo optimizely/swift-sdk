@@ -153,7 +153,6 @@ open class OptimizelyManager: NSObject {
                     // new datafile came in...
                     self.reInitLock.wait(); defer { self.reInitLock.signal() }
                     if let config = try? ProjectConfig(datafile: data) {
-                        var featureToggleNotifications:[String:FeatureFlagToggle] = self.getFeatureFlagChanges(newConfig:config)
                         
                         do {
                             self.config = config
@@ -170,9 +169,6 @@ open class OptimizelyManager: NSObject {
                         self.notificationCenter.sendNotifications(type:
                             NotificationType.DatafileChange.rawValue, args: [data])
                         
-                        for notify in featureToggleNotifications.keys {
-                            self.notificationCenter.sendNotifications(type: NotificationType.FeatureFlagRolloutToggle.rawValue, args: [notify, featureToggleNotifications[notify]])
-                        }
                     }
                 }
                 
@@ -186,26 +182,6 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.dataFileInvalid
         }
      }
-    
-    func getFeatureFlagChanges(newConfig:ProjectConfig) -> [String:FeatureFlagToggle] {
-        var featureToggleNotifications:[String:FeatureFlagToggle] =
-        [String:FeatureFlagToggle]()
-        
-        if let config = self.config, let featureFlags = config.project?.featureFlags {
-            for feature in featureFlags {
-                if let experiment = config.getRollout(id: feature.rolloutId)?.experiments.filter(
-                        {$0.layerId == feature.rolloutId}).first,
-                    let newExperiment = newConfig.getRollout(id: feature.rolloutId)?.experiments.filter(
-                        {$0.layerId == feature.rolloutId}).first,
-                    experiment.status != newExperiment.status {
-                    // call rollout change with status changed.
-                    featureToggleNotifications[feature.key] = newExperiment.status == .running ? FeatureFlagToggle.on : FeatureFlagToggle.off
-                }
-            }
-        }
-        
-        return featureToggleNotifications
-    }
     
     func fetchDatafileBackground(completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         

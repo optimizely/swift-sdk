@@ -11,10 +11,6 @@ import Optimizely
 
 class CustomNotificationCenter: OPTNotificationCenter {
     
-    func addFeatureFlagRolloutChangeListener(featureListener: @escaping FeatureFlagRolloutChangeListener) -> Int? {
-        return nil
-    }
-    
     var notificationId: Int
     
     required init() {

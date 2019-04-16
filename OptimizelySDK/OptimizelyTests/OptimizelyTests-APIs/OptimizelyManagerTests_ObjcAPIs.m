@@ -211,8 +211,9 @@ static NSString * const kSdkKey = @"12345";
 
 - (void)testCustomizationAPIs {
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
-    NSString *fileContents = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    
+    NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+    NSData *datafileData = [datafile dataUsingEncoding:NSUTF8StringEncoding];
+
     TestOPTLogger *logger = [[TestOPTLogger alloc] init];
     TestOPTEventDispatcher *eventDispatcher = [[TestOPTEventDispatcher alloc] init];
     TestOPTUserProfileService *userProfileService = [[TestOPTUserProfileService alloc] init];
@@ -233,12 +234,9 @@ static NSString * const kSdkKey = @"12345";
     
     [self.optimizely initializeSDKWithCompletion:^(NSData * _Nullable data, NSError * _Nullable error) {}];
     
-    [self.optimizely initializeSDKWithDatafile:fileContents error:nil];
+    [self.optimizely initializeSDKWithDatafile:datafile error:nil];
     
-    NSData *datafileData = [fileContents dataUsingEncoding:NSUTF8StringEncoding];
     [self.optimizely initializeSDKWithDatafile:datafileData doFetchDatafileBackground:false error:nil];
-    
-    //[self.optimizely.notifi]
 }
 
 @end

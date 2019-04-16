@@ -76,7 +76,7 @@ func addDecisionNotificationListener(decisionListener:@escaping DecisionListener
 
 /**
  Add a datafile change notification listener
- - Parameter datafileChangeListener: Notification to add.
+ - Parameter datafileListener: Notification to add.
  - Returns: the notification id used to remove the notification. It is greater than 0 on success.
  */
 func addDatafileChangeNotificationListener(datafileListener:@escaping DatafileChangeListener) -> Int?
@@ -133,7 +133,7 @@ func sendNotifications(type:Int, args:Array<Any?>)
     
     /**
      Add a datafile change notification listener
-     - Parameter datafileChangeListener: Notification to add.
+     - Parameter datafileListener: Notification to add.
      - Returns: the notification id used to remove the notification. It is greater than 0 on success.
      */
     func addDatafileChangeNotificationListener(datafileListener:@escaping (_ datafile:Data) -> Void) -> NSNumber?

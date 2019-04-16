@@ -708,8 +708,8 @@ extension OptimizelyManager {
     }
 
     @available(swift, obsoleted: 1.0)
-    @objc(notificationCenter) public var objc_notificationCenter: _ObjcOPTNotificationCente {
-        class ObjcCenter : Objc_OPTNotificationCenter {
+    @objc(notificationCenter) public var objc_notificationCenter: _ObjcOPTNotificationCenter {
+        class ObjcCenter : _ObjcOPTNotificationCenter {
             var notifications:OPTNotificationCenter
             
             init(notificationCenter:OPTNotificationCenter) {

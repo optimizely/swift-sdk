@@ -67,7 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                        logger: customLogger,
                                        periodicDownloadInterval:30)
 
-        
         _ = optimizely?.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in
             DispatchQueue.main.async {
             #if os(iOS)
@@ -149,7 +148,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                        userId: userId,
                                                        attributes: attributes)
             openVariationView(optimizelyManager: optimizely, variationKey: variationKey)
-
 // used to test threading and datafile updates.
 //
 //            DispatchQueue.global(qos: .background).async {

@@ -16,15 +16,7 @@
 
 import Foundation
 
-public typealias DispatchCompletionHandler = (Result<Data, OPTEventDispatchError>)->(Void)
-
-public class OPTEventDispatchError : Error {
-    public var localizedDescription: String
-    
-    init(description:String) {
-        localizedDescription = description
-    }
-}
+public typealias DispatchCompletionHandler = (Result<Data, OptimizelyError>)->(Void)
 
 /**
  The OPTEventDispatcher dispatches events to the Optimizely backend used in results.

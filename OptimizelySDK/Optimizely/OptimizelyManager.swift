@@ -708,7 +708,7 @@ extension OptimizelyManager {
     }
 
     @available(swift, obsoleted: 1.0)
-    @objc(notificationCenter) public var objc_notificationCenter: Objc_OPTNotificationCenter {
+    @objc(notificationCenter) public var objc_notificationCenter: _ObjcOPTNotificationCente {
         class ObjcCenter : Objc_OPTNotificationCenter {
             var notifications:OPTNotificationCenter
             
@@ -874,7 +874,8 @@ extension OptimizelyManager {
         return NSNumber(value: value)
     }
     
-    @available(swift, obsoleted: 1.0) @objc(getFeatureVariableIntegerWithFeatureKey:variableKey:userId:attributes:error:)
+    @available(swift, obsoleted: 1.0)
+    @objc(getFeatureVariableIntegerWithFeatureKey:variableKey:userId:attributes:error:)
     public func _objcGetFeatureVariableInteger(featureKey: String,
                                                variableKey: String,
                                                userId: String,
@@ -886,7 +887,8 @@ extension OptimizelyManager {
         return NSNumber(integerLiteral: value)
     }
     
-    @available(swift, obsoleted: 1.0)   @objc(getFeatureVariableStringWithFeatureKey:variableKey:userId:attributes:error:)
+    @available(swift, obsoleted: 1.0)
+    @objc(getFeatureVariableStringWithFeatureKey:variableKey:userId:attributes:error:)
     public func _objcGetFeatureVariableString(featureKey: String,
                                               variableKey: String,
                                               userId: String,

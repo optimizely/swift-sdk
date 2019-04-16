@@ -109,7 +109,7 @@ func sendNotifications(type:Int, args:Array<Any?>)
     
 }
 
-@objc(OPTNotificationCenter) public protocol Objc_OPTNotificationCenter {
+@objc(OPTNotificationCenter) public protocol _ObjcOPTNotificationCenter {
     /**
      Add an activate notification listener to the notification center.
      - Parameter activateListener: Notification to add.

@@ -181,6 +181,21 @@ extension AttributeValue {
         }
     }
     
+    var stringValue: String {
+        switch self {
+        case .string(let value):
+            return value
+        case .double(let value):
+            return String(value)
+        case .int(let value):
+            return String(value)
+        case .bool(let value):
+            return String(value)
+        case .others:
+            return "UNKNOWN"
+        }
+    }
+    
     func isComparable(with target: AttributeValue) -> Bool {
         switch (self, target) {
         case (.string, .string): return true

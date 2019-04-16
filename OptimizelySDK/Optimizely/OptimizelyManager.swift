@@ -424,6 +424,12 @@ open class OptimizelyManager: NSObject {
         
         let featureEnabled = variation.featureEnabled ?? false
     
+        if (featureEnabled) {
+            logger.log(level: .info, message: LogMessage.featureEnabledForUser(featureKey, userId).description)
+        } else {
+            logger.log(level: .info, message: LogMessage.featureNotEnabledForUser(featureKey, userId).description)
+        }
+
         // we came from an experiment if experiment is not nil
         if let experiment = pair?.experiment {
             

@@ -28,6 +28,5 @@ public protocol OPTLogger {
      - Parameter message: The message to log.
      */
     func log(level: OptimizelyLogLevel, message: String)
-
+    
 }
-

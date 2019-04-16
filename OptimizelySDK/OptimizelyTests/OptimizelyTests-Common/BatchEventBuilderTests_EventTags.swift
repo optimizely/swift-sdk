@@ -149,7 +149,7 @@ extension BatchEventBuilderTests_EventTags {
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["revenue"] as! Double, 12.5)
         XCTAssertEqual(tags["value"] as! Int, 30)
-        XCTAssertNil(de["revenue"], "invalid-type revenue field should not be copied")
+        XCTAssertEqual(de["revenue"] as! Int, 12, "double converted to integer")
         XCTAssertEqual(de["value"] as! Double, 30.0, "integer converted to double")
     }
     

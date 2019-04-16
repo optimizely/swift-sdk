@@ -34,7 +34,10 @@ class DefaultDecisionService : OPTDecisionService {
         let bucketingId = getBucketingId(userId:userId, attributes:attributes)
         
         // ---- check if the experiment is running ----
-        if !experiment.isActivated { return nil }
+        if !experiment.isActivated {
+            logger?.log(level: .info, message: LogMessage.experimentNotRunning(experiment.key).description)
+            return nil
+        }
         
         // ---- check for whitelisted variation registered at runtime ----
         if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
@@ -131,6 +134,10 @@ class DefaultDecisionService : OPTDecisionService {
                                           attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
         
         let experimentIds = featureFlag.experimentIds;
+        if experimentIds.isEmpty {
+            logger?.log(level: .debug, message: LogMessage.featureHasNoExperiments(featureFlag.key).description)
+        }
+        
         // Check if there are any experiment IDs inside feature flag
         // Evaluate each experiment ID and return the first bucketed experiment variation
         for experimentId in experimentIds {

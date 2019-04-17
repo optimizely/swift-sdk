@@ -99,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         })
         
         // initialize Optimizely Client from a datafile download
-        optimizely!.initializeSDK(resourceTimeout:0.001) { result in
+        optimizely!.initializeSDK { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")

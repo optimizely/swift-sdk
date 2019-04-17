@@ -113,5 +113,16 @@ class Utils {
         guard isBoolType(value) else { return nil }
         return (value as! Bool)
     }
+    
+    static func getSDKVersion() -> String {
+        // Bundle(for: self) not working properly to get SDK bundle within unit test frameworks
+        // Bundle(identifier: bundleIdentifier) works ok consistently
+        guard let bundle = Bundle(identifier: "com.optimizely.OptimizelySwiftSDK"),
+            let version = bundle.infoDictionary!["OPTIMIZELY_SDK_VERSION"] as? String else {
+            fatalError("Check if SDK framework identifier is correct")
+        }
+        
+        return version
+    }
 
 }

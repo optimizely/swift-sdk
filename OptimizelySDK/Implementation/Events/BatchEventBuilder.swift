@@ -10,10 +10,6 @@ import Foundation
 
 class BatchEventBuilder {
     static private let swiftSdkClientName = "swift-sdk"
-    static private var swiftSdkClientVersion = {
-        // TODO: fix this version controlled via xcode settings
-        return "3.0.0"
-    }()
     
     static private var logger = HandlerRegistryService.shared.injectLogger()
     
@@ -87,7 +83,7 @@ class BatchEventBuilder {
         
         let batchEvent = BatchEvent(revision: config.project.revision,
                                     accountID: config.project.accountId,
-                                    clientVersion: swiftSdkClientVersion,
+                                    clientVersion: Utils.getSDKVersion(),
                                     visitors: [visitor],
                                     projectID: config.project.projectId,
                                     clientName: swiftSdkClientName,

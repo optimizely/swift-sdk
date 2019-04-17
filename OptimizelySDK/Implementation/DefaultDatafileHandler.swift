@@ -48,8 +48,13 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         return datafile
     }
     
-    open func downloadDatafile(sdkKey: String, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+    open func downloadDatafile(sdkKey: String,
+                               resourceTimeoutInterval:Double = -1,
+                               completionHandler: @escaping DatafileDownloadCompletionHandler) {
         let config = URLSessionConfiguration.ephemeral
+        if resourceTimeoutInterval > 0 {
+            config.timeoutIntervalForResource = TimeInterval(resourceTimeoutInterval)
+        }
         let session = URLSession(configuration: config)
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
         if let url = URL(string: str) {
@@ -100,19 +105,11 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     
     func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification:((Data)->Void)?) {
         
-        timers.performAtomic { (timers) in
-            if let timer = timers[sdkKey] {
-                logger?.log(level: .info, message: "Timer getting restarted for datafile updates \(sdkKey)")
-                timer.invalidate()
-                timers[sdkKey] = nil
-                //return
-            }
-        }
         if #available(iOS 10.0, tvOS 10.0, *) {
             DispatchQueue.main.async {
                 let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: false) { (timer) in
                     
-                    self.downloadDatafile(sdkKey: sdkKey, completionHandler: { (result) in
+                    self.downloadDatafile(sdkKey: sdkKey) { (result) in
                         switch result {
                         case .success(let data):
                             if let data = data,
@@ -122,8 +119,13 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                         case .failure(let error):
                             self.logger?.log(level: .error, message: error.localizedDescription)
                         }
-                        self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
-                    })
+
+                        if self.hasPeriodUpdates(sdkKey: sdkKey) {
+                            self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
+                        }
+                    }
+                    
+                    timer.invalidate()
                 }
                 self.timers.performAtomic(atomicOperation: { (timers) in
                     timers[sdkKey] = timer
@@ -132,6 +134,17 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         } else {
             // Fallback on earlier versions
         }
+    }
+    
+    func hasPeriodUpdates(sdkKey: String) -> Bool {
+        var restart = true
+        self.timers.performAtomic(atomicOperation: { (timers) in
+            if !timers.contains(where: { $0.key == sdkKey} ) {
+                restart = false
+            }
+        })
+        
+        return restart
     }
     
     func stopPeriodicUpdates(sdkKey: String) {

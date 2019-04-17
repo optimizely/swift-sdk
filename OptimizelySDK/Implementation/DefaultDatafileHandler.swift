@@ -109,21 +109,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             DispatchQueue.main.async {
                 let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: false) { (timer) in
                     
-                    self.downloadDatafile(sdkKey: sdkKey) { (result) in
-                        switch result {
-                        case .success(let data):
-                            if let data = data,
-                                let datafileChangeNotification = datafileChangeNotification {
-                                datafileChangeNotification(data)
-                            }
-                        case .failure(let error):
-                            self.logger?.log(level: .error, message: error.localizedDescription)
-                        }
-
-                        if self.hasPeriodUpdates(sdkKey: sdkKey) {
-                            self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
-                        }
-                    }
+                    self.performPerodicDownload(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
                     
                     timer.invalidate()
                 }
@@ -133,7 +119,27 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             }
         } else {
             // Fallback on earlier versions
+            DispatchQueue.main.async {
+                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "updateInterval":updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
+                
+                self.timers.performAtomic(atomicOperation: { (timers) in
+                    timers[sdkKey] = timer
+                })
+            }
+
         }
+    }
+    
+    @objc
+    func timerFired(timer:Timer) {
+        if let info = timer.userInfo as? [String:Any],
+            let sdkKey = info["sdkKey"] as? String,
+            let updateInterval = info["updateInterval"] as? Int,
+            let datafileChangeNotification = info["datafileChangeNotification"] as? ((Data)->Void){
+                self.performPerodicDownload(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
+        }
+        timer.invalidate()
+
     }
     
     func hasPeriodUpdates(sdkKey: String) -> Bool {
@@ -145,6 +151,26 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         })
         
         return restart
+    }
+    
+    func performPerodicDownload(sdkKey: String,
+                                updateInterval:Int,
+                                datafileChangeNotification:((Data)->Void)?) {
+        self.downloadDatafile(sdkKey: sdkKey) { (result) in
+            switch result {
+            case .success(let data):
+                if let data = data,
+                    let datafileChangeNotification = datafileChangeNotification {
+                    datafileChangeNotification(data)
+                }
+            case .failure(let error):
+                self.logger?.log(level: .error, message: error.localizedDescription)
+            }
+            
+            if self.hasPeriodUpdates(sdkKey: sdkKey) {
+                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
+            }
+        }
     }
     
     func stopPeriodicUpdates(sdkKey: String) {

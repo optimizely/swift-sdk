@@ -34,6 +34,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     self.userId = [NSString stringWithFormat:@"%d", arc4random()];
     self.attributes = @{ @"browser_type": @"safari" };
     
+    
     // initialize SDK in one of these two ways:
     // (1) asynchronous SDK initialization (RECOMMENDED)
     //     - fetch a JSON datafile from the server
@@ -59,6 +60,10 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
             self.optimizely = nil;
         }
         
+        [self.optimizely.notificationCenter addActivateNotificationListenerWithActivateListener:^(NSDictionary<NSString *,id> * _Nonnull experiment, NSString * _Nonnull userId, NSDictionary<NSString *,id> * _Nullable attributes, NSDictionary<NSString *,id> * _Nonnull variation, NSDictionary<NSString *,id> * _Nonnull event) {
+            NSLog(@"got activate with experiment");
+            NSLog(@"%@", experiment[@"key"]);
+        }];
         [self startAppWithExperimentActivated];
     }];
 }

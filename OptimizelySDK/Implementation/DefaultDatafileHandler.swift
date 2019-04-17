@@ -19,7 +19,7 @@ import Foundation
 class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     lazy var logger = HandlerRegistryService.shared.injectLogger()
-    var timers:[String:Timer] = [String:Timer]()
+    var timers:AtomicProperty<[String:Timer]> = AtomicProperty(property: [String:Timer]())
     let dataStore = DataStoreUserDefaults()
     
     required init() {
@@ -28,34 +28,27 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     
     func downloadDatafile(sdkKey: String) -> Data? {
         
-        let config = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: config)
-        let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
-        var result:Data?
+        var datafile:Data?
         let group = DispatchGroup()
         
         group.enter()
         
-        if let url = URL(string: str) {
-            let task = session.downloadTask(with: url){ (url, response, error) in
-                self.logger?.log(level: .debug, message: response.debugDescription)
-                if let response = response as? HTTPURLResponse, response.statusCode == 200,
-                    let url = url, let projectConfig = try? Data(contentsOf: url) {
-                    result = projectConfig
-                    self.saveDatafile(sdkKey: sdkKey, dataFile: projectConfig)
-                }
-                group.leave()
+        downloadDatafile(sdkKey: sdkKey) { (result) in
+            switch result {
+            case .success(let data):
+                datafile = data
+            case .failure(let error):
+                self.logger?.log(level: .error, message: error.localizedDescription)
             }
-            
-            task.resume()
-            
-            group.wait()
-            
+            group.leave()
         }
-        return result
+        
+        group.wait()
+        
+        return datafile
     }
     
-    open func downloadDatafile(sdkKey: String, completionHandler: @escaping (Result<Data?, DatafileDownloadError>) -> Void) {
+    open func downloadDatafile(sdkKey: String, completionHandler: @escaping DatafileDownloadCompletionHandler) {
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
@@ -106,29 +99,35 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification:((Data)->Void)?) {
-        if let _ = timers[sdkKey] {
-            logger?.log(level: .info, message: "Timer already started for datafile updates")
-            return
+        
+        timers.performAtomic { (timers) in
+            if let timer = timers[sdkKey] {
+                logger?.log(level: .info, message: "Timer getting restarted for datafile updates \(sdkKey)")
+                timer.invalidate()
+                timers[sdkKey] = nil
+                //return
+            }
         }
         if #available(iOS 10.0, tvOS 10.0, *) {
             DispatchQueue.main.async {
-                let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: true) { (timer) in
-                    self.downloadDatafile(sdkKey: sdkKey) { (result) in
-                        if let datafileChangeNotification = datafileChangeNotification {
-                            switch result {
-                            case .success(let data):
-                                if let data = data {
-                                    datafileChangeNotification(data)
-                                }
-                            case .failure( _): break
-                                // don't do anything.
+                let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: false) { (timer) in
+                    
+                    self.downloadDatafile(sdkKey: sdkKey, completionHandler: { (result) in
+                        switch result {
+                        case .success(let data):
+                            if let data = data,
+                                let datafileChangeNotification = datafileChangeNotification {
+                                datafileChangeNotification(data)
                             }
+                        case .failure(let error):
+                            self.logger?.log(level: .error, message: error.localizedDescription)
                         }
-                        // background download saves to cache
-                    }
+                        self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
+                    })
                 }
-                self.timers[sdkKey] = timer
-
+                self.timers.performAtomic(atomicOperation: { (timers) in
+                    timers[sdkKey] = timer
+                })
             }
         } else {
             // Fallback on earlier versions
@@ -136,19 +135,23 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     func stopPeriodicUpdates(sdkKey: String) {
-        if let timer = timers[sdkKey] {
-            logger?.log(level: .info, message: "Stopping timer for datafile updates sdkKey:" + sdkKey)
-            
-            timer.invalidate()
-            timers.removeValue(forKey: sdkKey)
-        }
+        timers.performAtomic { (timers) in
+            if let timer = timers[sdkKey] {
+                logger?.log(level: .info, message: "Stopping timer for datafile updates sdkKey: \(sdkKey)")
+                
+                timer.invalidate()
+                timers.removeValue(forKey: sdkKey)
+            }
 
+        }
     }
     
     func stopPeriodicUpdates() {
-        for key in timers.keys {
-            logger?.log(level: .info, message: "Stopping timer for all datafile updates")
-            stopPeriodicUpdates(sdkKey: key)
+        timers.performAtomic { (timers) in
+            for key in timers.keys {
+                logger?.log(level: .info, message: "Stopping timer for all datafile updates")
+                stopPeriodicUpdates(sdkKey: key)
+            }
         }
         
     }

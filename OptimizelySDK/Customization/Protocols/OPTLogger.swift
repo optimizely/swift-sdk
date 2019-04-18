@@ -30,3 +30,33 @@ import Foundation
     func log(level: OptimizelyLogLevel, message: String)
     
 }
+
+extension OPTLogger {
+    
+    // MARK: - Utils
+    
+    func log(level: OptimizelyLogLevel, message: String?) {
+        guard let message = message else { return }
+        log(level: level, message: message)
+    }
+
+    func e(_ message: String) { log(level: .error, message: message) }
+    func w(_ message: String) { log(level: .warning, message: message) }
+    func i(_ message: String) { log(level: .info, message: message) }
+    func d(_ message: String) { log(level: .debug, message: message) }
+
+    // MARK: - Utils for LogMessage
+    
+    func e(_ message: LogMessage) { log(level: .error, message: message.description) }
+    func w(_ message: LogMessage) { log(level: .warning, message: message.description) }
+    func i(_ message: LogMessage) { log(level: .info, message: message.description) }
+    func d(_ message: LogMessage) { log(level: .debug, message: message.description) }
+    
+    // MARK: - Utils for OptimizelyError log
+    
+    func e(_ error: OptimizelyError?) { log(level: .error, message: error?.reason) }
+    func w(_ error: OptimizelyError?) { log(level: .warning, message: error?.reason) }
+    func i(_ error: OptimizelyError?) { log(level: .info, message: error?.reason) }
+    func d(_ error: OptimizelyError?) { log(level: .debug, message: error?.reason) }
+    
+}

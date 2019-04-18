@@ -29,8 +29,10 @@ class DefaultBucketer : OPTBucketer {
     }
 
     func bucketExperiment(config:ProjectConfig, experiment: Experiment, bucketingId: String) -> Variation? {
-        var ok = true
+        var mutexAllowed = true
+        
         // check for mutex
+        
         let group = config.project.groups.filter{ $0.getExperiemnt(id: experiment.id) != nil }.first
         
         if let group = group {
@@ -39,89 +41,86 @@ class DefaultBucketer : OPTBucketer {
                 break;
             case .random:
                 let mutexExperiment = bucketToExperiment(config: config, group: group, bucketingId: bucketingId)
-                if let mutexExperiment = mutexExperiment, mutexExperiment.id == experiment.id {
-                    ok = true
-                }
-                else {
-                    ok = false
+                if let mutexExperiment = mutexExperiment {
+                    if mutexExperiment.id == experiment.id {
+                        mutexAllowed = true
+                        logger?.i(.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
+                    } else {
+                        mutexAllowed = false
+                        logger?.i(.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
+                    }
+                } else {
+                    mutexAllowed = false
+                    logger?.i(.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id))
                 }
             }
         }
         
+        if !mutexAllowed { return nil }
+        
         // bucket to variation only if experiment passes Mutex check
-        if (ok) {
-            return bucketToVariation(experiment:experiment, bucketingId:bucketingId)
-        }
-        else {
-            // log message if the user is mutually excluded
-            logger?.log(level: .error, message: "User not bucketed into variation. Mutually excluded via group \(group?.id ?? "unknown")")
-            
-            return nil;
+
+        if let variation = bucketToVariation(experiment:experiment, bucketingId:bucketingId) {
+            logger?.i(.userBucketedIntoVariationInExperiment(bucketingId, experiment.key, variation.key))
+            return variation
+        } else {
+            logger?.i(.userNotBucketedIntoVariationInExperiment(bucketingId, experiment.key))
+            return nil
         }
     }
     
     func bucketToExperiment(config:ProjectConfig, group: Group, bucketingId: String) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
+        logger?.d(.userAssignedToExperimentBucketValue(bucketValue, bucketingId))
         
         if group.trafficAllocation.count == 0 {
-            // log error if there are no traffic allocation values
-            logger?.log(level: .error, message: "Group \(group.id) has no traffic allocation")
+            logger?.e(.groupHasNoTrafficAllocation(group.id))
             return nil;
         }
         
         for trafficAllocation in group.trafficAllocation {
             if bucketValue <= trafficAllocation.endOfRange {
                 let experimentId = trafficAllocation.entityId;
-                let experiment = config.getExperiment(id: experimentId)
                 
                 // propagate errors and logs for unknown experiment
-                if experiment == nil {
-                    // log problem with experiment id
-                    logger?.log(level: .error, message: "Experiment Id \(experimentId) for experiment not in datafile")
+                if let experiment = config.getExperiment(id: experimentId) {
+                    return experiment
+                } else {
+                    logger?.e(.userBucketedIntoInvalidExperiment(experimentId))
+                    return nil
                 }
-                return experiment;
             }
         }
         
-        // log error if invalid bucketing id
-        logger?.log(level: .error, message: "Bucketing value \(bucketValue) not in traffic allocation")
-
         return nil
     }
     
     func bucketToVariation(experiment:Experiment, bucketingId:String) -> Variation? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)
-        
-        if experiment.trafficAllocation.count == 0 {
-            // log error if there are no traffic allocation values
-            logger?.log(level: .error, message: "Experiment \(experiment.key) has no traffic allocation")
+        logger?.d(.userAssignedToVariationBucketValue(bucketValue, bucketingId))
 
+        if experiment.trafficAllocation.count == 0 {
+            logger?.e(.experimentHasNoTrafficAllocation(experiment.key))
             return nil
         }
         
         for trafficAllocation in experiment.trafficAllocation {
             if (bucketValue <= trafficAllocation.endOfRange) {
-                
                 let variationId = trafficAllocation.entityId;
-                let variation = experiment.getVariation(id: variationId)
+
                 // propagate errors and logs for unknown variation
-                if let variation = variation {
-                    logger?.log(level: .info, message: LogMessage.userHasVariation(bucketingId, experiment.key, variation.key).description)
+                if let variation = experiment.getVariation(id: variationId) {
+                    return variation
+                } else {
+                    logger?.e(.userBucketedIntoInvalidVariation(variationId))
+                    return nil
                 }
-                else {
-                    logger?.log(level: .error, message: LogMessage.invalidVariationId.description)
-                }
-                return variation;
             }
         }
         
-        // log error if invalid bucketing id
-        logger?.log(level: .error, message: "Invalid bucketing value for experiment \(experiment.key)")
-
         return nil;
-
     }
     
     func generateBucketValue(bucketingId: String) -> Int {

@@ -130,9 +130,9 @@ class BatchEventBuilder {
         }
         
         if let value = value {
-            logger?.log(level: .info, message: LogMessage.parsedNumericValue(value.stringValue).description)
+            logger?.i(.extractValueFromEventTags(value.stringValue))
         } else {
-            logger?.log(level: .info, message: LogMessage.failedToParseValue(valueFromTags.stringValue).description)
+            logger?.i(.failedToExtractValueFromEventTags(valueFromTags.stringValue))
         }
         
         return value
@@ -156,9 +156,9 @@ class BatchEventBuilder {
         }
         
         if let revenue = revenue {
-            logger?.log(level: .info, message: LogMessage.parsedRevenueValue(revenue.stringValue).description)
+            logger?.i(.extractRevenueFromEventTags(revenue.stringValue))
         } else {
-            logger?.log(level: .info, message: LogMessage.failedToParseRevenue(revenueFromTags.stringValue).description)
+            logger?.i(.failedToExtractRevenueFromEventTags(revenueFromTags.stringValue))
         }
         
         return revenue
@@ -183,7 +183,7 @@ class BatchEventBuilder {
                     }
                 }
                 else {
-                    logger?.log(level: .debug, message: "Attribute " + attr + " skipped. Not in datafile.")
+                    logger?.d(.unrecognizedAttribute(attr))
                 }
             }
         }

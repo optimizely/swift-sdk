@@ -93,7 +93,7 @@ extension BatchEventBuilderTests_EventTags {
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["big"] as! Double, OTUtils.positiveMaxValueAllowed)
-        XCTAssertNil(tags["tooBig"])
+        XCTAssertEqual(tags["tooBig"] as! Double, OTUtils.positiveTooBigValue, "range should not be checked for event tags at all")
     }
 
 }
@@ -159,21 +159,6 @@ extension BatchEventBuilderTests_EventTags {
 
 extension BatchEventBuilderTests_EventTags {
 
-    func testEventTagsWhenRevenueAndValueWhenValidBigNumbers() {
-        let eventKey = "event_single_targeted_exp"
-        let eventTags: [String: Any] = ["revenue": Int64(OTUtils.positiveMaxValueAllowed),
-                                        "value": OTUtils.positiveMaxValueAllowed]
-        
-        try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
-        
-        XCTAssertEqual(tags["revenue"] as! Int64, Int64(OTUtils.positiveMaxValueAllowed))
-        XCTAssertEqual(tags["value"] as! Double, OTUtils.positiveMaxValueAllowed)
-        XCTAssertEqual(de["revenue"] as! Int64, Int64(OTUtils.positiveMaxValueAllowed))
-        XCTAssertEqual(de["value"] as! Double, OTUtils.positiveMaxValueAllowed)
-    }
-    
     func testEventTagsWhenRevenueAndValueWhenInvalidBigNumbers() {
         let eventKey = "event_single_targeted_exp"
         let eventTags: [String: Any] = ["revenue": Int64(OTUtils.positiveTooBigValue),
@@ -183,27 +168,14 @@ extension BatchEventBuilderTests_EventTags {
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
-        XCTAssertNil(tags["revenue"], "invalid number must be filtered")
-        XCTAssertNil(tags["value"], "invalid number must be filtered")
-        XCTAssertNil(de["revenue"], "invalid-type revenue field should not be copied")
-        XCTAssertNil(de["value"], "invalid-type value field should not be copied")
+        // range should not be checked for event tags including revenue/value (JIRA #4449)
+        
+        XCTAssertEqual(tags["revenue"] as! Int64, Int64(OTUtils.positiveTooBigValue))
+        XCTAssertEqual(tags["value"] as! Double, OTUtils.positiveTooBigValue)
+        XCTAssertEqual(de["revenue"] as! Int64, Int64(OTUtils.positiveTooBigValue))
+        XCTAssertEqual(de["value"] as! Double, OTUtils.positiveTooBigValue)
     }
 
-    func testEventTagsWhenRevenueAndValueWhenValidBigNumbersNegative() {
-        let eventKey = "event_single_targeted_exp"
-        let eventTags: [String: Any] = ["revenue": Int64(OTUtils.negativeMaxValueAllowed),
-                                        "value": OTUtils.negativeMaxValueAllowed]
-        
-        try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
-        
-        XCTAssertEqual(tags["revenue"] as! Int64, Int64(OTUtils.negativeMaxValueAllowed))
-        XCTAssertEqual(tags["value"] as! Double, OTUtils.negativeMaxValueAllowed)
-        XCTAssertEqual(de["revenue"] as! Int64, Int64(OTUtils.negativeMaxValueAllowed))
-        XCTAssertEqual(de["value"] as! Double, OTUtils.negativeMaxValueAllowed)
-    }
-    
     func testEventTagsWhenRevenueAndValueWhenInvalidBigNumbersNegative() {
         let eventKey = "event_single_targeted_exp"
         let eventTags: [String: Any] = ["revenue": Int64(OTUtils.negativeTooBigValue),
@@ -213,10 +185,12 @@ extension BatchEventBuilderTests_EventTags {
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
-        XCTAssertNil(tags["revenue"], "invalid number must be filtered")
-        XCTAssertNil(tags["value"], "invalid number must be filtered")
-        XCTAssertNil(de["revenue"], "invalid-type revenue field should not be copied")
-        XCTAssertNil(de["value"], "invalid-type value field should not be copied")
+        // range should not be checked for event tags including revenue/value (JIRA #4449)
+        
+        XCTAssertEqual(tags["revenue"] as! Int64, Int64(OTUtils.negativeTooBigValue))
+        XCTAssertEqual(tags["value"] as! Double, OTUtils.negativeTooBigValue)
+        XCTAssertEqual(de["revenue"] as! Int64, Int64(OTUtils.negativeTooBigValue))
+        XCTAssertEqual(de["value"] as! Double, OTUtils.negativeTooBigValue)
     }
 }
 

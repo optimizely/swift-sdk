@@ -93,11 +93,11 @@ class OTUtils {
     }
     
     static var positiveTooBigValue: Double {
-        return positiveMaxValueAllowed + 100.0
+        return positiveMaxValueAllowed * 2.0
     }
     
     static var negativeTooBigValue: Double {
-        return negativeMaxValueAllowed - 100.0
+        return negativeMaxValueAllowed * 2.0
     }
 
 }

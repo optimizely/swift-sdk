@@ -228,11 +228,12 @@ open class OptimizelyManager: NSObject {
                          userId: String,
                          attributes: OptimizelyAttributes?=nil) throws -> String {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else {
+            throw OptimizelyError.sdkNotConfigured
+        }
         
-        // TODO: fix config to throw common errors (.experimentUnknown, .experimentKeyInvalid, ...)
         guard let experiment = config.getExperiment(key: experimentKey) else {
-            throw OptimizelyError.experimentUnknown
+            throw OptimizelyError.experimentKeyInvalid(experimentKey)
         }
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
@@ -244,7 +245,7 @@ open class OptimizelyManager: NSObject {
                                                                  userId: userId,
                                                                  attributes: attributes) else
         {
-            throw OptimizelyError.eventUnknown    // TODO: pass errors
+            throw OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey)
         }
         
         let event = EventForDispatch(body: body)
@@ -289,7 +290,7 @@ open class OptimizelyManager: NSObject {
         
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
-            throw OptimizelyError.experimentUnknown
+            throw OptimizelyError.experimentKeyInvalid(experimentKey)
         }
         
         var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.experiment, userId: userId, attributes: attributes)
@@ -302,7 +303,7 @@ open class OptimizelyManager: NSObject {
         guard let variation = decisionService.getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
             args.append(decisionInfo)
             self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
-            throw OptimizelyError.variationUnknown
+            throw OptimizelyError.variationUnknown(userId, experimentKey)
         }
         
         decisionInfo[Constants.NotificationKeys.experiment] = experimentKey
@@ -388,15 +389,15 @@ open class OptimizelyManager: NSObject {
         guard let variation = pair?.variation else {
             args.append(decisionInfo)
             self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
-            throw OptimizelyError.variationUnknown
+            throw OptimizelyError.variationUnknown(userId, featureKey)
         }
         
         let featureEnabled = variation.featureEnabled ?? false
     
         if (featureEnabled) {
-            logger.log(level: .info, message: LogMessage.featureEnabledForUser(featureKey, userId).description)
+            logger.i(.featureEnabledForUser(featureKey, userId))
         } else {
-            logger.log(level: .info, message: LogMessage.featureNotEnabledForUser(featureKey, userId).description)
+            logger.i(.featureNotEnabledForUser(featureKey, userId))
         }
 
         // we came from an experiment if experiment is not nil
@@ -412,8 +413,7 @@ open class OptimizelyManager: NSObject {
                                                                      userId: userId,
                                                                      attributes: attributes) else
             {
-                // TODO: pass error
-                throw OptimizelyError.eventUnknown
+                throw OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey)
             }
             
             let event = EventForDispatch(body: body)
@@ -529,11 +529,11 @@ open class OptimizelyManager: NSObject {
         
         // fix config to throw errors
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
-            throw OptimizelyError.featureUnknown
+            throw OptimizelyError.featureKeyInvalid(featureKey)
         }
         
         guard let variable = featureFlag.getVariable(key: variableKey) else {
-            throw OptimizelyError.variableUnknown
+            throw OptimizelyError.variableKeyInvalid(variableKey, featureKey)
         }
         
         var decisionInfo = [String:Any]()
@@ -553,13 +553,20 @@ open class OptimizelyManager: NSObject {
                 decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = experiment.key
                 decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = decision.variation?.key
             }
+            
             if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
                 if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
                     featureValue = featureVariable.value
+                    
+                    logger.i(.userReceivedVariableValue(userId, featureKey, variableKey, featureValue))
                 } else {
-                    // add standard log message here
+                    logger.i(.featureNotEnabledReturnDefaultVariableValue(userId, featureKey, variableKey))
                 }
+            } else {
+                logger.i(.variableNotUsedReturnDefaultVariableValue(variableKey))
             }
+        } else {
+            logger.i(.userReceivedDefaultVariableValue(userId, featureKey, variableKey))
         }
         
         var typeName: String?
@@ -646,17 +653,19 @@ open class OptimizelyManager: NSObject {
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
         
         guard let _ = config.getEvent(key: eventKey) else {
-            throw OptimizelyError.eventUnknown
+            let error = OptimizelyError.eventKeyInvalid(eventKey)
+            logger.e(error)
+            throw error
         }
         
         // TODO: fix to throw errors
         guard let body = BatchEventBuilder.createConversionEvent(config: config,
-                                                                 eventKey:eventKey,
-                                                                 userId:userId,
-                                                                 attributes:attributes,
-                                                                 eventTags:eventTags) else
+                                                                 eventKey: eventKey,
+                                                                 userId: userId,
+                                                                 attributes: attributes,
+                                                                 eventTags: eventTags) else
         {
-            throw OptimizelyError.eventUnknown    // TODO: pass errors
+            throw OptimizelyError.eventBuildFailure(eventKey)
         }
         
         let event = EventForDispatch(body: body)

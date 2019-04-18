@@ -92,16 +92,16 @@ extension UserAttribute {
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         guard let _ = typeSupported else {
-            throw OptimizelyError.conditionInvalidAttributeType(self.type ?? "empty")
+            throw OptimizelyError.userAttributeInvalidType(self.type ?? "empty")
         }
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            throw OptimizelyError.conditionInvalidAttributeMatch(self.match ?? "empty")
+            throw OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty")
         }
         
         guard let nameFinal = name else {
-            throw OptimizelyError.conditionInvalidFormat("empty name in condition")
+            throw OptimizelyError.userAttributeInvalidFormat("empty name in condition")
         }
         
         let attributes = attributes ?? OptimizelyAttributes()
@@ -110,11 +110,11 @@ extension UserAttribute {
         
         if matchFinal != .exists {
             if value == nil {
-                throw OptimizelyError.conditionInvalidFormat("missing value (\(nameFinal)) in condition)")
+                throw OptimizelyError.userAttributeInvalidFormat("missing value (\(nameFinal)) in condition)")
             }
             
             if rawAttributeValue == nil {
-                throw OptimizelyError.conditionNoAttributeValue("no attribute value for (\(nameFinal))")
+                throw OptimizelyError.evaluateAttributeInvalidFormat("no attribute value for (\(nameFinal))")
             }
         }
         

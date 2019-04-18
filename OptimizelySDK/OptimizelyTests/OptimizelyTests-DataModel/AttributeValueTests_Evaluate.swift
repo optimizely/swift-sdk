@@ -168,8 +168,7 @@ extension AttributeValueTests_Evaluate {
     func testIsGreaterSuccessWithFloat_LargeValue() {
         let model = try! OTUtils.getAttributeValueFromNative(13.5)
         XCTAssertFalse(try! model.isGreater(than: Float(OTUtils.positiveMaxValueAllowed)))
-        // precision issue; adding 100 is not big enough for overflow
-        XCTAssertNil(try? model.isGreater(than: Float(OTUtils.positiveMaxValueAllowed * 2.0)))
+        XCTAssertNil(try? model.isGreater(than: Float(OTUtils.positiveTooBigValue)))
     }
     
     func testIsGreaterSuccessWithInt64_LargeValue() {

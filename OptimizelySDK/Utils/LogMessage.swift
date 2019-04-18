@@ -13,104 +13,51 @@ enum LogMessage {
     case featureEnabledForUser(_ key: String, _ userId: String)
     case featureNotEnabledForUser(_ key: String, _ userId: String)
     case featureHasNoExperiments(_ key: String)
-    case failedToParseValue(_ val: String)
-    case failedToParseRevenue(_ val: String)
-    case forcedBucketingFailed(_ key: String, _ userId: String)
-    case invalidVariationId
     case noRolloutExists(_ key: String)
-    //    NOT_ACTIVATING_USER: '%s: Not activating user %s for experiment %s.',
-    //    NOT_TRACKING_USER: '%s: Not tracking user %s.',
-    case parsedRevenueValue(_ val: String)
-    case parsedNumericValue(_ val: String)
-    //    RETURNING_STORED_VARIATION: '%s: Returning previously activated variation "%s" of experiment "%s" for user "%s" from user profile.',
+    case extractRevenueFromEventTags(_ val: String)
+    case extractValueFromEventTags(_ val: String)
+    case failedToExtractRevenueFromEventTags(_ val: String)
+    case failedToExtractValueFromEventTags(_ val: String)
+    case gotVariationFromUserProfile(_ varKey: String, _ expKey: String, _ userId: String)
     case rolloutHasNoExperiments(_ id: String)
-    //    SAVED_VARIATION: '%s: Saved variation "%s" of experiment "%s" for user "%s".',
-    //    SAVED_VARIATION_NOT_FOUND: '%s: User %s was previously bucketed into variation with ID %s for experiment %s, but no matching variation was found.',
-    //    SHOULD_NOT_DISPATCH_ACTIVATE: '%s: Experiment %s is in "Launched" state. Not activating user.',
-    //    SKIPPING_JSON_VALIDATION: '%s: Skipping JSON schema validation.',
-    //    TRACK_EVENT: '%s: Tracking event %s for user %s.',
-    //    USER_ASSIGNED_TO_VARIATION_BUCKET: '%s: Assigned variation bucket %s to user %s.',
-    //    USER_ASSIGNED_TO_EXPERIMENT_BUCKET: '%s: Assigned experiment bucket %s to user %s.',
-    //    USER_BUCKETED_INTO_EXPERIMENT_IN_GROUP: '%s: User %s is in experiment %s of group %s.',
+    case forcedVariationFound(_ key: String, _ userId: String)
+    case forcedVariationFoundButInvalid(_ key: String, _ userId: String)
+    case savedVariationInUserProfile(_ varId: String, _ expId: String, _ userId: String)
+    case userAssignedToVariationBucketValue(_ bucket: Int, _ userId: String)
+    case userAssignedToExperimentBucketValue(_ bucket: Int, _ userId: String)
+    case userMappedToForcedVariation(_ userId: String, _ expId: String, _ varId: String)
+    case userMeetsConditionsForTargetingRule(_ userId: String, _ index: Int)
+    case userDoesntMeetConditionsForTargetingRule(_ userId: String, _ index: Int)
     case userBucketedIntoTargetingRule(_ userId: String, _ index: Int)
-    //    USER_IN_FEATURE_EXPERIMENT: '%s: User %s is in variation %s of experiment %s on the feature %s.',
-    //    USER_IN_ROLLOUT: '%s: User %s is in rollout of feature %s.',
     case userBucketedIntoEveryoneTargetingRule(_ userId: String)
     case userNotBucketedIntoEveryoneTargetingRule(_ userId: String)
-    //    USER_NOT_BUCKETED_INTO_EXPERIMENT_IN_GROUP: '%s: User %s is not in experiment %s of group %s.',
-    //    USER_NOT_BUCKETED_INTO_ANY_EXPERIMENT_IN_GROUP: '%s: User %s is not in any experiment of group %s.',
     case userNotBucketedIntoTargetingRule(_ userId: String, _ index: Int)
-    //    USER_NOT_IN_FEATURE_EXPERIMENT: '%s: User %s is not in any experiment on the feature %s.',
-    //    USER_NOT_IN_ROLLOUT: '%s: User %s is not in rollout of feature %s.',
-    case userForcedInVariation(_ key: String, _ userId: String)
-    //    USER_MAPPED_TO_FORCED_VARIATION: '%s: Set variation %s for experiment %s and user %s in the forced variation map.',
-    case userDoesntMeetConditionsForTargetingRule(_ userId: String, index: Int)
-    case userMeetsConditionsForTargetingRule(_ userId: String, index: Int)
-    case userHasVariation(_ userId: String, _ expKey: String, _ varKey: String)
-    //    USER_HAS_FORCED_VARIATION: '%s: Variation %s is mapped to experiment %s and user %s in the forced variation map.',
-    //    USER_HAS_NO_VARIATION: '%s: User %s is in no variation of experiment %s.',
-    //    USER_HAS_NO_FORCED_VARIATION: '%s: User %s is not in the forced variation map.',
-    //    USER_HAS_NO_FORCED_VARIATION_FOR_EXPERIMENT: '%s: No experiment %s mapped to user %s in the forced variation map.',
-    //    USER_NOT_IN_ANY_EXPERIMENT: '%s: User %s is not in any experiment of group %s.',
-    //    USER_NOT_IN_EXPERIMENT: '%s: User %s does not meet conditions to be in experiment %s.',
-    //    USER_RECEIVED_DEFAULT_VARIABLE_VALUE: '%s: User "%s" is not in any variation or rollout rule. Returning default value for variable "%s" of feature flag "%s".',
-    //    FEATURE_NOT_ENABLED_RETURN_DEFAULT_VARIABLE_VALUE: '%s: Feature "%s" is not enabled for user %s. Returning default value for variable "%s".',
-    //    VARIABLE_NOT_USED_RETURN_DEFAULT_VARIABLE_VALUE: '%s: Variable "%s" is not used in variation "%s". Returning default value.',
-    //    USER_RECEIVED_VARIABLE_VALUE: '%s: Value for variable "%s" of feature flag "%s" is %s for user "%s"',
-    //    VALID_DATAFILE: '%s: Datafile is valid.',
-    //    VALID_USER_PROFILE_SERVICE: '%s: Valid user profile service provided.',
-    //    VARIATION_REMOVED_FOR_USER: '%s: Variation mapped to experiment %s has been removed for user %s.',
-    //    VARIABLE_REQUESTED_WITH_WRONG_TYPE: '%s: Requested variable type "%s", but variable is of type "%s". Use correct API to retrieve value. Returning None.',
-    //    VALID_BUCKETING_ID: '%s: BucketingId is valid: "%s"',
-    //    BUCKETING_ID_NOT_STRING: '%s: BucketingID attribute is not a string. Defaulted to userId',
-    //    EVALUATING_AUDIENCE: '%s: Starting to evaluate audience "%s" with conditions: %s.',
-    //    EVALUATING_AUDIENCES_COMBINED: '%s: Evaluating audiences for experiment "%s": %s.',
-    //    AUDIENCE_EVALUATION_RESULT: '%s: Audience "%s" evaluated to %s.',
-    //    AUDIENCE_EVALUATION_RESULT_COMBINED: '%s: Audiences for experiment %s collectively evaluated to %s.',
-    //    MISSING_ATTRIBUTE_VALUE: '%s: Audience condition %s evaluated to UNKNOWN because no value was passed for user attribute "%s".',
-    //    UNEXPECTED_CONDITION_VALUE: '%s: Audience condition %s evaluated to UNKNOWN because the condition value is not supported.',
-    //    UNEXPECTED_TYPE: '%s: Audience condition %s evaluated to UNKNOWN because a value of type "%s" was passed for user attribute "%s".',
-    //    UNEXPECTED_TYPE_NULL: '%s: Audience condition %s evaluated to UNKNOWN because a null value was passed for user attribute "%s".',
-    //    UNKNOWN_CONDITION_TYPE: '%s: Audience condition %s has an unknown condition type. You may need to upgrade to a newer release of the Optimizely SDK.',
-    //    UNKNOWN_MATCH_TYPE: '%s: Audience condition %s uses an unknown match type. You may need to upgrade to a newer release of the Optimizely SDK.',
-    //    OUT_OF_BOUNDS: '%s: Audience condition %s evaluated to UNKNOWN because the number value for user attribute "%s" is not in the range [-2^53, +2^53].',
-    
-//    EXPERIMENT_KEY_NOT_IN_DATAFILE: '%s: Experiment key %s is not in datafile.',
-//    FEATURE_NOT_IN_DATAFILE: '%s: Feature key %s is not in datafile.',
-//    IMPROPERLY_FORMATTED_EXPERIMENT: '%s: Experiment key %s is improperly formatted.',
-//    INVALID_ATTRIBUTES: '%s: Provided attributes are in an invalid format.',
-//    INVALID_BUCKETING_ID: '%s: Unable to generate hash for bucketing ID %s: %s',
-//    INVALID_DATAFILE: '%s: Datafile is invalid - property %s: %s',
-//    INVALID_DATAFILE_MALFORMED: '%s: Datafile is invalid because it is malformed.',
-//    INVALID_JSON: '%s: JSON object is not valid.',
-//    INVALID_ERROR_HANDLER: '%s: Provided "errorHandler" is in an invalid format.',
-//    INVALID_EVENT_DISPATCHER: '%s: Provided "eventDispatcher" is in an invalid format.',
-//    INVALID_EVENT_KEY: '%s: Event key %s is not in datafile.',
-//    INVALID_EVENT_TAGS: '%s: Provided event tags are in an invalid format.',
-//    INVALID_EXPERIMENT_KEY: '%s: Experiment key %s is not in datafile. It is either invalid, paused, or archived.',
-//    INVALID_EXPERIMENT_ID: '%s: Experiment ID %s is not in datafile.',
-//    INVALID_GROUP_ID: '%s: Group ID %s is not in datafile.',
-//    INVALID_LOGGER: '%s: Provided "logger" is in an invalid format.',
-    case invalidRolloutId(_ id: String, _ featureKey: String)
-//    INVALID_USER_ID: '%s: Provided user ID is in an invalid format.',
-//    INVALID_USER_PROFILE_SERVICE: '%s: Provided user profile service instance is in an invalid format: %s.',
-//    JSON_SCHEMA_EXPECTED: '%s: JSON schema expected.',
-//    NO_DATAFILE_SPECIFIED: '%s: No datafile specified. Cannot start optimizely.',
-//    NO_JSON_PROVIDED: '%s: No JSON object to validate against schema.',
-//    NO_VARIATION_FOR_EXPERIMENT_KEY: '%s: No variation key %s defined in datafile for experiment %s.',
-//    UNDEFINED_ATTRIBUTE: '%s: Provided attribute: %s has an undefined value.',
-//    UNRECOGNIZED_ATTRIBUTE: '%s: Unrecognized attribute %s provided. Pruning before sending event to Optimizely.',
-//    UNABLE_TO_CAST_VALUE: '%s: Unable to cast value %s to type %s, returning null.',
-//    USER_NOT_IN_FORCED_VARIATION: '%s: User %s is not in the forced variation map. Cannot remove their forced variation.',
-//    USER_PROFILE_LOOKUP_ERROR: '%s: Error while looking up user profile for user ID "%s": %s.',
-//    USER_PROFILE_SAVE_ERROR: '%s: Error while saving user profile for user ID "%s": %s.',
-//    VARIABLE_KEY_NOT_IN_DATAFILE: '%s: Variable with key "%s" associated with feature with key "%s" is not in datafile.',
-//    VARIATION_ID_NOT_IN_DATAFILE: '%s: No variation ID %s defined in datafile for experiment %s.',
-//    VARIATION_ID_NOT_IN_DATAFILE_NO_EXPERIMENT: '%s: Variation ID %s is not in the datafile.',
-//    INVALID_INPUT_FORMAT: '%s: Provided %s is in an invalid format.',
-//    INVALID_DATAFILE_VERSION: '%s: This version of the JavaScript SDK does not support the given datafile version: %s',
-//    INVALID_VARIATION_KEY: '%s: Provided variation key is in an invalid format.',
-
+    case userHasForcedVariation(_ userId: String, _ expKey: String, _ varKey: String)
+    case userHasForcedVariationButInvalid(_ userId: String, _ expKey: String)
+    case userHasNoForcedVariation(_ userId: String)
+    case userHasNoForcedVariationForExperiment(_ userId: String, _ expKey: String)
+    case userInFeatureExperiment(_ userId: String, _ varKey: String, _ expKey: String, _ feature: String)
+    case userNotInFeatureExperiment(_ userId: String, _ feature: String)
+    case userInRollout(_ userId: String, _ feature: String)
+    case userNotInRollout(_ userId: String, _ feature: String)
+    case userBucketedIntoVariationInExperiment(_ userId: String, _ expKey: String, _ varKey: String)
+    case userNotBucketedIntoVariationInExperiment(_ userId: String, _ expKey: String)
+    case userBucketedIntoInvalidVariation(_ id: String)
+    case userBucketedIntoExperimentInGroup(_ userId: String, _ expKey: String, _ group: String)
+    case userNotBucketedIntoExperimentInGroup(_ userId: String, _ expKey: String, _ group: String)
+    case userNotBucketedIntoAnyExperimentInGroup(_ userId: String, _ group: String)
+    case userBucketedIntoInvalidExperiment(_ id: String)
+    case userNotInExperiment(_ userId: String, _ expKey: String)
+    case userReceivedDefaultVariableValue(_ userId: String, _ feature: String, _ variable: String)
+    case featureNotEnabledReturnDefaultVariableValue(_ userId: String, _ feature: String, _ variable: String)
+    case variableNotUsedReturnDefaultVariableValue(_ variable: String)
+    case userReceivedVariableValue(_ userId: String, _ feature: String, _ variable: String, _ value: String)
+    case variationRemovedForUser(_ userId: String, _ expKey: String)
+    case audienceEvaluationResult(_ audience: String, _ result: String)
+    case audienceEvaluationResultCombined(_ expKey: String, _ result: String)
+    case unrecognizedAttribute(_ key: String)
+    case eventBatchFailed
+    case eventSendRetyFailed(_ count: Int)
 }
 
 
@@ -119,117 +66,55 @@ extension LogMessage: CustomStringConvertible {
         var message: String
         
         switch self {
-            //[NU]    ACTIVATE_USER: '%s: Activating user %s in experiment %s.',
-            //[NU]    DISPATCH_CONVERSION_EVENT: '%s: Dispatching conversion event to URL %s with params %s.',
-            //[NU]    DISPATCH_IMPRESSION_EVENT: '%s: Dispatching impression event to URL %s with params %s.',
-            //[NU]    DEPRECATED_EVENT_VALUE: '%s: Event value is deprecated in %s call.',
-            case .experimentNotRunning(let key):                        message = "Experiment \(key) is not running."
-            case .featureEnabledForUser(let key, let userId):           message = "Feature \(key) is enabled for user \(userId)."
-            case .featureNotEnabledForUser(let key, let userId):        message = "Feature \(key) is not enabled for user \(userId)."
-            case .featureHasNoExperiments(let key):                     message = "Feature \(key) is not attached to any experiments."
-            case .failedToParseValue(let val):                          message = "Failed to parse event value \(val) from event tags."
-            case .failedToParseRevenue(let val):                        message = "Failed to parse revenue value \(val) from event tags."
-            case .forcedBucketingFailed(let key, let userId):           message = "Variation key \(key) is not in datafile. Not activating user \(userId)"
-            //[NU]    INVALID_OBJECT: '%s: Optimizely object is not valid. Failing %s.',
-            //[NU]    INVALID_CLIENT_ENGINE: '%s: Invalid client engine passed: %s. Defaulting to node-sdk.',
-            case .invalidVariationId:                                   message = "Bucketed into an invalid variation ID. Returning nil."
-            //[NU]    NOTIFICATION_LISTENER_EXCEPTION: '%s: Notification listener for (%s) threw exception: %s',
-            case .noRolloutExists(let key):                             message = "There is no rollout of feature \(key)."
-            //    NOT_ACTIVATING_USER: '%s: Not activating user %s for experiment %s.',
-            //    NOT_TRACKING_USER: '%s: Not tracking user %s.',
-            case .parsedRevenueValue(let val):                          message = "Parsed revenue value \(val) from event tags."
-            case .parsedNumericValue(let val):                          message = "Parsed event value \(val) from event tags."
-            //    RETURNING_STORED_VARIATION: '%s: Returning previously activated variation "%s" of experiment "%s" for user "%s" from user profile.',
-            case .rolloutHasNoExperiments(let id):                      message = "Rollout of feature \(id) has no experiments"
-            //    SAVED_VARIATION: '%s: Saved variation "%s" of experiment "%s" for user "%s".',
-            //    SAVED_VARIATION_NOT_FOUND: '%s: User %s was previously bucketed into variation with ID %s for experiment %s, but no matching variation was found.',
-            //    SHOULD_NOT_DISPATCH_ACTIVATE: '%s: Experiment %s is in "Launched" state. Not activating user.',
-            //    SKIPPING_JSON_VALIDATION: '%s: Skipping JSON schema validation.',
-            //    TRACK_EVENT: '%s: Tracking event %s for user %s.',
-            //    USER_ASSIGNED_TO_VARIATION_BUCKET: '%s: Assigned variation bucket %s to user %s.',
-            //    USER_ASSIGNED_TO_EXPERIMENT_BUCKET: '%s: Assigned experiment bucket %s to user %s.',
-            //    USER_BUCKETED_INTO_EXPERIMENT_IN_GROUP: '%s: User %s is in experiment %s of group %s.',
-            case .userBucketedIntoTargetingRule(let userId, let index):  message = "User \(userId) bucketed into targeting rule \(index)."
-            //    USER_IN_FEATURE_EXPERIMENT: '%s: User %s is in variation %s of experiment %s on the feature %s.',
-            //    USER_IN_ROLLOUT: '%s: User %s is in rollout of feature %s.',
-            case .userBucketedIntoEveryoneTargetingRule(let userId):   message = "User \(userId) bucketed into everyone targeting rule."
-            case .userNotBucketedIntoEveryoneTargetingRule(let userId): message = "User \(userId) not bucketed into everyone targeting rule due to traffic allocation."
-            //    USER_NOT_BUCKETED_INTO_EXPERIMENT_IN_GROUP: '%s: User %s is not in experiment %s of group %s.',
-            //    USER_NOT_BUCKETED_INTO_ANY_EXPERIMENT_IN_GROUP: '%s: User %s is not in any experiment of group %s.',
-            case .userNotBucketedIntoTargetingRule(let userId, let index):  message = "User \(userId) not bucketed into targeting rule \(index) due to traffic allocation. Trying everyone rule."
-            //    USER_NOT_IN_FEATURE_EXPERIMENT: '%s: User %s is not in any experiment on the feature %s.',
-            //    USER_NOT_IN_ROLLOUT: '%s: User %s is not in rollout of feature %s.',
-            case .userForcedInVariation(let key, let userId):           message = "User \(userId) is forced in variation \(key)"
-            //    USER_MAPPED_TO_FORCED_VARIATION: '%s: Set variation %s for experiment %s and user %s in the forced variation map.',
-            case .userDoesntMeetConditionsForTargetingRule(let userId, let index):   message = "User \(userId) does not meet conditions for targeting rule \(index)."
-            case .userMeetsConditionsForTargetingRule(let userId, let index): message = "User \(userId) meets conditions for targeting rule \(index)."
-            case .userHasVariation(let userId, let expKey, let varKey):    message = "User \(userId) is in variation \(varKey) of experiment \(expKey)"
-            //    USER_HAS_FORCED_VARIATION: '%s: Variation %s is mapped to experiment %s and user %s in the forced variation map.',
-            //    USER_HAS_NO_VARIATION: '%s: User %s is in no variation of experiment %s.',
-            //    USER_HAS_NO_FORCED_VARIATION: '%s: User %s is not in the forced variation map.',
-            //    USER_HAS_NO_FORCED_VARIATION_FOR_EXPERIMENT: '%s: No experiment %s mapped to user %s in the forced variation map.',
-            //    USER_NOT_IN_ANY_EXPERIMENT: '%s: User %s is not in any experiment of group %s.',
-            //    USER_NOT_IN_EXPERIMENT: '%s: User %s does not meet conditions to be in experiment %s.',
-            //    USER_RECEIVED_DEFAULT_VARIABLE_VALUE: '%s: User "%s" is not in any variation or rollout rule. Returning default value for variable "%s" of feature flag "%s".',
-            //    FEATURE_NOT_ENABLED_RETURN_DEFAULT_VARIABLE_VALUE: '%s: Feature "%s" is not enabled for user %s. Returning default value for variable "%s".',
-            //    VARIABLE_NOT_USED_RETURN_DEFAULT_VARIABLE_VALUE: '%s: Variable "%s" is not used in variation "%s". Returning default value.',
-            //    USER_RECEIVED_VARIABLE_VALUE: '%s: Value for variable "%s" of feature flag "%s" is %s for user "%s"',
-            //    VALID_DATAFILE: '%s: Datafile is valid.',
-            //    VALID_USER_PROFILE_SERVICE: '%s: Valid user profile service provided.',
-            //    VARIATION_REMOVED_FOR_USER: '%s: Variation mapped to experiment %s has been removed for user %s.',
-            //    VARIABLE_REQUESTED_WITH_WRONG_TYPE: '%s: Requested variable type "%s", but variable is of type "%s". Use correct API to retrieve value. Returning None.',
-            //    VALID_BUCKETING_ID: '%s: BucketingId is valid: "%s"',
-            //    BUCKETING_ID_NOT_STRING: '%s: BucketingID attribute is not a string. Defaulted to userId',
-            //    EVALUATING_AUDIENCE: '%s: Starting to evaluate audience "%s" with conditions: %s.',
-            //    EVALUATING_AUDIENCES_COMBINED: '%s: Evaluating audiences for experiment "%s": %s.',
-            //    AUDIENCE_EVALUATION_RESULT: '%s: Audience "%s" evaluated to %s.',
-            //    AUDIENCE_EVALUATION_RESULT_COMBINED: '%s: Audiences for experiment %s collectively evaluated to %s.',
-            //    MISSING_ATTRIBUTE_VALUE: '%s: Audience condition %s evaluated to UNKNOWN because no value was passed for user attribute "%s".',
-            //    UNEXPECTED_CONDITION_VALUE: '%s: Audience condition %s evaluated to UNKNOWN because the condition value is not supported.',
-            //    UNEXPECTED_TYPE: '%s: Audience condition %s evaluated to UNKNOWN because a value of type "%s" was passed for user attribute "%s".',
-            //    UNEXPECTED_TYPE_NULL: '%s: Audience condition %s evaluated to UNKNOWN because a null value was passed for user attribute "%s".',
-            //    UNKNOWN_CONDITION_TYPE: '%s: Audience condition %s has an unknown condition type. You may need to upgrade to a newer release of the Optimizely SDK.',
-            //    UNKNOWN_MATCH_TYPE: '%s: Audience condition %s uses an unknown match type. You may need to upgrade to a newer release of the Optimizely SDK.',
-            //    OUT_OF_BOUNDS: '%s: Audience condition %s evaluated to UNKNOWN because the number value for user attribute "%s" is not in the range [-2^53, +2^53].',
-
-//            EXPERIMENT_KEY_NOT_IN_DATAFILE: '%s: Experiment key %s is not in datafile.',
-//            FEATURE_NOT_IN_DATAFILE: '%s: Feature key %s is not in datafile.',
-//            IMPROPERLY_FORMATTED_EXPERIMENT: '%s: Experiment key %s is improperly formatted.',
-//            INVALID_ATTRIBUTES: '%s: Provided attributes are in an invalid format.',
-//            INVALID_BUCKETING_ID: '%s: Unable to generate hash for bucketing ID %s: %s',
-//            INVALID_DATAFILE: '%s: Datafile is invalid - property %s: %s',
-//            INVALID_DATAFILE_MALFORMED: '%s: Datafile is invalid because it is malformed.',
-//            INVALID_JSON: '%s: JSON object is not valid.',
-//            INVALID_ERROR_HANDLER: '%s: Provided "errorHandler" is in an invalid format.',
-//            INVALID_EVENT_DISPATCHER: '%s: Provided "eventDispatcher" is in an invalid format.',
-//            INVALID_EVENT_KEY: '%s: Event key %s is not in datafile.',
-//            INVALID_EVENT_TAGS: '%s: Provided event tags are in an invalid format.',
-//            INVALID_EXPERIMENT_KEY: '%s: Experiment key %s is not in datafile. It is either invalid, paused, or archived.',
-//            INVALID_EXPERIMENT_ID: '%s: Experiment ID %s is not in datafile.',
-//            INVALID_GROUP_ID: '%s: Group ID %s is not in datafile.',
-//            INVALID_LOGGER: '%s: Provided "logger" is in an invalid format.',
-            case .invalidRolloutId(let id, let featureKey):     message = "Invalid rollout ID \(id) attached to feature \(featureKey)"
-//            INVALID_USER_ID: '%s: Provided user ID is in an invalid format.',
-//            INVALID_USER_PROFILE_SERVICE: '%s: Provided user profile service instance is in an invalid format: %s.',
-//            JSON_SCHEMA_EXPECTED: '%s: JSON schema expected.',
-//            NO_DATAFILE_SPECIFIED: '%s: No datafile specified. Cannot start optimizely.',
-//            NO_JSON_PROVIDED: '%s: No JSON object to validate against schema.',
-//            NO_VARIATION_FOR_EXPERIMENT_KEY: '%s: No variation key %s defined in datafile for experiment %s.',
-//            UNDEFINED_ATTRIBUTE: '%s: Provided attribute: %s has an undefined value.',
-//            UNRECOGNIZED_ATTRIBUTE: '%s: Unrecognized attribute %s provided. Pruning before sending event to Optimizely.',
-//            UNABLE_TO_CAST_VALUE: '%s: Unable to cast value %s to type %s, returning null.',
-//            USER_NOT_IN_FORCED_VARIATION: '%s: User %s is not in the forced variation map. Cannot remove their forced variation.',
-//            USER_PROFILE_LOOKUP_ERROR: '%s: Error while looking up user profile for user ID "%s": %s.',
-//            USER_PROFILE_SAVE_ERROR: '%s: Error while saving user profile for user ID "%s": %s.',
-//            VARIABLE_KEY_NOT_IN_DATAFILE: '%s: Variable with key "%s" associated with feature with key "%s" is not in datafile.',
-//            VARIATION_ID_NOT_IN_DATAFILE: '%s: No variation ID %s defined in datafile for experiment %s.',
-//            VARIATION_ID_NOT_IN_DATAFILE_NO_EXPERIMENT: '%s: Variation ID %s is not in the datafile.',
-//            INVALID_INPUT_FORMAT: '%s: Provided %s is in an invalid format.',
-//            INVALID_DATAFILE_VERSION: '%s: This version of the JavaScript SDK does not support the given datafile version: %s',
-//            INVALID_VARIATION_KEY: '%s: Provided variation key is in an invalid format.',
-
-            
-            default:  message = "UNKNOWN"
+            case .experimentNotRunning(let key):                                    message = "Experiment \(key) is not running."
+            case .featureEnabledForUser(let key, let userId):                       message = "Feature \(key) is enabled for user \(userId)."
+            case .featureNotEnabledForUser(let key, let userId):                    message = "Feature \(key) is not enabled for user \(userId)."
+            case .featureHasNoExperiments(let key):                                 message = "Feature \(key) is not attached to any experiments."
+            case .noRolloutExists(let key):                                         message = "There is no rollout of feature \(key)."
+            case .extractRevenueFromEventTags(let val):                             message = "Parsed revenue \(val) from event tags."
+            case .extractValueFromEventTags(let val):                               message = "Parsed value \(val) from event tags."
+            case .failedToExtractRevenueFromEventTags(let val):                     message = "Failed to parse revenue \(val) from event tags."
+            case .failedToExtractValueFromEventTags(let val):                       message = "Failed to parse value \(val) from event tags."
+            case .gotVariationFromUserProfile(let varKey, let expKey, let userId):  message = "Returning previously activated variation \(varKey) of experiment \(expKey) for user \(userId) from user profile."
+            case .rolloutHasNoExperiments(let id):                                  message = "Rollout of feature \(id) has no experiments"
+            case .forcedVariationFound(let key, let userId):                        message = "Forced variation \(key) is found for user \(userId)"
+            case .forcedVariationFoundButInvalid(let key, let userId):              message = "Forced variation \(key) is found for user \(userId), but it's not in datafile."
+            case .savedVariationInUserProfile(let varId, let expId, let userId):    message = "Saved variation \(varId) of experiment \(expId) for user \(userId)."
+            case .userAssignedToVariationBucketValue(let bucket, let userId):       message = "Assigned variation bucket value \(bucket) to user \(userId)"
+            case .userAssignedToExperimentBucketValue(let bucket, let userId):      message = "Assigned experiment bucket value \(bucket) to user \(userId)"
+            case .userMappedToForcedVariation(let userId, let expId, let varId):    message = "Set variation \(varId) for experiment \(expId) and user \(userId) in the forced variation map."
+            case .userMeetsConditionsForTargetingRule(let userId, let index):       message = "User \(userId) meets conditions for targeting rule \(index)."
+            case .userDoesntMeetConditionsForTargetingRule(let userId, let index):  message = "User \(userId) does not meet conditions for targeting rule \(index)."
+            case .userBucketedIntoTargetingRule(let userId, let index):             message = "User \(userId) bucketed into targeting rule \(index)."
+            case .userNotBucketedIntoTargetingRule(let userId, let index):          message = "User \(userId) not bucketed into targeting rule \(index) due to traffic allocation. Trying everyone rule."
+            case .userBucketedIntoEveryoneTargetingRule(let userId):                message = "User \(userId) bucketed into everyone targeting rule."
+            case .userNotBucketedIntoEveryoneTargetingRule(let userId):             message = "User \(userId) not bucketed into everyone targeting rule due to traffic allocation."
+            case .userHasForcedVariation(let userId, let expKey, let varKey):       message = "Variation \(varKey) is mapped to experiment \(expKey) and user \(userId) in the forced variation map."
+            case .userHasForcedVariationButInvalid(let userId, let expKey):         message = "Invalid variation is mapped to experiment \(expKey) and user \(userId) in the forced variation map."
+            case .userHasNoForcedVariation(let userId):                             message = "User \(userId) is not in the forced variation map."
+            case .userHasNoForcedVariationForExperiment(let userId, let expKey):    message = "No experiment \(expKey) mapped to user \(userId) in the forced variation map."
+            case .userInFeatureExperiment(let userId, let varKey, let expKey, let feature):  message = "User \(userId) is in variation \(varKey) of experiment \(expKey) on the feature \(feature)."
+            case .userNotInFeatureExperiment(let userId, let feature):              message = "User \(userId) is not in any experiment on the feature \(feature)."
+            case .userInRollout(let userId, let feature):                           message = "User \(userId) is in rollout of feature \(feature)."
+            case .userNotInRollout(let userId, let feature):                        message = "User \(userId) is not in rollout of feature \(feature)."
+            case .userBucketedIntoVariationInExperiment(let userId, let expKey, let varKey): message = "User \(userId) is in variation \(varKey) of experiment \(expKey)"
+            case .userNotBucketedIntoVariationInExperiment(let userId, let expKey): message = "User \(userId) is in no variation of experiment \(expKey)."
+            case .userBucketedIntoInvalidVariation(let id):                         message = "Bucketed into an invalid variation id \(id)"
+            case .userBucketedIntoExperimentInGroup(let userId, let expId, let group): message = "User \(userId) is in experiment \(expId) of group \(group)."
+            case .userNotBucketedIntoExperimentInGroup(let userId, let expKey, let group): message = "User \(userId) is not in experiment \(expKey) of group \(group)."
+            case .userNotBucketedIntoAnyExperimentInGroup(let userId, let group):   message = "User \(userId) is not in any experiment of group \(group)."
+            case .userBucketedIntoInvalidExperiment(let id):                        message = "Bucketed into an invalid experiment id \(id)"
+            case .userNotInExperiment(let userId, let expKey):                      message = "User \(userId) does not meet conditions to be in experiment \(expKey)."
+            case .userReceivedDefaultVariableValue(let userId, let feature, let variable): message = "User \(userId) is not in any variation or rollout rule. Returning default value for variable \(variable) of feature flag \(feature)."
+            case .featureNotEnabledReturnDefaultVariableValue(let userId, let feature, let variable): message = "Feature \(feature) is not enabled for user \(userId). Returning default value for variable \(variable)."
+            case .variableNotUsedReturnDefaultVariableValue(let variable):          message = "Variable \(variable) is not used in variation. Returning default value."
+            case .userReceivedVariableValue(let userId, let feature, let variable, let value): message = "Value for variable \(variable) of feature flag \(feature) is \(value) for user \(userId)"
+            case .variationRemovedForUser(let userId, let expKey):                  message = "Variation mapped to experiment \(expKey) has been removed for user \(userId)."
+            case .audienceEvaluationResult(let audience, let result):               message = "Audience \(audience) evaluated to \(result)."
+            case .audienceEvaluationResultCombined(let expKey, let result):         message = "Audiences for experiment \(expKey) collectively evaluated to \(result)."
+            case .unrecognizedAttribute(let key):                                   message = "Unrecognized attribute \(key) provided. Pruning before sending event to Optimizely."
+            case .eventBatchFailed:                                                 message = "Failed to batch events"
+            case .eventSendRetyFailed(let count):                                   message = "Event dispatch retries failed \(count) times"
         }
         
         return message

@@ -653,9 +653,7 @@ open class OptimizelyManager: NSObject {
         guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
         
         guard let _ = config.getEvent(key: eventKey) else {
-            let error = OptimizelyError.eventKeyInvalid(eventKey)
-            logger.e(error)
-            throw error
+            throw OptimizelyError.eventKeyInvalid(eventKey)
         }
         
         // TODO: fix to throw errors

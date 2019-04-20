@@ -227,12 +227,12 @@ extension AttributeValue {
 
         // valid range: [-2^53, 2^53]
         if abs(num) > pow(2, 53) {
-            throw OptimizelyError.evaluateAttributeValueOutOfRange(prettySrc(#function, target: number))
+            throw OptimizelyError.evaluateAttributeValueOutOfRange(prettySrc(caller, target: number))
         }
     }
 
     func prettySrc(_ src: String, target: Any? = nil) -> String {
-        return "(\(src)): \(self) target: " + (target != nil ? "\(target!)" : "nil")
+        return "\(self):(\(src)) target: " + (target != nil ? "\(target!)" : "nil")
     }
     
 }

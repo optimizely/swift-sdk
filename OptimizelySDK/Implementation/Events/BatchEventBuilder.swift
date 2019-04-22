@@ -104,13 +104,19 @@ class BatchEventBuilder {
             return ([:], nil, nil)
         }
         
-        // should not pass invalid tags to the server (which will drop entire event if so)
-        let filteredTags = eventTags.mapValues{AttributeValue(value:$0)}.filter{$0.value != nil} as? [String: AttributeValue] ?? [:]
+        // should not pass tags of invalid types to the server (which will drop entire event if so)
+        let filteredTags = filterTagsWithInvalidTypes(eventTags)
         
+        // {revenue, value} keys are special - must be copied as separate properties
         let value = extractValueEventTag(filteredTags)
         let revenue = extractRevenueEventTag(filteredTags)
         
         return (filteredTags, value, revenue)
+    }
+    
+    static func filterTagsWithInvalidTypes(_ eventTags: [String: Any]) -> [String: AttributeValue] {
+        let filteredTags = eventTags.mapValues { AttributeValue(value:$0) }.filter { $0.value != nil } as? [String: AttributeValue]
+        return filteredTags ?? [:]
     }
     
     static func extractValueEventTag(_ eventTags: [String: AttributeValue]) -> AttributeValue? {

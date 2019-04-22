@@ -93,7 +93,7 @@ extension BatchEventBuilderTests_EventTags {
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["big"] as! Double, OTUtils.positiveMaxValueAllowed)
-        XCTAssertEqual(tags["tooBig"] as! Double, OTUtils.positiveTooBigValue, "range should not be checked for event tags at all")
+        XCTAssert(isEqualTooBigDoubles(tags["tooBig"] as! Double, OTUtils.positiveTooBigValue))
     }
 
 }
@@ -171,9 +171,9 @@ extension BatchEventBuilderTests_EventTags {
         // range should not be checked for event tags including revenue/value (JIRA #4449)
         
         XCTAssertEqual(tags["revenue"] as! Int64, Int64(OTUtils.positiveTooBigValue))
-        XCTAssertEqual(tags["value"] as! Double, OTUtils.positiveTooBigValue)
         XCTAssertEqual(de["revenue"] as! Int64, Int64(OTUtils.positiveTooBigValue))
-        XCTAssertEqual(de["value"] as! Double, OTUtils.positiveTooBigValue)
+        XCTAssert(isEqualTooBigDoubles(tags["value"] as! Double, OTUtils.positiveTooBigValue))
+        XCTAssert(isEqualTooBigDoubles(de["value"] as! Double, OTUtils.positiveTooBigValue))
     }
 
     func testEventTagsWhenRevenueAndValueWhenInvalidBigNumbersNegative() {
@@ -188,9 +188,9 @@ extension BatchEventBuilderTests_EventTags {
         // range should not be checked for event tags including revenue/value (JIRA #4449)
         
         XCTAssertEqual(tags["revenue"] as! Int64, Int64(OTUtils.negativeTooBigValue))
-        XCTAssertEqual(tags["value"] as! Double, OTUtils.negativeTooBigValue)
         XCTAssertEqual(de["revenue"] as! Int64, Int64(OTUtils.negativeTooBigValue))
-        XCTAssertEqual(de["value"] as! Double, OTUtils.negativeTooBigValue)
+        XCTAssert(isEqualTooBigDoubles(tags["value"] as! Double, OTUtils.negativeTooBigValue))
+        XCTAssert(isEqualTooBigDoubles(de["value"] as! Double, OTUtils.negativeTooBigValue))
     }
 }
 
@@ -312,6 +312,12 @@ extension BatchEventBuilderTests_EventTags {
         let dispatchEvent = snapshot["events"]![0].dictionaryObject
 
         return dispatchEvent
+    }
+    
+    // SwiftyJSON returns inaccurate double value for iOS9- (precision issue)
+    // Convert to Float to ignore tails
+    func isEqualTooBigDoubles(_ num1: Double, _ num2: Double) -> Bool {
+        return Float(num1) == Float(num2)
     }
     
 }

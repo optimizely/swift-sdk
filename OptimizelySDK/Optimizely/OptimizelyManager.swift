@@ -20,9 +20,9 @@ open class OptimizelyManager: NSObject {
     
     // MARK: - Customizable Services
     
-    var logger: OPTLogger {
-        return HandlerRegistryService.shared.injectLogger()!
-    }
+    // I only want to get this once from the handler service.
+    lazy var logger = HandlerRegistryService.shared.injectLogger()
+    
     var eventDispatcher: OPTEventDispatcher {
         return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!
     }

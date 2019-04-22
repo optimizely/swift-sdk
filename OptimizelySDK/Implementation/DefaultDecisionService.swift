@@ -50,10 +50,10 @@ class DefaultDecisionService : OPTDecisionService {
             if let variation = experiment.getVariation(key: variationKey) {
                 logger?.i(.forcedVariationFound(variationKey, userId))
                 return variation
-            } else {
-                logger?.e(.forcedVariationFoundButInvalid(variationKey, userId))
-                return nil
             }
+            
+            // mapped to invalid variation - ignore and continue for other deciesions
+            logger?.e(.forcedVariationFoundButInvalid(variationKey, userId))
         }
         
         // ---- check if a valid variation is stored in the user profile ----

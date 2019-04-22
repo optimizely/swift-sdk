@@ -47,7 +47,7 @@ public protocol OPTDatafileHandler {
      - Parameter completionHhandler:  listener to call when datafile download complete
      */
     func downloadDatafile(sdkKey:String,
-                          resourceTimeoutInterval:Double,
+                          resourceTimeoutInterval:Double?,
                           completionHandler:@escaping DatafileDownloadCompletionHandler)
     
     /**

@@ -79,7 +79,7 @@ open class OptimizelyManager: NSObject {
     ///
     /// - Parameters:
     ///   - completion: callback when initialization is completed
-    public func initializeSDK(resourceTimeout:Double = -1,completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+    public func initializeSDK(resourceTimeout:Double? = nil,completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         fetchDatafileBackground(resourceTimeout:resourceTimeout) { result in
             switch result {
             case .failure:
@@ -176,7 +176,7 @@ open class OptimizelyManager: NSObject {
         }
     }
     
-    func fetchDatafileBackground(resourceTimeout:Double = -1, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+    func fetchDatafileBackground(resourceTimeout:Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         
         // TODO: fix downloadDatafile to throw OptimizelyError
         //       those errors propagated instead of handling here

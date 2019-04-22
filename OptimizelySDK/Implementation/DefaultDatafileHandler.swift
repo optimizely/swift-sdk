@@ -49,10 +49,11 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     open func downloadDatafile(sdkKey: String,
-                               resourceTimeoutInterval:Double = -1,
+                               resourceTimeoutInterval:Double? = nil,
                                completionHandler: @escaping DatafileDownloadCompletionHandler) {
         let config = URLSessionConfiguration.ephemeral
-        if resourceTimeoutInterval > 0 {
+        if let resourceTimeoutInterval = resourceTimeoutInterval,
+            resourceTimeoutInterval > 0 {
             config.timeoutIntervalForResource = TimeInterval(resourceTimeoutInterval)
         }
         let session = URLSession(configuration: config)
@@ -105,11 +106,19 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     
     func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification:((Data)->Void)?) {
         
+        let now = Date()
         if #available(iOS 10.0, tvOS 10.0, *) {
             DispatchQueue.main.async {
+                if let timer = self.timers.property?[sdkKey], timer.isValid {
+                    return
+                }
+                
                 let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: false) { (timer) in
                     
-                    self.performPerodicDownload(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
+                    self.performPerodicDownload(sdkKey: sdkKey,
+                                                startTime: now,
+                                                updateInterval: updateInterval,
+                                                datafileChangeNotification: datafileChangeNotification)
                     
                     timer.invalidate()
                 }
@@ -120,7 +129,11 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         } else {
             // Fallback on earlier versions
             DispatchQueue.main.async {
-                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "updateInterval":updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
+                if let timer = self.timers.property?[sdkKey], timer.isValid {
+                    return
+                }
+
+                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval":updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
                 
                 self.timers.performAtomic(atomicOperation: { (timers) in
                     timers[sdkKey] = timer
@@ -135,8 +148,9 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         if let info = timer.userInfo as? [String:Any],
             let sdkKey = info["sdkKey"] as? String,
             let updateInterval = info["updateInterval"] as? Int,
+            let startDate = info["startDate"] as? Date,
             let datafileChangeNotification = info["datafileChangeNotification"] as? ((Data)->Void){
-                self.performPerodicDownload(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
+            self.performPerodicDownload(sdkKey: sdkKey, startTime: startDate, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
         }
         timer.invalidate()
 
@@ -154,6 +168,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     func performPerodicDownload(sdkKey: String,
+                                startTime:Date,
                                 updateInterval:Int,
                                 datafileChangeNotification:((Data)->Void)?) {
         self.downloadDatafile(sdkKey: sdkKey) { (result) in
@@ -168,7 +183,12 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             }
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
-                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
+                let minutesSinceFire = startTime.minutesPastSinceNow()
+                var diff = updateInterval - minutesSinceFire
+                if diff < 0 {
+                    diff = updateInterval
+                }
+                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: diff, datafileChangeNotification: datafileChangeNotification)
             }
         }
     }
@@ -247,6 +267,4 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         }
 
     }
-    
-    
 }

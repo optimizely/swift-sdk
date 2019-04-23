@@ -11,10 +11,10 @@
 		6923C05F4FFD7394581F4361 /* libPods-DemoObjctvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CE090EEBD47E05884C417C0 /* libPods-DemoObjctvOS.a */; };
 		6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
 		6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
-		6E4DD97C21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; };
-		6E4DD97D21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E4DD98021E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; };
-		6E4DD98121E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E4DD97C21E67AAD00B0C2C7 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */; };
+		6E4DD97D21E67AAD00B0C2C7 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E4DD98021E67ABA00B0C2C7 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */; };
+		6E4DD98121E67ABA00B0C2C7 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E96811521EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E96811421EE94DA009B7FEC /* CustomNotificationCenter.m */; };
 		6E96811621EE94DA009B7FEC /* CustomNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E96811421EE94DA009B7FEC /* CustomNotificationCenter.m */; };
 		6E96817C21EEA321009B7FEC /* tvOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817421EEA321009B7FEC /* tvOSMain.storyboard */; };
@@ -82,6 +82,62 @@
 			remoteGlobalIDString = 6E614DCC21E3F389005982A1;
 			remoteInfo = OptimizelySwiftSDKtvOS;
 		};
+		6E8D3244226FAC4F00478458 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA4256A2218E60A00B074B5;
+			remoteInfo = "OptimizelyTests-Common-iOS";
+		};
+		6E8D3246226FAC4F00478458 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E636B8C2236C91F00AF3CEF;
+			remoteInfo = "OptimizelyTests-APIs-iOS";
+		};
+		6E8D3248226FAC4F00478458 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA425792218E61E00B074B5;
+			remoteInfo = "OptimizelyTests-DataModel-iOS";
+		};
+		6E8D324A226FAC4F00478458 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA4265B2219242100B074B5;
+			remoteInfo = "OptimizelyTests-Others-iOS";
+		};
+		6E8D324C226FAC4F00478458 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E636B9B2236C96700AF3CEF;
+			remoteInfo = "OptimizelyTests-Legacy-iOS";
+		};
+		6E8D324E226FAC4F00478458 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA425082218E41500B074B5;
+			remoteInfo = "OptimizelyTests-Common-tvOS";
+		};
+		6E8D3250226FAC4F00478458 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA4255B2218E58400B074B5;
+			remoteInfo = "OptimizelyTests-DataModel-tvOS";
+		};
+		6E8D3252226FAC4F00478458 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EA4266A2219243D00B074B5;
+			remoteInfo = "OptimizelyTests-Others-tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -91,7 +147,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6E4DD97D21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */,
+				6E4DD97D21E67AAD00B0C2C7 /* Optimizely.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,7 +158,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6E4DD98121E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Embed Frameworks */,
+				6E4DD98121E67ABA00B0C2C7 /* Optimizely.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -149,7 +205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				361EF872CB7D0F6C8202145F /* Pods_DemoObjciOS.framework in Frameworks */,
-				6E4DD97C21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */,
+				6E4DD97C21E67AAD00B0C2C7 /* Optimizely.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,7 +213,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E4DD98021E67ABA00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */,
+				6E4DD98021E67ABA00B0C2C7 /* Optimizely.framework in Frameworks */,
 				6923C05F4FFD7394581F4361 /* libPods-DemoObjctvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -168,10 +224,18 @@
 		6E4DD96E21E67A6500B0C2C7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */,
-				6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */,
+				6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */,
+				6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */,
 				6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */,
+				6E8D3245226FAC4F00478458 /* OptimizelyTests-Common-iOS.xctest */,
+				6E8D3247226FAC4F00478458 /* OptimizelyTests-APIs-iOS.xctest */,
+				6E8D3249226FAC4F00478458 /* OptimizelyTests-DataModel-iOS.xctest */,
+				6E8D324B226FAC4F00478458 /* OptimizelyTests-Others-iOS.xctest */,
+				6E8D324D226FAC4F00478458 /* OptimizelyTests-Legacy-iOS.xctest */,
 				6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */,
+				6E8D324F226FAC4F00478458 /* OptimizelyTests-Common-tvOS.xctest */,
+				6E8D3251226FAC4F00478458 /* OptimizelyTests-DataModel-tvOS.xctest */,
+				6E8D3253226FAC4F00478458 /* OptimizelyTests-Others-tvOS.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -386,32 +450,88 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		6E4DD97521E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */ = {
+		6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = OptimizelySwiftSDK.framework;
+			path = Optimizely.framework;
 			remoteRef = 6E4DD97421E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97721E67A6500B0C2C7 /* OptimizelySwiftSDK.framework */ = {
+		6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = OptimizelySwiftSDK.framework;
+			path = Optimizely.framework;
 			remoteRef = 6E4DD97621E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = "OptimizelySwiftSDK-iOSTests.xctest";
+			path = "OptimizelyTests-iOS.xctest";
 			remoteRef = 6E4DD97821E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = "OptimizelySwiftSDK-tvOSTests.xctest";
+			path = "OptimizelyTests-tvOS.xctest";
 			remoteRef = 6E4DD97A21E67A6500B0C2C7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E8D3245226FAC4F00478458 /* OptimizelyTests-Common-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Common-iOS.xctest";
+			remoteRef = 6E8D3244226FAC4F00478458 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E8D3247226FAC4F00478458 /* OptimizelyTests-APIs-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-APIs-iOS.xctest";
+			remoteRef = 6E8D3246226FAC4F00478458 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E8D3249226FAC4F00478458 /* OptimizelyTests-DataModel-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-DataModel-iOS.xctest";
+			remoteRef = 6E8D3248226FAC4F00478458 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E8D324B226FAC4F00478458 /* OptimizelyTests-Others-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Others-iOS.xctest";
+			remoteRef = 6E8D324A226FAC4F00478458 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E8D324D226FAC4F00478458 /* OptimizelyTests-Legacy-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Legacy-iOS.xctest";
+			remoteRef = 6E8D324C226FAC4F00478458 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E8D324F226FAC4F00478458 /* OptimizelyTests-Common-tvOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Common-tvOS.xctest";
+			remoteRef = 6E8D324E226FAC4F00478458 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E8D3251226FAC4F00478458 /* OptimizelyTests-DataModel-tvOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-DataModel-tvOS.xctest";
+			remoteRef = 6E8D3250226FAC4F00478458 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E8D3253226FAC4F00478458 /* OptimizelyTests-Others-tvOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Others-tvOS.xctest";
+			remoteRef = 6E8D3252226FAC4F00478458 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -700,6 +820,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4BE4886BF950708C866FA8F2 /* Pods-DemoObjciOS.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_STYLE = Automatic;
@@ -718,6 +839,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D66FA87FA967DCE9F1972546 /* Pods-DemoObjciOS.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_STYLE = Automatic;

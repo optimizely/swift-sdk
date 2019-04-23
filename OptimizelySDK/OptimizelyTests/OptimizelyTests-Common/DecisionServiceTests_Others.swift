@@ -25,7 +25,7 @@ class DecisionServiceTests_Others: XCTestCase {
 
         var experiment = optimizely.config!.getExperiment(key: kExperimentWithTypedAudienceKey)!
         experiment.audienceConditions = ConditionHolder.array([])
-        let isValid = try! (optimizely.decisionService as! DefaultDecisionService).isInExperiment(config: config,
+        let isValid = (optimizely.decisionService as! DefaultDecisionService).isInExperiment(config: config,
                                                                                                   experiment: experiment,
                                                                                                   userId: kUserId,
                                                                                                   attributes: attributes)

@@ -167,7 +167,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //                while true
 //
 //            }
-        } catch OptimizelyError.experimentNotParticipated {
+        } catch OptimizelyError.variationUnknown(userId, experimentKey) {
             print("Optimizely SDK activation cannot map this user to experiemnt")
             openVariationView(optimizelyManager: optimizely, variationKey: nil)
         } catch {

@@ -18,7 +18,5 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>OPTIMIZELY_SDK_VERSION</key>
-	<string>$(OPTIMIZELY_SDK_VERSION)</string>
 </dict>
 </plist>

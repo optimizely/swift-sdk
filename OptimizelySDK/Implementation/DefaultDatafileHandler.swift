@@ -186,7 +186,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 let minutesSinceFire = startTime.minutesPastSinceNow()
                 var diff = updateInterval - minutesSinceFire
                 if diff < 0 {
-                    diff = updateInterval
+                    diff = 0
                 }
                 self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: diff, datafileChangeNotification: datafileChangeNotification)
             }

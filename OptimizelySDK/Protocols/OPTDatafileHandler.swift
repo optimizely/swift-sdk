@@ -43,9 +43,12 @@ public protocol OPTDatafileHandler {
     /**
      Asynchronous download data file.
      - Parameter sdkKey:   application context for download
+     - Parameter resourceTimeoutInterval: timeout in seconds to wait for resource.
      - Parameter completionHhandler:  listener to call when datafile download complete
      */
-    func downloadDatafile(sdkKey:String, completionHandler:@escaping DatafileDownloadCompletionHandler)
+    func downloadDatafile(sdkKey:String,
+                          resourceTimeoutInterval:Double?,
+                          completionHandler:@escaping DatafileDownloadCompletionHandler)
     
     /**
       Start periodic updates to the project datafile .

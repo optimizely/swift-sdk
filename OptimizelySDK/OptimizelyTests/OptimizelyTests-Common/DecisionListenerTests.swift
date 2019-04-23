@@ -426,7 +426,7 @@ class DecisionListenerTests: XCTestCase {
                                       userId: "test_user_1",
                                       attributes: nil)
         
-        XCTAssertEqual(notificationExperiment, nil)
+        XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(notificationVariation, nil)
         XCTAssertEqual(notificationType, Constants.DecisionTypeKeys.abTest)
         self.optimizely2?.notificationCenter.clearAllNotificationListeners()
@@ -470,7 +470,7 @@ class DecisionListenerTests: XCTestCase {
         
         _ = try? optimizely2?.getVariation(experimentKey: "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2", userId: "test_user_1")
         
-        XCTAssertEqual(notificationExperiment, nil)
+        XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(notificationVariation, nil)
         XCTAssertEqual(notificationType, Constants.DecisionTypeKeys.abTest)
         self.optimizely2?.notificationCenter.clearAllNotificationListeners()

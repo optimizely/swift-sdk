@@ -124,6 +124,8 @@
 		0BE644F5223821D3009A5D1D /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
 		0BE644F6223821D3009A5D1D /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
 		52E08AFF34D0A4A9ACB187EF /* libPods-OptimizelyTests-Common-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 307963A587A4D8DF0CFBF45E /* libPods-OptimizelyTests-Common-tvOS.a */; };
+		6E06451C226FD6A000F8A693 /* OtherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E06451B226FD6A000F8A693 /* OtherTests.swift */; };
+		6E06451D226FD6A000F8A693 /* OtherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E06451B226FD6A000F8A693 /* OtherTests.swift */; };
 		6E0AFBBD2257C49800BC7665 /* BucketTests_ExpToVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBB82257C49700BC7665 /* BucketTests_ExpToVariation.swift */; };
 		6E0AFBBE2257C49800BC7665 /* BucketTests_ExpToVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBB82257C49700BC7665 /* BucketTests_ExpToVariation.swift */; };
 		6E0AFBBF2257C49800BC7665 /* BucketTests_Base.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0AFBB92257C49800BC7665 /* BucketTests_Base.swift */; };
@@ -1224,6 +1226,7 @@
 		307963A587A4D8DF0CFBF45E /* libPods-OptimizelyTests-Common-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OptimizelyTests-Common-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		644A30DA4805286E7F8A1530 /* libPods-OptimizelyTests-Common-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OptimizelyTests-Common-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B36F1F60444A8511E8DCC10 /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Common-tvOS.release.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Common-tvOS/Pods-OptimizelyTests-Common-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		6E06451B226FD6A000F8A693 /* OtherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherTests.swift; sourceTree = "<group>"; };
 		6E0AFBB82257C49700BC7665 /* BucketTests_ExpToVariation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests_ExpToVariation.swift; sourceTree = "<group>"; };
 		6E0AFBB92257C49800BC7665 /* BucketTests_Base.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests_Base.swift; sourceTree = "<group>"; };
 		6E0AFBBA2257C49800BC7665 /* BucketTests_GroupToExp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests_GroupToExp.swift; sourceTree = "<group>"; };
@@ -1795,6 +1798,7 @@
 			isa = PBXGroup;
 			children = (
 				6EA426DF2219266600B074B5 /* ThrowableConditionListTest.swift */,
+				6E06451B226FD6A000F8A693 /* OtherTests.swift */,
 			);
 			path = "OptimizelyTests-Others";
 			sourceTree = "<group>";
@@ -3187,6 +3191,7 @@
 				6EA4268F221925B100B074B5 /* Variable.swift in Sources */,
 				6EA426CF221925DE00B074B5 /* DefaultLogger.swift in Sources */,
 				6EA42685221925B100B074B5 /* EventForDispatch.swift in Sources */,
+				6E06451C226FD6A000F8A693 /* OtherTests.swift in Sources */,
 				6EA4268C221925B100B074B5 /* ProjectConfig.swift in Sources */,
 				6EA426D0221925DE00B074B5 /* DefaultEventDispatcher.swift in Sources */,
 				6EA426CE221925DE00B074B5 /* OptimizelyLogLevel.swift in Sources */,
@@ -3254,6 +3259,7 @@
 				6EA426A2221925B300B074B5 /* Variable.swift in Sources */,
 				6EA426D9221925DF00B074B5 /* DefaultLogger.swift in Sources */,
 				6EA42698221925B300B074B5 /* EventForDispatch.swift in Sources */,
+				6E06451D226FD6A000F8A693 /* OtherTests.swift in Sources */,
 				6EA4269F221925B300B074B5 /* ProjectConfig.swift in Sources */,
 				6EA426DA221925DF00B074B5 /* DefaultEventDispatcher.swift in Sources */,
 				6EA426D8221925DF00B074B5 /* OptimizelyLogLevel.swift in Sources */,

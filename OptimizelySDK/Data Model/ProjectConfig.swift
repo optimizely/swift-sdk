@@ -24,6 +24,7 @@ class ProjectConfig : Codable {
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
     
     private var whitelistUsers = [String: [String: String]]()
+    private var experimentFeatureMap = [String: [String]]()
     
     init(datafile: Data) throws {
         do {
@@ -36,6 +37,7 @@ class ProjectConfig : Codable {
         if !isValidVersion(version: self.project.version) {
             throw OptimizelyError.dataFileVersionInvalid(self.project.version)
         }
+        generateExperimentFeatureMap()
     }
     
     convenience init(datafile: String) throws {
@@ -86,6 +88,20 @@ extension ProjectConfig {
     private func isValidVersion(version: String) -> Bool {
         // old versions (< 4) of datafiles not supported
         return ["4"].contains(version)
+    }
+    
+    private func generateExperimentFeatureMap() {
+        for feature in project.featureFlags {
+            for id in feature.experimentIds {
+                if var featureIdArray = experimentFeatureMap[id] {
+                    featureIdArray.append(feature.id)
+                    experimentFeatureMap[id] = featureIdArray
+                }
+                else {
+                    experimentFeatureMap[id] = [feature.id]
+                }
+            }
+        }
     }
 }
 
@@ -169,6 +185,13 @@ extension ProjectConfig {
      */
     func getAudience(id: String) -> Audience? {
         return project.getAudience(id: id)
+    }
+    
+    /**
+     *  Returns true if experiment belongs to any feature, false otherwise.
+     */
+    func isFeatureExperiment(id: String) -> Bool {
+        return experimentFeatureMap.keys.contains(id)
     }
     
     /**

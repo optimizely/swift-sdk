@@ -292,11 +292,10 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.experimentUnknown
         }
         
-        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.experiment, userId: userId, attributes: attributes)
+        let decisionType = config.isFeatureExperiment(id: experiment.id) ? Constants.DecisionTypeKeys.featureTest : Constants.DecisionTypeKeys.abTest
+        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: decisionType, userId: userId, attributes: attributes)
 
         var decisionInfo = [String:Any]()
-        decisionInfo[Constants.NotificationKeys.experiment] = nil
-        decisionInfo[Constants.NotificationKeys.variation] = nil
         
         // fix DecisionService to throw error
         guard let variation = decisionService.getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
@@ -305,8 +304,11 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.variationUnknown
         }
         
-        decisionInfo[Constants.NotificationKeys.experiment] = experimentKey
-        decisionInfo[Constants.NotificationKeys.variation] = variation.key
+        var sourceInfo = [String:Any]()
+        sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+        sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
+        decisionInfo = sourceInfo
+        
         args.append(decisionInfo)
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
         
@@ -378,12 +380,13 @@ open class OptimizelyManager: NSObject {
         // fix DecisionService to throw error
         let pair = decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes ?? OptimizelyAttributes())
         
-        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.isFeatureEnabled, userId: userId, attributes: attributes)
+        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.feature, userId: userId, attributes: attributes)
         
         var decisionInfo = [String:Any]()
         decisionInfo[Constants.DecisionInfoKeys.feature] = featureKey
         decisionInfo[Constants.DecisionInfoKeys.source] = Constants.DecisionSource.Rollout
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = false
+        decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = [:]
         
         guard let variation = pair?.variation else {
             args.append(decisionInfo)
@@ -396,8 +399,10 @@ open class OptimizelyManager: NSObject {
         // we came from an experiment if experiment is not nil
         if let experiment = pair?.experiment {
             
-            decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = experiment.key
-            decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = variation.key
+            var sourceInfo = [String:Any]()
+            sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+            sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
+            decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
             
             // TODO: fix to throw errors
             guard let body = BatchEventBuilder.createImpressionEvent(config: config,
@@ -427,7 +432,7 @@ open class OptimizelyManager: NSObject {
         }
         
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
-        decisionInfo[Constants.DecisionInfoKeys.source] = (pair?.experiment != nil ? Constants.DecisionSource.Experiment : Constants.DecisionSource.Rollout)
+        decisionInfo[Constants.DecisionInfoKeys.source] = (pair?.experiment != nil ? Constants.DecisionSource.FeatureTest : Constants.DecisionSource.Rollout)
         args.append(decisionInfo)
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
         
@@ -531,8 +536,7 @@ open class OptimizelyManager: NSObject {
         }
         
         var decisionInfo = [String:Any]()
-        decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = nil
-        decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = nil
+        decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = [:]
         
         // TODO: [Jae] optional? fallback to empty string is OK?
         var featureValue = variable.defaultValue ?? ""
@@ -544,8 +548,10 @@ open class OptimizelyManager: NSObject {
         let decision = self.decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: _attributes)
         if let decision = decision {
             if let experiment = decision.experiment {
-                decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = experiment.key
-                decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = decision.variation?.key
+                var sourceInfo = [String:Any]()
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = decision.variation?.key
+                decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
             }
             if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
                 if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
@@ -589,7 +595,7 @@ open class OptimizelyManager: NSObject {
         decisionInfo[Constants.DecisionInfoKeys.variable] = variableKey
         decisionInfo[Constants.DecisionInfoKeys.variableType] = typeName
         decisionInfo[Constants.DecisionInfoKeys.variableValue] = value
-        decisionInfo[Constants.DecisionInfoKeys.source] = (decision?.experiment != nil ? Constants.DecisionSource.Experiment : Constants.DecisionSource.Rollout)
+        decisionInfo[Constants.DecisionInfoKeys.source] = (decision?.experiment != nil ? Constants.DecisionSource.FeatureTest : Constants.DecisionSource.Rollout)
         args.append(decisionInfo)
     
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)

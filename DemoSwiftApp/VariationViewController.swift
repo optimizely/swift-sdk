@@ -23,24 +23,10 @@ class VariationViewController: UIViewController {
     var userId: String!
     var variationKey: String?
     var optimizelyManager: OptimizelyManager?
-    var showCoupon:Bool? {
+    var showCoupon: Bool = false {
         didSet  {
-            if let show = showCoupon {
-                if show {
-                    DispatchQueue.main.async {
-                        if self.couponView != nil {
-                            self.couponView.isHidden = false
-                        }
-                        
-                    }
-                }
-                else {
-                    DispatchQueue.main.async {
-                        if self.couponView != nil {
-                            self.couponView.isHidden = true
-                        }
-                    }
-                }
+            DispatchQueue.main.async {
+                self.couponView?.isHidden = !self.showCoupon
             }
         }
     }
@@ -76,23 +62,15 @@ class VariationViewController: UIViewController {
         }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     @IBAction func unwindToVariationAction(unwindSegue: UIStoryboardSegue) {
-        
     }
     
     @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {
         do {
             try self.optimizelyManager?.track(eventKey: self.eventKey, userId: userId)
             self.performSegue(withIdentifier: "ConversionSuccessSegue", sender: self)
-        }
-        catch {
+        } catch {
             self.performSegue(withIdentifier: "ConversionFailureSegue", sender: self)
-
         }
     }
 }

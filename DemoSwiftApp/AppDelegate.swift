@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let experimentKey = "background_experiment"
     let eventKey = "sample_conversion"
     
-    let userId = String(Int.random(in: 0..<300000))
+    let userId = String(Int.random(in: 0..<100000))
     let attributes: [String : Any?] = ["browser_type": "safari", "bool_attr": false]
     
     var window: UIWindow?
@@ -50,48 +50,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         initializeOptimizelySDKAsynchronous()
     }
     
+    // MARK: - Initialization Examples
+    
     func initializeOptimizelySDKAsynchronous() {
+        optimizely = OptimizelyManager(sdkKey: sdkKey)
         
-        // customization example (optional)
-        let customLogger = makeCustomLogger()
-        
-        optimizely = OptimizelyManager(sdkKey: sdkKey,
-                                       logger: customLogger,
-                                       periodicDownloadInterval:30)
-
-        _ = optimizely?.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in
-            DispatchQueue.main.async {
-            #if os(iOS)
-                let alert = UIAlertView(title: "Datafile change", message: "something changed.", delegate: nil, cancelButtonTitle: "cancel")
-                alert.show()
-            #else
-                print("Datafile changed")
-            #endif
-            }
-            if let controller = self.window?.rootViewController as? VariationViewController {
-                //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
-                if let showCoupon = try? self.optimizely?.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
-                    controller.showCoupon = showCoupon
-                }
-                
-            }
-        })
-
-        _ = optimizely?.notificationCenter.addActivateNotificationListener(activateListener: { (experiment, userId, attributes, variation, event) in
-            print("got activate notification")
-        })
-        
-        _ = optimizely?.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
-            print(eventKey)
-            print(userId)
-            print(attributes)
-            print(eventTags)
-            print(event)
-            print("got track notification")
-        })
-        
-        // initialize Optimizely Client from a datafile download
-        optimizely!.initializeSDK { result in
+        optimizely.initializeSDK { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
@@ -101,21 +65,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             DispatchQueue.main.async {
-                self.setRootViewController(optimizelyManager: self.optimizely)
+                self.setRootViewController()
             }
         }
     }
     
     func initializeOptimizelySDKSynchronous() {
-        guard let localDatafilePath = Bundle(for: self.classForCoder).path(forResource: datafileName, ofType: "json") else {
+        guard let localDatafilePath = Bundle.main.path(forResource: datafileName, ofType: "json") else {
             fatalError("Local datafile cannot be found")
         }
         
-        // customization example (optional)
-        let customLogger = makeCustomLogger()
-        
-        optimizely = OptimizelyManager(sdkKey: sdkKey,
-                                       logger: customLogger)
+        optimizely = OptimizelyManager(sdkKey: sdkKey)
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -126,102 +86,83 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             optimizely = nil
         }
         
-        setRootViewController(optimizelyManager: self.optimizely)
+        setRootViewController()
     }
     
-    func setRootViewController(optimizelyManager: OptimizelyManager?) {
-        guard let optimizely = optimizely else {
-            openFailureView()
-            return
-        }
+    func initializeOptimizelySDKWithCustomization() {
+        // customization example (optional)
         
+        let customLogger = CustomLogger()
+        let customDownloadIntervalInSecs = 30
+        
+        optimizely = OptimizelyManager(sdkKey: sdkKey,
+                                       logger: customLogger,
+                                       periodicDownloadInterval: customDownloadIntervalInSecs)
+        
+        // notification listeners
+        
+        _ = optimizely?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
+            print("Received decision notification: \(type) \(userId) \(String(describing: attributes)) \(decisionInfo)")
+        })
+        
+        _ = optimizely?.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
+            print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
+        })
+        
+        // initialize SDK
+        
+        optimizely!.initializeSDK { result in
+            switch result {
+            case .failure(let error):
+                print("Optimizely SDK initiliazation failed: \(error)")
+                self.optimizely = nil
+            case .success:
+                print("Optimizely SDK initialized successfully!")
+            }
+            
+            DispatchQueue.main.async {
+                self.setRootViewController()
+            }
+        }
+    }
+
+    // MARK: - ViewControl
+    
+    func setRootViewController() {
         do {
             let variationKey = try optimizely.activate(experimentKey: experimentKey,
                                                        userId: userId,
                                                        attributes: attributes)
-            openVariationView(optimizelyManager: optimizely, variationKey: variationKey)
-// used to test threading and datafile updates.
-//
-//            DispatchQueue.global(qos: .background).async {
-//                repeat {
-//                    do {
-//                        let userId = String(Int(arc4random_uniform(300000)))
-//                        let variationKey = try optimizely.activate(experimentKey: self.experimentKey,
-//                                                               userId: userId,
-//                                                               attributes: self.attributes)
-//                        print(variationKey)
-//                    }
-//                    catch let error {
-//                        print(error)
-//                    }
-//                    sleep(1)
-//                }
-//                while true
-//
-//            }
+            openVariationView(variationKey: variationKey)
         } catch OptimizelyError.variationUnknown(userId, experimentKey) {
             print("Optimizely SDK activation cannot map this user to experiemnt")
-            openVariationView(optimizelyManager: optimizely, variationKey: nil)
+            openVariationView(variationKey: nil)
         } catch {
             print("Optimizely SDK activation failed: \(error)")
             openFailureView()
         }
     }
     
-
-    func makeCustomLogger() -> OPTLogger {
-        class Logger : OPTLogger {
-            static var level:OptimizelyLogLevel?
-            static var logLevel: OptimizelyLogLevel {
-                get {
-                    if let level = level {
-                        return level
-                    }
-                    return .all
-                }
-                set {
-                    if let _ = level {
-                        // already set.
-                    }
-                    else {
-                        level = newValue
-                    }
-                }
-            }
-            
-            required init() {
-                
-            }
-            
-            func log(level: OptimizelyLogLevel, message: String) {
-                if level.rawValue <= Logger.logLevel.rawValue {
-                    print("🐱 - [\(level.name)] Kitty - \(message)")
-                }
-            }
-            
-        }
-        
-        return Logger()
-    }
-
-    func openVariationView(optimizelyManager: OptimizelyManager?, variationKey: String?) {
+    func openVariationView(variationKey: String?) {
         let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as! VariationViewController
         
-        if let showCoupon = try? optimizelyManager?.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
+        if let showCoupon = try? optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: userId) {
             variationViewController.showCoupon = showCoupon
         }
         
-        variationViewController.eventKey = eventKey
+        variationViewController.optimizelyManager = optimizely
         variationViewController.userId = userId
-        variationViewController.optimizelyManager = optimizelyManager
         variationViewController.variationKey = variationKey
-        
+        variationViewController.eventKey = eventKey
+
         window?.rootViewController = variationViewController
     }
-    
+
     func openFailureView() {
         window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
     }
+    
+    // MARK: - AppDelegate
     
     func applicationWillResignActive(_ application: UIApplication) {
     }

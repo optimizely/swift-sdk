@@ -66,7 +66,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 }
 
 -(void)initializeOptimizelySDKSynchronous {
-    NSString *localDatafilePath = [[NSBundle bundleForClass:self.classForCoder] pathForResource:kOptimizelyDatafileName ofType:@"json"];
+    NSString *localDatafilePath = [[NSBundle mainBundle] pathForResource:kOptimizelyDatafileName ofType:@"json"];
     if (localDatafilePath == nil) {
         NSAssert(false, @"Local datafile cannot be found");
         self.optimizely = nil;

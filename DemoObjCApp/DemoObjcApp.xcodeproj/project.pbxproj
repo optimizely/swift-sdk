@@ -204,7 +204,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E4DD97C21E67AAD00B0C2C7 /* OptimizelySwiftSDK.framework in Frameworks */,
+				6E4DD97C21E67AAD00B0C2C7 /* Optimizely.framework in Frameworks */,
 				C2E08E88D2C89768C7551208 /* libPods-DemoObjciOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -226,13 +226,13 @@
 			children = (
 				6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */,
 				6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */,
-				6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */,
+				6E4DD97921E67A6500B0C2C7 /* OptimizelyTests-iOS.xctest */,
 				6E8D3245226FAC4F00478458 /* OptimizelyTests-Common-iOS.xctest */,
 				6E8D3247226FAC4F00478458 /* OptimizelyTests-APIs-iOS.xctest */,
 				6E8D3249226FAC4F00478458 /* OptimizelyTests-DataModel-iOS.xctest */,
 				6E8D324B226FAC4F00478458 /* OptimizelyTests-Others-iOS.xctest */,
 				6E8D324D226FAC4F00478458 /* OptimizelyTests-Legacy-iOS.xctest */,
-				6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */,
+				6E4DD97B21E67A6500B0C2C7 /* OptimizelyTests-tvOS.xctest */,
 				6E8D324F226FAC4F00478458 /* OptimizelyTests-Common-tvOS.xctest */,
 				6E8D3251226FAC4F00478458 /* OptimizelyTests-DataModel-tvOS.xctest */,
 				6E8D3253226FAC4F00478458 /* OptimizelyTests-Others-tvOS.xctest */,
@@ -299,8 +299,8 @@
 		6E9681A621EEA3D8009B7FEC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				6E9681A721EEA3D8009B7FEC /* Roboto-Medium.ttf */,
 				6E9681A821EEA3D8009B7FEC /* demoTestDatafile.json */,
+				6E9681A721EEA3D8009B7FEC /* Roboto-Medium.ttf */,
 				6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */,
 			);
 			path = Resources;
@@ -463,14 +463,14 @@
 			remoteRef = 6E4DD97621E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */ = {
+		6E4DD97921E67A6500B0C2C7 /* OptimizelyTests-iOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-iOS.xctest";
 			remoteRef = 6E4DD97821E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */ = {
+		6E4DD97B21E67A6500B0C2C7 /* OptimizelyTests-tvOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-tvOS.xctest";

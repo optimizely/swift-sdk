@@ -123,7 +123,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 }
                 
                 guard let event = eventToSend else {
-                    self.logger?.log(level: .error, message: "Cannot find event to send")
+                    self.logger?.e(.eventBatchFailed)
                     resetBatch()
                     break
                 }
@@ -131,7 +131,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 // we've exhuasted our failure count.  Give up and try the next time a event
                 // is queued or someone calls flush.
                 if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
-                    self.logger?.log(level: .error, message:"EventDispatcher failed to send \(failureCount) times. Backing off.")
+                    self.logger?.e(.eventSendRetyFailed(failureCount))
                     failureCount = 0
                     resetBatch()
                     break;
@@ -142,7 +142,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 self.sendEvent(event: event) { (result) -> (Void) in
                     switch result {
                     case .failure(let error):
-                        self.logger?.log(level: .error, message: error.localizedDescription)
+                        self.logger?.e(error.localizedDescription)
                         failureCount += 1
                     case .success(_):
                         // we succeeded. remove the batch size sent.
@@ -191,13 +191,13 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
-            self.logger?.log(level: .debug, message: response.debugDescription)
+            self.logger?.d(response.debugDescription)
             
             if let error = error {
                 completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
             }
             else {
-                self.logger?.log(level: .debug, message: "Event Sent")
+                self.logger?.d("Event Sent")
                 completionHandler(.success(event.body))
             }
         }

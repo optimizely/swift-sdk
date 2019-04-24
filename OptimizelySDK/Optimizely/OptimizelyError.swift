@@ -10,45 +10,43 @@ import Foundation
 
 public enum OptimizelyError: Error {
     case generic
+
+    // MARK: - SDK
+    
     case sdkNotConfigured
     
     // MARK: - Experiment
     
     case experimentKeyInvalid(_ key: String)
-    case experimentUnknown
-    case experimentNotParticipated
+    case experimentIdInvalid(_ id: String)
     case experimentHasNoTrafficAllocation(_ key: String)
     case featureKeyInvalid(_ key: String)
-    case featureUnknown
-    case variationKeyInvalid(_ key: String)
-    case variationUnknown
-    case variableKeyInvalid(_ key: String)
-    case variableUnknown
+    case variationKeyInvalid(_ expKey: String, _ varKey: String)
+    case variationIdInvalid(_ expKey: String, _ varKey: String)
+    case variationUnknown(_ userId: String, _ key: String)
+    case variableKeyInvalid(_ varKey: String, _ feature: String)
     case variableValueInvalid(_ key: String)
     case eventKeyInvalid(_ key: String)
-    case eventUnknown
+    case eventBuildFailure(_ key: String)
+    case eventTagsFormatInvalid
     case attributesKeyInvalid(_ key: String)
-    case attributeValueInvalid
+    case attributeValueInvalid(_ key: String)
     case attributeFormatInvalid
-    case groupKeyInvalid(_ key: String)
-    case groupUnknown
+    case groupIdInvalid(_ id: String)
     case groupHasNoTrafficAllocation(_ key: String)
-    case rolloutKeyInvalid(_ key: String)
-    case rolloutUnknown
+    case rolloutIdInvalid(_ id: String, _ feature: String)
     
-    case trafficAllocationNotInRange
-    case trafficAllocationUnknown
-    case eventNotAssociatedToExperiment(_ key: String)
-
-    // MARK: - Audience Conditions
+    // MARK: - Audience Evaluation
     
-    case conditionNoMatchingAudience(_ hint: String)
-    case conditionInvalidValueType(_ hint: String)
+    case conditionNoMatchingAudience(_ id: String)
     case conditionInvalidFormat(_ hint: String)
     case conditionCannotBeEvaluated(_ hint: String)
-    case conditionInvalidAttributeType(_ hint: String)
-    case conditionInvalidAttributeMatch(_ hint: String)
-    case conditionNoAttributeValue(_ hint: String)
+    case evaluateAttributeInvalidType(_ hint: String)
+    case evaluateAttributeValueOutOfRange(_ hint: String)
+    case evaluateAttributeInvalidFormat(_ hint: String)
+    case userAttributeInvalidType(_ hint: String)
+    case userAttributeInvalidMatch(_ hint: String)
+    case userAttributeInvalidFormat(_ hint: String)
 
     // MARK: - Bucketing
     
@@ -67,10 +65,6 @@ public enum OptimizelyError: Error {
     // MARK: - EventDispatcher Errors
     
     case eventDispatchFailed(_ reason: String)
-    
-    // MARK: - Notifications
-    
-    case notificationCallbackInvalid
 }
 
 extension OptimizelyError: CustomStringConvertible {
@@ -87,57 +81,47 @@ extension OptimizelyError: CustomStringConvertible {
         
         switch self {
         case .generic:                                      message = "Unknown reason"
+        case .sdkNotConfigured:                             message = "Optimizely SDK not configured properly yet"
+        case .experimentKeyInvalid(let key):                message = "Experiment key \(key) is not in datafile. It is either invalid, paused, or archived."
+        case .experimentIdInvalid(let id):                  message = "Experiment ID \(id) is not in datafile."
+        case .experimentHasNoTrafficAllocation(let key):    message = "No traffic allocation rules are defined for experiement (\(key))."
+        case .featureKeyInvalid(let key):                   message = "Feature key \(key) is not in datafile."
+        case .variationKeyInvalid(let expKey, let varKey):  message = "No variation key \(varKey) defined in datafile for experiment \(expKey)."
+        case .variationIdInvalid(let expKey, let varId):    message = "No variation ID \(varId) defined in datafile for experiment \(expKey)."
+        case .variationUnknown(let userId, let key):        message = "User \(userId) does not meet conditions to be in experiment/feature \(key)."
+        case .variableKeyInvalid(let varKey, let feature):  message = "Variable with key \(varKey) associated with feature with key \(feature) is not in datafile."
+        case .variableValueInvalid(let key):                message = "Variable value for key \(key) is invalid or wrong type"
+        case .eventKeyInvalid(let key):                     message = "Event key \(key) is not in datafile."
+        case .eventBuildFailure(let key):                   message = "Failed to create a dispatch event \(key)"
+        case .eventTagsFormatInvalid:                       message = "Provided event tags are in an invalid format."
+        case .attributesKeyInvalid(let key):                message = "Attribute key \(key) is not in datafile."
+        case .attributeValueInvalid(let key):               message = "Attribute value for \(key) is invalid."
+        case .attributeFormatInvalid:                       message = "Provided attributes are in an invalid format."
+        case .groupIdInvalid(let id):                       message = "Group ID \(id) is not in datafile."
+        case .groupHasNoTrafficAllocation(let id):          message = "No traffic allocation rules are defined for group (\(id))"
+        case .rolloutIdInvalid(let id, let feature):        message = "Invalid rollout ID \(id) attached to feature \(feature)"
             
-        case .sdkNotConfigured:                             message = "(sdkNotConfigured) "
-            
-        case .experimentKeyInvalid(let hint):               message = "(experimentKeyInvalid(\(hint))) "
-        case .experimentUnknown:                            message = "(experimentUnknown) "
-        case .experimentNotParticipated:                    message = "(experimentNotParticipated) "
-        case .experimentHasNoTrafficAllocation(let hint):   message = "(experimentHasNoTrafficAllocation(\(hint))) "
-        case .featureKeyInvalid(let hint):                  message = "(featureKeyInvalid(\(hint))) "
-        case .featureUnknown:                               message = "(featureUnknown) "
-        case .variationKeyInvalid(let hint):                message = "(variationKeyInvalid(\(hint))) "
-        case .variationUnknown:                             message = "(variationUnknown) "
-        case .variableKeyInvalid(let hint):                 message = "(variableKeyInvalid(\(hint))) "
-        case .variableUnknown:                              message = "(variableUnknown) "
-        case .variableValueInvalid(let hint):               message = "(variableValueInvalid(\(hint))) "
-        case .eventKeyInvalid(let hint):                    message = "(eventKeyInvalid(\(hint))) "
-        case .eventUnknown:                                 message = "(eventUnknown) "
-        case .attributesKeyInvalid(let hint):               message = "(attributesKeyInvalid(\(hint))) "
-        case .attributeValueInvalid:                        message = "(attributeValueInvalid) "
-        case .attributeFormatInvalid:                       message = "Attributes provided in invalid format."
-        case .groupKeyInvalid(let hint):                    message = "(groupKeyInvalid(\(hint))) "
-        case .groupUnknown:                                 message = "(groupUnknown) "
-        case .groupHasNoTrafficAllocation(let hint):        message = "(groupHasNoTrafficAllocation(\(hint))) "
-        case .rolloutKeyInvalid(let hint):                  message = "(rolloutKeyInvalid(\(hint))) "
-        case .rolloutUnknown:                               message = "(rolloutUnknown) "
-            
-        case .trafficAllocationNotInRange:                  message = "Traffic allocation %ld is not in range."
-        case .trafficAllocationUnknown:                     message = "(trafficAllocationUnknown) "
-        case .eventNotAssociatedToExperiment(let hint):     message = "(eventNotAssociatedToExperiment(\(hint))) "
-            
-        case .conditionNoMatchingAudience(let hint):        message = "(conditionNoMatchingAudience(\(hint))) "
-        case .conditionInvalidValueType(let hint):          message = "(conditionInvalidValueType(\(hint))) "
-        case .conditionInvalidFormat(let hint):             message = "(conditionInvalidFormat(\(hint))) "
-        case .conditionCannotBeEvaluated(let hint):         message = "(conditionCannotBeEvaluated(\(hint))) "
-        case .conditionInvalidAttributeType(let hint):      message = "(conditionInvalidAttributeType(\(hint))) "
-        case .conditionInvalidAttributeMatch(let hint):     message = "(conditionInvalidAttributeMatch(\(hint))) "
-        case .conditionNoAttributeValue(let hint):          message = "(conditionNoAttributeValue(\(hint))) "
-            
-        case .userIdInvalid:                                message = "(userIdInvalid) "
-        case .bucketingIdInvalid (let hint):                message = "Invalid bucketing ID: \(hint)"
+        case .conditionNoMatchingAudience(let id):          message = "Audience \(id) is not in datafile."
+        case .conditionInvalidFormat(let hint):             message = "Condition has an invalid format (\(hint))"
+        case .conditionCannotBeEvaluated(let hint):         message = "Condition cannot be evaluated (\(hint))"
+        case .evaluateAttributeInvalidType(let hint):       message = "Evaluation attribute has an invalid value (\(hint))"
+        case .evaluateAttributeValueOutOfRange(let hint):   message = "Evaluation attribute has a value out of range (\(hint))"
+        case .evaluateAttributeInvalidFormat(let hint):     message = "Evaluation attribute has an invalid format (\(hint))"
+        case .userAttributeInvalidType(let hint):           message = "UserAttribute has an invalid attribute type (\(hint))"
+        case .userAttributeInvalidMatch(let hint):          message = "UserAttribute has an invalid match type (\(hint))"
+        case .userAttributeInvalidFormat(let hint):         message = "UserAttribute has an invalid format (\(hint))"
+
+        case .userIdInvalid:                                message = "Provided user ID is in an invalid format."
+        case .bucketingIdInvalid (let id):                  message = "Invalid bucketing ID: \(id)"
         case .userProfileInvalid:                           message = "Provided user profile object is invalid."
             
-        case .datafileDownloadFailed(let hint):             message = "(datafileDownloadFailed(\(hint))) "
-        case .dataFileInvalid:                              message = "Provided 'datafile' is in an invalid format."
-        case .dataFileVersionInvalid (let version):         message = "Provided 'datafile' version \(version) is not supported."
-        case .datafileSavingFailed(let hint):               message = "(datafileSavingFailed(\(hint))) "
-        case .datafileLoadingFailed(let hint):              message = "(datafileLoadingFailed(\(hint))) "
+        case .datafileDownloadFailed(let hint):             message = "Datafile download failed (\(hint))"
+        case .dataFileInvalid:                              message = "Provided datafile is in an invalid format."
+        case .dataFileVersionInvalid (let version):         message = "Provided datafile version \(version) is not supported."
+        case .datafileSavingFailed(let hint):               message = "Datafile save failed (\(hint))"
+        case .datafileLoadingFailed(let hint):              message = "Datafile load failed (\(hint))"
             
-        case .eventDispatchFailed(let hint):                message = "(eventDispatchFailed(\(hint)) "
-            
-            
-        case .notificationCallbackInvalid:                  message = "(notificationCallbackInvalid) "
+        case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))"
         }
         
         return message

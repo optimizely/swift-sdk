@@ -16,9 +16,10 @@
 
 import Foundation
 
-class ProjectConfig : Codable {
+class ProjectConfig {
     
     var project: Project!
+    lazy var logger = HandlerRegistryService.shared.injectLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
@@ -30,8 +31,6 @@ class ProjectConfig : Codable {
         do {
             self.project = try JSONDecoder().decode(Project.self, from: datafile)
         } catch {
-            // TODO: clean up (debug only)
-            print(">>>>> Project Decode Error: \(error)")
             throw OptimizelyError.dataFileInvalid
         }
         if !isValidVersion(version: self.project.version) {
@@ -81,8 +80,10 @@ extension ProjectConfig {
     private func getWhitelistedVariationId(userId: String, experimentId: String) -> String? {
         if var dic = whitelistUsers[userId] {
             return dic[experimentId]
+        } else {
+            logger?.d(.userHasNoForcedVariation(userId))
+            return nil
         }
-        return nil
     }
     
     private func isValidVersion(version: String) -> Bool {
@@ -198,26 +199,34 @@ extension ProjectConfig {
      * Get forced variation for a given experiment key and user id.
      */
     func getForcedVariation(experimentKey: String, userId: String) -> Variation? {
-        guard let experiment = allExperiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = getExperiment(key: experimentKey) else {
             return nil
         }
         
         if let id = getWhitelistedVariationId(userId: userId, experimentId: experiment.id) {
-            return experiment.getVariation(id:id)
+            if let variation = experiment.getVariation(id:id) {
+                logger?.d(.userHasForcedVariation(userId, experiment.key, variation.key))
+                return variation
+            } else {
+                logger?.d(.userHasForcedVariationButInvalid(userId, experiment.key))
+                return nil
+            }
+        } else {
+            logger?.d(.userHasNoForcedVariationForExperiment(userId, experiment.key))
+            return nil
         }
-        
-        return nil
     }
     
     /**
      * Set forced variation for a given experiment key and user id according to a given variation key.
      */
     func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) -> Bool {
-        guard let experiment = allExperiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = getExperiment(key: experimentKey) else {
             return false
         }
         
         guard var variationKey = variationKey else {
+            logger?.d(.variationRemovedForUser(userId, experimentKey))
             self.removeFromWhitelist(userId: userId, experimentId: experiment.id)
             return true
         }
@@ -235,14 +244,12 @@ extension ProjectConfig {
         
         self.whitelistUser(userId: userId, experimentId: experiment.id, variationId: variation.id)
         
+        logger?.d(.userMappedToForcedVariation(userId, experiment.id, variation.id))
         return true
     }
     
     var allExperiments:[Experiment] {
-        get {
-            return  project.experiments +
-                 project.groups.map({$0.experiments}).flatMap({$0})
-        }
+        return  project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
     }
 
 }

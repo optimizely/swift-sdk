@@ -37,7 +37,7 @@ open class DefaultLogger : OPTLogger {
         if level.rawValue > DefaultLogger.logLevel.rawValue {
             return
         }
-        let message = "[OPTIMIZELY SDK][" + level.name + "]:" + message
+        let message = "[OPTIMIZELY][" + level.name + "]:" + message
         NSLog(message)
     }
 }

@@ -95,54 +95,76 @@ class BatchEventBuilder {
             
     // MARK: - Event Tags
     
-    static func filterEventTags(_ eventTags: [String: Any]?) -> ([String: AttributeValue]?, AttributeValue?, AttributeValue?) {
+    static func filterEventTags(_ eventTags: [String: Any]?) -> ([String: AttributeValue], AttributeValue?, AttributeValue?) {
         guard let eventTags = eventTags else {
             return ([:], nil, nil)
         }
         
-        let tags = eventTags.mapValues{AttributeValue(value:$0)}.filter{$0.value != nil} as? [String: AttributeValue] ?? [:]
-        var value = tags[DispatchEvent.valueKey]
-        var revenue = tags[DispatchEvent.revenueKey]
+        // should not pass tags of invalid types to the server (which will drop entire event if so)
+        let filteredTags = filterTagsWithInvalidTypes(eventTags)
         
-        // export {value, revenue} only for {double, int64} types
+        // {revenue, value} keys are special - must be copied as separate properties
+        let value = extractValueEventTag(filteredTags)
+        let revenue = extractRevenueEventTag(filteredTags)
         
-        if let _value = value {
-            switch _value {
-            case .double:
-                // valid value type
-                break
-            case .int(let int64Value):
-                value = AttributeValue(value: Double(int64Value))
-            default:
-                value = nil
-            }
-        }
-        
-        if let _revenue = revenue {
-            switch _revenue {
-            case .int:
-                // valid revenue type
-                break
-            case .double(let doubleValue):
-                
-                // TODO: [Jae] is this double-to-integer conversion safe?
-                
-                // - special integer types ("NSNumber(intValue: )", ...) are parsed as .double()
-                //   since double has higher pririorty when cannot tell from {integer, double}
-                // - check if integer value
-                if doubleValue == Double(Int64(doubleValue)){
-                    revenue = AttributeValue(value: Int64(doubleValue))
-                } else {
-                    revenue = nil
-                }
-            default:
-                revenue = nil
-            }
-        }
-
-        return (tags, value, revenue)
+        return (filteredTags, value, revenue)
     }
     
+    static func filterTagsWithInvalidTypes(_ eventTags: [String: Any]) -> [String: AttributeValue] {
+        let filteredTags = eventTags.mapValues { AttributeValue(value:$0) }.filter { $0.value != nil } as? [String: AttributeValue]
+        return filteredTags ?? [:]
+    }
+    
+    static func extractValueEventTag(_ eventTags: [String: AttributeValue]) -> AttributeValue? {
+        guard let valueFromTags = eventTags[DispatchEvent.valueKey] else { return nil }
+        
+        // export {value, revenue} only for {double, int64} types
+        var value: AttributeValue?
+        
+        switch valueFromTags {
+        case .double:
+            // valid value type
+            value = valueFromTags
+        case .int(let int64Value):
+            value = AttributeValue(value: Double(int64Value))
+        default:
+            value = nil
+        }
+        
+        if let value = value {
+            logger?.i(.extractValueFromEventTags(value.stringValue))
+        } else {
+            logger?.i(.failedToExtractValueFromEventTags(valueFromTags.stringValue))
+        }
+        
+        return value
+    }
+    
+    static func extractRevenueEventTag(_ eventTags: [String: AttributeValue]) -> AttributeValue? {
+        guard let revenueFromTags = eventTags[DispatchEvent.revenueKey] else { return nil }
+        
+        // export {value, revenue} only for {double, int64} types
+        var revenue: AttributeValue?
+        
+        switch revenueFromTags {
+        case .int:
+            // valid revenue type
+            revenue = revenueFromTags
+        case .double(let doubleValue):
+            // not accurate but acceptable ("3.14" -> "3")
+            revenue = AttributeValue(value: Int64(doubleValue))
+        default:
+            revenue = nil
+        }
+        
+        if let revenue = revenue {
+            logger?.i(.extractRevenueFromEventTags(revenue.stringValue))
+        } else {
+            logger?.i(.failedToExtractRevenueFromEventTags(revenueFromTags.stringValue))
+        }
+        
+        return revenue
+    }
     
     // MARK: - Event Attributes
     
@@ -163,7 +185,7 @@ class BatchEventBuilder {
                     }
                 }
                 else {
-                    logger?.log(level: .debug, message: "Attribute " + attr + " skipped. Not in datafile.")
+                    logger?.d(.unrecognizedAttribute(attr))
                 }
             }
         }

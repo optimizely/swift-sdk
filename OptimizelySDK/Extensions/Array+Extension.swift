@@ -19,7 +19,7 @@ extension Array where Element == ThrowableCondition {
     // returns true only when all items are true and no-error
     func and() throws -> Bool {
         guard self.count > 0 else {
-            throw OptimizelyError.conditionInvalidFormat(#function)
+            throw OptimizelyError.conditionInvalidFormat("AND with empty items")
         }
 
         for eval in self {
@@ -47,8 +47,8 @@ extension Array where Element == ThrowableCondition {
             }
         }
         
-        if foundError != nil {
-            throw OptimizelyError.conditionInvalidFormat("OR with invalid items [\(foundError!.reason)]")
+        if let error = foundError {
+            throw OptimizelyError.conditionInvalidFormat("OR with invalid items [\(error.reason)]")
         }
         
         return false
@@ -57,7 +57,7 @@ extension Array where Element == ThrowableCondition {
     // evalute the 1st item only
     func not() throws -> Bool {
         guard let eval = self.first else {
-            throw OptimizelyError.conditionInvalidFormat(#function)
+            throw OptimizelyError.conditionInvalidFormat("NOT with empty items")
         }
 
         do {

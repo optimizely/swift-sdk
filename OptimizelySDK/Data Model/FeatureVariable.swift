@@ -20,9 +20,7 @@ struct FeatureVariable: Codable, Equatable {
     var id: String
     var key: String
     var type: String
-    
-    // TOOD: [Jae] datafile schema rquires this, but test has "null" value case
-    //       for now, fix to optional. confirm it.
+    // datafile schema rquires this, but test has "null" value case. keep optional for FSC
     var defaultValue: String?
 }
 

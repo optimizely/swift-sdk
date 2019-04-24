@@ -11,9 +11,6 @@
 #import "FailureViewController.h"
 
 @import Optimizely;
-#if TARGET_OS_IOS
-    @import Amplitude_iOS;
-#endif
 
 static NSString * const kOptimizelyDatafileName = @"demoTestDatafile";
 static NSString * const kOptimizelyExperimentKey = @"background_experiment";

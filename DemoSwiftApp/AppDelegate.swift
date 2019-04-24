@@ -16,26 +16,19 @@
 
 import UIKit
 import Optimizely
-#if os(iOS)
-import Amplitude_iOS
-#endif
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    
-    var window: UIWindow?
-    var optimizely: OptimizelyManager?
-    
-    // generate random user ID on each app load
-    let userId = String(Int(arc4random_uniform(300000)))
-    
-    // customizable settings
+    let sdkKey = "FCnSegiEkRry9rhVMroit4"
     let datafileName = "demoTestDatafile"
     let experimentKey = "background_experiment"
     let eventKey = "sample_conversion"
-    let attributes = ["browser_type": "safari", "bool_attr": false] as [String : Any?]
-    let sdkKey = "FCnSegiEkRry9rhVMroit4"
     
+    let userId = String(Int.random(in: 0..<300000))
+    let attributes: [String : Any?] = ["browser_type": "safari", "bool_attr": false]
+    
+    var window: UIWindow?
+    var optimizely: OptimizelyManager!
     var storyboard: UIStoryboard {
         #if os(iOS)
         return UIStoryboard(name: "iOSMain", bundle: nil)
@@ -55,7 +48,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
         
         initializeOptimizelySDKAsynchronous()
-        //initializeOptimizelySDKSynchronous()
     }
     
     func initializeOptimizelySDKAsynchronous() {

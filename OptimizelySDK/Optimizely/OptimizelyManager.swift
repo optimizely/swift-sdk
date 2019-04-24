@@ -73,6 +73,7 @@ open class OptimizelyManager: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
+        logger?.i("SDK Version: \(Utils.getSDKVersion())")
     }
     
     /// Initialize Optimizely Manager (Asynchronous)
@@ -228,9 +229,7 @@ open class OptimizelyManager: NSObject {
                          userId: String,
                          attributes: OptimizelyAttributes?=nil) throws -> String {
         
-        guard let config = self.config else {
-            throw OptimizelyError.sdkNotConfigured
-        }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
             throw OptimizelyError.experimentKeyInvalid(experimentKey)
@@ -286,7 +285,7 @@ open class OptimizelyManager: NSObject {
                       userId: String,
                       attributes: OptimizelyAttributes?=nil) throws -> Variation {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
@@ -374,7 +373,7 @@ open class OptimizelyManager: NSObject {
                                  userId: String,
                                  attributes: OptimizelyAttributes?=nil) throws -> Bool {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
             return false
@@ -532,7 +531,7 @@ open class OptimizelyManager: NSObject {
                                userId: String,
                                attributes: OptimizelyAttributes?=nil) throws -> T {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         // fix config to throw errors
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
@@ -629,7 +628,7 @@ open class OptimizelyManager: NSObject {
     public func getEnabledFeatures(userId: String,
                                    attributes: OptimizelyAttributes?=nil) throws -> [String] {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         guard let featureFlags = config.project?.featureFlags else {
             return [String]()
@@ -658,7 +657,7 @@ open class OptimizelyManager: NSObject {
                       attributes: OptimizelyAttributes?=nil,
                       eventTags: OptimizelyEventTags?=nil) throws {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         guard let _ = config.getEvent(key: eventKey) else {
             throw OptimizelyError.eventKeyInvalid(eventKey)

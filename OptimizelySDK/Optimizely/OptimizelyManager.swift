@@ -386,7 +386,7 @@ open class OptimizelyManager: NSObject {
         
         var decisionInfo = [String:Any]()
         decisionInfo[Constants.DecisionInfoKeys.feature] = featureKey
-        decisionInfo[Constants.DecisionInfoKeys.source] = Constants.DecisionSource.Rollout
+        decisionInfo[Constants.DecisionInfoKeys.source] = Constants.DecisionSource.rollout
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = false
         decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = [:]
         
@@ -434,7 +434,7 @@ open class OptimizelyManager: NSObject {
         }
         
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
-        decisionInfo[Constants.DecisionInfoKeys.source] = (pair?.experiment != nil ? Constants.DecisionSource.FeatureTest : Constants.DecisionSource.Rollout)
+        decisionInfo[Constants.DecisionInfoKeys.source] = (pair?.experiment != nil ? Constants.DecisionSource.featureTest : Constants.DecisionSource.rollout)
         args.append(decisionInfo)
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
         
@@ -597,7 +597,7 @@ open class OptimizelyManager: NSObject {
         decisionInfo[Constants.DecisionInfoKeys.variable] = variableKey
         decisionInfo[Constants.DecisionInfoKeys.variableType] = typeName
         decisionInfo[Constants.DecisionInfoKeys.variableValue] = value
-        decisionInfo[Constants.DecisionInfoKeys.source] = (decision?.experiment != nil ? Constants.DecisionSource.FeatureTest : Constants.DecisionSource.Rollout)
+        decisionInfo[Constants.DecisionInfoKeys.source] = (decision?.experiment != nil ? Constants.DecisionSource.featureTest : Constants.DecisionSource.rollout)
         args.append(decisionInfo)
     
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)

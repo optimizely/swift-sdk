@@ -38,8 +38,8 @@ struct Constants {
     }
     
     struct DecisionSource {
-        static let FeatureTest = "feature-test"
-        static let Rollout = "rollout"
+        static let featureTest = "feature-test"
+        static let rollout = "rollout"
     }
 
 }

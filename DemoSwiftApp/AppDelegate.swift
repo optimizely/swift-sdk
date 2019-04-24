@@ -47,7 +47,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //     - initialize immediately with the given JSON datafile or its cached copy
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
         
-        initializeOptimizelySDKAsynchronous()
+       //// initializeOptimizelySDKAsynchronous()
+       //// initializeOptimizelySDKSynchronous()
+        initializeOptimizelySDKWithCustomization()
+        
     }
     
     // MARK: - Initialization Examples
@@ -101,14 +104,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // notification listeners
         
-        _ = optimizely?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
+        _ = optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
             print("Received decision notification: \(type) \(userId) \(String(describing: attributes)) \(decisionInfo)")
         })
         
-        _ = optimizely?.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
+        _ = optimizely.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
             print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
         })
         
+        _ = optimizely.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in
+            DispatchQueue.main.async {
+                #if os(iOS)
+                let alert = UIAlertView(title: "Datafile change", message: "something changed.", delegate: nil, cancelButtonTitle: "cancel")
+                alert.show()
+                #else
+                print("Datafile changed")
+                #endif
+            }
+            
+            if let controller = self.window?.rootViewController as? VariationViewController {
+                //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
+                if let showCoupon = try? self.optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
+                    controller.showCoupon = showCoupon
+                }
+            }
+        })
+
         // initialize SDK
         
         optimizely!.initializeSDK { result in

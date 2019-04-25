@@ -58,7 +58,8 @@ open class OptimizelyManager: NSObject {
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
-                periodicDownloadInterval: Int? = nil) {
+                periodicDownloadInterval: Int? = nil,
+                defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         self.sdkKey = sdkKey
         self.periodicDownloadInterval = periodicDownloadInterval ?? 10 * 60
@@ -66,21 +67,24 @@ open class OptimizelyManager: NSObject {
         super.init()
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()
+        let logger = logger ?? DefaultLogger()
+        type(of: logger).logLevel = defaultLogLevel ?? .info
+        
         self.registerServices(sdkKey: sdkKey,
-                              logger: logger ?? DefaultLogger(),
+                              logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               datafileHandler: DefaultDatafileHandler(),
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
-        logger?.i("SDK Version: \(Utils.getSDKVersion())")
+        logger.i("SDK Version: \(Utils.getSDKVersion())")
     }
     
     /// Initialize Optimizely Manager (Asynchronous)
     ///
     /// - Parameters:
     ///   - completion: callback when initialization is completed
-    public func initializeSDK(resourceTimeout:Double? = nil,completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+    public func startSDK(resourceTimeout:Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         fetchDatafileBackground(resourceTimeout:resourceTimeout) { result in
             switch result {
             case .failure:
@@ -106,12 +110,12 @@ open class OptimizelyManager: NSObject {
     ///   - datafile: when given, this datafile will be used when cached copy is not available (fresh start)
     ///                       a cached copy from previous download is used if it's available
     ///                       the datafile will be updated from the server in the background thread
-    public func initializeSDK(datafile: String) throws {
+    public func startSDK(datafile: String) throws {
         guard let datafileData = datafile.data(using: .utf8) else {
             throw OptimizelyError.dataFileInvalid
         }
         
-        try initializeSDK(datafile: datafileData)
+        try startSDK(datafile: datafileData)
     }
     
     /// Initialize Optimizely Manager (Synchronous)
@@ -123,7 +127,7 @@ open class OptimizelyManager: NSObject {
     ///   - doFetchDatafileBackground: default to true.  This is really here for debugging purposes when
     ///                       you don't want to download the datafile.  In practice, you should allow the
     ///                       background thread to update the cache copy.
-    public func initializeSDK(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
+    public func startSDK(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
         let cachedDatafile = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey)
         
         let selectedDatafile = cachedDatafile ?? datafile
@@ -717,7 +721,7 @@ extension OptimizelyManager {
     @available(swift, obsoleted: 1.0)
     @objc(initializeSDKWithCompletion:)
     public func _objcInitializeSDK(completion: ((Data?, NSError?) -> Void)?) {
-        initializeSDK { result in
+        startSDK { result in
             switch result {
             case .failure(let error):
                 completion?(nil, self.convertErrorForObjc(error))
@@ -812,13 +816,13 @@ extension OptimizelyManager {
     @available(swift, obsoleted: 1.0)
     @objc(initializeSDKWithDatafile:error:)
     public func _objcInitializeSDKWith(datafile:String) throws {
-        try self.initializeSDK(datafile: datafile)
+        try self.startSDK(datafile: datafile)
     }
     
     @available(swift, obsoleted: 1.0)
     @objc(initializeSDKWithDatafile:doFetchDatafileBackground:error:)
     public func _objcInitializeSDK(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
-        try self.initializeSDK(datafile: datafile, doFetchDatafileBackground: doFetchDatafileBackground)
+        try self.startSDK(datafile: datafile, doFetchDatafileBackground: doFetchDatafileBackground)
     }
 
     @available(swift, obsoleted: 1.0)

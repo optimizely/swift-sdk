@@ -47,10 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //     - initialize immediately with the given JSON datafile or its cached copy
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
         
-       //// initializeOptimizelySDKAsynchronous()
-       //// initializeOptimizelySDKSynchronous()
-        initializeOptimizelySDKWithCustomization()
-        
+        initializeOptimizelySDKAsynchronous()        
     }
     
     // MARK: - Initialization Examples
@@ -58,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initializeOptimizelySDKAsynchronous() {
         optimizely = OptimizelyManager(sdkKey: sdkKey)
         
-        optimizely.initializeSDK { result in
+        optimizely.startSDK { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
@@ -82,7 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
-            try optimizely!.initializeSDK(datafile: datafileJSON)
+            try optimizely!.startSDK(datafile: datafileJSON)
             print("Optimizely SDK initialized successfully!")
         } catch {
             print("Optimizely SDK initiliazation failed: \(error)")
@@ -96,6 +93,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // customization example (optional)
         
         let customLogger = CustomLogger()
+        // 30 sec interval may be too frequent. This is for demo purpose.
+        // This should be should be much larger (default = 10 mins).
         let customDownloadIntervalInSecs = 30
         
         optimizely = OptimizelyManager(sdkKey: sdkKey,
@@ -115,24 +114,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = optimizely.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in
             DispatchQueue.main.async {
                 #if os(iOS)
-                let alert = UIAlertView(title: "Datafile change", message: "something changed.", delegate: nil, cancelButtonTitle: "cancel")
-                alert.show()
+                if let controller = self.window?.rootViewController {
+                    let alert = UIAlertController(title: "Datafile Changed", message: nil, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default))
+                    controller.present(alert, animated: true)
+                }
                 #else
                 print("Datafile changed")
                 #endif
-            }
-            
-            if let controller = self.window?.rootViewController as? VariationViewController {
-                //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
-                if let showCoupon = try? self.optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
-                    controller.showCoupon = showCoupon
+                
+                if let controller = self.window?.rootViewController as? VariationViewController {
+                    //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
+                    if let showCoupon = try? self.optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
+                        controller.showCoupon = showCoupon
+                    }
                 }
             }
         })
 
         // initialize SDK
         
-        optimizely!.initializeSDK { result in
+        optimizely!.startSDK { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
@@ -201,7 +203,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        NotificationCenter.default.post(name: NSNotification.Name("OPTLYbackgroundFetchDone"), object: nil)
+        
+        // add background fetch task here
+        
         completionHandler(.newData)
     }
 }

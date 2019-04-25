@@ -20,7 +20,7 @@ open class DefaultLogger : OPTLogger {
     private static var _logLevel: OptimizelyLogLevel?
     public static var logLevel: OptimizelyLogLevel {
         get {
-            return _logLevel ?? .all
+            return _logLevel ?? .info
         }
         set (newLevel){
             if _logLevel == nil {
@@ -30,7 +30,7 @@ open class DefaultLogger : OPTLogger {
     }
     
     required public init() {
-        DefaultLogger.logLevel = .all
+        DefaultLogger.logLevel = .info
     }
     
     open func log(level: OptimizelyLogLevel, message: String) {

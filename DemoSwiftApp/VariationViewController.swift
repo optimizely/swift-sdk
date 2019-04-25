@@ -36,6 +36,10 @@ class VariationViewController: UIViewController {
     @IBOutlet weak var variationSubheaderLabel: UILabel!
     @IBOutlet weak var variationBackgroundImage: UIImageView!
     
+    @IBAction func closeCoupon(_ sender: UIButton) {
+        showCoupon = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

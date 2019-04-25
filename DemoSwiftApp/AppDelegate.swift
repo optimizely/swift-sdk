@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //     - initialize immediately with the given JSON datafile or its cached copy
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
         
-        initializeOptimizelySDKAsynchronous()        
+        initializeOptimizelySDKAsynchronous()
     }
     
     // MARK: - Initialization Examples
@@ -65,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             DispatchQueue.main.async {
-                self.setRootViewController()
+                self.startWithRootViewController()
             }
         }
     }
@@ -86,7 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             optimizely = nil
         }
         
-        setRootViewController()
+        startWithRootViewController()
     }
     
     func initializeOptimizelySDKWithCustomization() {
@@ -144,14 +144,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             DispatchQueue.main.async {
-                self.setRootViewController()
+                self.startWithRootViewController()
             }
         }
     }
 
     // MARK: - ViewControl
     
-    func setRootViewController() {
+    func startWithRootViewController() {
         do {
             let variationKey = try optimizely.activate(experimentKey: experimentKey,
                                                        userId: userId,
@@ -173,7 +173,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             variationViewController.showCoupon = showCoupon
         }
         
-        variationViewController.optimizelyManager = optimizely
+        variationViewController.optimizely = optimizely
         variationViewController.userId = userId
         variationViewController.variationKey = variationKey
         variationViewController.eventKey = eventKey

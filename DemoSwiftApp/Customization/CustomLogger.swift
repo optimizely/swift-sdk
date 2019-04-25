@@ -10,17 +10,15 @@ import Foundation
 import Optimizely
 
 class CustomLogger: OPTLogger {
-    
-    static var level:OptimizelyLogLevel?
-    static var logLevel: OptimizelyLogLevel = .info
-    
+    public static var logLevel: OptimizelyLogLevel = .info
+
     required init() {
     }
-    
-    func log(level: OptimizelyLogLevel, message: String) {
+
+    public func log(level: OptimizelyLogLevel, message: String) {
         if level.rawValue <= CustomLogger.logLevel.rawValue {
             print("🐱 - [\(level.name)] Kitty - \(message)")
         }
     }
-    
 }
+

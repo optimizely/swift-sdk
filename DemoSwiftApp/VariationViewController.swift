@@ -22,7 +22,7 @@ class VariationViewController: UIViewController {
     var eventKey: String!
     var userId: String!
     var variationKey: String?
-    var optimizelyManager: OptimizelyManager?
+    var optimizely: OptimizelyManager?
     var showCoupon: Bool = false {
         didSet  {
             DispatchQueue.main.async {
@@ -40,6 +40,18 @@ class VariationViewController: UIViewController {
         showCoupon = false
     }
     
+    @IBAction func unwindToVariationAction(unwindSegue: UIStoryboardSegue) {
+    }
+    
+    @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {
+        do {
+            try self.optimizely?.track(eventKey: self.eventKey, userId: userId)
+            self.performSegue(withIdentifier: "ConversionSuccessSegue", sender: self)
+        } catch {
+            self.performSegue(withIdentifier: "ConversionFailureSegue", sender: self)
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -66,15 +78,4 @@ class VariationViewController: UIViewController {
         }
     }
 
-    @IBAction func unwindToVariationAction(unwindSegue: UIStoryboardSegue) {
-    }
-    
-    @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {
-        do {
-            try self.optimizelyManager?.track(eventKey: self.eventKey, userId: userId)
-            self.performSegue(withIdentifier: "ConversionSuccessSegue", sender: self)
-        } catch {
-            self.performSegue(withIdentifier: "ConversionFailureSegue", sender: self)
-        }
-    }
 }

@@ -10,10 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol OPTLogger
+@protocol OPTLogger;
 
-@end
 @interface CustomLogger : NSObject <OPTLogger>
++ (enum OptimizelyLogLevel)logLevel;
++ (void)setLogLevel:(enum OptimizelyLogLevel)value;
+- (nonnull instancetype)init;
+- (void)logWithLevel:(enum OptimizelyLogLevel)level message:(NSString *)message;
 @end
 
 NS_ASSUME_NONNULL_END

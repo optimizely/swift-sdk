@@ -38,7 +38,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             case .success(let data):
                 datafile = data
             case .failure(let error):
-                self.logger?.log(level: .error, message: error.localizedDescription)
+                self.logger?.e(error.localizedDescription)
             }
             group.leave()
         }
@@ -66,36 +66,33 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             }
             
             let task = session.downloadTask(with: request) { (url, response, error) in
-                var result = Result<Data?, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
+                var result = OptimizelyResult<Data?>.failure(.datafileDownloadFailed("Failed to parse"))
                 
                 if let _ = error {
-                    self.logger?.log(level: .error, message: error.debugDescription)
-                    let datafiledownloadError = DatafileDownloadError(description: error.debugDescription)
-                    result = Result.failure(datafiledownloadError)
-                }
-                else if let response = response as? HTTPURLResponse {
+                    self.logger?.e(error.debugDescription)
+                    result = .failure(.datafileDownloadFailed(error.debugDescription))
+                } else if let response = response as? HTTPURLResponse {
                     if response.statusCode == 200 {
                         if let url = url, let data = try? Data(contentsOf: url) {
                             if let str = String(data: data, encoding: .utf8) {
-                                self.logger?.log(level: .debug, message: str)
+                                self.logger?.d(str)
                             }
                             self.saveDatafile(sdkKey: sdkKey, dataFile: data)
                             if let lastModified = response.allHeaderFields["Last-Modified"] {
                                 self.dataStore.saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
                             }
                             
-                            result = Result.success(data)
+                            result = .success(data)
                         }
-                    }
-                    else if response.statusCode == 304 {
-                        self.logger?.log(level: .debug, message: "The datafile was not modified and won't be downloaded again")
+                    } else if response.statusCode == 304 {
+                        self.logger?.d("The datafile was not modified and won't be downloaded again")
                         result = .success(nil)
                     }
                 }
 
                 completionHandler(result)
                 
-                self.logger?.log(level: .debug, message: response.debugDescription)
+                self.logger?.d(response.debugDescription)
                 
             }
             
@@ -179,7 +176,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     datafileChangeNotification(data)
                 }
             case .failure(let error):
-                self.logger?.log(level: .error, message: error.localizedDescription)
+                self.logger?.e(error.localizedDescription)
             }
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
@@ -196,7 +193,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func stopPeriodicUpdates(sdkKey: String) {
         timers.performAtomic { (timers) in
             if let timer = timers[sdkKey] {
-                logger?.log(level: .info, message: "Stopping timer for datafile updates sdkKey: \(sdkKey)")
+                logger?.i("Stopping timer for datafile updates sdkKey: \(sdkKey)")
                 
                 timer.invalidate()
                 timers.removeValue(forKey: sdkKey)
@@ -208,7 +205,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func stopPeriodicUpdates() {
         timers.performAtomic { (timers) in
             for key in timers.keys {
-                logger?.log(level: .info, message: "Stopping timer for all datafile updates")
+                logger?.i("Stopping timer for all datafile updates")
                 stopPeriodicUpdates(sdkKey: key)
             }
         }
@@ -226,7 +223,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 try dataFile.write(to: fileURL, options: .atomic)
             }
             catch {/* error handling here */
-                logger?.log(level: .error, message: "Problem saving datafile for key " + sdkKey)
+                logger?.e("Problem saving datafile for key " + sdkKey)
             }
         }
     }
@@ -242,7 +239,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 return data
             }
             catch {/* error handling here */
-                logger?.log(level: .error, message: "Problem loading datafile for key " + sdkKey)
+                logger?.e("Problem loading datafile for key " + sdkKey)
             }
         }
         

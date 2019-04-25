@@ -20,7 +20,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // Do any additional setup after loading the view.
     if ([self.variationKey isEqualToString:@"variation_a"]) {
         self.variationLetterLabel.text = @"A";
         self.variationLetterLabel.textColor = [UIColor blackColor];

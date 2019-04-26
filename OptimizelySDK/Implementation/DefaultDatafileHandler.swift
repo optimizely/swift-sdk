@@ -194,7 +194,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
                 let interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
-                let actualDiff = (startTime.secondsPastSinceNow() - updateInterval)
+                let actualDiff = (Int(abs(startTime.timeIntervalSinceNow)) - updateInterval)
                 var nextInterval = interval
                 if actualDiff > 0 {
                     nextInterval -= actualDiff
@@ -219,11 +219,9 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     func stopPeriodicUpdates() {
-        timers.performAtomic { (timers) in
-            for key in timers.keys {
-                logger?.log(level: .info, message: "Stopping timer for all datafile updates")
-                stopPeriodicUpdates(sdkKey: key)
-            }
+        for key in timers.property?.keys ?? Dictionary<String, (timer: Timer, interval: Int)>().keys {
+            logger?.log(level: .info, message: "Stopping timer for all datafile updates")
+            stopPeriodicUpdates(sdkKey: key)
         }
         
     }

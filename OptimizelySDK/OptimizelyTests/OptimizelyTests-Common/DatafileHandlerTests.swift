@@ -65,6 +65,35 @@ class DatafileHandlerTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
+    
+    func testPeriodicDownload() {
+        class FakeDatafileHandler : DefaultDatafileHandler {
+            let data = Data()
+            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                completionHandler(.success(data))
+            }
+        }
+        let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
+        let handler = FakeDatafileHandler()
+        let now = Date()
+        var count = 0;
+        var seconds = 0
+        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: 1) { (data) in
+            count += 1
+            if count == 10 {
+                handler.stopPeriodicUpdates()
+                expection.fulfill()
+                seconds = Int(abs(now.timeIntervalSinceNow))
+            }
+        }
+        
+        wait(for: [expection], timeout: 20)
+        
+        XCTAssert(count == 10)
+        XCTAssert(seconds == 10)
+        
+        
+    }
 
     func testPerformanceExample() {
         // This is an example of a performance test case.

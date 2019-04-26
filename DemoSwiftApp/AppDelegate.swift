@@ -63,7 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initializeOptimizelySDKAsynchronous() {
         optimizely = OptimizelyManager(sdkKey: sdkKey)
         
-        optimizely.startSDK { result in
+        optimizely.start { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
@@ -87,7 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
-            try optimizely!.startSDK(datafile: datafileJSON)
+            try optimizely!.start(datafile: datafileJSON)
             print("Optimizely SDK initialized successfully!")
         } catch {
             print("Optimizely SDK initiliazation failed: \(error)")
@@ -154,7 +154,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // initialize SDK
         
-        optimizely!.startSDK { result in
+        optimizely!.start { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")

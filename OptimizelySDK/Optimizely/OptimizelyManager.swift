@@ -146,8 +146,11 @@ open class OptimizelyManager: NSObject {
                     // new datafile came in...
                     self.reInitLock.wait(); defer { self.reInitLock.signal() }
                     if let config = try? ProjectConfig(datafile: data) {
-                        
                         do {
+                            if let users = self.config?.whitelistUsers {
+                                config.whitelistUsers = users
+                            }
+                            
                             self.config = config
                             
                             // call reinit on the services we know we are reinitializing.

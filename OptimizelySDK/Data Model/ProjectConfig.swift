@@ -24,8 +24,7 @@ class ProjectConfig {
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
     
-    private var whitelistUsers = [String: [String: String]]()
-    private var experimentFeatureMap = [String: [String]]()
+    var whitelistUsers = [String: [String: String]]()
     
     init(datafile: Data) throws {
         do {
@@ -36,7 +35,6 @@ class ProjectConfig {
         if !isValidVersion(version: self.project.version) {
             throw OptimizelyError.dataFileVersionInvalid(self.project.version)
         }
-        generateExperimentFeatureMap()
     }
     
     convenience init(datafile: String) throws {
@@ -89,20 +87,6 @@ extension ProjectConfig {
     private func isValidVersion(version: String) -> Bool {
         // old versions (< 4) of datafiles not supported
         return ["4"].contains(version)
-    }
-    
-    private func generateExperimentFeatureMap() {
-        for feature in project.featureFlags {
-            for id in feature.experimentIds {
-                if var featureIdArray = experimentFeatureMap[id] {
-                    featureIdArray.append(feature.id)
-                    experimentFeatureMap[id] = featureIdArray
-                }
-                else {
-                    experimentFeatureMap[id] = [feature.id]
-                }
-            }
-        }
     }
 }
 
@@ -192,7 +176,12 @@ extension ProjectConfig {
      *  Returns true if experiment belongs to any feature, false otherwise.
      */
     func isFeatureExperiment(id: String) -> Bool {
-        return experimentFeatureMap.keys.contains(id)
+        if let _ = project.featureFlags.map({ $0.experimentIds.contains(id)}).first {
+            return true
+        }
+        else {
+            return false
+        }
     }
     
     /**

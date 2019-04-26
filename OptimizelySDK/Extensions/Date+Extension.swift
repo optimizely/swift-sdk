@@ -19,8 +19,8 @@
 import Foundation
 
 extension Date {
-    func minutesPastSinceNow() -> Int {
+    func secondsPastSinceNow() -> Int {
         let calendar = Calendar.current
-        return calendar.component(.minute, from: self)
+        return calendar.component(.second, from: self)
     }
 }

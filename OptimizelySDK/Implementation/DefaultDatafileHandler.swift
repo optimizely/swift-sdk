@@ -19,7 +19,7 @@ import Foundation
 class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     lazy var logger = HandlerRegistryService.shared.injectLogger()
-    var timers:AtomicProperty<[String:Timer]> = AtomicProperty(property: [String:Timer]())
+    var timers:AtomicProperty<[String:(timer:Timer, interval:Int)]> = AtomicProperty(property: [String:(Timer,Int)]())
     let dataStore = DataStoreUserDefaults()
     
     required init() {
@@ -95,7 +95,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
 
                 completionHandler(result)
                 
-                self.logger?.log(level: .debug, message: response.debugDescription)
+//                self.logger?.log(level: .debug, message: response.debugDescription)
                 
             }
             
@@ -109,7 +109,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         let now = Date()
         if #available(iOS 10.0, tvOS 10.0, *) {
             DispatchQueue.main.async {
-                if let timer = self.timers.property?[sdkKey], timer.isValid {
+                if let timer = self.timers.property?[sdkKey]?.timer, timer.isValid {
                     return
                 }
                 
@@ -123,20 +123,30 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     timer.invalidate()
                 }
                 self.timers.performAtomic(atomicOperation: { (timers) in
-                    timers[sdkKey] = timer
+                    if let interval = timers[sdkKey]?.interval {
+                        timers[sdkKey] = (timer,interval)
+                    }
+                    else {
+                        timers[sdkKey] = (timer,updateInterval)
+                    }
                 })
             }
         } else {
             // Fallback on earlier versions
             DispatchQueue.main.async {
-                if let timer = self.timers.property?[sdkKey], timer.isValid {
+                if let timer = self.timers.property?[sdkKey]?.timer, timer.isValid {
                     return
                 }
 
-                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval":updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
+                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval": self.timers.property?[sdkKey]?.interval ?? updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
                 
                 self.timers.performAtomic(atomicOperation: { (timers) in
-                    timers[sdkKey] = timer
+                    if let interval = timers[sdkKey]?.interval {
+                        timers[sdkKey] = (timer,interval)
+                    }
+                    else {
+                        timers[sdkKey] = (timer,updateInterval)
+                    }
                 })
             }
 
@@ -183,12 +193,15 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             }
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
-                let minutesSinceFire = startTime.minutesPastSinceNow()
-                var diff = updateInterval - minutesSinceFire
-                if diff < 0 {
-                    diff = 0
+                let interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
+                let actualDiff = (startTime.secondsPastSinceNow() - updateInterval)
+                var nextInterval = interval
+                if actualDiff > 0 {
+                    nextInterval -= actualDiff
                 }
-                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: diff, datafileChangeNotification: datafileChangeNotification)
+                
+                self.logger?.d("next datafile download is \(nextInterval) seconds \(Date())")
+                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: nextInterval, datafileChangeNotification: datafileChangeNotification)
             }
         }
     }
@@ -198,7 +211,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             if let timer = timers[sdkKey] {
                 logger?.log(level: .info, message: "Stopping timer for datafile updates sdkKey: \(sdkKey)")
                 
-                timer.invalidate()
+                timer.timer.invalidate()
                 timers.removeValue(forKey: sdkKey)
             }
 

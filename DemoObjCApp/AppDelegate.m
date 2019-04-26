@@ -12,6 +12,10 @@
 #import "CustomLogger.h"
 
 @import Optimizely;
+#if TARGET_OS_IOS
+@import Amplitude_iOS;
+#endif
+
 
 static NSString * const kOptimizelySdkKey = @"FCnSegiEkRry9rhVMroit4";
 static NSString * const kOptimizelyDatafileName = @"demoTestDatafile";
@@ -27,6 +31,11 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
+    #if TARGET_OS_IOS
+    
+    #endif
+    
     self.userId = [NSString stringWithFormat:@"%d", arc4random()];
     self.attributes = @{ @"browser_type": @"safari", @"bool_attr": @(false) };
     
@@ -115,6 +124,16 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                                                                   NSString *userId,
                                                                                                   NSDictionary<NSString *,id> *attributes, NSDictionary<NSString *,id> *eventTags, NSDictionary<NSString *,id> *event) {
         NSLog(@"Received track notification: %@ %@ %@ %@ %@", eventKey, userId, attributes, eventTags, event);
+        
+#if TARGET_OS_IOS
+        // Amplitude example
+        NSString *propertyKey = [NSString stringWithFormat:@"[Optimizely] %@", eventKey];
+        AMPIdentify *identify = [[AMPIdentify alloc] init];
+        [identify set:propertyKey value:userId];
+        // Track event (optional)
+        NSString *eventIdentifier = [NSString stringWithFormat:@"[Optimizely] %@ - %@", eventKey, userId];
+        [Amplitude.instance logEvent:eventIdentifier];
+#endif
     }];
     
     [self.optimizely startSDKWithCompletion:^(NSData *data, NSError *error) {

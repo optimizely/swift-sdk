@@ -1,39 +1,54 @@
 workspace 'OptimizelySDK.xcworkspace'
 
-def common_pods
+def analytics_pods
+  pod 'Amplitude-iOS'
+  pod 'Google/Analytics'
+  pod 'Localytics'
+  pod 'Mixpanel-swift', '2.5.7'
+end
+
+def test_pods
   pod 'SwiftyJSON', '4.0'
 end
 
 target 'OptimizelyTests-Common-iOS' do
   project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
   platform :ios, '10.0'
-  common_pods
+  use_frameworks!
+  test_pods
 end
 
 target 'OptimizelyTests-Common-tvOS' do
   project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
   platform :tvos, '10.0'
-  common_pods
+  use_frameworks!
+  test_pods
 end
 
 target 'DemoSwiftiOS' do
   project 'DemoSwiftApp/DemoSwiftApp.xcodeproj/'
   platform :ios, '10.0'
+  use_frameworks!
+  analytics_pods
 end
 
 target 'DemoSwifttvOS' do
   project 'DemoSwiftApp/DemoSwiftApp.xcodeproj/'
   platform :tvos, '10.0'
+  use_frameworks!
 end
 
 target 'DemoObjciOS' do
   project 'DemoObjcApp/DemoObjcApp.xcodeproj/'
   platform :ios, '10.0'
+  use_frameworks!
+  analytics_pods
 end
 
 target 'DemoObjctvOS' do
   project 'DemoObjcApp/DemoObjcApp.xcodeproj/'
   platform :tvos, '10.0'
+  use_frameworks!
 end
 
 post_install do |installer|

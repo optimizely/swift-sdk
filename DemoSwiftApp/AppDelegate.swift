@@ -16,6 +16,10 @@
 
 import UIKit
 import Optimizely
+#if os(iOS)
+import Amplitude_iOS
+#endif
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -38,7 +42,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
-        
+        // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
+        #if os(iOS)
+            Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
+        #endif
+
         // initialize SDK in one of these two ways:
         // (1) asynchronous SDK initialization (RECOMMENDED)
         //     - fetch a JSON datafile from the server
@@ -105,10 +113,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         _ = optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
             print("Received decision notification: \(type) \(userId) \(String(describing: attributes)) \(decisionInfo)")
-        })
+         })
         
         _ = optimizely.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
             print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
+            
+            #if os(iOS)
+            
+            // Amplitude example
+            let propertyKey = "[Optimizely] " + eventKey
+            let identify = AMPIdentify()
+            identify.set(propertyKey, value: userId as NSObject?)
+            // Track event (optional)
+            let eventIdentifier = "[Optimizely] " + eventKey + " - " + userId
+            Amplitude.instance().logEvent(eventIdentifier)
+            
+            #endif
         })
         
         _ = optimizely.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6923C05F4FFD7394581F4361 /* libPods-DemoObjctvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CE090EEBD47E05884C417C0 /* libPods-DemoObjctvOS.a */; };
+		2EDC4E2400B5EEBA576A62F5 /* Pods_DemoObjciOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E74A6F66A7FA658F00BDB921 /* Pods_DemoObjciOS.framework */; };
 		6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
 		6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
 		6E4DD97C21E67AAD00B0C2C7 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */; };
@@ -34,7 +34,7 @@
 		6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9681D721EFA5B2009B7FEC /* CustomLogger.m */; };
 		6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
 		6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
-		C2E08E88D2C89768C7551208 /* libPods-DemoObjciOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DB76E67DE203C5276D6958C5 /* libPods-DemoObjciOS.a */; };
+		A0C60F82A88EDB74234D7D3F /* Pods_DemoObjctvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48C9592909E0CF5074F9A84D /* Pods_DemoObjctvOS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -164,8 +164,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2CE090EEBD47E05884C417C0 /* libPods-DemoObjctvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DemoObjctvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EFD1578D8AB431E6FD4B8FE /* Pods-DemoObjctvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjctvOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		48C9592909E0CF5074F9A84D /* Pods_DemoObjctvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoObjctvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySDK/OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
 		6E96817521EEA321009B7FEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/tvOSMain.storyboard; sourceTree = "<group>"; };
 		6E96817621EEA321009B7FEC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -192,7 +192,7 @@
 		762D1F9E4AA702083D17C4C9 /* Pods-DemoObjciOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjciOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS.release.xcconfig"; sourceTree = "<group>"; };
 		D47F5FC88600AFD4E656D50A /* Pods-DemoObjciOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjciOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS.debug.xcconfig"; sourceTree = "<group>"; };
 		D58542E1B5771327083E56E2 /* Pods-DemoObjctvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjctvOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS.release.xcconfig"; sourceTree = "<group>"; };
-		DB76E67DE203C5276D6958C5 /* libPods-DemoObjciOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DemoObjciOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E74A6F66A7FA658F00BDB921 /* Pods_DemoObjciOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoObjciOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,7 +201,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E4DD97C21E67AAD00B0C2C7 /* Optimizely.framework in Frameworks */,
-				C2E08E88D2C89768C7551208 /* libPods-DemoObjciOS.a in Frameworks */,
+				2EDC4E2400B5EEBA576A62F5 /* Pods_DemoObjciOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,7 +210,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E4DD98021E67ABA00B0C2C7 /* Optimizely.framework in Frameworks */,
-				6923C05F4FFD7394581F4361 /* libPods-DemoObjctvOS.a in Frameworks */,
+				A0C60F82A88EDB74234D7D3F /* Pods_DemoObjctvOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,8 +335,8 @@
 			isa = PBXGroup;
 			children = (
 				6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */,
-				2CE090EEBD47E05884C417C0 /* libPods-DemoObjctvOS.a */,
-				DB76E67DE203C5276D6958C5 /* libPods-DemoObjciOS.a */,
+				E74A6F66A7FA658F00BDB921 /* Pods_DemoObjciOS.framework */,
+				48C9592909E0CF5074F9A84D /* Pods_DemoObjctvOS.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -364,6 +364,7 @@
 				6EF7498B21E404BB008B22A0 /* Frameworks */,
 				6EF7498C21E404BB008B22A0 /* Resources */,
 				6E4DD93B21E6708E00B0C2C7 /* Embed Frameworks */,
+				7493B4816C0BC9BAABDE8B5B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -599,6 +600,34 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7493B4816C0BC9BAABDE8B5B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Amplitude-iOS/Amplitude_iOS.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${PODS_ROOT}/Localytics/Localytics-iOS-5.5.0/Localytics.framework",
+				"${BUILT_PRODUCTS_DIR}/Mixpanel-swift/Mixpanel.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Amplitude_iOS.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Localytics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mixpanel.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

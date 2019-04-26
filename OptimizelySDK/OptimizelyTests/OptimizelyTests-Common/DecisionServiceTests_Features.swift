@@ -256,7 +256,7 @@ extension DecisionServiceTests_Features {
     }
     
     func testGetVariationForFeatureRolloutMultiple() {
-        // TODO: [Jae] last rollout handling ??
+        // add tests for last rollout handling
     }
     
 }

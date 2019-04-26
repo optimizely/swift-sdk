@@ -61,13 +61,6 @@ class FeatureVariableTests: XCTestCase {
         XCTAssertNil(model)
     }
 
-    // TODO: [Jae] validate this test
-//    func testDecodeFailWithMissingDefaultValue() {
-//        let data = ["id": "553339214", "key": "price", "type": "integer"]
-//        let model: FeatureVariable? = try? OTUtils.model(from: data)
-//        XCTAssertNotNil(model)
-//    }
-    
     func testDecodeFailWithJSONEmpty() {
         let data = [String: String]()
         let model: FeatureVariable? = try? OTUtils.model(from: data)

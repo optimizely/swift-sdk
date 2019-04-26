@@ -17,7 +17,6 @@
 import Foundation
 
 protocol OPTBucketer {
-    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     /**
      Bucket experiment based on bucket value and traffic allocations.
      - Parameter group: representing Group from which experiment belongs to.

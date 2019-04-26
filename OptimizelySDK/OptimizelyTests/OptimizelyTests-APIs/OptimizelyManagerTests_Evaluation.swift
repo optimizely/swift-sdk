@@ -268,8 +268,6 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
                                                     attributes: attributes)
         XCTAssert(variationKey == expectedVariationKey)
     }
-
-    // TODO: [Jae] FSC reports different results. check it out 
     
     func testBucketWithOptBucketId2() {
         let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id", clearUserProfileService: true)!

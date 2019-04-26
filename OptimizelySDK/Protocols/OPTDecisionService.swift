@@ -18,7 +18,6 @@
 import Foundation
 
 protocol OPTDecisionService {
-    // [Jae]: let be configured after initialized (with custom DecisionHandler set up on OPTManger initialization)
     /**
      Gets a variation based on the following rules (evaluated in sequential order):
      

@@ -554,7 +554,6 @@ open class OptimizelyManager: NSObject {
         var decisionInfo = [String:Any]()
         decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = [:]
         
-        // TODO: [Jae] optional? fallback to empty string is OK?
         var featureValue = variable.defaultValue ?? ""
         
         var _attributes = OptimizelyAttributes()
@@ -991,7 +990,7 @@ extension OptimizelyManager {
     func convertErrorForObjc(_ error: Error) -> NSError {
         var errorInObjc: NSError
         
-        // TODO: [Jae] add more details for error types
+        // add more details for error types
         
         switch error {
         default:

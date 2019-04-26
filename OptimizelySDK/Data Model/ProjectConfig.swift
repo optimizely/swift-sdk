@@ -48,7 +48,6 @@ class ProjectConfig {
    }
     
     init() {
-        // TODO: [Jae] fix to throw error
     }
     
     class func DateFromString(dateString:String) -> NSDate

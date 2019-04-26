@@ -138,7 +138,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     return
                 }
 
-                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval": self.timers.property?[sdkKey]?.interval ?? updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
+                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval":  updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
                 
                 self.timers.performAtomic(atomicOperation: { (timers) in
                     if let interval = timers[sdkKey]?.interval {
@@ -158,7 +158,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         if let info = timer.userInfo as? [String:Any],
             let sdkKey = info["sdkKey"] as? String,
             let updateInterval = info["updateInterval"] as? Int,
-            let startDate = info["startDate"] as? Date,
+            let startDate = info["startTime"] as? Date,
             let datafileChangeNotification = info["datafileChangeNotification"] as? ((Data)->Void){
             self.performPerodicDownload(sdkKey: sdkKey, startTime: startDate, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
         }

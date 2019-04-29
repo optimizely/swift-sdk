@@ -20,7 +20,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     lazy var logger = HandlerRegistryService.shared.injectLogger()
     var timers:AtomicProperty<[String:(timer:Timer, interval:Int)]> = AtomicProperty(property: [String:(Timer,Int)]())
-    let dataStore = DataStoreUserDefaults()x
+    let dataStore = DataStoreUserDefaults()
     
     required init() {
         

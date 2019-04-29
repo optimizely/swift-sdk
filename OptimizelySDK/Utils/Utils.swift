@@ -17,7 +17,7 @@ class Utils {
     static var sdkVersion:String = {
         let bundle = Bundle(identifier: "com.optimizely.OptimizelySwiftSDK") ?? Bundle(for: OptimizelyManager.self)
         guard let version = bundle.infoDictionary!["CFBundleShortVersionString"] as? String else {
-            return "3.0.0"
+            return "1.0.0"
         }
         return version
     }()

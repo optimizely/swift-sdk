@@ -49,7 +49,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         
         XCTAssertEqual(event["revision"]!.stringValue, project.revision)
         XCTAssertEqual(event["account_id"]!.stringValue, project.accountId)
-        XCTAssertEqual(event["client_version"]!.stringValue, Utils.getSDKVersion())
+        XCTAssertEqual(event["client_version"]!.stringValue, Utils.sdkVersion)
         XCTAssertEqual(event["project_id"]!.stringValue, project.projectId)
         XCTAssertEqual(event["client_name"]!.stringValue, "swift-sdk")
         XCTAssertEqual(event["anonymize_ip"]!.boolValue, project.anonymizeIP)
@@ -104,7 +104,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         
         XCTAssertEqual(event["revision"]!.stringValue, project.revision)
         XCTAssertEqual(event["account_id"]!.stringValue, project.accountId)
-        XCTAssertEqual(event["client_version"]!.stringValue, Utils.getSDKVersion())
+        XCTAssertEqual(event["client_version"]!.stringValue, Utils.sdkVersion)
         XCTAssertEqual(event["project_id"]!.stringValue, project.projectId)
         XCTAssertEqual(event["client_name"]!.stringValue, "swift-sdk")
         XCTAssertEqual(event["anonymize_ip"]!.boolValue, project.anonymizeIP)

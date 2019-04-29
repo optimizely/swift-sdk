@@ -21,7 +21,7 @@ import XCTest
 class OtherTests: XCTestCase {
 
     func testSDKVersionFormat() {
-        let version = Utils.getSDKVersion()
+        let version = Utils.sdkVersion
         XCTAssert(version.split(separator: ".").count == 3)
     }
 }

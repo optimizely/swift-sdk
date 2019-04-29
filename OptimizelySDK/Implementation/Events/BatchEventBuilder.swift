@@ -83,7 +83,7 @@ class BatchEventBuilder {
         
         let batchEvent = BatchEvent(revision: config.project.revision,
                                     accountID: config.project.accountId,
-                                    clientVersion: Utils.getSDKVersion(),
+                                    clientVersion: Utils.sdkVersion,
                                     visitors: [visitor],
                                     projectID: config.project.projectId,
                                     clientName: swiftSdkClientName,

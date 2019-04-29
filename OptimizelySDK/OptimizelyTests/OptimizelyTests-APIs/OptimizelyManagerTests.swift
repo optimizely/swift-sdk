@@ -138,9 +138,33 @@ class OptimizelyManagerTests: XCTestCase {
         let experiment:Experiment? = optimizely?.config?.getExperiment(key: "ab_running_exp_audience_combo_empty_conditions")
         
         XCTAssertNotNil(experiment)
+
+        let ex2 = optimizely?.config?.getExperiment(id: experiment!.id)
+        
+        XCTAssert(experiment == ex2)
+        
+        XCTAssert(ex2!.id == optimizely?.config?.getExperimentId(key: experiment!.key))
+        
+        
+        let event = optimizely?.config?.project.events.first
+        
+        let evId = optimizely?.config?.getEventId(key: event!.key)
+        
+        XCTAssert(event!.id == evId)
         
         let variation = experiment?.getVariation(key: "all_traffic_variation")
+        
         XCTAssertNotNil(variation)
+
+        let var2 = ex2?.getVariation(id: variation!.id)
+        
+        XCTAssert(variation == var2)
+        
+        let audience = optimizely?.config?.project.audiences.first
+        
+        let aud2 = optimizely?.config?.getAudience(id: audience!.id)
+        
+        XCTAssert(audience == aud2)
     }
 
 //    func testPerformanceInitialize() {

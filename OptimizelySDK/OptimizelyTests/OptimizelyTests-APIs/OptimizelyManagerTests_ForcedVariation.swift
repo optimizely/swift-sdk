@@ -33,7 +33,7 @@ class OptimizelyManagerTests_ForcedVariation: XCTestCase {
         
         self.optimizely = OptimizelyManager(sdkKey: "12345",
                                             userProfileService: OTUtils.createClearUserProfileService())
-        try! self.optimizely.initializeSDK(datafile: datafile)
+        try! self.optimizely.start(datafile: datafile)
     }
     
     func testForcedVariation_ThenActivate() {
@@ -79,7 +79,7 @@ class OptimizelyManagerTests_ForcedVariation: XCTestCase {
         
         // reload ProjectConfig (whitelist must NOT be sustained)
         
-        try! self.optimizely.initializeSDK(datafile: datafile)
+        try! self.optimizely.start(datafile: datafile)
         variationKey = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
         XCTAssertNil(variationKey)
     }

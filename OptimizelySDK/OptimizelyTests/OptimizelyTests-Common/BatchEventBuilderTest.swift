@@ -30,7 +30,7 @@ class BatchEventBuilderTests: XCTestCase {
         
         let datafile = OTUtils.loadJSONDatafile(datafileName)
         do {
-            try optimizely?.initializeSDK(datafile: datafile!)
+            try optimizely?.start(datafile: datafile!)
         }
         catch {
             print(error)

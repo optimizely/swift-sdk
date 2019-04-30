@@ -19,6 +19,7 @@ import Foundation
 class ProjectConfig {
     
     var project: Project!
+    
     lazy var logger = HandlerRegistryService.shared.injectLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
@@ -26,9 +27,33 @@ class ProjectConfig {
     
     var whitelistUsers = [String: [String: String]]()
     
-    var experimentKeyMap:[String:Experiment]?
-    var experimentFeatureMap:[String:[String]]?
-    var eventKeyMap:[String:Event]?
+    lazy var experimentKeyMap:[String:Experiment]? = {
+        var map = [String:Experiment]()
+        _ = allExperiments.map({map[$0.key] = $0})
+        return map
+    }()
+    
+    lazy var experimentFeatureMap:[String:[String]]? = {
+        var experimentFeatureMap = [String:[String]]()
+        _ = project.featureFlags.map({ (ff) in
+            ff.experimentIds.map({
+                if var arr = experimentFeatureMap[$0] {
+                    arr.append(ff.id)
+                    experimentFeatureMap[$0] = arr
+                }
+                else {
+                    experimentFeatureMap[$0] = [ff.id]
+                }
+            })
+        })
+        return experimentFeatureMap
+    }()
+    
+    lazy var eventKeyMap:[String:Event]? =  {
+        var eventKeyMap = [String:Event]()
+        _ = project.events.map({eventKeyMap[$0.key] = $0 })
+        return eventKeyMap
+    }()
     
     var _allExperiments:[Experiment]?
     
@@ -42,13 +67,6 @@ class ProjectConfig {
             throw OptimizelyError.dataFileVersionInvalid(self.project.version)
         }
         
-        generateExperimentFeatureMap()
-        
-        experimentKeyMap = [String:Experiment]()
-        _ = allExperiments.map({experimentKeyMap?[$0.key] = $0})
-        
-        eventKeyMap = [String:Event]()
-        _ = project.events.map({eventKeyMap?[$0.key] = $0 })
     }
     
     convenience init(datafile: String) throws {

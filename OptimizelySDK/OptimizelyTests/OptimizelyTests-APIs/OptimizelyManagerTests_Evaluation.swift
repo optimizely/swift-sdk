@@ -226,6 +226,7 @@ class OptimizelyManagerTests_Evaluation: XCTestCase {
         ]
         
         let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        optimizely.eventImitterQueue.sync {}
         XCTAssertNotNil(variationKey)
         XCTAssertNotNil(eventDispatcher.events.first)
     }

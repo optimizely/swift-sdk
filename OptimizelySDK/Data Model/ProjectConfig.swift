@@ -27,16 +27,16 @@ class ProjectConfig {
     
     var whitelistUsers = [String: [String: String]]()
     
-    lazy var experimentKeyMap:[String:Experiment]? = {
+    lazy var experimentKeyMap:[String:Experiment] = {
         var map = [String:Experiment]()
-        _ = allExperiments.map({map[$0.key] = $0})
+        allExperiments.forEach({map[$0.key] = $0})
         return map
     }()
     
-    lazy var experimentFeatureMap:[String:[String]]? = {
+    lazy var experimentFeatureMap:[String:[String]] = {
         var experimentFeatureMap = [String:[String]]()
-        _ = project.featureFlags.map({ (ff) in
-            ff.experimentIds.map({
+        project.featureFlags.forEach({ (ff) in
+            ff.experimentIds.forEach({
                 if var arr = experimentFeatureMap[$0] {
                     arr.append(ff.id)
                     experimentFeatureMap[$0] = arr
@@ -49,13 +49,15 @@ class ProjectConfig {
         return experimentFeatureMap
     }()
     
-    lazy var eventKeyMap:[String:Event]? =  {
+    lazy var eventKeyMap:[String:Event] =  {
         var eventKeyMap = [String:Event]()
-        _ = project.events.map({eventKeyMap[$0.key] = $0 })
+        project.events.forEach({eventKeyMap[$0.key] = $0 })
         return eventKeyMap
     }()
     
-    var _allExperiments:[Experiment]?
+    lazy var allExperiments:[Experiment] = {
+        return project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
+    }()
     
     init(datafile: Data) throws {
         do {
@@ -120,20 +122,6 @@ extension ProjectConfig {
         return ["4"].contains(version)
     }
 
-    private func generateExperimentFeatureMap() {
-        experimentFeatureMap = [String:[String]]()
-        _ = project.featureFlags.map({ (ff) in
-            ff.experimentIds.map({
-                if var arr = self.experimentFeatureMap?[$0] {
-                    arr.append(ff.id)
-                    self.experimentFeatureMap?[$0] = arr
-                }
-                else {
-                    self.experimentFeatureMap?[$0] = [ff.id]
-                }
-            })
-        })
-    }
 }
 
 // MARK: - Project Access
@@ -144,10 +132,7 @@ extension ProjectConfig {
      * Get an Experiment object for a key.
      */
     func getExperiment(key: String) -> Experiment? {
-        if let experimentMap = experimentKeyMap {
-            return experimentMap[key]
-        }
-        return allExperiments.filter { $0.key == key }.first
+        return experimentKeyMap[key]
     }
     
     /**
@@ -189,7 +174,7 @@ extension ProjectConfig {
      * Gets an event for a corresponding event key
      */
     func getEvent(key: String) -> Event? {
-        return eventKeyMap?[key]
+        return eventKeyMap[key]
     }
     
     /**
@@ -225,7 +210,7 @@ extension ProjectConfig {
      *  Returns true if experiment belongs to any feature, false otherwise.
      */
     func isFeatureExperiment(id: String) -> Bool {
-        return experimentFeatureMap?[id]?.isEmpty ?? false
+        return !(experimentFeatureMap[id]?.isEmpty ?? true)
     }
     
     /**
@@ -281,15 +266,4 @@ extension ProjectConfig {
         return true
     }
     
-    var allExperiments:[Experiment] {
-        if let _allExperiments = _allExperiments {
-            return _allExperiments
-        }
-        else {
-            _allExperiments = project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
-            return _allExperiments ?? []
-        }
-        
-    }
-
 }

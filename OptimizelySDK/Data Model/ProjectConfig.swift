@@ -27,6 +27,11 @@ class ProjectConfig {
     private var whitelistUsers = [String: [String: String]]()
     private var experimentFeatureMap = [String: [String]]()
     
+    var experimentKeyMap:[String:Experiment]?
+    var eventKeyMap:[String:Event]?
+    
+    var _allExperiments:[Experiment]?
+    
     init(datafile: Data) throws {
         do {
             self.project = try JSONDecoder().decode(Project.self, from: datafile)
@@ -37,6 +42,12 @@ class ProjectConfig {
             throw OptimizelyError.dataFileVersionInvalid(self.project.version)
         }
         generateExperimentFeatureMap()
+        
+        experimentKeyMap = [String:Experiment]()
+        _ = allExperiments.map({experimentKeyMap?[$0.key] = $0})
+        
+        eventKeyMap = [String:Event]()
+        _ = project.events.map({eventKeyMap?[$0.key] = $0 })
     }
     
     convenience init(datafile: String) throws {
@@ -92,17 +103,18 @@ extension ProjectConfig {
     }
     
     private func generateExperimentFeatureMap() {
-        for feature in project.featureFlags {
-            for id in feature.experimentIds {
-                if var featureIdArray = experimentFeatureMap[id] {
-                    featureIdArray.append(feature.id)
-                    experimentFeatureMap[id] = featureIdArray
+        experimentFeatureMap = [String:[String]]()
+        _ = project.featureFlags.map({ (ff) in
+            ff.experimentIds.map({
+                if var arr = self.experimentFeatureMap[$0] {
+                    arr.append(ff.id)
+                    self.experimentFeatureMap[$0] = arr
                 }
                 else {
-                    experimentFeatureMap[id] = [feature.id]
+                    self.experimentFeatureMap[$0] = [ff.id]
                 }
-            }
-        }
+            })
+        })
     }
 }
 
@@ -114,6 +126,9 @@ extension ProjectConfig {
      * Get an Experiment object for a key.
      */
     func getExperiment(key: String) -> Experiment? {
+        if let experimentMap = experimentKeyMap {
+            return experimentMap[key]
+        }
         return allExperiments.filter { $0.key == key }.first
     }
     
@@ -156,7 +171,7 @@ extension ProjectConfig {
      * Gets an event for a corresponding event key
      */
     func getEvent(key: String) -> Event? {
-        return project.events.filter{ $0.key == key }.first
+        return eventKeyMap?[key]
     }
     
     /**
@@ -249,7 +264,14 @@ extension ProjectConfig {
     }
     
     var allExperiments:[Experiment] {
-        return  project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
+        if let _allExperiments = _allExperiments {
+            return _allExperiments
+        }
+        else {
+            _allExperiments = project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
+            return _allExperiments ?? []
+        }
+        
     }
 
 }

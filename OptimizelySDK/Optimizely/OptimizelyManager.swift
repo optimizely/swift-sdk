@@ -44,6 +44,7 @@ open class OptimizelyManager: NSObject {
     }
 
     private let reInitLock = Dispatch.DispatchSemaphore(value: 1)
+    private let eventImitterQueue = DispatchQueue(label:"OptimizelyEventImitterQueue")
     
     // MARK: - Public interfaces
     
@@ -238,30 +239,11 @@ open class OptimizelyManager: NSObject {
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
         
-        // TODO: fix to throw errors
-        guard let body = BatchEventBuilder.createImpressionEvent(config: config,
-                                                                 experiment: experiment,
-                                                                 varionation: variation,
-                                                                 userId: userId,
-                                                                 attributes: attributes) else
-        {
-            throw OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey)
-        }
+        sendImpressionEvent(experiment: experiment,
+                            variation:variation,
+                            userId: userId,
+                            attributes: attributes)
         
-        let event = EventForDispatch(body: body)
-        // because we are batching events, we cannot guarantee that the completion handler will be
-        // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
-        // onActivate only means the event has been queued and not necessarily sent.
-        eventDispatcher.dispatchEvent(event: event) { result in
-            switch result {
-            case .failure:
-                break
-            case .success( _):
-                break
-            }
-        }
-        
-        self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
         
         return variation.key
     }
@@ -412,31 +394,8 @@ open class OptimizelyManager: NSObject {
             sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
             sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
             decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
-            
-            // TODO: fix to throw errors
-            guard let body = BatchEventBuilder.createImpressionEvent(config: config,
-                                                                     experiment: experiment,
-                                                                     varionation: variation,
-                                                                     userId: userId,
-                                                                     attributes: attributes) else
-            {
-                throw OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey)
-            }
-            
-            let event = EventForDispatch(body: body)
-            
-            // because we are batching events, we cannot guarantee that the completion handler will be
-            // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
-            // onActivate only means the event has been queued and not necessarily sent.
-            eventDispatcher.dispatchEvent(event: event) { result in
-                switch result {
-                case .failure:
-                    break
-                case .success(_):
-                    break
-                }
-            }
-            self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+
+            sendImpressionEvent(experiment: experiment, variation: variation, userId: userId, attributes: attributes)
         }
         
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
@@ -664,32 +623,86 @@ open class OptimizelyManager: NSObject {
             throw OptimizelyError.eventKeyInvalid(eventKey)
         }
         
-        // TODO: fix to throw errors
-        guard let body = BatchEventBuilder.createConversionEvent(config: config,
-                                                                 eventKey: eventKey,
-                                                                 userId: userId,
-                                                                 attributes: attributes,
-                                                                 eventTags: eventTags) else
-        {
-            throw OptimizelyError.eventBuildFailure(eventKey)
-        }
-        
-        let event = EventForDispatch(body: body)
-        // because we are batching events, we cannot guarantee that the completion handler will be
-        // called.  So, for now, we are queuing and calling onTrack.  Maybe we should mention that
-        // onTrack only means the event has been queued and not necessarily sent.
-        eventDispatcher.dispatchEvent(event: event) { result in
-            switch result {
-            case .failure:
-                break
-            case .success( _):
-                break
-            }
-        }
-        self.notificationCenter.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":event.url as Any, "body":event.body as Any]])
-        
+        sendConversionEvent(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
     }
     
+}
+
+extension OptimizelyManager {
+    
+    func sendImpressionEvent(experiment: Experiment,
+                             variation:Variation,
+                             userId: String,
+                             attributes: OptimizelyAttributes?=nil) {
+     
+        eventImitterQueue.async {
+            guard let config = self.config else { return }
+            
+            guard let body = BatchEventBuilder.createImpressionEvent(config: config,
+                                                                     experiment: experiment,
+                                                                     varionation: variation,
+                                                                     userId: userId,
+                                                                     attributes: attributes) else
+            {
+                self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
+                return
+            }
+            
+            let event = EventForDispatch(body: body)
+            // because we are batching events, we cannot guarantee that the completion handler will be
+            // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
+            // onActivate only means the event has been queued and not necessarily sent.
+            self.eventDispatcher.dispatchEvent(event: event) { result in
+                switch result {
+                case .failure:
+                    break
+                case .success( _):
+                    break
+                }
+            }
+            
+            self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+
+        }
+
+    }
+    
+    func sendConversionEvent(eventKey: String,
+                             userId: String,
+                             attributes: OptimizelyAttributes?=nil,
+                             eventTags: OptimizelyEventTags?=nil) {
+        
+        
+        eventImitterQueue.async {
+            guard let config = self.config else { return }
+            
+            guard let body = BatchEventBuilder.createConversionEvent(config: config,
+                                                                     eventKey: eventKey,
+                                                                     userId: userId,
+                                                                     attributes: attributes,
+                                                                     eventTags: eventTags) else
+            {
+                self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
+                return
+            }
+            
+            let event = EventForDispatch(body: body)
+            // because we are batching events, we cannot guarantee that the completion handler will be
+            // called.  So, for now, we are queuing and calling onTrack.  Maybe we should mention that
+            // onTrack only means the event has been queued and not necessarily sent.
+            self.eventDispatcher.dispatchEvent(event: event) { result in
+                switch result {
+                case .failure:
+                    break
+                case .success( _):
+                    break
+                }
+            }
+            self.notificationCenter.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":event.url as Any, "body":event.body as Any]])
+
+        }
+
+    }
 }
 
 extension OptimizelyManager {

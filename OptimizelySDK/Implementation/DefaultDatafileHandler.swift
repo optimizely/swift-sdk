@@ -1,25 +1,25 @@
 /****************************************************************************
- * Copyright 2019, Optimizely, Inc. and contributors                        *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
 class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     lazy var logger = HandlerRegistryService.shared.injectLogger()
-    var timers:AtomicProperty<[String:Timer]> = AtomicProperty(property: [String:Timer]())
+    var timers:AtomicProperty<[String:(timer:Timer, interval:Int)]> = AtomicProperty(property: [String:(Timer,Int)]())
     let dataStore = DataStoreUserDefaults()
     
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent, autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
@@ -119,7 +119,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 
                 completionHandler(result)
                 
-                self.logger?.log(level: .debug, message: response.debugDescription)
+//                self.logger?.log(level: .debug, message: response.debugDescription)
                 
             }
             
@@ -132,7 +132,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         let now = Date()
         if #available(iOS 10.0, tvOS 10.0, *) {
             DispatchQueue.main.async {
-                if let timer = self.timers.property?[sdkKey], timer.isValid {
+                if let timer = self.timers.property?[sdkKey]?.timer, timer.isValid {
                     return
                 }
                 
@@ -146,20 +146,30 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     timer.invalidate()
                 }
                 self.timers.performAtomic(atomicOperation: { (timers) in
-                    timers[sdkKey] = timer
+                    if let interval = timers[sdkKey]?.interval {
+                        timers[sdkKey] = (timer,interval)
+                    }
+                    else {
+                        timers[sdkKey] = (timer,updateInterval)
+                    }
                 })
             }
         } else {
             // Fallback on earlier versions
             DispatchQueue.main.async {
-                if let timer = self.timers.property?[sdkKey], timer.isValid {
+                if let timer = self.timers.property?[sdkKey]?.timer, timer.isValid {
                     return
                 }
 
-                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval":updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
+                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval":  updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
                 
                 self.timers.performAtomic(atomicOperation: { (timers) in
-                    timers[sdkKey] = timer
+                    if let interval = timers[sdkKey]?.interval {
+                        timers[sdkKey] = (timer,interval)
+                    }
+                    else {
+                        timers[sdkKey] = (timer,updateInterval)
+                    }
                 })
             }
 
@@ -171,7 +181,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         if let info = timer.userInfo as? [String:Any],
             let sdkKey = info["sdkKey"] as? String,
             let updateInterval = info["updateInterval"] as? Int,
-            let startDate = info["startDate"] as? Date,
+            let startDate = info["startTime"] as? Date,
             let datafileChangeNotification = info["datafileChangeNotification"] as? ((Data)->Void){
             self.performPerodicDownload(sdkKey: sdkKey, startTime: startDate, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
         }
@@ -206,12 +216,15 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             }
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
-                let minutesSinceFire = startTime.minutesPastSinceNow()
-                var diff = updateInterval - minutesSinceFire
-                if diff < 0 {
-                    diff = 0
+                let interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
+                let actualDiff = (Int(abs(startTime.timeIntervalSinceNow)) - updateInterval)
+                var nextInterval = interval
+                if actualDiff > 0 {
+                    nextInterval -= actualDiff
                 }
-                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: diff, datafileChangeNotification: datafileChangeNotification)
+                
+                self.logger?.d("next datafile download is \(nextInterval) seconds \(Date())")
+                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: nextInterval, datafileChangeNotification: datafileChangeNotification)
             }
         }
     }
@@ -221,7 +234,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             if let timer = timers[sdkKey] {
                 logger?.log(level: .info, message: "Stopping timer for datafile updates sdkKey: \(sdkKey)")
                 
-                timer.invalidate()
+                timer.timer.invalidate()
                 timers.removeValue(forKey: sdkKey)
             }
 
@@ -229,11 +242,9 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     func stopPeriodicUpdates() {
-        timers.performAtomic { (timers) in
-            for key in timers.keys {
-                logger?.log(level: .info, message: "Stopping timer for all datafile updates")
-                stopPeriodicUpdates(sdkKey: key)
-            }
+        for key in timers.property?.keys ?? Dictionary<String, (timer: Timer, interval: Int)>().keys {
+            logger?.log(level: .info, message: "Stopping timer for all datafile updates")
+            stopPeriodicUpdates(sdkKey: key)
         }
         
     }

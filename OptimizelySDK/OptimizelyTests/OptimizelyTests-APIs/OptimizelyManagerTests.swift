@@ -1,10 +1,18 @@
-//
-//  OptimizelyManagerTests.swift
-//  OptimizelySDKTests
-//
-//  Created by Thomas Zurkan on 12/7/18.
-//  Copyright © 2018 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import XCTest
 
@@ -130,9 +138,33 @@ class OptimizelyManagerTests: XCTestCase {
         let experiment:Experiment? = optimizely?.config?.getExperiment(key: "ab_running_exp_audience_combo_empty_conditions")
         
         XCTAssertNotNil(experiment)
+
+        let ex2 = optimizely?.config?.getExperiment(id: experiment!.id)
+        
+        XCTAssert(experiment == ex2)
+        
+        XCTAssert(ex2!.id == optimizely?.config?.getExperimentId(key: experiment!.key))
+        
+        
+        let event = optimizely?.config?.project.events.first
+        
+        let evId = optimizely?.config?.getEventId(key: event!.key)
+        
+        XCTAssert(event!.id == evId)
         
         let variation = experiment?.getVariation(key: "all_traffic_variation")
+        
         XCTAssertNotNil(variation)
+
+        let var2 = ex2?.getVariation(id: variation!.id)
+        
+        XCTAssert(variation == var2)
+        
+        let audience = optimizely?.config?.project.audiences.first
+        
+        let aud2 = optimizely?.config?.getAudience(id: audience!.id)
+        
+        XCTAssert(audience == aud2)
     }
 
 //    func testPerformanceInitialize() {

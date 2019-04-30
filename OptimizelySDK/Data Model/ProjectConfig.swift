@@ -1,18 +1,18 @@
 /****************************************************************************
- * Copyright 2018, Optimizely, Inc. and contributors                        *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
@@ -24,10 +24,10 @@ class ProjectConfig {
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
     
-    private var whitelistUsers = [String: [String: String]]()
-    private var experimentFeatureMap = [String: [String]]()
+    var whitelistUsers = [String: [String: String]]()
     
     var experimentKeyMap:[String:Experiment]?
+    var experimentFeatureMap:[String:[String]]?
     var eventKeyMap:[String:Event]?
     
     var _allExperiments:[Experiment]?
@@ -41,6 +41,7 @@ class ProjectConfig {
         if !isValidVersion(version: self.project.version) {
             throw OptimizelyError.dataFileVersionInvalid(self.project.version)
         }
+        
         generateExperimentFeatureMap()
         
         experimentKeyMap = [String:Experiment]()
@@ -59,7 +60,6 @@ class ProjectConfig {
    }
     
     init() {
-        // TODO: [Jae] fix to throw error
     }
     
     class func DateFromString(dateString:String) -> NSDate
@@ -101,17 +101,17 @@ extension ProjectConfig {
         // old versions (< 4) of datafiles not supported
         return ["4"].contains(version)
     }
-    
+
     private func generateExperimentFeatureMap() {
         experimentFeatureMap = [String:[String]]()
         _ = project.featureFlags.map({ (ff) in
             ff.experimentIds.map({
-                if var arr = self.experimentFeatureMap[$0] {
+                if var arr = self.experimentFeatureMap?[$0] {
                     arr.append(ff.id)
-                    self.experimentFeatureMap[$0] = arr
+                    self.experimentFeatureMap?[$0] = arr
                 }
                 else {
-                    self.experimentFeatureMap[$0] = [ff.id]
+                    self.experimentFeatureMap?[$0] = [ff.id]
                 }
             })
         })
@@ -207,7 +207,7 @@ extension ProjectConfig {
      *  Returns true if experiment belongs to any feature, false otherwise.
      */
     func isFeatureExperiment(id: String) -> Bool {
-        return experimentFeatureMap.keys.contains(id)
+        return experimentFeatureMap?[id]?.isEmpty ?? false
     }
     
     /**

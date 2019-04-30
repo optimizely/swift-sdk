@@ -1,10 +1,18 @@
-//
-//  DatafileHandlerTests.swift
-//  OptimizelySwiftSDK
-//
-//  Created by Thomas Zurkan on 3/20/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import XCTest
 
@@ -64,6 +72,35 @@ class DatafileHandlerTests: XCTestCase {
         XCTAssertFalse(saved)
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+    }
+    
+    func testPeriodicDownload() {
+        class FakeDatafileHandler : DefaultDatafileHandler {
+            let data = Data()
+            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                completionHandler(.success(data))
+            }
+        }
+        let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
+        let handler = FakeDatafileHandler()
+        let now = Date()
+        var count = 0;
+        var seconds = 0
+        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: 1) { (data) in
+            count += 1
+            if count == 10 {
+                handler.stopPeriodicUpdates()
+                expection.fulfill()
+                seconds = Int(abs(now.timeIntervalSinceNow))
+            }
+        }
+        
+        wait(for: [expection], timeout: 20)
+        
+        XCTAssert(count == 10)
+        XCTAssert(seconds == 10)
+        
+        
     }
 
     func testPerformanceExample() {

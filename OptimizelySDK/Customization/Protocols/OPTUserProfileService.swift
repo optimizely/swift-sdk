@@ -13,63 +13,6 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-//
-//  UserProfileService.swift
-//  OptimizelySDK
-//{
-//    124170 =     {
-//        "experiment_bucket_map" =         {
-//            11174010269 =             {
-//                "variation_id" = 11198460034;
-//            };
-//            11178792174 =             {
-//                "variation_id" = 11192561814;
-//            };
-//        };
-//        "user_id" = 124170;
-//    };
-//    133904 =     {
-//        "experiment_bucket_map" =         {
-//            11174010269 =             {
-//                "variation_id" = 11193600046;
-//            };
-//            11178792174 =             {
-//                "variation_id" = 11192561814;
-//            };
-//        };
-//        "user_id" = 133904;
-//    };
-//    205702 =     {
-//        "experiment_bucket_map" =         {
-//            11174010269 =             {
-//                "variation_id" = 11198460034;
-//            };
-//            11178792174 =             {
-//                "variation_id" = 11146534908;
-//            };
-//        };
-//        "user_id" = 205702;
-//    };
-//    261193 =     {
-//        "experiment_bucket_map" =         {
-//            11174010269 =             {
-//                "variation_id" = 11193600046;
-//            };
-//            11178792174 =             {
-//                "variation_id" = 11146534908;
-//            };
-//        };
-//        "user_id" = 261193;
-//    };
-//    89086 =     {
-//        "experiment_bucket_map" =         {
-//            11178792174 =             {
-//                "variation_id" = 11192561814;
-//            };
-//        };
-//        "user_id" = 89086;
-//    };
-//}
 
 import Foundation
 

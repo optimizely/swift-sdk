@@ -53,8 +53,6 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        optimizely?.eventImitterQueue.sync {
-        }
 
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
@@ -97,8 +95,6 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        optimizely?.eventImitterQueue.sync {
-        }
 
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
@@ -134,9 +130,6 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        optimizely?.eventImitterQueue.sync {
-        }
-
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
         let array = json["visitors"][0]["attributes"].arrayValue
@@ -174,8 +167,6 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        optimizely?.eventImitterQueue.sync {
-        }
 
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
@@ -212,8 +203,6 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
         
-        optimizely?.eventImitterQueue.sync {
-        }
 
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
@@ -232,8 +221,6 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: nil)
         
-        optimizely?.eventImitterQueue.sync {
-        }
         
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
@@ -255,8 +242,6 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        optimizely?.eventImitterQueue.sync {
-        }
 
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
@@ -292,8 +277,6 @@ extension BatchEventBuilderTests_Attributes {
                                               eventDispatcher: eventDispatcher)
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
-        optimizely?.eventImitterQueue.sync {
-        }
 
         let eventForDispatch = eventDispatcher.events.first
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
@@ -317,9 +300,6 @@ extension BatchEventBuilderTests_Attributes {
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
         
-        optimizely?.eventImitterQueue.sync {
-            
-        }
         
         let eventForDispatch = eventDispatcher.events.first
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
@@ -343,8 +323,6 @@ extension BatchEventBuilderTests_Attributes {
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
         
-        optimizely?.eventImitterQueue.sync {
-        }
         
         let eventForDispatch = eventDispatcher.events.first
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)

@@ -50,8 +50,6 @@ class BatchEventBuilderTests_Events: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        optimizely.eventImitterQueue.sync {
-        }
         
         let eventForDispatch = eventDispatcher.events.first!
         let json = JSON(eventForDispatch.body)
@@ -107,7 +105,6 @@ class BatchEventBuilderTests_Events: XCTestCase {
                               userId: userId,
                               attributes: attributes,
                               eventTags: eventTags)
-        optimizely.eventImitterQueue.sync {}
         let eventForDispatch = eventDispatcher.events.first!
         let json = JSON(eventForDispatch.body)
         let event = json.dictionaryValue
@@ -160,7 +157,6 @@ class BatchEventBuilderTests_Events: XCTestCase {
                                  userId: userId,
                                  attributes: nil,
                                  eventTags: eventTags)
-            optimizely.eventImitterQueue.sync {}
             XCTAssert(false, "event should not be created for an invalid event key")
         } catch {
             XCTAssert(true)

@@ -60,6 +60,7 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
                                         "value": 32.5]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
 
@@ -82,6 +83,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "future": [1,2,3]]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
@@ -96,6 +98,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "tooBig": OTUtils.positiveTooBigValue]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
@@ -117,6 +120,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": "bar"]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
 
@@ -134,6 +138,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": false]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
 
@@ -151,6 +156,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": 30]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
@@ -173,6 +179,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": OTUtils.positiveTooBigValue]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
@@ -190,6 +197,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": OTUtils.negativeTooBigValue]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
@@ -213,6 +221,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": 0]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
 
@@ -230,6 +239,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": 1]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
@@ -247,6 +257,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": -1]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
@@ -270,6 +281,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": NSNumber(value: 3.15)]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         
@@ -291,6 +303,7 @@ extension BatchEventBuilderTests_EventTags {
                                         "value": Float(32)]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
         let de = getDispatchEvent(dispatcher: eventDispatcher)!
         let tags = de["tags"] as! [String: Any]
         

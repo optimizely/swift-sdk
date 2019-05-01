@@ -22,6 +22,8 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     var timers:AtomicProperty<[String:(timer:Timer, interval:Int)]> = AtomicProperty(property: [String:(Timer,Int)]())
     let dataStore = DataStoreUserDefaults()
     
+    let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent, autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
+    
     required init() {
         
     }
@@ -48,22 +50,53 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         return datafile
     }
     
-    open func downloadDatafile(sdkKey: String,
-                               resourceTimeoutInterval:Double? = nil,
-                               completionHandler: @escaping DatafileDownloadCompletionHandler) {
+    open func getSession(resourceTimeoutInterval:Double?) -> URLSession {
         let config = URLSessionConfiguration.ephemeral
         if let resourceTimeoutInterval = resourceTimeoutInterval,
             resourceTimeoutInterval > 0 {
             config.timeoutIntervalForResource = TimeInterval(resourceTimeoutInterval)
         }
-        let session = URLSession(configuration: config)
+        return URLSession(configuration: config)
+    }
+    
+    open func getRequest(sdkKey:String) -> URLRequest? {
         let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
-        if let url = URL(string: str) {
-            var request = URLRequest(url: url)
-            
-            if let lastModified = dataStore.getItem(forKey: "OPTLastModified-" + sdkKey) {
-                request.addValue(lastModified as! String, forHTTPHeaderField: "If-Modified-Since")
+        guard let url = URL(string: str) else { return nil }
+        
+        var request = URLRequest(url: url)
+        
+        if let lastModified = dataStore.getItem(forKey: "OPTLastModified-" + sdkKey) {
+            request.addValue(lastModified as! String, forHTTPHeaderField: "If-Modified-Since")
+        }
+        
+        return request
+
+    }
+    
+    open func getResponseData(sdkKey:String, response:HTTPURLResponse, url:URL?) -> Data? {
+        if let url = url, let data = try? Data(contentsOf: url) {
+            if let str = String(data: data, encoding: .utf8) {
+                self.logger?.log(level: .debug, message: str)
             }
+            self.saveDatafile(sdkKey: sdkKey, dataFile: data)
+            if let lastModified = response.allHeaderFields["Last-Modified"] {
+                self.dataStore.saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
+            }
+            
+            return data
+        }
+        
+        return nil
+    }
+    
+    open func downloadDatafile(sdkKey: String,
+                               resourceTimeoutInterval:Double? = nil,
+                               completionHandler: @escaping DatafileDownloadCompletionHandler) {
+        
+        downloadQueue.async {
+            let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
+            
+            guard let request = self.getRequest(sdkKey: sdkKey) else { return }
             
             let task = session.downloadTask(with: request) { (url, response, error) in
                 var result = Result<Data?, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
@@ -75,24 +108,15 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 }
                 else if let response = response as? HTTPURLResponse {
                     if response.statusCode == 200 {
-                        if let url = url, let data = try? Data(contentsOf: url) {
-                            if let str = String(data: data, encoding: .utf8) {
-                                self.logger?.log(level: .debug, message: str)
-                            }
-                            self.saveDatafile(sdkKey: sdkKey, dataFile: data)
-                            if let lastModified = response.allHeaderFields["Last-Modified"] {
-                                self.dataStore.saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
-                            }
-                            
-                            result = Result.success(data)
-                        }
+                        let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url)
+                        result = Result.success(data)
                     }
                     else if response.statusCode == 304 {
                         self.logger?.log(level: .debug, message: "The datafile was not modified and won't be downloaded again")
                         result = .success(nil)
                     }
                 }
-
+                
                 completionHandler(result)
                 
 //                self.logger?.log(level: .debug, message: response.debugDescription)
@@ -101,7 +125,6 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             
             task.resume()
         }
-
     }
     
     func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification:((Data)->Void)?) {

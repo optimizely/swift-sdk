@@ -74,18 +74,21 @@ import Foundation
 open class DefaultUserProfileService: OPTUserProfileService {
     public typealias UserProfileData = [String: UPProfile]
 
-    var profiles: UserProfileData
+    var profiles: UserProfileData?
     let lock = DispatchQueue(label: "com.optimizely.UserProfileService")
     let kStorageName = "user-profile-service"
 
     public required init() {
-        profiles = UserDefaults.standard.dictionary(forKey: kStorageName) as? UserProfileData ?? UserProfileData()
+        lock.async {
+            self.profiles = UserDefaults.standard.dictionary(forKey: self.kStorageName) as? UserProfileData ?? UserProfileData()
+
+        }
     }
 
     open func lookup(userId: String) -> UPProfile? {
         var retVal: UPProfile?
         lock.sync {
-            retVal = profiles[userId]
+            retVal = profiles?[userId]
         }
         return retVal
     }
@@ -94,7 +97,7 @@ open class DefaultUserProfileService: OPTUserProfileService {
         guard let userId = userProfile[UserProfileKeys.kUserId] as? String else { return }
             
         lock.async {
-            self.profiles[userId] = userProfile
+            self.profiles?[userId] = userProfile
             let defaults = UserDefaults.standard
             defaults.set(self.profiles, forKey: self.kStorageName)
             defaults.synchronize()

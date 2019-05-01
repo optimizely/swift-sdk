@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let attributes: [String : Any?] = ["browser_type": "safari", "bool_attr": false]
     
     var window: UIWindow?
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     var storyboard: UIStoryboard {
         #if os(iOS)
         return UIStoryboard(name: "iOSMain", bundle: nil)
@@ -61,7 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Initialization Examples
     
     func initializeOptimizelySDKAsynchronous() {
-        optimizely = OptimizelyManager(sdkKey: sdkKey)
+        optimizely = OptimizelyClient(sdkKey: sdkKey)
         
         optimizely.initializeSDK { result in
             switch result {
@@ -83,7 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Local datafile cannot be found")
         }
         
-        optimizely = OptimizelyManager(sdkKey: sdkKey)
+        optimizely = OptimizelyClient(sdkKey: sdkKey)
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -105,7 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // This should be should be much larger (default = 10 mins).
         let customDownloadIntervalInSecs = 30
         
-        optimizely = OptimizelyManager(sdkKey: sdkKey,
+        optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,
                                        periodicDownloadInterval: customDownloadIntervalInSecs)
         

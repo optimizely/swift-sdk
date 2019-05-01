@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyManagerTests_Valid: XCTestCase {
+class OptimizelyClientTests_Valid: XCTestCase {
 
     // MARK: - Constants
     
@@ -45,7 +45,7 @@ class OptimizelyManagerTests_Valid: XCTestCase {
     // MARK: - Properties
     
     var datafile: Data!
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     
     // MARK: - SetUp
     
@@ -54,7 +54,7 @@ class OptimizelyManagerTests_Valid: XCTestCase {
         
         self.datafile = OTUtils.loadJSONDatafile("api_datafile")
         
-        self.optimizely = OptimizelyManager(sdkKey: "12345",
+        self.optimizely = OptimizelyClient(sdkKey: "12345",
                                             userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.initializeSDK(datafile: datafile)
     }

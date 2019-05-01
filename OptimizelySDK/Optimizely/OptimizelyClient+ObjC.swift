@@ -16,7 +16,7 @@
 
 import Foundation
 
-extension OptimizelyManager {
+extension OptimizelyClient {
     
 
     @available(swift, obsoleted: 1.0)
@@ -310,7 +310,7 @@ extension OptimizelyManager {
 
 // MARK: - ObjC Type Conversions
 
-extension OptimizelyManager {
+extension OptimizelyClient {
     
     /// EventDispatcher implementation for Objective-C interface support
     class SwiftEventDispatcher: OPTEventDispatcher {

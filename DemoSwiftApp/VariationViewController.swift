@@ -22,7 +22,7 @@ class VariationViewController: UIViewController {
     var eventKey: String!
     var userId: String!
     var variationKey: String?
-    var optimizely: OptimizelyManager?
+    var optimizely: OptimizelyClient?
     var showCoupon: Bool = false {
         didSet  {
             DispatchQueue.main.async {

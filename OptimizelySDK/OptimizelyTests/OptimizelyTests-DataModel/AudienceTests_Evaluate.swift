@@ -51,7 +51,7 @@ class AudienceTests_Evaluate: XCTestCase {
     // MARK: - Properties
     
     var typedAudienceDatafile: Data!
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     
     // MARK: - SetUp
     
@@ -60,7 +60,7 @@ class AudienceTests_Evaluate: XCTestCase {
         
         self.typedAudienceDatafile = OTUtils.loadJSONDatafile("typed_audience_datafile")
         
-        self.optimizely = OptimizelyManager(sdkKey: "12345")
+        self.optimizely = OptimizelyClient(sdkKey: "12345")
         try! self.optimizely.initializeSDK(datafile: typedAudienceDatafile)
     }
 

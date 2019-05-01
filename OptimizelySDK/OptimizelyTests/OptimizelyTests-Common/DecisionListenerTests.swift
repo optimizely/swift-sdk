@@ -38,7 +38,7 @@ class DecisionListenerTests: XCTestCase {
     
     var datafile: Data!
     var optimizely: FakeManager!
-    var optimizely2: OptimizelyManager?
+    var optimizely2: OptimizelyClient?
     
     // MARK: - SetUp
     
@@ -563,7 +563,7 @@ class DecisionListenerTests: XCTestCase {
     }
 }
 
-class FakeManager: OptimizelyManager {
+class FakeManager: OptimizelyClient {
     
     override var decisionService: OPTDecisionService {
         get {

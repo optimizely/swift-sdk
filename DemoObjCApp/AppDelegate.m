@@ -33,7 +33,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 @interface AppDelegate ()
 @property(nonnull, strong, nonatomic) NSString *userId;
 @property(nonnull, strong, nonatomic) NSDictionary *attributes;
-@property(nullable, strong, nonatomic) OptimizelyManager *optimizely;
+@property(nullable, strong, nonatomic) OptimizelyClient *optimizely;
 @end
 
 @implementation AppDelegate
@@ -62,7 +62,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 // MARK: - Initialization Examples
 
 -(void)initializeOptimizelySDKAsynchronous {
-    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey];
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey];
     
     [self.optimizely initializeSDKWithCompletion:^(NSData *data, NSError *error) {
         if (error == nil) {
@@ -84,7 +84,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
         return;
     }
     
-    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey];
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey];
     
     NSString *datafileJSON = [NSString stringWithContentsOfFile:localDatafilePath encoding:NSUTF8StringEncoding error:nil];
     
@@ -113,7 +113,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     // This should be should be much larger (default = 10 mins).
     NSNumber *customDownloadIntervalInSecs = @(30);
     
-    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
                                                          logger:customLogger
                                                 eventDispatcher:nil
                                              userProfileService:nil

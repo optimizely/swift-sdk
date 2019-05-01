@@ -19,7 +19,7 @@ import Foundation
 public typealias OptimizelyAttributes = [String: Any?]
 public typealias OptimizelyEventTags = [String: Any]
 
-open class OptimizelyManager: NSObject {
+open class OptimizelyClient: NSObject {
     
     // MARK: - Properties
     
@@ -645,7 +645,7 @@ open class OptimizelyManager: NSObject {
     
 }
 
-extension OptimizelyManager {
+extension OptimizelyClient {
     
     func sendImpressionEvent(experiment: Experiment,
                              variation:Variation,

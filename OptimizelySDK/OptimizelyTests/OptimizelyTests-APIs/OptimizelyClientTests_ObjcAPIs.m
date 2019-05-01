@@ -43,8 +43,8 @@ static NSString * const kUserId = @"11111";
 static NSString * const kSdkKey = @"12345";
 
 
-@interface OptimizelyManagerTests_ObjcAPIs : XCTestCase
-@property(nonatomic) OptimizelyManager *optimizely;
+@interface OptimizelyClientTests_ObjcAPIs : XCTestCase
+@property(nonatomic) OptimizelyClient *optimizely;
 @property(nonatomic) NSDictionary * attributes;
 @end
 
@@ -96,13 +96,13 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
 
 // MARK: - tests
 
-@implementation OptimizelyManagerTests_ObjcAPIs
+@implementation OptimizelyClientTests_ObjcAPIs
 
 - (void)setUp {
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
     NSString *fileContents = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
-    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey: kSdkKey];
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey: kSdkKey];
     
     [self.optimizely initializeSDKWithDatafile:fileContents error:nil];
     
@@ -222,9 +222,9 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     XCTAssert(event.body.length==0);
     
     // check all SDK initialization APIs for ObjC
-    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kSdkKey];
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kSdkKey];
     
-    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kSdkKey
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kSdkKey
                                                          logger:logger
                                                 eventDispatcher:eventDispatcher
                                              userProfileService:userProfileService

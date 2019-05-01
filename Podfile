@@ -30,12 +30,14 @@ target 'DemoSwiftiOS' do
   platform :ios, '10.0'
   use_frameworks!
   analytics_pods
+  #pod 'OptimizelySwiftSDK','3.0.0'
 end
 
 target 'DemoSwifttvOS' do
   project 'DemoSwiftApp/DemoSwiftApp.xcodeproj/'
   platform :tvos, '10.0'
   use_frameworks!
+  #pod 'OptimizelySwiftSDK','3.0.0'
 end
 
 target 'DemoObjciOS' do
@@ -43,12 +45,14 @@ target 'DemoObjciOS' do
   platform :ios, '10.0'
   use_frameworks!
   analytics_pods
+  #pod 'OptimizelySwiftSDK','3.0.0'
 end
 
 target 'DemoObjctvOS' do
   project 'DemoObjcApp/DemoObjcApp.xcodeproj/'
   platform :tvos, '10.0'
   use_frameworks!
+  #pod 'OptimizelySwiftSDK','3.0.0'
 end
 
 post_install do |installer|

@@ -14,15 +14,26 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
-#import <Foundation/Foundation.h>
+import Foundation
+import XCTest
 
-NS_ASSUME_NONNULL_BEGIN
+class OptimizelyClientTests_Group: XCTestCase {
+    
+    let kUserId = "q456789"
+    
+    var datafile: Data?
+    var optimizely: OptimizelyClient?
+    var eventDispatcher:FakeEventDispatcher?
+    
+    // MARK: - Attribute Value Range
+    
+    func testFeatureEnabledMutextGroup() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments",
+                                                  clearUserProfileService: true)!
+        
+        let featureEnabled = try? optimizely.isFeatureEnabled(featureKey: "mutex_group_feature", userId: kUserId)
+        XCTAssertTrue(featureEnabled!)
+    }
+    
+}
 
-@protocol OPTNotificationCenter
-
-@end
-@interface CustomNotificationCenter : NSObject <OPTNotificationCenter>
-@property(nonatomic, assign) int notificationId;
-@end
-
-NS_ASSUME_NONNULL_END

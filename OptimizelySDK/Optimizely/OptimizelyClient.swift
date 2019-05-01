@@ -19,7 +19,7 @@ import Foundation
 public typealias OptimizelyAttributes = [String: Any?]
 public typealias OptimizelyEventTags = [String: Any]
 
-open class OptimizelyManager: NSObject {
+open class OptimizelyClient: NSObject {
     
     // MARK: - Properties
     
@@ -60,13 +60,16 @@ open class OptimizelyManager: NSObject {
     /// - Parameters:
     ///   - sdkKey: sdk key
     ///   - logger: custom Logger
-    ///   - eventDispatcher: custom EventDispatcher
-    ///   - ...
+    ///   - eventDispatcher: custom EventDispatcher (optional)
+    ///   - userProfileService: custom UserProfileService (optional)
+    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional. default = 10 * 60 secs)
+    ///   - defaultLogLevel: default log level (optional. default = .info)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
-                periodicDownloadInterval: Int? = nil) {
+                periodicDownloadInterval: Int? = nil,
+                defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         self.sdkKey = sdkKey
         self.periodicDownloadInterval = periodicDownloadInterval ?? 10 * 60
@@ -74,20 +77,28 @@ open class OptimizelyManager: NSObject {
         super.init()
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()
+        let logger = logger ?? DefaultLogger()
+        type(of: logger).logLevel = defaultLogLevel ?? .info
+        
         self.registerServices(sdkKey: sdkKey,
-                              logger: logger ?? DefaultLogger(),
+                              logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               datafileHandler: DefaultDatafileHandler(),
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
+        logger.i("SDK Version: \(Utils.sdkVersion)")
     }
     
-    /// Initialize Optimizely Manager (Asynchronous)
+    /// Start Optimizely SDK (Asynchronous)
+    ///
+    /// If an updated datafile is available in the server, it's downloaded and the SDK is configured with
+    /// the updated datafile.
     ///
     /// - Parameters:
+    ///   - resourceTimeout: timeout for datafile download (optional)
     ///   - completion: callback when initialization is completed
-    public func initializeSDK(resourceTimeout:Double? = nil,completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+    public func start(resourceTimeout:Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         fetchDatafileBackground(resourceTimeout:resourceTimeout) { result in
             switch result {
             case .failure:
@@ -107,30 +118,30 @@ open class OptimizelyManager: NSObject {
         }
     }
     
-    /// Initialize Optimizely Manager (Synchronous)
+    /// Start Optimizely SDK (Synchronous)
     ///
     /// - Parameters:
-    ///   - datafile: when given, this datafile will be used when cached copy is not available (fresh start)
-    ///                       a cached copy from previous download is used if it's available
-    ///                       the datafile will be updated from the server in the background thread
-    public func initializeSDK(datafile: String) throws {
+    ///   - datafile: This datafile will be used when cached copy is not available (fresh start).
+    ///             A cached copy from previous download is used if it's available.
+    ///             The datafile will be updated from the server in the background thread.
+    public func start(datafile: String) throws {
         guard let datafileData = datafile.data(using: .utf8) else {
             throw OptimizelyError.dataFileInvalid
         }
         
-        try initializeSDK(datafile: datafileData)
+        try start(datafile: datafileData)
     }
     
-    /// Initialize Optimizely Manager (Synchronous)
+    /// Start Optimizely SDK (Synchronous)
     ///
     /// - Parameters:
-    ///   - datafile: when given, this datafile will be used when cached copy is not available (fresh start)
-    ///                       a cached copy from previous download is used if it's available
-    ///                       the datafile will be updated from the server in the background thread
-    ///   - doFetchDatafileBackground: default to true.  This is really here for debugging purposes when
-    ///                       you don't want to download the datafile.  In practice, you should allow the
-    ///                       background thread to update the cache copy.
-    public func initializeSDK(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
+    ///   - datafile: This datafile will be used when cached copy is not available (fresh start)
+    ///             A cached copy from previous download is used if it's available.
+    ///             The datafile will be updated from the server in the background thread.
+    ///   - doFetchDatafileBackground: This is for debugging purposes when
+    ///             you don't want to download the datafile.  In practice, you should allow the
+    ///             background thread to update the cache copy (optional)
+    public func start(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
         let cachedDatafile = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey)
         
         let selectedDatafile = cachedDatafile ?? datafile
@@ -239,9 +250,7 @@ open class OptimizelyManager: NSObject {
                          userId: String,
                          attributes: OptimizelyAttributes?=nil) throws -> String {
         
-        guard let config = self.config else {
-            throw OptimizelyError.sdkNotConfigured
-        }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
             throw OptimizelyError.experimentKeyInvalid(experimentKey)
@@ -278,7 +287,7 @@ open class OptimizelyManager: NSObject {
                       userId: String,
                       attributes: OptimizelyAttributes?=nil) throws -> Variation {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
@@ -334,7 +343,6 @@ open class OptimizelyManager: NSObject {
         return variaion?.key
     }
     
-    
     /// Set forced variation for experiment and user ID to variationKey.
     ///
     /// - Parameters:
@@ -366,7 +374,7 @@ open class OptimizelyManager: NSObject {
                                  userId: String,
                                  attributes: OptimizelyAttributes?=nil) throws -> Bool {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
             return false
@@ -501,7 +509,7 @@ open class OptimizelyManager: NSObject {
                                userId: String,
                                attributes: OptimizelyAttributes?=nil) throws -> T {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         // fix config to throw errors
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
@@ -597,7 +605,7 @@ open class OptimizelyManager: NSObject {
     public func getEnabledFeatures(userId: String,
                                    attributes: OptimizelyAttributes?=nil) throws -> [String] {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         guard let featureFlags = config.project?.featureFlags else {
             return [String]()
@@ -626,7 +634,7 @@ open class OptimizelyManager: NSObject {
                       attributes: OptimizelyAttributes?=nil,
                       eventTags: OptimizelyEventTags?=nil) throws {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         guard let _ = config.getEvent(key: eventKey) else {
             throw OptimizelyError.eventKeyInvalid(eventKey)
@@ -637,7 +645,7 @@ open class OptimizelyManager: NSObject {
     
 }
 
-extension OptimizelyManager {
+extension OptimizelyClient {
     
     func sendImpressionEvent(experiment: Experiment,
                              variation:Variation,
@@ -708,314 +716,3 @@ extension OptimizelyManager {
     }
 }
 
-extension OptimizelyManager {
-    @available(swift, obsoleted: 1.0)
-    @objc public convenience init(sdkKey: String) {
-        self.init(sdkKey: sdkKey,
-                  logger: nil,
-                  eventDispatcher: nil,
-                  userProfileService: nil,
-                  periodicDownloadInterval: nil as NSNumber?)
-    }
-    
-    @objc public convenience init(sdkKey: String,
-                                  logger: OPTLogger?,
-                                  eventDispatcher: _ObjcOPTEventDispatcher?,
-                                  userProfileService: OPTUserProfileService?,
-                                  periodicDownloadInterval: NSNumber?) {
-        self.init(sdkKey: sdkKey,
-                  logger: logger,
-                  eventDispatcher: SwiftEventDispatcher(eventDispatcher),
-                  userProfileService: userProfileService,
-                  periodicDownloadInterval: periodicDownloadInterval?.intValue)
-        
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(initializeSDKWithCompletion:)
-    public func _objcInitializeSDK(completion: ((Data?, NSError?) -> Void)?) {
-        initializeSDK { result in
-            switch result {
-            case .failure(let error):
-                completion?(nil, self.convertErrorForObjc(error))
-            case .success(let data):
-                completion?(data, nil)
-            }
-        }
-    }
-
-    @available(swift, obsoleted: 1.0)
-    @objc(notificationCenter) public var objc_notificationCenter: _ObjcOPTNotificationCenter {
-        class ObjcCenter : _ObjcOPTNotificationCenter {
-            var notifications:OPTNotificationCenter
-            
-            init(notificationCenter:OPTNotificationCenter) {
-                notifications = notificationCenter
-            }
-            
-            internal func convertAttribues(attributes:OptimizelyAttributes?) -> [String:Any]? {
-                return attributes?.mapValues({ (val) -> Any in
-                    if let val = val {
-                        return val
-                    }
-                    else {
-                        return NSNull()
-                    }
-                })
-            }
-            
-            internal func returnVal(num:Int?) -> NSNumber? {
-                if let num = num {
-                    return NSNumber(value: num)
-                }
-                
-                return nil
-            }
-            
-            func addActivateNotificationListener(activateListener: @escaping ([String : Any], String, [String : Any]?, [String : Any], Dictionary<String, Any>) -> Void) -> NSNumber? {
-                
-                let num = notifications.addActivateNotificationListener { (experiment, userId, attributes, variation, event) in
-                    
-                    activateListener(experiment, userId, self.convertAttribues(attributes: attributes), variation, event)
-                }
-                
-                return returnVal(num: num)
-            }
-            
-            func addTrackNotificationListener(trackListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>?, Dictionary<String, Any>) -> Void) -> NSNumber? {
-                let num = notifications.addTrackNotificationListener { (eventKey, userId, attributes, eventTags, event) in
-                    
-                    trackListener(eventKey, userId, self.convertAttribues(attributes: attributes), eventTags, event)
-                }
-                
-                return returnVal(num: num)
-            }
-            
-            func addDecisionNotificationListener(decisionListener: @escaping (String, String, [String : Any]?, Dictionary<String, Any>) -> Void) -> NSNumber? {
-                
-                let num = notifications.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-                    decisionListener(type, userId, self.convertAttribues(attributes: attributes), decisionInfo)
-                }
-                return returnVal(num: num)
-            }
-            
-            func addDatafileChangeNotificationListener(datafileListener: @escaping (Data) -> Void) -> NSNumber? {
-                let num = notifications.addDatafileChangeNotificationListener { (data) in
-                    datafileListener(data)
-                }
-                
-                return returnVal(num: num)
-            }
-            
-            func removeNotificationListener(notificationId: Int) {
-                notifications.removeNotificationListener(notificationId: notificationId)
-            }
-            
-            func clearNotificationListeners(type: NotificationType) {
-                notifications.clearNotificationListeners(type: type)
-            }
-            
-            func clearAllNotificationListeners() {
-                notifications.clearAllNotificationListeners()
-            }
-            
-            
-        }
-        
-        return ObjcCenter(notificationCenter: self.notificationCenter)
-    }
-    
-
-    @available(swift, obsoleted: 1.0)
-    @objc(initializeSDKWithDatafile:error:)
-    public func _objcInitializeSDKWith(datafile:String) throws {
-        try self.initializeSDK(datafile: datafile)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(initializeSDKWithDatafile:doFetchDatafileBackground:error:)
-    public func _objcInitializeSDK(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
-        try self.initializeSDK(datafile: datafile, doFetchDatafileBackground: doFetchDatafileBackground)
-    }
-
-    @available(swift, obsoleted: 1.0)
-    @objc(activateWithExperimentKey:userId:attributes:error:)
-    public func _objcActivate(experimentKey: String,
-                              userId: String,
-                              attributes: [String:Any]?) throws -> String {
-        return try self.activate(experimentKey: experimentKey, userId: userId, attributes: attributes as OptimizelyAttributes?)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(getVariationKeyWithExperimentKey:userId:attributes:error:)
-    public func _objcGetVariationKey(experimentKey: String,
-                                     userId: String,
-                                     attributes: [String:Any]?) throws -> String {
-        return try getVariationKey(experimentKey: experimentKey,
-                                   userId: userId,
-                                   attributes: attributes)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(getForcedVariationWithExperimentKey:userId:)
-    public func _objcGetForcedVariation(experimentKey: String, userId: String) -> String? {
-        return getForcedVariation(experimentKey: experimentKey,
-                                  userId: userId)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(setForcedVariationWithExperimentKey:userId:variationKey:)
-    public func _objcSetForcedVariation(experimentKey: String,
-                                        userId: String,
-                                        variationKey: String?) -> Bool {
-        return setForcedVariation(experimentKey: experimentKey,
-                                  userId: userId,
-                                  variationKey: variationKey)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(isFeatureEnabledWithFeatureKey:userId:attributes:error:)
-    public func _objcIsFeatureEnabled(featureKey: String,
-                                      userId: String,
-                                      attributes: [String:Any]?) throws -> NSNumber {
-        let enabled = try self.isFeatureEnabled(featureKey: featureKey,
-                                                userId: userId,
-                                                attributes: attributes)
-        return NSNumber(booleanLiteral: enabled)
-    }
-    
-
-    @available(swift, obsoleted: 1.0)
-    @objc(getFeatureVariableBooleanWithFeatureKey:variableKey:userId:attributes:error:)
-    public func _objcGetFeatureVariableBoolean(featureKey: String,
-                                               variableKey: String,
-                                               userId: String,
-                                               attributes: [String: Any]?) throws -> NSNumber {
-        let value = try self.getFeatureVariableBoolean(featureKey: featureKey,
-                                                       variableKey: variableKey,
-                                                       userId: userId,
-                                                       attributes: attributes)
-        return NSNumber(booleanLiteral: value)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(getFeatureVariableDoubleWithFeatureKey:variableKey:userId:attributes:error:)
-    public func _objcGetFeatureVariableDouble(featureKey: String,
-                                              variableKey: String,
-                                              userId: String,
-                                              attributes: [String: Any]?) throws -> NSNumber {
-        let value = try self.getFeatureVariableDouble(featureKey: featureKey,
-                                                      variableKey: variableKey,
-                                                      userId: userId,
-                                                      attributes: attributes)
-        return NSNumber(value: value)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(getFeatureVariableIntegerWithFeatureKey:variableKey:userId:attributes:error:)
-    public func _objcGetFeatureVariableInteger(featureKey: String,
-                                               variableKey: String,
-                                               userId: String,
-                                               attributes: [String: Any]?) throws -> NSNumber {
-        let value = try self.getFeatureVariableInteger(featureKey: featureKey,
-                                                       variableKey: variableKey,
-                                                       userId: userId,
-                                                       attributes: attributes)
-        return NSNumber(integerLiteral: value)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(getFeatureVariableStringWithFeatureKey:variableKey:userId:attributes:error:)
-    public func _objcGetFeatureVariableString(featureKey: String,
-                                              variableKey: String,
-                                              userId: String,
-                                              attributes: [String: Any]?) throws -> String {
-        return try self.getFeatureVariableString(featureKey: featureKey,
-                                                 variableKey: variableKey,
-                                                 userId: userId,
-                                                 attributes: attributes)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(getEnabledFeaturesWithUserId:attributes:error:)
-    public func _objcGetEnabledFeatures(userId: String,
-                                        attributes: [String: Any]?) throws -> [String] {
-        return try self.getEnabledFeatures(userId:userId, attributes: attributes)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(trackWithEventKey:userId:attributes:eventTags:error:)
-    public func _objcTrack(eventKey:String,
-                           userId: String,
-                           attributes: [String:Any]?,
-                           eventTags: [String:Any]?) throws {
-        try self.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
-    }
-    
-}
-
-// MARK: - ObjC Conversions
-
-extension OptimizelyManager {
-    
-    // MARK: - OPTEventDispatcher protocol wrapper
-
-    class SwiftEventDispatcher: OPTEventDispatcher {
-        let objcEventDispatcher: _ObjcOPTEventDispatcher
-        
-        init?(_ objcEventDispatcher: _ObjcOPTEventDispatcher?) {
-            guard let objcDispatcher = objcEventDispatcher else { return nil }
-            
-            self.objcEventDispatcher = objcDispatcher
-        }
-        
-        func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-            var objcHandler: ((Data?, NSError?) -> Void)? = nil
-            
-            if let completionHandler = completionHandler {
-                objcHandler = { (data, error) in
-                    var result: Result<Data, OptimizelyError>
-                    
-                    if let error = error {
-                        result = .failure(.eventDispatchFailed(error.localizedDescription))
-                    } else {
-                        result = .success(data ?? Data())
-                    }
-                    
-                    completionHandler(result)
-                }
-            }
-            
-            objcEventDispatcher.dispatchEvent(event: event, completionHandler: objcHandler)
-        }
-        
-        func flushEvents() {
-            objcEventDispatcher.flushEvents()
-        }
-    }
-    
-    // MAKR: - ObjC Errors
-    
-    func convertErrorForObjc(_ error: Error) -> NSError {
-        var errorInObjc: NSError
-        
-        // add more details for error types
-        
-        switch error {
-        default:
-            errorInObjc = NSError(domain: "com.optimizely.OptimizelySwiftSDK",
-                                  code: 1000,
-                                  userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])
-        }
-        
-        return errorInObjc
-    }
-}
-
-// MARK: - ObjC protocols
-@objc(OPTEventDispatcher) public protocol _ObjcOPTEventDispatcher {
-    func dispatchEvent(event:EventForDispatch, completionHandler:((Data?, NSError?) -> Void)?)
-    
-    /// Attempts to flush the event queue if there are any events to process.
-    func flushEvents()
-}

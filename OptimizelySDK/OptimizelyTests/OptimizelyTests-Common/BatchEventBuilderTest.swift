@@ -22,15 +22,15 @@ class BatchEventBuilderTests: XCTestCase {
     let featureExperimentKey = "feature_targeted_exp"
     let eventWithNoExperimentKey = "unused_event"
     let userId = "userId"
-    var optimizely: OptimizelyManager?
+    var optimizely: OptimizelyClient?
     
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        optimizely = OptimizelyManager(sdkKey: "", periodicDownloadInterval: 0)
+        optimizely = OptimizelyClient(sdkKey: "", periodicDownloadInterval: 0)
         
         let datafile = OTUtils.loadJSONDatafile(datafileName)
         do {
-            try optimizely?.initializeSDK(datafile: datafile!)
+            try optimizely?.start(datafile: datafile!)
         }
         catch {
             print(error)

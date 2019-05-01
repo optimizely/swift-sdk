@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyManagerTests_Invalid: XCTestCase {
+class OptimizelyClientTests_Invalid: XCTestCase {
     let kSdkKey = "12345"
     let kUserId = "11111"
     let kExperimentKey = "e1"
@@ -25,15 +25,15 @@ class OptimizelyManagerTests_Invalid: XCTestCase {
     let kVariableKey = "va1"
     let kEventKey  = "ev1"
 
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
 
     override func setUp() {
         super.setUp()
         
-        self.optimizely = OptimizelyManager(sdkKey: kSdkKey)
+        self.optimizely = OptimizelyClient(sdkKey: kSdkKey)
         
         let invalidDatafile = "{\"version\": \"4\"}"
-        try? self.optimizely.initializeSDK(datafile: invalidDatafile)
+        try? self.optimizely.start(datafile: invalidDatafile)
     }
     
     func testActivate_WhenManagerNonInitialized() {

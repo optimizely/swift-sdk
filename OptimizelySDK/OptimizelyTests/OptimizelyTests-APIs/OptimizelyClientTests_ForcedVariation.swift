@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyManagerTests_ForcedVariation: XCTestCase {
+class OptimizelyClientTests_ForcedVariation: XCTestCase {
     
     let kExperimentKey = "exp_with_audience"
     let kVariationKey = "a"
@@ -24,16 +24,16 @@ class OptimizelyManagerTests_ForcedVariation: XCTestCase {
     let kUserId = "11111"
     
     var datafile: Data!
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     
     override func setUp() {
         super.setUp()
         
         self.datafile = OTUtils.loadJSONDatafile("api_datafile")
         
-        self.optimizely = OptimizelyManager(sdkKey: "12345",
+        self.optimizely = OptimizelyClient(sdkKey: "12345",
                                             userProfileService: OTUtils.createClearUserProfileService())
-        try! self.optimizely.initializeSDK(datafile: datafile)
+        try! self.optimizely.start(datafile: datafile)
     }
     
     func testForcedVariation_ThenActivate() {
@@ -79,7 +79,7 @@ class OptimizelyManagerTests_ForcedVariation: XCTestCase {
         
         // reload ProjectConfig (whitelist must NOT be sustained)
         
-        try! self.optimizely.initializeSDK(datafile: datafile)
+        try! self.optimizely.start(datafile: datafile)
         variationKey = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
         XCTAssertNil(variationKey)
     }

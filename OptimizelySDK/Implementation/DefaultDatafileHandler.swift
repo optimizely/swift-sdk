@@ -40,7 +40,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             case .success(let data):
                 datafile = data
             case .failure(let error):
-                self.logger?.log(level: .error, message: error.localizedDescription)
+                self.logger?.e(error.localizedDescription)
             }
             group.leave()
         }
@@ -99,17 +99,15 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             guard let request = self.getRequest(sdkKey: sdkKey) else { return }
             
             let task = session.downloadTask(with: request) { (url, response, error) in
-                var result = Result<Data?, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
+                var result = OptimizelyResult<Data?>.failure(.datafileDownloadFailed("Failed to parse"))
                 
                 if let _ = error {
-                    self.logger?.log(level: .error, message: error.debugDescription)
-                    let datafiledownloadError = DatafileDownloadError(description: error.debugDescription)
-                    result = Result.failure(datafiledownloadError)
-                }
-                else if let response = response as? HTTPURLResponse {
+                    self.logger?.e(error.debugDescription)
+                    result = .failure(.datafileDownloadFailed(error.debugDescription))
+                } else if let response = response as? HTTPURLResponse {
                     if response.statusCode == 200 {
                         let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url)
-                        result = Result.success(data)
+                        result = .success(data)
                     }
                     else if response.statusCode == 304 {
                         self.logger?.log(level: .debug, message: "The datafile was not modified and won't be downloaded again")
@@ -119,8 +117,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 
                 completionHandler(result)
                 
-//                self.logger?.log(level: .debug, message: response.debugDescription)
-                
+                //self.logger?.d(response.debugDescription)                
             }
             
             task.resume()
@@ -212,7 +209,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     datafileChangeNotification(data)
                 }
             case .failure(let error):
-                self.logger?.log(level: .error, message: error.localizedDescription)
+                self.logger?.e(error.localizedDescription)
             }
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
@@ -232,7 +229,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func stopPeriodicUpdates(sdkKey: String) {
         timers.performAtomic { (timers) in
             if let timer = timers[sdkKey] {
-                logger?.log(level: .info, message: "Stopping timer for datafile updates sdkKey: \(sdkKey)")
+                logger?.i("Stopping timer for datafile updates sdkKey: \(sdkKey)")
                 
                 timer.timer.invalidate()
                 timers.removeValue(forKey: sdkKey)
@@ -243,7 +240,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     
     func stopPeriodicUpdates() {
         for key in timers.property?.keys ?? Dictionary<String, (timer: Timer, interval: Int)>().keys {
-            logger?.log(level: .info, message: "Stopping timer for all datafile updates")
+            logger?.i("Stopping timer for all datafile updates")
             stopPeriodicUpdates(sdkKey: key)
         }
         
@@ -260,7 +257,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 try dataFile.write(to: fileURL, options: .atomic)
             }
             catch {/* error handling here */
-                logger?.log(level: .error, message: "Problem saving datafile for key " + sdkKey)
+                logger?.e("Problem saving datafile for key " + sdkKey)
             }
         }
     }
@@ -276,7 +273,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 return data
             }
             catch {/* error handling here */
-                logger?.log(level: .error, message: "Problem loading datafile for key " + sdkKey)
+                logger?.e("Problem loading datafile for key " + sdkKey)
             }
         }
         

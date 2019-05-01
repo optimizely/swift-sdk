@@ -38,7 +38,7 @@ class DecisionListenerTests: XCTestCase {
     
     var datafile: Data!
     var optimizely: FakeManager!
-    var optimizely2: OptimizelyManager?
+    var optimizely2: OptimizelyClient?
     
     // MARK: - SetUp
     
@@ -49,7 +49,7 @@ class DecisionListenerTests: XCTestCase {
         
         self.optimizely = FakeManager(sdkKey: "12345",
                                       userProfileService: OTUtils.createClearUserProfileService())
-        try! self.optimizely.initializeSDK(datafile: datafile)
+        try! self.optimizely.start(datafile: datafile)
         
         
         self.optimizely2 = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
@@ -563,7 +563,7 @@ class DecisionListenerTests: XCTestCase {
     }
 }
 
-class FakeManager: OptimizelyManager {
+class FakeManager: OptimizelyClient {
     
     override var decisionService: OPTDecisionService {
         get {
@@ -571,9 +571,9 @@ class FakeManager: OptimizelyManager {
         }
     }
     
-    override init(sdkKey: String, logger:OPTLogger? = nil, eventDispatcher:OPTEventDispatcher? = nil, userProfileService:OPTUserProfileService? = nil, periodicDownloadInterval:Int? = nil) {
+    override init(sdkKey: String, logger:OPTLogger? = nil, eventDispatcher:OPTEventDispatcher? = nil, userProfileService:OPTUserProfileService? = nil, periodicDownloadInterval:Int? = nil, defaultLogLevel: OptimizelyLogLevel? = nil) {
         
-        super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, periodicDownloadInterval: periodicDownloadInterval)
+        super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, periodicDownloadInterval: periodicDownloadInterval, defaultLogLevel: defaultLogLevel)
         HandlerRegistryService.shared.removeAll()
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()

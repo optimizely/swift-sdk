@@ -16,7 +16,7 @@
 
 import Foundation
 
-extension OptimizelyManager {
+extension OptimizelyClient {
     func registerServices(sdkKey:String,
                           logger:OPTLogger,
                           eventDispatcher:OPTEventDispatcher,

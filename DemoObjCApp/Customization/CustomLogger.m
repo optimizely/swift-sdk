@@ -28,4 +28,18 @@
     return self;
 }
 
+- (void)logWithLevel:(enum OptimizelyLogLevel)level message:(NSString * _Nonnull)message {
+    if (level <= CustomLogger.logLevel) {
+        NSLog(@"🐱 - [\(level.name)] Kitty - %@", message);
+    }
+}
+
+static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
++(enum OptimizelyLogLevel)logLevel {
+    return logLevel;
+}
++(void)setLogLevel:(enum OptimizelyLogLevel)value {
+    logLevel = value;
+}
+
 @end

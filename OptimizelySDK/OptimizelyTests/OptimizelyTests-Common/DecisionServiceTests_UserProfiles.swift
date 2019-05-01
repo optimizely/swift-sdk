@@ -18,7 +18,7 @@ import XCTest
 
 class DecisionServiceTests_UserProfiles: XCTestCase {
     
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     var config: ProjectConfig!
     var decisionService: DefaultDecisionService!
     

@@ -16,15 +16,7 @@
 
 import Foundation
 
-public struct DatafileDownloadError : Error {
-    var description:String
-    
-    init(description:String) {
-        self.description = description
-    }
-}
-
-public typealias DatafileDownloadCompletionHandler = (Result<Data?,DatafileDownloadError>) -> Void
+public typealias DatafileDownloadCompletionHandler = (OptimizelyResult<Data?>) -> Void
 
 ///
 /// The datafile handler is used by the optimizely manager to manage the Optimizely datafile.

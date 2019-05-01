@@ -16,10 +16,10 @@
 
 #import <UIKit/UIKit.h>
 
-@class OptimizelyManager;
+@class OptimizelyClient;
 
 @interface VariationViewController : UIViewController
-@property(nullable, nonatomic, strong) OptimizelyManager *optimizely;
+@property(nullable, nonatomic, strong) OptimizelyClient *optimizely;
 @property(nonnull, nonatomic, strong) NSString *eventKey;
 @property(nonnull, nonatomic, strong) NSString *variationKey;
 @property(nonnull, nonatomic, strong) NSString *userId;

@@ -22,7 +22,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
     let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2"
     let userId = "test_user_1"
 
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     var eventDispatcher: FakeEventDispatcher!
     var project: Project!
     

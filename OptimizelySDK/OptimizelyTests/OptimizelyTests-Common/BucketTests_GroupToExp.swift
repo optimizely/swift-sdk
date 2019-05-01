@@ -18,7 +18,7 @@ import XCTest
 
 class BucketTests_GroupToExp: XCTestCase {
 
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     var config: ProjectConfig!
     var bucketer: OPTBucketer!
     

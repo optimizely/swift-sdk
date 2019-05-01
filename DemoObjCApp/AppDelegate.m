@@ -39,11 +39,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-    #if TARGET_OS_IOS
-    
-    #endif
     
     self.userId = [NSString stringWithFormat:@"%d", arc4random_uniform(300000)];
     self.attributes = @{ @"browser_type": @"safari" };
@@ -134,8 +129,13 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                                                                   NSDictionary<NSString *,id> *attributes, NSDictionary<NSString *,id> *eventTags, NSDictionary<NSString *,id> *event) {
         NSLog(@"Received track notification: %@ %@ %@ %@ %@", eventKey, userId, attributes, eventTags, event);
         
+
 #if TARGET_OS_IOS
+        // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
+
         // Amplitude example
+        [Amplitude.instance initializeApiKey:@"YOUR_API_KEY_HERE"];
+
         NSString *propertyKey = [NSString stringWithFormat:@"[Optimizely] %@", eventKey];
         AMPIdentify *identify = [[AMPIdentify alloc] init];
         [identify set:propertyKey value:userId];

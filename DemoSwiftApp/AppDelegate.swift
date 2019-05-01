@@ -42,10 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
-        // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-        #if os(iOS)
-            Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
-        #endif
 
         // initialize SDK in one of these two ways:
         // (1) asynchronous SDK initialization (RECOMMENDED)
@@ -118,9 +114,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = optimizely.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
             print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
             
+            // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
             #if os(iOS)
-            
+
             // Amplitude example
+            Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
+
             let propertyKey = "[Optimizely] " + eventKey
             let identify = AMPIdentify()
             identify.set(propertyKey, value: userId as NSObject?)

@@ -33,7 +33,7 @@ class OptimizelyManagerTests_Invalid: XCTestCase {
         self.optimizely = OptimizelyManager(sdkKey: kSdkKey)
         
         let invalidDatafile = "{\"version\": \"4\"}"
-        try? self.optimizely.start(datafile: invalidDatafile)
+        try? self.optimizely.initializeSDK(datafile: invalidDatafile)
     }
     
     func testActivate_WhenManagerNonInitialized() {

@@ -83,7 +83,7 @@ class OTUtils {
                                            eventDispatcher: eventDispatcher,
                                            userProfileService: userProfileService)
         do {
-            try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
+            try optimizely.initializeSDK(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely
         } catch {
             return nil

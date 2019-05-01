@@ -64,7 +64,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 -(void)initializeOptimizelySDKAsynchronous {
     self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey];
     
-    [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
+    [self.optimizely initializeSDKWithCompletion:^(NSData *data, NSError *error) {
         if (error == nil) {
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
@@ -93,7 +93,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
         self.optimizely = nil;
     } else {
         NSError *error;
-        BOOL status = [self.optimizely startWithDatafile:datafileJSON error:&error];
+        BOOL status = [self.optimizely initializeSDKWithDatafile:datafileJSON error:&error];
         if (status) {
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
@@ -144,7 +144,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 #endif
     }];
     
-    [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
+    [self.optimizely initializeSDKWithCompletion:^(NSData *data, NSError *error) {
         if (error == nil) {
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {

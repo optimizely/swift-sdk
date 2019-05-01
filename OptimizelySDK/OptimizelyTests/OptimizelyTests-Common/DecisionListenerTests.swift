@@ -49,7 +49,7 @@ class DecisionListenerTests: XCTestCase {
         
         self.optimizely = FakeManager(sdkKey: "12345",
                                       userProfileService: OTUtils.createClearUserProfileService())
-        try! self.optimizely.start(datafile: datafile)
+        try! self.optimizely.initializeSDK(datafile: datafile)
         
         
         self.optimizely2 = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)

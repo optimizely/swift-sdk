@@ -61,7 +61,7 @@ class AudienceTests_Evaluate: XCTestCase {
         self.typedAudienceDatafile = OTUtils.loadJSONDatafile("typed_audience_datafile")
         
         self.optimizely = OptimizelyManager(sdkKey: "12345")
-        try! self.optimizely.start(datafile: typedAudienceDatafile)
+        try! self.optimizely.initializeSDK(datafile: typedAudienceDatafile)
     }
 
 

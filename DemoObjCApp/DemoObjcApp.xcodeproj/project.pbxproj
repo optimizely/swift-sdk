@@ -226,13 +226,13 @@
 			children = (
 				6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */,
 				6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */,
-				6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */,
+				6E4DD97921E67A6500B0C2C7 /* OptimizelyTests-iOS.xctest */,
 				6E8D3245226FAC4F00478458 /* OptimizelyTests-Common-iOS.xctest */,
 				6E8D3247226FAC4F00478458 /* OptimizelyTests-APIs-iOS.xctest */,
 				6E8D3249226FAC4F00478458 /* OptimizelyTests-DataModel-iOS.xctest */,
 				6E8D324B226FAC4F00478458 /* OptimizelyTests-Others-iOS.xctest */,
 				6E8D324D226FAC4F00478458 /* OptimizelyTests-Legacy-iOS.xctest */,
-				6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */,
+				6E4DD97B21E67A6500B0C2C7 /* OptimizelyTests-tvOS.xctest */,
 				6E8D324F226FAC4F00478458 /* OptimizelyTests-Common-tvOS.xctest */,
 				6E8D3251226FAC4F00478458 /* OptimizelyTests-DataModel-tvOS.xctest */,
 				6E8D3253226FAC4F00478458 /* OptimizelyTests-Others-tvOS.xctest */,
@@ -464,14 +464,14 @@
 			remoteRef = 6E4DD97621E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97921E67A6500B0C2C7 /* OptimizelySwiftSDK-iOSTests.xctest */ = {
+		6E4DD97921E67A6500B0C2C7 /* OptimizelyTests-iOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-iOS.xctest";
 			remoteRef = 6E4DD97821E67A6500B0C2C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97B21E67A6500B0C2C7 /* OptimizelySwiftSDK-tvOSTests.xctest */ = {
+		6E4DD97B21E67A6500B0C2C7 /* OptimizelyTests-tvOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-tvOS.xctest";
@@ -619,7 +619,7 @@
 				"${PODS_ROOT}/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Amplitude-iOS/Amplitude_iOS.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
-				"${PODS_ROOT}/Localytics/Localytics-iOS-5.4.0/Localytics.framework",
+				"${PODS_ROOT}/Localytics/Localytics-iOS-5.5.0/Localytics.framework",
 				"${BUILT_PRODUCTS_DIR}/Mixpanel-swift/Mixpanel.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";

@@ -39,7 +39,7 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    self.userId = [NSString stringWithFormat:@"%d", arc4random()];
+    self.userId = [NSString stringWithFormat:@"%d", arc4random_uniform(300000)];
     self.attributes = @{ @"browser_type": @"safari" };
     
     

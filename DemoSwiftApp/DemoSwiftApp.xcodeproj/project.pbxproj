@@ -466,7 +466,7 @@
 				"${PODS_ROOT}/Target Support Files/Pods-DemoSwiftiOS/Pods-DemoSwiftiOS-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Amplitude-iOS/Amplitude_iOS.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
-				"${PODS_ROOT}/Localytics/Localytics-iOS-5.4.0/Localytics.framework",
+				"${PODS_ROOT}/Localytics/Localytics-iOS-5.5.0/Localytics.framework",
 				"${BUILT_PRODUCTS_DIR}/Mixpanel-swift/Mixpanel.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";

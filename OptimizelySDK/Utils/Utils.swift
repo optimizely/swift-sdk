@@ -22,7 +22,7 @@ class Utils {
     // - Bundle(identifier: bundleIdentifier) works ok consistently
     // - CocoaPods uses its own bundle identifier, so let it use Bundle(for:) as a fallback
     //   CocoaPods copies "s.version" in podspec to "CFBundleShortVersionString" in its own Info.plist file
-    static var sdkVersion:String = {
+    static var sdkVersion: String = {
         let bundle = Bundle(identifier: "com.optimizely.OptimizelySwiftSDK") ?? Bundle(for: OptimizelyManager.self)
         guard let version = bundle.infoDictionary!["CFBundleShortVersionString"] as? String else {
             return "1.0.0"

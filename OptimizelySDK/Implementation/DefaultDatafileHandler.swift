@@ -107,7 +107,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 } else if let response = response as? HTTPURLResponse {
                     if response.statusCode == 200 {
                         let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url)
-                        result = Result.success(data)
+                        result = .success(data)
                     }
                     else if response.statusCode == 304 {
                         self.logger?.log(level: .debug, message: "The datafile was not modified and won't be downloaded again")

@@ -57,7 +57,7 @@ github "optimizely/swift-sdk" "master"
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
 
 ```
-        let optimizely = OptimizelyManager(sdkKey:"somesdkkey")
+        let optimizely = OptimizelyClient(sdkKey:"somesdkkey")
         
         if let _ try? = optimizely.initializeSDK(datafile:json) {
             let variation = optimizely.activate(experimentKey: "background_experiment", userId: "userId", attributes: ["doubleKey":5])

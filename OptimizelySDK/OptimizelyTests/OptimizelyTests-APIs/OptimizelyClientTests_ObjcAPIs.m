@@ -104,7 +104,7 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey: kSdkKey];
     
-    [self.optimizely initializeSDKWithDatafile:fileContents error:nil];
+    [self.optimizely startWithDatafile:fileContents error:nil];
     
     self.attributes = @{ @"name": @"tom", @"age": @21 };
 }
@@ -231,11 +231,11 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
                                        periodicDownloadInterval:@(50)
                                                  defaultLogLevel:OptimizelyLogLevelInfo];
     
-    [self.optimizely initializeSDKWithCompletion:^(NSData * _Nullable data, NSError * _Nullable error) {}];
+    [self.optimizely startWithCompletion:^(NSData * _Nullable data, NSError * _Nullable error) {}];
     
-    [self.optimizely initializeSDKWithDatafile:datafile error:nil];
+    [self.optimizely startWithDatafile:datafile error:nil];
     
-    [self.optimizely initializeSDKWithDatafile:datafileData doFetchDatafileBackground:false error:nil];
+    [self.optimizely startWithDatafile:datafileData doFetchDatafileBackground:false error:nil];
 }
 
 @end

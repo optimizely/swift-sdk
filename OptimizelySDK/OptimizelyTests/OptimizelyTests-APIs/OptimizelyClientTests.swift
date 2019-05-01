@@ -25,7 +25,7 @@ class OptimizelyClientTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         optimizely = OptimizelyClient(sdkKey: "SDKKEY")
         
-       try! optimizely?.initializeSDK(datafile:json)
+       try! optimizely?.start(datafile:json)
     }
 
     override func tearDown() {
@@ -172,7 +172,7 @@ class OptimizelyClientTests: XCTestCase {
 //        measure {
 //            let optimizely = OptimizelyClient(sdkKey: "SDKKEY")
 //            
-//            try? optimizely.initializeSDK(datafile:json)
+//            try? optimizely.start(datafile:json)
 //        }
 //    }
 //

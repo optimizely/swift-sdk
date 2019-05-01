@@ -98,7 +98,7 @@ open class OptimizelyClient: NSObject {
     /// - Parameters:
     ///   - resourceTimeout: timeout for datafile download (optional)
     ///   - completion: callback when initialization is completed
-    public func initializeSDK(resourceTimeout:Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+    public func start(resourceTimeout:Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         fetchDatafileBackground(resourceTimeout:resourceTimeout) { result in
             switch result {
             case .failure:
@@ -124,12 +124,12 @@ open class OptimizelyClient: NSObject {
     ///   - datafile: This datafile will be used when cached copy is not available (fresh start).
     ///             A cached copy from previous download is used if it's available.
     ///             The datafile will be updated from the server in the background thread.
-    public func initializeSDK(datafile: String) throws {
+    public func start(datafile: String) throws {
         guard let datafileData = datafile.data(using: .utf8) else {
             throw OptimizelyError.dataFileInvalid
         }
         
-        try initializeSDK(datafile: datafileData)
+        try start(datafile: datafileData)
     }
     
     /// Start Optimizely SDK (Synchronous)
@@ -141,7 +141,7 @@ open class OptimizelyClient: NSObject {
     ///   - doFetchDatafileBackground: This is for debugging purposes when
     ///             you don't want to download the datafile.  In practice, you should allow the
     ///             background thread to update the cache copy (optional)
-    public func initializeSDK(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
+    public func start(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
         let cachedDatafile = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey)
         
         let selectedDatafile = cachedDatafile ?? datafile

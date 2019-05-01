@@ -56,7 +56,7 @@ class OptimizelyClientTests_Valid: XCTestCase {
         
         self.optimizely = OptimizelyClient(sdkKey: "12345",
                                             userProfileService: OTUtils.createClearUserProfileService())
-        try! self.optimizely.initializeSDK(datafile: datafile)
+        try! self.optimizely.start(datafile: datafile)
     }
     
     func testActivate() {

@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyManagerTests_Variables: XCTestCase {
+class OptimizelyClientTests_Variables: XCTestCase {
     
     let kVariableId = "1111"
     let kVariableDefaultValue = 20
@@ -67,7 +67,7 @@ class OptimizelyManagerTests_Variables: XCTestCase {
         ]
     }
     
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     var experiment: Experiment!
     var featureFlag: FeatureFlag!
     

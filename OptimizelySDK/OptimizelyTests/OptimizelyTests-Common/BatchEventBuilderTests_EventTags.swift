@@ -22,7 +22,7 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
     let userId = "test_user_1"
     let eventKey = "event_single_targeted_exp"
 
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     var eventDispatcher: FakeEventDispatcher!
     var project: Project!
     

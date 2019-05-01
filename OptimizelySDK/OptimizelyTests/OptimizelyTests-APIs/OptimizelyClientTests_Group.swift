@@ -17,12 +17,12 @@
 import Foundation
 import XCTest
 
-class OptimizelyManagerTests_Group: XCTestCase {
+class OptimizelyClientTests_Group: XCTestCase {
     
     let kUserId = "q456789"
     
     var datafile: Data?
-    var optimizely: OptimizelyManager?
+    var optimizely: OptimizelyClient?
     var eventDispatcher:FakeEventDispatcher?
     
     // MARK: - Attribute Value Range

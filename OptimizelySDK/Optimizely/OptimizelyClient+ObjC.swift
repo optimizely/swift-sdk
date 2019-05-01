@@ -16,7 +16,7 @@
 
 import Foundation
 
-extension OptimizelyManager {
+extension OptimizelyClient {
     
 
     @available(swift, obsoleted: 1.0)
@@ -58,7 +58,7 @@ extension OptimizelyManager {
     }
     
     @available(swift, obsoleted: 1.0)
-    @objc(initializeSDKWithCompletion:)
+    @objc(startWithCompletion:)
     /// Start Optimizely SDK (Asynchronous)
     ///
     /// If an updated datafile is available in the server, it's downloaded and the SDK is configured with
@@ -66,8 +66,8 @@ extension OptimizelyManager {
     ///
     /// - Parameters:
     ///   - completion: callback when initialization is completed
-    public func _objcInitializeSDK(completion: ((Data?, NSError?) -> Void)?) {
-        initializeSDK { result in
+    public func _objcStart(completion: ((Data?, NSError?) -> Void)?) {
+        start { result in
             switch result {
             case .failure(let error):
                 completion?(nil, self.convertErrorForObjc(error))
@@ -78,7 +78,7 @@ extension OptimizelyManager {
     }
 
     @available(swift, obsoleted: 1.0)
-    @objc(initializeSDKWithDatafile:error:)
+    @objc(startWithDatafile:error:)
     /// Start Optimizely SDK (Synchronous)
     ///
     /// - Parameters:
@@ -86,11 +86,11 @@ extension OptimizelyManager {
     ///             A cached copy from previous download is used if it's available.
     ///             The datafile will be updated from the server in the background thread.
     public func _objcStartWith(datafile:String) throws {
-        try self.initializeSDK(datafile: datafile)
+        try self.start(datafile: datafile)
     }
     
     @available(swift, obsoleted: 1.0)
-    @objc(initializeSDKWithDatafile:doFetchDatafileBackground:error:)
+    @objc(startWithDatafile:doFetchDatafileBackground:error:)
     /// Start Optimizely SDK (Synchronous)
     ///
     /// - Parameters:
@@ -101,7 +101,7 @@ extension OptimizelyManager {
     ///             you don't want to download the datafile.  In practice, you should allow the
     ///             background thread to update the cache copy (optional)
     public func _objcStart(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
-        try self.initializeSDK(datafile: datafile, doFetchDatafileBackground: doFetchDatafileBackground)
+        try self.start(datafile: datafile, doFetchDatafileBackground: doFetchDatafileBackground)
     }
 
     @available(swift, obsoleted: 1.0)
@@ -310,7 +310,7 @@ extension OptimizelyManager {
 
 // MARK: - ObjC Type Conversions
 
-extension OptimizelyManager {
+extension OptimizelyClient {
     
     /// EventDispatcher implementation for Objective-C interface support
     class SwiftEventDispatcher: OPTEventDispatcher {

@@ -19,12 +19,45 @@ import Foundation
 class ProjectConfig {
     
     var project: Project!
+    
     lazy var logger = HandlerRegistryService.shared.injectLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
     
     var whitelistUsers = [String: [String: String]]()
+    
+    lazy var experimentKeyMap:[String:Experiment] = {
+        var map = [String:Experiment]()
+        allExperiments.forEach({map[$0.key] = $0})
+        return map
+    }()
+    
+    lazy var experimentFeatureMap:[String:[String]] = {
+        var experimentFeatureMap = [String:[String]]()
+        project.featureFlags.forEach({ (ff) in
+            ff.experimentIds.forEach({
+                if var arr = experimentFeatureMap[$0] {
+                    arr.append(ff.id)
+                    experimentFeatureMap[$0] = arr
+                }
+                else {
+                    experimentFeatureMap[$0] = [ff.id]
+                }
+            })
+        })
+        return experimentFeatureMap
+    }()
+    
+    lazy var eventKeyMap:[String:Event] =  {
+        var eventKeyMap = [String:Event]()
+        project.events.forEach({eventKeyMap[$0.key] = $0 })
+        return eventKeyMap
+    }()
+    
+    lazy var allExperiments:[Experiment] = {
+        return project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
+    }()
     
     init(datafile: Data) throws {
         do {
@@ -35,6 +68,7 @@ class ProjectConfig {
         if !isValidVersion(version: self.project.version) {
             throw OptimizelyError.dataFileVersionInvalid(self.project.version)
         }
+        
     }
     
     convenience init(datafile: String) throws {
@@ -87,6 +121,7 @@ extension ProjectConfig {
         // old versions (< 4) of datafiles not supported
         return ["4"].contains(version)
     }
+
 }
 
 // MARK: - Project Access
@@ -97,7 +132,7 @@ extension ProjectConfig {
      * Get an Experiment object for a key.
      */
     func getExperiment(key: String) -> Experiment? {
-        return allExperiments.filter { $0.key == key }.first
+        return experimentKeyMap[key]
     }
     
     /**
@@ -139,7 +174,7 @@ extension ProjectConfig {
      * Gets an event for a corresponding event key
      */
     func getEvent(key: String) -> Event? {
-        return project.events.filter{ $0.key == key }.first
+        return eventKeyMap[key]
     }
     
     /**
@@ -175,12 +210,7 @@ extension ProjectConfig {
      *  Returns true if experiment belongs to any feature, false otherwise.
      */
     func isFeatureExperiment(id: String) -> Bool {
-        if let _ = project.featureFlags.map({ $0.experimentIds.contains(id)}).first {
-            return true
-        }
-        else {
-            return false
-        }
+        return !(experimentFeatureMap[id]?.isEmpty ?? true)
     }
     
     /**
@@ -236,8 +266,4 @@ extension ProjectConfig {
         return true
     }
     
-    var allExperiments:[Experiment] {
-        return  project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
-    }
-
 }

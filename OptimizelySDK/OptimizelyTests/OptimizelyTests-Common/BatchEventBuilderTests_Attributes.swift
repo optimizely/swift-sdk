@@ -53,7 +53,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        
+
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
         let array = json["visitors"][0]["attributes"].arrayValue
@@ -95,7 +95,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        
+
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
         let array = json["visitors"][0]["attributes"].arrayValue
@@ -130,7 +130,6 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
         let array = json["visitors"][0]["attributes"].arrayValue
@@ -168,7 +167,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        
+
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
         let array = json["visitors"][0]["attributes"].arrayValue
@@ -193,7 +192,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     
     func testEventAttributesWhenAttributesEmpty() {
         // clear all audience conditions to accept empty attributes
-        var experiment = optimizely.config!.getExperiment(key: experimentKey)!
+        var experiment = optimizely.config!.project!.experiments.filter({$0.key == experimentKey}).first!
         experiment.audienceConditions = nil
         experiment.audienceIds = []
         optimizely.config!.project!.experiments = [experiment]
@@ -204,6 +203,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
         
+
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
         let array = json["visitors"][0]["attributes"]
@@ -212,7 +212,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     
     func testEventAttributesWhenAttributesNil() {
         // clear all audience conditions to accept empty attributes
-        var experiment = optimizely.config!.getExperiment(key: experimentKey)!
+        var experiment = optimizely.config!.project!.experiments.filter({$0.key == experimentKey}).first!
         experiment.audienceConditions = nil
         experiment.audienceIds = []
         optimizely.config!.project!.experiments = [experiment]
@@ -220,6 +220,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: nil)
+        
         
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
@@ -241,7 +242,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        
+
         let event = eventDispatcher.events.first!
         let json = JSON(event.body)
         let array = json["visitors"][0]["attributes"].arrayValue
@@ -276,7 +277,7 @@ extension BatchEventBuilderTests_Attributes {
                                               eventDispatcher: eventDispatcher)
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
-        
+
         let eventForDispatch = eventDispatcher.events.first
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
@@ -299,6 +300,7 @@ extension BatchEventBuilderTests_Attributes {
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
         
+        
         let eventForDispatch = eventDispatcher.events.first
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
@@ -320,6 +322,7 @@ extension BatchEventBuilderTests_Attributes {
         
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
+        
         
         let eventForDispatch = eventDispatcher.events.first
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)

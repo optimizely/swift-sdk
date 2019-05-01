@@ -51,20 +51,19 @@ static NSString * const kSdkKey = @"12345";
 // MARK: - Customization Modules Protocols
 
 @interface TestOPTLogger: NSObject <OPTLogger>
-@property(nonatomic, assign) OptimizelyLogLevel logLevel;
 @end
 
 @implementation TestOPTLogger
-+ (enum OptimizelyLogLevel)logLevel {
-    return OptimizelyLogLevelInfo;
-}
-
 - (void)logWithLevel:(enum OptimizelyLogLevel)level message:(NSString * _Nonnull)message {
     NSLog(@"[LOG] %@", message);
 }
 
+static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
++ (enum OptimizelyLogLevel)logLevel {
+    return logLevel;
+}
 + (void)setLogLevel:(enum OptimizelyLogLevel)newValue {
-    self.logLevel = newValue;
+    logLevel = newValue;
 }
 @end
 
@@ -95,7 +94,7 @@ static NSString * const kSdkKey = @"12345";
 @end
 
 
-// AMRK: - tests
+// MARK: - tests
 
 @implementation OptimizelyManagerTests_ObjcAPIs
 
@@ -229,7 +228,8 @@ static NSString * const kSdkKey = @"12345";
                                                          logger:logger
                                                 eventDispatcher:eventDispatcher
                                              userProfileService:userProfileService
-                                       periodicDownloadInterval:@(50)];
+                                       periodicDownloadInterval:@(50)
+                                                 defaultLogLevel:OptimizelyLogLevelInfo];
     
     [self.optimizely initializeSDKWithCompletion:^(NSData * _Nullable data, NSError * _Nullable error) {}];
     

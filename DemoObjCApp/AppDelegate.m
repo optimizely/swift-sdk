@@ -17,16 +17,18 @@
 #import "AppDelegate.h"
 #import "VariationViewController.h"
 #import "FailureViewController.h"
+#import "CustomLogger.h"
 
 @import Optimizely;
 #if TARGET_OS_IOS
-    @import Amplitude_iOS;
+@import Amplitude_iOS;
 #endif
 
+
+static NSString * const kOptimizelySdkKey = @"FCnSegiEkRry9rhVMroit4";
 static NSString * const kOptimizelyDatafileName = @"demoTestDatafile";
 static NSString * const kOptimizelyExperimentKey = @"background_experiment";
 static NSString * const kOptimizelyEventKey = @"sample_conversion";
-static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 
 @interface AppDelegate ()
 @property(nonnull, strong, nonatomic) NSString *userId;
@@ -36,12 +38,14 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    self.userId = [NSString stringWithFormat:@"%d", arc4random()];
-    self.attributes = @{ @"browser_type": @"safari" };
+    // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
+    #if TARGET_OS_IOS
     
+    #endif
+    
+    self.userId = [NSString stringWithFormat:@"%d", arc4random()];
+    self.attributes = @{ @"browser_type": @"safari", @"bool_attr": @(false) };
     
     // initialize SDK in one of these two ways:
     // (1) asynchronous SDK initialization (RECOMMENDED)
@@ -50,17 +54,17 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     // (2) synchronous SDK initialization
     //     - initialize immediately with the given JSON datafile or its cached copy
     //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
-
+    
     [self initializeOptimizelySDKAsynchronous];
-    //[self initializeOptimizelySDKSynchronous];
-
     return YES;
 }
 
+// MARK: - Initialization Examples
+
 -(void)initializeOptimizelySDKAsynchronous {
     self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey];
-
-    [self.optimizely initializeSDKWithCompletion:^(NSData * _Nullable data, NSError * _Nullable error) {
+    
+    [self.optimizely initializeSDKWithCompletion:^(NSData *data, NSError *error) {
         if (error == nil) {
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
@@ -68,16 +72,12 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
             self.optimizely = nil;
         }
         
-        [self.optimizely.notificationCenter addActivateNotificationListenerWithActivateListener:^(NSDictionary<NSString *,id> * _Nonnull experiment, NSString * _Nonnull userId, NSDictionary<NSString *,id> * _Nullable attributes, NSDictionary<NSString *,id> * _Nonnull variation, NSDictionary<NSString *,id> * _Nonnull event) {
-            NSLog(@"got activate with experiment");
-            NSLog(@"%@", experiment[@"key"]);
-        }];
-        [self startAppWithExperimentActivated];
+        [self startWithRootViewController];
     }];
 }
 
 -(void)initializeOptimizelySDKSynchronous {
-    NSString *localDatafilePath = [[NSBundle bundleForClass:self.classForCoder] pathForResource:kOptimizelyDatafileName ofType:@"json"];
+    NSString *localDatafilePath = [[NSBundle mainBundle] pathForResource:kOptimizelyDatafileName ofType:@"json"];
     if (localDatafilePath == nil) {
         NSAssert(false, @"Local datafile cannot be found");
         self.optimizely = nil;
@@ -86,11 +86,8 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
     
     self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey];
     
-    // customization example (optional)
-    // TODO: add cutomization for ObjC
-    
     NSString *datafileJSON = [NSString stringWithContentsOfFile:localDatafilePath encoding:NSUTF8StringEncoding error:nil];
-        
+    
     if (datafileJSON == nil) {
         NSLog(@"Invalid JSON format");
         self.optimizely = nil;
@@ -105,72 +102,117 @@ static NSString * const kOptimizelySdkKey = @"AqLkkcss3wRGUbftnKNgh2";
         }
     }
     
-    [self startAppWithExperimentActivated];
+    [self startWithRootViewController];
 }
-     
--(void)startAppWithExperimentActivated {
-    NSError *error;
-    NSString *variationKey = [self.optimizely activateWithExperimentKey:kOptimizelyExperimentKey
-                                                                 userId:self.userId
-                                                             attributes:self.attributes
-                                                                  error:&error];
+
+-(void)initializeOptimizelySDKWithCustomization {
+    // customization example (optional)
     
-    if (variationKey == nil) {
-        NSLog(@"Optimizely SDK activation failed: %@", error.localizedDescription);
-        self.optimizely = nil;
-    }
-
-
-    [self setRootViewControllerWithOtimizelyManager:self.optimizely bucketedVariation:variationKey];
-}
-
--(void)setRootViewControllerWithOtimizelyManager:(OptimizelyManager*)manager bucketedVariation:(NSString*)variationKey {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    CustomLogger *customLogger = [[CustomLogger alloc] init];
+    // 30 sec interval may be too frequent. This is for demo purpose.
+    // This should be should be much larger (default = 10 mins).
+    NSNumber *customDownloadIntervalInSecs = @(30);
+    
+    self.optimizely = [[OptimizelyManager alloc] initWithSdkKey:kOptimizelySdkKey
+                                                         logger:customLogger
+                                                eventDispatcher:nil
+                                             userProfileService:nil
+                                       periodicDownloadInterval:customDownloadIntervalInSecs
+                                                defaultLogLevel:OptimizelyLogLevelInfo];
+    
+    NSNumber *notifId;
+    notifId = [self.optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString *type,
+                                                                                              NSString *userId,
+                                                                                              NSDictionary<NSString *,id> *attributes,
+                                                                                              NSDictionary<NSString *,id> *decisionInfo) {
+        NSLog(@"Received decision notification: %@ %@ %@ %@", type, userId, attributes, decisionInfo);
+    }];
+    
+    notifId = [self.optimizely.notificationCenter addTrackNotificationListenerWithTrackListener:^(NSString *eventKey,
+                                                                                                  NSString *userId,
+                                                                                                  NSDictionary<NSString *,id> *attributes, NSDictionary<NSString *,id> *eventTags, NSDictionary<NSString *,id> *event) {
+        NSLog(@"Received track notification: %@ %@ %@ %@ %@", eventKey, userId, attributes, eventTags, event);
         
 #if TARGET_OS_IOS
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"iOSMain" bundle:nil];
-#else
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"tvOSMain" bundle:nil];
+        // Amplitude example
+        NSString *propertyKey = [NSString stringWithFormat:@"[Optimizely] %@", eventKey];
+        AMPIdentify *identify = [[AMPIdentify alloc] init];
+        [identify set:propertyKey value:userId];
+        // Track event (optional)
+        NSString *eventIdentifier = [NSString stringWithFormat:@"[Optimizely] %@ - %@", eventKey, userId];
+        [Amplitude.instance logEvent:eventIdentifier];
 #endif
-        UIViewController *rootViewController;
-        
-        if ((manager != nil) && (variationKey != nil)) {
-            VariationViewController *vc = [storyboard instantiateViewControllerWithIdentifier: @"VariationViewController"];
-            
-            vc.eventKey = kOptimizelyEventKey;
-            vc.optimizely = manager;
-            vc.userId = self.userId;
-            vc.variationKey = variationKey;
-
-            rootViewController = vc;
+    }];
+    
+    [self.optimizely initializeSDKWithCompletion:^(NSData *data, NSError *error) {
+        if (error == nil) {
+            NSLog(@"Optimizely SDK initialized successfully!");
         } else {
-            rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"FailureViewController"];
+            NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
+            self.optimizely = nil;
         }
-            
-        self.window.rootViewController = rootViewController;
+        
+        [self startWithRootViewController];
+    }];
+}
+
+// MARK: - ViewControl
+
+-(void)startWithRootViewController {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSError *error;
+        NSString *variationKey = [self.optimizely activateWithExperimentKey:kOptimizelyExperimentKey
+                                                                     userId:self.userId
+                                                                 attributes:self.attributes
+                                                                      error:&error];
+        
+        if (variationKey != nil) {
+            [self openVariationViewWithVariationKey:variationKey];
+        } else {
+            NSLog(@"Optimizely SDK activation failed: %@", error.localizedDescription);
+            [self openFailureView];
+        }
     });
 }
 
+-(void)openVariationViewWithVariationKey:(nullable NSString*)variationKey {
+    VariationViewController *variationViewController = [self.storyboard instantiateViewControllerWithIdentifier: @"VariationViewController"];
+    
+    variationViewController.optimizely = self.optimizely;
+    variationViewController.userId = self.userId;
+    variationViewController.variationKey = variationKey;
+    variationViewController.eventKey = kOptimizelyEventKey;
+    
+    self.window.rootViewController = variationViewController;
+}
 
+-(void)openFailureView {
+    self.window.rootViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"FailureViewController"];
+}
+
+-(UIStoryboard*)storyboard {
+#if TARGET_OS_IOS
+    return [UIStoryboard storyboardWithName:@"iOSMain" bundle:nil];
+#else
+    return [UIStoryboard storyboardWithName:@"tvOSMain" bundle:nil];
+#endif
+}
+
+// MARK: - AppDelegate
 
 - (void)applicationWillResignActive:(UIApplication *)application {
 }
 
-
 - (void)applicationDidEnterBackground:(UIApplication *)application {
 }
-
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
 }
 
-
 - (void)applicationDidBecomeActive:(UIApplication *)application {
 }
 
-
 - (void)applicationWillTerminate:(UIApplication *)application {
 }
-
 
 @end

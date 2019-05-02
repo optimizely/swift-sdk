@@ -32,7 +32,13 @@ class ProjectConfig {
         allExperiments.forEach({map[$0.key] = $0})
         return map
     }()
-    
+
+    lazy var experimentIdMap:[String:Experiment] = {
+        var map = [String:Experiment]()
+        allExperiments.forEach({map[$0.id] = $0})
+        return map
+    }()
+
     lazy var experimentFeatureMap:[String:[String]] = {
         var experimentFeatureMap = [String:[String]]()
         project.featureFlags.forEach({ (ff) in
@@ -55,6 +61,24 @@ class ProjectConfig {
         return eventKeyMap
     }()
     
+    lazy var attributeKeyMap:[String:Attribute] = {
+        var map = [String:Attribute]()
+        project.attributes.forEach({map[$0.key] = $0 })
+        return map
+    }()
+
+    lazy var featureFlagKeyMap:[String:FeatureFlag] = {
+        var map = [String:FeatureFlag]()
+        project.featureFlags.forEach({map[$0.key] = $0 })
+        return map
+    }()
+
+    lazy var rolloutIdMap:[String:Rollout] = {
+        var map = [String:Rollout]()
+        project.rollouts.forEach({map[$0.id] = $0 })
+        return map
+    }()
+
     lazy var allExperiments:[Experiment] = {
         return project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
     }()
@@ -139,7 +163,7 @@ extension ProjectConfig {
      * Get an Experiment object for an Id.
      */
     func getExperiment(id: String) -> Experiment? {
-        return allExperiments.filter { $0.id == id }.first
+        return experimentIdMap[id]
     }
     
     /**
@@ -160,14 +184,14 @@ extension ProjectConfig {
      * Get a Feature Flag object for a key.
      */
     func getFeatureFlag(key: String) -> FeatureFlag? {
-        return project.featureFlags.filter{ $0.key == key }.first
+        return featureFlagKeyMap[key]
     }
     
     /**
      * Get a Rollout object for an Id.
      */
     func getRollout(id: String) -> Rollout? {
-        return project.rollouts.filter{ $0.id == id }.first
+        return rolloutIdMap[id]
     }
     
     /**
@@ -189,7 +213,7 @@ extension ProjectConfig {
      * Get an attribute for a given key.
      */
     func getAttribute(key: String) -> Attribute? {
-        return project.attributes.filter{ $0.key == key }.first
+        return attributeKeyMap[key]
     }
     
     /**

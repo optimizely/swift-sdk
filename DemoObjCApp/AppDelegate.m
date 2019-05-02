@@ -16,7 +16,6 @@
 
 #import "AppDelegate.h"
 #import "VariationViewController.h"
-#import "FailureViewController.h"
 #import "CustomLogger.h"
 
 @import Optimizely;
@@ -165,7 +164,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                                      userId:self.userId
                                                                  attributes:self.attributes
                                                                       error:&error];
-        
+
         if (variationKey != nil) {
             [self openVariationViewWithVariationKey:variationKey];
         } else {

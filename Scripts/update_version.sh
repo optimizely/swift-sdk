@@ -31,112 +31,63 @@ fi
 vMajor=${varComps[0]}
 vMinor=${varComps[1]}
 vPatch=${varComps[2]}
+vSuffix=""
 
-printf "\nRelease SDK Version: ${releaseSDKVersion} \n"
+if [[ $vPatch =~ ^([0-9]+)([^0-9]*)$ ]] ; then
+    vPatch=${BASH_REMATCH[1]}
+    vSuffix=${BASH_REMATCH[2]}
+fi
+
+printf "\nRelease SDK Version: ${vMajor}.${vMinor}.${vPatch}${vSuffix} \n"
 
 cd "$(dirname $0)/.."
 
 #----------------------------------------------------------------------------------
 # 1. update the SDK version in all xcode project settings
 #----------------------------------------------------------------------------------
-# SDK submodules + universal
-mods=(OptimizelySDKCore \
-    OptimizelySDKShared \
-    OptimizelySDKDatafileManager \
-    OptimizelySDKEventDispatcher \
-    OptimizelySDKUserProfileService \
-    OptimizelySDKiOS \
-    OptimizelySDKTVOS \
-    OptimizelySDKUniversal)
-numMods=${#mods[@]}
-
 printf "\n\nReplacing OPTIMIZELY_SDK_VERSION in Xcode Build Settings to the target version.\n"
 
-for (( i = 0; i < ${numMods}; i++ ))
-do
-    curMod=${mods[i]}
-    curPbxProjPath=${curMod}/${curMod}.xcodeproj/project.pbxproj
-    printf "\t[${curMod}] Updating .pbxproj to ${releaseSDKVersion}.\n"
+curPbxProjPath="OptimizelySDK/OptimizelySwiftSDK.xcodeproj/project.pbxproj"
+printf "\t[Updating .pbxproj to ${releaseSDKVersion}.\n"
 
-    sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_MAJOR[ ]*\)=.*;/\1= ${vMajor};/g" ${curPbxProjPath}
-    sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_MINOR[ ]*\)=.*;/\1= ${vMinor};/g" ${curPbxProjPath}
-    sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_PATCH[ ]*\)=.*;/\1= ${vPatch};/g" ${curPbxProjPath}
-done
+sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_MAJOR[ ]*\)=.*;/\1= \"${vMajor}\";/g" ${curPbxProjPath}
+sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_MINOR[ ]*\)=.*;/\1= \"${vMinor}\";/g" ${curPbxProjPath}
+sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_PATCH[ ]*\)=.*;/\1= \"${vPatch}\";/g" ${curPbxProjPath}
+sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_SUFFIX[ ]*\)=.*;/\1= \"${vSuffix}\";/g" ${curPbxProjPath}
 
 printf "Verifying OPTIMIZELY_SDK_VERSION from Xcode Build Settings.\n";
 
-for (( i = 0; i < ${numMods}; i++ ))
-do
-    curMod=${mods[i]}
-    curProjPath=${curMod}/${curMod}.xcodeproj
+curProjPath="OptimizelySDK/OptimizelySwiftSDK.xcodeproj"
 
-    OPTIMIZELY_SDK_VERSION=$(Xcodebuild -project ${curProjPath} -showBuildSettings | sed -n 's/OPTIMIZELY_SDK_VERSION = \(.*\)/\1/p' | sed 's/ //g');
+OPTIMIZELY_SDK_VERSION=$(Xcodebuild -project ${curProjPath} -showBuildSettings | sed -n 's/OPTIMIZELY_SDK_VERSION = \(.*\)/\1/p' | sed 's/ //g');
 
-    if [ "${OPTIMIZELY_SDK_VERSION}" == "${releaseSDKVersion}" ]
-    then
-        printf "\t[${curMod}] OPTIMIZELY_SDK_VERSION in xcode settings verified: ${releaseSDKVersion}/${OPTIMIZELY_SDK_VERSION}\n"
-    else
-        printf "\n[ERROR][${curMod}] OPTIMIZELY_SDK_VERSION mismatch: (releaseSDKVersion/OPTIMIZELY_SDK_VERSION) = ${releaseSDKVersion}/${OPTIMIZELY_SDK_VERSION}\n";
-       exit 1
-    fi
-
-done
+if [ "${OPTIMIZELY_SDK_VERSION}" == "${releaseSDKVersion}" ]
+then
+    printf "\t[OPTIMIZELY_SDK_VERSION in xcode settings verified: ${releaseSDKVersion} === ${OPTIMIZELY_SDK_VERSION}\n"
+else
+    printf "\n[ERROR][${curMod}] OPTIMIZELY_SDK_VERSION mismatch: (releaseSDKVersion/OPTIMIZELY_SDK_VERSION) = ${releaseSDKVersion}/${OPTIMIZELY_SDK_VERSION}\n";
+    exit 1
+fi
 
 
 #----------------------------------------------------------------------------------
 # 2. update the SDK version in all podspecs
 #----------------------------------------------------------------------------------
-podSpecs=(OptimizelySDKCore.podspec \
-        OptimizelySDKShared.podspec \
-        OptimizelySDKDatafileManager.podspec \
-        OptimizelySDKEventDispatcher.podspec \
-        OptimizelySDKUserProfileService.podspec \
-        OptimizelySDKiOS.podspec \
-        OptimizelySDKTVOS.podspec)
-numPodSpecs=${#podSpecs[@]};
-
 printf "\n\nReplacing all versions in *.podspec files\n"
 
-for (( i = 0; i < ${numPodSpecs}; i++ ));
-do
-    curPodSpec=${podSpecs[i]}
+curPodSpec="OptimizelySwiftSDK.podspec"
 
-    printf "\t[${curPodSpec}] Updating podspec to ${releaseSDKVersion}.\n"
-    sed -i '' -e "s/\(s\.version[ ]*\)=[ ]*\".*\"/\1= \"${releaseSDKVersion}\"/g" ${curPodSpec}
-    sed -i '' -e "s/\(s\.dependency[ ]*[\'\"]OptimizelySDK.*[\'\"].*\,\)[ ]*[\'\"].*[\'\"]/\1 \"${releaseSDKVersion}\"/g" ${curPodSpec}
-done
+printf "\t[${curPodSpec}] Updating podspec to ${releaseSDKVersion}.\n"
+sed -i '' -e "s/\(s\.version[ ]*\)=[ ]*\".*\"/\1= \"${releaseSDKVersion}\"/g" ${curPodSpec}
 
 # pod-spec-lint cannot be run here due to dependency issues
 # all podspecs will be validated anyway when uploading to CocoaPods repo
 
 printf "Verifying *.podspec files\n"
 
-countChanges=0
-
-for (( i = 0; i < ${numPodSpecs}; i++ ))
-do
-    curPodSpec=${podSpecs[i]}
-
-    vm=$(sed -n "s/s\.version.*=.*\"\(.*\)\"/\1/p" ${curPodSpec} | sed "s/ //g" )
-    if [ "${vm}" == "${releaseSDKVersion}" ]; then countChanges=$(( countChanges + 1 )); fi
-
-    deps=$(sed -n "s/s\.dependency.*OptimizelySDK.*\"\(.*\)\"/\1/p" ${curPodSpec} | sed "s/ //g" )
-    deps=( ${deps//\n/ } )
-    for (( j = 0; j < ${#deps[@]}; j++ )); do
-        if [ "${deps[j]}" == "${releaseSDKVersion}" ]; then countChanges=$(( countChanges + 1 )); fi
-    done
-
-    printf "\t[${curPodSpec}] Verified podspec: ${releaseSDKVersion}\n"
-done
-
-# check total 17 (= 7 + 10) places replaced
-expTotalCount=17
-if (( ${countChanges} == ${expTotalCount} ))
-then
-    printf "Verified successfully! (podspec version updated in ${expTotalCount} places) \n"
-else
-    printf "\n[ERROR] podspec version update failed (count=${countChanges}). check it out! \n"
-    exit 1
+vm=$(sed -n "s/s\.version.*=.*\"\(.*\)\"/\1/p" ${curPodSpec} | sed "s/ //g" )
+if [ "${vm}" == "${releaseSDKVersion}" ]; then
+    printf "\t[${curPodSpec}] Verified podspec: ${vm} === ${releaseSDKVersion}\n"
 fi
 
 printf "\n\n[SUCCESS] All release-skd-version settings have been updated successfully!\n\n\n"

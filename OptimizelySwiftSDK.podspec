@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name                    = "OptimizelySwiftSDK"
   s.module_name	            = "Optimizely"
-  s.version                 = "3.0.0"
+  s.version                 = "3.1.0-beta"
   s.summary                 = "Optimizely server-side testing core framework."
   s.homepage                = "http://developers.optimizely.com/server/reference/index.html?language=objectivec"
   s.license                 = { :type => "Apache License, Version 2.0", :file => "LICENSE" }

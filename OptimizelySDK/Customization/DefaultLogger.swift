@@ -30,7 +30,6 @@ open class DefaultLogger : OPTLogger {
     }
     
     required public init() {
-        DefaultLogger.logLevel = .info
     }
     
     open func log(level: OptimizelyLogLevel, message: String) {

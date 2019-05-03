@@ -50,14 +50,14 @@ enum ConditionLeaf: Codable, Equatable {
         }
     }
     
-    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluate(project: Project?, attributes: OptimizelyAttributes?) throws -> Bool {
         switch self {
         case .audienceId(let id):
-            guard let project = project else {
+            guard var project = project else {
                 throw OptimizelyError.conditionCannotBeEvaluated("audienceId: \(id)")
             }
             
-            return try project.evaluateAudience(audienceId: id, attributes: attributes)
+            return try project.getAudience(id: id)?.evaluate(project: project, attributes: attributes) ?? false
         case .attribute(let userAttribute):
             return try userAttribute.evaluate(attributes: attributes)
         }

@@ -21,13 +21,6 @@ import XCTest
 
 class ConditionHolderTests_Evaluate: XCTestCase {
 
-    struct ProjectMock: ProjectProtocol {
-        func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool {
-            return Int(audienceId)! < 20000
-        }
-    }
-    
-    var project = ProjectMock()
     let attributeData = ["age": 30]
     let userAttributeData: [String: Any] = ["name":"age",
                                             "type":"custom_attribute",

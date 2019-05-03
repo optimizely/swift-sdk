@@ -26,14 +26,27 @@ struct Group: Codable, Equatable {
     var policy: Policy
     var trafficAllocation: [TrafficAllocation]
     var experiments: [Experiment]
+    
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case policy
+        case trafficAllocation
+        case experiments
+    }
+    
+    lazy var experimentMap:[String:Experiment] = {
+        var map:[String:Experiment] = [:]
+        experiments.forEach({map[$0.id] = $0 })
+        return map
+    }()
 }
 
 // MARK: - Utils
 
 extension Group {
     
-    func getExperiemnt(id: String) -> Experiment? {
-        return experiments.filter { $0.id == id }.first
+    mutating func getExperiment(id: String) -> Experiment? {
+        return self.experimentMap[id]
     }
     
 }

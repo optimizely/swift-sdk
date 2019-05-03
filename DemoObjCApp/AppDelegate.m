@@ -18,6 +18,7 @@
 #import "VariationViewController.h"
 #import "FailureViewController.h"
 #import "CustomLogger.h"
+#import "SamplesForAPI.h"
 
 @import Optimizely;
 #if TARGET_OS_IOS

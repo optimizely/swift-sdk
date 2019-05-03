@@ -15,6 +15,8 @@
 		0B05901A2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B05901B2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
 		0B11272E2242D817002A9C20 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
+		0B272F83227CB217002B302D /* ConditionHolderTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95C8B12217C92E00B6EE06 /* ConditionHolderTests_Evaluate.swift */; };
+		0B272F84227CB219002B302D /* ConditionHolderTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95C8B12217C92E00B6EE06 /* ConditionHolderTests_Evaluate.swift */; };
 		0B4AE9FA22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
 		0B4AE9FB22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */; };
 		0B4AEA112228A6430047B75D /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B4AE9FC2228A6410047B75D /* bucketing_id.json */; };
@@ -2989,6 +2991,7 @@
 				6EA426382218E74F00B074B5 /* Attribute.swift in Sources */,
 				6EA425A72218E6AE00B074B5 /* VariationTests.swift in Sources */,
 				0B7B188E2232DB8700A1F85D /* DataStoreMemory.swift in Sources */,
+				0B272F84227CB219002B302D /* ConditionHolderTests_Evaluate.swift in Sources */,
 				6E8B6A4C221CC2D6006EA8A6 /* ProjectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3161,6 +3164,7 @@
 				6EA426042218E74E00B074B5 /* Attribute.swift in Sources */,
 				6EA425982218E6AD00B074B5 /* VariationTests.swift in Sources */,
 				0B7B188A2232DB8500A1F85D /* DataStoreMemory.swift in Sources */,
+				0B272F83227CB217002B302D /* ConditionHolderTests_Evaluate.swift in Sources */,
 				6E8B6A4B221CC2D6006EA8A6 /* ProjectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

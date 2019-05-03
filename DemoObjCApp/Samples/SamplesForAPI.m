@@ -83,7 +83,7 @@
     }
     {
         [optimizely trackWithEventKey:@"my_purchase_event_key"
-                               userId:@"user_id"
+                               userId:@"user_123"
                            attributes:attributes
                             eventTags:tags
                                 error:nil];

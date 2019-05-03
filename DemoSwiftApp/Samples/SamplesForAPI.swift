@@ -28,7 +28,7 @@ class SamplesForAPI {
             "lifetime": 24738388,
             "is_logged_in": true,
             ]
-        let eventTags: [String: Any] = [
+        let tags: [String: Any] = [
             "category": "shoes",
             "count": 2,
             ]
@@ -75,7 +75,7 @@ class SamplesForAPI {
             print("[getEnabledFeatures] \(enabledFeatures)")
         }
         
-        try? optimizely.track(eventKey: "my_purchase_event_key", userId: "user_123", attributes: attributes, eventTags: eventTags)
+        try? optimizely.track(eventKey: "my_purchase_event_key", userId: "user_123", attributes: attributes, eventTags: tags)
         print("[track]")
     }
     

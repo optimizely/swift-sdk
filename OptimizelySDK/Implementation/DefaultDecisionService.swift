@@ -63,50 +63,50 @@ class DefaultDecisionService : OPTDecisionService {
             return variation
         }
         
-        var bucketedVariation:Variation?
         // ---- check if the user passes audience targeting before bucketing ----
-        if isInExperiment(config: config, experiment:experiment, userId:userId, attributes:attributes) {
-            // bucket user into a variation
-            bucketedVariation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId)
-            
-            if let bucketedVariation = bucketedVariation {
+        if isInExperiment(config: config, experiment:experiment, userId:userId, attributes:attributes), let bucketedVariation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
                 // save to user profile
-                self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
-            }
+            self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+            return bucketedVariation
         } else {
             logger?.i(.userNotInExperiment(userId, experiment.key))
         }
         
-        return bucketedVariation;
+        return nil
     }
     
     func isInExperiment(config:ProjectConfig, experiment:Experiment, userId:String, attributes: OptimizelyAttributes) -> Bool {
-        
+     
+        func innerEvaluate(conditions:ConditionHolder) throws -> Bool {
+            var result = false
+            switch conditions {
+            case .array(let arrConditions):
+                if arrConditions.count > 0 {
+                    result = try conditions.evaluate(project: config.project, attributes: attributes)
+                } else {
+                    // empty conditions (backward compatibility with "audienceIds" is ignored if exists even though empty
+                    result = true
+                }
+            case .leaf:
+                result = try conditions.evaluate(project: config.project, attributes: attributes)
+            default:
+                result = true
+            }
+            return result
+        }
         var result = true   // success as default (no condition, etc)
         
         do {
             if let conditions = experiment.audienceConditions {
-                switch conditions {
-                case .array(let arrConditions):
-                    if arrConditions.count > 0 {
-                        result = try conditions.evaluate(project: config.project, attributes: attributes)
-                    } else {
-                        // empty conditions (backward compatibility with "audienceIds" is ignored if exists even though empty
-                        result = true
-                    }
-                case .leaf:
-                    result = try conditions.evaluate(project: config.project, attributes: attributes)
-                default:
-                    result = true
-                }
+                result = try innerEvaluate(conditions: conditions)
             }
             // backward compatibility with audiencIds list
             else if experiment.audienceIds.count > 0 {
                 var holder = [ConditionHolder]()
                 holder.append(.logicalOp(.or))
-                for id in experiment.audienceIds {
-                    holder.append(.leaf(.audienceId(id)))
-                }
+                experiment.audienceIds.forEach({
+                    holder.append(.leaf(.audienceId($0)))
+                })
                 
                 result = try holder.evaluate(project: config.project, attributes: attributes)
             }

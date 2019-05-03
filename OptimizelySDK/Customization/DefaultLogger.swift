@@ -23,8 +23,9 @@ open class DefaultLogger : OPTLogger {
             return _logLevel ?? .info
         }
         set (newLevel){
-            if _logLevel == nil {
+            guard let _ = _logLevel else {
                 _logLevel = newLevel
+                return
             }
         }
     }

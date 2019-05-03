@@ -33,7 +33,13 @@ class DefaultBucketer : OPTBucketer {
         
         // check for mutex
         
-        let group = config.project.groups.filter{ $0.getExperiemnt(id: experiment.id) != nil }.first
+        let group = config.project.groups.filter({
+            var g = $0
+            guard let _ = g.experimentMap[experiment.id] else {
+                return false
+            }
+            return true
+        }).first
         
         if let group = group {
             switch group.policy {
@@ -79,17 +85,12 @@ class DefaultBucketer : OPTBucketer {
             return nil;
         }
         
-        for trafficAllocation in group.trafficAllocation {
-            if bucketValue <= trafficAllocation.endOfRange {
-                let experimentId = trafficAllocation.entityId;
-                
-                // propagate errors and logs for unknown experiment
-                if let experiment = config.getExperiment(id: experimentId) {
-                    return experiment
-                } else {
-                    logger?.e(.userBucketedIntoInvalidExperiment(experimentId))
-                    return nil
-                }
+        for trafficAllocation in group.trafficAllocation where bucketValue <= trafficAllocation.endOfRange {
+            if let experiment = config.getExperiment(id: trafficAllocation.entityId) {
+                return experiment
+            } else {
+                logger?.e(.userBucketedIntoInvalidExperiment(trafficAllocation.entityId))
+                return nil
             }
         }
         
@@ -106,18 +107,14 @@ class DefaultBucketer : OPTBucketer {
             return nil
         }
         
-        for trafficAllocation in experiment.trafficAllocation {
-            if (bucketValue <= trafficAllocation.endOfRange) {
-                let variationId = trafficAllocation.entityId;
-
+        for trafficAllocation in experiment.trafficAllocation where (bucketValue <= trafficAllocation.endOfRange) {
                 // propagate errors and logs for unknown variation
-                if let variation = experiment.getVariation(id: variationId) {
+                if let variation = experiment.getVariation(id: trafficAllocation.entityId) {
                     return variation
                 } else {
-                    logger?.e(.userBucketedIntoInvalidVariation(variationId))
+                    logger?.e(.userBucketedIntoInvalidVariation(trafficAllocation.entityId))
                     return nil
                 }
-            }
         }
         
         return nil;

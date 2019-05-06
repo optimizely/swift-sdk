@@ -75,6 +75,8 @@ public enum OptimizelyError: Error {
     case eventDispatchFailed(_ reason: String)
 }
 
+// MARK: - CustomStringConvertible
+
 extension OptimizelyError: CustomStringConvertible {
     public var description: String {
         return "[Optimizely][Error] " + self.reason
@@ -135,3 +137,12 @@ extension OptimizelyError: CustomStringConvertible {
         return message
     }
 }
+
+// MARK: - LocalizedError (ObjC NSError)
+
+extension OptimizelyError: LocalizedError {
+    public var errorDescription: String? {
+        return self.reason
+    }
+}
+

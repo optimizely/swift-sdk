@@ -142,20 +142,20 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 self.sendEvent(event: event) { (result) -> (Void) in
                     switch result {
                     case .failure(let error):
-                        self.logger?.e(error.localizedDescription)
+                        self.logger?.e(error.reason)
                         failureCount += 1
                     case .success(_):
                         // we succeeded. remove the batch size sent.
                         if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
                             if self.batchSize == 1 && removedItem.first != event {
-                                self.logger?.log(level: .error, message: "Removed event different from sent event")
+                                self.logger?.e("Removed event different from sent event")
                             }
                             else {
-                                self.logger?.log(level: .debug, message: "Successfully sent event " + event.body.debugDescription)
+                                self.logger?.d("Successfully sent event " + event.body.debugDescription)
                             }
                         }
                         else {
-                            self.logger?.log(level: .error, message: "Removed event nil for sent item")
+                            self.logger?.e("Removed event nil for sent item")
                         }
                         // reset failureCount
                         failureCount = 0

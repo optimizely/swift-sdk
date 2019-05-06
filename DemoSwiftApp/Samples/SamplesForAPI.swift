@@ -33,50 +33,82 @@ class SamplesForAPI {
             "count": 2,
             ]
         
-        if let variationKey = try? optimizely.activate(experimentKey: "my_experiment_key",
+        // MARK: - activate
+        
+        do {
+            let variationKey = try optimizely.activate(experimentKey: "my_experiment_key",
                                                        userId: "user_123",
-                                                       attributes: attributes) {
+                                                       attributes: attributes)
             print("[activate] \(variationKey)")
+        } catch {
+            print(error)
         }
         
-        if let variationKey = try? optimizely.getVariationKey(experimentKey: "my_experiment_key",
+        // MARK: - getVariationKey
+        
+        do {
+            let variationKey = try optimizely.getVariationKey(experimentKey: "my_experiment_key",
                                                               userId: "user_123",
-                                                              attributes: attributes) {
+                                                              attributes: attributes)
             print("[getVariationKey] \(variationKey)")
+        } catch {
+            print(error)
         }
+        
+        // MARK: - getForcedVariation
         
         if let variationKey = optimizely.getForcedVariation(experimentKey: "my_experiment_key", userId: "user_123") {
             print("[getForcedVariation] \(variationKey)")
         }
         
+        // MARK: - setForcedVariation
+
         if optimizely.setForcedVariation(experimentKey: "my_experiment_key",
                                          userId: "user_123",
                                          variationKey: "some_variation_key") {
             print("[setForcedVariation]")
         }
         
+        // MARK: - isFeatureEnabled
+
         do {
             let enabled = try optimizely.isFeatureEnabled(featureKey: "my_feature_key",
                                                           userId: "user_123",
                                                           attributes: attributes)
             print("[isFeatureEnabled] \(enabled)")
         } catch {
-            // error
+            print(error)
         }
         
-        if let featureVariableValue = try? optimizely.getFeatureVariableDouble(featureKey: "my_feature_key",
+        // MARK: - getFeatureVariable
+
+        do {
+            let featureVariableValue = try optimizely.getFeatureVariableDouble(featureKey: "my_feature_key",
                                                                                variableKey: "double_variable_key",
                                                                                userId: "user_123",
-                                                                               attributes: attributes) {
+                                                                               attributes: attributes)
             print("[getFeatureVariableDouble] \(featureVariableValue)")
+        } catch {
+            print(error)
         }
         
-        if let enabledFeatures = try? optimizely.getEnabledFeatures(userId: "user_123", attributes: attributes) {
+        // MARK: - getEnabledFeatures
+
+        do {
+            let enabledFeatures = try optimizely.getEnabledFeatures(userId: "user_123", attributes: attributes)
             print("[getEnabledFeatures] \(enabledFeatures)")
+        } catch {
+            print(error)
         }
         
-        try? optimizely.track(eventKey: "my_purchase_event_key", userId: "user_123", attributes: attributes, eventTags: tags)
-        print("[track]")
+        // MARK: - track
+
+        do {
+            try optimizely.track(eventKey: "my_purchase_event_key", userId: "user_123", attributes: attributes, eventTags: tags)
+            print("[track]")
+        } catch {
+            print(error)
+        }
     }
     
     

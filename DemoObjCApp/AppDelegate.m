@@ -161,6 +161,8 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 
 -(void)startWithRootViewController {
     dispatch_async(dispatch_get_main_queue(), ^{
+        // For sample codes for other APIs, see "Samples/SamplesForAPI.m"
+
         NSError *error;
         NSString *variationKey = [self.optimizely activateWithExperimentKey:kOptimizelyExperimentKey
                                                                      userId:self.userId

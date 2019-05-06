@@ -21,9 +21,7 @@
 
 @implementation SamplesForAPI
 
-+(void)run:(OptimizelyClient*)optimizely {
-    NSString *variationKey;
-    
++(void)run:(OptimizelyClient*)optimizely {    
     NSDictionary *attributes = @{
                                  @"device": @"iPhone",
                                  @"lifetime": @24738388,
@@ -35,59 +33,113 @@
                            @"count": @5
                            };
     
+    // MARK: - activate
+
     {
+        NSError *error = nil;
         NSString *variationKey = [optimizely activateWithExperimentKey:@"my_experiment_key"
                                                                 userId:@"user_123"
                                                             attributes:attributes
-                                                                 error:nil];
-        NSLog(@"[activate] %@", variationKey);
+                                                                 error:&error];
+        if (variationKey == nil) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"[activate] %@", variationKey);
+        }
     }
+    
+    // MARK: - getVariationKey
+
     {
+        NSError *error = nil;
         NSString *variationKey = [optimizely getVariationKeyWithExperimentKey:@"my_experiment_key"
                                                                        userId:@"user_123"
                                                                    attributes:attributes
-                                                                        error:nil];
-        NSLog(@"[getVariationKey] %@", variationKey);
+                                                                        error:&error];
+        if (variationKey == nil) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"[getVariationKey] %@", variationKey);
+        }
     }
+    
+    // MARK: - getForcedVariation
+
     {
         NSString *variationKey = [optimizely getForcedVariationWithExperimentKey:@"my_experiment_key"
                                                                           userId:@"user_123"];
         NSLog(@"[getForcedVariation] %@", variationKey);
     }
+    
+    // MARK: - setForcedVariation
+
     {
         BOOL result = [optimizely setForcedVariationWithExperimentKey:@"my_experiment_key"
                                                                userId:@"user_123"
                                                          variationKey:@"some_variation_key"];
         NSLog(@"[setForcedVariation] %d", result);
     }
+    
+    // MARK: - isFeatureEnabled
+    
     {
+        NSError *error = nil;
         NSNumber *enabled = [optimizely isFeatureEnabledWithFeatureKey:@"my_feature_key"
                                                                 userId:@"user_123"
                                                             attributes:attributes
-                                                                 error:nil];
-        NSLog(@"[isFeatureEnabled] %@", enabled);
+                                                                 error:&error];
+        
+        if (enabled == nil) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"[isFeatureEnabled] %d", enabled.boolValue);
+        }
     }
+    
+    // MARK: - getFeatureVariable
+
     {
+        NSError *error = nil;
         NSNumber *featureVariableValue = [optimizely getFeatureVariableDoubleWithFeatureKey:@"my_feature_key"
                                                                                 variableKey:@"double_variable_key"
                                                                                      userId:@"user_123"
                                                                                  attributes:attributes
-                                                                                      error:nil];
-        NSLog(@"[getFeatureVariableDouble] %@", featureVariableValue);
+                                                                                      error:&error];
+        if (featureVariableValue == nil) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"[getFeatureVariableDouble] %@", featureVariableValue);
+        }
     }
+    
+    // MARK: - getEnabledFeatures
+
     {
+        NSError *error = nil;
         NSArray *enabledFeatures = [optimizely getEnabledFeaturesWithUserId:@"user_123"
                                                                  attributes:attributes
-                                                                      error:nil];
-        NSLog(@"[getEnabledFeatures] %@", enabledFeatures);
+                                                                      error:&error];
+        if (enabledFeatures == nil) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"[getEnabledFeatures] %@", enabledFeatures);
+        }
     }
+    
+    // MARK: - track
+
     {
-        [optimizely trackWithEventKey:@"my_purchase_event_key"
-                               userId:@"user_123"
-                           attributes:attributes
-                            eventTags:tags
-                                error:nil];
-        NSLog(@"[track]");
+        NSError *error = nil;
+        BOOL success = [optimizely trackWithEventKey:@"my_purchase_event_key"
+                                              userId:@"user_123"
+                                          attributes:attributes
+                                           eventTags:tags
+                                               error:&error];
+        if (success == false) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"[track]");
+        }
     }
     
 }

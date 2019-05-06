@@ -40,7 +40,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             case .success(let data):
                 datafile = data
             case .failure(let error):
-                self.logger?.e(error.localizedDescription)
+                self.logger?.e(error.reason)
             }
             group.leave()
         }
@@ -76,7 +76,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     open func getResponseData(sdkKey:String, response:HTTPURLResponse, url:URL?) -> Data? {
         if let url = url, let data = try? Data(contentsOf: url) {
             if let str = String(data: data, encoding: .utf8) {
-                self.logger?.log(level: .debug, message: str)
+                self.logger?.d(str)
             }
             self.saveDatafile(sdkKey: sdkKey, dataFile: data)
             if let lastModified = response.allHeaderFields["Last-Modified"] {
@@ -110,7 +110,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                         result = .success(data)
                     }
                     else if response.statusCode == 304 {
-                        self.logger?.log(level: .debug, message: "The datafile was not modified and won't be downloaded again")
+                        self.logger?.d("The datafile was not modified and won't be downloaded again")
                         result = .success(nil)
                     }
                 }
@@ -209,7 +209,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     datafileChangeNotification(data)
                 }
             case .failure(let error):
-                self.logger?.e(error.localizedDescription)
+                self.logger?.e(error.reason)
             }
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {

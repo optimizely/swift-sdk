@@ -33,13 +33,7 @@ class DefaultBucketer : OPTBucketer {
         
         // check for mutex
         
-        let group = config.project.groups.filter({
-            var g = $0
-            guard let _ = g.experimentMap[experiment.id] else {
-                return false
-            }
-            return true
-        }).first
+        let group = config.project.groups.filter({$0.experiments.contains(experiment)}).first
         
         if let group = group {
             switch group.policy {

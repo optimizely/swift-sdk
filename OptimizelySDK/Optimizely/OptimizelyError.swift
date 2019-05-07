@@ -64,11 +64,11 @@ public enum OptimizelyError: Error {
 
     // MARK: - Datafile Errors
     
-    case datafileDownloadFailed(_ reason: String)
+    case datafileDownloadFailed(_ hint: String)
     case dataFileInvalid
     case dataFileVersionInvalid(_ version: String)
-    case datafileSavingFailed(_ sdkKey: String)
-    case datafileLoadingFailed(_ sdkKey: String)
+    case datafileSavingFailed(_ hint: String)
+    case datafileLoadingFailed(_ hint: String)
 
     // MARK: - EventDispatcher Errors
     

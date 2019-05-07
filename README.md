@@ -17,7 +17,7 @@ See the [Mobile developer documentation](https://developers.optimizely.com/x/sol
 up an Optimizely X project and start using the SDK.
 
 ### Requirements
-* iOS 8.0+ / tvOS 9.0+
+* iOS 9.0+ / tvOS 9.0+
 
 ### Installing the SDK
  
@@ -59,7 +59,7 @@ Futher installation instructions for Carthage: https://github.com/Carthage/Carth
 ```
         let optimizely = OptimizelyClient(sdkKey:"somesdkkey")
         
-        if let _ try? = optimizely.initializeSDK(datafile:json) {
+        if let _ try? = optimizely.start(datafile:json) {
             let variation = optimizely.activate(experimentKey: "background_experiment", userId: "userId", attributes: ["doubleKey":5])
             
             let basicVariation = optimizely.track(eventKey: "sample_conversion", userId: "userId")
@@ -69,4 +69,14 @@ Futher installation instructions for Carthage: https://github.com/Carthage/Carth
 ### Contributing
 Please see [CONTRIBUTING](CONTRIBUTING.md).
 
+### Credits
+
+First-party code (under OptimizelySwiftSDK is copyright Optimizely, Inc. and contributors, licensed under Apache 2.0.
+
+### Additional Code
+
+This software incorporates code from the following open source repo:
+
+MurmurHash3:https://github.com/jpedrosa/sua/blob/master/Sources/murmurhash3.swift License (Apache 2.0):https://github.com/jpedrosa/sua/blob/master/LICENSE.txt
+Ported to Swift4.
 

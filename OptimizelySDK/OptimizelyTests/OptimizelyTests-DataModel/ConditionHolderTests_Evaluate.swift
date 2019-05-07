@@ -21,24 +21,18 @@ import XCTest
 
 class ConditionHolderTests_Evaluate: XCTestCase {
 
+    struct ProjectMock: ProjectProtocol {
+        func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool {
+            return Int(audienceId)! < 20000
+        }
+    }
+    
+    var project = ProjectMock()
     let attributeData = ["age": 30]
     let userAttributeData: [String: Any] = ["name":"age",
                                             "type":"custom_attribute",
                                             "match":"gt",
                                             "value":20]
-    var project:Project?
-    
-    override func setUp() {
-        let data = OTUtils.loadJSONDatafile("simple_datafile")
-        project = try! OTUtils.model(fromData:data!)
-        let typedAudiences = "[{\"id\": \"11111\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"exact\", \"value\": 30}]]] },{\"id\": \"22222\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },{\"id\": \"33333\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },{\"id\": \"44444\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },{\"id\": \"55555\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },{\"id\": \"66666\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },]"
-        
-        let jsonData = typedAudiences.data(using: .utf8)
-        
-        let audiences = try! JSONDecoder().decode([Audience].self, from: jsonData!)
-        
-        project?.typedAudiences = audiences
-    }
 
     func testEvaluate_I() {
         let model = ConditionHolder.leaf(.audienceId("11111"))

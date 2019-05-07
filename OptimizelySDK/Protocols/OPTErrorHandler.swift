@@ -16,27 +16,23 @@
 
 import Foundation
 
-open class DefaultLogger : OPTLogger {
-    private static var _logLevel: OptimizelyLogLevel?
-    public static var logLevel: OptimizelyLogLevel {
-        get {
-            return _logLevel ?? .info
-        }
-        set (newLevel){
-            if _logLevel == nil {
-                _logLevel = newLevel
-            }
-        }
-    }
+/**
+ This is the protocol to implement in order to be notified of errors in the app.  However, if the method throws then you can simply catch the error and the error handler is not used.
+ */
+public protocol OPTErrorHandler {
     
-    required public init() {
-    }
+    static func createInstance() -> OPTErrorHandler
+
+    /**
+     Handle an error thrown by the SDK.
+     - Parameter error: The error object to be handled.
+     */
+    func handleError(error:Error)
     
-    open func log(level: OptimizelyLogLevel, message: String) {
-        if level.rawValue > DefaultLogger.logLevel.rawValue {
-            return
-        }
-        let message = "[OPTIMIZELY][" + level.name + "]:" + message
-        NSLog(message)
-    }
+    /**
+     Handle an exception thrown by the SDK.
+     - Parameter exception: The exception object to be handled.
+     */
+    func handlerException(exception:NSException)
+
 }

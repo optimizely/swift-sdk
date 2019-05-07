@@ -16,27 +16,7 @@
 
 import Foundation
 
-open class DefaultLogger : OPTLogger {
-    private static var _logLevel: OptimizelyLogLevel?
-    public static var logLevel: OptimizelyLogLevel {
-        get {
-            return _logLevel ?? .info
-        }
-        set (newLevel){
-            if _logLevel == nil {
-                _logLevel = newLevel
-            }
-        }
-    }
-    
-    required public init() {
-    }
-    
-    open func log(level: OptimizelyLogLevel, message: String) {
-        if level.rawValue > DefaultLogger.logLevel.rawValue {
-            return
-        }
-        let message = "[OPTIMIZELY][" + level.name + "]:" + message
-        NSLog(message)
-    }
+protocol JSONParser {
+    func decode<T>(_ type: T.Type, from data: Data) throws -> T
+    func encode<T>(_ type: T.Type) -> Data?
 }

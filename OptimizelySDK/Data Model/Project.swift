@@ -16,6 +16,10 @@
 
 import Foundation
 
+protocol ProjectProtocol {
+    func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool
+}
+
 //[REF]: datafile schema
 //       https://github.com/optimizely/optimizely/blob/43454b726a2a8aab7dcd953999cf8e1902b09d4d/src/www/services/datafile_generator/schema.json
 
@@ -38,40 +42,27 @@ struct Project: Codable, Equatable {
     var typedAudiences: [Audience]?
     var featureFlags: [FeatureFlag]
     var botFiltering: Bool?
+}
+
+extension Project: ProjectProtocol {
     
-    private enum CodingKeys: String, CodingKey {
-        case version
-        case projectId
-        case experiments
-        case audiences
-        case groups
-        case attributes
-        case accountId
-        case events
-        case revision
-        case anonymizeIP
-        case rollouts
-        case typedAudiences
-        case featureFlags
-        case botFiltering
+    func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool {
+        guard let audience = getAudience(id: audienceId) else {
+            throw OptimizelyError.conditionNoMatchingAudience(audienceId)
+        }
+        
+        return try audience.evaluate(project: self, attributes: attributes)
     }
     
-    lazy var audienceMap:[String:Audience] = {
-        var map:[String:Audience] = [:]
-        audiences.forEach({map[$0.id] = $0 })
-        typedAudiences?.forEach({map[$0.id] = $0})
-        return map
-    }()
-
-
 }
 
 // MARK: - Utils
 
 extension Project {
     
-    mutating func getAudience(id: String) -> Audience? {
-        return audienceMap[id]
+    func getAudience(id: String) -> Audience? {
+        return typedAudiences?.filter{ $0.id == id }.first ??
+            audiences.filter{ $0.id == id }.first
     }
     
 }

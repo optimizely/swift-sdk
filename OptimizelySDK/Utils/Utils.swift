@@ -24,7 +24,7 @@ class Utils {
     //   CocoaPods copies "s.version" in podspec to "CFBundleShortVersionString" in its own Info.plist file
     static var sdkVersion: String = {
         let bundle = Bundle(identifier: "com.optimizely.OptimizelySwiftSDK") ?? Bundle(for: OptimizelyClient.self)
-        guard let version = bundle.infoDictionary!["CFBundleShortVersionString"] as? String else {
+        guard let version = bundle.infoDictionary?["CFBundleShortVersionString"] as? String else {
             return "1.0.0"
         }
         return version

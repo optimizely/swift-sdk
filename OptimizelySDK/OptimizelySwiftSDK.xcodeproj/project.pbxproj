@@ -194,23 +194,19 @@
 		6E4DD84C21E524FC00B0C2C7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625121B731E8000D7A28 /* Constants.swift */; };
 		6E4DD84E21E5250200B0C2C7 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6E4DD84F21E5250200B0C2C7 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6E4DD85021E5250200B0C2C7 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6E4DD85121E5250200B0C2C7 /* OPTEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */; };
 		6E4DD85221E5250200B0C2C7 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E4DD85321E5250200B0C2C7 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */; };
 		6E4DD85421E5250200B0C2C7 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
 		6E4DD85521E5250200B0C2C7 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* OPTLogger.swift */; };
-		6E4DD85621E5250200B0C2C7 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E4DD85721E5250200B0C2C7 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6E4DD85921E5250200B0C2C7 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6E4DD85A21E5250200B0C2C7 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6E4DD85B21E5250200B0C2C7 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6E4DD85C21E5250200B0C2C7 /* OPTEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */; };
 		6E4DD85D21E5250200B0C2C7 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E4DD85E21E5250200B0C2C7 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */; };
 		6E4DD85F21E5250200B0C2C7 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
 		6E4DD86021E5250200B0C2C7 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* OPTLogger.swift */; };
-		6E4DD86121E5250200B0C2C7 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E4DD86221E5250200B0C2C7 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6E4DD86321E5250B00B0C2C7 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
 		6E4DD86421E5250B00B0C2C7 /* BatchEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623A21B60167000D7A28 /* BatchEvent.swift */; };
@@ -268,23 +264,19 @@
 		6E4DD8A021E5260200B0C2C7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625121B731E8000D7A28 /* Constants.swift */; };
 		6E4DD8A221E5260600B0C2C7 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6E4DD8A321E5260600B0C2C7 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6E4DD8A421E5260600B0C2C7 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6E4DD8A521E5260600B0C2C7 /* OPTEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */; };
 		6E4DD8A621E5260600B0C2C7 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E4DD8A721E5260600B0C2C7 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */; };
 		6E4DD8A821E5260600B0C2C7 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
 		6E4DD8A921E5260600B0C2C7 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* OPTLogger.swift */; };
-		6E4DD8AA21E5260600B0C2C7 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E4DD8AB21E5260600B0C2C7 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6E4DD8AD21E5260700B0C2C7 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6E4DD8AE21E5260700B0C2C7 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6E4DD8AF21E5260700B0C2C7 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6E4DD8B021E5260700B0C2C7 /* OPTEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */; };
 		6E4DD8B121E5260700B0C2C7 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E4DD8B221E5260700B0C2C7 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */; };
 		6E4DD8B321E5260700B0C2C7 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
 		6E4DD8B421E5260700B0C2C7 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* OPTLogger.swift */; };
-		6E4DD8B521E5260700B0C2C7 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E4DD8B621E5260700B0C2C7 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6E4DD8B721E5260A00B0C2C7 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
 		6E4DD8B821E5260A00B0C2C7 /* BatchEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623A21B60167000D7A28 /* BatchEvent.swift */; };
@@ -382,18 +374,14 @@
 		6E636BCB2236C99E00AF3CEF /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
 		6E636BCC2236C9A800AF3CEF /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6E636BCD2236C9A800AF3CEF /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6E636BCE2236C9A800AF3CEF /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6E636BCF2236C9A800AF3CEF /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E636BD02236C9A800AF3CEF /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6E636BD12236C9A800AF3CEF /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E636BD22236C9A800AF3CEF /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6E636BD32236C9A800AF3CEF /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		6E636BD42236C9A900AF3CEF /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6E636BD52236C9A900AF3CEF /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6E636BD62236C9A900AF3CEF /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6E636BD72236C9A900AF3CEF /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6E636BD82236C9A900AF3CEF /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6E636BD92236C9A900AF3CEF /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6E636BDA2236C9A900AF3CEF /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6E636BDB2236C9A900AF3CEF /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		6E636BDC2236C9B100AF3CEF /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
@@ -588,10 +576,8 @@
 		6EA425332218E4A300B074B5 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
 		6EA425342218E4A300B074B5 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6EA425352218E4A300B074B5 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6EA425362218E4A300B074B5 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6EA425372218E4A300B074B5 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6EA425382218E4A300B074B5 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6EA425392218E4A300B074B5 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6EA4253A2218E4A300B074B5 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6EA4253B2218E4A300B074B5 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		6EA4253C2218E4A300B074B5 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
@@ -678,10 +664,8 @@
 		6EA425BE2218E74D00B074B5 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
 		6EA425BF2218E74D00B074B5 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6EA425C02218E74D00B074B5 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6EA425C12218E74D00B074B5 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6EA425C22218E74D00B074B5 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6EA425C32218E74D00B074B5 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6EA425C42218E74D00B074B5 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6EA425C52218E74D00B074B5 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6EA425C62218E74D00B074B5 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		6EA425C72218E74D00B074B5 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
@@ -729,10 +713,8 @@
 		6EA425F22218E74E00B074B5 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
 		6EA425F32218E74E00B074B5 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6EA425F42218E74E00B074B5 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6EA425F52218E74E00B074B5 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6EA425F62218E74E00B074B5 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6EA425F72218E74E00B074B5 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6EA425F82218E74E00B074B5 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6EA425F92218E74E00B074B5 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6EA425FA2218E74E00B074B5 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		6EA425FB2218E74E00B074B5 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
@@ -780,10 +762,8 @@
 		6EA426262218E74F00B074B5 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
 		6EA426272218E74F00B074B5 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6EA426282218E74F00B074B5 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6EA426292218E74F00B074B5 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6EA4262A2218E74F00B074B5 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6EA4262B2218E74F00B074B5 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6EA4262C2218E74F00B074B5 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6EA4262D2218E74F00B074B5 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6EA4262E2218E74F00B074B5 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		6EA4262F2218E74F00B074B5 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
@@ -875,18 +855,14 @@
 		6EA426AA221925B300B074B5 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0FE21AE03A0007B77E5 /* Group.swift */; };
 		6EA426AB221925BB00B074B5 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6EA426AC221925BB00B074B5 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6EA426AD221925BB00B074B5 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6EA426AE221925BB00B074B5 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6EA426AF221925BB00B074B5 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6EA426B0221925BB00B074B5 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6EA426B1221925BB00B074B5 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6EA426B2221925BB00B074B5 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		6EA426B3221925BC00B074B5 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
 		6EA426B4221925BC00B074B5 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6EA426B5221925BC00B074B5 /* OPTErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */; };
 		6EA426B6221925BC00B074B5 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
 		6EA426B7221925BC00B074B5 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6EA426B8221925BC00B074B5 /* JSONParse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625C21B8B82A000D7A28 /* JSONParse.swift */; };
 		6EA426B9221925BC00B074B5 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
 		6EA426BA221925BC00B074B5 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
 		6EA426BB221925CD00B074B5 /* DataStoreUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11FB21EE90F600D5B370 /* DataStoreUserDefaults.swift */; };
@@ -1165,7 +1141,6 @@
 		0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTBucketer.swift; sourceTree = "<group>"; };
 		0B124BBE21B5C024001BE0FA /* MurmurHash3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurmurHash3.swift; sourceTree = "<group>"; };
 		0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTDecisionService.swift; sourceTree = "<group>"; };
-		0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTErrorHandler.swift; sourceTree = "<group>"; };
 		0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventForDispatch.swift; sourceTree = "<group>"; };
 		0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPTEventDispatcher.swift; sourceTree = "<group>"; };
 		0B4AE9F922289CD90047B75D /* BatchEventBuilderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchEventBuilderTest.swift; sourceTree = "<group>"; };
@@ -1203,7 +1178,6 @@
 		0B61624F21B72DCB000D7A28 /* DefaultDecisionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDecisionService.swift; sourceTree = "<group>"; };
 		0B61625121B731E8000D7A28 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		0B61625921B870C6000D7A28 /* DefaultUserProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultUserProfileService.swift; sourceTree = "<group>"; };
-		0B61625C21B8B82A000D7A28 /* JSONParse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONParse.swift; sourceTree = "<group>"; };
 		0B61625E21B8C3A9000D7A28 /* DefaultLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
 		0B626D602242B98D00E4F7DA /* NotificationCenterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationCenterTests.swift; sourceTree = "<group>"; };
 		0B77D03F22331D1E005AA83F /* OptimizelyClient+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OptimizelyClient+Extension.swift"; sourceTree = "<group>"; };
@@ -1445,10 +1419,8 @@
 				0B77D05722370526005AA83F /* BackgroundingCallbacks.swift */,
 				0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */,
 				0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */,
-				0B124BC221B5D88D001BE0FA /* OPTErrorHandler.swift */,
 				0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */,
 				0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */,
-				0B61625C21B8B82A000D7A28 /* JSONParse.swift */,
 				0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */,
 				0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */,
 			);
@@ -2630,7 +2602,6 @@
 				0BE644EE223821D3009A5D1D /* AtomicProperty.swift in Sources */,
 				6E4DD87C21E5251800B0C2C7 /* Rollout.swift in Sources */,
 				6E7C0B7521F1372500ECFF34 /* OptimizelyLogLevel.swift in Sources */,
-				6E4DD86121E5250200B0C2C7 /* JSONParse.swift in Sources */,
 				6E95C8B92217F9B100B6EE06 /* ConditionLeaf.swift in Sources */,
 				6E4DD85D21E5250200B0C2C7 /* OPTDatafileHandler.swift in Sources */,
 				6EDBCE1A2272333A009DF724 /* OptimizelyClient+ObjC.swift in Sources */,
@@ -2642,7 +2613,6 @@
 				6E4DD8FA21E530A900B0C2C7 /* OptimizelyClient.swift in Sources */,
 				6E4DD87D21E5251800B0C2C7 /* FeatureVariable.swift in Sources */,
 				6E4DD87A21E5251800B0C2C7 /* Variation.swift in Sources */,
-				6E4DD85B21E5250200B0C2C7 /* OPTErrorHandler.swift in Sources */,
 				6E4DD85921E5250200B0C2C7 /* OPTBucketer.swift in Sources */,
 				6E4DD86521E5250B00B0C2C7 /* EventForDispatch.swift in Sources */,
 				0B7B18862231D8B800A1F85D /* DataStoreMemory.swift in Sources */,
@@ -2655,13 +2625,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E4DD88621E525F100B0C2C7 /* EventForDispatch+Extension.swift in Sources */,
-				6E4DD8B521E5260700B0C2C7 /* JSONParse.swift in Sources */,
 				6E4F0D7C22133C5A00DD13A5 /* AttributeValue.swift in Sources */,
 				6E4DD8D021E5261600B0C2C7 /* ProjectConfig.swift in Sources */,
 				0B7B188C2232DB8600A1F85D /* DataStoreMemory.swift in Sources */,
 				6EA4265422191EEC00B074B5 /* Array+Extension.swift in Sources */,
 				6E4DD8C921E5261600B0C2C7 /* Variable.swift in Sources */,
-				6E4DD8AF21E5260700B0C2C7 /* OPTErrorHandler.swift in Sources */,
 				6E4DD8D121E5261600B0C2C7 /* Group.swift in Sources */,
 				6E4DD89E21E5260200B0C2C7 /* MurmurHash3.swift in Sources */,
 				6E4DD8BC21E5261100B0C2C7 /* Audience.swift in Sources */,
@@ -2729,7 +2697,6 @@
 				6E636BB62236C98A00AF3CEF /* OPTUserProfileService.swift in Sources */,
 				6E636BF12236C9BC00AF3CEF /* TrafficAllocation.swift in Sources */,
 				6E636BD22236C9A800AF3CEF /* DataStoreQueueStack.swift in Sources */,
-				6E636BCE2236C9A800AF3CEF /* OPTErrorHandler.swift in Sources */,
 				6E636BC72236C99D00AF3CEF /* DefaultDatafileHandler.swift in Sources */,
 				0B8F537E223FFB0500C56082 /* OptimizelyClientTests_Group.swift in Sources */,
 				6E636C5E223708B000AF3CEF /* OptimizelyClientTests_ForcedVariation.swift in Sources */,
@@ -2738,7 +2705,6 @@
 				6E636BA72236C97E00AF3CEF /* OptimizelyResult.swift in Sources */,
 				6E636BC42236C99D00AF3CEF /* DefaultBucketer.swift in Sources */,
 				6E636BBA2236C99300AF3CEF /* DataStoreUserDefaults.swift in Sources */,
-				6E636BD12236C9A800AF3CEF /* JSONParse.swift in Sources */,
 				6E636BF02236C9BC00AF3CEF /* Variation.swift in Sources */,
 				6E636BEB2236C9BC00AF3CEF /* Project.swift in Sources */,
 				6E636BB42236C98A00AF3CEF /* OPTLogger.swift in Sources */,
@@ -2804,7 +2770,6 @@
 				6E636BB92236C98B00AF3CEF /* OPTUserProfileService.swift in Sources */,
 				6E636BFD2236C9BD00AF3CEF /* TrafficAllocation.swift in Sources */,
 				6E636BDA2236C9A900AF3CEF /* DataStoreQueueStack.swift in Sources */,
-				6E636BD62236C9A900AF3CEF /* OPTErrorHandler.swift in Sources */,
 				6EF4B4E6223836C1002DE8B6 /* BackgroundingCallbacks.swift in Sources */,
 				6E636BCB2236C99E00AF3CEF /* DefaultDatafileHandler.swift in Sources */,
 				6E636C0A2236C9C500AF3CEF /* Array+Extension.swift in Sources */,
@@ -2814,7 +2779,6 @@
 				6E636BC82236C99E00AF3CEF /* DefaultBucketer.swift in Sources */,
 				6E636BBE2236C99400AF3CEF /* DataStoreUserDefaults.swift in Sources */,
 				6EDBCE202272333B009DF724 /* OptimizelyClient+ObjC.swift in Sources */,
-				6E636BD92236C9A900AF3CEF /* JSONParse.swift in Sources */,
 				6E8D321A2266905F00478458 /* LogMessage.swift in Sources */,
 				6E636BFC2236C9BD00AF3CEF /* Variation.swift in Sources */,
 				6E636BF72236C9BD00AF3CEF /* Project.swift in Sources */,
@@ -2864,7 +2828,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EA425362218E4A300B074B5 /* OPTErrorHandler.swift in Sources */,
 				0B4AE9FB22289CD90047B75D /* BatchEventBuilderTest.swift in Sources */,
 				6E0AFBBE2257C49800BC7665 /* BucketTests_ExpToVariation.swift in Sources */,
 				6EA4265522191EEC00B074B5 /* Array+Extension.swift in Sources */,
@@ -2921,7 +2884,6 @@
 				6E0AFBC62257C49800BC7665 /* BucketTests_BucketVariation.swift in Sources */,
 				6EA4253C2218E4A300B074B5 /* EventForDispatch.swift in Sources */,
 				6EA4254E2218E4A300B074B5 /* Group.swift in Sources */,
-				6EA425392218E4A300B074B5 /* JSONParse.swift in Sources */,
 				6EA4254D2218E4A300B074B5 /* Rollout.swift in Sources */,
 				6EA425492218E4A300B074B5 /* Event.swift in Sources */,
 				6EA4254B2218E4A300B074B5 /* FeatureFlag.swift in Sources */,
@@ -2953,7 +2915,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EA426292218E74F00B074B5 /* OPTErrorHandler.swift in Sources */,
 				0B77D06022370526005AA83F /* BackgroundingCallbacks.swift in Sources */,
 				6EA426452218E74F00B074B5 /* MurmurHash3.swift in Sources */,
 				6EA425A22218E6AE00B074B5 /* AttributeValueTests_Evaluate.swift in Sources */,
@@ -3009,7 +2970,6 @@
 				6EA4262F2218E74F00B074B5 /* EventForDispatch.swift in Sources */,
 				6EA426412218E74F00B074B5 /* Group.swift in Sources */,
 				6EDE910C2225F7DB00840112 /* AudienceTests_Evaluate.swift in Sources */,
-				6EA4262C2218E74F00B074B5 /* JSONParse.swift in Sources */,
 				6EA426402218E74F00B074B5 /* Rollout.swift in Sources */,
 				6E852C6B221A7E3300C41F94 /* ExperimentTests.swift in Sources */,
 				6EA4263C2218E74F00B074B5 /* Event.swift in Sources */,
@@ -3083,7 +3043,6 @@
 				6E8CB5A2224BF4BE00B8CB7A /* DecisionServiceTests_Features.swift in Sources */,
 				6EA425D42218E74D00B074B5 /* Event.swift in Sources */,
 				6EA425C02218E74D00B074B5 /* OPTDecisionService.swift in Sources */,
-				6EA425C12218E74D00B074B5 /* OPTErrorHandler.swift in Sources */,
 				6EA425C82218E74D00B074B5 /* BatchEvent.swift in Sources */,
 				6EA425B22218E74D00B074B5 /* DefaultEventDispatcher.swift in Sources */,
 				6EA425CE2218E74D00B074B5 /* ProjectConfig.swift in Sources */,
@@ -3119,7 +3078,6 @@
 				0BAB9AFE22567E21000DC388 /* EventDispatcherTests.swift in Sources */,
 				6EA425BB2218E74D00B074B5 /* DefaultBucketer.swift in Sources */,
 				6EA425D52218E74D00B074B5 /* Variation.swift in Sources */,
-				6EA425C42218E74D00B074B5 /* JSONParse.swift in Sources */,
 				6E2B8D662257C612003C4799 /* DecisionListenerTests.swift in Sources */,
 				6ED1B8FA2225AA6500C4C774 /* DefaultUserProfileServiceTests.swift in Sources */,
 				6EA425AD2218E74D00B074B5 /* OptimizelyClient.swift in Sources */,
@@ -3130,7 +3088,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EA425F52218E74E00B074B5 /* OPTErrorHandler.swift in Sources */,
 				0B77D05C22370526005AA83F /* BackgroundingCallbacks.swift in Sources */,
 				6EA426112218E74E00B074B5 /* MurmurHash3.swift in Sources */,
 				6EA425932218E6AD00B074B5 /* AttributeValueTests_Evaluate.swift in Sources */,
@@ -3186,7 +3143,6 @@
 				6EA425FB2218E74E00B074B5 /* EventForDispatch.swift in Sources */,
 				6EA4260D2218E74E00B074B5 /* Group.swift in Sources */,
 				6EDE910B2225F7DB00840112 /* AudienceTests_Evaluate.swift in Sources */,
-				6EA425F82218E74E00B074B5 /* JSONParse.swift in Sources */,
 				6EA4260C2218E74E00B074B5 /* Rollout.swift in Sources */,
 				6E852C6A221A7E3300C41F94 /* ExperimentTests.swift in Sources */,
 				6EA426082218E74E00B074B5 /* Event.swift in Sources */,
@@ -3240,9 +3196,7 @@
 				6EA42697221925B100B074B5 /* Group.swift in Sources */,
 				6E8D32192266905E00478458 /* LogMessage.swift in Sources */,
 				6EA426D3221925DE00B074B5 /* OPTEventDispatcher.swift in Sources */,
-				6EA426B0221925BB00B074B5 /* JSONParse.swift in Sources */,
 				6EA426C2221925CD00B074B5 /* DefaultDatafileHandler.swift in Sources */,
-				6EA426AD221925BB00B074B5 /* OPTErrorHandler.swift in Sources */,
 				6EA426BF221925CD00B074B5 /* DefaultBucketer.swift in Sources */,
 				6EA426782219259800B074B5 /* HandlerRegistryService.swift in Sources */,
 				6EA426CB221925DE00B074B5 /* OptimizelyClient.swift in Sources */,
@@ -3308,9 +3262,7 @@
 				6EA426C8221925CE00B074B5 /* DefaultNotificationCenter.swift in Sources */,
 				6EA426AA221925B300B074B5 /* Group.swift in Sources */,
 				6EA426DD221925DF00B074B5 /* OPTEventDispatcher.swift in Sources */,
-				6EA426B8221925BC00B074B5 /* JSONParse.swift in Sources */,
 				6EA426CA221925CE00B074B5 /* DefaultDatafileHandler.swift in Sources */,
-				6EA426B5221925BC00B074B5 /* OPTErrorHandler.swift in Sources */,
 				6EA426C7221925CE00B074B5 /* DefaultBucketer.swift in Sources */,
 				6EA4267C2219259900B074B5 /* HandlerRegistryService.swift in Sources */,
 				6EA426D5221925DF00B074B5 /* OptimizelyClient.swift in Sources */,
@@ -3396,7 +3348,6 @@
 				0B77D05822370526005AA83F /* BackgroundingCallbacks.swift in Sources */,
 				6E4DD87121E5251700B0C2C7 /* Rollout.swift in Sources */,
 				6E7C0B7421F1372100ECFF34 /* OptimizelyLogLevel.swift in Sources */,
-				6E4DD85621E5250200B0C2C7 /* JSONParse.swift in Sources */,
 				0BC48EA522038491003AFD71 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E4DD85221E5250200B0C2C7 /* OPTDatafileHandler.swift in Sources */,
 				6E4F0D7922133C5A00DD13A5 /* AttributeValue.swift in Sources */,
@@ -3407,7 +3358,6 @@
 				6E4DD8F921E530A900B0C2C7 /* OptimizelyClient.swift in Sources */,
 				6E4DD87221E5251700B0C2C7 /* FeatureVariable.swift in Sources */,
 				6E4DD86F21E5251700B0C2C7 /* Variation.swift in Sources */,
-				6E4DD85021E5250200B0C2C7 /* OPTErrorHandler.swift in Sources */,
 				6E8D32132266905B00478458 /* LogMessage.swift in Sources */,
 				6E4DD84E21E5250200B0C2C7 /* OPTBucketer.swift in Sources */,
 				6E4DD86321E5250B00B0C2C7 /* EventForDispatch.swift in Sources */,
@@ -3469,13 +3419,11 @@
 				6E7C0B7621F1372600ECFF34 /* OptimizelyLogLevel.swift in Sources */,
 				6E4DD88B21E525FC00B0C2C7 /* DefaultDecisionService.swift in Sources */,
 				6E4DD8A621E5260600B0C2C7 /* OPTDatafileHandler.swift in Sources */,
-				6E4DD8A421E5260600B0C2C7 /* OPTErrorHandler.swift in Sources */,
 				6E4DD8BF21E5261500B0C2C7 /* Variation.swift in Sources */,
 				6E4DD8C521E5261500B0C2C7 /* ProjectConfig.swift in Sources */,
 				6EC126172218D97E00C1FC97 /* OTUtils.swift in Sources */,
 				6E4DD8A321E5260600B0C2C7 /* OPTDecisionService.swift in Sources */,
 				6E4DD88A21E525FC00B0C2C7 /* DefaultNotificationCenter.swift in Sources */,
-				6E4DD8AA21E5260600B0C2C7 /* JSONParse.swift in Sources */,
 				6E4DD89021E525FC00B0C2C7 /* DefaultDatafileHandler.swift in Sources */,
 				0B05901A2209DC180007F4A2 /* HandlerRegistryService.swift in Sources */,
 				0B7B9EA721F2823500056589 /* OPTDataStore.swift in Sources */,
@@ -3597,9 +3545,9 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OPTIMIZELY_SDK_VERSION = "$(OPTIMIZELY_SDK_VERSION_MAJOR).$(OPTIMIZELY_SDK_VERSION_MINOR).$(OPTIMIZELY_SDK_VERSION_PATCH)$(OPTIMIZELY_SDK_VERSION_SUFFIX)";
-				OPTIMIZELY_SDK_VERSION_MAJOR = "3";
-				OPTIMIZELY_SDK_VERSION_MINOR = "1";
-				OPTIMIZELY_SDK_VERSION_PATCH = "0";
+				OPTIMIZELY_SDK_VERSION_MAJOR = 3;
+				OPTIMIZELY_SDK_VERSION_MINOR = 1;
+				OPTIMIZELY_SDK_VERSION_PATCH = 0;
 				OPTIMIZELY_SDK_VERSION_SUFFIX = "-beta";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -3660,9 +3608,9 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OPTIMIZELY_SDK_VERSION = "$(OPTIMIZELY_SDK_VERSION_MAJOR).$(OPTIMIZELY_SDK_VERSION_MINOR).$(OPTIMIZELY_SDK_VERSION_PATCH)$(OPTIMIZELY_SDK_VERSION_SUFFIX)";
-				OPTIMIZELY_SDK_VERSION_MAJOR = "3";
-				OPTIMIZELY_SDK_VERSION_MINOR = "1";
-				OPTIMIZELY_SDK_VERSION_PATCH = "0";
+				OPTIMIZELY_SDK_VERSION_MAJOR = 3;
+				OPTIMIZELY_SDK_VERSION_MINOR = 1;
+				OPTIMIZELY_SDK_VERSION_PATCH = 0;
 				OPTIMIZELY_SDK_VERSION_SUFFIX = "-beta";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;

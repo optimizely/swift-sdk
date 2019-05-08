@@ -35,7 +35,7 @@ import Foundation
      - Parameter level: The priority level of the log.
      - Parameter message: The message to log.
      */
-    func log(level: OptimizelyLogLevel, message: String)
+    func log(level: OptimizelyLogLevel, message: @autoclosure () -> String)
     
 }
 

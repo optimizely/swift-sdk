@@ -277,10 +277,12 @@ extension ProjectConfig {
         variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
 
         guard !variationKey.isEmpty else {
+            logger?.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
 
         guard let variation = experiment.variations.filter({$0.key == variationKey }).first else {
+            logger?.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
         

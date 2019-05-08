@@ -148,14 +148,14 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                         // we succeeded. remove the batch size sent.
                         if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
                             if self.batchSize == 1 && removedItem.first != event {
-                                self.logger?.log(level: .error, message: "Removed event different from sent event")
+                                self.logger?.e("Removed event different from sent event")
                             }
                             else {
-                                self.logger?.log(level: .debug, message: "Successfully sent event " + event.body.debugDescription)
+                                self.logger?.d("Successfully sent event: \(event)")
                             }
                         }
                         else {
-                            self.logger?.log(level: .error, message: "Removed event nil for sent item")
+                            self.logger?.e("Removed event nil for sent item")
                         }
                         // reset failureCount
                         failureCount = 0
@@ -172,7 +172,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                         }
                     }
                     // our send is done.
-                    defer { self.notify.leave() }
+                    self.notify.leave()
                     
                 }
                 // wait for send

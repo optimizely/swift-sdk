@@ -15,9 +15,9 @@ class CustomLogger: OPTLogger {
     required init() {
     }
 
-    public func log(level: OptimizelyLogLevel, message: String) {
+    public func log(level: OptimizelyLogLevel, message: @autoclosure () -> String) {
         if level.rawValue <= CustomLogger.logLevel.rawValue {
-            print("🐱 - [\(level.name)] Kitty - \(message)")
+            print("🐱 - [\(level.name)] Kitty - \(message())")
         }
     }
 }

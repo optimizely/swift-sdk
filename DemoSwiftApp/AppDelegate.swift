@@ -23,6 +23,8 @@ import Amplitude_iOS
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    let logLevel = OptimizelyLogLevel.debug
+
     let sdkKey = "FCnSegiEkRry9rhVMroit4"
     let datafileName = "demoTestDatafile"
     let experimentKey = "background_experiment"
@@ -51,13 +53,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //     - initialize immediately with the given JSON datafile or its cached copy
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
         
-        initializeOptimizelySDKWithCustomization()
+        initializeOptimizelySDKAsynchronous()
     }
     
     // MARK: - Initialization Examples
     
     func initializeOptimizelySDKAsynchronous() {
-        optimizely = OptimizelyClient(sdkKey: sdkKey)
+        optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
         
         optimizely.start { result in
             switch result {
@@ -79,7 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Local datafile cannot be found")
         }
         
-        optimizely = OptimizelyClient(sdkKey: sdkKey)
+        optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -103,7 +105,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,
-                                       periodicDownloadInterval: customDownloadIntervalInSecs)
+                                       periodicDownloadInterval: customDownloadIntervalInSecs,
+                                       defaultLogLevel: logLevel)
         
         // notification listeners
         

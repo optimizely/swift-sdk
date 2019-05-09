@@ -78,7 +78,7 @@ class OptimizelySDKTests: XCTestCase {
                 }
             }
             
-            XCTAssertTrue(try! audience.conditions.evaluate(project: config.project, attributes: attr))
+            XCTAssertTrue(audience.conditions.evaluate(project: config.project, attributes: attr)!)
         }
         XCTAssertNotNil(config)
         

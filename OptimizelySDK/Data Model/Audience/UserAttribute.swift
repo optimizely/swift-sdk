@@ -88,20 +88,23 @@ struct UserAttribute: Codable, Equatable {
 
 extension UserAttribute {
     
-    func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluate(attributes: OptimizelyAttributes?) -> Bool? {
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         guard let _ = typeSupported else {
-            throw OptimizelyError.userAttributeInvalidType(self.type ?? "empty")
+            print(OptimizelyError.userAttributeInvalidType(self.type ?? "empty"))
+            return nil
         }
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            throw OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty")
+            print(OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty"))
+            return nil
         }
         
         guard let nameFinal = name else {
-            throw OptimizelyError.userAttributeInvalidFormat("empty name in condition")
+            print(OptimizelyError.userAttributeInvalidFormat("empty name in condition"))
+            return nil
         }
         
         let attributes = attributes ?? OptimizelyAttributes()
@@ -110,11 +113,13 @@ extension UserAttribute {
         
         if matchFinal != .exists {
             if value == nil {
-                throw OptimizelyError.userAttributeInvalidFormat("missing value (\(nameFinal)) in condition)")
+                print(OptimizelyError.userAttributeInvalidFormat("missing value (\(nameFinal)) in condition)"))
+                return nil
             }
             
             if rawAttributeValue == nil {
-                throw OptimizelyError.evaluateAttributeInvalidFormat("no attribute value for (\(nameFinal))")
+                print(OptimizelyError.evaluateAttributeInvalidFormat("no attribute value for (\(nameFinal))"))
+                return nil
             }
         }
         
@@ -122,17 +127,17 @@ extension UserAttribute {
         case .exists:
             return !(rawAttributeValue is NSNull || rawAttributeValue == nil)
         case .exact:
-            return try value!.isExactMatch(with: rawAttributeValue!)
+            return value!.isExactMatch(with: rawAttributeValue!)
         case .substring:
-            return try value!.isSubstring(of: rawAttributeValue!)
+            return value!.isSubstring(of: rawAttributeValue!)
         case .lt:
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
-            return try value!.isGreater(than: rawAttributeValue!)
+            return value!.isGreater(than: rawAttributeValue!)
         case .gt:
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
-            return try value!.isLess(than: rawAttributeValue!)
+            return value!.isLess(than: rawAttributeValue!)
         }
     }
     

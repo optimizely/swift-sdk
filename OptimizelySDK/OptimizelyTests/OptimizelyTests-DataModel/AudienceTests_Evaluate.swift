@@ -90,7 +90,7 @@ class AudienceTests_Evaluate: XCTestCase {
                                      "location" : "San Francisco",
                                      "browser" : "Chrome"]
         
-        XCTAssertTrue(try! audience.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertTrue(audience.evaluate(project: nil, attributes: attributesPassOrValue)!)
     }
     
     func testEvaluateConditionsDoNotMatch() {
@@ -100,7 +100,7 @@ class AudienceTests_Evaluate: XCTestCase {
                                      "location" : "San Francisco",
                                      "browser" : "Firefox"]
         
-        XCTAssertFalse(try! audience.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertFalse(audience.evaluate(project: nil, attributes: attributesPassOrValue)!)
     }
 
     func testEvaluateSingleLeaf() {
@@ -110,7 +110,7 @@ class AudienceTests_Evaluate: XCTestCase {
         
         let attributes = ["house": "Gryffindor"]
         
-        let bool = try? holder.evaluate(project: config?.project, attributes: attributes)
+        let bool = holder.evaluate(project: config?.project, attributes: attributes)
         
         XCTAssertTrue(bool!)
     }
@@ -119,13 +119,13 @@ class AudienceTests_Evaluate: XCTestCase {
         let audience = makeAudienceLegacy(conditions: kAudienceConditions)
 
         let attributesPassOrValue = [String: String]()
-        XCTAssertNil(try? audience.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertNil(audience.evaluate(project: nil, attributes: attributesPassOrValue))
     }
     
     func testEvaluateNullUserAttributes() {
         let audience = makeAudienceLegacy(conditions: kAudienceConditions)
         
-        XCTAssertNil(try? audience.evaluate(project: nil, attributes: nil))
+        XCTAssertNil(audience.evaluate(project: nil, attributes: nil))
     }
 
     func testTypedUserAttributesEvaluateTrue() {
@@ -137,7 +137,7 @@ class AudienceTests_Evaluate: XCTestCase {
                                                     "pi_value" : 3.14,
                                                     "decimal_value": 3.15678]
         
-        XCTAssertTrue(try! audience.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertTrue(audience.evaluate(project: nil, attributes: attributesPassOrValue)!)
     }
 
     func testEvaluateTrueWhenNoUserAttributesAndConditionEvaluatesTrue() {
@@ -146,7 +146,7 @@ class AudienceTests_Evaluate: XCTestCase {
         let conditions: [Any] = ["not", ["or", ["or", ["name": "input_value", "type": "custom_attribute", "match": "exists"]]]]
         let audience = makeAudience(conditions: conditions)
         
-        XCTAssertTrue(try! audience.evaluate(project: nil, attributes: nil))
+        XCTAssertTrue(audience.evaluate(project: nil, attributes: nil)!)
     }
     
     // MARK: - Invalid Base Condition Tests
@@ -156,23 +156,23 @@ class AudienceTests_Evaluate: XCTestCase {
 
         var condition = ["name": "device_type"]
         var userAttribute: UserAttribute = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
 
         condition = ["name": "device_type", "value": "iPhone"]
         userAttribute = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
 
         condition = ["name": "device_type", "match": "exact"]
         userAttribute = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
 
         condition = ["name": "device_type", "type": "invalid"]
         userAttribute = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
 
         condition = ["name": "device_type", "type": "custom_attribute"]
         userAttribute = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
     }
 
     //MARK: - Invalid input Tests
@@ -185,7 +185,7 @@ class AudienceTests_Evaluate: XCTestCase {
 
         let attributesPassOrValue = ["device_type" : "iPhone"];
         let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
     }
     
     func testEvaluateReturnsNullWithNullValueTypeAndNonExistMatchType() {
@@ -213,19 +213,19 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue = ["device_type" : "iPhone"]
         
         var userAttribute: UserAttribute = try! OTUtils.model(from: condition1)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
         
         userAttribute = try! OTUtils.model(from: condition2)
-        XCTAssertTrue(try! userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertTrue(userAttribute.evaluate(attributes: attributesPassOrValue)!)
         
         userAttribute = try! OTUtils.model(from: condition3)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
         
         userAttribute = try! OTUtils.model(from: condition4)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
         
         userAttribute = try! OTUtils.model(from: condition5)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
     }
         
     func testEvaluateReturnsNullWithInvalidMatchType() {
@@ -237,7 +237,7 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue = ["device_type" : "iPhone"]
 
         let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
     }
 
     func testEvaluateReturnsNullWithInvalidValueForMatchType() {
@@ -249,7 +249,7 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue = ["is_firefox" : false]
         
         let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
     }
     
     //MARK: - ExactMatcher Tests
@@ -263,23 +263,23 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue = ["device_type" : "iPhone"]
 
         let userAttribute: UserAttribute = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(attributes: attributesPassOrValue))
     }
     
     func testExactMatcherReturnsNullWhenNoUserProvidedValue() {
         let attributesPassOrValue: [String: Any] = [:]
     
         var conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchStringType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchBoolType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
     
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchDecimalType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchIntType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
     }
     
     func testExactMatcherReturnsFalseWhenAttributeValueDoesNotMatch() {
@@ -289,16 +289,16 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue4 = ["attr_value" : 55]
         
         var conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchStringType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1)!)
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchBoolType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2)!)
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchDecimalType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3)!)
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchIntType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4)!)
     }
     
     func testExactMatcherReturnsNullWhenTypeMismatch() {
@@ -310,17 +310,17 @@ class AudienceTests_Evaluate: XCTestCase {
         //let attributesPassOrValue6 = ["attr_value" : nil]
         
         var conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchStringType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchBoolType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchDecimalType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchIntType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue5))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue5))
     }
     
     func testExactMatcherReturnsNullWithNumericInfinity() {
@@ -330,7 +330,7 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue1 = ["attr_value" : Double.infinity]
         
         let andCondition1: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchIntType)
-        XCTAssertNil(try? andCondition1.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(andCondition1.evaluate(project: nil, attributes: attributesPassOrValue1))
 
     }
     
@@ -342,19 +342,19 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue5 = ["attr_value" : 10.0]
         
         var conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchStringType)
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1)!)
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchBoolType)
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2)!)
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchDecimalType)
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3)!)
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchIntType)
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4)!)
 
         conditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchIntType)
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue5))
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue5)!)
     }
     
     //MARK: - ExistsMatcher Tests
@@ -362,19 +362,19 @@ class AudienceTests_Evaluate: XCTestCase {
     func testExistsMatcherReturnsFalseWhenAttributeIsNotProvided() {
         let attributesPassOrValue = [String: String]()
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue)!)
     }
     
    func testExistsMatcherReturnsFalseWhenAttributeIsNull() {
     let attributesPassOrValue: [String: Any?] = ["attr_value" : nil]
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue)!)
     }
 
     func testExistsMatcherReturnsFalseWhenAttributeIsNSNull() {
         let attributesPassOrValue: [String: Any?] = ["attr_value" : NSNull()]
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue)!)
     }
 
     func testExistsMatcherReturnsTrueWhenAttributeValueIsProvided() {
@@ -385,11 +385,11 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue5 = ["attr_value" : false]
         
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExistsMatchType)
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue5))
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1)!)
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2)!)
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3)!)
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4)!)
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue5)!)
     }
     
     //MARK:- SubstringMatcher Tests
@@ -403,13 +403,13 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue = ["device_type" : "iPhone"]
 
         let userAttribute: ConditionHolder = try! OTUtils.model(from: condition)
-        XCTAssertNil(try? userAttribute.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertNil(userAttribute.evaluate(project: nil, attributes: attributesPassOrValue))
     }
     
     func testSubstringMatcherReturnsFalseWhenConditionValueIsNotSubstringOfUserValue() {
         let attributesPassOrValue = ["attr_value":"Breaking news!"]
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithSubstringMatchType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue)!)
     }
     
     func testSubstringMatcherReturnsTrueWhenConditionValueIsSubstringOfUserValue() {
@@ -417,8 +417,8 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue2 = ["attr_value" : "chrome vs firefox"]
 
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithSubstringMatchType)
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1)!)
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2)!)
     }
     
     func testSubstringMatcherReturnsNullWhenAttributeValueIsNotAString() {
@@ -426,8 +426,8 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue2: [String: Any?] = ["attr_value" : nil]
 
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithSubstringMatchType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
     }
     
     func testSubstringMatcherReturnsNullWhenAttributeIsNotProvided() {
@@ -435,8 +435,8 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue2: [String: Any]? = nil
 
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithSubstringMatchType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
     }
     
     //MARK:- GTMatcher Tests
@@ -447,9 +447,9 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue3 = ["attr_value" : 10.0]
     
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1)!)
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2)!)
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3)!)
     }
     
     func testGTMatcherReturnsNullWhenAttributeValueIsNotANumericValue() {
@@ -459,17 +459,17 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue4 = ["attr_value" : false]
     
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
     }
     
     func testGTMatcherReturnsNullWhenAttributeValueIsInfinity() {
         let attributesPassOrValue = ["attr_value" : Double.infinity]
         
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
     }
     
     func testGTMatcherReturnsTrueWhenAttributeValueIsGreaterThanConditionValue() {
@@ -477,8 +477,8 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue2 = ["attr_value" : 10.1]
     
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1)!)
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2)!)
     }
     
     //MARK: - LTMatcher Tests
@@ -488,8 +488,8 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue2 = ["attr_value" : 10]
     
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithLessThanMatchType)
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertFalse(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1)!)
+        XCTAssertFalse(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2)!)
     }
     
     func testLTMatcherReturnsNullWhenAttributeValueIsNotANumericValue() {
@@ -499,17 +499,17 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue4 = ["attr_value" : false]
         
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithLessThanMatchType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue3))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue4))
     }
     
     func testLTMatcherReturnsNullWhenAttributeValueIsInfinity() {
         let attributesPassOrValue = ["attr_value" : Double.infinity]
     
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithLessThanMatchType)
-        XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
+        XCTAssertNil(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
     }
     
     func testLTMatcherReturnsTrueWhenAttributeValueIsLessThanConditionValue() {
@@ -517,8 +517,8 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue2 = ["attr_value" : 9.9]
     
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithLessThanMatchType)
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
-        XCTAssertTrue(try! conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2))
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1)!)
+        XCTAssertTrue(conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue2)!)
     }
     
 }

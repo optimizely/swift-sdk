@@ -117,16 +117,20 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
 
 extension AttributeValue {
     
-    func isExactMatch(with target: Any) throws -> Bool {
+    func isExactMatch(with target: Any) -> Bool? {
         guard let targetValue = AttributeValue(value: target) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            return nil
         }
         
         guard self.isComparable(with: targetValue) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            return nil
         }
         
-        try checkValidAttributeNumber(target)
+        if !checkValidAttributeNumber(target) {
+            return nil
+        }
         
         // same type and same value
         if self == targetValue {
@@ -141,44 +145,54 @@ extension AttributeValue {
         return false
     }
 
-    func isSubstring(of target: Any) throws -> Bool {
+    func isSubstring(of target: Any) -> Bool? {
         guard case .string(let value) = self else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            return nil
         }
         
         guard let targetStr = target as? String else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            return nil
         }
         
         return targetStr.contains(value)
     }
     
-    func isGreater(than target: Any) throws -> Bool {
+    func isGreater(than target: Any) -> Bool? {
         guard let targetValue = AttributeValue(value: target) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            return nil
         }
         
         guard let currentDouble = self.doubleValue,
             let targetDouble = targetValue.doubleValue else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            return nil
         }
         
-        try checkValidAttributeNumber(target)
+        if !checkValidAttributeNumber(target) {
+            return nil
+        }
 
         return currentDouble > targetDouble
     }
     
-    func isLess(than target: Any) throws -> Bool {
+    func isLess(than target: Any) -> Bool? {
         guard let targetValue = AttributeValue(value: target) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            return nil
         }
         
         guard let currentDouble = self.doubleValue,
             let targetDouble = targetValue.doubleValue else {
-                throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+                print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+                return nil
         }
         
-        try checkValidAttributeNumber(target)
+        if !checkValidAttributeNumber(target) {
+            return nil
+        }
 
         return currentDouble < targetDouble
     }
@@ -218,11 +232,11 @@ extension AttributeValue {
         }
     }
     
-    func checkValidAttributeNumber(_ number: Any?, caller: String = #function) throws {
+    func checkValidAttributeNumber(_ number: Any?, caller: String = #function) -> Bool {
         // check range for any value types (Int, Int64, Double, Float...)
         // do not check value range for string types
         
-        guard let number = number else { return }
+        guard let number = number else { return false }
     
         var num: Double
         if let number = Utils.getInt64Value(number) {
@@ -230,13 +244,17 @@ extension AttributeValue {
         } else if let number = Utils.getDoubleValue(number) {
             num = number
         } else {
-            return
+            // its not a number so let it go.
+            return true
         }
 
         // valid range: [-2^53, 2^53]
         if abs(num) > pow(2, 53) {
-            throw OptimizelyError.evaluateAttributeValueOutOfRange(prettySrc(caller, target: number))
+            print(OptimizelyError.evaluateAttributeValueOutOfRange(prettySrc(caller, target: number)))
+            return false
         }
+        
+        return true
     }
 
     func prettySrc(_ src: String, target: Any? = nil) -> String {

@@ -61,14 +61,16 @@ enum ConditionHolder: Codable, Equatable {
         }
     }
     
-    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
         switch self {
         case .logicalOp:
-            throw OptimizelyError.conditionInvalidFormat("Logical operation not evaluated")
+            //TODO: replace with logger
+            print("Logical operation not evaluated")
+            return nil
         case .leaf(let conditionLeaf):
-            return try conditionLeaf.evaluate(project: project, attributes: attributes)
+            return conditionLeaf.evaluate(project: project, attributes: attributes)
         case .array(let conditions):
-            return try conditions.evaluate(project: project, attributes: attributes)
+            return conditions.evaluate(project: project, attributes: attributes)
         }
     }
 }
@@ -77,46 +79,108 @@ enum ConditionHolder: Codable, Equatable {
 
 extension Array where Element == ConditionHolder {
     
-    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
         guard let firstItem = self.first else {
-            throw OptimizelyError.conditionInvalidFormat("Empty condition array")
+            print("Empty condition array")
+            return nil
         }
         
         switch firstItem {
         case .logicalOp(let op):
-            return try evaluate(op: op, project: project, attributes: attributes)
+            return evaluate(op: op, project: project, attributes: attributes)
         case .leaf:
             // special case - no logical operator
             // implicit or
-            return try [[ConditionHolder.logicalOp(.or)],self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, attributes: attributes)
+            return [[ConditionHolder.logicalOp(.or)],self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, attributes: attributes)
         default:
-            throw OptimizelyError.conditionInvalidFormat("Invalid first item")
+            print("Invalid first item")
+            return nil
         }
     }
     
-    func evaluate(op: LogicalOp, project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluate(op: LogicalOp, project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
         guard self.count > 0 else {
-            throw OptimizelyError.conditionInvalidFormat("Empty condition array")
+            print("Empty condition array")
+            return nil
         }
         
-        let itemsAfterOpTrimmed = Array(self[1...])
-        
-        // create closure array for delayed evaluations to avoid unnecessary ops
-        let evalList = itemsAfterOpTrimmed.map { holder -> ThrowableCondition in
-            return {
-                return try holder.evaluate(project: project, attributes: attributes)
-            }
-        }
+        let evalList = Array(self[1...])
         
         switch op {
         case .and:
-            return try evalList.and()
+            return evalList.and(project: project, attributes: attributes)
         case .or:
-            return try evalList.or()
+            return evalList.or(project: project, attributes: attributes)
         case .not:
-            return try evalList.not()
+            return evalList.not(project: project, attributes: attributes)
         }
     }
     
+    // returns true only when all items are true and no-error
+    func and(project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
+        guard self.count > 0 else {
+            print(OptimizelyError.conditionInvalidFormat("AND with empty items"))
+            return nil
+        }
+        
+        var foundError = false
+        
+        for eval in self {
+            if let value = eval.evaluate(project: project, attributes: attributes) {
+                if !value {
+                    return false
+                }
+            }
+            else {
+                foundError = true
+            }
+        }
+        
+        if foundError {
+            print(OptimizelyError.conditionInvalidFormat("AND with invalid items [\(self)]"))
+            return nil
+        }
+        
+        return true
+    }
+    
+    // return try if any item is true (even with other error items)
+    func or(project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
+        var foundError: Bool = false
+        
+        for eval in self {
+            if let value = eval.evaluate(project: project, attributes: attributes) {
+                if value {
+                    return true
+                }
+            }
+            else {
+                foundError = true
+            }
+        }
+        
+        if foundError {
+            print(OptimizelyError.conditionInvalidFormat("OR with invalid items [\(self)]"))
+            return nil
+        }
+        
+        return false
+    }
+    
+    // evalute the 1st item only
+    func not(project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
+        guard let eval = self.first else {
+            print(OptimizelyError.conditionInvalidFormat("NOT with empty items"))
+            return nil
+        }
+        
+        if let result = eval.evaluate(project: project, attributes: attributes) {
+            return !result
+        }
+
+        print(OptimizelyError.conditionInvalidFormat("NOT with invalid items [\(eval)]"))
+        return nil
+    }
+
 }
 

@@ -130,7 +130,7 @@ class ConditionHolderTests: XCTestCase {
 
         XCTAssertNotNil(data)
         let testHolder = try? JSONDecoder().decode(ConditionHolder.self, from: data!)
-        let bool = try? testHolder!.evaluate(project: nil, attributes: nil)
+        let bool = testHolder!.evaluate(project: nil, attributes: nil)
         XCTAssertNil(bool)
     }
 }

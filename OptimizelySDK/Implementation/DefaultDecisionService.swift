@@ -89,13 +89,13 @@ class DefaultDecisionService : OPTDecisionService {
                 switch conditions {
                 case .array(let arrConditions):
                     if arrConditions.count > 0 {
-                        result = try conditions.evaluate(project: config.project, attributes: attributes)
+                        result = conditions.evaluate(project: config.project, attributes: attributes) ?? false
                     } else {
                         // empty conditions (backward compatibility with "audienceIds" is ignored if exists even though empty
                         result = true
                     }
                 case .leaf:
-                    result = try conditions.evaluate(project: config.project, attributes: attributes)
+                    result = conditions.evaluate(project: config.project, attributes: attributes) ?? false
                 default:
                     result = true
                 }
@@ -108,11 +108,8 @@ class DefaultDecisionService : OPTDecisionService {
                     holder.append(.leaf(.audienceId(id)))
                 }
                 
-                result = try holder.evaluate(project: config.project, attributes: attributes)
+                result = holder.evaluate(project: config.project, attributes: attributes) ?? false
             }
-        } catch {
-            logger?.i(error as? OptimizelyError, source: "isInExperiment(experiment: \(experiment.key), userId: \(userId))")
-            result = false
         }
         
         logger?.i(.audienceEvaluationResultCombined(experiment.key, result.description))

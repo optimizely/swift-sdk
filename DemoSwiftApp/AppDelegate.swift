@@ -63,7 +63,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
-                self.optimizely = nil
             case .success:
                 print("Optimizely SDK initialized successfully!")
             }
@@ -87,7 +86,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Optimizely SDK initialized successfully!")
         } catch {
             print("Optimizely SDK initiliazation failed: \(error)")
-            optimizely = nil
         }
         
         startWithRootViewController()
@@ -157,7 +155,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
-                self.optimizely = nil
             case .success:
                 print("Optimizely SDK initialized successfully!")
             }

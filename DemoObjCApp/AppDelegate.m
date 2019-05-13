@@ -16,7 +16,6 @@
 
 #import "AppDelegate.h"
 #import "VariationViewController.h"
-#import "FailureViewController.h"
 #import "CustomLogger.h"
 
 @import Optimizely;
@@ -65,7 +64,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-            self.optimizely = nil;
         }
         
         [self startWithRootViewController];
@@ -76,7 +74,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     NSString *localDatafilePath = [[NSBundle mainBundle] pathForResource:kOptimizelyDatafileName ofType:@"json"];
     if (localDatafilePath == nil) {
         NSAssert(false, @"Local datafile cannot be found");
-        self.optimizely = nil;
         return;
     }
     
@@ -86,7 +83,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     
     if (datafileJSON == nil) {
         NSLog(@"Invalid JSON format");
-        self.optimizely = nil;
     } else {
         NSError *error;
         BOOL status = [self.optimizely startWithDatafile:datafileJSON error:&error];
@@ -94,7 +90,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-            self.optimizely = nil;
         }
     }
     
@@ -150,7 +145,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-            self.optimizely = nil;
         }
         
         [self startWithRootViewController];
@@ -166,7 +160,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                                      userId:self.userId
                                                                  attributes:self.attributes
                                                                       error:&error];
-        
+
         if (variationKey != nil) {
             [self openVariationViewWithVariationKey:variationKey];
         } else {

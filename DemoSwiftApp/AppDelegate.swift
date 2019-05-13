@@ -67,9 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Optimizely SDK initialized successfully!")
             }
             
-            DispatchQueue.main.async {
-                self.startWithRootViewController()
-            }
+            self.startWithRootViewController()
         }
     }
     
@@ -159,26 +157,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Optimizely SDK initialized successfully!")
             }
             
-            DispatchQueue.main.async {
-                self.startWithRootViewController()
-            }
+            self.startWithRootViewController()
         }
     }
 
     // MARK: - ViewControl
     
     func startWithRootViewController() {
-        do {
-            let variationKey = try optimizely.activate(experimentKey: experimentKey,
-                                                       userId: userId,
-                                                       attributes: attributes)
-            openVariationView(variationKey: variationKey)
-        } catch OptimizelyError.variationUnknown(userId, experimentKey) {
-            print("Optimizely SDK activation cannot map this user to experiemnt")
-            openVariationView(variationKey: nil)
-        } catch {
-            print("Optimizely SDK activation failed: \(error)")
-            openFailureView()
+        DispatchQueue.main.async {
+            do {
+                // For sample codes for other APIs, see "Samples/SamplesForAPI.swift"
+                
+                let variationKey = try self.optimizely.activate(experimentKey: self.experimentKey,
+                                                           userId: self.userId,
+                                                           attributes: self.attributes)
+                self.openVariationView(variationKey: variationKey)
+            } catch OptimizelyError.variationUnknown(self.userId, self.experimentKey) {
+                print("Optimizely SDK activation cannot map this user to experiemnt")
+                self.openVariationView(variationKey: nil)
+            } catch {
+                print("Optimizely SDK activation failed: \(error)")
+                self.openFailureView()
+            }
         }
     }
     

@@ -30,6 +30,8 @@
 		6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9681D721EFA5B2009B7FEC /* CustomLogger.m */; };
 		6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
 		6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
+		6EFA3206227CD55E006FA572 /* SamplesForAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFA3205227CD55E006FA572 /* SamplesForAPI.m */; };
+		6EFA3207227CD55E006FA572 /* SamplesForAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EFA3205227CD55E006FA572 /* SamplesForAPI.m */; };
 		A0C60F82A88EDB74234D7D3F /* Pods_DemoObjctvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48C9592909E0CF5074F9A84D /* Pods_DemoObjctvOS.framework */; };
 /* End PBXBuildFile section */
 
@@ -181,6 +183,8 @@
 		6EF7498E21E404BB008B22A0 /* DemoObjciOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoObjciOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF7499F21E404BC008B22A0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6EF749A821E404D6008B22A0 /* DemoObjctvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoObjctvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EFA3204227CD55E006FA572 /* SamplesForAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SamplesForAPI.h; sourceTree = "<group>"; };
+		6EFA3205227CD55E006FA572 /* SamplesForAPI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SamplesForAPI.m; sourceTree = "<group>"; };
 		762D1F9E4AA702083D17C4C9 /* Pods-DemoObjciOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjciOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS.release.xcconfig"; sourceTree = "<group>"; };
 		D47F5FC88600AFD4E656D50A /* Pods-DemoObjciOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjciOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjciOS/Pods-DemoObjciOS.debug.xcconfig"; sourceTree = "<group>"; };
 		D58542E1B5771327083E56E2 /* Pods-DemoObjctvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjctvOS.release.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -300,6 +304,7 @@
 				6EB8456621EE5DE3005346CC /* VariationViewController.h */,
 				6EB8456521EE5DE3005346CC /* VariationViewController.m */,
 				6E96812021EE957B009B7FEC /* Customization */,
+				6EFA322A227CDDF0006FA572 /* Samples */,
 				6E96817721EEA321009B7FEC /* DemoObjciOS */,
 				6E96817321EEA321009B7FEC /* DemoObjctvOS */,
 				6E9681A121EEA3D8009B7FEC /* SharedResources */,
@@ -317,6 +322,15 @@
 				6EF749A821E404D6008B22A0 /* DemoObjctvOS.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6EFA322A227CDDF0006FA572 /* Samples */ = {
+			isa = PBXGroup;
+			children = (
+				6EFA3204227CD55E006FA572 /* SamplesForAPI.h */,
+				6EFA3205227CD55E006FA572 /* SamplesForAPI.m */,
+			);
+			path = Samples;
 			sourceTree = "<group>";
 		};
 		E4F9C3F25D5A22985B6E41CD /* Frameworks */ = {
@@ -628,6 +642,8 @@
 				6E9681BA21EEB361009B7FEC /* VariationViewController.m in Sources */,
 				6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E9681D821EFA5B2009B7FEC /* CustomLogger.m in Sources */,
+
+				6EFA3206227CD55E006FA572 /* SamplesForAPI.m in Sources */,
 				6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -639,6 +655,7 @@
 				6E9681BD21EEB364009B7FEC /* VariationViewController.m in Sources */,
 				6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */,
+				6EFA3207227CD55E006FA572 /* SamplesForAPI.m in Sources */,
 				6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

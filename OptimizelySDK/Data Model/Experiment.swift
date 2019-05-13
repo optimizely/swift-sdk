@@ -46,6 +46,7 @@ extension Experiment {
         return variations.filter { $0.id == id }.first
     }
     
+    @inlinable
     func getVariation(key: String) -> Variation? {
         return variations.filter { $0.key == key }.first
     }

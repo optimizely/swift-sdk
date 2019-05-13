@@ -26,7 +26,7 @@ struct Variation: Codable, Equatable {
 // MARK: - Utils
 
 extension Variation {
-    
+    @inlinable
     func getVariable(id: String) -> Variable? {
         return variables?.filter { $0.id == id }.first
     }

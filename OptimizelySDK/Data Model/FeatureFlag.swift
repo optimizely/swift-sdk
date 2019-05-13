@@ -28,6 +28,7 @@ struct FeatureFlag: Codable, Equatable {
 
 extension FeatureFlag {
     
+    @inlinable
     func getVariable(key: String) -> FeatureVariable? {
         return variables.filter { $0.key == key }.first
     }

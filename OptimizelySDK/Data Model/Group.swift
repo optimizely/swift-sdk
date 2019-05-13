@@ -31,7 +31,7 @@ struct Group: Codable, Equatable {
 // MARK: - Utils
 
 extension Group {
-    
+    @inlinable
     func getExperiemnt(id: String) -> Experiment? {
         return experiments.filter { $0.id == id }.first
     }

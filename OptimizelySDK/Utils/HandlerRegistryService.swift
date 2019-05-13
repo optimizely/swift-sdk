@@ -20,40 +20,41 @@ class HandlerRegistryService {
     
     static let shared = HandlerRegistryService()
     
-    let dispatchQueue = DispatchQueue(label: "com.optimizely.HandlerRegistryService")
+    struct ServiceKey : Hashable {
+        var service:String
+        var sdkKey:String?
+    }
     
-    var binders = [BinderProtocol]()
+    var binders:[ServiceKey:BinderProtocol] = [ServiceKey:BinderProtocol]()
     
     private init() {
         
     }
     
     func registerBinding(binder:BinderProtocol) {
-        dispatchQueue.sync {
-            if let _ = binders.filter({(type(of: $0.service) == type(of: binder.service)) && $0.sdkKey == binder.sdkKey}).first {
-            }
-            else {
-                binders.append(binder)
-            }
-        }        
+        let sk = ServiceKey(service: "\(type(of: binder.service))", sdkKey: binder.sdkKey)
+        if let _ = binders[sk] {
+        }
+        else {
+            binders[sk] = binder
+        }
     }
     
     func injectComponent(service:Any, sdkKey:String? = nil, isReintialize:Bool=false) -> Any? {
         var result:Any?
-        dispatchQueue.sync {
-            if var binder = binders.filter({(type(of: $0.service) == type(of: service)) && $0.sdkKey == sdkKey}).first {
-                if isReintialize && binder.strategy == .reCreate {
-                    binder.instance = binder.factory()
-                    result = binder.instance
-                }
-                else if let inst = binder.instance, binder.isSingleton {
-                    result = inst
-                }
-                else {
-                    let inst = binder.factory()
-                    binder.instance = inst
-                    result = inst
-                }
+        let sk = ServiceKey(service: "\(type(of:service))", sdkKey: sdkKey)
+        if var binder = binders[sk] {
+            if isReintialize && binder.strategy == .reCreate {
+                binder.instance = binder.factory()
+                result = binder.instance
+            }
+            else if let inst = binder.instance, binder.isSingleton {
+                result = inst
+            }
+            else {
+                let inst = binder.factory()
+                binder.instance = inst
+                result = inst
             }
         }
         return result
@@ -64,10 +65,9 @@ class HandlerRegistryService {
     }
     
     func lookupComponents(sdkKey:String)->[Any?]? {
-        var value:[Any]?
         
-        value = self.binders.filter({$0.sdkKey == sdkKey}).map({ self.injectComponent(service: $0.service) as Any })
-
+        let value = self.binders.keys.filter({$0.sdkKey == sdkKey}).map({self.injectComponent(service: self.binders[$0]!.service)!})
+        
         return value
     }
 }

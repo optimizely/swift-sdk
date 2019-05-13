@@ -23,14 +23,14 @@ open class DefaultLogger : OPTLogger {
             return _logLevel ?? .info
         }
         set (newLevel){
-            if _logLevel == nil {
+            guard let _ = _logLevel else {
                 _logLevel = newLevel
+                return
             }
         }
     }
     
     required public init() {
-        DefaultLogger.logLevel = .info
     }
     
     open func log(level: OptimizelyLogLevel, message: String) {

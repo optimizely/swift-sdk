@@ -87,7 +87,6 @@ open class OptimizelyClient: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
-        logger.i("SDK Version: \(Utils.sdkVersion)")
     }
     
     /// Start Optimizely SDK (Asynchronous)
@@ -207,20 +206,20 @@ open class OptimizelyClient: NSObject {
             var fetchResult: OptimizelyResult<Data>
             
             switch result {
-            case .failure:
-                fetchResult = .failure(.generic)
+            case .failure(let error):
+                fetchResult = .failure(error)
             case .success(let datafile):
                 // we got a new datafile.
                 if let datafile = datafile {
                     fetchResult = .success(datafile)
                 }
-                    // we got a success but no datafile 304. So, load the saved datafile.
+                // we got a success but no datafile 304. So, load the saved datafile.
                 else if let data = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) {
                     fetchResult = .success(data)
                 }
-                    // if that fails, we have a problem.
+                // if that fails, we have a problem.
                 else {
-                    fetchResult = .failure(.generic)
+                    fetchResult = .failure(.datafileLoadingFailed(self.sdkKey))
                 }
                 
             }

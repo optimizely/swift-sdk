@@ -18,17 +18,8 @@ import Foundation
 
 class Utils {
     
-    // - Bundle(for: OptimizelyClient.self) not working properly to get SDK bundle within unit tests
-    // - Bundle(identifier: bundleIdentifier) works ok consistently
-    // - CocoaPods uses its own bundle identifier, so let it use Bundle(for:) as a fallback
-    //   CocoaPods copies "s.version" in podspec to "CFBundleShortVersionString" in its own Info.plist file
-    static var sdkVersion: String = {
-        let bundle = Bundle(identifier: "com.optimizely.OptimizelySwiftSDK") ?? Bundle(for: OptimizelyClient.self)
-        guard let version = bundle.infoDictionary!["CFBundleShortVersionString"] as? String else {
-            return "1.0.0"
-        }
-        return version
-    }()
+    // from auto-generated variable OPTIMIZEY_SDK_VERSION
+    static var sdkVersion: String = OPTIMIZELY_SDK_VERSION
     
     // @objc NSNumber can be casted either Bool, Int, or Double
     // more filtering required to avoid NSNumber(false, true) interpreted as Int(0, 1) instead of Bool

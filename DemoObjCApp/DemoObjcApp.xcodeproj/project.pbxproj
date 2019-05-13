@@ -25,11 +25,7 @@
 		6E9681B221EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */; };
 		6E9681B321EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */; };
 		6E9681BA21EEB361009B7FEC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
-		6E9681BB21EEB361009B7FEC /* FailureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456721EE5DE3005346CC /* FailureViewController.m */; };
-		6E9681BC21EEB361009B7FEC /* SplashScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */; };
 		6E9681BD21EEB364009B7FEC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
-		6E9681BE21EEB364009B7FEC /* FailureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456721EE5DE3005346CC /* FailureViewController.m */; };
-		6E9681BF21EEB364009B7FEC /* SplashScreenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */; };
 		6E9681D821EFA5B2009B7FEC /* CustomLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9681D721EFA5B2009B7FEC /* CustomLogger.m */; };
 		6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E9681D721EFA5B2009B7FEC /* CustomLogger.m */; };
 		6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456421EE5DE3005346CC /* AppDelegate.m */; };
@@ -180,13 +176,9 @@
 		6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
 		6E9681D421EFA5B2009B7FEC /* CustomLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLogger.h; sourceTree = "<group>"; };
 		6E9681D721EFA5B2009B7FEC /* CustomLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLogger.m; sourceTree = "<group>"; };
-		6EB8456321EE5DE3005346CC /* SplashScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashScreenViewController.h; sourceTree = "<group>"; };
 		6EB8456421EE5DE3005346CC /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		6EB8456521EE5DE3005346CC /* VariationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VariationViewController.m; sourceTree = "<group>"; };
 		6EB8456621EE5DE3005346CC /* VariationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariationViewController.h; sourceTree = "<group>"; };
-		6EB8456721EE5DE3005346CC /* FailureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FailureViewController.m; sourceTree = "<group>"; };
-		6EB8456821EE5DE3005346CC /* FailureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FailureViewController.h; sourceTree = "<group>"; };
-		6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashScreenViewController.m; sourceTree = "<group>"; };
 		6EB8456A21EE5DE3005346CC /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6EF7498E21E404BB008B22A0 /* DemoObjciOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoObjciOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EF7499F21E404BC008B22A0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -311,10 +303,6 @@
 				6EB8456421EE5DE3005346CC /* AppDelegate.m */,
 				6EB8456621EE5DE3005346CC /* VariationViewController.h */,
 				6EB8456521EE5DE3005346CC /* VariationViewController.m */,
-				6EB8456821EE5DE3005346CC /* FailureViewController.h */,
-				6EB8456721EE5DE3005346CC /* FailureViewController.m */,
-				6EB8456321EE5DE3005346CC /* SplashScreenViewController.h */,
-				6EB8456921EE5DE3005346CC /* SplashScreenViewController.m */,
 				6E96812021EE957B009B7FEC /* Customization */,
 				6EFA322A227CDDF0006FA572 /* Samples */,
 				6E96817721EEA321009B7FEC /* DemoObjciOS */,
@@ -654,10 +642,9 @@
 				6E9681BA21EEB361009B7FEC /* VariationViewController.m in Sources */,
 				6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E9681D821EFA5B2009B7FEC /* CustomLogger.m in Sources */,
+
 				6EFA3206227CD55E006FA572 /* SamplesForAPI.m in Sources */,
-				6E9681BB21EEB361009B7FEC /* FailureViewController.m in Sources */,
 				6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */,
-				6E9681BC21EEB361009B7FEC /* SplashScreenViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -669,9 +656,7 @@
 				6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */,
 				6EFA3207227CD55E006FA572 /* SamplesForAPI.m in Sources */,
-				6E9681BE21EEB364009B7FEC /* FailureViewController.m in Sources */,
 				6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */,
-				6E9681BF21EEB364009B7FEC /* SplashScreenViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

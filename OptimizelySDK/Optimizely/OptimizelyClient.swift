@@ -34,7 +34,6 @@ open class OptimizelyClient: NSObject {
     var eventDispatcher: OPTEventDispatcher {
         return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!
     }
-    let periodicDownloadInterval: Int
     
     // MARK: - Default Services
     
@@ -68,11 +67,9 @@ open class OptimizelyClient: NSObject {
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
-                periodicDownloadInterval: Int? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         self.sdkKey = sdkKey
-        self.periodicDownloadInterval = periodicDownloadInterval ?? 10 * 60
         
         super.init()
         
@@ -158,34 +155,30 @@ open class OptimizelyClient: NSObject {
             // this isn't really necessary because the try would throw if there is a problem.  But, we want to avoid using bang so we do another let binding.
             guard let config = self.config else { throw OptimizelyError.dataFileInvalid }
             
-            if periodicDownloadInterval > 0 {
-                datafileHandler.stopPeriodicUpdates(sdkKey: self.sdkKey)
-                datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
-                    // new datafile came in...
-                    self.reInitLock.wait(); defer { self.reInitLock.signal() }
-                    if let config = try? ProjectConfig(datafile: data) {
-                        do {
-                            if let users = self.config?.whitelistUsers {
-                                config.whitelistUsers = users
-                            }
-                            
-                            self.config = config
-                            
-                            // call reinit on the services we know we are reinitializing.
-                            
-                            for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
-                                guard let component = component else { continue }
-                                HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
-                            }
-                            
+            datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
+                // new datafile came in...
+                self.reInitLock.wait(); defer { self.reInitLock.signal() }
+                if let config = try? ProjectConfig(datafile: data) {
+                    do {
+                        if let users = self.config?.whitelistUsers {
+                            config.whitelistUsers = users
                         }
                         
-                        self.notificationCenter.sendNotifications(type:
-                            NotificationType.DatafileChange.rawValue, args: [data])
+                        self.config = config
+                        
+                        // call reinit on the services we know we are reinitializing.
+                        
+                        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
+                            guard let component = component else { continue }
+                            HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
+                        }
                         
                     }
+                    
+                    self.notificationCenter.sendNotifications(type:
+                        NotificationType.DatafileChange.rawValue, args: [data])
+                    
                 }
-                
             }
         } catch let error as OptimizelyError {
             // .datafileInvalid

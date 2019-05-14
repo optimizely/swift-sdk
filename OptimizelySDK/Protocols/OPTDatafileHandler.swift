@@ -43,24 +43,23 @@ public protocol OPTDatafileHandler {
                           completionHandler:@escaping DatafileDownloadCompletionHandler)
     
     /**
-      Start periodic updates to the project datafile .
+      Start updates to the project datafile .
      
       - Parameter sdkKey: SdkKey for the datafile
-      - Parameter updateInterval: frequency of updates in seconds
      */
-    func startPeriodicUpdates(sdkKey:String, updateInterval:Int, datafileChangeNotification:((Data)->Void)?)
+    func startUpdates(sdkKey:String, datafileChangeNotification:((Data)->Void)?)
     
     /**
      Stop the periodic updates. This should be called when the app goes to background
      
      - Parameter sdkKey: sdk key for datafile.
      */
-    func stopPeriodicUpdates(sdkKey:String)
+    func stopUpdates(sdkKey:String)
 
     /**
      Stop all periodic updates. This should be called when the app goes to background
      */
-    func stopPeriodicUpdates()
+    func stopAllUpdates()
 
     /**
      Save the datafile to cache.

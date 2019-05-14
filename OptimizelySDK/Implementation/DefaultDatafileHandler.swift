@@ -245,6 +245,22 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         }
         
     }
+    
+    func startUpdates(sdkKey: String, datafileChangeNotification: ((Data) -> Void)?) {
+        if let value = timers.property?[sdkKey], !value.timer.isValid {
+            startPeriodicUpdates(sdkKey: sdkKey, updateInterval: value.interval, datafileChangeNotification: datafileChangeNotification)
+        }
+    }
+    
+    func stopUpdates(sdkKey: String) {
+        stopPeriodicUpdates(sdkKey: sdkKey)
+    }
+    
+    func stopAllUpdates() {
+        stopPeriodicUpdates()
+    }
+    
+
 
     
     func saveDatafile(sdkKey: String, dataFile: Data) {

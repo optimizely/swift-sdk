@@ -28,13 +28,13 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     static let MAX_FAILURE_COUNT = 3
     
     // default timerInterval
-    open var timerInterval:TimeInterval = 60 * 5 // every five minutes
+    var timerInterval:TimeInterval = 60 * 5 // every five minutes
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
-    open var batchSize:Int = 10
+    var batchSize:Int = 10
     // start trimming the front of the queue when we get to over maxQueueSize
     // TODO: implement
-    open var maxQueueSize:Int = 3000
+    var maxQueueSize:Int = 30000
     
     lazy var logger = HandlerRegistryService.shared.injectLogger()
     var backingStore:DataStoreType = .file
@@ -47,9 +47,8 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     // timer as a atomic property.
     var timer:AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    public init(batchSize:Int = 10, maxQueueSize:Int = 3000, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*5 ) {
-        self.batchSize = batchSize
-        self.maxQueueSize = maxQueueSize
+    public init(batchSize:Int = 10, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*5 ) {
+        self.batchSize = batchSize > 0 ? batchSize : 1
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
         self.timerInterval = timerInterval

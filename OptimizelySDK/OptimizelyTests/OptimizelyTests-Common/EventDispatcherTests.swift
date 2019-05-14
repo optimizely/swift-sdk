@@ -238,6 +238,12 @@ class EventDispatcherTests: XCTestCase {
 
     }
     
+    func testDispatcherZeroBatchSize() {
+        let eventDispatcher = DefaultEventDispatcher(batchSize: 0, backingStore: .userDefaults, dataStoreName: "DoNothing", timerInterval: 0)
+        
+        XCTAssert(eventDispatcher.batchSize > 0)
+    }
+    
     func testDataStoreQueue() {
         let queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: "backingStoreName"))
         

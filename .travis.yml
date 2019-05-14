@@ -31,11 +31,11 @@ jobs:
       language: swift
       os: osx
       osx_image: xcode10.1
-      addons:
-        srcclr: true
       install: gem install cocoapods
       script:
         - pod spec lint --quick
+      after_script:
+        - curl -sSL https://download.sourceclear.com/ci.sh |  bash
 
     - &unittests
       stage: 'Unit Tests'

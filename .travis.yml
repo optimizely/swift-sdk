@@ -35,7 +35,7 @@ jobs:
       script:
         - pod spec lint --quick
       after_script:
-        - curl -sSL https://download.sourceclear.com/ci.sh |  bash
+        - curl -sSL https://download.sourceclear.com/ci.sh | bash
 
     - &unittests
       stage: 'Unit Tests'

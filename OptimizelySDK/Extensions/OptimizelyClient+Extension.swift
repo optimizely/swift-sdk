@@ -42,4 +42,12 @@ extension OptimizelyClient {
         // sdk keys without having to be created for every key.
         HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStrategy(strategy: .reUse).to(factory: type(of:datafileHandler).init).using(instance: datafileHandler).sdkKey(key: sdkKey))
     }
+    
+    func getAllExperimentKeys() -> [String]? {
+        return self.config?.allExperiments.map({$0.key})
+    }
+
+    func getAllFeatureKeys() -> [String]? {
+        return self.config?.featureFlagKeyMap.keys.map({$0})
+    }
 }

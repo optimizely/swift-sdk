@@ -1,3 +1,4 @@
+//
 /****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -13,10 +14,6 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-
-#ifndef DemoSwiftApp_Bridging_Header_h
-#define DemoSwiftApp_Bridging_Header_h
-
-#import <Google/Analytics.h>
-
-#endif /* DemoSwiftApp_Bridging_Header_h */
+    
+/// Do not edit this field.  It is auto updated to reflect the current version using the runtimeVersion script.
+let OPTIMIZELY_SDK_VERSION = "1.0.0"

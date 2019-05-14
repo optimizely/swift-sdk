@@ -64,16 +64,18 @@ public enum OptimizelyError: Error {
 
     // MARK: - Datafile Errors
     
-    case datafileDownloadFailed(_ reason: String)
+    case datafileDownloadFailed(_ hint: String)
     case dataFileInvalid
     case dataFileVersionInvalid(_ version: String)
-    case datafileSavingFailed(_ sdkKey: String)
-    case datafileLoadingFailed(_ sdkKey: String)
+    case datafileSavingFailed(_ hint: String)
+    case datafileLoadingFailed(_ hint: String)
 
     // MARK: - EventDispatcher Errors
     
     case eventDispatchFailed(_ reason: String)
 }
+
+// MARK: - CustomStringConvertible
 
 extension OptimizelyError: CustomStringConvertible {
     public var description: String {
@@ -135,3 +137,12 @@ extension OptimizelyError: CustomStringConvertible {
         return message
     }
 }
+
+// MARK: - LocalizedError (ObjC NSError)
+
+extension OptimizelyError: LocalizedError {
+    public var errorDescription: String? {
+        return self.reason
+    }
+}
+

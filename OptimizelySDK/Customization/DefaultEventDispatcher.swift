@@ -142,7 +142,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 self.sendEvent(event: event) { (result) -> (Void) in
                     switch result {
                     case .failure(let error):
-                        self.logger?.e(error.localizedDescription)
+                        self.logger?.e(error.reason)
                         failureCount += 1
                     case .success(_):
                         // we succeeded. remove the batch size sent.

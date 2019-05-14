@@ -16,8 +16,8 @@
 
 #import "AppDelegate.h"
 #import "VariationViewController.h"
-#import "FailureViewController.h"
 #import "CustomLogger.h"
+#import "SamplesForAPI.h"
 
 @import Optimizely;
 #if TARGET_OS_IOS
@@ -65,7 +65,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-            self.optimizely = nil;
         }
         
         [self startWithRootViewController];
@@ -76,7 +75,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     NSString *localDatafilePath = [[NSBundle mainBundle] pathForResource:kOptimizelyDatafileName ofType:@"json"];
     if (localDatafilePath == nil) {
         NSAssert(false, @"Local datafile cannot be found");
-        self.optimizely = nil;
         return;
     }
     
@@ -86,7 +84,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     
     if (datafileJSON == nil) {
         NSLog(@"Invalid JSON format");
-        self.optimizely = nil;
     } else {
         NSError *error;
         BOOL status = [self.optimizely startWithDatafile:datafileJSON error:&error];
@@ -94,7 +91,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-            self.optimizely = nil;
         }
     }
     
@@ -150,7 +146,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-            self.optimizely = nil;
         }
         
         [self startWithRootViewController];
@@ -161,12 +156,14 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 
 -(void)startWithRootViewController {
     dispatch_async(dispatch_get_main_queue(), ^{
+        // For sample codes for other APIs, see "Samples/SamplesForAPI.m"
+
         NSError *error;
         NSString *variationKey = [self.optimizely activateWithExperimentKey:kOptimizelyExperimentKey
                                                                      userId:self.userId
                                                                  attributes:self.attributes
                                                                       error:&error];
-        
+
         if (variationKey != nil) {
             [self openVariationViewWithVariationKey:variationKey];
         } else {

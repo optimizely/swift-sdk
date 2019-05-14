@@ -26,6 +26,7 @@ class ConditionHolderTests_Evaluate: XCTestCase {
                                             "type":"custom_attribute",
                                             "match":"gt",
                                             "value":20]
+
     var project:Project?
     
     override func setUp() {

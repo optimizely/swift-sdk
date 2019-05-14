@@ -44,7 +44,7 @@ class OptimizelyClientTests: XCTestCase {
     
     func testTypedAudienceThroughProject() {
         //        let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
-        let answer = try? optimizely?.config?.project.getAudience(id: "3468206643")?.evaluate( project: optimizely?.config?.project, attributes: ["booleanKey":true])
+        let answer = try? optimizely?.config?.project.evaluateAudience(audienceId: "3468206643", attributes: ["booleanKey":true])
         XCTAssertTrue(answer!!)
         
     }

@@ -32,7 +32,7 @@ jobs:
       os: osx
       osx_image: xcode10.1
       addons:
-        srcclr: false
+        #srcclr: false
       install: gem install cocoapods
       script:
         - pod spec lint --quick

@@ -111,9 +111,17 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 
             }
             while let eventsToSend:[EventForDispatch] = self.dataStore.getFirstItems(count:self.batchSize) {
+                let actualEventsSize = eventsToSend.count
                 var eventToSend = eventsToSend.batch()
                 if let _ = eventToSend {
                     // we merged the event and ready for batch
+                    // if the bacth size is not equal to the actual event size,
+                    // then setup the batchSizeHolder to be the size of the event.
+                    if actualEventsSize != self.batchSize {
+                        batchSizeHolder = actualEventsSize
+                        self.batchSize = actualEventsSize
+                        sendCount = actualEventsSize - 1
+                    }
                 }
                 else {
                     failedBatch()
@@ -145,7 +153,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                         failureCount += 1
                     case .success(_):
                         // we succeeded. remove the batch size sent.
-                        if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
+                        if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: failureCount > 0 ? 1 : actualEventsSize) {
                             if self.batchSize == 1 && removedItem.first != event {
                                 self.logger?.e("Removed event different from sent event")
                             }
@@ -181,7 +189,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
 
     }
     
-    func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         var request = URLRequest(url: event.url)

@@ -175,7 +175,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                             }
                         }
                         else {
-                            // batch worked
+                            // batch had batchSize items
                         }
                     }
                     // our send is done.

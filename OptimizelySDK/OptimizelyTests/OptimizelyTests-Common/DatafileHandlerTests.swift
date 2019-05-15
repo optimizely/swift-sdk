@@ -102,6 +102,38 @@ class DatafileHandlerTests: XCTestCase {
         
         
     }
+    
+    func testPeriodicDownloadWithOptimizlyClient() {
+        class FakeDatafileHandler : DefaultDatafileHandler {
+            let data = OTUtils.loadJSONDatafile("typed_audience_datafile")
+            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                completionHandler(.success(data))
+            }
+        }
+        let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
+        let handler = FakeDatafileHandler()
+
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse))
+        
+        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval:1)
+
+        var count = 0
+        
+        let _ = optimizely.notificationCenter.addDatafileChangeNotificationListener { (data) in
+            count += 1
+            if count == 10 {
+                expection.fulfill()
+            }
+        }
+        optimizely.start() { (result) in
+            XCTAssert(true)
+        }
+        wait(for: [expection], timeout: 10)
+        
+        XCTAssert(count == 10)
+        
+    }
+
 
     func testPerformanceExample() {
         // This is an example of a performance test case.

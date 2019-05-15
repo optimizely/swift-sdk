@@ -19,6 +19,8 @@ import XCTest
 class DatafileHandlerTests: XCTestCase {
 
     override func setUp() {
+        
+        HandlerRegistryService.shared.binders.removeAll()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             if (!FileManager.default.fileExists(atPath: url.path)) {
@@ -113,7 +115,7 @@ class DatafileHandlerTests: XCTestCase {
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
         let handler = FakeDatafileHandler()
 
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse))
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
         
         let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval:1)
 
@@ -121,7 +123,8 @@ class DatafileHandlerTests: XCTestCase {
         
         let _ = optimizely.notificationCenter.addDatafileChangeNotificationListener { (data) in
             count += 1
-            if count == 10 {
+            if count == 9 {
+                optimizely.datafileHandler.stopPeriodicUpdates()
                 expection.fulfill()
             }
         }
@@ -130,7 +133,7 @@ class DatafileHandlerTests: XCTestCase {
         }
         wait(for: [expection], timeout: 10)
         
-        XCTAssert(count == 10)
+        XCTAssert(count == 9)
         
     }
 

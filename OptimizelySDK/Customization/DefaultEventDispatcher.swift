@@ -28,13 +28,13 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     static let MAX_FAILURE_COUNT = 3
     
     // default timerInterval
-    open var timerInterval:TimeInterval = 60 * 5 // every five minutes
+    var timerInterval:TimeInterval = 60 * 5 // every five minutes
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
-    open var batchSize:Int = 10
+    var batchSize:Int = 10
     // start trimming the front of the queue when we get to over maxQueueSize
     // TODO: implement
-    open var maxQueueSize:Int = 3000
+    var maxQueueSize:Int = 30000
     
     lazy var logger = HandlerRegistryService.shared.injectLogger()
     var backingStore:DataStoreType = .file
@@ -47,9 +47,8 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     // timer as a atomic property.
     var timer:AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    public init(batchSize:Int = 10, maxQueueSize:Int = 3000, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*5 ) {
-        self.batchSize = batchSize
-        self.maxQueueSize = maxQueueSize
+    public init(batchSize:Int = 10, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*5 ) {
+        self.batchSize = batchSize > 0 ? batchSize : 1
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
         self.timerInterval = timerInterval
@@ -112,9 +111,17 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 
             }
             while let eventsToSend:[EventForDispatch] = self.dataStore.getFirstItems(count:self.batchSize) {
+                let actualEventsSize = eventsToSend.count
                 var eventToSend = eventsToSend.batch()
                 if let _ = eventToSend {
                     // we merged the event and ready for batch
+                    // if the bacth size is not equal to the actual event size,
+                    // then setup the batchSizeHolder to be the size of the event.
+                    if actualEventsSize != self.batchSize {
+                        batchSizeHolder = actualEventsSize
+                        self.batchSize = actualEventsSize
+                        sendCount = actualEventsSize - 1
+                    }
                 }
                 else {
                     failedBatch()
@@ -142,20 +149,20 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 self.sendEvent(event: event) { (result) -> (Void) in
                     switch result {
                     case .failure(let error):
-                        self.logger?.e(error.localizedDescription)
+                        self.logger?.e(error.reason)
                         failureCount += 1
                     case .success(_):
                         // we succeeded. remove the batch size sent.
                         if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
                             if self.batchSize == 1 && removedItem.first != event {
-                                self.logger?.log(level: .error, message: "Removed event different from sent event")
+                                self.logger?.e("Removed event different from sent event")
                             }
                             else {
-                                self.logger?.log(level: .debug, message: "Successfully sent event " + event.body.debugDescription)
+                                self.logger?.d("Successfully sent event " + event.body.debugDescription)
                             }
                         }
                         else {
-                            self.logger?.log(level: .error, message: "Removed event nil for sent item")
+                            self.logger?.e("Removed event nil for sent item")
                         }
                         // reset failureCount
                         failureCount = 0
@@ -182,7 +189,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
 
     }
     
-    func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         var request = URLRequest(url: event.url)

@@ -153,7 +153,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                         failureCount += 1
                     case .success(_):
                         // we succeeded. remove the batch size sent.
-                        if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: failureCount > 0 ? 1 : actualEventsSize) {
+                        if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
                             if self.batchSize == 1 && removedItem.first != event {
                                 self.logger?.e("Removed event different from sent event")
                             }

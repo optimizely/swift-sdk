@@ -80,6 +80,32 @@ class EventDispatcherTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
+    
+    func testDispatcherZeroTimeInterval() {
+        class InnerEventDispatcher : DefaultEventDispatcher {
+            var once = false
+            var events:[EventForDispatch] = [EventForDispatch]()
+            override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+                events.append(event)
+                if !once {
+                    self.dataStore.save(item: EventForDispatch(body: Data()))
+                    once = true
+                }
+                completionHandler(.success(Data()))
+            }
+        }
+        
+        let dispatcher = InnerEventDispatcher(timerInterval:0)
+
+        // add two items.... call flush
+        dispatcher.dataStore.save(item: EventForDispatch(body: Data()))
+        dispatcher.flushEvents()
+        
+        dispatcher.dispatcher.sync {
+        }
+        
+        XCTAssert(dispatcher.events.count == 2)
+    }
 
     func testEventDispatcherFile() {
         eventDispatcher = DefaultEventDispatcher( backingStore: .file)
@@ -236,6 +262,12 @@ class EventDispatcherTests: XCTestCase {
         // so, must be nil here
         XCTAssert(eventDispatcher?.timer.property == nil)
 
+    }
+    
+    func testDispatcherZeroBatchSize() {
+        let eventDispatcher = DefaultEventDispatcher(batchSize: 0, backingStore: .userDefaults, dataStoreName: "DoNothing", timerInterval: 0)
+        
+        XCTAssert(eventDispatcher.batchSize > 0)
     }
     
     func testDataStoreQueue() {

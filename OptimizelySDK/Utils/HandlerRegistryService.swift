@@ -66,7 +66,7 @@ class HandlerRegistryService {
     
     func lookupComponents(sdkKey:String)->[Any?]? {
         
-        let value = self.binders.keys.filter({$0.sdkKey == sdkKey}).map({self.injectComponent(service: self.binders[$0]!.service)!})
+        let value = self.binders.keys.filter({$0.sdkKey == sdkKey}).map({self.injectComponent(service: self.binders[$0]!.service, sdkKey: sdkKey)!})
         
         return value
     }

@@ -48,9 +48,8 @@ class EventDispatcherTests: XCTestCase {
     }
 
     func testDefaultDispatcher() {
-        eventDispatcher = DefaultEventDispatcher()
+        eventDispatcher = DefaultEventDispatcher(timerInterval:1)
         let pEventD:OPTEventDispatcher = eventDispatcher!
-        eventDispatcher?.timerInterval = 1
 
         pEventD.flushEvents()
         
@@ -297,13 +296,5 @@ class EventDispatcherTests: XCTestCase {
         let _ = queue.removeLastItem()
         
         XCTAssert(queue.count == 0)
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
+    }    
 }

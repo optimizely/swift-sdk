@@ -345,9 +345,9 @@ open class OptimizelyClient: NSObject {
     /// Set forced variation for experiment and user ID to variationKey.
     ///
     /// - Parameters:
-    ///   - experimentKey The key for the experiment.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - variationKey The variation the user should be forced into.
+    ///   - experimentKey: The key for the experiment.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - variationKey: The variation the user should be forced into.
     ///                  This value can be nil, in which case, the forced variation is cleared.
     /// - Returns: true if forced variation set successfully
     public func setForcedVariation(experimentKey: String,
@@ -364,9 +364,9 @@ open class OptimizelyClient: NSObject {
     /// Determine whether a feature is enabled.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: true if feature is enabled, false otherwise.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func isFeatureEnabled(featureKey: String,
@@ -426,10 +426,10 @@ open class OptimizelyClient: NSObject {
     /// Gets boolean feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type boolean.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableBoolean(featureKey: String,
@@ -446,10 +446,10 @@ open class OptimizelyClient: NSObject {
     /// Gets double feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type double.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableDouble(featureKey: String,
@@ -466,10 +466,10 @@ open class OptimizelyClient: NSObject {
     /// Gets integer feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type integer.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableInteger(featureKey: String,
@@ -486,10 +486,10 @@ open class OptimizelyClient: NSObject {
     /// Gets string feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type string.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableString(featureKey: String,

@@ -13,7 +13,7 @@ Optimizely Rollouts is free feature flags for development teams. Easily roll out
 
 ### Using the SDK
 
-See the [Mobile developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=objectivec&platform=mobile) or [OTT developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=objectivec&platform=ott) to learn how to set
+See the [Mobile developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=swift&platform=mobile) or [OTT developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=swift&platform=ott) to learn how to set
 up an Optimizely X project and start using the SDK.
 
 ### Requirements
@@ -77,6 +77,9 @@ First-party code (under OptimizelySwiftSDK is copyright Optimizely, Inc. and con
 
 This software incorporates code from the following open source repo:
 
+For the SDK:
 MurmurHash3:https://github.com/jpedrosa/sua/blob/master/Sources/murmurhash3.swift License (Apache 2.0):https://github.com/jpedrosa/sua/blob/master/LICENSE.txt
 Ported to Swift4.
+
+
 

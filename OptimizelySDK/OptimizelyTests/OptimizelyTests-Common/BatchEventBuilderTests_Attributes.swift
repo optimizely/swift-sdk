@@ -15,7 +15,6 @@
 ***************************************************************************/
 
 import XCTest
-import SwiftyJSON
 
 class BatchEventBuilderTests_Attributes: XCTestCase {
     
@@ -55,30 +54,31 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      attributes: attributes)
 
         let event = eventDispatcher.events.first!
-        let json = JSON(event.body)
-        let array = json["visitors"][0]["attributes"].arrayValue
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: JSONSerialization.ReadingOptions.allowFragments) as! Dictionary<String,Any>
         
-        var item: [String: Any] = array.filter{ $0["key"].stringValue == "s_foo" }.first!.dictionaryObject!
+        let array = (json["visitors"] as! Array<Dictionary<String,Any>>)[0]["attributes"] as! Array<Dictionary<String,Any>>
+        
+        var item: [String: Any] = array.filter{ ($0["key"] as! String) == "s_foo" }.first!
         XCTAssertEqual(item["value"] as! String, "foo")
         XCTAssertEqual(item["type"] as! String, "custom")
         XCTAssertEqual(item["entity_id"] as! String, "10401066171")
         
-        item = array.filter{ $0["key"].stringValue == "b_true" }.first!.dictionaryObject!
+        item = array.filter{ ($0["key"] as! String) == "b_true" }.first!
         XCTAssertEqual(item["value"] as! Bool, true)
         XCTAssertEqual(item["type"] as! String, "custom")
         XCTAssertEqual(item["entity_id"] as! String, "10401066172")
         
-        item = array.filter{ $0["key"].stringValue == "i_42" }.first!.dictionaryObject!
+        item = array.filter{ ($0["key"] as! String) == "i_42" }.first!
         XCTAssertEqual(item["value"] as! Int, 42)
         XCTAssertEqual(item["type"] as! String, "custom")
         XCTAssertEqual(item["entity_id"] as! String, "10401066172")
         
-        item = array.filter{ $0["key"].stringValue == "d_4_2" }.first!.dictionaryObject!
+        item = array.filter{ ($0["key"] as! String) == "d_4_2" }.first!
         XCTAssertEqual(item["value"] as! Double, 4.2)
         XCTAssertEqual(item["type"] as! String, "custom")
         XCTAssertEqual(item["entity_id"] as! String, "10401066173")
         
-        item = array.filter{ $0["key"].stringValue == "$opt_key_1" }.first!.dictionaryObject!
+        item = array.filter{ ($0["key"] as! String) == "$opt_key_1" }.first!
         XCTAssertEqual(item["value"] as! String, "bar")
         XCTAssertEqual(item["type"] as! String, "custom")
         XCTAssertEqual(item["entity_id"] as! String, "$opt_key_1")
@@ -97,11 +97,11 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      attributes: attributes)
 
         let event = eventDispatcher.events.first!
-        let json = JSON(event.body)
-        let array = json["visitors"][0]["attributes"].arrayValue
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String,Any>
+        let array = (json["visitors"] as! Array<Dictionary<String,Any>>)[0]["attributes"] as! Array<Dictionary<String,Any>>
         var dict = [String: Any]()
         for item in array {
-            dict[item["key"].stringValue] = item["value"].rawValue
+            dict[item["key"] as! String] = item["value"]
         }
         XCTAssert(dict.count == attributes.count)
         
@@ -131,19 +131,19 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
         let event = eventDispatcher.events.first!
-        let json = JSON(event.body)
-        let array = json["visitors"][0]["attributes"].arrayValue
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String,Any>
+        let array = (json["visitors"] as! Array<Dictionary<String,Any>>)[0]["attributes"] as! Array<Dictionary<String,Any>>
         
-        var item: [String: Any] = array.filter{ $0["key"].stringValue == "s_foo" }.first!.dictionaryObject!
+        var item: [String: Any] = array.filter{ $0["key"] as! String == "s_foo" }.first!
         XCTAssertEqual(item["value"] as! String, "foo")
         
-        item = array.filter{ $0["key"].stringValue == "b_true" }.first!.dictionaryObject!
+        item = array.filter{ $0["key"] as! String == "b_true" }.first!
         XCTAssertEqual(item["value"] as! Bool, true)
         
-        item = array.filter{ $0["key"].stringValue == "i_42" }.first!.dictionaryObject!
+        item = array.filter{ $0["key"] as! String == "i_42" }.first!
         XCTAssertEqual(item["value"] as! Int, 42)
         
-        item = array.filter{ $0["key"].stringValue == "d_4_2" }.first!.dictionaryObject!
+        item = array.filter{ $0["key"] as! String == "d_4_2" }.first!
         XCTAssertEqual(item["value"] as! Double, 4.2)
         
         // "not_match_x" not defined in datafile > attributes
@@ -169,11 +169,11 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      attributes: attributes)
 
         let event = eventDispatcher.events.first!
-        let json = JSON(event.body)
-        let array = json["visitors"][0]["attributes"].arrayValue
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String,Any>
+        let array = (json["visitors"] as! Array<Dictionary<String,Any>>)[0]["attributes"] as! Array<Dictionary<String,Any>>
         var dict = [String: Any]()
         for item in array {
-            dict[item["key"].stringValue] = item["value"].rawValue
+            dict[item["key"] as! String] = item["value"]
         }
         XCTAssert(dict.count == attributes.count)
         
@@ -205,8 +205,8 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         
 
         let event = eventDispatcher.events.first!
-        let json = JSON(event.body)
-        let array = json["visitors"][0]["attributes"]
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String,Any>
+        let array = (json["visitors"] as! Array<Dictionary<String,Any>>)[0]["attributes"] as! Array<Dictionary<String,Any>>
         XCTAssert(array.count == 0)
     }
     
@@ -223,8 +223,8 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         
         
         let event = eventDispatcher.events.first!
-        let json = JSON(event.body)
-        let array = json["visitors"][0]["attributes"]
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String,Any>
+        let array = (json["visitors"] as! Array<Dictionary<String,Any>>)[0]["attributes"] as! Array<Dictionary<String,Any>>
         XCTAssert(array.count == 0)
     }
     
@@ -244,11 +244,11 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      attributes: attributes)
 
         let event = eventDispatcher.events.first!
-        let json = JSON(event.body)
-        let array = json["visitors"][0]["attributes"].arrayValue
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String,Any>
+        let array = (json["visitors"] as! Array<Dictionary<String,Any>>)[0]["attributes"] as! Array<Dictionary<String,Any>>
         var dict = [String: Any]()
         for item in array {
-            dict[item["key"].stringValue] = item["value"].rawValue
+            dict[item["key"] as! String] = item["value"]
         }
         XCTAssert(dict.count == attributes.count)
         

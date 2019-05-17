@@ -20,9 +20,6 @@
 #import "SamplesForAPI.h"
 
 @import Optimizely;
-#if TARGET_OS_IOS
-@import Amplitude_iOS;
-#endif
 
 
 static NSString * const kOptimizelySdkKey = @"FCnSegiEkRry9rhVMroit4";
@@ -125,20 +122,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                                                                   NSDictionary<NSString *,id> *attributes, NSDictionary<NSString *,id> *eventTags, NSDictionary<NSString *,id> *event) {
         NSLog(@"Received track notification: %@ %@ %@ %@ %@", eventKey, userId, attributes, eventTags, event);
         
-
-#if TARGET_OS_IOS
-        // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-
-        // Amplitude example
-        [Amplitude.instance initializeApiKey:@"YOUR_API_KEY_HERE"];
-
-        NSString *propertyKey = [NSString stringWithFormat:@"[Optimizely] %@", eventKey];
-        AMPIdentify *identify = [[AMPIdentify alloc] init];
-        [identify set:propertyKey value:userId];
-        // Track event (optional)
-        NSString *eventIdentifier = [NSString stringWithFormat:@"[Optimizely] %@ - %@", eventKey, userId];
-        [Amplitude.instance logEvent:eventIdentifier];
-#endif
     }];
     
     [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {

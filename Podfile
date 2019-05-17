@@ -1,14 +1,14 @@
 workspace 'OptimizelySDK.xcworkspace'
 
 def analytics_pods
-  pod 'Amplitude-iOS'
-  pod 'Google/Analytics'
-  pod 'Localytics'
-  pod 'Mixpanel-swift', '2.5.7'
+#  pod 'Amplitude-iOS'
+#  pod 'Google/Analytics'
+#  pod 'Localytics'
+#  pod 'Mixpanel-swift', '2.5.7'
 end
 
 def test_pods
-  pod 'SwiftyJSON', '4.0'
+# pod 'SwiftyJSON', '4.0'
 end
 
 target 'OptimizelyTests-Common-iOS' do

@@ -16,7 +16,7 @@
 
 import Foundation
 
-class DefaultDatafileHandler : OPTDatafileHandler {
+public class DefaultDatafileHandler : OPTDatafileHandler {
     static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     lazy var logger = HandlerRegistryService.shared.injectLogger()
     var timers:AtomicProperty<[String:(timer:Timer, interval:Int)]> = AtomicProperty(property: [String:(Timer,Int)]())
@@ -24,11 +24,11 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent, autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
     
-    required init() {
+    required public init() {
         
     }
     
-    func downloadDatafile(sdkKey: String) -> Data? {
+    public func downloadDatafile(sdkKey: String) -> Data? {
         
         var datafile:Data?
         let group = DispatchGroup()
@@ -124,7 +124,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         }
     }
     
-    func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification:((Data)->Void)?) {
+    public func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification:((Data)->Void)?) {
         
         let now = Date()
         if #available(iOS 10.0, tvOS 10.0, *) {
@@ -226,7 +226,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         }
     }
     
-    func stopPeriodicUpdates(sdkKey: String) {
+    public func stopPeriodicUpdates(sdkKey: String) {
         timers.performAtomic { (timers) in
             if let timer = timers[sdkKey] {
                 logger?.i("Stopping timer for datafile updates sdkKey: \(sdkKey)")
@@ -238,7 +238,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         }
     }
     
-    func stopPeriodicUpdates() {
+    public func stopPeriodicUpdates() {
         for key in timers.property?.keys ?? Dictionary<String, (timer: Timer, interval: Int)>().keys {
             logger?.i("Stopping timer for all datafile updates")
             stopPeriodicUpdates(sdkKey: key)
@@ -247,7 +247,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
 
     
-    func saveDatafile(sdkKey: String, dataFile: Data) {
+    public func saveDatafile(sdkKey: String, dataFile: Data) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             
             let fileURL = dir.appendingPathComponent(sdkKey, isDirectory: false)
@@ -262,7 +262,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         }
     }
     
-    func loadSavedDatafile(sdkKey: String) -> Data? {
+    public func loadSavedDatafile(sdkKey: String) -> Data? {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             
             let fileURL = dir.appendingPathComponent(sdkKey)
@@ -280,7 +280,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         return nil
     }
     
-    func isDatafileSaved(sdkKey: String) -> Bool {
+    public func isDatafileSaved(sdkKey: String) -> Bool {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let fileURL = dir.appendingPathComponent(sdkKey)
             return FileManager.default.fileExists(atPath:fileURL.path)
@@ -289,7 +289,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         return false
     }
     
-    func removeSavedDatafile(sdkKey: String) {
+    public func removeSavedDatafile(sdkKey: String) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let fileURL = dir.appendingPathComponent(sdkKey)
             if FileManager.default.fileExists(atPath:fileURL.path) {

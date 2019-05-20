@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Initialization Examples
     
     func initializeOptimizelySDKAsynchronous() {
-        optimizely = OptimizelyClient(sdkKey: sdkKey)
+        optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: .info)
         
         optimizely.start { result in
             switch result {
@@ -72,8 +72,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard let localDatafilePath = Bundle.main.path(forResource: datafileName, ofType: "json") else {
             fatalError("Local datafile cannot be found")
         }
-        
-        optimizely = OptimizelyClient(sdkKey: sdkKey)
+   
+        optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: .info)
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -96,8 +96,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,
-                                       periodicDownloadInterval: customDownloadIntervalInSecs)
-        
+                                       periodicDownloadInterval: customDownloadIntervalInSecs,
+                                       defaultLogLevel: .info)
         // notification listeners
         
         _ = optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in

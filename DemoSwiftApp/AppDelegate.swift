@@ -16,9 +16,6 @@
 
 import UIKit
 import Optimizely
-#if os(iOS)
-import Amplitude_iOS
-#endif
 
 
 @UIApplicationMain
@@ -108,22 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          })
         
         _ = optimizely.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
-            print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
-            
-            // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-            #if os(iOS)
-
-            // Amplitude example
-            Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
-
-            let propertyKey = "[Optimizely] " + eventKey
-            let identify = AMPIdentify()
-            identify.set(propertyKey, value: userId as NSObject?)
-            // Track event (optional)
-            let eventIdentifier = "[Optimizely] " + eventKey + " - " + userId
-            Amplitude.instance().logEvent(eventIdentifier)
-            
-            #endif
+            print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")            
         })
         
         _ = optimizely.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in

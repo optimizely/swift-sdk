@@ -15,7 +15,6 @@
 ***************************************************************************/
 
 import XCTest
-import SwiftyJSON
 
 class BatchEventBuilderTests_EventTags: XCTestCase {
 
@@ -325,12 +324,12 @@ extension BatchEventBuilderTests_EventTags {
 
     func getDispatchEvent(dispatcher: FakeEventDispatcher) -> [String: Any]? {
         let eventForDispatch = dispatcher.events.first!
-        let json = JSON(eventForDispatch.body)
-        let event = json.dictionaryValue
+        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! [String:Any]
+        let event = json
         
-        let visitor = event["visitors"]![0].dictionaryValue
-        let snapshot = visitor["snapshots"]![0].dictionaryValue
-        let dispatchEvent = snapshot["events"]![0].dictionaryObject
+        let visitor = (event["visitors"] as! Array<Dictionary<String,Any>>)[0]
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String,Any>>)[0]
+        let dispatchEvent = (snapshot["events"] as! Array<Dictionary<String,Any>>)[0] as! Dictionary<String, Any>
 
         return dispatchEvent
     }

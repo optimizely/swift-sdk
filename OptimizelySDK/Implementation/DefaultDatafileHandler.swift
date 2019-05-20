@@ -17,7 +17,7 @@
 import Foundation
 
 class DefaultDatafileHandler : OPTDatafileHandler {
-    static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
+    public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     lazy var logger = HandlerRegistryService.shared.injectLogger()
     var timers:AtomicProperty<[String:(timer:Timer, interval:Int)]> = AtomicProperty(property: [String:(Timer,Int)]())
     let dataStore = DataStoreUserDefaults()
@@ -60,7 +60,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     open func getRequest(sdkKey:String) -> URLRequest? {
-        let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
+        let str = String(format: endPointStringFormat, sdkKey)
         guard let url = URL(string: str) else { return nil }
         
         var request = URLRequest(url: url)

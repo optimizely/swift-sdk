@@ -23,6 +23,8 @@ public typealias DatafileDownloadCompletionHandler = (OptimizelyResult<Data?>) -
 ///
 public protocol OPTDatafileHandler {
     init()
+    
+    var endPointStringFormat:String { get set }
     /**
     Synchronous call to download the datafile.
 

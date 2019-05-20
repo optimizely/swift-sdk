@@ -42,7 +42,8 @@ open class OptimizelyClient: NSObject {
     var decisionService: OPTDecisionService {
         return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
     }
-    var datafileHandler: OPTDatafileHandler {
+    
+    public var datafileHandler: OPTDatafileHandler {
         return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
     }
     

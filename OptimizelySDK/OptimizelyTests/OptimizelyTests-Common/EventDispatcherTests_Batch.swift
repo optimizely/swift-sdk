@@ -345,12 +345,8 @@ extension EventDispatcherTests_Batch {
         sleep(10)
 
         // check if we have only one batched event transmitted
-        if #available(iOS 10.0, *) {
-            XCTAssert(eventDispatcher.sendRequestedEvents.count == 1)
-        }
-        else {
-            XCTAssert(eventDispatcher.sendRequestedEvents.count == 2)
-        }
+        XCTAssert(eventDispatcher.sendRequestedEvents.count == 1)
+
         XCTAssertEqual(eventDispatcher.dataStore.count, 0, "all expected to get transmitted successfully")
     }
 

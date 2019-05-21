@@ -331,6 +331,9 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventBatchedOnTimer_CheckNoRedundantSend() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+        
         eventDispatcher.timerInterval = 3
 
         eventDispatcher.exp = expectation(description: "timer")

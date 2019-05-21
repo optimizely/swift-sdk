@@ -60,8 +60,8 @@ class OptimizelyClientTests_Invalid: XCTestCase {
     }
 
     func testIsFeatureEnabled_WhenManagerNonInitialized() {
-        let result: Bool? = try? self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
-        XCTAssertNil(result)
+        let result = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        XCTAssertFalse(result)
     }
     
     func testGetFeatureVariableBoolean_WhenManagerNonInitialized() {
@@ -93,8 +93,8 @@ class OptimizelyClientTests_Invalid: XCTestCase {
     }
     
     func testGetEnabledFeatures_WhenManagerNonInitialized() {
-        let result: [String]? = try? self.optimizely.getEnabledFeatures(userId: kUserId)
-        XCTAssertNil(result)
+        let result = self.optimizely.getEnabledFeatures(userId: kUserId)
+        XCTAssert(result.count == 0)
     }
     
     func testTrack_WhenManagerNonInitialized() {

@@ -85,6 +85,7 @@ jobs:
       name: Push to cocoapods.org
       language: minimal
       os: osx
+      osx_image: xcode10.1
       env:
         - VERSION=3.0.2
       install:

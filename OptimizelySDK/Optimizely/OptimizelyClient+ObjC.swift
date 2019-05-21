@@ -70,7 +70,7 @@ extension OptimizelyClient {
         start { result in
             switch result {
             case .failure(let error):
-                completion?(nil, self.convertErrorForObjc(error))
+                completion?(nil, error as NSError)
             case .success(let data):
                 completion?(data, nil)
             }
@@ -345,25 +345,6 @@ extension OptimizelyClient {
         func flushEvents() {
             objcEventDispatcher.flushEvents()
         }
-    }
-    
-    /// Conver Swift Error for Objective-C interfaces
-    ///
-    /// - Parameter error: Swift Error
-    /// - Returns: Objective-C NSError converted
-    func convertErrorForObjc(_ error: Error) -> NSError {
-        var errorInObjc: NSError
-        
-        // TODO: [Jae] add more details for error types
-        
-        switch error {
-        default:
-            errorInObjc = NSError(domain: "com.optimizely.OptimizelySwiftSDK",
-                                  code: 1000,
-                                  userInfo: [NSLocalizedDescriptionKey: error.localizedDescription])
-        }
-        
-        return errorInObjc
     }
     
     @available(swift, obsoleted: 1.0)

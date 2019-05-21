@@ -64,7 +64,7 @@ extension OptimizelyClient {
         self.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)
         
         if let handler = datafileHandler as? DefaultDatafileHandler {
-            handler.timers.property?[sdkKey] = (timer:Timer(), interval:interval)
+            handler.setTimer(sdkKey: sdkKey, interval: interval)
         }
         
         

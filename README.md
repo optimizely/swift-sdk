@@ -26,8 +26,7 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 #### Cocoapod 
 1. Add the following lines to the _Podfile_:<pre>
     ```use_frameworks!```
-    ```pod 'OptimizelySDK', :git => 'https://github.com/optimizely/swift-sdk.git', :branch => 'master'```
-  ```pod 'OptimizelySDK', :path => '~/Development/swift-sdk'```
+    ```pod 'OptimizelySDK', '3.1.0-beta```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -51,20 +50,11 @@ github "optimizely/swift-sdk" "master"
       - In the script area include:<pre>
       ```/usr/local/bin/carthage copy-frameworks```</pre> 
       - Add the frameworks to the **Input Files** list:<pre>
-            ```$(SRCROOT)/Carthage/Build/<platform>/OptimizelySDK.framework```
+            ```$(SRCROOT)/Carthage/Build/<platform>/Optimizely.framework```
             </pre>
 
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
 
-```
-        let optimizely = OptimizelyClient(sdkKey:"somesdkkey")
-        
-        if let _ try? = optimizely.start(datafile:json) {
-            let variation = optimizely.activate(experimentKey: "background_experiment", userId: "userId", attributes: ["doubleKey":5])
-            
-            let basicVariation = optimizely.track(eventKey: "sample_conversion", userId: "userId")
-            }
-```
 
 ### Contributing
 Please see [CONTRIBUTING](CONTRIBUTING.md).

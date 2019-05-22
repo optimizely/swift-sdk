@@ -571,9 +571,9 @@ class FakeManager: OptimizelyClient {
         }
     }
     
-    override init(sdkKey: String, logger:OPTLogger? = nil, eventDispatcher:OPTEventDispatcher? = nil, userProfileService:OPTUserProfileService? = nil, periodicDownloadInterval:Int? = nil, defaultLogLevel: OptimizelyLogLevel? = nil) {
+    override init(sdkKey: String, logger:OPTLogger? = nil, eventDispatcher:OPTEventDispatcher? = nil, userProfileService:OPTUserProfileService? = nil, defaultLogLevel: OptimizelyLogLevel? = nil) {
         
-        super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, periodicDownloadInterval: periodicDownloadInterval, defaultLogLevel: defaultLogLevel)
+        super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)
         HandlerRegistryService.shared.removeAll()
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()

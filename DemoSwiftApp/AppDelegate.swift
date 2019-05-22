@@ -55,6 +55,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func initializeOptimizelySDKAsynchronous() {
         optimizely = OptimizelyClient(sdkKey: sdkKey)
+        var handler = optimizely.datafileHandler
+        handler.endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
         
         optimizely.start { result in
             switch result {

@@ -25,10 +25,13 @@ open class OptimizelyClient: NSObject {
     
     var sdkKey: String
     var config: ProjectConfig?
+
+    public var version: String {
+        return Utils.sdkVersion
+    }
     
     // MARK: - Customizable Services
     
-    // I only want to get this once from the handler service.
     lazy var logger = HandlerRegistryService.shared.injectLogger()!
     
     var eventDispatcher: OPTEventDispatcher {
@@ -36,8 +39,6 @@ open class OptimizelyClient: NSObject {
     }
     
     // MARK: - Default Services
-    
-    // TODO: [Tom] can we remove decisionService from RegsitryService?
     
     var decisionService: OPTDecisionService {
         return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
@@ -85,6 +86,7 @@ open class OptimizelyClient: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
+        logger.i("SDK Version: \(version)")
     }
     
     /// Start Optimizely SDK (Asynchronous)

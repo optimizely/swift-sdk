@@ -170,7 +170,7 @@ extension OptimizelyClient {
     }
     
     @available(swift, obsoleted: 1.0)
-    @objc(isFeatureEnabledWithFeatureKey:userId:attributes:error:)
+    @objc(isFeatureEnabledWithFeatureKey:userId:attributes:)
     /// Determine whether a feature is enabled.
     ///
     /// - Parameters:
@@ -181,11 +181,11 @@ extension OptimizelyClient {
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func _objcIsFeatureEnabled(featureKey: String,
                                       userId: String,
-                                      attributes: [String:Any]?) throws -> NSNumber {
-        let enabled = try self.isFeatureEnabled(featureKey: featureKey,
+                                      attributes: [String:Any]?) -> Bool {
+        let enabled = self.isFeatureEnabled(featureKey: featureKey,
                                                 userId: userId,
                                                 attributes: attributes)
-        return NSNumber(booleanLiteral: enabled)
+        return enabled
     }
     
 
@@ -277,7 +277,7 @@ extension OptimizelyClient {
     }
     
     @available(swift, obsoleted: 1.0)
-    @objc(getEnabledFeaturesWithUserId:attributes:error:)
+    @objc(getEnabledFeaturesWithUserId:attributes:)
     /// Get array of features that are enabled for the user.
     ///
     /// - Parameters:
@@ -286,8 +286,8 @@ extension OptimizelyClient {
     /// - Returns: Array of feature keys that are enabled for the user.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func _objcGetEnabledFeatures(userId: String,
-                                        attributes: [String: Any]?) throws -> [String] {
-        return try self.getEnabledFeatures(userId:userId, attributes: attributes)
+                                        attributes: [String: Any]?) -> [String] {
+        return self.getEnabledFeatures(userId:userId, attributes: attributes)
     }
     
     @available(swift, obsoleted: 1.0)

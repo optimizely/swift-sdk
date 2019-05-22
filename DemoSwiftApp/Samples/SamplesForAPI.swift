@@ -71,14 +71,10 @@ class SamplesForAPI {
         
         // MARK: - isFeatureEnabled
 
-        do {
-            let enabled = try optimizely.isFeatureEnabled(featureKey: "my_feature_key",
+        let enabled = optimizely.isFeatureEnabled(featureKey: "my_feature_key",
                                                           userId: "user_123",
                                                           attributes: attributes)
-            print("[isFeatureEnabled] \(enabled)")
-        } catch {
-            print(error)
-        }
+        print("[isFeatureEnabled] \(enabled)")
         
         // MARK: - getFeatureVariable
 
@@ -94,12 +90,8 @@ class SamplesForAPI {
         
         // MARK: - getEnabledFeatures
 
-        do {
-            let enabledFeatures = try optimizely.getEnabledFeatures(userId: "user_123", attributes: attributes)
-            print("[getEnabledFeatures] \(enabledFeatures)")
-        } catch {
-            print(error)
-        }
+        let enabledFeatures = optimizely.getEnabledFeatures(userId: "user_123", attributes: attributes)
+        print("[getEnabledFeatures] \(enabledFeatures)")
         
         // MARK: - track
 

@@ -371,11 +371,15 @@ open class OptimizelyClient: NSObject {
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
-                                 attributes: OptimizelyAttributes?=nil) throws -> Bool {
+                                 attributes: OptimizelyAttributes?=nil) -> Bool {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let config = self.config else {
+            logger.e(.sdkNotReady)
+            return false
+        }
         
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
+            logger.e(.featureKeyInvalid(featureKey))
             return false
         }
         
@@ -393,7 +397,8 @@ open class OptimizelyClient: NSObject {
         guard let variation = pair?.variation else {
             args.append(decisionInfo)
             self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
-            throw OptimizelyError.variationUnknown(userId, featureKey)
+            logger.i(.variationUnknown(userId, featureKey))
+            return false
         }
         
         let featureEnabled = variation.featureEnabled ?? false
@@ -602,23 +607,24 @@ open class OptimizelyClient: NSObject {
     /// - Returns: Array of feature keys that are enabled for the user.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId: String,
-                                   attributes: OptimizelyAttributes?=nil) throws -> [String] {
+                                   attributes: OptimizelyAttributes?=nil) -> [String] {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        var enabledFeatures = [String]()
+        
+        guard let config = self.config else {
+            logger.e(.sdkNotReady)
+            return enabledFeatures
+        }
         
         guard let featureFlags = config.project?.featureFlags else {
-            return [String]()
+            return enabledFeatures
         }
         
-        let enabledFeatures = featureFlags.filter{
-            do {
-                return try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
-            } catch {
-                return false
-            }
-        }
+        enabledFeatures = featureFlags.filter{
+            isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
+        }.map{ $0.key }
         
-        return enabledFeatures.map{$0.key}
+        return enabledFeatures
     }
     
     /// Track an event

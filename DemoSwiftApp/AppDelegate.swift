@@ -122,9 +122,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 if let controller = self.window?.rootViewController as? VariationViewController {
                     //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
-                    if let showCoupon = try? self.optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
-                        controller.showCoupon = showCoupon
-                    }
+                    controller.showCoupon = self.optimizely.isFeatureEnabled(featureKey: "show_coupon",
+                                                                             userId: self.userId)
                 }
             }
         })
@@ -167,10 +166,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func openVariationView(variationKey: String?) {
         let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as! VariationViewController
         
-        if let showCoupon = try? optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: userId) {
-            variationViewController.showCoupon = showCoupon
-        }
-        
+        variationViewController.showCoupon = optimizely.isFeatureEnabled(featureKey: "show_coupon",
+                                                                         userId: userId)
         variationViewController.optimizely = optimizely
         variationViewController.userId = userId
         variationViewController.variationKey = variationKey

@@ -15,5 +15,6 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-/// Do not edit this field.  It is auto updated to reflect the current version using the runtimeVersion script.
-let OPTIMIZELY_SDK_VERSION = "1.0.0"
+/// Do not edit this field.
+/// It is auto updated (Scripts/updated_version.sh) to reflect the current version
+let OPTIMIZELY_SDK_VERSION = "3.1.0-beta"

@@ -3,7 +3,7 @@
 # update_version.sh
 #
 # This script consistently updates the SDK version numbers in several places:
-# 1. {XcodeProject}/{XcodeProject}.xcodeproj/project.pbxproj
+# 1. {XcodeProject}/OptimizelySDK/Utils/SDKVersion.swift
 # 2. {XcodeProject}.podspec
 #
 # Usage:
@@ -28,44 +28,25 @@ if (( ${#varComps[@]} != 3 )); then
     exit 1
 fi
 
-vMajor=${varComps[0]}
-vMinor=${varComps[1]}
-vPatch=${varComps[2]}
-vSuffix=""
-
-if [[ $vPatch =~ ^([0-9]+)([^0-9]*)$ ]] ; then
-    vPatch=${BASH_REMATCH[1]}
-    vSuffix=${BASH_REMATCH[2]}
-fi
-
-printf "\nRelease SDK Version: ${vMajor}.${vMinor}.${vPatch}${vSuffix} \n"
-
 cd "$(dirname $0)/.."
 
 #----------------------------------------------------------------------------------
-# 1. update the SDK version in all xcode project settings
+# 1. update the SDK version in SDKVersion.swift file
 #----------------------------------------------------------------------------------
-printf "\n\nReplacing OPTIMIZELY_SDK_VERSION in Xcode Build Settings to the target version.\n"
+sdkVersionFilepath="OptimizelySDK/Utils/SDKVersion.swift"
+sdkVersionKey="OPTIMIZELY_SDK_VERSION"
 
-curPbxProjPath="OptimizelySDK/OptimizelySwiftSDK.xcodeproj/project.pbxproj"
-printf "\t[Updating .pbxproj to ${releaseSDKVersion}.\n"
+printf "\tUpdating ${sdkVersionKey} to ${releaseSDKVersion}.\n"
+sed -i '' -e "s/${sdkVersionKey}[ ]*=.*\"\(.*\)\"/${sdkVersionKey} = \"${releaseSDKVersion}\"/g" ${sdkVersionFilepath}
 
-sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_MAJOR[ ]*\)=.*;/\1= \"${vMajor}\";/g" ${curPbxProjPath}
-sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_MINOR[ ]*\)=.*;/\1= \"${vMinor}\";/g" ${curPbxProjPath}
-sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_PATCH[ ]*\)=.*;/\1= \"${vPatch}\";/g" ${curPbxProjPath}
-sed -i '' -e "s/\(OPTIMIZELY_SDK_VERSION_SUFFIX[ ]*\)=.*;/\1= \"${vSuffix}\";/g" ${curPbxProjPath}
+printf "Verifying ${sdkVersionKey} from ${sdkVersionFilepath}\n";
+verifySdkVersion=$(sed -n "s/.*${sdkVersionKey} = \"\(.*\)\".*/\1/p" ${sdkVersionFilepath})
 
-printf "Verifying OPTIMIZELY_SDK_VERSION from Xcode Build Settings.\n";
-
-curProjPath="OptimizelySDK/OptimizelySwiftSDK.xcodeproj"
-
-OPTIMIZELY_SDK_VERSION=$(Xcodebuild -project ${curProjPath} -showBuildSettings | sed -n 's/OPTIMIZELY_SDK_VERSION = \(.*\)/\1/p' | sed 's/ //g');
-
-if [ "${OPTIMIZELY_SDK_VERSION}" == "${releaseSDKVersion}" ]
+if [ "${verifySdkVersion}" == "${releaseSDKVersion}" ]
 then
-    printf "\t[OPTIMIZELY_SDK_VERSION in xcode settings verified: ${releaseSDKVersion} === ${OPTIMIZELY_SDK_VERSION}\n"
+    printf "\tSDKVersion.swift file verified: ${releaseSDKVersion} === ${verifySdkVersion}\n"
 else
-    printf "\n[ERROR][${curMod}] OPTIMIZELY_SDK_VERSION mismatch: (releaseSDKVersion/OPTIMIZELY_SDK_VERSION) = ${releaseSDKVersion}/${OPTIMIZELY_SDK_VERSION}\n";
+    printf "\n[ERROR] SDKVersion.swift file has an error: [${verifySdkVersion}]";
     exit 1
 fi
 

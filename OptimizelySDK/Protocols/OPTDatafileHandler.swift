@@ -28,7 +28,7 @@ public protocol OPTDatafileHandler {
     /**
     Synchronous call to download the datafile.
 
-    - Parameter sdkKey:   sdk key of the datafile to download
+    - Parameter sdkKey: sdk key of the datafile to download
     - Parameter datafileConfig: DatafileConfig for the datafile
     - Returns: a valid datafile or null
      */
@@ -36,7 +36,7 @@ public protocol OPTDatafileHandler {
     
     /**
      Asynchronous download data file.
-     - Parameter sdkKey:   application context for download
+     - Parameter sdkKey: application context for download
      - Parameter resourceTimeoutInterval: timeout in seconds to wait for resource.
      - Parameter completionHhandler:  listener to call when datafile download complete
      */

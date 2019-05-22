@@ -107,7 +107,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                 eventDispatcher:nil
                                              userProfileService:nil
                                        periodicDownloadInterval:customDownloadIntervalInSecs
-                                                defaultLogLevel:OptimizelyLogLevelInfo];
+                                                defaultLogLevel:OptimizelyLogLevelDebug];
     
     NSNumber *notifId;
     notifId = [self.optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString *type,

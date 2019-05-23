@@ -118,7 +118,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                     // if the bacth size is not equal to the actual event size,
                     // then setup the batchSizeHolder to be the size of the event.
                     if actualEventsSize != self.batchSize {
-                        batchSizeHolder = actualEventsSize
+                        batchSizeHolder = self.batchSize
                         self.batchSize = actualEventsSize
                         sendCount = actualEventsSize - 1
                     }
@@ -170,7 +170,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                         if batchSizeHolder != 0 {
                             sendCount += 1
                             // have we sent all the events in this batch?
-                            if sendCount == batchSizeHolder {
+                            if sendCount == self.batchSize {
                                 resetBatch()
                             }
                         }

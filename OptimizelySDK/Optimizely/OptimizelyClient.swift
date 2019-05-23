@@ -86,7 +86,7 @@ open class OptimizelyClient: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
-        logger.i("SDK Version: \(version)")
+        logger.d("SDK Version: \(version)")
     }
     
     /// Start Optimizely SDK (Asynchronous)

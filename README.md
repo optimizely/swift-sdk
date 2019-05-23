@@ -26,7 +26,7 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 #### Cocoapod 
 1. Add the following lines to the _Podfile_:<pre>
     ```use_frameworks!```
-    ```pod 'OptimizelySDK', '3.1.0-beta```
+    ```pod 'OptimizelySwiftSDK', '3.1.0-beta```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -54,6 +54,21 @@ github "optimizely/swift-sdk" "master"
             </pre>
 
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
+
+A sample code for SDK initialization and experiments:
+
+```
+let optimizely = OptimizelyClient(sdkKey:"somesdkkey")
+
+optimizely.start(datafile:json) { result in
+    do {
+        let variation = try optimizely.activate(experimentKey: "background_experiment", userId: "userId", attributes: ["doubleKey":5])
+        try optimizely.track(eventKey: "sample_conversion", userId: "userId")
+    } catch {
+        print(error)
+    }
+}
+```
 
 
 ### Contributing

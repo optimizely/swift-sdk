@@ -83,17 +83,11 @@
     // MARK: - isFeatureEnabled
     
     {
-        NSError *error = nil;
-        NSNumber *enabled = [optimizely isFeatureEnabledWithFeatureKey:@"my_feature_key"
+        BOOL enabled = [optimizely isFeatureEnabledWithFeatureKey:@"my_feature_key"
                                                                 userId:@"user_123"
-                                                            attributes:attributes
-                                                                 error:&error];
+                                                            attributes:attributes];
         
-        if (enabled == nil) {
-            NSLog(@"Error: %@", error);
-        } else {
-            NSLog(@"[isFeatureEnabled] %d", enabled.boolValue);
-        }
+        NSLog(@"[isFeatureEnabled] %@", enabled ? @"YES": @"NO");
     }
     
     // MARK: - getFeatureVariable
@@ -115,15 +109,9 @@
     // MARK: - getEnabledFeatures
 
     {
-        NSError *error = nil;
         NSArray *enabledFeatures = [optimizely getEnabledFeaturesWithUserId:@"user_123"
-                                                                 attributes:attributes
-                                                                      error:&error];
-        if (enabledFeatures == nil) {
-            NSLog(@"Error: %@", error);
-        } else {
-            NSLog(@"[getEnabledFeatures] %@", enabledFeatures);
-        }
+                                                                 attributes:attributes];
+        NSLog(@"[getEnabledFeatures] %@", enabledFeatures);
     }
     
     // MARK: - track

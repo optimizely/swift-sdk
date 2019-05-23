@@ -48,9 +48,8 @@ class EventDispatcherTests: XCTestCase {
     }
 
     func testDefaultDispatcher() {
-        eventDispatcher = DefaultEventDispatcher()
+        eventDispatcher = DefaultEventDispatcher(timerInterval:1)
         let pEventD:OPTEventDispatcher = eventDispatcher!
-        eventDispatcher?.timerInterval = 1
 
         pEventD.flushEvents()
         
@@ -79,6 +78,32 @@ class EventDispatcherTests: XCTestCase {
         
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+    }
+    
+    func testDispatcherZeroTimeInterval() {
+        class InnerEventDispatcher : DefaultEventDispatcher {
+            var once = false
+            var events:[EventForDispatch] = [EventForDispatch]()
+            override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+                events.append(event)
+                if !once {
+                    self.dataStore.save(item: EventForDispatch(body: Data()))
+                    once = true
+                }
+                completionHandler(.success(Data()))
+            }
+        }
+        
+        let dispatcher = InnerEventDispatcher(timerInterval:0)
+
+        // add two items.... call flush
+        dispatcher.dataStore.save(item: EventForDispatch(body: Data()))
+        dispatcher.flushEvents()
+        
+        dispatcher.dispatcher.sync {
+        }
+        
+        XCTAssert(dispatcher.events.count == 2)
     }
 
     func testEventDispatcherFile() {
@@ -238,6 +263,12 @@ class EventDispatcherTests: XCTestCase {
 
     }
     
+    func testDispatcherZeroBatchSize() {
+        let eventDispatcher = DefaultEventDispatcher(batchSize: 0, backingStore: .userDefaults, dataStoreName: "DoNothing", timerInterval: 0)
+        
+        XCTAssert(eventDispatcher.batchSize > 0)
+    }
+    
     func testDataStoreQueue() {
         let queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: "backingStoreName"))
         
@@ -265,13 +296,5 @@ class EventDispatcherTests: XCTestCase {
         let _ = queue.removeLastItem()
         
         XCTAssert(queue.count == 0)
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
+    }    
 }

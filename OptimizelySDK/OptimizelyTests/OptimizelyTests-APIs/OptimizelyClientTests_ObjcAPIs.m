@@ -148,8 +148,7 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
 - (void)testIsFeatureEnabled {
     BOOL result = [self.optimizely isFeatureEnabledWithFeatureKey:kFeatureKey
                                                            userId:kUserId
-                                                       attributes:self.attributes
-                                                            error:nil];
+                                                       attributes:self.attributes];
     XCTAssertTrue(result);
 }
     
@@ -191,8 +190,7 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     
 - (void)testGetEnabledFeatures {
     NSArray *result = [self.optimizely getEnabledFeaturesWithUserId:kUserId
-                                                         attributes:self.attributes
-                                                              error:nil];
+                                                         attributes:self.attributes];
     XCTAssertEqualObjects(result, @[kFeatureKey]);
 }
     

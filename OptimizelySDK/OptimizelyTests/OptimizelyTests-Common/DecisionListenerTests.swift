@@ -488,7 +488,7 @@ class DecisionListenerTests: XCTestCase {
             count += 1
         }
         
-        _ = try! optimizely.getEnabledFeatures(userId: kUserId)
+        _ = optimizely.getEnabledFeatures(userId: kUserId)
         XCTAssertEqual(count, 2)
     }
     
@@ -502,7 +502,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
         }
-        _ = try? self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
     }
     
     func testDecisionListenerWithUserInRollout() {
@@ -517,7 +517,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
         }
-        _ = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         
         variation.featureEnabled = false
         self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
@@ -528,7 +528,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
         }
-        _ = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
     }
     
     func testDecisionListenerWithUserInExperiment() {
@@ -546,7 +546,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertEqual(sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] as! String, experiment.key)
             XCTAssertEqual(sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] as! String, variation.key)
         }
-        _ = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         
         variation.featureEnabled = false
         self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation)
@@ -559,7 +559,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertEqual(sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] as! String, experiment.key)
             XCTAssertEqual(sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] as! String, variation.key)
         }
-        _ = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
     }
 }
 
@@ -571,9 +571,9 @@ class FakeManager: OptimizelyClient {
         }
     }
     
-    override init(sdkKey: String, logger:OPTLogger? = nil, eventDispatcher:OPTEventDispatcher? = nil, userProfileService:OPTUserProfileService? = nil, periodicDownloadInterval:Int? = nil, defaultLogLevel: OptimizelyLogLevel? = nil) {
+    override init(sdkKey: String, logger:OPTLogger? = nil, eventDispatcher:OPTEventDispatcher? = nil, userProfileService:OPTUserProfileService? = nil, defaultLogLevel: OptimizelyLogLevel? = nil) {
         
-        super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, periodicDownloadInterval: periodicDownloadInterval, defaultLogLevel: defaultLogLevel)
+        super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)
         HandlerRegistryService.shared.removeAll()
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()

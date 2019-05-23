@@ -23,10 +23,12 @@ public typealias DatafileDownloadCompletionHandler = (OptimizelyResult<Data?>) -
 ///
 public protocol OPTDatafileHandler {
     init()
+    
+    var endPointStringFormat:String { get set }
     /**
     Synchronous call to download the datafile.
 
-    - Parameter sdkKey:   sdk key of the datafile to download
+    - Parameter sdkKey: sdk key of the datafile to download
     - Parameter datafileConfig: DatafileConfig for the datafile
     - Returns: a valid datafile or null
      */
@@ -34,7 +36,7 @@ public protocol OPTDatafileHandler {
     
     /**
      Asynchronous download data file.
-     - Parameter sdkKey:   application context for download
+     - Parameter sdkKey: application context for download
      - Parameter resourceTimeoutInterval: timeout in seconds to wait for resource.
      - Parameter completionHhandler:  listener to call when datafile download complete
      */
@@ -43,24 +45,23 @@ public protocol OPTDatafileHandler {
                           completionHandler:@escaping DatafileDownloadCompletionHandler)
     
     /**
-      Start periodic updates to the project datafile .
+      Start updates to the project datafile .
      
       - Parameter sdkKey: SdkKey for the datafile
-      - Parameter updateInterval: frequency of updates in seconds
      */
-    func startPeriodicUpdates(sdkKey:String, updateInterval:Int, datafileChangeNotification:((Data)->Void)?)
+    func startUpdates(sdkKey:String, datafileChangeNotification:((Data)->Void)?)
     
     /**
      Stop the periodic updates. This should be called when the app goes to background
      
      - Parameter sdkKey: sdk key for datafile.
      */
-    func stopPeriodicUpdates(sdkKey:String)
+    func stopUpdates(sdkKey:String)
 
     /**
      Stop all periodic updates. This should be called when the app goes to background
      */
-    func stopPeriodicUpdates()
+    func stopAllUpdates()
 
     /**
      Save the datafile to cache.

@@ -17,15 +17,24 @@
 import Foundation
 
 class DefaultDatafileHandler : OPTDatafileHandler {
-    static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
+    public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     lazy var logger = HandlerRegistryService.shared.injectLogger()
-    var timers:AtomicProperty<[String:(timer:Timer, interval:Int)]> = AtomicProperty(property: [String:(Timer,Int)]())
+    var timers:AtomicProperty<[String:(timer:Timer?, interval:Int)]> = AtomicProperty(property: [String:(Timer?,Int)]())
     let dataStore = DataStoreUserDefaults()
     
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent, autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
     
     required init() {
         
+    }
+    
+    func setTimer(sdkKey:String, interval:Int) {
+        timers.performAtomic { (timers) in
+            guard let _ = timers[sdkKey] else {
+                timers[sdkKey] = (nil, interval)
+                return
+            }
+        }
     }
     
     func downloadDatafile(sdkKey: String) -> Data? {
@@ -60,7 +69,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     open func getRequest(sdkKey:String) -> URLRequest? {
-        let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
+        let str = String(format: endPointStringFormat, sdkKey)
         guard let url = URL(string: str) else { return nil }
         
         var request = URLRequest(url: url)
@@ -231,7 +240,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             if let timer = timers[sdkKey] {
                 logger?.i("Stopping timer for datafile updates sdkKey: \(sdkKey)")
                 
-                timer.timer.invalidate()
+                timer.timer?.invalidate()
                 timers.removeValue(forKey: sdkKey)
             }
 
@@ -239,12 +248,28 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     func stopPeriodicUpdates() {
-        for key in timers.property?.keys ?? Dictionary<String, (timer: Timer, interval: Int)>().keys {
+        for key in timers.property?.keys ?? Dictionary<String, (timer: Timer?, interval: Int)>().keys {
             logger?.i("Stopping timer for all datafile updates")
             stopPeriodicUpdates(sdkKey: key)
         }
         
     }
+    
+    func startUpdates(sdkKey: String, datafileChangeNotification: ((Data) -> Void)?) {
+        if let value = timers.property?[sdkKey], !(value.timer?.isValid ?? false) {
+            startPeriodicUpdates(sdkKey: sdkKey, updateInterval: value.interval, datafileChangeNotification: datafileChangeNotification)
+        }
+    }
+    
+    func stopUpdates(sdkKey: String) {
+        stopPeriodicUpdates(sdkKey: sdkKey)
+    }
+    
+    func stopAllUpdates() {
+        stopPeriodicUpdates()
+    }
+    
+
 
     
     func saveDatafile(sdkKey: String, dataFile: Data) {

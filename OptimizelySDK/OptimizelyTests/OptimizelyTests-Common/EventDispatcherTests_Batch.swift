@@ -15,7 +15,6 @@
 ***************************************************************************/
 
 import XCTest
-import SwiftyJSON
 
 class EventDispatcherTests_Batch: XCTestCase {
     

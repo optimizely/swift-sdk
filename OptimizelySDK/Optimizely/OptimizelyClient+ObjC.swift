@@ -156,9 +156,9 @@ extension OptimizelyClient {
     /// Set forced variation for experiment and user ID to variationKey.
     ///
     /// - Parameters:
-    ///   - experimentKey The key for the experiment.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - variationKey The variation the user should be forced into.
+    ///   - experimentKey: The key for the experiment.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - variationKey: The variation the user should be forced into.
     ///                  This value can be nil, in which case, the forced variation is cleared.
     /// - Returns: true if forced variation set successfully
     public func _objcSetForcedVariation(experimentKey: String,
@@ -170,22 +170,22 @@ extension OptimizelyClient {
     }
     
     @available(swift, obsoleted: 1.0)
-    @objc(isFeatureEnabledWithFeatureKey:userId:attributes:error:)
+    @objc(isFeatureEnabledWithFeatureKey:userId:attributes:)
     /// Determine whether a feature is enabled.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: true if feature is enabled, false otherwise.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func _objcIsFeatureEnabled(featureKey: String,
                                       userId: String,
-                                      attributes: [String:Any]?) throws -> NSNumber {
-        let enabled = try self.isFeatureEnabled(featureKey: featureKey,
+                                      attributes: [String:Any]?) -> Bool {
+        let enabled = self.isFeatureEnabled(featureKey: featureKey,
                                                 userId: userId,
                                                 attributes: attributes)
-        return NSNumber(booleanLiteral: enabled)
+        return enabled
     }
     
 
@@ -194,10 +194,10 @@ extension OptimizelyClient {
     /// Gets boolean feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type boolean.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func _objcGetFeatureVariableBoolean(featureKey: String,
@@ -216,10 +216,10 @@ extension OptimizelyClient {
     /// Gets double feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type double.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func _objcGetFeatureVariableDouble(featureKey: String,
@@ -238,10 +238,10 @@ extension OptimizelyClient {
     /// Gets integer feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type integer.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func _objcGetFeatureVariableInteger(featureKey: String,
@@ -260,10 +260,10 @@ extension OptimizelyClient {
     /// Gets string feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type string.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func _objcGetFeatureVariableString(featureKey: String,
@@ -277,7 +277,7 @@ extension OptimizelyClient {
     }
     
     @available(swift, obsoleted: 1.0)
-    @objc(getEnabledFeaturesWithUserId:attributes:error:)
+    @objc(getEnabledFeaturesWithUserId:attributes:)
     /// Get array of features that are enabled for the user.
     ///
     /// - Parameters:
@@ -286,8 +286,8 @@ extension OptimizelyClient {
     /// - Returns: Array of feature keys that are enabled for the user.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func _objcGetEnabledFeatures(userId: String,
-                                        attributes: [String: Any]?) throws -> [String] {
-        return try self.getEnabledFeatures(userId:userId, attributes: attributes)
+                                        attributes: [String: Any]?) -> [String] {
+        return self.getEnabledFeatures(userId:userId, attributes: attributes)
     }
     
     @available(swift, obsoleted: 1.0)
@@ -433,10 +433,38 @@ extension OptimizelyClient {
 }
 
 // MARK: - ObjC protocols
-
 @objc(OPTEventDispatcher) public protocol _ObjcOPTEventDispatcher {
     func dispatchEvent(event:EventForDispatch, completionHandler:((Data?, NSError?) -> Void)?)
     
     /// Attempts to flush the event queue if there are any events to process.
     func flushEvents()
+}
+
+@available(swift, obsoleted: 1.0)
+@objc(DefaultEventDispatcher) public class ObjEventDispatcher : NSObject, _ObjcOPTEventDispatcher {
+    
+    let innerEventDispatcher:DefaultEventDispatcher
+    
+    @objc public init(timerInterval:TimeInterval) {
+        innerEventDispatcher = DefaultEventDispatcher(timerInterval: timerInterval)
+    }
+    
+    public func dispatchEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?) {
+        innerEventDispatcher.dispatchEvent(event: event) { (result) -> (Void) in
+            guard let completionHandler = completionHandler else { return }
+            
+            switch result {
+            case .success(let value):
+                completionHandler(value, nil)
+            case .failure(let error):
+                completionHandler(nil, error as NSError)
+            }
+        }
+    }
+    
+    public func flushEvents() {
+        innerEventDispatcher.flushEvents()
+    }
+    
+    
 }

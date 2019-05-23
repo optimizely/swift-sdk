@@ -158,7 +158,8 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                                 self.logger?.e("Removed event different from sent event")
                             }
                             else {
-                                self.logger?.d("Successfully sent event: \(event)")
+                                // avoid event-log-message preparation overheads with closure-logging
+                                self.logger?.d({ "Successfully sent event: \(event)" })
                             }
                         }
                         else {

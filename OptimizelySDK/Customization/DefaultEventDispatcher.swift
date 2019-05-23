@@ -170,7 +170,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                         if batchSizeHolder != 0 {
                             sendCount += 1
                             // have we sent all the events in this batch?
-                            if sendCount == batchSizeHolder {
+                            if sendCount == self.batchSize {
                                 resetBatch()
                             }
                         }

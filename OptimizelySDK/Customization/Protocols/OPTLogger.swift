@@ -16,7 +16,6 @@
 
 import Foundation
 
-
 /**
  * Any logger must implement these following methods.
  */
@@ -76,3 +75,15 @@ extension OPTLogger {
         return message
     }
 }
+
+@objc public class OPTLoggerFactory:NSObject {
+    class func getLogger() -> OPTLogger {
+        if let logger = HandlerRegistryService.shared.injectLogger() {
+            return logger
+        }
+        
+        return DefaultLogger()
+    }
+}
+
+

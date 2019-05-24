@@ -22,7 +22,7 @@ class DefaultBucketer : OPTBucketer {
     let MAX_HASH_SEED:UInt64 = 1
     var MAX_HASH_VALUE:UInt64?
     
-    private lazy var logger = HandlerRegistryService.shared.injectLogger()
+    private lazy var logger = OPTLoggerFactory.getLogger()
     
     init() {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
@@ -44,14 +44,14 @@ class DefaultBucketer : OPTBucketer {
                 if let mutexExperiment = mutexExperiment {
                     if mutexExperiment.id == experiment.id {
                         mutexAllowed = true
-                        logger?.i(.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
+                        logger.i(.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
                     } else {
                         mutexAllowed = false
-                        logger?.i(.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
+                        logger.i(.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
                     }
                 } else {
                     mutexAllowed = false
-                    logger?.i(.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id))
+                    logger.i(.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id))
                 }
             }
         }
@@ -61,10 +61,10 @@ class DefaultBucketer : OPTBucketer {
         // bucket to variation only if experiment passes Mutex check
 
         if let variation = bucketToVariation(experiment:experiment, bucketingId:bucketingId) {
-            logger?.i(.userBucketedIntoVariationInExperiment(bucketingId, experiment.key, variation.key))
+            logger.i(.userBucketedIntoVariationInExperiment(bucketingId, experiment.key, variation.key))
             return variation
         } else {
-            logger?.i(.userNotBucketedIntoVariationInExperiment(bucketingId, experiment.key))
+            logger.i(.userNotBucketedIntoVariationInExperiment(bucketingId, experiment.key))
             return nil
         }
     }
@@ -72,10 +72,10 @@ class DefaultBucketer : OPTBucketer {
     func bucketToExperiment(config:ProjectConfig, group: Group, bucketingId: String) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
-        logger?.d(.userAssignedToExperimentBucketValue(bucketValue, bucketingId))
+        logger.d(.userAssignedToExperimentBucketValue(bucketValue, bucketingId))
         
         if group.trafficAllocation.count == 0 {
-            logger?.e(.groupHasNoTrafficAllocation(group.id))
+            logger.e(.groupHasNoTrafficAllocation(group.id))
             return nil;
         }
         
@@ -87,7 +87,7 @@ class DefaultBucketer : OPTBucketer {
                 if let experiment = config.getExperiment(id: experimentId) {
                     return experiment
                 } else {
-                    logger?.e(.userBucketedIntoInvalidExperiment(experimentId))
+                    logger.e(.userBucketedIntoInvalidExperiment(experimentId))
                     return nil
                 }
             }
@@ -99,10 +99,10 @@ class DefaultBucketer : OPTBucketer {
     func bucketToVariation(experiment:Experiment, bucketingId:String) -> Variation? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)
-        logger?.d(.userAssignedToVariationBucketValue(bucketValue, bucketingId))
+        logger.d(.userAssignedToVariationBucketValue(bucketValue, bucketingId))
 
         if experiment.trafficAllocation.count == 0 {
-            logger?.e(.experimentHasNoTrafficAllocation(experiment.key))
+            logger.e(.experimentHasNoTrafficAllocation(experiment.key))
             return nil
         }
         
@@ -114,7 +114,7 @@ class DefaultBucketer : OPTBucketer {
                 if let variation = experiment.getVariation(id: variationId) {
                     return variation
                 } else {
-                    logger?.e(.userBucketedIntoInvalidVariation(variationId))
+                    logger.e(.userBucketedIntoInvalidVariation(variationId))
                     return nil
                 }
             }

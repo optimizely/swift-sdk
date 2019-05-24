@@ -77,6 +77,49 @@ class DatafileHandlerTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
     
+    func testDownloadTimeout() {
+        let handler = DefaultDatafileHandler()
+        handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
+        
+        let expectation = XCTestExpectation(description: "should fail before 10")
+        handler.downloadDatafile(sdkKey: "invalidKey", resourceTimeoutInterval:3) { (result) in
+            switch result {
+            case .failure(let error):
+                    print(error)
+                    XCTAssert(true)
+                    expectation.fulfill()
+            case .success(let data):
+                    print(data)
+                    XCTAssert(false)
+            }
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
+        
+    }
+
+    func testDownloadWithoutTimeout() {
+        let handler = DefaultDatafileHandler()
+        handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
+        
+        let expectation = XCTestExpectation(description: "should fail before 10")
+        handler.downloadDatafile(sdkKey: "invalidKey") { (result) in
+            switch result {
+            case .failure(let error):
+                print(error)
+                XCTAssert(false)
+                // the expectation is inverted and would fail if fullfilled.
+                expectation.fulfill()
+            case .success(let data):
+                print(data)
+                XCTAssert(false)
+            }
+        }
+        expectation.isInverted = true
+        wait(for: [expectation], timeout: 5.0)
+        
+    }
+
     func testPeriodicDownload() {
         class FakeDatafileHandler : DefaultDatafileHandler {
             let data = Data()

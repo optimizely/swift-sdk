@@ -13,7 +13,7 @@ Optimizely Rollouts is free feature flags for development teams. Easily roll out
 
 ### Using the SDK
 
-See the [Mobile developer documentation](https://docs.developers.optimizely.com/full-stack/docs/implement-the-ios-sdk-310-beta) or [OTT developer documentation](https://docs.developers.optimizely.com/full-stack/docs/implement-the-ios-sdk-310-beta) to learn how to set
+See the [Mobile developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=swift&platform=mobile) or [OTT developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=swift&platform=ott) to learn how to set
 up an Optimizely X project and start using the SDK.
 
 ### Requirements

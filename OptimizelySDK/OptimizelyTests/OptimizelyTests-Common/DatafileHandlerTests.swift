@@ -138,12 +138,45 @@ class DatafileHandlerTests: XCTestCase {
         
     }
 
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func testDownloadTimeout() {
+        let handler = DefaultDatafileHandler()
+        handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
+        
+        let expectation = XCTestExpectation(description: "should fail before 10")
+        handler.downloadDatafile(sdkKey: "invalidKey1212121", resourceTimeoutInterval:3) { (result) in
+            switch result {
+            case .failure(let error):
+                print(error)
+                XCTAssert(true)
+                expectation.fulfill()
+            case .success(let data):
+                print(data)
+                XCTAssert(false)
+            }
         }
+        
+        wait(for: [expectation], timeout: 5.0)
+        
     }
+    
+    func testDownloadWithoutTimeout() {
+        let handler = DefaultDatafileHandler()
+        handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
+        
+        let expectation = XCTestExpectation(description: "will wait for response.")
+        handler.downloadDatafile(sdkKey: "invalidKeyXXXXX") { (result) in
+            switch result {
+            case .failure(let error):
+                print(error)
+                XCTAssert(false)
+            case .success(let data):
+                print(data ?? "")
+                XCTAssert(true)
+                expectation.fulfill()
+            }
+        }
 
+        wait(for: [expectation], timeout: 10.0)
+        
+    }
 }

@@ -101,7 +101,7 @@ class DatafileHandlerTests: XCTestCase {
         wait(for: [expection], timeout: 20)
         
         XCTAssert(count == 10)
-        //XCTAssert(seconds == 10)
+        XCTAssert(seconds == 10)
         
         
     }
@@ -143,7 +143,7 @@ class DatafileHandlerTests: XCTestCase {
         handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
         
         let expectation = XCTestExpectation(description: "should fail before 10")
-        handler.downloadDatafile(sdkKey: "invalidKey", resourceTimeoutInterval:3) { (result) in
+        handler.downloadDatafile(sdkKey: "invalidKey1212121", resourceTimeoutInterval:3) { (result) in
             switch result {
             case .failure(let error):
                 print(error)
@@ -163,21 +163,20 @@ class DatafileHandlerTests: XCTestCase {
         let handler = DefaultDatafileHandler()
         handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
         
-        let expectation = XCTestExpectation(description: "should fail before 10")
-        handler.downloadDatafile(sdkKey: "invalidKey") { (result) in
+        let expectation = XCTestExpectation(description: "will wait for response.")
+        handler.downloadDatafile(sdkKey: "invalidKeyXXXXX") { (result) in
             switch result {
             case .failure(let error):
                 print(error)
                 XCTAssert(false)
-                // the expectation is inverted and would fail if fullfilled.
-                expectation.fulfill()
             case .success(let data):
-                print(data)
-                XCTAssert(false)
+                print(data ?? "")
+                XCTAssert(true)
+                expectation.fulfill()
             }
         }
-        expectation.isInverted = true
-        wait(for: [expectation], timeout: 5.0)
+
+        wait(for: [expectation], timeout: 10.0)
         
     }
 }

@@ -36,7 +36,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     // TODO: implement
     var maxQueueSize:Int = 30000
     
-    lazy var logger = HandlerRegistryService.shared.injectLogger()
+    lazy var logger = OPTLoggerFactory.getLogger()
     var backingStore:DataStoreType = .file
     var backingStoreName:String = "OPTEventQueue"
     
@@ -130,7 +130,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 }
                 
                 guard let event = eventToSend else {
-                    self.logger?.e(.eventBatchFailed)
+                    self.logger.e(.eventBatchFailed)
                     resetBatch()
                     break
                 }
@@ -138,7 +138,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 // we've exhuasted our failure count.  Give up and try the next time a event
                 // is queued or someone calls flush.
                 if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
-                    self.logger?.e(.eventSendRetyFailed(failureCount))
+                    self.logger.e(.eventSendRetyFailed(failureCount))
                     failureCount = 0
                     resetBatch()
                     break;
@@ -149,21 +149,21 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 self.sendEvent(event: event) { (result) -> (Void) in
                     switch result {
                     case .failure(let error):
-                        self.logger?.e(error.reason)
+                        self.logger.e(error.reason)
                         failureCount += 1
                     case .success(_):
                         // we succeeded. remove the batch size sent.
                         if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
                             if self.batchSize == 1 && removedItem.first != event {
-                                self.logger?.e("Removed event different from sent event")
+                                self.logger.e("Removed event different from sent event")
                             }
                             else {
                                 // avoid event-log-message preparation overheads with closure-logging
-                                self.logger?.d({ "Successfully sent event: \(event)" })
+                                self.logger.d({ "Successfully sent event: \(event)" })
                             }
                         }
                         else {
-                            self.logger?.e("Removed event nil for sent item")
+                            self.logger.e("Removed event nil for sent item")
                         }
                         // reset failureCount
                         failureCount = 0
@@ -199,13 +199,13 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
-            self.logger?.d(response.debugDescription)
+            self.logger.d(response.debugDescription)
             
             if let error = error {
                 completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
             }
             else {
-                self.logger?.d("Event Sent")
+                self.logger.d("Event Sent")
                 completionHandler(.success(event.body))
             }
         }

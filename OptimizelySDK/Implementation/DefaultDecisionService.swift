@@ -20,7 +20,7 @@ class DefaultDecisionService : OPTDecisionService {
     
     let bucketer:OPTBucketer
     let userProfileService:OPTUserProfileService
-    lazy var logger = HandlerRegistryService.shared.injectLogger()
+    lazy var logger = OPTLoggerFactory.getLogger()
 
     init(userProfileService:OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
@@ -35,7 +35,7 @@ class DefaultDecisionService : OPTDecisionService {
         
         // ---- check if the experiment is running ----
         if !experiment.isActivated {
-            logger?.i(.experimentNotRunning(experiment.key))
+            logger.i(.experimentNotRunning(experiment.key))
             return nil
         }
         
@@ -48,18 +48,18 @@ class DefaultDecisionService : OPTDecisionService {
         // ---- check if the experiment has forced variation ----
         if let variationKey = experiment.forcedVariations[userId] {
             if let variation = experiment.getVariation(key: variationKey) {
-                logger?.i(.forcedVariationFound(variationKey, userId))
+                logger.i(.forcedVariationFound(variationKey, userId))
                 return variation
             }
             
             // mapped to invalid variation - ignore and continue for other deciesions
-            logger?.e(.forcedVariationFoundButInvalid(variationKey, userId))
+            logger.e(.forcedVariationFoundButInvalid(variationKey, userId))
         }
         
         // ---- check if a valid variation is stored in the user profile ----
         if let variationId = self.getVariationIdFromProfile(userId: userId, experimentId: experimentId),
             let variation = experiment.getVariation(id: variationId) {
-            logger?.i(.gotVariationFromUserProfile(variation.key, experiment.key, userId))
+            logger.i(.gotVariationFromUserProfile(variation.key, experiment.key, userId))
             return variation
         }
         
@@ -74,7 +74,7 @@ class DefaultDecisionService : OPTDecisionService {
                 self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
             }
         } else {
-            logger?.i(.userNotInExperiment(userId, experiment.key))
+            logger.i(.userNotInExperiment(userId, experiment.key))
         }
         
         return bucketedVariation;
@@ -111,11 +111,11 @@ class DefaultDecisionService : OPTDecisionService {
                 result = try holder.evaluate(project: config.project, attributes: attributes)
             }
         } catch {
-            logger?.i(error as? OptimizelyError, source: "isInExperiment(experiment: \(experiment.key), userId: \(userId))")
+            logger.i(error as? OptimizelyError, source: "isInExperiment(experiment: \(experiment.key), userId: \(userId))")
             result = false
         }
         
-        logger?.i(.audienceEvaluationResultCombined(experiment.key, result.description))
+        logger.i(.audienceEvaluationResultCombined(experiment.key, result.description))
 
         return result
     }
@@ -126,19 +126,19 @@ class DefaultDecisionService : OPTDecisionService {
         //1. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
         if let pair = getVariationForFeatureExperiment(config: config, featureFlag: featureFlag, userId:userId, attributes:attributes) {
-            logger?.d(.userInFeatureExperiment(userId, pair.variation?.key ?? "unknown", pair.experiment?.key ?? "unknown", featureFlag.key))
+            logger.d(.userInFeatureExperiment(userId, pair.variation?.key ?? "unknown", pair.experiment?.key ?? "unknown", featureFlag.key))
             return pair
         } else {
-            logger?.d(.userNotInFeatureExperiment(userId, featureFlag.key))
+            logger.d(.userNotInFeatureExperiment(userId, featureFlag.key))
         }
         
         //2. Attempt to bucket user into rollout using the feature flag.
         // Check if the feature flag has rollout and the user is bucketed into one of it's rules
         if let variation = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, userId:userId, attributes:attributes) {
-            logger?.d(.userInRollout(userId, featureFlag.key))
+            logger.d(.userInRollout(userId, featureFlag.key))
             return (nil, variation)
         } else {
-            logger?.d(.userNotInRollout(userId, featureFlag.key))
+            logger.d(.userNotInRollout(userId, featureFlag.key))
         }
         
         return nil;
@@ -152,7 +152,7 @@ class DefaultDecisionService : OPTDecisionService {
         
         let experimentIds = featureFlag.experimentIds;
         if experimentIds.isEmpty {
-            logger?.d(.featureHasNoExperiments(featureFlag.key))
+            logger.d(.featureHasNoExperiments(featureFlag.key))
         }
         
         // Check if there are any experiment IDs inside feature flag
@@ -176,35 +176,35 @@ class DefaultDecisionService : OPTDecisionService {
         let rolloutId = featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces)
         
         guard rolloutId != "" else {
-            logger?.d(.noRolloutExists(featureFlag.key))
+            logger.d(.noRolloutExists(featureFlag.key))
             return nil
         }
         
         guard let rollout = config.getRollout(id: rolloutId) else {
-            logger?.d(.rolloutIdInvalid(rolloutId, featureFlag.key))
+            logger.d(.rolloutIdInvalid(rolloutId, featureFlag.key))
             return nil
         }
         
         let rolloutRules = rollout.experiments
         if rolloutRules.isEmpty {
-            logger?.e(.rolloutHasNoExperiments(rolloutId))
+            logger.e(.rolloutHasNoExperiments(rolloutId))
         }
 
         // Evaluate all rollout rules except for last one
         for index in 0..<rolloutRules.count.advanced(by: -1) {
             let experiment = rolloutRules[index]
             if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
-                logger?.d(.userMeetsConditionsForTargetingRule(userId, index + 1))
+                logger.d(.userMeetsConditionsForTargetingRule(userId, index + 1))
                 
                 if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
-                    logger?.d(.userBucketedIntoTargetingRule(userId, index + 1))
+                    logger.d(.userBucketedIntoTargetingRule(userId, index + 1))
                     
                     return variation
                 } else {
-                    logger?.d(.userNotBucketedIntoTargetingRule(userId, index + 1))
+                    logger.d(.userNotBucketedIntoTargetingRule(userId, index + 1))
                 }
             } else {
-                logger?.d(.userDoesntMeetConditionsForTargetingRule(userId, index + 1))
+                logger.d(.userDoesntMeetConditionsForTargetingRule(userId, index + 1))
             }
         }
         // Evaluate fall back rule / last rule now
@@ -212,11 +212,11 @@ class DefaultDecisionService : OPTDecisionService {
         
         if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
             if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
-                logger?.d(.userBucketedIntoEveryoneTargetingRule(userId))
+                logger.d(.userBucketedIntoEveryoneTargetingRule(userId))
                 
                 return variation
             } else {
-                logger?.d(.userNotBucketedIntoEveryoneTargetingRule(userId))
+                logger.d(.userNotBucketedIntoEveryoneTargetingRule(userId))
             }
         }
         
@@ -265,7 +265,7 @@ extension DefaultDecisionService {
         
         userProfileService.save(userProfile: profile)
         
-        logger?.i(.savedVariationInUserProfile(variationId, experimentId, userId))
+        logger.i(.savedVariationInUserProfile(variationId, experimentId, userId))
     }
     
 }

@@ -19,7 +19,7 @@ import Foundation
 class BatchEventBuilder {
     static private let swiftSdkClientName = "swift-sdk"
     
-    static private var logger = HandlerRegistryService.shared.injectLogger()
+    static private var logger = OPTLoggerFactory.getLogger()
     
     // MARK: - Impression Event
     
@@ -140,9 +140,9 @@ class BatchEventBuilder {
         }
         
         if let value = value {
-            logger?.i(.extractValueFromEventTags(value.stringValue))
+            logger.i(.extractValueFromEventTags(value.stringValue))
         } else {
-            logger?.i(.failedToExtractValueFromEventTags(valueFromTags.stringValue))
+            logger.i(.failedToExtractValueFromEventTags(valueFromTags.stringValue))
         }
         
         return value
@@ -166,9 +166,9 @@ class BatchEventBuilder {
         }
         
         if let revenue = revenue {
-            logger?.i(.extractRevenueFromEventTags(revenue.stringValue))
+            logger.i(.extractRevenueFromEventTags(revenue.stringValue))
         } else {
-            logger?.i(.failedToExtractRevenueFromEventTags(revenueFromTags.stringValue))
+            logger.i(.failedToExtractRevenueFromEventTags(revenueFromTags.stringValue))
         }
         
         return revenue
@@ -193,7 +193,7 @@ class BatchEventBuilder {
                     }
                 }
                 else {
-                    logger?.d(.unrecognizedAttribute(attr))
+                    logger.d(.unrecognizedAttribute(attr))
                 }
             }
         }

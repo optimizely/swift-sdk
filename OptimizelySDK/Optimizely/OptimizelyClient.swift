@@ -32,7 +32,7 @@ open class OptimizelyClient: NSObject {
     
     // MARK: - Customizable Services
     
-    lazy var logger = HandlerRegistryService.shared.injectLogger()!
+    lazy var logger = OPTLoggerFactory.getLogger()
     
     var eventDispatcher: OPTEventDispatcher {
         return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!

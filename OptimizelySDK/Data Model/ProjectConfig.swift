@@ -20,7 +20,7 @@ class ProjectConfig {
     
     var project: Project!
     
-    lazy var logger = HandlerRegistryService.shared.injectLogger()
+    lazy var logger = OPTLoggerFactory.getLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
@@ -136,7 +136,7 @@ extension ProjectConfig {
         if var dic = whitelistUsers[userId] {
             return dic[experimentId]
         } else {
-            logger?.d(.userHasNoForcedVariation(userId))
+            logger.d(.userHasNoForcedVariation(userId))
             return nil
         }
     }
@@ -247,14 +247,14 @@ extension ProjectConfig {
         
         if let id = getWhitelistedVariationId(userId: userId, experimentId: experiment.id) {
             if let variation = experiment.getVariation(id:id) {
-                logger?.d(.userHasForcedVariation(userId, experiment.key, variation.key))
+                logger.d(.userHasForcedVariation(userId, experiment.key, variation.key))
                 return variation
             } else {
-                logger?.d(.userHasForcedVariationButInvalid(userId, experiment.key))
+                logger.d(.userHasForcedVariationButInvalid(userId, experiment.key))
                 return nil
             }
         } else {
-            logger?.d(.userHasNoForcedVariationForExperiment(userId, experiment.key))
+            logger.d(.userHasNoForcedVariationForExperiment(userId, experiment.key))
             return nil
         }
     }
@@ -268,7 +268,7 @@ extension ProjectConfig {
         }
         
         guard var variationKey = variationKey else {
-            logger?.d(.variationRemovedForUser(userId, experimentKey))
+            logger.d(.variationRemovedForUser(userId, experimentKey))
             self.removeFromWhitelist(userId: userId, experimentId: experiment.id)
             return true
         }
@@ -277,18 +277,18 @@ extension ProjectConfig {
         variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
 
         guard !variationKey.isEmpty else {
-            logger?.e(.variationKeyInvalid(experimentKey, variationKey))
+            logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
 
         guard let variation = experiment.variations.filter({$0.key == variationKey }).first else {
-            logger?.e(.variationKeyInvalid(experimentKey, variationKey))
+            logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
         
         self.whitelistUser(userId: userId, experimentId: experiment.id, variationId: variation.id)
         
-        logger?.d(.userMappedToForcedVariation(userId, experiment.id, variation.id))
+        logger.d(.userMappedToForcedVariation(userId, experiment.id, variation.id))
         return true
     }
     

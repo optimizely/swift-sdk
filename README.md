@@ -1,7 +1,7 @@
 # SWIFT SDK
 [![Apache 2.0](https://img.shields.io/github/license/nebula-plugins/gradle-extra-configurations-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/carthage/carthage)
-[![Build Status](https://travis-ci.org/optimizely/swift-sdk.svg?branch=master)](https://travis-ci.org/optimizely/swift-sdk)
+[![Build Status](https://travis-ci.com/optimizely/swift-sdk.svg?branch=master)](https://travis-ci.com/optimizely/swift-sdk)
 [![Coverage Status](https://coveralls.io/repos/github/optimizely/swift-sdk/badge.svg)](https://coveralls.io/github/optimizely/swift-sdk)
 
 This repository houses the Swift SDK for use with Optimizely Full Stack and Optimizely Rollouts for Mobile and OTT.

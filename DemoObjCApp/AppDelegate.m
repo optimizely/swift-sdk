@@ -16,13 +16,10 @@
 
 #import "AppDelegate.h"
 #import "VariationViewController.h"
-#import "FailureViewController.h"
 #import "CustomLogger.h"
+#import "SamplesForAPI.h"
 
 @import Optimizely;
-#if TARGET_OS_IOS
-@import Amplitude_iOS;
-#endif
 
 
 static NSString * const kOptimizelySdkKey = @"FCnSegiEkRry9rhVMroit4";
@@ -58,14 +55,15 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 // MARK: - Initialization Examples
 
 -(void)initializeOptimizelySDKAsynchronous {
-    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey];
+    DefaultEventDispatcher *eventDispacher = [[DefaultEventDispatcher alloc] initWithTimerInterval:1];
+    
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey logger:nil eventDispatcher:eventDispacher userProfileService:nil periodicDownloadInterval:@(5) defaultLogLevel:OptimizelyLogLevelDebug];
     
     [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
         if (error == nil) {
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-            self.optimizely = nil;
         }
         
         [self startWithRootViewController];
@@ -76,7 +74,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     NSString *localDatafilePath = [[NSBundle mainBundle] pathForResource:kOptimizelyDatafileName ofType:@"json"];
     if (localDatafilePath == nil) {
         NSAssert(false, @"Local datafile cannot be found");
-        self.optimizely = nil;
         return;
     }
     
@@ -86,7 +83,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     
     if (datafileJSON == nil) {
         NSLog(@"Invalid JSON format");
-        self.optimizely = nil;
     } else {
         NSError *error;
         BOOL status = [self.optimizely startWithDatafile:datafileJSON error:&error];
@@ -94,7 +90,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-            self.optimizely = nil;
         }
     }
     
@@ -114,7 +109,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                 eventDispatcher:nil
                                              userProfileService:nil
                                        periodicDownloadInterval:customDownloadIntervalInSecs
-                                                defaultLogLevel:OptimizelyLogLevelInfo];
+                                                defaultLogLevel:OptimizelyLogLevelDebug];
     
     NSNumber *notifId;
     notifId = [self.optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString *type,
@@ -129,20 +124,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                                                                   NSDictionary<NSString *,id> *attributes, NSDictionary<NSString *,id> *eventTags, NSDictionary<NSString *,id> *event) {
         NSLog(@"Received track notification: %@ %@ %@ %@ %@", eventKey, userId, attributes, eventTags, event);
         
-
-#if TARGET_OS_IOS
-        // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-
-        // Amplitude example
-        [Amplitude.instance initializeApiKey:@"YOUR_API_KEY_HERE"];
-
-        NSString *propertyKey = [NSString stringWithFormat:@"[Optimizely] %@", eventKey];
-        AMPIdentify *identify = [[AMPIdentify alloc] init];
-        [identify set:propertyKey value:userId];
-        // Track event (optional)
-        NSString *eventIdentifier = [NSString stringWithFormat:@"[Optimizely] %@ - %@", eventKey, userId];
-        [Amplitude.instance logEvent:eventIdentifier];
-#endif
     }];
     
     [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
@@ -150,7 +131,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
             NSLog(@"Optimizely SDK initialized successfully!");
         } else {
             NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-            self.optimizely = nil;
         }
         
         [self startWithRootViewController];
@@ -161,12 +141,14 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 
 -(void)startWithRootViewController {
     dispatch_async(dispatch_get_main_queue(), ^{
+        // For sample codes for other APIs, see "Samples/SamplesForAPI.m"
+
         NSError *error;
         NSString *variationKey = [self.optimizely activateWithExperimentKey:kOptimizelyExperimentKey
                                                                      userId:self.userId
                                                                  attributes:self.attributes
                                                                       error:&error];
-        
+
         if (variationKey != nil) {
             [self openVariationViewWithVariationKey:variationKey];
         } else {

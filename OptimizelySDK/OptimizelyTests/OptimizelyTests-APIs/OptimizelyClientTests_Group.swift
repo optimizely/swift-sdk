@@ -31,8 +31,8 @@ class OptimizelyClientTests_Group: XCTestCase {
         let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments",
                                                   clearUserProfileService: true)!
         
-        let featureEnabled = try? optimizely.isFeatureEnabled(featureKey: "mutex_group_feature", userId: kUserId)
-        XCTAssertTrue(featureEnabled!)
+        let featureEnabled = optimizely.isFeatureEnabled(featureKey: "mutex_group_feature", userId: kUserId)
+        XCTAssertTrue(featureEnabled)
     }
     
 }

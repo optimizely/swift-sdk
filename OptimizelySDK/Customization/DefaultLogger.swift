@@ -34,10 +34,11 @@ open class DefaultLogger : OPTLogger {
     }
     
     open func log(level: OptimizelyLogLevel, message: String) {
-        if level.rawValue > DefaultLogger.logLevel.rawValue {
+        if level > DefaultLogger.logLevel {
             return
         }
-        let message = "[OPTIMIZELY][" + level.name + "]:" + message
+        let message = "[OPTIMIZELY][" + level.name + "] " + message
+
         NSLog(message)
     }
 }

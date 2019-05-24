@@ -1,3 +1,4 @@
+//
 /****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -13,21 +14,7 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-
-#import "SplashScreenViewController.h"
-
-@interface SplashScreenViewController ()
-
-@end
-
-@implementation SplashScreenViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-}
-
-- (IBAction)unwindToSplashScreen:(UIStoryboardSegue*)segue {
-}
-
-
-@end
+    
+/// Do not edit this field.
+/// It is auto updated (Scripts/updated_version.sh) to reflect the current version
+let OPTIMIZELY_SDK_VERSION = "3.1.0-beta"

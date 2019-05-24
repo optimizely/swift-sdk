@@ -16,13 +16,12 @@
 
 import UIKit
 import Optimizely
-#if os(iOS)
-import Amplitude_iOS
-#endif
 
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    let logLevel = OptimizelyLogLevel.debug
+
     let sdkKey = "FCnSegiEkRry9rhVMroit4"
     let datafileName = "demoTestDatafile"
     let experimentKey = "background_experiment"
@@ -57,20 +56,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Initialization Examples
     
     func initializeOptimizelySDKAsynchronous() {
-        optimizely = OptimizelyClient(sdkKey: sdkKey)
+        optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
         
         optimizely.start { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
-                self.optimizely = nil
             case .success:
                 print("Optimizely SDK initialized successfully!")
             }
             
-            DispatchQueue.main.async {
-                self.startWithRootViewController()
-            }
+            self.startWithRootViewController()
         }
     }
     
@@ -79,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Local datafile cannot be found")
         }
         
-        optimizely = OptimizelyClient(sdkKey: sdkKey)
+        optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -87,7 +83,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Optimizely SDK initialized successfully!")
         } catch {
             print("Optimizely SDK initiliazation failed: \(error)")
-            optimizely = nil
         }
         
         startWithRootViewController()
@@ -103,7 +98,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,
-                                       periodicDownloadInterval: customDownloadIntervalInSecs)
+                                       periodicDownloadInterval: customDownloadIntervalInSecs,
+                                       defaultLogLevel: logLevel)
         
         // notification listeners
         
@@ -112,22 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          })
         
         _ = optimizely.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
-            print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
-            
-            // most of the third-party integrations only support iOS, so the sample code is only targeted for iOS builds
-            #if os(iOS)
-
-            // Amplitude example
-            Amplitude.instance().initializeApiKey("YOUR_API_KEY_HERE")
-
-            let propertyKey = "[Optimizely] " + eventKey
-            let identify = AMPIdentify()
-            identify.set(propertyKey, value: userId as NSObject?)
-            // Track event (optional)
-            let eventIdentifier = "[Optimizely] " + eventKey + " - " + userId
-            Amplitude.instance().logEvent(eventIdentifier)
-            
-            #endif
+            print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")            
         })
         
         _ = optimizely.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in
@@ -144,9 +125,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 if let controller = self.window?.rootViewController as? VariationViewController {
                     //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
-                    if let showCoupon = try? self.optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId) {
-                        controller.showCoupon = showCoupon
-                    }
+                    controller.showCoupon = self.optimizely.isFeatureEnabled(featureKey: "show_coupon",
+                                                                             userId: self.userId)
                 }
             }
         })
@@ -157,41 +137,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
-                self.optimizely = nil
             case .success:
                 print("Optimizely SDK initialized successfully!")
             }
             
-            DispatchQueue.main.async {
-                self.startWithRootViewController()
-            }
+            self.startWithRootViewController()
         }
     }
 
     // MARK: - ViewControl
     
     func startWithRootViewController() {
-        do {
-            let variationKey = try optimizely.activate(experimentKey: experimentKey,
-                                                       userId: userId,
-                                                       attributes: attributes)
-            openVariationView(variationKey: variationKey)
-        } catch OptimizelyError.variationUnknown(userId, experimentKey) {
-            print("Optimizely SDK activation cannot map this user to experiemnt")
-            openVariationView(variationKey: nil)
-        } catch {
-            print("Optimizely SDK activation failed: \(error)")
-            openFailureView()
+        DispatchQueue.main.async {
+            do {
+                // For sample codes for other APIs, see "Samples/SamplesForAPI.swift"
+                
+                let variationKey = try self.optimizely.activate(experimentKey: self.experimentKey,
+                                                           userId: self.userId,
+                                                           attributes: self.attributes)
+                self.openVariationView(variationKey: variationKey)
+            } catch OptimizelyError.variationUnknown(self.userId, self.experimentKey) {
+                print("Optimizely SDK activation cannot map this user to experiemnt")
+                self.openVariationView(variationKey: nil)
+            } catch {
+                print("Optimizely SDK activation failed: \(error)")
+                self.openFailureView()
+            }
         }
     }
     
     func openVariationView(variationKey: String?) {
         let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as! VariationViewController
         
-        if let showCoupon = try? optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: userId) {
-            variationViewController.showCoupon = showCoupon
-        }
-        
+        variationViewController.showCoupon = optimizely.isFeatureEnabled(featureKey: "show_coupon",
+                                                                         userId: userId)
         variationViewController.optimizely = optimizely
         variationViewController.userId = userId
         variationViewController.variationKey = variationKey

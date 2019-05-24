@@ -19,6 +19,8 @@ import XCTest
 class DatafileHandlerTests: XCTestCase {
 
     override func setUp() {
+        
+        HandlerRegistryService.shared.binders.removeAll()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             if (!FileManager.default.fileExists(atPath: url.path)) {
@@ -36,6 +38,7 @@ class DatafileHandlerTests: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        HandlerRegistryService.shared.binders.removeAll()
     }
 
     func testDatafileHandler() {
@@ -102,6 +105,39 @@ class DatafileHandlerTests: XCTestCase {
         
         
     }
+    
+    func testPeriodicDownloadWithOptimizlyClient() {
+        class FakeDatafileHandler : DefaultDatafileHandler {
+            let data = OTUtils.loadJSONDatafile("typed_audience_datafile")
+            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                completionHandler(.success(data))
+            }
+        }
+        let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
+        let handler = FakeDatafileHandler()
+
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        
+        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval:1)
+
+        var count = 0
+        
+        let _ = optimizely.notificationCenter.addDatafileChangeNotificationListener { (data) in
+            count += 1
+            if count == 9 {
+                optimizely.datafileHandler.stopAllUpdates()
+                expection.fulfill()
+            }
+        }
+        optimizely.start() { (result) in
+            XCTAssert(true)
+        }
+        wait(for: [expection], timeout: 10)
+        
+        XCTAssert(count == 9)
+        
+    }
+
 
     func testPerformanceExample() {
         // This is an example of a performance test case.

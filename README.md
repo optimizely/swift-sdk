@@ -13,7 +13,7 @@ Optimizely Rollouts is free feature flags for development teams. Easily roll out
 
 ### Using the SDK
 
-See the [Mobile developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=objectivec&platform=mobile) or [OTT developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=objectivec&platform=ott) to learn how to set
+See the [Mobile developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=swift&platform=mobile) or [OTT developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=swift&platform=ott) to learn how to set
 up an Optimizely X project and start using the SDK.
 
 ### Requirements
@@ -26,8 +26,7 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 #### Cocoapod 
 1. Add the following lines to the _Podfile_:<pre>
     ```use_frameworks!```
-    ```pod 'OptimizelySDK', :git => 'https://github.com/optimizely/swift-sdk.git', :branch => 'master'```
-  ```pod 'OptimizelySDK', :path => '~/Development/swift-sdk'```
+    ```pod 'OptimizelySwiftSDK', '3.1.0-beta```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -51,20 +50,26 @@ github "optimizely/swift-sdk" "master"
       - In the script area include:<pre>
       ```/usr/local/bin/carthage copy-frameworks```</pre> 
       - Add the frameworks to the **Input Files** list:<pre>
-            ```$(SRCROOT)/Carthage/Build/<platform>/OptimizelySDK.framework```
+            ```$(SRCROOT)/Carthage/Build/<platform>/Optimizely.framework```
             </pre>
 
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
 
+A sample code for SDK initialization and experiments:
+
 ```
-        let optimizely = OptimizelyClient(sdkKey:"somesdkkey")
-        
-        if let _ try? = optimizely.start(datafile:json) {
-            let variation = optimizely.activate(experimentKey: "background_experiment", userId: "userId", attributes: ["doubleKey":5])
-            
-            let basicVariation = optimizely.track(eventKey: "sample_conversion", userId: "userId")
-            }
+let optimizely = OptimizelyClient(sdkKey:"somesdkkey")
+
+optimizely.start(datafile:json) { result in
+    do {
+        let variation = try optimizely.activate(experimentKey: "background_experiment", userId: "userId", attributes: ["doubleKey":5])
+        try optimizely.track(eventKey: "sample_conversion", userId: "userId")
+    } catch {
+        print(error)
+    }
+}
 ```
+
 
 ### Contributing
 Please see [CONTRIBUTING](CONTRIBUTING.md).
@@ -77,6 +82,9 @@ First-party code (under OptimizelySwiftSDK is copyright Optimizely, Inc. and con
 
 This software incorporates code from the following open source repo:
 
+For the SDK:
 MurmurHash3:https://github.com/jpedrosa/sua/blob/master/Sources/murmurhash3.swift License (Apache 2.0):https://github.com/jpedrosa/sua/blob/master/LICENSE.txt
 Ported to Swift4.
+
+
 

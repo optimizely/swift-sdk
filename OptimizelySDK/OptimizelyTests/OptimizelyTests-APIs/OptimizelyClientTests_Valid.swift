@@ -88,7 +88,7 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testIsFeatureEnabled() {
-        let result: Bool = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        let result = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         XCTAssertTrue(result)
     }
     
@@ -121,7 +121,7 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testGetEnabledFeatures() {
-        let result: [String] = try! self.optimizely.getEnabledFeatures(userId: kUserId)
+        let result: [String] = self.optimizely.getEnabledFeatures(userId: kUserId)
         XCTAssert(result == [kFeatureKey])
     }
     

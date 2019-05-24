@@ -15,7 +15,7 @@
 ***************************************************************************/
 
 import Foundation
-// Adapted from this github implementation:
+// Modified version of this github implementation:
 //https://github.com/jpedrosa/sua/blob/master/Sources/murmurhash3.swift
 public class MurmurHash3 {
     

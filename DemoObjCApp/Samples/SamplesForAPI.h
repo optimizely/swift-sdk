@@ -1,3 +1,4 @@
+//
 /****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -13,10 +14,16 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
+    
 
-#ifndef DemoSwiftApp_Bridging_Header_h
-#define DemoSwiftApp_Bridging_Header_h
+#import <Foundation/Foundation.h>
 
-#import <Google/Analytics.h>
+NS_ASSUME_NONNULL_BEGIN
 
-#endif /* DemoSwiftApp_Bridging_Header_h */
+@class OptimizelyClient;
+
+@interface SamplesForAPI: NSObject
++(void)run:(OptimizelyClient*)optimizely;
+@end
+
+NS_ASSUME_NONNULL_END

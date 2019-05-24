@@ -15,7 +15,6 @@
 ***************************************************************************/
 
 import XCTest
-import SwiftyJSON
 
 class EventDispatcherTests_Batch: XCTestCase {
     
@@ -111,6 +110,8 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
+        XCTAssert(eventDispatcher.batchSize == 10)
+        
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventB), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
@@ -134,11 +135,18 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[2], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 3)
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        
+        XCTAssert(eventDispatcher.batchSize == 10)
+        
+
     }
     
     func testFlushEventsWhenBatchFails() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
+        XCTAssert(eventDispatcher.batchSize == 10)
+        
 
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
@@ -192,6 +200,8 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        
+        XCTAssert(eventDispatcher.batchSize == 10)        
     }
     
     func testFlushEventsWhenSendEventFails() {

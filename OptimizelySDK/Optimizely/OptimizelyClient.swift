@@ -25,25 +25,26 @@ open class OptimizelyClient: NSObject {
     
     var sdkKey: String
     var config: ProjectConfig?
+
+    public var version: String {
+        return Utils.sdkVersion
+    }
     
     // MARK: - Customizable Services
     
-    // I only want to get this once from the handler service.
     lazy var logger = HandlerRegistryService.shared.injectLogger()!
     
     var eventDispatcher: OPTEventDispatcher {
         return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!
     }
-    let periodicDownloadInterval: Int
     
     // MARK: - Default Services
-    
-    // TODO: [Tom] can we remove decisionService from RegsitryService?
     
     var decisionService: OPTDecisionService {
         return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
     }
-    var datafileHandler: OPTDatafileHandler {
+    
+    public var datafileHandler: OPTDatafileHandler {
         return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
     }
     
@@ -68,11 +69,9 @@ open class OptimizelyClient: NSObject {
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
-                periodicDownloadInterval: Int? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         self.sdkKey = sdkKey
-        self.periodicDownloadInterval = periodicDownloadInterval ?? 10 * 60
         
         super.init()
         
@@ -87,6 +86,7 @@ open class OptimizelyClient: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
+        logger.d("SDK Version: \(version)")
     }
     
     /// Start Optimizely SDK (Asynchronous)
@@ -158,34 +158,30 @@ open class OptimizelyClient: NSObject {
             // this isn't really necessary because the try would throw if there is a problem.  But, we want to avoid using bang so we do another let binding.
             guard let config = self.config else { throw OptimizelyError.dataFileInvalid }
             
-            if periodicDownloadInterval > 0 {
-                datafileHandler.stopPeriodicUpdates(sdkKey: self.sdkKey)
-                datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
-                    // new datafile came in...
-                    self.reInitLock.wait(); defer { self.reInitLock.signal() }
-                    if let config = try? ProjectConfig(datafile: data) {
-                        do {
-                            if let users = self.config?.whitelistUsers {
-                                config.whitelistUsers = users
-                            }
-                            
-                            self.config = config
-                            
-                            // call reinit on the services we know we are reinitializing.
-                            
-                            for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
-                                guard let component = component else { continue }
-                                HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
-                            }
-                            
+            datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
+                // new datafile came in...
+                self.reInitLock.wait(); defer { self.reInitLock.signal() }
+                if let config = try? ProjectConfig(datafile: data) {
+                    do {
+                        if let users = self.config?.whitelistUsers {
+                            config.whitelistUsers = users
                         }
                         
-                        self.notificationCenter.sendNotifications(type:
-                            NotificationType.DatafileChange.rawValue, args: [data])
+                        self.config = config
+                        
+                        // call reinit on the services we know we are reinitializing.
+                        
+                        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
+                            guard let component = component else { continue }
+                            HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
+                        }
                         
                     }
+                    
+                    self.notificationCenter.sendNotifications(type:
+                        NotificationType.DatafileChange.rawValue, args: [data])
+                    
                 }
-                
             }
         } catch let error as OptimizelyError {
             // .datafileInvalid
@@ -206,20 +202,20 @@ open class OptimizelyClient: NSObject {
             var fetchResult: OptimizelyResult<Data>
             
             switch result {
-            case .failure:
-                fetchResult = .failure(.generic)
+            case .failure(let error):
+                fetchResult = .failure(error)
             case .success(let datafile):
                 // we got a new datafile.
                 if let datafile = datafile {
                     fetchResult = .success(datafile)
                 }
-                    // we got a success but no datafile 304. So, load the saved datafile.
+                // we got a success but no datafile 304. So, load the saved datafile.
                 else if let data = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) {
                     fetchResult = .success(data)
                 }
-                    // if that fails, we have a problem.
+                // if that fails, we have a problem.
                 else {
-                    fetchResult = .failure(.generic)
+                    fetchResult = .failure(.datafileLoadingFailed(self.sdkKey))
                 }
                 
             }
@@ -345,9 +341,9 @@ open class OptimizelyClient: NSObject {
     /// Set forced variation for experiment and user ID to variationKey.
     ///
     /// - Parameters:
-    ///   - experimentKey The key for the experiment.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - variationKey The variation the user should be forced into.
+    ///   - experimentKey: The key for the experiment.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - variationKey: The variation the user should be forced into.
     ///                  This value can be nil, in which case, the forced variation is cleared.
     /// - Returns: true if forced variation set successfully
     public func setForcedVariation(experimentKey: String,
@@ -364,18 +360,22 @@ open class OptimizelyClient: NSObject {
     /// Determine whether a feature is enabled.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: true if feature is enabled, false otherwise.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
-                                 attributes: OptimizelyAttributes?=nil) throws -> Bool {
+                                 attributes: OptimizelyAttributes?=nil) -> Bool {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let config = self.config else {
+            logger.e(.sdkNotReady)
+            return false
+        }
         
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
+            logger.e(.featureKeyInvalid(featureKey))
             return false
         }
         
@@ -393,7 +393,8 @@ open class OptimizelyClient: NSObject {
         guard let variation = pair?.variation else {
             args.append(decisionInfo)
             self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
-            throw OptimizelyError.variationUnknown(userId, featureKey)
+            logger.i(.variationUnknown(userId, featureKey))
+            return false
         }
         
         let featureEnabled = variation.featureEnabled ?? false
@@ -426,10 +427,10 @@ open class OptimizelyClient: NSObject {
     /// Gets boolean feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type boolean.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableBoolean(featureKey: String,
@@ -446,10 +447,10 @@ open class OptimizelyClient: NSObject {
     /// Gets double feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type double.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableDouble(featureKey: String,
@@ -466,10 +467,10 @@ open class OptimizelyClient: NSObject {
     /// Gets integer feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type integer.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableInteger(featureKey: String,
@@ -486,10 +487,10 @@ open class OptimizelyClient: NSObject {
     /// Gets string feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type string.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableString(featureKey: String,
@@ -602,23 +603,24 @@ open class OptimizelyClient: NSObject {
     /// - Returns: Array of feature keys that are enabled for the user.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId: String,
-                                   attributes: OptimizelyAttributes?=nil) throws -> [String] {
+                                   attributes: OptimizelyAttributes?=nil) -> [String] {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        var enabledFeatures = [String]()
+        
+        guard let config = self.config else {
+            logger.e(.sdkNotReady)
+            return enabledFeatures
+        }
         
         guard let featureFlags = config.project?.featureFlags else {
-            return [String]()
+            return enabledFeatures
         }
         
-        let enabledFeatures = featureFlags.filter{
-            do {
-                return try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
-            } catch {
-                return false
-            }
-        }
+        enabledFeatures = featureFlags.filter{
+            isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
+        }.map{ $0.key }
         
-        return enabledFeatures.map{$0.key}
+        return enabledFeatures
     }
     
     /// Track an event

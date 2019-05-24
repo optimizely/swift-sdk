@@ -43,3 +43,9 @@ import Foundation
         }
     }
 }
+
+extension OptimizelyLogLevel: Comparable {
+    public static func < (lhs: OptimizelyLogLevel, rhs: OptimizelyLogLevel) -> Bool {
+        return lhs.rawValue < rhs.rawValue
+    }
+}

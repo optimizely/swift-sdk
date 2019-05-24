@@ -27,9 +27,9 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 
 #### Cocoapod 
 1. Add the following lines to the _Podfile_:<pre>
-    ```use_frameworks!```
-    ```pod 'OptimizelySwiftSDK', '3.1.0-beta```
-</pre>
+	```use_frameworks!```
+    ```pod 'OptimizelySDK', :git => 'https://github.com/optimizely/swift-sdk.git', :branch => 'master'```
+    </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
 
@@ -38,22 +38,18 @@ Further installation instructions for Cocoapods: https://guides.cocoapods.org/us
 We haven't actually published to Cocoapods yet.  
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre> 
-github "optimizely/swift-sdk" "master"
-</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" "master"```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 
-3. Link the frameworks to your project. Go to your project target's **Link Binary With Libraries** and drag over the following from the _Carthage/Build/\<platform\>_ folder: <pre> 
-      OptimizelySDK.framework
+3. Link the frameworks to your project. Go to your project target's **Link Binary With Libraries** and drag over the following from the _Carthage/Build/\<platform\>_ folder: <pre>```OptimizelySDK.framework```</pre>
 
 4. To ensure that proper bitcode-related files and dSYMs are copied when archiving your app, you will need to install a Carthage build script:
       - Add a new **Run Script** phase in your target's **Build Phase**.</br>
       - In the script area include:<pre>
       ```/usr/local/bin/carthage copy-frameworks```</pre> 
       - Add the frameworks to the **Input Files** list:<pre>
-            ```$(SRCROOT)/Carthage/Build/<platform>/Optimizely.framework```
-            </pre>
+      ```$(SRCROOT)/Carthage/Build/<platform>/Optimizely.framework```</pre>
 
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
 
@@ -62,7 +58,7 @@ A sample code for SDK initialization and experiments:
 ```
 let optimizely = OptimizelyClient(sdkKey:"somesdkkey")
 
-optimizely.start(datafile:json) { result in
+optimizely.start{ result in
     do {
         let variation = try optimizely.activate(experimentKey: "background_experiment", userId: "userId", attributes: ["doubleKey":5])
         try optimizely.track(eventKey: "sample_conversion", userId: "userId")

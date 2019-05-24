@@ -33,3 +33,9 @@ import Foundation
         return url == object.url && body == object.body
     }
 }
+
+extension EventForDispatch {
+    override public var description: String {
+        return "[url] \(url) (" + (String(data: body, encoding: .utf8) ?? "UNKNOWN") + ")"
+    }
+}

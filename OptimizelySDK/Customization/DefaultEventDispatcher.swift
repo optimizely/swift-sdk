@@ -158,7 +158,8 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                                 self.logger?.e("Removed event different from sent event")
                             }
                             else {
-                                self.logger?.d("Successfully sent event " + event.body.debugDescription)
+                                // avoid event-log-message preparation overheads with closure-logging
+                                self.logger?.d({ "Successfully sent event: \(event)" })
                             }
                         }
                         else {
@@ -179,7 +180,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                         }
                     }
                     // our send is done.
-                    defer { self.notify.leave() }
+                    self.notify.leave()
                     
                 }
                 // wait for send

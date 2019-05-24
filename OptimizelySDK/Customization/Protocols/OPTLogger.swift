@@ -47,6 +47,12 @@ extension OPTLogger {
     func w(_ message: String) { log(level: .warning, message: message) }
     func i(_ message: String) { log(level: .info, message: message) }
     func d(_ message: String) { log(level: .debug, message: message) }
+    // closure-based debug logging:
+    // - we pay overhead for preparing large/complicated log messages only when it's debug level
+    func d(_ message: () -> String) {
+        guard Self.logLevel >= OptimizelyLogLevel.debug else { return }
+        log(level: .debug, message: message())
+    }
 
     // MARK: - Utils for LogMessage
     

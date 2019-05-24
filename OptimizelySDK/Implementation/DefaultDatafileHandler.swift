@@ -126,7 +126,8 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 
                 completionHandler(result)
                 
-                //self.logger?.d(response.debugDescription)                
+                // avoid event-log-message preparation overheads with closure-logging
+                self.logger?.d({ response.debugDescription })
             }
             
             task.resume()

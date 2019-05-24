@@ -78,7 +78,7 @@ extension OPTLogger {
 
 @objc public class OPTLoggerFactory:NSObject {
     class func getLogger() -> OPTLogger {
-        if let logger = HandlerRegistryService.shared.injectComponent(service: OPTLogger.self) as? OPTLogger {
+        if let logger = HandlerRegistryService.shared.injectLogger() {
             return logger
         }
         

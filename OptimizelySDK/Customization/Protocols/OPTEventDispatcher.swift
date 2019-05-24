@@ -16,26 +16,18 @@
 
 import Foundation
 
-public typealias DispatchCompletionHandler = (Result<Data, OPTEventDispatchError>)->(Void)
+public typealias DispatchCompletionHandler = (OptimizelyResult<Data>)->(Void)
 
-public class OPTEventDispatchError : Error {
-    public var localizedDescription: String
-    
-    init(description:String) {
-        localizedDescription = description
-    }
-}
-
-/**
- The OPTEventDispatcher dispatches events to the Optimizely backend used in results.
- */
+/// The OPTEventDispatcher dispatches events to the Optimizely backend used in results.
 public protocol OPTEventDispatcher {
-    /**
-     Dispatch event to Optimizely backend for results measurement.
-     - Parameter event: EventForDispatch object which contains the url to send to and the body.
-     - Parameter completionHandler: Called when the event has been sent or if an error occured.  This may not be called in the case where the dispatcher is doing batch events. It is up to the implementor of the protocol.
-    */
-    func dispatchEvent(event:EventForDispatch, completionHandler: @escaping DispatchCompletionHandler)
+
+    /// Dispatch event to Optimizely backend for results measurement.
+    ///
+    /// - Parameters:
+    ///   - event: EventForDispatch object which contains the url to send to and the body.
+    ///   - completionHandler: Called when the event has been sent or if an error occured.
+    ///     This may not be called in the case where the dispatcher is doing batch events. It is up to the implementor of the protocol.
+    func dispatchEvent(event:EventForDispatch, completionHandler: DispatchCompletionHandler?)
     
     /// Attempts to flush the event queue if there are any events to process.
     func flushEvents()

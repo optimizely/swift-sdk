@@ -1,157 +1,276 @@
 /****************************************************************************
- * Copyright 2019, Optimizely, Inc. and contributors                        *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
 class DefaultDatafileHandler : OPTDatafileHandler {
-    static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
-    lazy var logger = HandlerRegistryService.shared.injectLogger()
-    var timers:[String:Timer] = [String:Timer]()
+    public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
+    lazy var logger = OPTLoggerFactory.getLogger()
+    var timers:AtomicProperty<[String:(timer:Timer?, interval:Int)]> = AtomicProperty(property: [String:(Timer?,Int)]())
     let dataStore = DataStoreUserDefaults()
+    
+    let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent, autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
     
     required init() {
         
     }
     
+    func setTimer(sdkKey:String, interval:Int) {
+        timers.performAtomic { (timers) in
+            guard let _ = timers[sdkKey] else {
+                timers[sdkKey] = (nil, interval)
+                return
+            }
+        }
+    }
+    
     func downloadDatafile(sdkKey: String) -> Data? {
         
-        let config = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: config)
-        let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
-        var result:Data?
+        var datafile:Data?
         let group = DispatchGroup()
         
         group.enter()
         
-        if let url = URL(string: str) {
-            let task = session.downloadTask(with: url){ (url, response, error) in
-                self.logger?.log(level: .debug, message: response.debugDescription)
-                if let response = response as? HTTPURLResponse, response.statusCode == 200,
-                    let url = url, let projectConfig = try? Data(contentsOf: url) {
-                    result = projectConfig
-                    self.saveDatafile(sdkKey: sdkKey, dataFile: projectConfig)
-                }
-                group.leave()
+        downloadDatafile(sdkKey: sdkKey) { (result) in
+            switch result {
+            case .success(let data):
+                datafile = data
+            case .failure(let error):
+                self.logger.e(error.reason)
             }
-            
-            task.resume()
-            
-            group.wait()
-            
+            group.leave()
         }
-        return result
+        
+        group.wait()
+        
+        return datafile
     }
     
-    open func downloadDatafile(sdkKey: String, completionHandler: @escaping (Result<Data?, DatafileDownloadError>) -> Void) {
+    open func getSession(resourceTimeoutInterval:Double?) -> URLSession {
         let config = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: config)
-        let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
-        if let url = URL(string: str) {
-            var request = URLRequest(url: url)
-            
-            if let lastModified = dataStore.getItem(forKey: "OPTLastModified-" + sdkKey) {
-                request.addValue(lastModified as! String, forHTTPHeaderField: "If-Modified-Since")
+        if let resourceTimeoutInterval = resourceTimeoutInterval,
+            resourceTimeoutInterval > 0 {
+            config.timeoutIntervalForResource = TimeInterval(resourceTimeoutInterval)
+        }
+        return URLSession(configuration: config)
+    }
+    
+    open func getRequest(sdkKey:String) -> URLRequest? {
+        let str = String(format: endPointStringFormat, sdkKey)
+        guard let url = URL(string: str) else { return nil }
+        
+        var request = URLRequest(url: url)
+        
+        if let lastModified = dataStore.getItem(forKey: "OPTLastModified-" + sdkKey) {
+            request.addValue(lastModified as! String, forHTTPHeaderField: "If-Modified-Since")
+        }
+        
+        return request
+
+    }
+    
+    open func getResponseData(sdkKey:String, response:HTTPURLResponse, url:URL?) -> Data? {
+        if let url = url, let data = try? Data(contentsOf: url) {
+            if let str = String(data: data, encoding: .utf8) {
+                self.logger.d(str)
+            }
+            self.saveDatafile(sdkKey: sdkKey, dataFile: data)
+            if let lastModified = response.allHeaderFields["Last-Modified"] {
+                self.dataStore.saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
             }
             
+            return data
+        }
+        
+        return nil
+    }
+    
+    open func downloadDatafile(sdkKey: String,
+                               resourceTimeoutInterval:Double? = nil,
+                               completionHandler: @escaping DatafileDownloadCompletionHandler) {
+        
+        downloadQueue.async {
+            let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
+            
+            guard let request = self.getRequest(sdkKey: sdkKey) else { return }
+            
             let task = session.downloadTask(with: request) { (url, response, error) in
-                var result = Result<Data?, DatafileDownloadError>.failure(DatafileDownloadError(description: "Failed to parse"))
+                var result = OptimizelyResult<Data?>.failure(.datafileDownloadFailed("Failed to parse"))
                 
                 if let _ = error {
-                    self.logger?.log(level: .error, message: error.debugDescription)
-                    let datafiledownloadError = DatafileDownloadError(description: error.debugDescription)
-                    result = Result.failure(datafiledownloadError)
-                }
-                else if let response = response as? HTTPURLResponse {
+                    self.logger.e(error.debugDescription)
+                    result = .failure(.datafileDownloadFailed(error.debugDescription))
+                } else if let response = response as? HTTPURLResponse {
                     if response.statusCode == 200 {
-                        if let url = url, let data = try? Data(contentsOf: url) {
-                            if let str = String(data: data, encoding: .utf8) {
-                                self.logger?.log(level: .debug, message: str)
-                            }
-                            self.saveDatafile(sdkKey: sdkKey, dataFile: data)
-                            if let lastModified = response.allHeaderFields["Last-Modified"] {
-                                self.dataStore.saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
-                            }
-                            
-                            result = Result.success(data)
-                        }
+                        let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url)
+                        result = .success(data)
                     }
                     else if response.statusCode == 304 {
-                        self.logger?.log(level: .debug, message: "The datafile was not modified and won't be downloaded again")
+                        self.logger.d("The datafile was not modified and won't be downloaded again")
                         result = .success(nil)
                     }
                 }
-
+                
                 completionHandler(result)
                 
-                self.logger?.log(level: .debug, message: response.debugDescription)
-                
+                // avoid event-log-message preparation overheads with closure-logging
+                self.logger.d({ response.debugDescription })
             }
             
             task.resume()
         }
-
     }
     
     func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification:((Data)->Void)?) {
-        if let _ = timers[sdkKey] {
-            logger?.log(level: .info, message: "Timer already started for datafile updates")
-            return
-        }
+        
+        let now = Date()
         if #available(iOS 10.0, tvOS 10.0, *) {
             DispatchQueue.main.async {
-                let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: true) { (timer) in
-                    self.downloadDatafile(sdkKey: sdkKey) { (result) in
-                        if let datafileChangeNotification = datafileChangeNotification {
-                            switch result {
-                            case .success(let data):
-                                if let data = data {
-                                    datafileChangeNotification(data)
-                                }
-                            case .failure( _): break
-                                // don't do anything.
-                            }
-                        }
-                        // background download saves to cache
-                    }
+                if let timer = self.timers.property?[sdkKey]?.timer, timer.isValid {
+                    return
                 }
-                self.timers[sdkKey] = timer
-
+                
+                let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: false) { (timer) in
+                    
+                    self.performPerodicDownload(sdkKey: sdkKey,
+                                                startTime: now,
+                                                updateInterval: updateInterval,
+                                                datafileChangeNotification: datafileChangeNotification)
+                    
+                    timer.invalidate()
+                }
+                self.timers.performAtomic(atomicOperation: { (timers) in
+                    if let interval = timers[sdkKey]?.interval {
+                        timers[sdkKey] = (timer,interval)
+                    }
+                    else {
+                        timers[sdkKey] = (timer,updateInterval)
+                    }
+                })
             }
         } else {
             // Fallback on earlier versions
+            DispatchQueue.main.async {
+                if let timer = self.timers.property?[sdkKey]?.timer, timer.isValid {
+                    return
+                }
+
+                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval":  updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
+                
+                self.timers.performAtomic(atomicOperation: { (timers) in
+                    if let interval = timers[sdkKey]?.interval {
+                        timers[sdkKey] = (timer,interval)
+                    }
+                    else {
+                        timers[sdkKey] = (timer,updateInterval)
+                    }
+                })
+            }
+
+        }
+    }
+    
+    @objc
+    func timerFired(timer:Timer) {
+        if let info = timer.userInfo as? [String:Any],
+            let sdkKey = info["sdkKey"] as? String,
+            let updateInterval = info["updateInterval"] as? Int,
+            let startDate = info["startTime"] as? Date,
+            let datafileChangeNotification = info["datafileChangeNotification"] as? ((Data)->Void){
+            self.performPerodicDownload(sdkKey: sdkKey, startTime: startDate, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
+        }
+        timer.invalidate()
+
+    }
+    
+    func hasPeriodUpdates(sdkKey: String) -> Bool {
+        var restart = true
+        self.timers.performAtomic(atomicOperation: { (timers) in
+            if !timers.contains(where: { $0.key == sdkKey} ) {
+                restart = false
+            }
+        })
+        
+        return restart
+    }
+    
+    func performPerodicDownload(sdkKey: String,
+                                startTime:Date,
+                                updateInterval:Int,
+                                datafileChangeNotification:((Data)->Void)?) {
+        self.downloadDatafile(sdkKey: sdkKey) { (result) in
+            switch result {
+            case .success(let data):
+                if let data = data,
+                    let datafileChangeNotification = datafileChangeNotification {
+                    datafileChangeNotification(data)
+                }
+            case .failure(let error):
+                self.logger.e(error.reason)
+            }
+            
+            if self.hasPeriodUpdates(sdkKey: sdkKey) {
+                let interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
+                let actualDiff = (Int(abs(startTime.timeIntervalSinceNow)) - updateInterval)
+                var nextInterval = interval
+                if actualDiff > 0 {
+                    nextInterval -= actualDiff
+                }
+                
+                self.logger.d("next datafile download is \(nextInterval) seconds \(Date())")
+                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: nextInterval, datafileChangeNotification: datafileChangeNotification)
+            }
         }
     }
     
     func stopPeriodicUpdates(sdkKey: String) {
-        if let timer = timers[sdkKey] {
-            logger?.log(level: .info, message: "Stopping timer for datafile updates sdkKey:" + sdkKey)
-            
-            timer.invalidate()
-            timers.removeValue(forKey: sdkKey)
-        }
+        timers.performAtomic { (timers) in
+            if let timer = timers[sdkKey] {
+                logger.i("Stopping timer for datafile updates sdkKey: \(sdkKey)")
+                
+                timer.timer?.invalidate()
+                timers.removeValue(forKey: sdkKey)
+            }
 
+        }
     }
     
     func stopPeriodicUpdates() {
-        for key in timers.keys {
-            logger?.log(level: .info, message: "Stopping timer for all datafile updates")
+        for key in timers.property?.keys ?? Dictionary<String, (timer: Timer?, interval: Int)>().keys {
+            logger.i("Stopping timer for all datafile updates")
             stopPeriodicUpdates(sdkKey: key)
         }
         
     }
+    
+    func startUpdates(sdkKey: String, datafileChangeNotification: ((Data) -> Void)?) {
+        if let value = timers.property?[sdkKey], !(value.timer?.isValid ?? false) {
+            startPeriodicUpdates(sdkKey: sdkKey, updateInterval: value.interval, datafileChangeNotification: datafileChangeNotification)
+        }
+    }
+    
+    func stopUpdates(sdkKey: String) {
+        stopPeriodicUpdates(sdkKey: sdkKey)
+    }
+    
+    func stopAllUpdates() {
+        stopPeriodicUpdates()
+    }
+    
+
 
     
     func saveDatafile(sdkKey: String, dataFile: Data) {
@@ -164,7 +283,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 try dataFile.write(to: fileURL, options: .atomic)
             }
             catch {/* error handling here */
-                logger?.log(level: .error, message: "Problem saving datafile for key " + sdkKey)
+                logger.e("Problem saving datafile for key " + sdkKey)
             }
         }
     }
@@ -180,7 +299,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 return data
             }
             catch {/* error handling here */
-                logger?.log(level: .error, message: "Problem loading datafile for key " + sdkKey)
+                logger.e("Problem loading datafile for key " + sdkKey)
             }
         }
         
@@ -205,6 +324,4 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         }
 
     }
-    
-    
 }

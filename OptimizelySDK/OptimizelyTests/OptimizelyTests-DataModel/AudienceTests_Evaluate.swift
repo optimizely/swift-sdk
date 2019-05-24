@@ -1,10 +1,18 @@
-//
-//  AudienceTests_Evaluate.swift
-//  OptimizelySwiftSDK
-//
-//  Created by Jae Kim on 2/26/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import XCTest
 
@@ -43,7 +51,7 @@ class AudienceTests_Evaluate: XCTestCase {
     // MARK: - Properties
     
     var typedAudienceDatafile: Data!
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
     
     // MARK: - SetUp
     
@@ -52,8 +60,8 @@ class AudienceTests_Evaluate: XCTestCase {
         
         self.typedAudienceDatafile = OTUtils.loadJSONDatafile("typed_audience_datafile")
         
-        self.optimizely = OptimizelyManager(sdkKey: "12345")
-        try! self.optimizely.initializeSDK(datafile: typedAudienceDatafile)
+        self.optimizely = OptimizelyClient(sdkKey: "12345")
+        try! self.optimizely.start(datafile: typedAudienceDatafile)
     }
 
 
@@ -259,9 +267,6 @@ class AudienceTests_Evaluate: XCTestCase {
     }
     
     func testExactMatcherReturnsNullWhenNoUserProvidedValue() {
-        
-        // TODO: [Jae] confirm: it looks like return false is correct behavior. Why ObjC expects nil for these?
-        
         let attributesPassOrValue: [String: Any] = [:]
     
         var conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchStringType)
@@ -302,7 +307,6 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue3 = ["attr_value" : false]
         let attributesPassOrValue4 = ["attr_value" : "apple"]
         let attributesPassOrValue5 = [String: String]()
-        // TODO: [Jae] confirm: filtered by type checking [String: Any], so not valid input
         //let attributesPassOrValue6 = ["attr_value" : nil]
         
         var conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchStringType)
@@ -327,11 +331,7 @@ class AudienceTests_Evaluate: XCTestCase {
         
         let andCondition1: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithExactMatchIntType)
         XCTAssertNil(try? andCondition1.evaluate(project: nil, attributes: attributesPassOrValue1))
-      
-        // TODO: [Jae] infinity in datafile causes parse error - check if we need to test this invalid datafile
-//        let attributesPassOrValue2 = ["attr_value" : 15]
-//        let andCondition2: ConditionHolder = try! OTUtils.model(from: kInfinityIntConditionStr)
-//        XCTAssertNil(try? andCondition2.evaluate(project: nil, attributes: attributesPassOrValue2))
+
     }
     
     func testExactMatcherReturnsTrueWhenAttributeValueMatches() {
@@ -395,9 +395,6 @@ class AudienceTests_Evaluate: XCTestCase {
     //MARK:- SubstringMatcher Tests
     
     func testSubstringMatcherReturnsNullWhenUnsupportedConditionValue() {
-        
-        // TODO: [Jae] confirm: filtered by type checking, so not valid UserAttribute
-
         let condition: [String: Any] = ["name": "device_type",
                                         "value": [],
                                         "type": "custom_attribute",
@@ -460,8 +457,6 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue2 = [String: String]()
         let attributesPassOrValue3 = ["attr_value" : true]
         let attributesPassOrValue4 = ["attr_value" : false]
-        // TODO: [Jae] confirm: filtered by type checking, so not valid attribute
-        //let attributesPassOrValue5 = ["attr_value" : nil]
     
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
         XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))
@@ -473,8 +468,6 @@ class AudienceTests_Evaluate: XCTestCase {
     func testGTMatcherReturnsNullWhenAttributeValueIsInfinity() {
         let attributesPassOrValue = ["attr_value" : Double.infinity]
         
-        // TODO: [Jae] expected behavior for infinity??
-
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithGreaterThanMatchType)
         XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue))
     }
@@ -490,10 +483,6 @@ class AudienceTests_Evaluate: XCTestCase {
     
     //MARK: - LTMatcher Tests
     
-    func testLTMatcherReturnsNullWhenUnsupportedConditionValue() {
-        // TODO: [Jae] confirm: filtered by type checking, so not valid UserAttribute
-    }
-    
     func testLTMatcherReturnsFalseWhenAttributeValueIsGreaterThanOrEqualToConditionValue() {
         let attributesPassOrValue1 = ["attr_value" : 15]
         let attributesPassOrValue2 = ["attr_value" : 10]
@@ -508,8 +497,6 @@ class AudienceTests_Evaluate: XCTestCase {
         let attributesPassOrValue2 = [String: String]()
         let attributesPassOrValue3 = ["attr_value" : true]
         let attributesPassOrValue4 = ["attr_value" : false]
-        // TODO: [Jae] confirm: filtered by type checking, so not valid attribute
-        //let attributesPassOrValue5 = ["attr_value" : nil]
         
         let conditionHolder: ConditionHolder = try! OTUtils.model(from: kAudienceConditionsWithLessThanMatchType)
         XCTAssertNil(try? conditionHolder.evaluate(project: nil, attributes: attributesPassOrValue1))

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -19,7 +20,7 @@
         <!--Splash Screen View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="SplashScreenViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" userLabel="Splash Screen View Controller" customClass="SplashScreenViewController" customModule="DemoSwiftiOS" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SplashScreenViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" userLabel="Splash Screen View Controller" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -45,10 +46,10 @@
             </objects>
             <point key="canvasLocation" x="43.125" y="-305.28169014084506"/>
         </scene>
-        <!--Failure View Controller-->
+        <!--View Controller-->
         <scene sceneID="tuC-ag-DcX">
             <objects>
-                <viewController storyboardIdentifier="FailureViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Dne-99-XyY" customClass="FailureViewController" customModule="DemoSwiftiOS" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FailureViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Dne-99-XyY" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="AdG-n6-YDN"/>
                         <viewControllerLayoutGuide type="bottom" id="41k-LG-Ek5"/>
@@ -98,7 +99,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GuL-M1-dn2">
-                                <rect key="frame" x="124" y="253" width="128" height="125"/>
+                                <rect key="frame" x="123.5" y="253" width="128" height="125"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="128" id="RRZ-tK-QO5"/>
                                 </constraints>
@@ -107,7 +108,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="VARIATION" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8CQ-8i-O97">
-                                <rect key="frame" x="128" y="368" width="120" height="24"/>
+                                <rect key="frame" x="127.5" y="368" width="120" height="24"/>
                                 <fontDescription key="fontDescription" name="ProximaNova-Regular" family="Proxima Nova" pointSize="24"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -146,6 +147,9 @@
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="28"/>
                                         <state key="normal" title="Ok" backgroundImage="background_confirmation"/>
+                                        <connections>
+                                            <action selector="closeCoupon:" destination="Gt1-ok-FkN" eventType="touchUpInside" id="guX-ha-ev2"/>
+                                        </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Coupon" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wfb-0V-K6B">
                                         <rect key="frame" x="118" y="53" width="163" height="117"/>
@@ -202,10 +206,10 @@
             </objects>
             <point key="canvasLocation" x="727.20000000000005" y="-552.77361319340332"/>
         </scene>
-        <!--Conversion Success View Controller-->
+        <!--View Controller-->
         <scene sceneID="thi-5V-klT">
             <objects>
-                <viewController storyboardIdentifier="ConversionSuccessViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="HJm-I5-YSq" customClass="ConversionSuccessViewController" customModule="DemoSwiftiOS" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ConversionSuccessViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="HJm-I5-YSq" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="0j4-IK-nUn"/>
                         <viewControllerLayoutGuide type="bottom" id="ARR-Gc-cn2"/>

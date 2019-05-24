@@ -1,41 +1,98 @@
 /****************************************************************************
- * Copyright 2018, Optimizely, Inc. and contributors                        *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
-class ProjectConfig : Codable {
+class ProjectConfig {
     
     var project: Project!
+    
+    lazy var logger = OPTLoggerFactory.getLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
     
-    private var whitelistUsers = [String: [String: String]]()
+    var whitelistUsers = [String: [String: String]]()
+    
+    lazy var experimentKeyMap:[String:Experiment] = {
+        var map = [String:Experiment]()
+        allExperiments.forEach({map[$0.key] = $0})
+        return map
+    }()
+
+    lazy var experimentIdMap:[String:Experiment] = {
+        var map = [String:Experiment]()
+        allExperiments.forEach({map[$0.id] = $0})
+        return map
+    }()
+
+    lazy var experimentFeatureMap:[String:[String]] = {
+        var experimentFeatureMap = [String:[String]]()
+        project.featureFlags.forEach({ (ff) in
+            ff.experimentIds.forEach({
+                if var arr = experimentFeatureMap[$0] {
+                    arr.append(ff.id)
+                    experimentFeatureMap[$0] = arr
+                }
+                else {
+                    experimentFeatureMap[$0] = [ff.id]
+                }
+            })
+        })
+        return experimentFeatureMap
+    }()
+    
+    lazy var eventKeyMap:[String:Event] =  {
+        var eventKeyMap = [String:Event]()
+        project.events.forEach({eventKeyMap[$0.key] = $0 })
+        return eventKeyMap
+    }()
+    
+    lazy var attributeKeyMap:[String:Attribute] = {
+        var map = [String:Attribute]()
+        project.attributes.forEach({map[$0.key] = $0 })
+        return map
+    }()
+
+    lazy var featureFlagKeyMap:[String:FeatureFlag] = {
+        var map = [String:FeatureFlag]()
+        project.featureFlags.forEach({map[$0.key] = $0 })
+        return map
+    }()
+
+    lazy var rolloutIdMap:[String:Rollout] = {
+        var map = [String:Rollout]()
+        project.rollouts.forEach({map[$0.id] = $0 })
+        return map
+    }()
+
+    lazy var allExperiments:[Experiment] = {
+        return project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
+    }()
     
     init(datafile: Data) throws {
         do {
             self.project = try JSONDecoder().decode(Project.self, from: datafile)
         } catch {
-            // TODO: clean up (debug only)
-            print(">>>>> Project Decode Error: \(error)")
             throw OptimizelyError.dataFileInvalid
         }
         if !isValidVersion(version: self.project.version) {
             throw OptimizelyError.dataFileVersionInvalid(self.project.version)
         }
+        
     }
     
     convenience init(datafile: String) throws {
@@ -47,7 +104,6 @@ class ProjectConfig : Codable {
    }
     
     init() {
-        // TODO: [Jae] fix to throw error
     }
     
     class func DateFromString(dateString:String) -> NSDate
@@ -79,14 +135,17 @@ extension ProjectConfig {
     private func getWhitelistedVariationId(userId: String, experimentId: String) -> String? {
         if var dic = whitelistUsers[userId] {
             return dic[experimentId]
+        } else {
+            logger.d(.userHasNoForcedVariation(userId))
+            return nil
         }
-        return nil
     }
     
     private func isValidVersion(version: String) -> Bool {
         // old versions (< 4) of datafiles not supported
         return ["4"].contains(version)
     }
+
 }
 
 // MARK: - Project Access
@@ -97,14 +156,14 @@ extension ProjectConfig {
      * Get an Experiment object for a key.
      */
     func getExperiment(key: String) -> Experiment? {
-        return allExperiments.filter { $0.key == key }.first
+        return experimentKeyMap[key]
     }
     
     /**
      * Get an Experiment object for an Id.
      */
     func getExperiment(id: String) -> Experiment? {
-        return allExperiments.filter { $0.id == id }.first
+        return experimentIdMap[id]
     }
     
     /**
@@ -125,21 +184,21 @@ extension ProjectConfig {
      * Get a Feature Flag object for a key.
      */
     func getFeatureFlag(key: String) -> FeatureFlag? {
-        return project.featureFlags.filter{ $0.key == key }.first
+        return featureFlagKeyMap[key]
     }
     
     /**
      * Get a Rollout object for an Id.
      */
     func getRollout(id: String) -> Rollout? {
-        return project.rollouts.filter{ $0.id == id }.first
+        return rolloutIdMap[id]
     }
     
     /**
      * Gets an event for a corresponding event key
      */
     func getEvent(key: String) -> Event? {
-        return project.events.filter{ $0.key == key }.first
+        return eventKeyMap[key]
     }
     
     /**
@@ -154,7 +213,7 @@ extension ProjectConfig {
      * Get an attribute for a given key.
      */
     func getAttribute(key: String) -> Attribute? {
-        return project.attributes.filter{ $0.key == key }.first
+        return attributeKeyMap[key]
     }
     
     /**
@@ -172,29 +231,44 @@ extension ProjectConfig {
     }
     
     /**
+     *  Returns true if experiment belongs to any feature, false otherwise.
+     */
+    func isFeatureExperiment(id: String) -> Bool {
+        return !(experimentFeatureMap[id]?.isEmpty ?? true)
+    }
+    
+    /**
      * Get forced variation for a given experiment key and user id.
      */
     func getForcedVariation(experimentKey: String, userId: String) -> Variation? {
-        guard let experiment = allExperiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = getExperiment(key: experimentKey) else {
             return nil
         }
         
         if let id = getWhitelistedVariationId(userId: userId, experimentId: experiment.id) {
-            return experiment.getVariation(id:id)
+            if let variation = experiment.getVariation(id:id) {
+                logger.d(.userHasForcedVariation(userId, experiment.key, variation.key))
+                return variation
+            } else {
+                logger.d(.userHasForcedVariationButInvalid(userId, experiment.key))
+                return nil
+            }
+        } else {
+            logger.d(.userHasNoForcedVariationForExperiment(userId, experiment.key))
+            return nil
         }
-        
-        return nil
     }
     
     /**
      * Set forced variation for a given experiment key and user id according to a given variation key.
      */
     func setForcedVariation(experimentKey: String, userId: String, variationKey: String?) -> Bool {
-        guard let experiment = allExperiments.filter({$0.key == experimentKey}).first else {
+        guard let experiment = getExperiment(key: experimentKey) else {
             return false
         }
         
         guard var variationKey = variationKey else {
+            logger.d(.variationRemovedForUser(userId, experimentKey))
             self.removeFromWhitelist(userId: userId, experimentId: experiment.id)
             return true
         }
@@ -203,23 +277,19 @@ extension ProjectConfig {
         variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
 
         guard !variationKey.isEmpty else {
+            logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
 
         guard let variation = experiment.variations.filter({$0.key == variationKey }).first else {
+            logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
         
         self.whitelistUser(userId: userId, experimentId: experiment.id, variationId: variation.id)
         
+        logger.d(.userMappedToForcedVariation(userId, experiment.id, variation.id))
         return true
     }
     
-    var allExperiments:[Experiment] {
-        get {
-            return  project.experiments +
-                 project.groups.map({$0.experiments}).flatMap({$0})
-        }
-    }
-
 }

@@ -1,40 +1,34 @@
 /****************************************************************************
- * Copyright 2019, Optimizely, Inc. and contributors                        *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
-public struct DatafileDownloadError : Error {
-    var description:String
-    
-    init(description:String) {
-        self.description = description
-    }
-}
-
-public typealias DatafileDownloadCompletionHandler = (Result<Data?,DatafileDownloadError>) -> Void
+public typealias DatafileDownloadCompletionHandler = (OptimizelyResult<Data?>) -> Void
 
 ///
 /// The datafile handler is used by the optimizely manager to manage the Optimizely datafile.
 ///
 public protocol OPTDatafileHandler {
     init()
+    
+    var endPointStringFormat:String { get set }
     /**
     Synchronous call to download the datafile.
 
-    - Parameter sdkKey:   sdk key of the datafile to download
+    - Parameter sdkKey: sdk key of the datafile to download
     - Parameter datafileConfig: DatafileConfig for the datafile
     - Returns: a valid datafile or null
      */
@@ -42,30 +36,32 @@ public protocol OPTDatafileHandler {
     
     /**
      Asynchronous download data file.
-     - Parameter sdkKey:   application context for download
+     - Parameter sdkKey: application context for download
+     - Parameter resourceTimeoutInterval: timeout in seconds to wait for resource.
      - Parameter completionHhandler:  listener to call when datafile download complete
      */
-    func downloadDatafile(sdkKey:String, completionHandler:@escaping DatafileDownloadCompletionHandler)
+    func downloadDatafile(sdkKey:String,
+                          resourceTimeoutInterval:Double?,
+                          completionHandler:@escaping DatafileDownloadCompletionHandler)
     
     /**
-      Start periodic updates to the project datafile .
+      Start updates to the project datafile .
      
       - Parameter sdkKey: SdkKey for the datafile
-      - Parameter updateInterval: frequency of updates in seconds
      */
-    func startPeriodicUpdates(sdkKey:String, updateInterval:Int, datafileChangeNotification:((Data)->Void)?)
+    func startUpdates(sdkKey:String, datafileChangeNotification:((Data)->Void)?)
     
     /**
      Stop the periodic updates. This should be called when the app goes to background
      
      - Parameter sdkKey: sdk key for datafile.
      */
-    func stopPeriodicUpdates(sdkKey:String)
+    func stopUpdates(sdkKey:String)
 
     /**
      Stop all periodic updates. This should be called when the app goes to background
      */
-    func stopPeriodicUpdates()
+    func stopAllUpdates()
 
     /**
      Save the datafile to cache.

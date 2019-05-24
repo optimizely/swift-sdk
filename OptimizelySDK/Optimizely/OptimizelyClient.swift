@@ -1,55 +1,57 @@
-//
-//  OptimizelyManager.swift
-//  OptimizelySDK
-//
-//  Created by Jae Kim on 12/19/18.
-//  Copyright © 2018 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
 public typealias OptimizelyAttributes = [String: Any?]
 public typealias OptimizelyEventTags = [String: Any]
 
-open class OptimizelyManager: NSObject {
-
+open class OptimizelyClient: NSObject {
+    
     // MARK: - Properties
     
     var sdkKey: String
-    var config:ProjectConfig?
+    var config: ProjectConfig?
+
+    public var version: String {
+        return Utils.sdkVersion
+    }
     
     // MARK: - Customizable Services
-
-    var logger: OPTLogger {
-        get {
-            return HandlerRegistryService.shared.injectLogger()!
-        }
-    }
+    
+    lazy var logger = OPTLoggerFactory.getLogger()
+    
     var eventDispatcher: OPTEventDispatcher {
-        get {
-            return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!
-        }
-    }
-    let periodicDownloadInterval: Int
-
-    // MARK: - Default Services
-
-    var decisionService: OPTDecisionService {
-        get {
-            return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
-        }
-    }
-    var datafileHandler: OPTDatafileHandler {
-        get {
-            return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
-        }
-    }
-    public var notificationCenter: OPTNotificationCenter {
-        get {
-            return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)!
-        }
+        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!
     }
     
+    // MARK: - Default Services
+    
+    var decisionService: OPTDecisionService {
+        return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
+    }
+    
+    public var datafileHandler: OPTDatafileHandler {
+        return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
+    }
+    
+    public var notificationCenter: OPTNotificationCenter {
+        return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)!
+    }
+
     private let reInitLock = Dispatch.DispatchSemaphore(value: 1)
     
     // MARK: - Public interfaces
@@ -59,35 +61,44 @@ open class OptimizelyManager: NSObject {
     /// - Parameters:
     ///   - sdkKey: sdk key
     ///   - logger: custom Logger
-    ///   - eventDispatcher: custom EventDispatcher
-    ///   - ...
+    ///   - eventDispatcher: custom EventDispatcher (optional)
+    ///   - userProfileService: custom UserProfileService (optional)
+    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional. default = 10 * 60 secs)
+    ///   - defaultLogLevel: default log level (optional. default = .info)
     public init(sdkKey: String,
-                logger:OPTLogger? = nil,
-                eventDispatcher:OPTEventDispatcher? = nil,
-                userProfileService:OPTUserProfileService? = nil,
-                periodicDownloadInterval:Int? = nil) {
+                logger: OPTLogger? = nil,
+                eventDispatcher: OPTEventDispatcher? = nil,
+                userProfileService: OPTUserProfileService? = nil,
+                defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         self.sdkKey = sdkKey
-        self.periodicDownloadInterval = periodicDownloadInterval ?? (10 * 60)
         
         super.init()
-
+        
         let userProfileService = userProfileService ?? DefaultUserProfileService()
+        let logger = logger ?? DefaultLogger()
+        type(of: logger).logLevel = defaultLogLevel ?? .info
+        
         self.registerServices(sdkKey: sdkKey,
-                              logger: logger ?? DefaultLogger(),
+                              logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               datafileHandler: DefaultDatafileHandler(),
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
-
+        
+        logger.d("SDK Version: \(version)")
     }
     
-    /// Initialize Optimizely Manager (Asynchronous)
+    /// Start Optimizely SDK (Asynchronous)
+    ///
+    /// If an updated datafile is available in the server, it's downloaded and the SDK is configured with
+    /// the updated datafile.
     ///
     /// - Parameters:
+    ///   - resourceTimeout: timeout for datafile download (optional)
     ///   - completion: callback when initialization is completed
-    public func initializeSDK(completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
-        fetchDatafileBackground { result in
+    public func start(resourceTimeout:Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+        fetchDatafileBackground(resourceTimeout:resourceTimeout) { result in
             switch result {
             case .failure:
                 completion?(result)
@@ -106,32 +117,32 @@ open class OptimizelyManager: NSObject {
         }
     }
     
-    /// Initialize Optimizely Manager (Synchronous)
+    /// Start Optimizely SDK (Synchronous)
     ///
     /// - Parameters:
-    ///   - datafile: when given, this datafile will be used when cached copy is not available (fresh start)
-    ///                       a cached copy from previous download is used if it's available
-    ///                       the datafile will be updated from the server in the background thread
-    public func initializeSDK(datafile: String) throws {
+    ///   - datafile: This datafile will be used when cached copy is not available (fresh start).
+    ///             A cached copy from previous download is used if it's available.
+    ///             The datafile will be updated from the server in the background thread.
+    public func start(datafile: String) throws {
         guard let datafileData = datafile.data(using: .utf8) else {
             throw OptimizelyError.dataFileInvalid
         }
         
-        try initializeSDK(datafile: datafileData)
+        try start(datafile: datafileData)
     }
     
-    /// Initialize Optimizely Manager (Synchronous)
+    /// Start Optimizely SDK (Synchronous)
     ///
     /// - Parameters:
-    ///   - datafile: when given, this datafile will be used when cached copy is not available (fresh start)
-    ///                       a cached copy from previous download is used if it's available
-    ///                       the datafile will be updated from the server in the background thread
-    ///   - doFetchDatafileBackground: default to true.  This is really here for debugging purposes when
-    ///                       you don't want to download the datafile.  In practice, you should allow the
-    ///                       background thread to update the cache copy.
-    public func initializeSDK(datafile: Data, doFetchDatafileBackground:Bool = true) throws {
+    ///   - datafile: This datafile will be used when cached copy is not available (fresh start)
+    ///             A cached copy from previous download is used if it's available.
+    ///             The datafile will be updated from the server in the background thread.
+    ///   - doFetchDatafileBackground: This is for debugging purposes when
+    ///             you don't want to download the datafile.  In practice, you should allow the
+    ///             background thread to update the cache copy (optional)
+    public func start(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
         let cachedDatafile = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey)
-
+        
         let selectedDatafile = cachedDatafile ?? datafile
         
         try configSDK(datafile: selectedDatafile)
@@ -147,35 +158,30 @@ open class OptimizelyManager: NSObject {
             // this isn't really necessary because the try would throw if there is a problem.  But, we want to avoid using bang so we do another let binding.
             guard let config = self.config else { throw OptimizelyError.dataFileInvalid }
             
-            if periodicDownloadInterval > 0 {
-                datafileHandler.stopPeriodicUpdates(sdkKey: self.sdkKey)
-                datafileHandler.startPeriodicUpdates(sdkKey: self.sdkKey, updateInterval: periodicDownloadInterval) { data in
-                    // new datafile came in...
-                    self.reInitLock.wait(); defer { self.reInitLock.signal() }
-                    if let config = try? ProjectConfig(datafile: data) {
-                        var featureToggleNotifications:[String:FeatureFlagToggle] = self.getFeatureFlagChanges(newConfig:config)
-                        
-                        do {
-                            self.config = config
-                            
-                            // call reinit on the services we know we are reinitializing.
-                            
-                            for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
-                                guard let component = component else { continue }
-                                HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
-                            }
-
+            datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
+                // new datafile came in...
+                self.reInitLock.wait(); defer { self.reInitLock.signal() }
+                if let config = try? ProjectConfig(datafile: data) {
+                    do {
+                        if let users = self.config?.whitelistUsers {
+                            config.whitelistUsers = users
                         }
                         
-                        self.notificationCenter.sendNotifications(type:
-                            NotificationType.DatafileChange.rawValue, args: [data])
+                        self.config = config
                         
-                        for notify in featureToggleNotifications.keys {
-                            self.notificationCenter.sendNotifications(type: NotificationType.FeatureFlagRolloutToggle.rawValue, args: [notify, featureToggleNotifications[notify]])
+                        // call reinit on the services we know we are reinitializing.
+                        
+                        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
+                            guard let component = component else { continue }
+                            HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
                         }
+                        
                     }
+                    
+                    self.notificationCenter.sendNotifications(type:
+                        NotificationType.DatafileChange.rawValue, args: [data])
+                    
                 }
-                
             }
         } catch let error as OptimizelyError {
             // .datafileInvalid
@@ -185,39 +191,19 @@ open class OptimizelyManager: NSObject {
         } catch {  // DecodingError, etc.
             throw OptimizelyError.dataFileInvalid
         }
-     }
-    
-    func getFeatureFlagChanges(newConfig:ProjectConfig) -> [String:FeatureFlagToggle] {
-        var featureToggleNotifications:[String:FeatureFlagToggle] =
-        [String:FeatureFlagToggle]()
-        
-        if let config = self.config, let featureFlags = config.project?.featureFlags {
-            for feature in featureFlags {
-                if let experiment = config.getRollout(id: feature.rolloutId)?.experiments.filter(
-                        {$0.layerId == feature.rolloutId}).first,
-                    let newExperiment = newConfig.getRollout(id: feature.rolloutId)?.experiments.filter(
-                        {$0.layerId == feature.rolloutId}).first,
-                    experiment.status != newExperiment.status {
-                    // call rollout change with status changed.
-                    featureToggleNotifications[feature.key] = newExperiment.status == .running ? FeatureFlagToggle.on : FeatureFlagToggle.off
-                }
-            }
-        }
-        
-        return featureToggleNotifications
     }
     
-    func fetchDatafileBackground(completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+    func fetchDatafileBackground(resourceTimeout:Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         
         // TODO: fix downloadDatafile to throw OptimizelyError
         //       those errors propagated instead of handling here
         
-        datafileHandler.downloadDatafile(sdkKey: self.sdkKey){ result in
+        datafileHandler.downloadDatafile(sdkKey: self.sdkKey, resourceTimeoutInterval:resourceTimeout){ result in
             var fetchResult: OptimizelyResult<Data>
-
+            
             switch result {
-            case .failure:
-                fetchResult = .failure(.generic)
+            case .failure(let error):
+                fetchResult = .failure(error)
             case .success(let datafile):
                 // we got a new datafile.
                 if let datafile = datafile {
@@ -229,16 +215,16 @@ open class OptimizelyManager: NSObject {
                 }
                 // if that fails, we have a problem.
                 else {
-                    fetchResult = .failure(.generic)
+                    fetchResult = .failure(.datafileLoadingFailed(self.sdkKey))
                 }
-
+                
             }
             
             completion?(fetchResult)
         }
     }
-
-        
+    
+    
     /**
      * Use the activate method to start an experiment.
      *
@@ -259,40 +245,20 @@ open class OptimizelyManager: NSObject {
                          userId: String,
                          attributes: OptimizelyAttributes?=nil) throws -> String {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
-
-        // TODO: fix config to throw common errors (.experimentUnknown, .experimentKeyInvalid, ...)
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        
         guard let experiment = config.getExperiment(key: experimentKey) else {
-            throw OptimizelyError.experimentUnknown
+            throw OptimizelyError.experimentKeyInvalid(experimentKey)
         }
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
         
-        // TODO: fix to throw errors
-        guard let body = BatchEventBuilder.createImpressionEvent(config: config,
-                                                                 experiment: experiment,
-                                                                 varionation: variation,
-                                                                 userId: userId,
-                                                                 attributes: attributes) else
-        {
-            throw OptimizelyError.eventUnknown    // TODO: pass errors
-        }
+        sendImpressionEvent(experiment: experiment,
+                            variation:variation,
+                            userId: userId,
+                            attributes: attributes)
         
-        let event = EventForDispatch(body: body)
-        // because we are batching events, we cannot guarantee that the completion handler will be
-        // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
-        // onActivate only means the event has been queued and not necessarily sent.
-        eventDispatcher.dispatchEvent(event: event) { result in
-            switch result {
-            case .failure:
-                break
-            case .success( _):
-                break
-            }
-        }
-
-        self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
-
+        
         return variation.key
     }
     
@@ -316,28 +282,32 @@ open class OptimizelyManager: NSObject {
                       userId: String,
                       attributes: OptimizelyAttributes?=nil) throws -> Variation {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
-            throw OptimizelyError.experimentUnknown
+            throw OptimizelyError.experimentKeyInvalid(experimentKey)
         }
-    
-        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.experiment, userId: userId, attributes: attributes)
+        
+        let decisionType = config.isFeatureExperiment(id: experiment.id) ? Constants.DecisionTypeKeys.featureTest : Constants.DecisionTypeKeys.abTest
+        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: decisionType, userId: userId, attributes: attributes)
 
         var decisionInfo = [String:Any]()
-        decisionInfo[Constants.NotificationKeys.experiment] = nil
-        decisionInfo[Constants.NotificationKeys.variation] = nil
+        var sourceInfo = [String:Any]()
+        sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+        sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = NSNull()
         
         // fix DecisionService to throw error
         guard let variation = decisionService.getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
+            decisionInfo = sourceInfo
             args.append(decisionInfo)
             self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
-            throw OptimizelyError.variationUnknown
+            throw OptimizelyError.variationUnknown(userId, experimentKey)
         }
         
-        decisionInfo[Constants.NotificationKeys.experiment] = experimentKey
-        decisionInfo[Constants.NotificationKeys.variation] = variation.key
+        sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
+        decisionInfo = sourceInfo
+        
         args.append(decisionInfo)
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
         
@@ -361,28 +331,27 @@ open class OptimizelyManager: NSObject {
     ///   - experimentKey: The key for the experiment.
     ///   - userId: The user ID to be used for bucketing.
     /// - Returns: forced variation key if it exists, otherwise return nil.
-    public func getForcedVariation(experimentKey:String, userId:String) -> String? {
+    public func getForcedVariation(experimentKey: String, userId: String) -> String? {
         guard let config = self.config else { return nil }
-
+        
         let variaion = config.getForcedVariation(experimentKey: experimentKey, userId: userId)
         return variaion?.key
     }
-        
-
+    
     /// Set forced variation for experiment and user ID to variationKey.
     ///
     /// - Parameters:
-    ///   - experimentKey The key for the experiment.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - variationKey The variation the user should be forced into.
+    ///   - experimentKey: The key for the experiment.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - variationKey: The variation the user should be forced into.
     ///                  This value can be nil, in which case, the forced variation is cleared.
     /// - Returns: true if forced variation set successfully
-    public func setForcedVariation(experimentKey:String,
-                                   userId:String,
-                                   variationKey:String?) -> Bool {
+    public func setForcedVariation(experimentKey: String,
+                                   userId: String,
+                                   variationKey: String?) -> Bool {
         
         guard let config = self.config else { return false }
-
+        
         return config.setForcedVariation(experimentKey: experimentKey,
                                          userId: userId,
                                          variationKey: variationKey)
@@ -391,74 +360,64 @@ open class OptimizelyManager: NSObject {
     /// Determine whether a feature is enabled.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: true if feature is enabled, false otherwise.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
-                                 attributes: OptimizelyAttributes?=nil) throws -> Bool {
+                                 attributes: OptimizelyAttributes?=nil) -> Bool {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
-
+        guard let config = self.config else {
+            logger.e(.sdkNotReady)
+            return false
+        }
+        
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
+            logger.e(.featureKeyInvalid(featureKey))
             return false
         }
         
         // fix DecisionService to throw error
         let pair = decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes ?? OptimizelyAttributes())
         
-        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.isFeatureEnabled, userId: userId, attributes: attributes)
+        var args: Array<Any?> = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.feature, userId: userId, attributes: attributes)
         
         var decisionInfo = [String:Any]()
         decisionInfo[Constants.DecisionInfoKeys.feature] = featureKey
-        decisionInfo[Constants.DecisionInfoKeys.source] = Constants.DecisionSource.Rollout
+        decisionInfo[Constants.DecisionInfoKeys.source] = Constants.DecisionSource.rollout
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = false
-
+        decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = [:]
+        
         guard let variation = pair?.variation else {
             args.append(decisionInfo)
             self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
-            throw OptimizelyError.variationUnknown
+            logger.i(.variationUnknown(userId, featureKey))
+            return false
         }
         
         let featureEnabled = variation.featureEnabled ?? false
     
+        if (featureEnabled) {
+            logger.i(.featureEnabledForUser(featureKey, userId))
+        } else {
+            logger.i(.featureNotEnabledForUser(featureKey, userId))
+        }
+
         // we came from an experiment if experiment is not nil
         if let experiment = pair?.experiment {
             
-            decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = experiment.key
-            decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = variation.key
-            
-        // TODO: fix to throw errors
-            guard let body = BatchEventBuilder.createImpressionEvent(config: config,
-                                                                 experiment: experiment,
-                                                                 varionation: variation,
-                                                                 userId: userId,
-                                                                 attributes: attributes) else
-            {
-                // TODO: pass error
-                throw OptimizelyError.eventUnknown
-            }
+            var sourceInfo = [String:Any]()
+            sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+            sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
+            decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
 
-            let event = EventForDispatch(body: body)
-            
-            // because we are batching events, we cannot guarantee that the completion handler will be
-            // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
-            // onActivate only means the event has been queued and not necessarily sent.
-            eventDispatcher.dispatchEvent(event: event) { result in
-                switch result {
-                case .failure:
-                    break
-                case .success(_):
-                    break
-                }
-            }
-            self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+            sendImpressionEvent(experiment: experiment, variation: variation, userId: userId, attributes: attributes)
         }
-
+        
         decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
-        decisionInfo[Constants.DecisionInfoKeys.source] = (pair?.experiment != nil ? Constants.DecisionSource.Experiment : Constants.DecisionSource.Rollout)
+        decisionInfo[Constants.DecisionInfoKeys.source] = (pair?.experiment != nil ? Constants.DecisionSource.featureTest : Constants.DecisionSource.rollout)
         args.append(decisionInfo)
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
         
@@ -468,10 +427,10 @@ open class OptimizelyManager: NSObject {
     /// Gets boolean feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type boolean.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableBoolean(featureKey: String,
@@ -488,10 +447,10 @@ open class OptimizelyManager: NSObject {
     /// Gets double feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type double.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableDouble(featureKey: String,
@@ -508,10 +467,10 @@ open class OptimizelyManager: NSObject {
     /// Gets integer feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type integer.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableInteger(featureKey: String,
@@ -528,10 +487,10 @@ open class OptimizelyManager: NSObject {
     /// Gets string feature variable value.
     ///
     /// - Parameters:
-    ///   - featureKey The key for the feature flag.
-    ///   - variableKey The key for the variable.
-    ///   - userId The user ID to be used for bucketing.
-    ///   - attributes The user's attributes.
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type string.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getFeatureVariableString(featureKey: String,
@@ -550,22 +509,20 @@ open class OptimizelyManager: NSObject {
                                userId: String,
                                attributes: OptimizelyAttributes?=nil) throws -> T {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
-
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        
         // fix config to throw errors
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
-            throw OptimizelyError.featureUnknown
+            throw OptimizelyError.featureKeyInvalid(featureKey)
         }
         
         guard let variable = featureFlag.getVariable(key: variableKey) else {
-            throw OptimizelyError.variableUnknown
+            throw OptimizelyError.variableKeyInvalid(variableKey, featureKey)
         }
         
         var decisionInfo = [String:Any]()
-        decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = nil
-        decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = nil
+        decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = [:]
         
-        // TODO: [Jae] optional? fallback to empty string is OK?
         var featureValue = variable.defaultValue ?? ""
         
         var _attributes = OptimizelyAttributes()
@@ -575,18 +532,27 @@ open class OptimizelyManager: NSObject {
         let decision = self.decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: _attributes)
         if let decision = decision {
             if let experiment = decision.experiment {
-                decisionInfo[Constants.DecisionInfoKeys.sourceExperiment] = experiment.key
-                decisionInfo[Constants.DecisionInfoKeys.sourceVariation] = decision.variation?.key
+                var sourceInfo = [String:Any]()
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = decision.variation?.key
+                decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
             }
+            
             if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
                 if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
                     featureValue = featureVariable.value
+                    
+                    logger.i(.userReceivedVariableValue(userId, featureKey, variableKey, featureValue))
                 } else {
-                    // add standard log message here
+                    logger.i(.featureNotEnabledReturnDefaultVariableValue(userId, featureKey, variableKey))
                 }
+            } else {
+                logger.i(.variableNotUsedReturnDefaultVariableValue(variableKey))
             }
+        } else {
+            logger.i(.userReceivedDefaultVariableValue(userId, featureKey, variableKey))
         }
-
+        
         var typeName: String?
         var valueParsed: T?
         
@@ -620,7 +586,7 @@ open class OptimizelyManager: NSObject {
         decisionInfo[Constants.DecisionInfoKeys.variable] = variableKey
         decisionInfo[Constants.DecisionInfoKeys.variableType] = typeName
         decisionInfo[Constants.DecisionInfoKeys.variableValue] = value
-        decisionInfo[Constants.DecisionInfoKeys.source] = (decision?.experiment != nil ? Constants.DecisionSource.Experiment : Constants.DecisionSource.Rollout)
+        decisionInfo[Constants.DecisionInfoKeys.source] = (decision?.experiment != nil ? Constants.DecisionSource.featureTest : Constants.DecisionSource.rollout)
         args.append(decisionInfo)
     
         self.notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: args)
@@ -637,23 +603,24 @@ open class OptimizelyManager: NSObject {
     /// - Returns: Array of feature keys that are enabled for the user.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId: String,
-                                   attributes: OptimizelyAttributes?=nil) throws -> Array<String> {
+                                   attributes: OptimizelyAttributes?=nil) -> [String] {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
-
+        var enabledFeatures = [String]()
+        
+        guard let config = self.config else {
+            logger.e(.sdkNotReady)
+            return enabledFeatures
+        }
+        
         guard let featureFlags = config.project?.featureFlags else {
-            return [String]()
+            return enabledFeatures
         }
         
-        let enabledFeatures = featureFlags.filter{
-            do {
-                return try isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
-            } catch {
-                return false
-            }
-        }
+        enabledFeatures = featureFlags.filter{
+            isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
+        }.map{ $0.key }
         
-        return enabledFeatures.map{$0.key}
+        return enabledFeatures
     }
     
     /// Track an event
@@ -668,104 +635,85 @@ open class OptimizelyManager: NSObject {
                       attributes: OptimizelyAttributes?=nil,
                       eventTags: OptimizelyEventTags?=nil) throws {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotConfigured }
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
         guard let _ = config.getEvent(key: eventKey) else {
-            throw OptimizelyError.eventUnknown
+            throw OptimizelyError.eventKeyInvalid(eventKey)
         }
         
-        // TODO: fix to throw errors
-        guard let body = BatchEventBuilder.createConversionEvent(config: config,
-                                                                 eventKey:eventKey,
-                                                                 userId:userId,
-                                                                 attributes:attributes,
-                                                                 eventTags:eventTags) else
+        sendConversionEvent(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
+    }
+    
+}
+
+extension OptimizelyClient {
+    
+    func sendImpressionEvent(experiment: Experiment,
+                             variation:Variation,
+                             userId: String,
+                             attributes: OptimizelyAttributes?=nil) {
+     
+        guard let config = self.config else { return }
+        
+        guard let body = BatchEventBuilder.createImpressionEvent(config: config,
+                                                                 experiment: experiment,
+                                                                 varionation: variation,
+                                                                 userId: userId,
+                                                                 attributes: attributes) else
         {
-            throw OptimizelyError.eventUnknown    // TODO: pass errors
+            self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
+            return
+        }
+        
+        let event = EventForDispatch(body: body)
+        // because we are batching events, we cannot guarantee that the completion handler will be
+        // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
+        // onActivate only means the event has been queued and not necessarily sent.
+        self.eventDispatcher.dispatchEvent(event: event) { result in
+            switch result {
+            case .failure:
+                break
+            case .success( _):
+                break
+            }
+        }
+        
+        self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
+
+    }
+    
+    func sendConversionEvent(eventKey: String,
+                             userId: String,
+                             attributes: OptimizelyAttributes?=nil,
+                             eventTags: OptimizelyEventTags?=nil) {
+        
+        
+        guard let config = self.config else { return }
+        
+        guard let body = BatchEventBuilder.createConversionEvent(config: config,
+                                                                 eventKey: eventKey,
+                                                                 userId: userId,
+                                                                 attributes: attributes,
+                                                                 eventTags: eventTags) else
+        {
+            self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
+            return
         }
         
         let event = EventForDispatch(body: body)
         // because we are batching events, we cannot guarantee that the completion handler will be
         // called.  So, for now, we are queuing and calling onTrack.  Maybe we should mention that
         // onTrack only means the event has been queued and not necessarily sent.
-        eventDispatcher.dispatchEvent(event: event) { result in
+        self.eventDispatcher.dispatchEvent(event: event) { result in
             switch result {
             case .failure:
                 break
             case .success( _):
-                    break
+                break
             }
         }
         self.notificationCenter.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":event.url as Any, "body":event.body as Any]])
 
     }
-    
 }
 
-// MARK: - Objective-C Wrappers (WIP)
-extension OptimizelyManager {
-    
-    @objc public convenience init(sdkKey: String) {
-        self.init(sdkKey: sdkKey,
-                  logger: nil,
-                  eventDispatcher: nil,
-                  userProfileService: nil,
-                  periodicDownloadInterval: nil)
-    }
-    
-    // TODO: review this for Objective-C clients support (@objc)
-    
-    //    @objc public convenience init(sdkKey: String,
-    //                                  logger:OPTLogger?,
-    //                                  eventDispatcher:OPTEventDispatcher?,
-    //                                  userProfileService:OPTUserProfileService?,
-    //                                  periodicDownloadInterval:Int? = nil) {
-    
-    @objc public func initializeSDK(completion: ((NSError?, Data?) -> Void)?) {
-        initializeSDK { result in
-            switch result {
-            case .failure(let error):
-                
-                completion?(self.convertErrorForObjc(error), nil)
-            case .success(let data):
-                completion?(nil, data)
-            }
-            
-        }
-    }
-    
-    @objc public func initializeSDKWith(datafile:String) throws {
-        try self.initializeSDK(datafile: datafile)
-    }
-    
-    @objc public func activate(experimentKey: String,
-                         userId: String,
-                         attributes: [String:Any]?) throws -> String {
-        return try self.activate(experimentKey: experimentKey, userId: userId, attributes: attributes as OptimizelyAttributes?)
-    }
-
-    @objc public func activate(experimentKey: String,
-                               userId: String) throws -> String {
-        return try self.activate(experimentKey: experimentKey, userId: userId, attributes: nil)
-    }
-
-    
-    @objc public func trackWith(eventKey:String,
-                      userId: String,
-                      attributes: [String:Any]?,
-                      eventTags: [String:Any]?) throws {
-        try self.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
-    }
-    
-    func convertErrorForObjc(_ error: Error) -> NSError {
-        var errorInObjc: NSError
-        
-        switch error {
-            
-        default:
-            errorInObjc = NSError(domain: "com.optimizely.OptimizelySwiftSDK", code: 1000, userInfo: nil)
-        }
-        
-        return errorInObjc
-    }
-}

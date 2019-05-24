@@ -1,10 +1,18 @@
-//
-//  Array+Extension.swift
-//  OptimizelySwiftSDK
-//
-//  Created by Jae Kim on 2/16/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
@@ -19,7 +27,7 @@ extension Array where Element == ThrowableCondition {
     // returns true only when all items are true and no-error
     func and() throws -> Bool {
         guard self.count > 0 else {
-            throw OptimizelyError.conditionInvalidFormat(#function)
+            throw OptimizelyError.conditionInvalidFormat("AND with empty items")
         }
 
         for eval in self {
@@ -47,8 +55,8 @@ extension Array where Element == ThrowableCondition {
             }
         }
         
-        if foundError != nil {
-            throw OptimizelyError.conditionInvalidFormat("OR with invalid items [\(foundError!.reason)]")
+        if let error = foundError {
+            throw OptimizelyError.conditionInvalidFormat("OR with invalid items [\(error.reason)]")
         }
         
         return false
@@ -57,7 +65,7 @@ extension Array where Element == ThrowableCondition {
     // evalute the 1st item only
     func not() throws -> Bool {
         guard let eval = self.first else {
-            throw OptimizelyError.conditionInvalidFormat(#function)
+            throw OptimizelyError.conditionInvalidFormat("NOT with empty items")
         }
 
         do {

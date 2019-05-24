@@ -1,45 +1,69 @@
-language: swift
-osx_image: xcode10.1
-branches:
-  only:
-    - master
-env:
-  matrix:
-    - SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=9.1 NAME='iPad Air'
-    - SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=10.1 NAME='iPhone 7 Plus'
-    - SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=10.3.1 NAME='iPhone 7'
-    - SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=10.2 NAME='Apple TV 1080p'
-before_install: 
-  - gem install slather --no-document --quiet 
-install: pod install --repo-update
-addons:
-  srcclr: true
-script:
-  - pod spec lint --quick
-  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi
-  - more buildoutput | xcpretty
-after_success:
-  - slather
-  - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
+language: minimal
+os: linux
 
 # Integration tests need to run first to reset the PR build status to pending
 stages:
-  - 'Integration tests'
-  - 'Test'
+  - name: 'Trigger Integration Tests'
+    if: env(RUN_COMPAT_SUITE) = true
+  - name: 'SourceClear and Lint'
+  - name: 'Unit Tests'
+  - name: 'Prepare for release'
+    if: env(PREP) = true and type = api
+  - name: 'Release'
+    if: env(RELEASE) = true and type = api
 
 jobs:
   include:
-    - stage: 'Integration tests'
-      if: env(RUN_COMPAT_SUITE) = true
+    - stage: 'Trigger Integration Tests'
+      language: minimal
+      os: linux
       env:
         - SDK=swift
         - BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
         - TESTAPP_TAG=master
       cache: false
-      language: minimal
-      os: linux
       install:
         - mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git && popd
       script:
         - "$HOME/travisci-tools/fsc-trigger/trigger_fullstack-sdk-compat.sh"
-      after_success: travis_terminate 0
+
+    - stage: 'SourceClear and Lint'
+      language: swift
+      os: osx
+      osx_image: xcode10.1
+      install: gem install cocoapods
+      script:
+        - pod spec lint --quick
+      after_script:
+        - curl -sSL https://download.sourceclear.com/ci.sh | bash
+
+    - &unittests
+      stage: 'Unit Tests'
+      language: swift
+      os: osx
+      osx_image: xcode10.1
+      branches:
+        only:
+          - master
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=9.1 NAME='iPad Air'
+      name: PLATFORM='iOS Simulator' OS=9.1 NAME='iPad Air'
+      before_install:
+        - gem install slather --no-document --quiet
+      install:
+        - pod install --repo-update
+      script:
+        - pod spec lint --quick
+        - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi
+        - cat buildoutput | xcpretty
+      after_success:
+        - slather
+        - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
+    - <<: *unittests
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=10.1 NAME='iPhone 7 Plus'
+      name: PLATFORM='iOS Simulator' OS=10.1 NAME='iPhone 7 Plus'
+    - <<: *unittests
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=10.3.1 NAME='iPhone 7'
+      name: PLATFORM='iOS Simulator' OS=10.3.1 NAME='iPhone 7'
+    - <<: *unittests
+      env: SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=10.2 NAME='Apple TV 1080p'
+      name: PLATFORM='tvOS Simulator' OS=10.2 NAME='Apple TV 1080p'

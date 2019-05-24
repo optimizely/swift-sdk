@@ -1,10 +1,18 @@
-//
-//  File.swift
-//  OptimizelySwiftSDK
-//
-//  Created by Thomas Zurkan on 2/5/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
@@ -12,40 +20,41 @@ class HandlerRegistryService {
     
     static let shared = HandlerRegistryService()
     
-    let dispatchQueue = DispatchQueue(label: "com.optimizely.HandlerRegistryService")
+    struct ServiceKey : Hashable {
+        var service:String
+        var sdkKey:String?
+    }
     
-    var binders = [BinderProtocol]()
+    var binders:[ServiceKey:BinderProtocol] = [ServiceKey:BinderProtocol]()
     
     private init() {
         
     }
     
     func registerBinding(binder:BinderProtocol) {
-        dispatchQueue.sync {
-            if let _ = binders.filter({(type(of: $0.service) == type(of: binder.service)) && $0.sdkKey == binder.sdkKey}).first {
-            }
-            else {
-                binders.append(binder)
-            }
-        }        
+        let sk = ServiceKey(service: "\(type(of: binder.service))", sdkKey: binder.sdkKey)
+        if let _ = binders[sk] {
+        }
+        else {
+            binders[sk] = binder
+        }
     }
     
     func injectComponent(service:Any, sdkKey:String? = nil, isReintialize:Bool=false) -> Any? {
         var result:Any?
-        dispatchQueue.sync {
-            if var binder = binders.filter({(type(of: $0.service) == type(of: service)) && $0.sdkKey == sdkKey}).first {
-                if isReintialize && binder.strategy == .reCreate {
-                    binder.instance = binder.factory()
-                    result = binder.instance
-                }
-                else if let inst = binder.instance, binder.isSingleton {
-                    result = inst
-                }
-                else {
-                    let inst = binder.factory()
-                    binder.instance = inst
-                    result = inst
-                }
+        let sk = ServiceKey(service: "\(type(of:service))", sdkKey: sdkKey)
+        if var binder = binders[sk] {
+            if isReintialize && binder.strategy == .reCreate {
+                binder.instance = binder.factory()
+                result = binder.instance
+            }
+            else if let inst = binder.instance, binder.isSingleton {
+                result = inst
+            }
+            else {
+                let inst = binder.factory()
+                binder.instance = inst
+                result = inst
             }
         }
         return result
@@ -56,10 +65,9 @@ class HandlerRegistryService {
     }
     
     func lookupComponents(sdkKey:String)->[Any?]? {
-        var value:[Any]?
         
-        value = self.binders.filter({$0.sdkKey == sdkKey}).map({ self.injectComponent(service: $0.service) as Any })
-
+        let value = self.binders.keys.filter({$0.sdkKey == sdkKey}).map({self.injectComponent(service: self.binders[$0]!.service, sdkKey: sdkKey)!})
+        
         return value
     }
 }

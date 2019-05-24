@@ -1,18 +1,18 @@
 /****************************************************************************
- * Copyright 2018, Optimizely, Inc. and contributors                        *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
@@ -64,7 +64,7 @@ enum ConditionHolder: Codable, Equatable {
     func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
         switch self {
         case .logicalOp:
-            throw OptimizelyError.conditionInvalidFormat("logical op not evaluated")
+            throw OptimizelyError.conditionInvalidFormat("Logical operation not evaluated")
         case .leaf(let conditionLeaf):
             return try conditionLeaf.evaluate(project: project, attributes: attributes)
         case .array(let conditions):
@@ -79,7 +79,7 @@ extension Array where Element == ConditionHolder {
     
     func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
         guard let firstItem = self.first else {
-            throw OptimizelyError.conditionInvalidFormat("empty condition array")
+            throw OptimizelyError.conditionInvalidFormat("Empty condition array")
         }
         
         switch firstItem {
@@ -90,13 +90,13 @@ extension Array where Element == ConditionHolder {
             // implicit or
             return try [[ConditionHolder.logicalOp(.or)],self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, attributes: attributes)
         default:
-            throw OptimizelyError.conditionInvalidFormat("invalid first item")
+            throw OptimizelyError.conditionInvalidFormat("Invalid first item")
         }
     }
     
     func evaluate(op: LogicalOp, project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
         guard self.count > 0 else {
-            throw OptimizelyError.conditionInvalidFormat(#function)
+            throw OptimizelyError.conditionInvalidFormat("Empty condition array")
         }
         
         let itemsAfterOpTrimmed = Array(self[1...])

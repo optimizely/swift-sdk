@@ -1,10 +1,18 @@
-//
-//  Constants.swift
-//  OptimizelySDK
-//
-//  Created by Thomas Zurkan on 12/4/18.
-//  Copyright © 2018 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
@@ -15,31 +23,31 @@ struct Constants {
         static let OptimizelyUserAgent = "$opt_user_agent";
     }
     
-    struct NotificationKeys {
-        static let experiment = "experiment"
-        static let variation = "variation"
-    }
-    
     struct DecisionTypeKeys {
-        static let featureVariable  = "feature_variable"
-        static let isFeatureEnabled  = "feature"
-        static let experiment = "experiment"
+        static let abTest = "ab-test"
+        static let feature  = "feature"
+        static let featureVariable  = "feature-variable"
+        static let featureTest = "feature-test"
     }
     
     struct DecisionInfoKeys {
         static let feature = "featureKey"
         static let featureEnabled = "featureEnabled"
-        static let sourceExperiment = "sourceExperimentKey"
-        static let sourceVariation = "sourceVariationKey"
+        static let sourceInfo = "sourceInfo"
         static let source = "source"
         static let variable = "variableKey"
         static let variableType = "variableType"
         static let variableValue = "variableValue"
     }
     
+    struct ExperimentDecisionInfoKeys {
+        static let experiment = "experimentKey"
+        static let variation = "variationKey"
+    }
+    
     struct DecisionSource {
-        static let Experiment = "EXPERIMENT"
-        static let Rollout = "ROLLOUT"
+        static let featureTest = "feature-test"
+        static let rollout = "rollout"
     }
 
 }

@@ -1,18 +1,18 @@
 /****************************************************************************
- * Copyright 2019, Optimizely, Inc. and contributors                        *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
@@ -74,18 +74,21 @@ import Foundation
 open class DefaultUserProfileService: OPTUserProfileService {
     public typealias UserProfileData = [String: UPProfile]
 
-    var profiles: UserProfileData
+    var profiles: UserProfileData?
     let lock = DispatchQueue(label: "com.optimizely.UserProfileService")
     let kStorageName = "user-profile-service"
 
     public required init() {
-        profiles = UserDefaults.standard.dictionary(forKey: kStorageName) as? UserProfileData ?? UserProfileData()
+        lock.async {
+            self.profiles = UserDefaults.standard.dictionary(forKey: self.kStorageName) as? UserProfileData ?? UserProfileData()
+
+        }
     }
 
     open func lookup(userId: String) -> UPProfile? {
         var retVal: UPProfile?
         lock.sync {
-            retVal = profiles[userId]
+            retVal = profiles?[userId]
         }
         return retVal
     }
@@ -94,7 +97,7 @@ open class DefaultUserProfileService: OPTUserProfileService {
         guard let userId = userProfile[UserProfileKeys.kUserId] as? String else { return }
             
         lock.async {
-            self.profiles[userId] = userProfile
+            self.profiles?[userId] = userProfile
             let defaults = UserDefaults.standard
             defaults.set(self.profiles, forKey: self.kStorageName)
             defaults.synchronize()

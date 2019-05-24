@@ -1,18 +1,18 @@
 /****************************************************************************
- * Copyright 2016-2017, Optimizely, Inc. and contributors                   *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import UIKit
 import Optimizely
@@ -22,25 +22,11 @@ class VariationViewController: UIViewController {
     var eventKey: String!
     var userId: String!
     var variationKey: String?
-    var optimizelyManager: OptimizelyManager?
-    var showCoupon:Bool? {
+    var optimizely: OptimizelyClient?
+    var showCoupon: Bool = false {
         didSet  {
-            if let show = showCoupon {
-                if show {
-                    DispatchQueue.main.async {
-                        if self.couponView != nil {
-                            self.couponView.isHidden = false
-                        }
-                        
-                    }
-                }
-                else {
-                    DispatchQueue.main.async {
-                        if self.couponView != nil {
-                            self.couponView.isHidden = true
-                        }
-                    }
-                }
+            DispatchQueue.main.async {
+                self.couponView?.isHidden = !self.showCoupon
             }
         }
     }
@@ -50,6 +36,22 @@ class VariationViewController: UIViewController {
     @IBOutlet weak var variationSubheaderLabel: UILabel!
     @IBOutlet weak var variationBackgroundImage: UIImageView!
     
+    @IBAction func closeCoupon(_ sender: UIButton) {
+        showCoupon = false
+    }
+    
+    @IBAction func unwindToVariationAction(unwindSegue: UIStoryboardSegue) {
+    }
+    
+    @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {
+        do {
+            try self.optimizely?.track(eventKey: self.eventKey, userId: userId)
+            self.performSegue(withIdentifier: "ConversionSuccessSegue", sender: self)
+        } catch {
+            self.performSegue(withIdentifier: "ConversionFailureSegue", sender: self)
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -76,23 +78,4 @@ class VariationViewController: UIViewController {
         }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBAction func unwindToVariationAction(unwindSegue: UIStoryboardSegue) {
-        
-    }
-    
-    @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {
-        do {
-            try self.optimizelyManager?.track(eventKey: self.eventKey, userId: userId)
-            self.performSegue(withIdentifier: "ConversionSuccessSegue", sender: self)
-        }
-        catch {
-            self.performSegue(withIdentifier: "ConversionFailureSegue", sender: self)
-
-        }
-    }
 }

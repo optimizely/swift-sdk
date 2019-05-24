@@ -1,14 +1,22 @@
-//
-//  OptimizelyManagerTests_Invalid.swift
-//  OptimizelySwiftSDK
-//
-//  Created by Jae Kim on 3/7/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import XCTest
 
-class OptimizelyManagerTests_Invalid: XCTestCase {
+class OptimizelyClientTests_Invalid: XCTestCase {
     let kSdkKey = "12345"
     let kUserId = "11111"
     let kExperimentKey = "e1"
@@ -17,15 +25,15 @@ class OptimizelyManagerTests_Invalid: XCTestCase {
     let kVariableKey = "va1"
     let kEventKey  = "ev1"
 
-    var optimizely: OptimizelyManager!
+    var optimizely: OptimizelyClient!
 
     override func setUp() {
         super.setUp()
         
-        self.optimizely = OptimizelyManager(sdkKey: kSdkKey)
+        self.optimizely = OptimizelyClient(sdkKey: kSdkKey)
         
         let invalidDatafile = "{\"version\": \"4\"}"
-        try? self.optimizely.initializeSDK(datafile: invalidDatafile)
+        try? self.optimizely.start(datafile: invalidDatafile)
     }
     
     func testActivate_WhenManagerNonInitialized() {
@@ -52,8 +60,8 @@ class OptimizelyManagerTests_Invalid: XCTestCase {
     }
 
     func testIsFeatureEnabled_WhenManagerNonInitialized() {
-        let result: Bool? = try? self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
-        XCTAssertNil(result)
+        let result = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        XCTAssertFalse(result)
     }
     
     func testGetFeatureVariableBoolean_WhenManagerNonInitialized() {
@@ -85,8 +93,8 @@ class OptimizelyManagerTests_Invalid: XCTestCase {
     }
     
     func testGetEnabledFeatures_WhenManagerNonInitialized() {
-        let result: [String]? = try? self.optimizely.getEnabledFeatures(userId: kUserId)
-        XCTAssertNil(result)
+        let result = self.optimizely.getEnabledFeatures(userId: kUserId)
+        XCTAssert(result.count == 0)
     }
     
     func testTrack_WhenManagerNonInitialized() {

@@ -1,10 +1,18 @@
-//
-//  ConditionHolderTests_Evaluate.swift
-//  OptimizelySwiftSDK-iOSTests
-//
-//  Created by Jae Kim on 2/15/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import XCTest
 
@@ -13,18 +21,25 @@ import XCTest
 
 class ConditionHolderTests_Evaluate: XCTestCase {
 
-    struct ProjectMock: ProjectProtocol {
-        func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool {
-            return Int(audienceId)! < 20000
-        }
-    }
-    
-    var project = ProjectMock()
     let attributeData = ["age": 30]
     let userAttributeData: [String: Any] = ["name":"age",
                                             "type":"custom_attribute",
                                             "match":"gt",
                                             "value":20]
+
+    var project:Project?
+    
+    override func setUp() {
+        let data = OTUtils.loadJSONDatafile("simple_datafile")
+        project = try! OTUtils.model(fromData:data!)
+        let typedAudiences = "[{\"id\": \"11111\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"exact\", \"value\": 30}]]] },{\"id\": \"22222\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },{\"id\": \"33333\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },{\"id\": \"44444\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },{\"id\": \"55555\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },{\"id\": \"66666\",\"name\": \"age\",\"conditions\": [\"and\", [\"or\", [\"or\", {\"name\": \"age\", \"type\": \"custom_attribute\", \"match\":\"gt\", \"value\": 30}]]] },]"
+        
+        let jsonData = typedAudiences.data(using: .utf8)
+        
+        let audiences = try! JSONDecoder().decode([Audience].self, from: jsonData!)
+        
+        project?.typedAudiences = audiences
+    }
 
     func testEvaluate_I() {
         let model = ConditionHolder.leaf(.audienceId("11111"))

@@ -1,10 +1,18 @@
-//
-//  OTUtils.swift
-//  OptimizelySwiftSDK
-//
-//  Created by Jae Kim on 2/11/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 import XCTest
@@ -64,21 +72,20 @@ class OTUtils {
     
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
-                                 eventDispatcher: OPTEventDispatcher?=nil) -> OptimizelyManager? {
+                                 eventDispatcher: OPTEventDispatcher?=nil) -> OptimizelyClient? {
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
         let arbitrarySdkKey = String(arc4random())
 
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
-        let optimizely = OptimizelyManager(sdkKey: arbitrarySdkKey,
+        let optimizely = OptimizelyClient(sdkKey: arbitrarySdkKey,
                                            eventDispatcher: eventDispatcher,
                                            userProfileService: userProfileService)
         do {
-            try optimizely.initializeSDK(datafile: datafile, doFetchDatafileBackground: false)
+            try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely
         } catch {
-            print("\(error)")
             return nil
         }
     }
@@ -94,11 +101,11 @@ class OTUtils {
     }
     
     static var positiveTooBigValue: Double {
-        return positiveMaxValueAllowed + 100.0
+        return positiveMaxValueAllowed * 2.0
     }
     
     static var negativeTooBigValue: Double {
-        return negativeMaxValueAllowed - 100.0
+        return negativeMaxValueAllowed * 2.0
     }
 
 }
@@ -110,14 +117,14 @@ class FakeEventDispatcher : OPTEventDispatcher {
         
     }
     
-    func dispatchEvent(event:EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    func dispatchEvent(event:EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         events.append(event)
         //completionHandler(event)
     }
     
     /// Attempts to flush the event queue if there are any events to process.
     func flushEvents() {
-        
+        events.removeAll()
     }
 }
 

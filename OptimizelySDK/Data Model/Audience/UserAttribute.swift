@@ -1,18 +1,18 @@
 /****************************************************************************
- * Copyright 2018, Optimizely, Inc. and contributors                        *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import Foundation
 
@@ -92,16 +92,16 @@ extension UserAttribute {
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         guard let _ = typeSupported else {
-            throw OptimizelyError.conditionInvalidAttributeType(self.type ?? "empty")
+            throw OptimizelyError.userAttributeInvalidType(self.type ?? "empty")
         }
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            throw OptimizelyError.conditionInvalidAttributeMatch(self.match ?? "empty")
+            throw OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty")
         }
         
         guard let nameFinal = name else {
-            throw OptimizelyError.conditionInvalidFormat("empty name in condition")
+            throw OptimizelyError.userAttributeInvalidFormat("empty name in condition")
         }
         
         let attributes = attributes ?? OptimizelyAttributes()
@@ -110,11 +110,11 @@ extension UserAttribute {
         
         if matchFinal != .exists {
             if value == nil {
-                throw OptimizelyError.conditionInvalidFormat("missing value (\(nameFinal)) in condition)")
+                throw OptimizelyError.userAttributeInvalidFormat("missing value (\(nameFinal)) in condition)")
             }
             
             if rawAttributeValue == nil {
-                throw OptimizelyError.conditionNoAttributeValue("no attribute value for (\(nameFinal))")
+                throw OptimizelyError.evaluateAttributeInvalidFormat("no attribute value for (\(nameFinal))")
             }
         }
         

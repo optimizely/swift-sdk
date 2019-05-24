@@ -1,28 +1,36 @@
-//
-//  BatchEventBuilderTest.swift
-//  OptimizelySwiftSDK
-//
-//  Created by Thomas Zurkan on 2/28/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import XCTest
 
-class BatchEventBuilderTest: XCTestCase {
+class BatchEventBuilderTests: XCTestCase {
     
     let datafileName = "feature_experiments"
     let featureExperimentKey = "feature_targeted_exp"
     let eventWithNoExperimentKey = "unused_event"
     let userId = "userId"
-    var optimizely: OptimizelyManager?
+    var optimizely: OptimizelyClient?
     
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        optimizely = OptimizelyManager(sdkKey: "", periodicDownloadInterval: 0)
+        optimizely = OptimizelyClient(sdkKey: "", periodicDownloadInterval: 0)
         
         let datafile = OTUtils.loadJSONDatafile(datafileName)
         do {
-            try optimizely?.initializeSDK(datafile: datafile!)
+            try optimizely?.start(datafile: datafile!)
         }
         catch {
             print(error)

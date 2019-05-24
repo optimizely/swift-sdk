@@ -1,16 +1,26 @@
-//
-//  DatafileHandlerTests.swift
-//  OptimizelySwiftSDK
-//
-//  Created by Thomas Zurkan on 3/20/19.
-//  Copyright © 2019 Optimizely. All rights reserved.
-//
+/****************************************************************************
+* Copyright 2019, Optimizely, Inc. and contributors                        *
+*                                                                          *
+* Licensed under the Apache License, Version 2.0 (the "License");          *
+* you may not use this file except in compliance with the License.         *
+* You may obtain a copy of the License at                                  *
+*                                                                          *
+*    http://www.apache.org/licenses/LICENSE-2.0                            *
+*                                                                          *
+* Unless required by applicable law or agreed to in writing, software      *
+* distributed under the License is distributed on an "AS IS" BASIS,        *
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+* See the License for the specific language governing permissions and      *
+* limitations under the License.                                           *
+***************************************************************************/
 
 import XCTest
 
 class DatafileHandlerTests: XCTestCase {
 
     override func setUp() {
+        
+        HandlerRegistryService.shared.binders.removeAll()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             if (!FileManager.default.fileExists(atPath: url.path)) {
@@ -28,6 +38,7 @@ class DatafileHandlerTests: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        HandlerRegistryService.shared.binders.removeAll()
     }
 
     func testDatafileHandler() {
@@ -65,6 +76,68 @@ class DatafileHandlerTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
+    
+    func testPeriodicDownload() {
+        class FakeDatafileHandler : DefaultDatafileHandler {
+            let data = Data()
+            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                completionHandler(.success(data))
+            }
+        }
+        let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
+        let handler = FakeDatafileHandler()
+        let now = Date()
+        var count = 0;
+        var seconds = 0
+        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: 1) { (data) in
+            count += 1
+            if count == 10 {
+                handler.stopPeriodicUpdates()
+                expection.fulfill()
+                seconds = Int(abs(now.timeIntervalSinceNow))
+            }
+        }
+        
+        wait(for: [expection], timeout: 20)
+        
+        XCTAssert(count == 10)
+        XCTAssert(seconds == 10)
+        
+        
+    }
+    
+    func testPeriodicDownloadWithOptimizlyClient() {
+        class FakeDatafileHandler : DefaultDatafileHandler {
+            let data = OTUtils.loadJSONDatafile("typed_audience_datafile")
+            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                completionHandler(.success(data))
+            }
+        }
+        let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
+        let handler = FakeDatafileHandler()
+
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        
+        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval:1)
+
+        var count = 0
+        
+        let _ = optimizely.notificationCenter.addDatafileChangeNotificationListener { (data) in
+            count += 1
+            if count == 9 {
+                optimizely.datafileHandler.stopAllUpdates()
+                expection.fulfill()
+            }
+        }
+        optimizely.start() { (result) in
+            XCTAssert(true)
+        }
+        wait(for: [expection], timeout: 10)
+        
+        XCTAssert(count == 9)
+        
+    }
+
 
     func testPerformanceExample() {
         // This is an example of a performance test case.

@@ -15,7 +15,7 @@ Optimizely Rollouts is free feature flags for development teams. Easily roll out
 
 ### Using the SDK
 
-See the [Mobile developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=swift&platform=mobile) or [OTT developer documentation](https://developers.optimizely.com/x/solutions/sdks/reference/index.html?language=swift&platform=ott) to learn how to set
+See the [Mobile developer documentation](https://docs.developers.optimizely.com/full-stack/docs/implement-the-ios-sdk-310-beta) or [OTT developer documentation](https://docs.developers.optimizely.com/full-stack/docs/implement-the-ios-sdk-310-beta) to learn how to set
 up an Optimizely X project and start using the SDK.
 
 ### Requirements
@@ -25,10 +25,10 @@ up an Optimizely X project and start using the SDK.
  
 Please note below that _\<platform\>_ is used to represent the platform on which you are building your app. Currently, we support ```iOS``` and ```tvOS``` platforms.
 
-#### Cocoapod 
+#### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 	```use_frameworks!```
-    ```pod 'OptimizelySwiftSDK', :git => 'https://github.com/optimizely/swift-sdk.git', :branch => 'master'```
+    ```pod 'OptimizelySwiftSDK', '3.1.0-beta'```
     </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -38,7 +38,7 @@ Further installation instructions for Cocoapods: https://guides.cocoapods.org/us
 We haven't actually published to Cocoapods yet.  
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" "master"```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" == 3.1.0-beta```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 

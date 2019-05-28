@@ -15,4 +15,3 @@ This modernized version of the SDK is meant to replace the Objective-C SDK.
 ### Bug Fixes:
 
 ### Breaking Changes
-

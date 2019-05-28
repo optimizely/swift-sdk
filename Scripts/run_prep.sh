@@ -43,6 +43,9 @@ function do_stuff {
   trap "kill $!" EXIT
   trap 'error_handler' ERR
 
+  # we need pod install or test_all.sh fails
+  pod install
+
   myscripts=( "build_all.sh" "test_all.sh" "update_version.sh ${VERSION}" )
   for i in "${myscripts[@]}"; do
     echo -n "${i} "

@@ -7,6 +7,24 @@ def analytics_pods
 #  pod 'Mixpanel-swift', '2.5.7'
 end
 
+def linter_pods
+  pod 'SwiftLint'
+end
+
+target 'OptimizelySwiftSDK-iOS' do
+  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
+  platform :ios, '9.0'
+  use_frameworks!
+  linter_pods
+end
+
+target 'OptimizelySwiftSDK-tvOS' do
+  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
+  platform :tvos, '9.0'
+  use_frameworks!
+  linter_pods
+end
+
 target 'OptimizelyTests-Common-iOS' do
   project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
   platform :ios, '9.0'

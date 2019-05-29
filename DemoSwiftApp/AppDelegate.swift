@@ -50,14 +50,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //     - initialize immediately with the given JSON datafile or its cached copy
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
         
-        initializeOptimizelySDKAsynchronous()
+        initializeOptimizelySDKWithCustomization()
     }
     
     // MARK: - Initialization Examples
     
     func initializeOptimizelySDKAsynchronous() {
         optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
-        
+
+        addListeners()
+
         optimizely.start { result in
             switch result {
             case .failure(let error):
@@ -76,10 +78,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
+        
+        addListeners()
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
             try optimizely!.start(datafile: datafileJSON)
+            
             print("Optimizely SDK initialized successfully!")
         } catch {
             print("Optimizely SDK initiliazation failed: \(error)")
@@ -101,14 +106,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                        periodicDownloadInterval: customDownloadIntervalInSecs,
                                        defaultLogLevel: logLevel)
         
+
+        addListeners()
+        
+        // initialize SDK
+        optimizely!.start { result in
+            switch result {
+            case .failure(let error):
+                print("Optimizely SDK initiliazation failed: \(error)")
+            case .success:
+                print("Optimizely SDK initialized successfully!")
+            }
+            self.startWithRootViewController()
+        }
+    }
+    
+    func addListeners() {
         // notification listeners
         
         _ = optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
             print("Received decision notification: \(type) \(userId) \(String(describing: attributes)) \(decisionInfo)")
-         })
+        })
         
         _ = optimizely.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
-            print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")            
+            print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
         })
         
         _ = optimizely.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (data) in
@@ -130,19 +151,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         })
-
-        // initialize SDK
-        
-        optimizely!.start { result in
-            switch result {
-            case .failure(let error):
-                print("Optimizely SDK initiliazation failed: \(error)")
-            case .success:
-                print("Optimizely SDK initialized successfully!")
-            }
-            
-            self.startWithRootViewController()
-        }
     }
 
     // MARK: - ViewControl

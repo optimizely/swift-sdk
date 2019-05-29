@@ -46,7 +46,7 @@ function do_stuff {
   # we need pod install or test_all.sh fails
   pod install
 
-  myscripts=( "build_all.sh" "test_all.sh" "update_version.sh ${VERSION}" )
+  myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
   for i in "${myscripts[@]}"; do
     echo -n "${i} "
     Scripts/${i} >> $BUILD_OUTPUT 2>&1

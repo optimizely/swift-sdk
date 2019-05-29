@@ -66,11 +66,11 @@ function push_changes {
     {
       case $? in
         1 )
-          echo "${COLOR_CYAN}INFO: ${COLOR_RESET}Nothing to commit, so not creating a PR"
+          echo -e "${COLOR_CYAN}INFO: ${COLOR_RESET}Nothing to commit, so not creating a PR"
           exit 0
           ;;
         * )
-          echo "${COLOR_CYAN}ERROR: ${COLOR_RESET}Unexpected exit code while trying to git commit"
+          echo -e "${COLOR_CYAN}ERROR: ${COLOR_RESET}Unexpected exit code while trying to git commit"
           exit 1
           ;;
       esac

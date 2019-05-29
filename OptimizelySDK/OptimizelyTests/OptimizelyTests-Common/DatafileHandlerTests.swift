@@ -161,7 +161,7 @@ class DatafileHandlerTests: XCTestCase {
     
     func testDownloadWithoutTimeout() {
         let handler = DefaultDatafileHandler()
-        handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
+        handler.endPointStringFormat = "https://httpstat.us/200?sleep=3000&datafile=%@"
         
         let expectation = XCTestExpectation(description: "will wait for response.")
         handler.downloadDatafile(sdkKey: "invalidKeyXXXXX") { (result) in

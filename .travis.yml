@@ -66,7 +66,7 @@ jobs:
       name: PLATFORM='iOS Simulator' OS=12.1 NAME='iPhone 7'
     - <<: *unittests
       env: SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 1080p'
-      name: PLATFORM='tvOS Simulator' OS=12.2 NAME='Apple TV 1080p'
+      name: PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 1080p'
 
     - stage: 'Prepare for release'
       name: Prepare for release

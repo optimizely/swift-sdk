@@ -1,9 +1,9 @@
 # Optimizely Swift SDK Changelog
 
 ## 3.1.0-beta
-May 28, 2019
+May 29, 2019
 
-This the initial release of the Swift SDK. It is a pure Swift implementation take complete advantage of language features and performance.  It supports objective-C as well through objective-c only API. It uses Swift 4.2 but we will be upgrading to 5.0 soon.
+This is the initial release of the Swift SDK. It is a pure Swift implementation which takes complete advantage of language features and performance.  It supports Objective-C applications as well. It uses Swift 4.2 but we will be upgrading to 5.0 soon.
 
 This modernized version of the SDK is meant to replace the Objective-C SDK.
 

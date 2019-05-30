@@ -28,17 +28,17 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     static let MAX_FAILURE_COUNT = 3
     
     // default timerInterval
-    var timerInterval:TimeInterval = 60 * 1 // every minute
+    var timerInterval:TimeInterval // every minute
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
-    var batchSize:Int = 10
+    var batchSize:Int
     // start trimming the front of the queue when we get to over maxQueueSize
     // TODO: implement
     var maxQueueSize:Int = 30000
     
     lazy var logger = OPTLoggerFactory.getLogger()
-    var backingStore:DataStoreType = .file
-    var backingStoreName:String = "OPTEventQueue"
+    var backingStore:DataStoreType
+    var backingStoreName:String
     
     // for dispatching events
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
@@ -47,7 +47,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     // timer as a atomic property.
     var timer:AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    public init(batchSize:Int = 10, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*5 ) {
+    public init(batchSize:Int = 10, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*1 ) {
         self.batchSize = batchSize > 0 ? batchSize : 1
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName

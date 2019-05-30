@@ -8,7 +8,9 @@ def analytics_pods
 end
 
 def linter_pods
-  pod 'SwiftLint'
+  # ignore all warnings from all dependencies
+  inhibit_all_warnings!
+#  pod 'SwiftLint'
 end
 
 target 'OptimizelySwiftSDK-iOS' do

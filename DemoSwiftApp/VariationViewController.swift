@@ -18,31 +18,31 @@ import UIKit
 import Optimizely
 
 class VariationViewController: UIViewController {
-    
+
     var eventKey: String!
     var userId: String!
     var variationKey: String?
     var optimizely: OptimizelyClient?
     var showCoupon: Bool = false {
-        didSet  {
+        didSet {
             DispatchQueue.main.async {
                 self.couponView?.isHidden = !self.showCoupon
             }
         }
     }
 
-    @IBOutlet weak var couponView:UIView!
+    @IBOutlet weak var couponView: UIView!
     @IBOutlet weak var variationLetterLabel: UILabel!
     @IBOutlet weak var variationSubheaderLabel: UILabel!
     @IBOutlet weak var variationBackgroundImage: UIImageView!
-    
+
     @IBAction func closeCoupon(_ sender: UIButton) {
         showCoupon = false
     }
-    
+
     @IBAction func unwindToVariationAction(unwindSegue: UIStoryboardSegue) {
     }
-    
+
     @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {
         do {
             try self.optimizely?.track(eventKey: self.eventKey, userId: userId)
@@ -54,7 +54,7 @@ class VariationViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         if let variationKey = self.variationKey {
             switch variationKey {
             case "variation_a":

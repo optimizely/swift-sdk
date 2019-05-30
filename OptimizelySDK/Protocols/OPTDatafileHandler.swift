@@ -24,7 +24,7 @@ public typealias DatafileDownloadCompletionHandler = (OptimizelyResult<Data?>) -
 public protocol OPTDatafileHandler {
     init()
     
-    var endPointStringFormat:String { get set }
+    var endPointStringFormat: String { get set }
     /**
     Synchronous call to download the datafile.
 
@@ -32,7 +32,7 @@ public protocol OPTDatafileHandler {
     - Parameter datafileConfig: DatafileConfig for the datafile
     - Returns: a valid datafile or null
      */
-    func downloadDatafile(sdkKey:String) -> Data?
+    func downloadDatafile(sdkKey: String) -> Data?
     
     /**
      Asynchronous download data file.
@@ -40,8 +40,8 @@ public protocol OPTDatafileHandler {
      - Parameter resourceTimeoutInterval: timeout in seconds to wait for resource.
      - Parameter completionHhandler:  listener to call when datafile download complete
      */
-    func downloadDatafile(sdkKey:String,
-                          resourceTimeoutInterval:Double?,
+    func downloadDatafile(sdkKey: String,
+                          resourceTimeoutInterval: Double?,
                           completionHandler:@escaping DatafileDownloadCompletionHandler)
     
     /**
@@ -49,14 +49,14 @@ public protocol OPTDatafileHandler {
      
       - Parameter sdkKey: SdkKey for the datafile
      */
-    func startUpdates(sdkKey:String, datafileChangeNotification:((Data)->Void)?)
+    func startUpdates(sdkKey: String, datafileChangeNotification: ((Data) -> Void)?)
     
     /**
      Stop the periodic updates. This should be called when the app goes to background
      
      - Parameter sdkKey: sdk key for datafile.
      */
-    func stopUpdates(sdkKey:String)
+    func stopUpdates(sdkKey: String)
 
     /**
      Stop all periodic updates. This should be called when the app goes to background
@@ -68,25 +68,25 @@ public protocol OPTDatafileHandler {
      - Parameter sdkKey: sdkKey
      - Parameter datafile: JSON string of datafile.
      */
-    func saveDatafile(sdkKey:String, dataFile:Data)
+    func saveDatafile(sdkKey: String, dataFile: Data)
     
     /**
      Load a cached datafile if it exists
      - Parameter sdkKey: sdkKey
      - Returns: the datafile cached or null if it was not available
      */
-    func loadSavedDatafile(sdkKey:String) -> Data?
+    func loadSavedDatafile(sdkKey: String) -> Data?
     
     /**
      Has the file already been cached locally?
      - Parameter sdkKey: sdkKey
      - Returns: true if the datafile is cached or false if not.
      */
-    func isDatafileSaved(sdkKey:String) -> Bool
+    func isDatafileSaved(sdkKey: String) -> Bool
     /**
      Remove the datafile in cache.
      - Parameter sdkKey: sdkKey
      */
-    func removeSavedDatafile(sdkKey:String)
+    func removeSavedDatafile(sdkKey: String)
 
 }

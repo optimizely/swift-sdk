@@ -20,7 +20,7 @@ public enum DataStoreType {
     case file, memory, userDefaults
 }
 
-open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
+open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     static let sharedInstance = DefaultEventDispatcher()
     
@@ -28,26 +28,26 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     static let MAX_FAILURE_COUNT = 3
     
     // default timerInterval
-    var timerInterval:TimeInterval = 60 * 5 // every five minutes
+    var timerInterval: TimeInterval = 60 * 5 // every five minutes
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
-    var batchSize:Int = 10
+    var batchSize: Int = 10
     // start trimming the front of the queue when we get to over maxQueueSize
     // TODO: implement
-    var maxQueueSize:Int = 30000
+    var maxQueueSize: Int = 30000
     
     lazy var logger = OPTLoggerFactory.getLogger()
-    var backingStore:DataStoreType = .file
-    var backingStoreName:String = "OPTEventQueue"
+    var backingStore: DataStoreType = .file
+    var backingStoreName: String = "OPTEventQueue"
     
     // for dispatching events
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
-    let dataStore:DataStoreQueueStackImpl<EventForDispatch>
+    let dataStore: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
-    var timer:AtomicProperty<Timer> = AtomicProperty<Timer>()
+    var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    public init(batchSize:Int = 10, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*5 ) {
+    public init(batchSize: Int = 10, backingStore: DataStoreType = .file, dataStoreName: String = "OPTEventQueue", timerInterval: TimeInterval = 60*5 ) {
         self.batchSize = batchSize > 0 ? batchSize : 1
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
@@ -55,9 +55,9 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
         
         switch backingStore {
         case .file:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<Array<Data>>(storeName: backingStoreName))
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<[Data]>(storeName: backingStoreName))
         case .memory:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: backingStoreName))
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<[Data]>(storeName: backingStoreName))
         case .userDefaults:
             self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreUserDefaults())
         }
@@ -66,7 +66,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     deinit {
-        timer.performAtomic() { (timer) in
+        timer.performAtomic { (timer) in
             timer.invalidate()
         }
         unsubscribe()
@@ -87,7 +87,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     open func flushEvents() {
         dispatcher.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
-            var failureCount = 0;
+            var failureCount = 0
             // if we can't batch the events because they are not from the same project or
             // are being sent to a different url.  we set the batchSizeHolder to batchSize
             // and batchSize to 1 until we have sent the last batch that couldn't be batched.
@@ -102,7 +102,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 self.batchSize = 1
             }
             
-            let resetBatch = { ()->Void in
+            let resetBatch = { () -> Void in
                 if batchSizeHolder != 0 {
                     self.batchSize = batchSizeHolder
                     sendCount = 0
@@ -110,10 +110,10 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                 }
                 
             }
-            while let eventsToSend:[EventForDispatch] = self.dataStore.getFirstItems(count:self.batchSize) {
+            while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
                 let actualEventsSize = eventsToSend.count
                 var eventToSend = eventsToSend.batch()
-                if let _ = eventToSend {
+                if eventToSend != nil {
                     // we merged the event and ready for batch
                     // if the bacth size is not equal to the actual event size,
                     // then setup the batchSizeHolder to be the size of the event.
@@ -122,8 +122,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                         self.batchSize = actualEventsSize
                         sendCount = actualEventsSize - 1
                     }
-                }
-                else {
+                } else {
                     failedBatch()
                     // just send the first one and let the rest be sent until sendCount == batchSizeHolder
                     eventToSend = eventsToSend.first
@@ -141,28 +140,26 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                     self.logger.e(.eventSendRetyFailed(failureCount))
                     failureCount = 0
                     resetBatch()
-                    break;
+                    break
                 }
 
                 // make the send event synchronous. enter our notify
                 self.notify.enter()
-                self.sendEvent(event: event) { (result) -> (Void) in
+                self.sendEvent(event: event) { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         self.logger.e(error.reason)
                         failureCount += 1
-                    case .success(_):
+                    case .success:
                         // we succeeded. remove the batch size sent.
-                        if let removedItem:[EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
+                        if let removedItem: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
                             if self.batchSize == 1 && removedItem.first != event {
                                 self.logger.e("Removed event different from sent event")
-                            }
-                            else {
+                            } else {
                                 // avoid event-log-message preparation overheads with closure-logging
                                 self.logger.d({ "Successfully sent event: \(event)" })
                             }
-                        }
-                        else {
+                        } else {
                             self.logger.e("Removed event nil for sent item")
                         }
                         // reset failureCount
@@ -174,8 +171,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
                             if sendCount == self.batchSize {
                                 resetBatch()
                             }
-                        }
-                        else {
+                        } else {
                             // batch had batchSize items
                         }
                     }
@@ -198,13 +194,12 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
         request.httpBody = event.body
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let task = session.uploadTask(with: request, from: event.body) { (data, response, error) in
+        let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
             self.logger.d(response.debugDescription)
             
             if let error = error {
                 completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
-            }
-            else {
+            } else {
                 self.logger.d("Event Sent")
                 completionHandler(.success(event.body))
             }
@@ -215,7 +210,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func applicationDidEnterBackground() {
-        timer.performAtomic() { (timer) in
+        timer.performAtomic { (timer) in
             timer.invalidate()
         }
         timer.property = nil
@@ -244,12 +239,11 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
             
             self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
                 if self.dataStore.count == 0 {
-                    self.timer.performAtomic() { (timer) in
+                    self.timer.performAtomic { (timer) in
                         timer.invalidate()
                     }
                     self.timer.property = nil
-                }
-                else {
+                } else {
                     self.flushEvents()
                 }
             }

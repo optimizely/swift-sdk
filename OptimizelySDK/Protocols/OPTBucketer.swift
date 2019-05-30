@@ -23,7 +23,7 @@ protocol OPTBucketer {
      - Parameter bucketingId: Id to be used for bucketing the user.
      - Returns: experiment which represent Experiment.
      */
-    func bucketToExperiment(config:ProjectConfig, group:Group, bucketingId:String) -> Experiment?
+    func bucketToExperiment(config: ProjectConfig, group: Group, bucketingId: String) -> Experiment?
     
     /**
      Bucket a bucketingId into an experiment.
@@ -31,14 +31,14 @@ protocol OPTBucketer {
      - Parameter bucketingId: The ID to bucket. This must be a non-null, non-empty string.
      - Returns: The variation the bucketingId was bucketed into.
      */
-    func bucketExperiment(config:ProjectConfig, experiment:Experiment, bucketingId:String) -> Variation?
+    func bucketExperiment(config: ProjectConfig, experiment: Experiment, bucketingId: String) -> Variation?
 
     /**
      Hash the bucketing ID and map it to the range [0, 10000).
      - Parameter bucketingId: The ID for which to generate the hash and bucket values.
      - Returns: A value in the range [0, 10000).
      */
-    func generateBucketValue(bucketingId:String) -> Int
+    func generateBucketValue(bucketingId: String) -> Int
     
     /**
      Generate an ID to be used in Murmur3 hash based on the provided User ID and the ID of the entity the user is bucketed into.
@@ -46,6 +46,6 @@ protocol OPTBucketer {
      - Parameter entityId: The ID of the entity the user is being bucketed into. ex: OPTLYExperiment.experimentId.
      - Returns: The string to be used in the Murmur3 hash for bucketing.
      */
-    func makeHashIdFromBucketingId(bucketingId:String, entityId:String) -> String
+    func makeHashIdFromBucketingId(bucketingId: String, entityId: String) -> String
 
 }

@@ -26,8 +26,7 @@ class DatafileHandlerTests: XCTestCase {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-                }
-                catch {
+                } catch {
                     print(error)
                 }
                 
@@ -78,7 +77,7 @@ class DatafileHandlerTests: XCTestCase {
     }
     
     func testPeriodicDownload() {
-        class FakeDatafileHandler : DefaultDatafileHandler {
+        class FakeDatafileHandler: DefaultDatafileHandler {
             let data = Data()
             override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 completionHandler(.success(data))
@@ -87,9 +86,9 @@ class DatafileHandlerTests: XCTestCase {
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
         let handler = FakeDatafileHandler()
         let now = Date()
-        var count = 0;
+        var count = 0
         var seconds = 0
-        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: 1) { (data) in
+        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: 1) { (_) in
             count += 1
             if count == 10 {
                 handler.stopPeriodicUpdates()
@@ -103,11 +102,10 @@ class DatafileHandlerTests: XCTestCase {
         XCTAssert(count == 10)
         XCTAssert(seconds == 10)
         
-        
     }
     
     func testPeriodicDownloadWithOptimizlyClient() {
-        class FakeDatafileHandler : DefaultDatafileHandler {
+        class FakeDatafileHandler: DefaultDatafileHandler {
             let data = OTUtils.loadJSONDatafile("typed_audience_datafile")
             override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 completionHandler(.success(data))
@@ -118,18 +116,18 @@ class DatafileHandlerTests: XCTestCase {
 
         HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
         
-        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval:1)
+        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval: 1)
 
         var count = 0
         
-        let _ = optimizely.notificationCenter.addDatafileChangeNotificationListener { (data) in
+        _ = optimizely.notificationCenter.addDatafileChangeNotificationListener { (_) in
             count += 1
             if count == 9 {
                 optimizely.datafileHandler.stopAllUpdates()
                 expection.fulfill()
             }
         }
-        optimizely.start() { (result) in
+        optimizely.start { (_) in
             XCTAssert(true)
         }
         wait(for: [expection], timeout: 10)
@@ -143,14 +141,13 @@ class DatafileHandlerTests: XCTestCase {
         handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
         
         let expectation = XCTestExpectation(description: "should fail before 10")
-        handler.downloadDatafile(sdkKey: "invalidKey1212121", resourceTimeoutInterval:3) { (result) in
+        handler.downloadDatafile(sdkKey: "invalidKey1212121", resourceTimeoutInterval: 3) { (result) in
             switch result {
             case .failure(let error):
                 print(error)
                 XCTAssert(true)
                 expectation.fulfill()
-            case .success(let data):
-                print(data)
+            case .success(_):
                 XCTAssert(false)
             }
         }

@@ -10,7 +10,7 @@ This modernized version of the SDK is meant to replace the Objective-C SDK.
 ### New Features
 * By default the datafile handler does updates every 10 minutes when the application is in the foreground.  To disable this, set the periodicUpdateInterval to zero.  If you do allow for polling, the project will update automatically when a new datafile change is received. 
 * On top of the above functionality, the developer may register for a datafile change notification.  This notification will be called anytime a new datafile is downloaded to cache and is used to reinitialize the optimizely client automatically.
-* The event handler batches events and will run every 5 minutes in the foreground to send events. 
+* The event handler batches events and will run every minute in the foreground to send events.  If there are no events in the queue it will not reschedule.
 
 ### Bug Fixes:
 

@@ -28,7 +28,7 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
     static let MAX_FAILURE_COUNT = 3
     
     // default timerInterval
-    var timerInterval:TimeInterval = 60 * 5 // every five minutes
+    var timerInterval:TimeInterval = 60 * 1 // every minute
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
     var batchSize:Int = 10

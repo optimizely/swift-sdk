@@ -71,4 +71,4 @@ if [ "${vm}" == "${releaseSDKVersion}" ]; then
     printf "\t[${curPodSpec}] Verified podspec: ${vm} === ${releaseSDKVersion}\n"
 fi
 
-printf "\n\n[SUCCESS] All release-skd-version settings have been updated successfully!\n\n\n"
+printf "\n\n[SUCCESS] All release-sdk-version settings have been updated successfully!\n\n\n"

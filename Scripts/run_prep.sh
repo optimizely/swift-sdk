@@ -43,7 +43,10 @@ function do_stuff {
   trap "kill $!" EXIT
   trap 'error_handler' ERR
 
-  myscripts=( "build_all.sh" "test_all.sh" "update_version.sh ${VERSION}" )
+  # we need pod install or test_all.sh fails
+  pod install
+
+  myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
   for i in "${myscripts[@]}"; do
     echo -n "${i} "
     Scripts/${i} >> $BUILD_OUTPUT 2>&1
@@ -57,7 +60,21 @@ function do_stuff {
 function push_changes {
   git config user.email "optibot@users.noreply.github.com"
   git config user.name "${GITHUB_USER}"
-  git add --all && git commit -m "ci(travis): auto release prep for $VERSION"
+  git add --all
+  # this is like a try/catch
+  git commit -m "ci(travis): auto release prep for $VERSION" ||
+    {
+      case $? in
+        1 )
+          echo -e "${COLOR_CYAN}INFO: ${COLOR_RESET}Nothing to commit, so not creating a PR"
+          exit 0
+          ;;
+        * )
+          echo -e "${COLOR_CYAN}ERROR: ${COLOR_RESET}Unexpected exit code while trying to git commit"
+          exit 1
+          ;;
+      esac
+    }
   git push https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG} ${AUTOBRANCH}
   PR_URL=$(hub pull-request --no-edit -b ${TRAVIS_BRANCH})
   echo -e "${COLOR_CYAN}ATTENTION:${COLOR_RESET} review and merge ${COLOR_CYAN}${PR_URL}${COLOR_RESET}"

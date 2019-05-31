@@ -37,11 +37,16 @@ class MurmurTests: XCTestCase {
         let utf8 = s.utf8.map({$0})
         let hash1 = MurmurHash3.hash32Bytes(key: utf8, maxBytes: s.count - pre - post, seed: 123456789)
         var hash2 = MurmurHash3.hash32(key: s, seed: 123456789)
+        var hash3 = MurmurHash3.hash32CChar(key: s.cString(using: .utf8)!, maxBytes: s.count - pre - post, seed: 123456789)
         if (hash1 != hash2) {
         // second time for debugging...
             hash2 = MurmurHash3.hash32(key: s, seed: 123456789)
         }
+        if (hash2 != hash3) {
+            hash3 = MurmurHash3.hash32CChar(key: s.cString(using: .utf8)!, maxBytes: s.count - pre - post, seed: 123456789)
+        }
         XCTAssertEqual(hash1, hash2);
+        XCTAssertEqual(hash2, hash3)
     }
 
     private func doString128(s:String) {
@@ -52,12 +57,18 @@ class MurmurTests: XCTestCase {
         let utf8 = s.utf8.map({$0})
         let hash1 = MurmurHash3.hash128Bytes(key: utf8, maxBytes: s.count - pre - post, seed: 123456789)
         var hash2 = MurmurHash3.hash128(key: s, seed: 123456789)
+        var hash3 = MurmurHash3.hash128CChar(key: s.cString(using: .utf8)!, maxBytes: s.count - pre - post, seed: 123456789)
         if (hash1 != hash2) {
             // second time for debugging...
             hash2 = MurmurHash3.hash128(key: s, seed: 123456789)
         }
+        if (hash2 != hash3) {
+            hash3 = MurmurHash3.hash128CChar(key: s.cString(using: .utf8)!, maxBytes: s.count - pre - post, seed: 123456789)
+        }
         XCTAssertEqual(hash1.h1, hash2.h1);
         XCTAssertEqual(hash1.h2, hash2.h2);
+        XCTAssertEqual(hash2.h1, hash3.h1);
+        XCTAssertEqual(hash2.h2, hash3.h2);
     }
 
     func testMurmur32() {

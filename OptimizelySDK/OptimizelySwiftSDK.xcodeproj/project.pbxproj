@@ -1072,6 +1072,8 @@
 		6EF4B4E422383632002DE8B6 /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
 		6EF4B4E5223836C1002DE8B6 /* BackgroundingCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77D05722370526005AA83F /* BackgroundingCallbacks.swift */; };
 		6EF4B4E6223836C1002DE8B6 /* BackgroundingCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77D05722370526005AA83F /* BackgroundingCallbacks.swift */; };
+		6EFAB05022A57FB100800884 /* ProjectConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFAB04F22A57FB100800884 /* ProjectConfigTests.swift */; };
+		6EFAB05122A57FB100800884 /* ProjectConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFAB04F22A57FB100800884 /* ProjectConfigTests.swift */; };
 		C79F9D872251F597002B0BC9 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79F9D852251F58F002B0BC9 /* DecisionListenerTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -1319,6 +1321,7 @@
 		6EDE919822273DD700840112 /* optimizely_6372300739_v4.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_6372300739_v4.json; sourceTree = "<group>"; };
 		6EDE91A122273DD700840112 /* typed_audience_datafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = typed_audience_datafile.json; sourceTree = "<group>"; };
 		6EDE91A422273DD700840112 /* UnsupportedVersionDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UnsupportedVersionDatafile.json; sourceTree = "<group>"; };
+		6EFAB04F22A57FB100800884 /* ProjectConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfigTests.swift; sourceTree = "<group>"; };
 		7C392E11ABAA00DDA1F864B9 /* Pods_OptimizelyTests_APIs_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OptimizelyTests_APIs_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8268B42D4E084F1ED5D05151 /* Pods_OptimizelyTests_Common_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OptimizelyTests_Common_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AED4B61B2F7C775E23D39EBB /* Pods-OptimizelyTests-Common-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Common-iOS.release.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Common-iOS/Pods-OptimizelyTests-Common-iOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -1760,6 +1763,7 @@
 			children = (
 				6E30A06F224DA4D3005EFA1D /* AudienceTests.swift */,
 				6EDE910A2225F7DB00840112 /* AudienceTests_Evaluate.swift */,
+				6EFAB04F22A57FB100800884 /* ProjectConfigTests.swift */,
 				6E8B6A4A221CC2D6006EA8A6 /* ProjectTests.swift */,
 				6E8B6A47221CBBC5006EA8A6 /* GroupTests.swift */,
 				6E852C69221A7E3300C41F94 /* ExperimentTests.swift */,
@@ -2891,6 +2895,7 @@
 				0B77D06022370526005AA83F /* BackgroundingCallbacks.swift in Sources */,
 				6EA426452218E74F00B074B5 /* MurmurHash3.swift in Sources */,
 				6EA425A22218E6AE00B074B5 /* AttributeValueTests_Evaluate.swift in Sources */,
+				6EFAB05122A57FB100800884 /* ProjectConfigTests.swift in Sources */,
 				6E30A071224DA4D3005EFA1D /* AudienceTests.swift in Sources */,
 				6EA426252218E74F00B074B5 /* DefaultDecisionService.swift in Sources */,
 				6EA07225223AC72D00F447CF /* Utils.swift in Sources */,
@@ -3066,6 +3071,7 @@
 				0B77D05C22370526005AA83F /* BackgroundingCallbacks.swift in Sources */,
 				6EA426112218E74E00B074B5 /* MurmurHash3.swift in Sources */,
 				6EA425932218E6AD00B074B5 /* AttributeValueTests_Evaluate.swift in Sources */,
+				6EFAB05022A57FB100800884 /* ProjectConfigTests.swift in Sources */,
 				6E30A070224DA4D3005EFA1D /* AudienceTests.swift in Sources */,
 				6EA425F12218E74E00B074B5 /* DefaultDecisionService.swift in Sources */,
 				6EA07220223AC72D00F447CF /* Utils.swift in Sources */,

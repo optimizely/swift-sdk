@@ -21,7 +21,6 @@ import XCTest
 class DefaultLoggerTests: XCTestCase {
 
     func testLoggerDefaultsToInfoLogLevel() {
-        XCTAssertNotEqual(DefaultLogger.logLevel, nil)
         XCTAssertEqual(DefaultLogger.logLevel, .info)
     }
 

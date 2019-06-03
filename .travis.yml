@@ -59,11 +59,41 @@ jobs:
         - slather
         - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=10.1 NAME='iPhone 7 Plus'
-      name: PLATFORM='iOS Simulator' OS=10.1 NAME='iPhone 7 Plus'
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
+      name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=10.3.1 NAME='iPhone 7'
-      name: PLATFORM='iOS Simulator' OS=10.3.1 NAME='iPhone 7'
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=12.1 NAME='iPhone 7'
+      name: PLATFORM='iOS Simulator' OS=12.1 NAME='iPhone 7'
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=10.2 NAME='Apple TV 1080p'
-      name: PLATFORM='tvOS Simulator' OS=10.2 NAME='Apple TV 1080p'
+      env: SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4k'
+      name: PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4k'
+
+    - stage: 'Prepare for release'
+      name: Prepare for release
+      language: swift
+      os: osx
+      osx_image: xcode10.1
+      env:
+        - VERSION=3.1.0-beta
+      install:
+        # install hub
+        - wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
+        # upgrade cocoapods
+        - gem install cocoapods -v '1.6.1'
+      script:
+        - Scripts/run_prep.sh
+
+    - stage: 'Release'
+      name: Push to cocoapods.org
+      language: minimal
+      os: osx
+      osx_image: xcode10.1
+      env:
+        - VERSION=3.1.0-beta
+      install:
+        # install hub
+        - wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
+        # upgrade cocoapods
+        - gem install cocoapods -v '1.6.1'
+      script:
+        - Scripts/run_release.sh

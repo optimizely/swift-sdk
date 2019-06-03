@@ -80,7 +80,9 @@ extension EventDispatcherTests_Batch {
         ]
 
         let batch = events.batch()!
+        XCTAssertNotNil(batch)
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertNotNil(batchedEvents)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.revision, kRevision)
         XCTAssertEqual(batchedEvents.accountID, kAccountId)

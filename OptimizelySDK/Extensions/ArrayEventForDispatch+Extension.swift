@@ -58,19 +58,21 @@ extension Array where Element == EventForDispatch {
             }
         }
         
-        if let first = firstBatchEvent {
-            let batchEvent = BatchEvent(revision: first.revision,
-                                        accountID: first.accountID,
-                                        clientVersion: first.clientVersion,
-                                        visitors: visitors,
-                                        projectID: first.projectID,
-                                        clientName: first.clientName,
-                                        anonymizeIP: first.anonymizeIP,
-                                        enrichDecisions: true)
-            
-            if let data = try? JSONEncoder().encode(batchEvent), let url = url {
-                return EventForDispatch(url: url, body: data)
-            }
+        guard let first = firstBatchEvent, let tmpUrl = url else {
+            return nil
+        }
+        
+        let batchEvent = BatchEvent(revision: first.revision,
+                                    accountID: first.accountID,
+                                    clientVersion: first.clientVersion,
+                                    visitors: visitors,
+                                    projectID: first.projectID,
+                                    clientName: first.clientName,
+                                    anonymizeIP: first.anonymizeIP,
+                                    enrichDecisions: true)
+        
+        if let data = try? JSONEncoder().encode(batchEvent) {
+            return EventForDispatch(url: tmpUrl, body: data)
         }
         return nil
     }

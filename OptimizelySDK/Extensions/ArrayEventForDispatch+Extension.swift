@@ -18,11 +18,7 @@ import Foundation
 
 extension Array where Element == EventForDispatch {
     func batch() -> EventForDispatch? {
-        if count == 0 {
-            return nil
-        }
-        
-        if count == 1 {
+        if count < 2 {
             return first
         }
         

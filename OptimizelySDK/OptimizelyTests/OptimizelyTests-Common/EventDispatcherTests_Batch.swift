@@ -58,7 +58,7 @@ extension EventDispatcherTests_Batch {
         XCTAssertNil(batch)
         
         let event = makeEventForDispatch(url: kUrlA, event: batchEventA)
-        events.append(makeEventForDispatch(url: kUrlA, event: batchEventA))
+        events.append(event)
         batch = events.batch()
         XCTAssertEqual(event, batch)
     }

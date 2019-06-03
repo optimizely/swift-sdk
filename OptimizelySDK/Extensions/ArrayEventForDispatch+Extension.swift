@@ -31,29 +31,19 @@ extension Array where Element == EventForDispatch {
         var projectId:String?
         
         let checkUrl = { (event:EventForDispatch) -> Bool in
-            if let url = url {
-                if url != event.url {
-                    return false
-                }
-            }
-            else {
+            guard let _ = url else {
                 url = event.url
+                return true
             }
-            
-            return true
+            return url == event.url
         }
         
         let checkProjectId = { (batchEvent:BatchEvent) -> Bool in
-            if let projectId = projectId {
-                if projectId != batchEvent.projectID {
-                    return false
-                }
-            }
-            else {
+            guard let _ = projectId else {
                 projectId = batchEvent.projectID
+                return true
             }
-            
-            return true
+            return projectId == batchEvent.projectID
         }
 
         var firstBatchEvent:BatchEvent?

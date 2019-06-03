@@ -18,11 +18,13 @@
 
 import XCTest
 
-class DefaultLoggerTests: XCTestCase {
+class OptimizelyErrorTests: XCTestCase {
 
-    func testLoggerDefaultsToInfoLogLevel() {
-        let logLevel = DefaultLogger.logLevel
-        XCTAssertEqual(logLevel, .info)
+    func testErrorDescription() {
+        let description = "10111"
+        let error = OptimizelyError.eventDispatchFailed(description)
+        XCTAssertTrue(error.localizedDescription.contains(description))
+        XCTAssertTrue(error.errorDescription!.contains(description))
     }
 
 }

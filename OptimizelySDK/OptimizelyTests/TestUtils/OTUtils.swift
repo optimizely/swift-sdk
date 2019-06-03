@@ -51,7 +51,6 @@ class OTUtils {
     
     static func loadJSONDatafile(_ filename: String) -> Data? {
         guard let filePath = Bundle(for: self).path(forResource: filename, ofType: "json") else {
-            XCTAssert(false, "file not available: \(filename).json")
             return nil
         }
         
@@ -59,7 +58,6 @@ class OTUtils {
             let fileContents = try String(contentsOfFile: filePath)
             return fileContents.data(using: .utf8)
         } catch {
-            XCTAssert(false, "cannot read file: \(filename).json")
             return nil
         }
     }

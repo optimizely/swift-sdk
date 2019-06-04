@@ -107,11 +107,8 @@ open class OptimizelyClient: NSObject {
                     try self.configSDK(datafile: datafile)
                     
                     completion?(result)
-                } catch let error as OptimizelyError {
-                    completion?(.failure(error))
                 } catch {
-                    print("Invalid error types: \(error)")
-                    completion?(.failure(OptimizelyError.datafileDownloadFailed("Unknown")))
+                    completion?(.failure(error as! OptimizelyError))
                 }
             }
         }
@@ -669,14 +666,7 @@ extension OptimizelyClient {
         // because we are batching events, we cannot guarantee that the completion handler will be
         // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
         // onActivate only means the event has been queued and not necessarily sent.
-        self.eventDispatcher.dispatchEvent(event: event) { result in
-            switch result {
-            case .failure:
-                break
-            case .success( _):
-                break
-            }
-        }
+        self.eventDispatcher.dispatchEvent(event: event, completionHandler: nil)
         
         self.notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment, userId, attributes, variation, ["url":event.url as Any, "body":event.body as Any]])
 
@@ -704,14 +694,8 @@ extension OptimizelyClient {
         // because we are batching events, we cannot guarantee that the completion handler will be
         // called.  So, for now, we are queuing and calling onTrack.  Maybe we should mention that
         // onTrack only means the event has been queued and not necessarily sent.
-        self.eventDispatcher.dispatchEvent(event: event) { result in
-            switch result {
-            case .failure:
-                break
-            case .success( _):
-                break
-            }
-        }
+        self.eventDispatcher.dispatchEvent(event: event, completionHandler: nil)
+        
         self.notificationCenter.sendNotifications(type: NotificationType.Track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url":event.url as Any, "body":event.body as Any]])
 
     }

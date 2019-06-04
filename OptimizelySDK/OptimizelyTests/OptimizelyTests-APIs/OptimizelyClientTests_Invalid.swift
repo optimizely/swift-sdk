@@ -35,6 +35,11 @@ class OptimizelyClientTests_Invalid: XCTestCase {
         let invalidDatafile = "{\"version\": \"4\"}"
         try? self.optimizely.start(datafile: invalidDatafile)
     }
+}
+
+// MARK: - ManagerNonInitialized
+
+extension OptimizelyClientTests_Invalid {
     
     func testActivate_WhenManagerNonInitialized() {
         let variationKey: String? = try? self.optimizely.activate(experimentKey: kExperimentKey, userId: kUserId)
@@ -105,6 +110,12 @@ class OptimizelyClientTests_Invalid: XCTestCase {
             XCTAssert(true)
         }
     }
+    
+}
+
+// MARK: - Invalid Keys
+
+extension OptimizelyClientTests_Invalid {
 
     func testTrack_WhenEventNotInDatafile() {
         do {
@@ -116,3 +127,19 @@ class OptimizelyClientTests_Invalid: XCTestCase {
     }
 
 }
+
+// MARK: - Invalid Datafile
+
+extension OptimizelyClientTests_Invalid {
+    
+//    func testActivate_WhenManagerNonInitialized() {
+//        do {
+//            try self.optimizely.track(eventKey: "somecrazytrackingidthatdoesntexist", userId: kUserId)
+//            XCTAssert(false)
+//        } catch {
+//            XCTAssert(true)
+//        }
+//    }
+    
+}
+

@@ -22,7 +22,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     var timers:AtomicProperty<[String:(timer:Timer?, interval:Int)]> = AtomicProperty(property: [String:(Timer?,Int)]())
     let dataStore = DataStoreUserDefaults()
     
-    let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent, autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
+    let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
     
     required init() {
         
@@ -211,28 +211,31 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                                 startTime:Date,
                                 updateInterval:Int,
                                 datafileChangeNotification:((Data)->Void)?) {
-        self.downloadDatafile(sdkKey: sdkKey) { (result) in
-            switch result {
-            case .success(let data):
-                if let data = data,
-                    let datafileChangeNotification = datafileChangeNotification {
-                    datafileChangeNotification(data)
-                }
-            case .failure(let error):
-                self.logger.e(error.reason)
-            }
-            
-            if self.hasPeriodUpdates(sdkKey: sdkKey) {
-                let interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
-                let actualDiff = (Int(abs(startTime.timeIntervalSinceNow)) - updateInterval)
-                var nextInterval = interval
-                if actualDiff > 0 {
-                    nextInterval -= actualDiff
+        self.downloadQueue.async {
+            self.downloadDatafile(sdkKey: sdkKey) { (result) in
+                switch result {
+                case .success(let data):
+                    if let data = data,
+                        let datafileChangeNotification = datafileChangeNotification {
+                        datafileChangeNotification(data)
+                    }
+                case .failure(let error):
+                    self.logger.e(error.reason)
                 }
                 
-                self.logger.d("next datafile download is \(nextInterval) seconds \(Date())")
-                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: nextInterval, datafileChangeNotification: datafileChangeNotification)
+                if self.hasPeriodUpdates(sdkKey: sdkKey) {
+                    let interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
+                    let actualDiff = (Int(abs(startTime.timeIntervalSinceNow)) - updateInterval)
+                    var nextInterval = interval
+                    if actualDiff > 0 {
+                        nextInterval -= actualDiff
+                    }
+                    
+                    self.logger.d("next datafile download is \(nextInterval) seconds \(Date())")
+                    self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: nextInterval, datafileChangeNotification: datafileChangeNotification)
+                }
             }
+
         }
     }
     

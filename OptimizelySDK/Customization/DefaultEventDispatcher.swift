@@ -243,14 +243,16 @@ open class DefaultEventDispatcher : BackgroundingCallbacks, OPTEventDispatcher {
             guard self.timer.property == nil else { return }
             
             self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
-                if self.dataStore.count == 0 {
-                    self.timer.performAtomic() { (timer) in
-                        timer.invalidate()
+                self.dispatcher.async {
+                    if self.dataStore.count == 0 {
+                        self.timer.performAtomic() { (timer) in
+                            timer.invalidate()
+                        }
+                        self.timer.property = nil
                     }
-                    self.timer.property = nil
-                }
-                else {
-                    self.flushEvents()
+                    else {
+                        self.flushEvents()
+                    }
                 }
             }
         }

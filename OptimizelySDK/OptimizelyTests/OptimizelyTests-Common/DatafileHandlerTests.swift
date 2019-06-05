@@ -82,14 +82,7 @@ class DatafileHandlerTests: XCTestCase {
         var localUrl:URL?
         
         // create a dummy file at a url to use as or datafile cdn location
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent("localcdn", isDirectory: false)
-            
-            let data = Data()
-            try? data.write(to: fileURL, options: .atomic)
-            localUrl = fileURL
-        }
+        localUrl = OTUtils.saveAFile(name: "localcdn", data: Data())
 
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {
@@ -134,15 +127,8 @@ class DatafileHandlerTests: XCTestCase {
         
         var fileUrl:URL?
         
-        // create a dummy file at a url to use as or datafile cdn location
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent("localcdn", isDirectory: false)
-            
-            let data = Data()
-            try? data.write(to: fileURL, options: .atomic)
-            fileUrl = fileURL
-        }
+        // create a dummy file at a url to use as our datafile local download location
+        fileUrl = OTUtils.saveAFile(name: "localcdn", data: Data())
         
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {

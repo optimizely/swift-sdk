@@ -31,16 +31,8 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
     func testOptimizelyClientWithCachedDatafile() {
         var fileUrl:URL?
         
-        // create a dummy file at a url to use as or datafile cdn location
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent("localcdn", isDirectory: false)
-            
-            let data = OTUtils.loadJSONDatafile("api_datafile")
-
-            try? data!.write(to: fileURL, options: .atomic)
-            fileUrl = fileURL
-        }
+        // create a dummy file at a url to use as our datafile local download
+        fileUrl = OTUtils.saveAFile(name: "localcdn", data: OTUtils.loadJSONDatafile("api_datafile")!)
         
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {
@@ -83,19 +75,14 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         
         wait(for: [expectation], timeout: 3)
         
+        try? FileManager.default.removeItem(at: fileUrl!)
+        
         client.datafileHandler.stopAllUpdates()
         
         HandlerRegistryService.shared.binders.removeAll()
 
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
     }
 
 }

@@ -41,7 +41,6 @@ class DefaultUserProfileServiceTests: XCTestCase {
         ],
         "user_id": "51"
     ]
-
     
     var ups: DefaultUserProfileService!
     var decisionService: DefaultDecisionService!

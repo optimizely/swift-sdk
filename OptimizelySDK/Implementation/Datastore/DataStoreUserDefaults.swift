@@ -18,13 +18,13 @@ import Foundation
 
 /// Implementation of OPTDataStore using standard UserDefaults.
 /// This class should be used as a singleton.
-public class DataStoreUserDefaults : OPTDataStore {
+public class DataStoreUserDefaults: OPTDataStore {
     static let dispatchQueue = DispatchQueue(label: "OPTDataStoreQueueUserDefaults")
     
     public func getItem(forKey: String) -> Any? {
         
         return DataStoreUserDefaults.dispatchQueue.sync {
-            return UserDefaults.standard.object(forKey:forKey)
+            return UserDefaults.standard.object(forKey: forKey)
         }
     }
     
@@ -34,6 +34,5 @@ public class DataStoreUserDefaults : OPTDataStore {
             UserDefaults.standard.synchronize()
         }
     }
-    
     
 }

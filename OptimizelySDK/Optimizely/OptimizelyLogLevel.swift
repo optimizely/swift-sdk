@@ -16,7 +16,7 @@
 
 import Foundation
 
-@objc public enum OptimizelyLogLevel : Int {
+@objc public enum OptimizelyLogLevel: Int {
     
     /// If the filter level is set to OptimizelyLogLevelOff, all log messages will be suppressed.
     case off = 0

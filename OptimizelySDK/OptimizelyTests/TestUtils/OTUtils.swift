@@ -122,14 +122,14 @@ class OTUtils {
 
 }
 
-class FakeEventDispatcher : OPTEventDispatcher {
+class FakeEventDispatcher: OPTEventDispatcher {
     
-    public var events:[EventForDispatch] = [EventForDispatch]()
+    public var events: [EventForDispatch] = [EventForDispatch]()
     required init() {
         
     }
     
-    func dispatchEvent(event:EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+    func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         events.append(event)
         //completionHandler(event)
     }
@@ -139,4 +139,3 @@ class FakeEventDispatcher : OPTEventDispatcher {
         events.removeAll()
     }
 }
-

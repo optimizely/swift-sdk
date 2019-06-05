@@ -80,7 +80,7 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testSetForcedVariationKey() {
-        let _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+        _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
                                                 userId: kUserId,
                                                 variationKey: kVariationOtherKey)
         let variationKey: String? = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
@@ -133,7 +133,5 @@ class OptimizelyClientTests_Valid: XCTestCase {
             XCTAssert(false)
         }
     }
-
-
 
 }

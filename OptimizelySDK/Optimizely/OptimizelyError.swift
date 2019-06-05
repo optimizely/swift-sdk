@@ -145,4 +145,3 @@ extension OptimizelyError: LocalizedError {
         return self.reason
     }
 }
-

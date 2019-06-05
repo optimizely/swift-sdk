@@ -21,17 +21,17 @@ import XCTest
 class UserAttributeTests: XCTestCase {
     let modelType = UserAttribute.self
     
-    static var sampleData: [String: Any] = ["name":"geo",
-                                            "type":"custom_attribute",
-                                            "match":"exact",
-                                            "value":30]
+    static var sampleData: [String: Any] = ["name": "geo",
+                                            "type": "custom_attribute",
+                                            "match": "exact",
+                                            "value": 30]
 }
 
 // MARK: - Decode
 
 extension UserAttributeTests {
     func testDecodeSuccessWithJSONValid() {
-        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact", "value":30]
+        let json: [String: Any] = ["name": "geo", "type": "custom_attribute", "match": "exact", "value": 30]
         // JSONEncoder not happy with [String: Any]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
@@ -44,7 +44,7 @@ extension UserAttributeTests {
     }
     
     func testDecodeSuccessWithJSONValid2() {
-        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"gt", "value":30.5]
+        let json: [String: Any] = ["name": "geo", "type": "custom_attribute", "match": "gt", "value": 30.5]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
@@ -55,7 +55,7 @@ extension UserAttributeTests {
     }
 
     func testDecodeSuccessWithJSONValid3() {
-        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exists", "value":true]
+        let json: [String: Any] = ["name": "geo", "type": "custom_attribute", "match": "exists", "value": true]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
@@ -66,7 +66,7 @@ extension UserAttributeTests {
     }
 
     func testDecodeSuccessWithJSONValid4() {
-        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"substring", "value":"us"]
+        let json: [String: Any] = ["name": "geo", "type": "custom_attribute", "match": "substring", "value": "us"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
@@ -77,7 +77,7 @@ extension UserAttributeTests {
     }
     
     func testDecodeSuccessWithMissingMatch() {
-        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "value":"us"]
+        let json: [String: Any] = ["name": "geo", "type": "custom_attribute", "value": "us"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
@@ -87,7 +87,7 @@ extension UserAttributeTests {
     }
 
     func testDecodeSuccessWithMissingName() {
-        let json: [String: Any] = ["type":"custom_attribute", "match":"exact", "value":"us"]
+        let json: [String: Any] = ["type": "custom_attribute", "match": "exact", "value": "us"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
 
@@ -97,7 +97,7 @@ extension UserAttributeTests {
     }
 
     func testDecodeSuccessWithMissingType() {
-        let json: [String: Any] = ["name":"geo", "match":"exact", "value":"us"]
+        let json: [String: Any] = ["name": "geo", "match": "exact", "value": "us"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
 
@@ -107,7 +107,7 @@ extension UserAttributeTests {
     }
     
     func testDecodeSuccessWithMissingValue() {
-        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact"]
+        let json: [String: Any] = ["name": "geo", "type": "custom_attribute", "match": "exact"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
 
@@ -117,7 +117,7 @@ extension UserAttributeTests {
     }
     
     func testDecodeSuccessWithWrongValueType() {
-        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"exact", "value": ["a1", "a2"]]
+        let json: [String: Any] = ["name": "geo", "type": "custom_attribute", "match": "exact", "value": ["a1", "a2"]]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
 
@@ -130,7 +130,7 @@ extension UserAttributeTests {
     // MARK: - Forward Compatibility
     
     func testDecodeSuccessWithInvalidType() {
-        let json: [String: Any] = ["name":"geo", "type":"invalid", "match":"exact", "value": 10]
+        let json: [String: Any] = ["name": "geo", "type": "invalid", "match": "exact", "value": 10]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
@@ -140,7 +140,7 @@ extension UserAttributeTests {
     }
     
     func testDecodeSuccessWithInvalidMatch() {
-        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"invalid", "value": 10]
+        let json: [String: Any] = ["name": "geo", "type": "custom_attribute", "match": "invalid", "value": 10]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
         
@@ -202,3 +202,4 @@ extension UserAttributeTests {
     }
 
 }
+

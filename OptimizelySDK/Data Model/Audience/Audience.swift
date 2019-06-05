@@ -21,7 +21,7 @@ struct Audience: Codable, Equatable {
     var name: String
     var conditions: ConditionHolder
     
-    enum CodingKeys : String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case id
         case name
         case conditions

@@ -27,27 +27,26 @@ class ProjectConfig {
     
     var whitelistUsers = [String: [String: String]]()
     
-    lazy var experimentKeyMap:[String:Experiment] = {
-        var map = [String:Experiment]()
+    lazy var experimentKeyMap: [String: Experiment] = {
+        var map = [String: Experiment]()
         allExperiments.forEach({map[$0.key] = $0})
         return map
     }()
 
-    lazy var experimentIdMap:[String:Experiment] = {
-        var map = [String:Experiment]()
+    lazy var experimentIdMap: [String: Experiment] = {
+        var map = [String: Experiment]()
         allExperiments.forEach({map[$0.id] = $0})
         return map
     }()
 
-    lazy var experimentFeatureMap:[String:[String]] = {
-        var experimentFeatureMap = [String:[String]]()
+    lazy var experimentFeatureMap: [String: [String]] = {
+        var experimentFeatureMap = [String: [String]]()
         project.featureFlags.forEach({ (ff) in
             ff.experimentIds.forEach({
                 if var arr = experimentFeatureMap[$0] {
                     arr.append(ff.id)
                     experimentFeatureMap[$0] = arr
-                }
-                else {
+                } else {
                     experimentFeatureMap[$0] = [ff.id]
                 }
             })
@@ -55,31 +54,31 @@ class ProjectConfig {
         return experimentFeatureMap
     }()
     
-    lazy var eventKeyMap:[String:Event] =  {
-        var eventKeyMap = [String:Event]()
+    lazy var eventKeyMap: [String: Event] = {
+        var eventKeyMap = [String: Event]()
         project.events.forEach({eventKeyMap[$0.key] = $0 })
         return eventKeyMap
     }()
     
-    lazy var attributeKeyMap:[String:Attribute] = {
-        var map = [String:Attribute]()
+    lazy var attributeKeyMap: [String: Attribute] = {
+        var map = [String: Attribute]()
         project.attributes.forEach({map[$0.key] = $0 })
         return map
     }()
 
-    lazy var featureFlagKeyMap:[String:FeatureFlag] = {
-        var map = [String:FeatureFlag]()
+    lazy var featureFlagKeyMap: [String: FeatureFlag] = {
+        var map = [String: FeatureFlag]()
         project.featureFlags.forEach({map[$0.key] = $0 })
         return map
     }()
 
-    lazy var rolloutIdMap:[String:Rollout] = {
-        var map = [String:Rollout]()
+    lazy var rolloutIdMap: [String: Rollout] = {
+        var map = [String: Rollout]()
         project.rollouts.forEach({map[$0.id] = $0 })
         return map
     }()
 
-    lazy var allExperiments:[Experiment] = {
+    lazy var allExperiments: [Experiment] = {
         return project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
     }()
     
@@ -160,7 +159,7 @@ extension ProjectConfig {
      * Get a Group object for an Id.
      */
     func getGroup(id: String) -> Group? {
-        return project.groups.filter{ $0.id == id }.first
+        return project.groups.filter { $0.id == id }.first
     }
     
     /**
@@ -190,7 +189,6 @@ extension ProjectConfig {
     func getEventId(key: String) -> String? {
         return getEvent(key: key)?.id
     }
-    
     
     /**
      * Get an attribute for a given key.
@@ -229,7 +227,7 @@ extension ProjectConfig {
         }
         
         if let id = getWhitelistedVariationId(userId: userId, experimentId: experiment.id) {
-            if let variation = experiment.getVariation(id:id) {
+            if let variation = experiment.getVariation(id: id) {
                 logger.d(.userHasForcedVariation(userId, experiment.key, variation.key))
                 return variation
             }

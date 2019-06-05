@@ -56,7 +56,7 @@ class BucketTests_GroupToExp: XCTestCase {
             "trafficAllocation": [],
             "audienceIds": [],
             "variations": [],
-            "forcedVariations":[:]
+            "forcedVariations": [:]
         ]
     }
     
@@ -69,7 +69,7 @@ class BucketTests_GroupToExp: XCTestCase {
             "trafficAllocation": [],
             "audienceIds": [],
             "variations": [],
-            "forcedVariations":[:]
+            "forcedVariations": [:]
         ]
     }
     
@@ -82,7 +82,7 @@ class BucketTests_GroupToExp: XCTestCase {
             "trafficAllocation": [],
             "audienceIds": [],
             "variations": [],
-            "forcedVariations":[:]
+            "forcedVariations": [:]
         ]
     }
     
@@ -92,7 +92,7 @@ class BucketTests_GroupToExp: XCTestCase {
          "trafficAllocation": [
             ["entityId": kExperimentId1, "endOfRange": 3000],
             ["entityId": kExperimentId2, "endOfRange": 6000],
-            ["entityId": kExperimentId3, "endOfRange": 10000],
+            ["entityId": kExperimentId3, "endOfRange": 10000]
             ],
          "experiments": [sampleExperimentData1, sampleExperimentData2, sampleExperimentData3]
         ]
@@ -130,7 +130,7 @@ extension BucketTests_GroupToExp {
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"], experiment?.key, "test[\(idx)] failed")
             } else {
-                XCTAssertNil(experiment);
+                XCTAssertNil(experiment)
             }
         }
     }
@@ -147,7 +147,7 @@ extension BucketTests_GroupToExp {
         
         for test in tests {
             let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!)
-            XCTAssertNil(experiment);
+            XCTAssertNil(experiment)
         }
     }
     
@@ -164,7 +164,7 @@ extension BucketTests_GroupToExp {
         
         for test in tests {
             let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!)
-            XCTAssertNil(experiment);
+            XCTAssertNil(experiment)
         }
     }
     
@@ -182,7 +182,7 @@ extension BucketTests_GroupToExp {
         
         for test in tests {
             let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!)
-            XCTAssertNil(experiment);
+            XCTAssertNil(experiment)
         }
     }
 

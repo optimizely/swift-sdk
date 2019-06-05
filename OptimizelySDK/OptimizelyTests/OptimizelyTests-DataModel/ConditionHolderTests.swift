@@ -16,7 +16,6 @@
 
 import XCTest
 
-
 /* Test combinations
  
  // single UserAttribute
@@ -123,8 +122,8 @@ class ConditionHolderTests: XCTestCase {
     }
     
     func testEvaluateFail() {
-        let holder:ConditionHolder = ConditionHolder.array([ConditionHolder.logicalOp(.and)])
-        var data:Data?
+        let holder: ConditionHolder = ConditionHolder.array([ConditionHolder.logicalOp(.and)])
+        var data: Data?
     
         data = try? JSONEncoder().encode(holder)
 

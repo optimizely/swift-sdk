@@ -288,3 +288,17 @@ extension ConditionHolderTests {
     }
 }
 
+// MARK: - Others
+
+extension ConditionHolderTests {
+
+    func testDecode_Invalid() {
+        do {
+            let _: ConditionHolder = try OTUtils.model(from: [120])
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+
+}

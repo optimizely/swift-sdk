@@ -20,6 +20,21 @@ import XCTest
 
 class ProjectConfigTests: XCTestCase {
 
+    var datafile: Data!
+    var optimizely: OptimizelyClient!
+    var config: ProjectConfig!
+
+    override func setUp() {
+        super.setUp()
+        
+        self.datafile = OTUtils.loadJSONDatafile("api_datafile")
+        
+        self.optimizely = OptimizelyClient(sdkKey: "12345",
+                                           userProfileService: OTUtils.createClearUserProfileService())
+        try! self.optimizely.start(datafile: datafile)
+        
+        self.config = optimizely.config
+    }
 
     func testExperimentFeatureMapIsBuiltFromProject() {
 
@@ -66,4 +81,67 @@ class ProjectConfigTests: XCTestCase {
         XCTAssertEqual(featureMap["1003"], ["2002"])
         XCTAssertEqual(featureMap["1004"], ["2002"])
     }
+    
+}
+
+// MARK: - Others
+
+extension ProjectConfigTests {
+    
+    
+    func testGetForcedVariation_InvalidExperimentKey() {
+        let variationKey = config.getForcedVariation(experimentKey: "invalid_key", userId: "user")
+        XCTAssertNil(variationKey)
+    }
+    
+    func testGetForcedVariation_InvalidVariationKey() {
+        let experimentKey = "exp_with_audience"
+        let userId = "user"
+
+        // set forced variation for "variation a"
+        let status = config.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: "a")
+        XCTAssert(status)
+
+        // remove "variation a" from experiment
+        var experiment = config.getExperiment(key: experimentKey)!
+        experiment.variations = experiment.variations.filter{ $0.key == "b" }
+
+        config.experimentKeyMap[experimentKey] = experiment
+        
+        // forced variation finds variation which is not valid any more
+        let variationKey = config.getForcedVariation(experimentKey: experimentKey, userId: userId)
+        XCTAssertNil(variationKey)
+    }
+
+    func testSetForcedVariation_InvalidExperimentKey() {
+        let result = config.setForcedVariation(experimentKey: "invalid_key", userId: "user", variationKey: "a")
+        XCTAssertFalse(result)
+    }
+    
+    func testSetForcedVariation_EmptyVariationKey() {
+        let result = config.setForcedVariation(experimentKey: "exp_with_audience", userId: "user", variationKey: " ")
+        XCTAssertFalse(result)
+    }
+
+    func testSetForcedVariation_InvalidVariationKey() {
+        let result = config.setForcedVariation(experimentKey: "exp_with_audience", userId: "user", variationKey: "invalid_key")
+        XCTAssertFalse(result)
+    }
+    
+    func testSetForcedVariation_ExistingUser() {
+        let experimentKey = "exp_with_audience"
+        let userId = "user"
+
+        var result = config.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: "a")
+        XCTAssert(result)
+        var variation = config.getForcedVariation(experimentKey: experimentKey, userId: userId)!
+        XCTAssertEqual(variation.key, "a")
+
+        result = config.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: "b")
+        XCTAssert(result)
+        variation = config.getForcedVariation(experimentKey: experimentKey, userId: userId)!
+        XCTAssertEqual(variation.key, "b")
+    }
+
+
 }

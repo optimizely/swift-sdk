@@ -97,7 +97,7 @@ extension UserAttribute {
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            throw OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty")
+            throw OptimizelyError.userAttributeInvalidMatch(self.match!)
         }
         
         guard let nameFinal = name else {

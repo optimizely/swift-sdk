@@ -188,4 +188,17 @@ extension UserAttributeTests {
             XCTAssert(true)
         }
     }
+    
+    func testEvaluateWithInvalidMatch() {
+        let json: [String: Any] = ["name":"geo", "type":"custom_attribute", "match":"invalid", "value": 10]
+        let model: UserAttribute = try! OTUtils.model(from: json)
+
+        do {
+            _ = try model.evaluate(attributes: ["name": "geo"])
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+
 }

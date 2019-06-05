@@ -26,14 +26,9 @@ enum ConditionLeaf: Codable, Equatable {
         if let value = try? container.decode(String.self) {
             self = .audienceId(value)
             return
-        }
-        
-        do {
-            let value = try container.decode(UserAttribute.self)
+        } else if let value = try? container.decode(UserAttribute.self) {
             self = .attribute(value)
             return
-        } catch {
-                
         }
         
         throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Failed to decode ConditionLeaf"))

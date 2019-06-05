@@ -254,6 +254,7 @@ class AttributeValueTests: XCTestCase {
 // MARK: - Encode
 
 extension AttributeValueTests {
+    
     func testEncodeJSON() {
         let modelGiven = [AttributeValue.string("us")]
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
@@ -274,5 +275,108 @@ extension AttributeValueTests {
         let modelGiven = [AttributeValue.bool(true)]
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
+    
+    func testEncodeJSON5() {
+        let modelGiven = [AttributeValue.others]
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
+    }
+    
 }
 
+// MARK: - Others
+
+extension AttributeValueTests {
+    
+    func testDescription() {
+        let valueString = "string"
+        var model = try! OTUtils.getAttributeValueFromNative(valueString)
+        XCTAssert(model == AttributeValue.string(valueString))
+        XCTAssert(model.description == "string(\(valueString))")
+        
+        let valueDouble = 123.45
+        model = try! OTUtils.getAttributeValueFromNative(valueDouble)
+        XCTAssert(model == AttributeValue.double(valueDouble))
+        XCTAssert(model.description == "double(\(valueDouble))")
+
+        let valueBool = true
+        model = try! OTUtils.getAttributeValueFromNative(valueBool)
+        XCTAssert(model == AttributeValue.bool(valueBool))
+        XCTAssert(model.description == "bool(\(valueBool))")
+
+        let valueOther = [3]
+        model = try! OTUtils.getAttributeValueFromNative(valueOther)
+        XCTAssert(model == AttributeValue.others)
+        XCTAssert(model.description == "others")
+        
+        
+        let valueInteger = Int64(100)
+        model = AttributeValue(value: valueInteger)!
+        XCTAssert(model.description == "int(\(valueInteger))")
+        
+        let modelOptional = AttributeValue(value: valueOther)
+        XCTAssertNil(modelOptional)
+    }
+    
+    func testStringValue() {
+        let valueString = "string"
+        var model = AttributeValue.string(valueString)
+        XCTAssert(model.stringValue == valueString)
+        
+        let valueInt = Int64(100)
+        model = AttributeValue.int(valueInt)
+        XCTAssert(model.stringValue == "\(valueInt)")
+
+        let valueDouble = 123.45
+        model = AttributeValue.double(valueDouble)
+        XCTAssert(model.stringValue == "\(valueDouble)")
+
+        let valueBool = true
+        model = AttributeValue.bool(valueBool)
+        XCTAssert(model.stringValue == "\(valueBool)")
+
+        model = AttributeValue.others
+        XCTAssert(model.stringValue == "UNKNOWN")
+    }
+    
+    func testIsExactMatchWithInvalid() {
+        let attr = AttributeValue.string("string")
+        do {
+            _ = try attr.isExactMatch(with: ["invalidType"])
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+    
+    func testIsGreaterWithInvalid() {
+        let attr = AttributeValue.string("string")
+        do {
+            _ = try attr.isSubstring(of: ["invalidType"])
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+
+    func testIsLessWithInvalid() {
+        let attr = AttributeValue.double(100.23)
+        do {
+            _ = try attr.isGreater(than: ["invalidType"])
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+    
+    func testIsSubstringWithInvalid() {
+        let attr = AttributeValue.double(100.23)
+        do {
+            _ = try attr.isLess(than: ["invalidType"])
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+    
+
+}

@@ -19,8 +19,30 @@
 import XCTest
 
 class EventForDispatchTests: XCTestCase {
+    
+    func testEqualOperator() {
+        var urlStr = "https://optimizely.com"
+        var message = "One body"
+        let event1 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
+        var event2 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
+        XCTAssert(event1 == event2)
+        
+        message = "Other body"
+        event2 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
+        XCTAssert(event1 != event2)
 
-    func testDescription() {
+        urlStr = "Other url"
+        message = "One body"
+        event2 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
+        XCTAssert(event1 != event2)
+        
+        urlStr = "https://optimizely.com"
+        message = "One body"
+        event2 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
+        XCTAssert(event1 == event2)
+    }
+
+    func testDescriptionWithGoodString() {
         let urlStr = "https://optimizely.com"
         let message = "This is event body"
         let event = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
@@ -30,4 +52,18 @@ class EventForDispatchTests: XCTestCase {
         XCTAssert(desc.contains(message))
     }
     
+    func testDescriptionWithBadString() {
+        let urlStr = "https://optimizely.com"
+        let message = "This is event body"
+        
+        // use a wrong encoding (UTF16), which will cause invalid string
+        let event = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf16)!)
+        
+        let desc = event.description
+        XCTAssert(desc.contains(urlStr))
+        XCTAssert(desc.contains("UNKNOWN"))
+    }
+    
+    
+
 }

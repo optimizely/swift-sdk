@@ -13,11 +13,11 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
+    
 
-import Foundation
+import XCTest
 
-extension EventForDispatch {
-    public static func == (lhs: EventForDispatch, rhs: EventForDispatch) -> Bool {
-        return lhs.url == rhs.url && lhs.body == rhs.body
-    }
+class ConditionLeaf: XCTestCase {
+
+
 }

@@ -81,10 +81,13 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             return
         }
         
-        if let value = try? container.decode(Int64.self) {
+        // Int values are all filtered as Double, so this Int parsing is not needed here
+        /*
+         if let value = try? container.decode(Int64.self) {
             self = .int(value)
             return
-        }
+         }
+         */
         
         if let value = try? container.decode(Bool.self) {
             self = .bool(value)

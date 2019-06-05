@@ -79,7 +79,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         
         var request = URLRequest(url: url)
         
-        if let lastModified = dataStore.getLastModified(sdkKey: sdkKey) {
+        if let lastModified = dataStore.getLastModified(sdkKey: sdkKey), isDatafileSaved(sdkKey: sdkKey) {
             request.setLastModified(lastModified: lastModified)
         }
         
@@ -125,16 +125,8 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                         result = .success(data)
                     }
                     else if response.statusCode == 304 {
-                        // if for some reason we get a 304 but we can't find the cached
-                        // datafile, we go ahead and download again.
-                        if self.isDatafileSaved(sdkKey: sdkKey) {
-                            self.logger.d("The datafile was not modified and won't be downloaded again")
-                            result = .success(nil)
-                        }
-                        else {
-                            let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url)
-                            result = .success(data)
-                        }
+                        self.logger.d("The datafile was not modified and won't be downloaded again")
+                        result = .success(nil)
                     }
                 }
                 
@@ -355,8 +347,12 @@ extension URLRequest {
         if let lastModified = lastModified {
             addValue(lastModified, forHTTPHeaderField: "If-Modified-Since")
         }
-    
     }
+
+    func getLastModified() -> String? {
+        return value(forHTTPHeaderField: "If-Modified-Since")
+    }
+
 }
 
 extension HTTPURLResponse {

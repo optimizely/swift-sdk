@@ -110,7 +110,8 @@ class DatafileHandlerTests: XCTestCase {
                     var cdnUrl:URL?
                     override func downloadTask(with request: URLRequest, completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionDownloadTask {
                         
-                        let response = HTTPURLResponse(url: request.url!, statusCode: 304, httpVersion: nil, headerFields: nil)
+                        let statusCode = request.getLastModified() != nil ? 304 : 200
+                        let response = HTTPURLResponse(url: request.url!, statusCode: statusCode, httpVersion: nil, headerFields: nil)
                         
                         completionHandler(cdnUrl!, response, nil )
                         

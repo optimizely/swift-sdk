@@ -154,9 +154,38 @@ extension UserAttributeTests {
 // MARK: - Encode
 
 extension UserAttributeTests {
+    
     func testEncodeJSON() {
         let modelGiven = modelType.init(name: "geo", type: "custom_attribute", match: "exact", value: .string("us"))
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
+    
 }
 
+// MARK: - Others
+
+extension UserAttributeTests {
+    
+    func testDecodeFailureWithInvalidData() {
+        let jsonInvalid: [String: Any] = ["name": true, "type": 123]
+        let jsonDataInvalid = try! JSONSerialization.data(withJSONObject: jsonInvalid, options: [])
+        do {
+            _ = try JSONDecoder().decode(modelType, from: jsonDataInvalid)
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+    
+    func testEvaluateWithMissingName() {
+        let json: [String: Any] = ["type":"custom_attribute", "match":"exact", "value":"us"]
+        let model: UserAttribute = try! OTUtils.model(from: json)
+
+        do {
+            _ = try model.evaluate(attributes: ["country": "us"])
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+}

@@ -23,4 +23,3 @@ struct FeatureVariable: Codable, Equatable {
     // datafile schema rquires this, but test has "null" value case. keep optional for FSC
     var defaultValue: String?
 }
-

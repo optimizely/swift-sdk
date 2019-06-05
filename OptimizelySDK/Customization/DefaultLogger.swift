@@ -16,14 +16,14 @@
 
 import Foundation
 
-open class DefaultLogger : OPTLogger {
+open class DefaultLogger: OPTLogger {
     private static var _logLevel: OptimizelyLogLevel?
     public static var logLevel: OptimizelyLogLevel {
         get {
             return _logLevel ?? .info
         }
-        set (newLevel){
-            guard let _ = _logLevel else {
+        set (newLevel) {
+            if _logLevel == nil {
                 _logLevel = newLevel
                 return
             }

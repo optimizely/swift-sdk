@@ -275,4 +275,3 @@ extension AttributeValueTests {
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
 }
-

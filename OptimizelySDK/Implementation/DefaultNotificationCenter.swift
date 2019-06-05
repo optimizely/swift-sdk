@@ -16,10 +16,9 @@
 
 import Foundation
 
-
-public class DefaultNotificationCenter : OPTNotificationCenter {
+public class DefaultNotificationCenter: OPTNotificationCenter {
     public var notificationId: Int = 1
-    var notificationListeners = [Int:(Int,GenericListener)]()
+    var notificationListeners = [Int: (Int, GenericListener)]()
     
     required public init() {
         
@@ -38,7 +37,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
     }
     
     public func addActivateNotificationListener(activateListener: @escaping (OptimizelyExperimentData, String, OptimizelyAttributes?, OptimizelyVariationData, [String: Any]) -> Void) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.Activate.rawValue,  { (args:Any...) in
+        notificationListeners[notificationId] = (NotificationType.activate.rawValue, { (args: Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
             }
@@ -47,10 +46,9 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             }
             if let experiement = myArgs[0] as? Experiment,
                 let userId = myArgs[1] as? String,
-                let variation = myArgs[3] as? Variation
-            {
+                let variation = myArgs[3] as? Variation {
                 let attributes = myArgs[2] as? OptimizelyAttributes
-                let event = myArgs[4] as! Dictionary<String,Any>
+                let event = myArgs[4] as! [String: Any]
                 
                 let experimentData = ["key": experiement.key, "id": experiement.id]
                 
@@ -64,7 +62,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
     }
     
     public func addTrackNotificationListener(trackListener: @escaping (String, String, OptimizelyAttributes?, [String: Any]?, [String: Any]) -> Void) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.Track.rawValue,  { (args:Any...) in
+        notificationListeners[notificationId] = (NotificationType.track.rawValue, { (args: Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
             }
@@ -74,9 +72,8 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             if let eventKey = myArgs[0] as? String,
                 let userId = myArgs[1] as? String,
                 let attributes = myArgs[2] as? OptimizelyAttributes?,
-                let eventTags = myArgs[3] as? Dictionary<String,Any>?,
-                let event = myArgs[4] as? Dictionary<String,Any>
-                {
+                let eventTags = myArgs[3] as? [String: Any]?,
+                let event = myArgs[4] as? [String: Any] {
                 trackListener(eventKey, userId, attributes, eventTags, event)
             }
         })
@@ -85,7 +82,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
     }
     
     public func addDecisionNotificationListener(decisionListener: @escaping (String, String, OptimizelyAttributes?, [String: Any]) -> Void) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.Decision.rawValue,  { (args:Any...) in
+        notificationListeners[notificationId] = (NotificationType.decision.rawValue, { (args: Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
             }
@@ -95,8 +92,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
             if let type = myArgs[0] as? String,
                 let userId = myArgs[1] as? String,
                 let attributes = myArgs[2] as? OptimizelyAttributes?,
-                let decisionInfo = myArgs[3] as? Dictionary<String,Any>
-            {
+                let decisionInfo = myArgs[3] as? [String: Any] {
                 decisionListener(type, userId, attributes, decisionInfo)
             }
         })
@@ -105,7 +101,7 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
     }
 
     public func addDatafileChangeNotificationListener(datafileListener: @escaping DatafileChangeListener) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.DatafileChange.rawValue,  { (args:Any...) in
+        notificationListeners[notificationId] = (NotificationType.datafileChange.rawValue, { (args: Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
             }
@@ -132,16 +128,14 @@ public class DefaultNotificationCenter : OPTNotificationCenter {
         self.notificationListeners.removeAll()
     }
     
-    public func sendNotifications(type: Int, args: Array<Any?>) {
-        for values in notificationListeners.values {
-            if values.0 == type {
-                values.1(args)
-            }
+    public func sendNotifications(type: Int, args: [Any?]) {
+        for values in notificationListeners.values where values.0 == type {
+            values.1(args)
         }
     }
     
-    public func getArgumentsForDecisionListener(notificationType: String, userId: String, attributes: OptimizelyAttributes?) -> Array<Any?> {
-        var args = Array<Any?>()
+    public func getArgumentsForDecisionListener(notificationType: String, userId: String, attributes: OptimizelyAttributes?) -> [Any?] {
+        var args = [Any?]()
         args.append(notificationType)
         args.append(userId)
         args.append(attributes ?? OptimizelyAttributes())

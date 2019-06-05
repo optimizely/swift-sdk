@@ -17,10 +17,10 @@
 import Foundation
 
 class AtomicProperty<T> {
-    private var _property:T?
-    var property:T? {
+    private var _property: T?
+    var property: T? {
         get {
-            var retVal:T? = nil
+            var retVal: T?
             lock.sync {
                 retVal = _property
             }
@@ -32,14 +32,14 @@ class AtomicProperty<T> {
             }
         }
     }
-    private let lock:DispatchQueue =  {
+    private let lock: DispatchQueue = {
         var name = "AtomicProperty" + String(Int.random(in: 0...100000))
         let clzzName = String(describing: T.self)
         name += clzzName
         return DispatchQueue(label: name)
     }()
 
-    init(property:T) {
+    init(property: T) {
         self.property = property
     }
 
@@ -49,7 +49,7 @@ class AtomicProperty<T> {
     
     // perform an atomic operation on the atomic property
     // the operation will not run if the property is nil.
-    public func performAtomic(atomicOperation:((_ prop:inout T)->Void)) {
+    public func performAtomic(atomicOperation:((_ prop:inout T) -> Void)) {
         lock.sync {
             if var prop = _property {
                 atomicOperation(&prop)

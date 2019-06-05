@@ -26,37 +26,35 @@ extension Array where Element == EventForDispatch {
             return first
         }
         
-        var visitors:[Visitor] = [Visitor]()
-        var url:URL?
-        var projectId:String?
+        var visitors: [Visitor] = [Visitor]()
+        var url: URL?
+        var projectId: String?
         
-        let checkUrl = { (event:EventForDispatch) -> Bool in
+        let checkUrl = { (event: EventForDispatch) -> Bool in
             if let url = url {
                 if url != event.url {
                     return false
                 }
-            }
-            else {
+            } else {
                 url = event.url
             }
             
             return true
         }
         
-        let checkProjectId = { (batchEvent:BatchEvent) -> Bool in
+        let checkProjectId = { (batchEvent: BatchEvent) -> Bool in
             if let projectId = projectId {
                 if projectId != batchEvent.projectID {
                     return false
                 }
-            }
-            else {
+            } else {
                 projectId = batchEvent.projectID
             }
             
             return true
         }
 
-        var firstBatchEvent:BatchEvent?
+        var firstBatchEvent: BatchEvent?
         
         for event in self {
             if let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: event.body) {
@@ -64,9 +62,8 @@ extension Array where Element == EventForDispatch {
                     return nil
                 }
                 visitors.append(contentsOf: batchEvent.visitors)
-                if let _ = firstBatchEvent {
-                }
-                else {
+                if firstBatchEvent != nil {
+                } else {
                     firstBatchEvent = batchEvent
                 }
             }

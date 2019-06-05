@@ -84,5 +84,6 @@ For the SDK:
 MurmurHash3:https://github.com/jpedrosa/sua/blob/master/Sources/murmurhash3.swift License (Apache 2.0):https://github.com/jpedrosa/sua/blob/master/LICENSE.txt
 Ported to Swift4.
 
-
+SwiftLint:https://github.com/realm/SwiftLint License (MIT):https://github.com/realm/SwiftLint/blob/master/LICENSE
+Used to enforce Swift style and conventions.
 

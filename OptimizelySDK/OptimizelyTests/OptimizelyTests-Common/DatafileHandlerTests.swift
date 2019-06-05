@@ -79,7 +79,7 @@ class DatafileHandlerTests: XCTestCase {
     
     func testDatafileDownload304NoCache() {
         
-        var cdnUrl:URL?
+        var localUrl:URL?
         
         // create a dummy file at a url to use as or datafile cdn location
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -88,39 +88,17 @@ class DatafileHandlerTests: XCTestCase {
             
             let data = Data()
             try? data.write(to: fileURL, options: .atomic)
-            cdnUrl = fileURL
+            localUrl = fileURL
         }
 
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {
-            var cdnUrl:URL?
+            var localFileUrl:URL?
             // override getSession to return our own session.
             override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
-                class InnerDownloadTask : URLSessionDownloadTask {
-                    override func resume() {
-                    
-                    }
-                }
-                // session returns a download task that noop for resume.
-                // crafts a httpurlresponse with 304
-                // and returns that.
-                // the response also includes the url for the data download.
-                // the cdn url is used to get the datafile if the datafile is not in cache
-                class InnerSession : URLSession {
-                    var cdnUrl:URL?
-                    override func downloadTask(with request: URLRequest, completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionDownloadTask {
-                        
-                        let statusCode = request.getLastModified() != nil ? 304 : 200
-                        let response = HTTPURLResponse(url: request.url!, statusCode: statusCode, httpVersion: nil, headerFields: nil)
-                        
-                        completionHandler(cdnUrl!, response, nil )
-                        
-                        return InnerDownloadTask()
-                    }
-                }
-                
-                let session = InnerSession()
-                session.cdnUrl = cdnUrl
+            
+                let session = MockUrlSession()
+                session.downloadCacheUrl = localFileUrl
                 
                 return session
             }
@@ -131,7 +109,7 @@ class DatafileHandlerTests: XCTestCase {
         //remove any cached datafile..
         handler.removeSavedDatafile(sdkKey: "localcdnTestSDKKey")
         // set the url to use as our datafile download url
-        handler.cdnUrl = cdnUrl
+        handler.localFileUrl = localUrl
         
         let expectation = XCTestExpectation(description: "wait to get no-nil data")
         
@@ -149,12 +127,12 @@ class DatafileHandlerTests: XCTestCase {
         
         wait(for: [expectation], timeout: 3)
         // finally remove the datafile when complete.
-        try? FileManager.default.removeItem(at: cdnUrl!)
+        try? FileManager.default.removeItem(at: localUrl!)
     }
 
     func testDatafileDownload304WithCache() {
         
-        var cdnUrl:URL?
+        var fileUrl:URL?
         
         // create a dummy file at a url to use as or datafile cdn location
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -163,38 +141,17 @@ class DatafileHandlerTests: XCTestCase {
             
             let data = Data()
             try? data.write(to: fileURL, options: .atomic)
-            cdnUrl = fileURL
+            fileUrl = fileURL
         }
         
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {
-            var cdnUrl:URL?
+            var localFileUrl:URL?
             // override getSession to return our own session.
             override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
-                class InnerDownloadTask : URLSessionDownloadTask {
-                    override func resume() {
-                        
-                    }
-                }
-                // session returns a download task that noop for resume.
-                // crafts a httpurlresponse with 304
-                // and returns that.
-                // the response also includes the url for the data download.
-                // the cdn url is used to get the datafile if the datafile is not in cache
-                class InnerSession : URLSession {
-                    var cdnUrl:URL?
-                    override func downloadTask(with request: URLRequest, completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionDownloadTask {
-                        
-                        let response = HTTPURLResponse(url: request.url!, statusCode: 304, httpVersion: nil, headerFields: nil)
-                        
-                        completionHandler(cdnUrl!, response, nil )
-                        
-                        return InnerDownloadTask()
-                    }
-                }
-                
-                let session = InnerSession()
-                session.cdnUrl = cdnUrl
+
+                let session = MockUrlSession()
+                session.downloadCacheUrl = localFileUrl
                 
                 return session
             }
@@ -204,8 +161,9 @@ class DatafileHandlerTests: XCTestCase {
         let handler = InnerDatafileHandler()
         //save the cached datafile..
         handler.saveDatafile(sdkKey: "localcdnTestSDKKey", dataFile: "{}".data(using: .utf8)!)
+        handler.dataStore.setLastModified(sdkKey: "localcdnTestSDKKey", lastModified: "1234")
         // set the url to use as our datafile download url
-        handler.cdnUrl = cdnUrl
+        handler.localFileUrl = fileUrl
         
         let expectation = XCTestExpectation(description: "wait to get no-nil data")
         
@@ -224,7 +182,7 @@ class DatafileHandlerTests: XCTestCase {
         
         wait(for: [expectation], timeout: 3)
         // finally remove the datafile when complete.
-        try? FileManager.default.removeItem(at: cdnUrl!)
+        try? FileManager.default.removeItem(at: fileUrl!)
     }
 
     func testPeriodicDownload() {

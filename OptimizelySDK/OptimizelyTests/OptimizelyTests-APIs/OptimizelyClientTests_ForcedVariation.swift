@@ -45,7 +45,7 @@ class OptimizelyClientTests_ForcedVariation: XCTestCase {
         
         // set local forced variation
         
-        let _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+        _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
                                                 userId: kUserId,
                                                 variationKey: kVariationOtherKey)
 
@@ -68,7 +68,7 @@ class OptimizelyClientTests_ForcedVariation: XCTestCase {
 
         // set local forced variation
         
-        let _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+        _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
                                                 userId: kUserId,
                                                 variationKey: kVariationOtherKey)
         
@@ -83,6 +83,5 @@ class OptimizelyClientTests_ForcedVariation: XCTestCase {
         variationKey = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)
         XCTAssertNil(variationKey)
     }
-    
     
 }

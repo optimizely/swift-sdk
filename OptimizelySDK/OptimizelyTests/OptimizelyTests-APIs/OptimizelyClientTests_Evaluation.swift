@@ -22,7 +22,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     var datafile: Data?
     var optimizely: OptimizelyClient?
-    var eventDispatcher:FakeEventDispatcher?
+    var eventDispatcher: FakeEventDispatcher?
     
     // MARK: - Attribute Value Range
     
@@ -33,7 +33,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let experimentKey = "ab_running_exp_typed_audiences_lt_43_match"
         let userId = "test_user_1"
         
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "i_42": -9007199254740994
        ]
         
@@ -48,7 +48,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let experimentKey = "ab_running_exp_typed_audiences_gt_41_match"
         let userId = "test_user_1"
         
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "i_42": 9007199254740994
         ]
         
@@ -63,7 +63,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let experimentKey = "ab_running_exp_typed_audiences_lt_4_3_match"
         let userId = "test_user_1"
         
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "d_4_2": -9007199254740994
         ]
         
@@ -78,7 +78,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let experimentKey = "ab_running_exp_typed_audiences_gt_4_1_match"
         let userId = "test_user_1"
         
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "d_4_2": 9007199254740994
         ]
         
@@ -96,7 +96,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let userId = "test_user_1"
         let expectedVariationKey = "all_traffic_variation"
 
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "s_foo": "not_foo",
             "b_true": "N/A",
             "i_42": 42,
@@ -115,7 +115,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let userId = "test_user_1"
         let expectedVariationKey = "all_traffic_variation"
         
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "string_attribute": "no_match"
         ]
         
@@ -133,7 +133,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let userId = "test_user_1"
         let expectedVariationKey = "all_traffic_variation"
         
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "s_foo": nil
         ]
         
@@ -149,7 +149,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let userId = "test_user_1"
         let expectedVariationKey = "all_traffic_variation"
         
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "b_true": nil
         ]
         
@@ -165,7 +165,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let userId = "test_user_1"
         let expectedVariationKey = "all_traffic_variation"
         
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "i_42": nil
         ]
         
@@ -181,7 +181,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let userId = "test_user_1"
         let expectedVariationKey = "all_traffic_variation"
         
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "d_4_2": nil
         ]
         
@@ -198,7 +198,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_42"
         let userId = "test_user_1"
 
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "s_foo": "foo",
             "b_true": nil,
             "i_42": 44,
@@ -218,7 +218,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_42"
         let userId = "test_user_1"
 
-        let attributes: [String : Any?] = [
+        let attributes: [String: Any?] = [
             "s_foo": "foo",
             "b_true": nil,
             "i_42": 44,
@@ -324,4 +324,3 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     }
 
 }
-

@@ -29,7 +29,7 @@ class DecisionServiceTests_Others: XCTestCase {
         let optimizely = OTUtils.createOptimizely(datafileName: ktypeAudienceDatafileName, clearUserProfileService: true)!
         let config = optimizely.config!
         
-        let attributes = [kAttributeKey : kAttributeValue]
+        let attributes = [kAttributeKey: kAttributeValue]
 
         var experiment = optimizely.config!.getExperiment(key: kExperimentWithTypedAudienceKey)!
         experiment.audienceConditions = ConditionHolder.array([])
@@ -41,6 +41,5 @@ class DecisionServiceTests_Others: XCTestCase {
     }
     
     // TODO: transfer valid ObjC SDK tests
-    
 
 }

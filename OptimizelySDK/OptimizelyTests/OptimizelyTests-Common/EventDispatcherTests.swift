@@ -18,7 +18,7 @@ import XCTest
 
 class EventDispatcherTests: XCTestCase {
     
-    var eventDispatcher:DefaultEventDispatcher?
+    var eventDispatcher: DefaultEventDispatcher?
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -26,8 +26,7 @@ class EventDispatcherTests: XCTestCase {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-                }
-                catch {
+                } catch {
                     print(error)
                 }
                 
@@ -48,15 +47,15 @@ class EventDispatcherTests: XCTestCase {
     }
 
     func testDefaultDispatcher() {
-        eventDispatcher = DefaultEventDispatcher(timerInterval:1)
-        let pEventD:OPTEventDispatcher = eventDispatcher!
+        eventDispatcher = DefaultEventDispatcher(timerInterval: 1)
+        let pEventD: OPTEventDispatcher = eventDispatcher!
 
         pEventD.flushEvents()
         
         eventDispatcher?.dispatcher.sync {
         }
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
             
         }
         
@@ -65,8 +64,7 @@ class EventDispatcherTests: XCTestCase {
  
         if #available(iOS 10.0, tvOS 10.0, *) {
             XCTAssert(eventDispatcher?.dataStore.count == 1)
-        }
-        else {
+        } else {
             XCTAssert(eventDispatcher?.dataStore.count == 0)
         }
         eventDispatcher?.flushEvents()
@@ -81,9 +79,9 @@ class EventDispatcherTests: XCTestCase {
     }
     
     func testDispatcherZeroTimeInterval() {
-        class InnerEventDispatcher : DefaultEventDispatcher {
+        class InnerEventDispatcher: DefaultEventDispatcher {
             var once = false
-            var events:[EventForDispatch] = [EventForDispatch]()
+            var events: [EventForDispatch] = [EventForDispatch]()
             override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
                 events.append(event)
                 if !once {
@@ -94,7 +92,7 @@ class EventDispatcherTests: XCTestCase {
             }
         }
         
-        let dispatcher = InnerEventDispatcher(timerInterval:0)
+        let dispatcher = InnerEventDispatcher(timerInterval: 0)
 
         // add two items.... call flush
         dispatcher.dataStore.save(item: EventForDispatch(body: Data()))
@@ -108,7 +106,7 @@ class EventDispatcherTests: XCTestCase {
 
     func testEventDispatcherFile() {
         eventDispatcher = DefaultEventDispatcher( backingStore: .file)
-        let pEventD:OPTEventDispatcher = eventDispatcher!
+        let pEventD: OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
         let wait = {() in
             self.eventDispatcher?.dispatcher.sync {
@@ -118,15 +116,14 @@ class EventDispatcherTests: XCTestCase {
         pEventD.flushEvents()
         wait()
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
             
         }
         wait()
         
         if #available(iOS 10.0, tvOS 10.0, *) {
             XCTAssert(eventDispatcher?.dataStore.count == 1)
-        }
-        else {
+        } else {
             XCTAssert(eventDispatcher?.dataStore.count == 0)
         }
 
@@ -141,7 +138,7 @@ class EventDispatcherTests: XCTestCase {
 
     func testEventDispatcherUserDefaults() {
         eventDispatcher = DefaultEventDispatcher( backingStore: .userDefaults)
-        let pEventD:OPTEventDispatcher = eventDispatcher!
+        let pEventD: OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
         let wait = {() in
             self.eventDispatcher?.dispatcher.sync {
@@ -151,15 +148,14 @@ class EventDispatcherTests: XCTestCase {
         pEventD.flushEvents()
         wait()
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
             
         }
         wait()
         
         if #available(iOS 10.0, tvOS 10.0, *) {
             XCTAssert(eventDispatcher?.dataStore.count == 1)
-        }
-        else {
+        } else {
             XCTAssert(eventDispatcher?.dataStore.count == 0)
         }
 
@@ -174,7 +170,7 @@ class EventDispatcherTests: XCTestCase {
 
     func testEventDispatcherMemory() {
         eventDispatcher = DefaultEventDispatcher( backingStore: .memory)
-        let pEventD:OPTEventDispatcher = eventDispatcher!
+        let pEventD: OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
         let wait = {() in
             self.eventDispatcher?.dispatcher.sync {
@@ -184,14 +180,13 @@ class EventDispatcherTests: XCTestCase {
         pEventD.flushEvents()
         wait()
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
         }
         wait()
         
         if #available(iOS 10.0, tvOS 10.0, *) {
             XCTAssert(eventDispatcher?.dataStore.count == 1)
-        }
-        else {
+        } else {
             XCTAssert(eventDispatcher?.dataStore.count == 0)
         }
 
@@ -207,7 +202,7 @@ class EventDispatcherTests: XCTestCase {
     func testDispatcherCustom() {
         let dispatcher = FakeEventDispatcher()
         
-        dispatcher.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
+        dispatcher.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
             
         }
         
@@ -225,7 +220,7 @@ class EventDispatcherTests: XCTestCase {
         eventDispatcher?.dispatcher.sync {
         }
         
-        eventDispatcher?.dispatchEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
+        eventDispatcher?.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
         }
         
         eventDispatcher?.dispatcher.sync {
@@ -241,7 +236,7 @@ class EventDispatcherTests: XCTestCase {
         
         group.enter()
         
-        eventDispatcher?.sendEvent(event: EventForDispatch(body: Data())) { (result) -> (Void) in
+        eventDispatcher?.sendEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
             sent = true
             group.leave()
         }
@@ -289,11 +284,11 @@ class EventDispatcherTests: XCTestCase {
         
         XCTAssert(queue.count == 1)
         
-        let _ = queue.removeFirstItem()
+        _ = queue.removeFirstItem()
         
         XCTAssert(queue.count == 0)
         
-        let _ = queue.removeLastItem()
+        _ = queue.removeLastItem()
         
         XCTAssert(queue.count == 0)
     }    

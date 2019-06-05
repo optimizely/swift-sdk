@@ -38,9 +38,8 @@ class OptimizelySDKTests: XCTestCase {
     func testProjectConfigInvalidDatafile() {
         var gotError = false
         do {
-            let _ = try ProjectConfig(datafile: "{revision:1}")
-        }
-        catch {
+            _ = try ProjectConfig(datafile: "{revision:1}")
+        } catch {
             gotError = true
         }
         XCTAssertTrue(gotError)
@@ -64,16 +63,15 @@ class OptimizelySDKTests: XCTestCase {
         }
 
         for audience in config.project.typedAudiences! {
-            var attr = ["integerKey":1, "doubleKey": 99.0, "booleanKey": true, "nationality":"English"] as [String : Any]
+            var attr = ["integerKey": 1, "doubleKey": 99.0, "booleanKey": true, "nationality": "English"] as [String: Any]
             // all user attributes equate to true at this point.  so, all conditions should pass.
             if audience.name == "INT" {
                 attr["integerKey"] = 2
             }
-            if ["Gryffindors","Slytherins"].contains(where: { $0 == audience.name }) {
+            if ["Gryffindors", "Slytherins"].contains(where: { $0 == audience.name }) {
                 if "Gryffindors" == audience.name {
                     attr["house"] = "Gryffindor"
-                }
-                else {
+                } else {
                     attr["house"] = "Slytherin"
                 }
             }

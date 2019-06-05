@@ -17,8 +17,8 @@
 import Foundation
 
 struct Variation: Codable, Equatable {
-    var id:String
-    var key:String
+    var id: String
+    var key: String
     var featureEnabled: Bool?
     var variables: [Variable]?
 }

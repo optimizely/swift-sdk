@@ -89,11 +89,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
     
     open func getResponseData(sdkKey: String, response: HTTPURLResponse, url: URL?) -> Data? {
         if let url = url, let data = try? Data(contentsOf: url) {
-            if type(of:self.logger).logLevel == .debug {
-                if let str = String(data: data, encoding: .utf8) {
-                    self.logger.d(str)
-                }
-            }
+            self.logger.d { String(data: data, encoding: .utf8) ?? "" }
             self.saveDatafile(sdkKey: sdkKey, dataFile: data)
             if let lastModified = response.getLastModified() {
                 self.dataStore.setLastModified(sdkKey: sdkKey, lastModified: lastModified)            }
@@ -325,17 +321,17 @@ class DefaultDatafileHandler: OPTDatafileHandler {
 }
 
 extension DataStoreUserDefaults {
-    func getLastModified(sdkKey:String) -> String? {
+    func getLastModified(sdkKey: String) -> String? {
         return getItem(forKey: "OPTLastModified-" + sdkKey) as? String
     }
     
-    func setLastModified(sdkKey:String, lastModified:String) {
+    func setLastModified(sdkKey: String, lastModified: String) {
         saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
     }
 }
 
 extension URLRequest {
-    mutating func setLastModified(lastModified:String?) {
+    mutating func setLastModified(lastModified: String?) {
         if let lastModified = lastModified {
             addValue(lastModified, forHTTPHeaderField: "If-Modified-Since")
         }

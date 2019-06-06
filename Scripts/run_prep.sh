@@ -49,10 +49,12 @@ function do_stuff {
   myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
   for i in "${myscripts[@]}"; do
     echo -n "${i} "
+    echo "===== ${i} =====" >> $BUILD_OUTPUT
     Scripts/${i} >> $BUILD_OUTPUT 2>&1
     echo
   done
 
+  aws s3 cp $BUILD_OUTPUT "s3://$AWS_BUCKET/$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER/"
   dump_output
   kill $! && trap " " EXIT
 }

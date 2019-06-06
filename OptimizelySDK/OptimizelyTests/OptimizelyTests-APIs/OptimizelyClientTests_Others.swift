@@ -19,45 +19,175 @@ import XCTest
 
 class OptimizelyClientTests_Others: XCTestCase {
     
+    let kExperimentKey = "exp_with_audience"
+    let kInvalidExperimentKey = "invalid_key"
+    let kVariationKey = "a"
     
-    func testFetchedDatafileInvalid() {
-        
-    }
+    let kFeatureKey = "feature_1"
+    let kInvalidFeatureKey = "invalid_key"
+
+    let kVariableKeyString = "s_foo"
+    let kInvalidVariableKeyString = "invalid_key"
+
+    let kUserId = "user"
     
-    func testActivate_InvalidExperimentKey() {
+    var optimizely: OptimizelyClient!
+    let eventDispatcher = FakeEventDispatcher()
+
+    override func setUp() {
+        super.setUp()
         
+        self.optimizely = OTUtils.createOptimizely(datafileName: "api_datafile",
+                                                   clearUserProfileService: true,
+                                                   eventDispatcher: eventDispatcher)!
     }
 
-    func testVariation_InvalidExperimentKey() {
+    func testActivate_InvalidExperimentKey() {
+        var variationKey = try? optimizely.activate(experimentKey: kExperimentKey, userId: kUserId)
+        XCTAssertNotNil(variationKey)
+
+        variationKey = try? optimizely.activate(experimentKey: kInvalidExperimentKey, userId: kUserId)
+        XCTAssertNil(variationKey)
+    }
+
+    func testGetVariation_InvalidExperimentKey() {
+        var variation = try? optimizely.getVariation(experimentKey: kExperimentKey, userId: kUserId)
+        XCTAssertNotNil(variation)
         
+        variation = try? optimizely.getVariation(experimentKey: kInvalidExperimentKey, userId: kUserId)
+        XCTAssertNil(variation)
     }
 
     func testIsFeatureEnabled_InvalidFeatureKey() {
+        var result = optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        XCTAssert(result)
         
+        result = optimizely.isFeatureEnabled(featureKey: kInvalidFeatureKey, userId: kUserId)
+        XCTAssertFalse(result)
     }
     
     func testGetFeatureVariableString_InvalidFeatureKey() {
+        var value = try? optimizely.getFeatureVariableString(featureKey: kFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
+        XCTAssertNotNil(value)
         
+        value = try? optimizely.getFeatureVariableString(featureKey: kInvalidFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
+        XCTAssertNil(value)
     }
 
     func testGetFeatureVariableString_InvalidVariableKey() {
+        var value = try? optimizely.getFeatureVariableString(featureKey: kFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
+        XCTAssertNotNil(value)
         
-    }
-
-    
-    func testGetFeatureVariableString_DecisionFailed() {
-        
+        value = try? optimizely.getFeatureVariableString(featureKey: kFeatureKey, variableKey: kInvalidVariableKeyString, userId: kUserId)
+        XCTAssertNil(value)
     }
     
     func testGetFeatureVariable_WrongType() {
+        // read integer for string-type variable
+        let value = try? optimizely.getFeatureVariableInteger(featureKey: kFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
+        XCTAssertNil(value)
+    }
+    
+    func testGetFeatureVariable_NotSupportedType() {
+        let value: [String: Int]? = try? optimizely.getFeatureVariable(featureKey: kFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
+        XCTAssertNil(value)
+    }
+
+    func testGetFeatureVariableString_DecisionFailed() {
+        var optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
+                                                  clearUserProfileService: true)!
         
+        let featureKey = "feature_running_exp_enabled_targeted_with_variable_overrides"
+        let attributeKey = "string_attribute"
+        let attributeValue = "exact_match"
+        
+        let variableKey = "s_foo"
+        let variableValue = "foo bar"
+        let variableDefaultValue = "foo"
+        
+        let userId = "user"
+        let attributes: [String: Any] = [attributeKey: attributeValue]
+        let attributesNotMatch: [String: Any] = [attributeKey: "wrong_value"]
+
+        var value = try? optimizely.getFeatureVariableString(featureKey: featureKey,
+                                                        variableKey: variableKey,
+                                                        userId: userId,
+                                                        attributes: attributes)
+        XCTAssert(value == variableValue)
+
+        // reset user-profile-service to test variation-not-found case (default variable value)
+        
+        optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
+                                                  clearUserProfileService: true)!
+
+        value = try? optimizely.getFeatureVariableString(featureKey: featureKey,
+                                                             variableKey: variableKey,
+                                                             userId: userId,
+                                                             attributes: attributesNotMatch)
+        XCTAssert(value == variableDefaultValue)
     }
     
     func testSendImpressionEvent_FailToCreateEvent() {
+        let experiment = optimizely.config!.getExperiment(key: kExperimentKey)!
+        let variation = experiment.getVariation(key: kVariationKey)!
+        let attributes = ["x": 1]
         
+        optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId, attributes: attributes)
+        XCTAssert(eventDispatcher.events.count == 0)
     }
     
     func testSendConversionEvent_FailToCreateEvent() {
+        let kEventKey = "event1"
+        let kInvalidEventKey = "invalid_key"
+        let kUserId = "user"
         
+        optimizely.sendConversionEvent(eventKey: kEventKey, userId: kUserId)
+        XCTAssert(eventDispatcher.events.count == 1)
+
+        optimizely.sendConversionEvent(eventKey: kInvalidEventKey, userId: kUserId)
+        XCTAssert(eventDispatcher.events.count == 1, "event should not be sent for invalid event key")
+        
+        optimizely.sendConversionEvent(eventKey: kEventKey, userId: kUserId)
+        XCTAssert(eventDispatcher.events.count == 2)
     }
+    
+    func testFetchedDatafileInvalid() {
+        
+        class FakeDatafileHandler: DefaultDatafileHandler {
+            override func downloadDatafile(sdkKey: String,
+                                           resourceTimeoutInterval: Double? = nil,
+                                           completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                let invalidDatafile = OTUtils.loadJSONDatafile("unsupported_datafile")!
+                completionHandler(.success(invalidDatafile))
+            }
+        }
+        
+        let handler = FakeDatafileHandler()
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
+            .sdkKey(key: "notrealkey123")
+            .using(instance: handler)
+            .to(factory: FakeDatafileHandler.init)
+            .reInitializeStrategy(strategy: .reUse)
+            .singetlon())
+        
+        let optimizely = OptimizelyClient(sdkKey: "notrealkey123")
+        
+        let exp = expectation(description: "a")
+        
+        optimizely.start { result in
+            switch result {
+            case .success:
+                XCTAssert(false)
+            case .failure(OptimizelyError.dataFileVersionInvalid):
+                XCTAssert(true)
+            case .failure(let error):
+                XCTAssert(false, "wrong error type: \(error)")
+            }
+            
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 10)
+    }
+    
 }

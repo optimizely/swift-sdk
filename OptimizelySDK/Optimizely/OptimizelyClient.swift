@@ -121,12 +121,7 @@ open class OptimizelyClient: NSObject {
     ///             A cached copy from previous download is used if it's available.
     ///             The datafile will be updated from the server in the background thread.
     public func start(datafile: String) throws {
-        let datafileData = Data(xxx)
-        
-        guard let datafileData = datafile.data(using: .utf8) else {
-            throw OptimizelyError.dataFileInvalid
-        }
-        
+        let datafileData = Data(datafile.utf8)
         try start(datafile: datafileData)
     }
     
@@ -153,10 +148,7 @@ open class OptimizelyClient: NSObject {
     func configSDK(datafile: Data) throws {
         do {
             self.config = try ProjectConfig(datafile: datafile)
-            
-            // this isn't really necessary because the try would throw if there is a problem.  But, we want to avoid using bang so we do another let binding.
-            guard let config = self.config else { throw OptimizelyError.dataFileInvalid }
-            
+                        
             datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in...
                 self.reInitLock.wait(); defer { self.reInitLock.signal() }

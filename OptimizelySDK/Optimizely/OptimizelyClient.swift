@@ -121,6 +121,8 @@ open class OptimizelyClient: NSObject {
     ///             A cached copy from previous download is used if it's available.
     ///             The datafile will be updated from the server in the background thread.
     public func start(datafile: String) throws {
+        let datafileData = Data(xxx)
+        
         guard let datafileData = datafile.data(using: .utf8) else {
             throw OptimizelyError.dataFileInvalid
         }

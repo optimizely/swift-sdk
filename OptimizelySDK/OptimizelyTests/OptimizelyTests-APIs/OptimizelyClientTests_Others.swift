@@ -20,7 +20,9 @@ import XCTest
 class OptimizelyClientTests_Others: XCTestCase {
     
     
-    
+    func testFetchedDatafileInvalid() {
+        
+    }
     
     func testActivate_InvalidExperimentKey() {
         

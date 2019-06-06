@@ -17,45 +17,45 @@
 
 import XCTest
 
-class OptimizelyClientTests_Initialize: XCTestCase {
+class OptimizelyClientTests_Others: XCTestCase {
     
-    // MARK: - Properties
     
-    // Change to test with a mock DatafileHandler (instead of a real sdkKey)
-    var sdkKey = "AqLkkcss3wRGUbftnKNgh2"
     
-    func testStartOptimizelyClient_CachedDatafile() {
-        let optimizely = OptimizelyClient(sdkKey: sdkKey)
+    
+    func testActivate_InvalidExperimentKey() {
         
-        // 1st fetch - cache hit or miss
-        
-        var exp = expectation(description: "fetch")
-        optimizely.start { result in
-            switch result {
-            case .success:
-                XCTAssert(true)
-            case .failure:
-                XCTAssert(false)
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 30)
-
-        // 2nd fetch - cache hit
-        
-        exp = expectation(description: "fetch")
-        optimizely.start { result in
-            switch result {
-            case .success:
-                XCTAssert(true)
-            case .failure:
-                XCTAssert(false)
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 30)
-
-        XCTAssert(true)
     }
 
+    func testVariation_InvalidExperimentKey() {
+        
+    }
+
+    func testIsFeatureEnabled_InvalidFeatureKey() {
+        
+    }
+    
+    func testGetFeatureVariableString_InvalidFeatureKey() {
+        
+    }
+
+    func testGetFeatureVariableString_InvalidVariableKey() {
+        
+    }
+
+    
+    func testGetFeatureVariableString_DecisionFailed() {
+        
+    }
+    
+    func testGetFeatureVariable_WrongType() {
+        
+    }
+    
+    func testSendImpressionEvent_FailToCreateEvent() {
+        
+    }
+    
+    func testSendConversionEvent_FailToCreateEvent() {
+        
+    }
 }

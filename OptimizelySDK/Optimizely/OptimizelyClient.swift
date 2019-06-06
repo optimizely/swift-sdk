@@ -180,13 +180,11 @@ open class OptimizelyClient: NSObject {
                     
                 }
             }
-        } catch let error as OptimizelyError {
+        } catch {
             // .datafileInvalid
             // .datafaileVersionInvalid
             // .datafaileLoadingFailed
             throw error
-        } catch {  // DecodingError, etc.
-            throw OptimizelyError.dataFileInvalid
         }
     }
     
@@ -604,11 +602,7 @@ open class OptimizelyClient: NSObject {
             return enabledFeatures
         }
         
-        guard let featureFlags = config.project?.featureFlags else {
-            return enabledFeatures
-        }
-        
-        enabledFeatures = featureFlags.filter {
+        enabledFeatures = config.getFeatureFlags().filter {
             isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
         }.map { $0.key }
         

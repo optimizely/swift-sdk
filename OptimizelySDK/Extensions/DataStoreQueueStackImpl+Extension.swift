@@ -17,16 +17,16 @@
 import Foundation
 
 extension DataStoreQueueStack {
-    func getFirstItem()->T? {
+    func getFirstItem() -> T? {
         return getFirstItems(count: 1)?.first
     }
-    func getLastItem()->T? {
+    func getLastItem() -> T? {
         return getLastItems(count: 1)?.first
     }
-    func removeFirstItem()->T? {
+    func removeFirstItem() -> T? {
         return removeFirstItems(count: 1)?.first
     }
-    func removeLastItem()->T? {
+    func removeLastItem() -> T? {
         return removeLastItems(count: 1)?.first
     }
  }

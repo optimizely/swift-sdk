@@ -18,8 +18,8 @@ import Foundation
 
 class Utils {
     
-    // from auto-generated variable OPTIMIZEY_SDK_VERSION
-    static var sdkVersion: String = OPTIMIZELY_SDK_VERSION
+    // from auto-generated variable OPTIMIZELYSDKVERSION
+    static var sdkVersion: String = OPTIMIZELYSDKVERSION
     
     // @objc NSNumber can be casted either Bool, Int, or Double
     // more filtering required to avoid NSNumber(false, true) interpreted as Int(0, 1) instead of Bool
@@ -34,7 +34,7 @@ class Utils {
         let allSwiftIntTypes: [Any.Type] = [Int.self, Int8.self, Int16.self, Int32.self, Int64.self,
                                             UInt.self, UInt8.self, UInt16.self, UInt32.self, UInt64.self]
         
-        let isSwiftIntType = allSwiftIntTypes.contains{ $0 == type(of: value) }
+        let isSwiftIntType = allSwiftIntTypes.contains { $0 == type(of: value) }
 
         return isSwiftIntType || isNSNumberIntegerType(value)
     }
@@ -44,7 +44,7 @@ class Utils {
         let allSwiftNumTypes: [Any.Type] = [Double.self,
                                             Float.self, CLongDouble.self]
         
-        let isSwiftNumType = allSwiftNumTypes.contains{ $0 == type(of: value) }
+        let isSwiftNumType = allSwiftNumTypes.contains { $0 == type(of: value) }
 
         return isSwiftNumType || isNSNumberDoubleType(value)
     }
@@ -66,7 +66,7 @@ class Utils {
         // Need to look at objCType ("q": integer, "d": decimal
         
         let ptr1 = (value as! NSNumber).objCType
-        let ptr2 = NSNumber(integerLiteral: 10).objCType
+        let ptr2 = (10 as NSNumber).objCType
         return String(cString: ptr1) == String(cString: ptr2)
     }
 

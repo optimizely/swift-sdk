@@ -31,15 +31,14 @@ class BucketTests_Base: XCTestCase {
             // Same PPID as previous, diff experiment ID
             ["userId": "ppid2", "experimentId": "1886780722", "expect": 2434],
             ["userId": "ppid3", "experimentId": experimentId, "expect": 5439],
-            ["userId": "a very very very very very very very very very very very very very very very long ppd string", "experimentId": experimentId, "expect": 6128]];
+            ["userId": "a very very very very very very very very very very very very very very very long ppd string", "experimentId": experimentId, "expect": 6128]]
         
         for test in tests {
             let hashId = bucketer.makeHashIdFromBucketingId(bucketingId:test["userId"] as! String, entityId:test["experimentId"] as! String)
             let bucketingValue = bucketer.generateBucketValue(bucketingId: hashId)
             
-            XCTAssertEqual(test["expect"] as! Int, bucketingValue);
+            XCTAssertEqual(test["expect"] as! Int, bucketingValue)
         }
     }
     
 }
-

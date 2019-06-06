@@ -18,11 +18,11 @@ import XCTest
 
 class NotificationCenterTests: XCTestCase {
     
-    let notificationCenter:DefaultNotificationCenter = DefaultNotificationCenter()
-    var experiment:Experiment?
-    var variation:Variation?
+    let notificationCenter: DefaultNotificationCenter = DefaultNotificationCenter()
+    var experiment: Experiment?
+    var variation: Variation?
     
-    static var sampleVariation: [String : Any] = ["id": "553339214",
+    static var sampleVariation: [String: Any] = ["id": "553339214",
                                   "key": "house",
                                   "featureEnabled": true]
     
@@ -54,22 +54,22 @@ class NotificationCenterTests: XCTestCase {
     }
     
     func sendActivate() {
-        notificationCenter.sendNotifications(type: NotificationType.Activate.rawValue, args: [experiment!, "userId", nil, variation!, ["url":"https://url.com/", "body": Data()]])
+        notificationCenter.sendNotifications(type: NotificationType.activate.rawValue, args: [experiment!, "userId", nil, variation!, ["url": "https://url.com/", "body": Data()]])
 
     }
 
     func sendTrack() {
-        notificationCenter.sendNotifications(type: NotificationType.Track.rawValue, args: ["eventKey", "userId", nil, nil, ["url":"https://url.com/", "body": Data()]])
+        notificationCenter.sendNotifications(type: NotificationType.track.rawValue, args: ["eventKey", "userId", nil, nil, ["url": "https://url.com/", "body": Data()]])
         
     }
 
     func sendDecision() {
-        notificationCenter.sendNotifications(type: NotificationType.Decision.rawValue, args: [Constants.DecisionTypeKeys.featureVariable, "userId", nil, ["url":"https://url.com/", "body": Data()]])
+        notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: [Constants.DecisionTypeKeys.featureVariable, "userId", nil, ["url": "https://url.com/", "body": Data()]])
         
     }
 
     func sendDatafileChange() {
-        notificationCenter.sendNotifications(type: NotificationType.DatafileChange.rawValue, args: [Data()])
+        notificationCenter.sendNotifications(type: NotificationType.datafileChange.rawValue, args: [Data()])
         
     }
 
@@ -78,17 +78,17 @@ class NotificationCenterTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         var called = false
         
-        let _ = notificationCenter.addActivateNotificationListener { (experiment, userid, attributes, variation, logEvent) in
+        _ = notificationCenter.addActivateNotificationListener { (_, _, _, _, _) in
                 called = true
         }
         
-        notificationCenter.clearNotificationListeners(type: .Activate)
+        notificationCenter.clearNotificationListeners(type: .activate)
         
         sendActivate()
         
         XCTAssertFalse(called)
 
-        let id = notificationCenter.addActivateNotificationListener { (experiment, userid, attributes, variation, logEvent) in
+        let id = notificationCenter.addActivateNotificationListener { (_, _, _, _, _) in
             called = true
         }
         
@@ -98,7 +98,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
 
-        let _ = notificationCenter.addActivateNotificationListener { (experiment, userid, attributes, variation, logEvent) in
+        _ = notificationCenter.addActivateNotificationListener { (_, _, _, _, _) in
             called = true
         }
 
@@ -112,17 +112,17 @@ class NotificationCenterTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         var called = false
         
-        let _ = notificationCenter.addTrackNotificationListener { (eventKey, userId, attr, eventTags, logEvent) in
+        _ = notificationCenter.addTrackNotificationListener { (_, _, _, _, _) in
             called = true
         }
         
-        notificationCenter.clearNotificationListeners(type: .Track)
+        notificationCenter.clearNotificationListeners(type: .track)
         
         sendTrack()
         
         XCTAssertFalse(called)
         
-        let id = notificationCenter.addTrackNotificationListener { (eventKey, userId, attr, eventTags, logEvent) in
+        let id = notificationCenter.addTrackNotificationListener { (_, _, _, _, _) in
             called = true
         }
 
@@ -132,7 +132,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
         
-        let _ = notificationCenter.addTrackNotificationListener { (eventKey, userId, attr, eventTags, logEvent) in
+        _ = notificationCenter.addTrackNotificationListener { (_, _, _, _, _) in
             called = true
         }
 
@@ -146,17 +146,17 @@ class NotificationCenterTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         var called = false
         
-        let _ = notificationCenter.addDecisionNotificationListener { (type, userId, attr, decisionInfo) in
+        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, _) in
             called = true
         }
         
-        notificationCenter.clearNotificationListeners(type: .Decision)
+        notificationCenter.clearNotificationListeners(type: .decision)
         
         sendDecision()
         
         XCTAssertFalse(called)
         
-        let id = notificationCenter.addDecisionNotificationListener { (type, userId, attr, decisionInfo) in
+        let id = notificationCenter.addDecisionNotificationListener { (_, _, _, _) in
             called = true
         }
         
@@ -166,7 +166,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
         
-        let _ = notificationCenter.addDecisionNotificationListener { (type, userId, attr, decisionInfo) in
+        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, _) in
             called = true
         }
         
@@ -180,17 +180,17 @@ class NotificationCenterTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         var called = false
         
-        let _ = notificationCenter.addDatafileChangeNotificationListener { (data) in
+        _ = notificationCenter.addDatafileChangeNotificationListener { (_) in
             called = true
         }
         
-        notificationCenter.clearNotificationListeners(type: .DatafileChange)
+        notificationCenter.clearNotificationListeners(type: .datafileChange)
         
         sendDatafileChange()
         
         XCTAssertFalse(called)
         
-        let id = notificationCenter.addDatafileChangeNotificationListener { (data) in
+        let id = notificationCenter.addDatafileChangeNotificationListener { (_) in
             called = true
         }
 
@@ -200,7 +200,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
         
-        let _ = notificationCenter.addDatafileChangeNotificationListener { (data) in
+        _ = notificationCenter.addDatafileChangeNotificationListener { (_) in
             called = true
         }
 

@@ -30,7 +30,7 @@ jobs:
     - stage: 'SourceClear and Lint'
       language: swift
       os: osx
-      osx_image: xcode10.1
+      osx_image: xcode10.2
       install:
         - gem install cocoapods -v '1.6.1'
       script:
@@ -42,7 +42,7 @@ jobs:
       stage: 'Unit Tests'
       language: swift
       os: osx
-      osx_image: xcode10.1
+      osx_image: xcode10.2
       branches:
         only:
           - master

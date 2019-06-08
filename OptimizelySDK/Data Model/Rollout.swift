@@ -20,4 +20,3 @@ struct Rollout: Codable, Equatable {
     var id: String
     var experiments: [Experiment]
 }
-

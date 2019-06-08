@@ -88,7 +88,7 @@ extension Array where Element == ConditionHolder {
         case .leaf:
             // special case - no logical operator
             // implicit or
-            return try [[ConditionHolder.logicalOp(.or)],self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, attributes: attributes)
+            return try [[ConditionHolder.logicalOp(.or)], self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, attributes: attributes)
         default:
             throw OptimizelyError.conditionInvalidFormat("Invalid first item")
         }
@@ -119,4 +119,3 @@ extension Array where Element == ConditionHolder {
     }
     
 }
-

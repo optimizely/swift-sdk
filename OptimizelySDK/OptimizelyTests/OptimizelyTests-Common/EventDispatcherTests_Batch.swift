@@ -158,7 +158,6 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
         
         XCTAssert(eventDispatcher.batchSize == 10)
-        
 
     }
     
@@ -167,7 +166,6 @@ extension EventDispatcherTests_Batch {
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
         XCTAssert(eventDispatcher.batchSize == 10)
-        
 
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
@@ -237,7 +235,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
-        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.MAX_FAILURE_COUNT + 1
+        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.maxFailureCount + 1
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
         
@@ -270,7 +268,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
-        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.MAX_FAILURE_COUNT + 1
+        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.maxFailureCount + 1
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
         
@@ -328,7 +326,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.timerInterval = 0
 
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatcher.sync{}
+        eventDispatcher.dispatcher.sync {}
         
         let batch = eventDispatcher.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
@@ -461,8 +459,6 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.revision, kRevision)
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
     }
-
-    
     
     // TODO: [Tom] these 2 tests fails - please take a look
     
@@ -525,7 +521,6 @@ extension EventDispatcherTests_Batch {
 //    }
 
 }
-
 
 // MARK: - Utils
 
@@ -603,7 +598,7 @@ class TestEventDispatcher: DefaultEventDispatcher {
         sendRequestedEvents.append(event)
 
         // must call completionHandler to complete synchronization
-        super.sendEvent(event: event) { result in
+        super.sendEvent(event: event) { _ in
             if self.forceError {
                 completionHandler(.failure(.eventDispatchFailed("forced")))
             } else {
@@ -617,4 +612,3 @@ class TestEventDispatcher: DefaultEventDispatcher {
     }
     
 }
-

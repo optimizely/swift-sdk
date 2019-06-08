@@ -79,7 +79,7 @@ extension BatchEventBuilderTests_EventTags {
     func testEventTagsWhenInvalidType() {
         let eventKey = "event_single_targeted_exp"
         let eventTags: [String: Any] = ["browser": "chrome",
-                                        "future": [1,2,3]]
+                                        "future": [1, 2, 3]]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
@@ -324,12 +324,12 @@ extension BatchEventBuilderTests_EventTags {
 
     func getDispatchEvent(dispatcher: FakeEventDispatcher) -> [String: Any]? {
         let eventForDispatch = dispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! [String:Any]
+        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! [String: Any]
         let event = json
         
-        let visitor = (event["visitors"] as! Array<Dictionary<String,Any>>)[0]
-        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String,Any>>)[0]
-        let dispatchEvent = (snapshot["events"] as! Array<Dictionary<String,Any>>)[0] as! Dictionary<String, Any>
+        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+        let dispatchEvent = (snapshot["events"] as! Array<Dictionary<String, Any>>)[0] 
 
         return dispatchEvent
     }

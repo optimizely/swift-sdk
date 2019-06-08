@@ -16,19 +16,19 @@
 
 import Foundation
 
-class DefaultDecisionService : OPTDecisionService {
+class DefaultDecisionService: OPTDecisionService {
     
-    let bucketer:OPTBucketer
-    let userProfileService:OPTUserProfileService
+    let bucketer: OPTBucketer
+    let userProfileService: OPTUserProfileService
     lazy var logger = OPTLoggerFactory.getLogger()
 
-    init(userProfileService:OPTUserProfileService) {
+    init(userProfileService: OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
     }
     
-    func getVariation(config:ProjectConfig, userId:String, experiment: Experiment, attributes: OptimizelyAttributes) -> Variation? {
-        let experimentId = experiment.id;
+    func getVariation(config: ProjectConfig, userId: String, experiment: Experiment, attributes: OptimizelyAttributes) -> Variation? {
+        let experimentId = experiment.id
         
         // Acquire bucketingId .
         let bucketingId = getBucketingId(userId: userId, attributes: attributes)
@@ -42,7 +42,7 @@ class DefaultDecisionService : OPTDecisionService {
         // ---- check for whitelisted variation registered at runtime ----
         if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
             let variation = experiment.getVariation(id: variationId) {
-            return variation;
+            return variation
         }
         
         // ---- check if the experiment has forced variation ----
@@ -63,9 +63,9 @@ class DefaultDecisionService : OPTDecisionService {
             return variation
         }
         
-        var bucketedVariation:Variation?
+        var bucketedVariation: Variation?
         // ---- check if the user passes audience targeting before bucketing ----
-        if isInExperiment(config: config, experiment:experiment, userId:userId, attributes:attributes) {
+        if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
             // bucket user into a variation
             bucketedVariation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId)
             
@@ -77,10 +77,10 @@ class DefaultDecisionService : OPTDecisionService {
             logger.i(.userNotInExperiment(userId, experiment.key))
         }
         
-        return bucketedVariation;
+        return bucketedVariation
     }
     
-    func isInExperiment(config:ProjectConfig, experiment:Experiment, userId:String, attributes: OptimizelyAttributes) -> Bool {
+    func isInExperiment(config: ProjectConfig, experiment: Experiment, userId: String, attributes: OptimizelyAttributes) -> Bool {
         
         var result = true   // success as default (no condition, etc)
         
@@ -120,12 +120,12 @@ class DefaultDecisionService : OPTDecisionService {
         return result
     }
     
-    func getVariationForFeature(config:ProjectConfig, featureFlag:FeatureFlag, userId:String, attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
+    func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment?, variation: Variation?)? {
         //Evaluate in this order:
         
         //1. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
-        if let pair = getVariationForFeatureExperiment(config: config, featureFlag: featureFlag, userId:userId, attributes:attributes) {
+        if let pair = getVariationForFeatureExperiment(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes) {
             logger.d(.userInFeatureExperiment(userId, pair.variation?.key ?? "unknown", pair.experiment?.key ?? "unknown", featureFlag.key))
             return pair
         } else {
@@ -134,23 +134,23 @@ class DefaultDecisionService : OPTDecisionService {
         
         //2. Attempt to bucket user into rollout using the feature flag.
         // Check if the feature flag has rollout and the user is bucketed into one of it's rules
-        if let variation = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, userId:userId, attributes:attributes) {
+        if let variation = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes) {
             logger.d(.userInRollout(userId, featureFlag.key))
             return (nil, variation)
         } else {
             logger.d(.userNotInRollout(userId, featureFlag.key))
         }
         
-        return nil;
+        return nil
         
     }
     
-    func getVariationForFeatureExperiment(config:ProjectConfig,
+    func getVariationForFeatureExperiment(config: ProjectConfig,
                                           featureFlag: FeatureFlag,
                                           userId: String,
-                                          attributes: OptimizelyAttributes) -> (experiment:Experiment?, variation:Variation?)? {
+                                          attributes: OptimizelyAttributes) -> (experiment: Experiment?, variation: Variation?)? {
         
-        let experimentIds = featureFlag.experimentIds;
+        let experimentIds = featureFlag.experimentIds
         if experimentIds.isEmpty {
             logger.d(.featureHasNoExperiments(featureFlag.key))
         }
@@ -160,10 +160,10 @@ class DefaultDecisionService : OPTDecisionService {
         for experimentId in experimentIds {
             if let experiment = config.getExperiment(id: experimentId),
                 let variation = getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes) {
-                return (experiment,variation)
+                return (experiment, variation)
             }
         }
-        return nil;
+        return nil
     }
     
     func getVariationForFeatureRollout(config: ProjectConfig,
@@ -175,7 +175,7 @@ class DefaultDecisionService : OPTDecisionService {
         
         let rolloutId = featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces)
         
-        guard rolloutId != "" else {
+        guard !rolloutId.isEmpty else {
             logger.d(.noRolloutExists(featureFlag.key))
             return nil
         }
@@ -208,7 +208,7 @@ class DefaultDecisionService : OPTDecisionService {
             }
         }
         // Evaluate fall back rule / last rule now
-        let experiment = rolloutRules[rolloutRules.count - 1];
+        let experiment = rolloutRules[rolloutRules.count - 1]
         
         if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
             if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
@@ -233,7 +233,7 @@ class DefaultDecisionService : OPTDecisionService {
             bucketingId = newBucketingId
         }
         
-        return bucketingId;
+        return bucketingId
     }
     
 }
@@ -246,8 +246,7 @@ extension DefaultDecisionService {
         if let profile = userProfileService.lookup(userId: userId),
             let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
             let experimentMap = bucketMap[experimentId],
-            let variationId = experimentMap[UserProfileKeys.kVariationId]
-        {
+            let variationId = experimentMap[UserProfileKeys.kVariationId] {
             return variationId
         } else {
             return nil
@@ -269,4 +268,3 @@ extension DefaultDecisionService {
     }
     
 }
-

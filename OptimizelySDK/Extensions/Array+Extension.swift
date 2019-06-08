@@ -16,7 +16,6 @@
 
 import Foundation
 
-
 // MARK: - logical ops on eval array
 
 typealias ThrowableCondition = () throws -> Bool
@@ -45,7 +44,7 @@ extension Array where Element == ThrowableCondition {
     
     // return try if any item is true (even with other error items)
     func or() throws -> Bool {
-        var foundError: OptimizelyError? = nil
+        var foundError: OptimizelyError?
         
         for eval in self {
             do {

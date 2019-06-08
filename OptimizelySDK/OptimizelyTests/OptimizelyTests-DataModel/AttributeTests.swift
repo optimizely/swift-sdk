@@ -67,5 +67,3 @@ extension AttributeTests {
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
 }
-
-

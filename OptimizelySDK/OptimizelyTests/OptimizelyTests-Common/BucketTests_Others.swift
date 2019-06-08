@@ -18,7 +18,7 @@ import XCTest
 
 class BucketTests_Others: XCTestCase {
 
-    var config:ProjectConfig?
+    var config: ProjectConfig?
     
     let testBucketingIdControl = "1291332554"
     let testBucketingIdVariation = "791931608"
@@ -28,8 +28,7 @@ class BucketTests_Others: XCTestCase {
         let data = OTUtils.loadJSONDatafile("grouped_experiments")
         do {
             config = try ProjectConfig(datafile: data!)
-        }
-        catch {
+        } catch {
             print(error.localizedDescription)
         }
     }
@@ -56,13 +55,13 @@ extension BucketTests_Others {
             // Same PPID as previous, diff experiment ID
             ["userId": "ppid2", "experimentId": "1886780722", "expect": 2434],
             ["userId": "ppid3", "experimentId": experimentId, "expect": 5439],
-            ["userId": "a very very very very very very very very very very very very very very very long ppd string", "experimentId": experimentId, "expect": 6128]];
+            ["userId": "a very very very very very very very very very very very very very very very long ppd string", "experimentId": experimentId, "expect": 6128]]
         
         for test in tests {
             let hashId = bucketer.makeHashIdFromBucketingId(bucketingId:test["userId"] as! String, entityId:test["experimentId"] as! String)
             let bucketingValue = bucketer.generateBucketValue(bucketingId: hashId)
             
-            XCTAssertEqual(test["expect"] as! Int, bucketingValue);
+            XCTAssertEqual(test["expect"] as! Int, bucketingValue)
         }
     }
     
@@ -76,7 +75,7 @@ extension BucketTests_Others {
         let groupId = "12115595439"
         let bucketer = DefaultBucketer()
         
-        let tests = [["userId": "ppid1","expect": "all_traffic_experiment"],
+        let tests = [["userId": "ppid1", "expect": "all_traffic_experiment"],
                      ["userId": "ppid2", "expect": "all_traffic_experiment"],
                      ["userId": "ppid3", "expect": "all_traffic_experiment"],
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": "all_traffic_experiment"]]
@@ -87,9 +86,8 @@ extension BucketTests_Others {
             let experiment = bucketer.bucketToExperiment(config: config!, group: group!, bucketingId: test["userId"]!)
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"]!, experiment?.key)
-            }
-            else {
-                XCTAssertNil(experiment);
+            } else {
+                XCTAssertNil(experiment)
             }
         }
     }
@@ -108,7 +106,7 @@ extension BucketTests_Others {
         
         for test in tests {
             let experiment = bucketer.bucketToExperiment(config: config!, group: group!, bucketingId: test["userId"]!)
-            XCTAssertNil(experiment);
+            XCTAssertNil(experiment)
         }
     }
 
@@ -118,11 +116,6 @@ extension BucketTests_Others {
         
         let experimentKey = "experiment_4000"
         let userIdForThisTestOnly = "ppid31886780721"
-        
-        
-        
-        
-        
         
         let expectedVariationKey = "all_traffic_variation_exp_1"
         
@@ -145,25 +138,25 @@ extension BucketTests_Others {
     
     func testBucketToVariation() {
         let experimentData: [String: Any] = [
-            "id" : "1886780721",
-            "key" : "Basic_Experiment",
+            "id": "1886780721",
+            "key": "Basic_Experiment",
             "layerId": "1234",
-            "status" : "Running",
-            "audienceIds" : [String](),
-            "forcedVariations" :[String:Any](),
-            "variations" : [
-                ["id" : "6030714421",
-                 "key" : "Variation_A",
+            "status": "Running",
+            "audienceIds": [String](),
+            "forcedVariations": [String: Any](),
+            "variations": [
+                ["id": "6030714421",
+                 "key": "Variation_A",
                  "variables": [Any]()],
                 ["id": "6030714422",
-                 "key" : "Variation_B",
+                 "key": "Variation_B",
                  "variables": [Any]()]
             ],
             "trafficAllocation": [
-                ["entityId" : "6030714421",
-                 "endOfRange" : 5000],
-                ["entityId" : "6030714422",
-                 "endOfRange" : 10000]
+                ["entityId": "6030714421",
+                 "endOfRange": 5000],
+                ["entityId": "6030714422",
+                 "endOfRange": 10000]
             ]
             ]
         
@@ -235,7 +228,7 @@ extension BucketTests_Others {
                 XCTAssertNotNil(variation)
                 XCTAssert(variation!.key == test["expect"])
                 variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!)
-                XCTAssertNil(variation);
+                XCTAssertNil(variation)
             } else if test["experiment"] == "experiment2" {
                 var variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!)
                 XCTAssertNotNil(variation)
@@ -268,16 +261,16 @@ extension BucketTests_Others {
         let bucketer = DefaultBucketer()
         
         let experiment = config.getExperiment(key: "test_experiment")!
-        XCTAssertNotNil(experiment);
+        XCTAssertNotNil(experiment)
     
         // check testBucketingIdControl is bucketed into "control" variation
         var variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdControl)
         XCTAssertNotNil(variation)
-        XCTAssert(variation!.key == "control",  "Unexpected variationKey")
+        XCTAssert(variation!.key == "control", "Unexpected variationKey")
         
         // check testBucketingIdVariation is bucketed into "variation" variation
         variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation)
-        XCTAssertNotNil(variation);
+        XCTAssertNotNil(variation)
         XCTAssert(variation!.key == "variation", "Unexpected variationKey")
     }
 

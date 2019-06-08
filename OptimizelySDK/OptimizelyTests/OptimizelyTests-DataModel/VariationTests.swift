@@ -92,7 +92,6 @@ extension VariationTests {
         XCTAssert(model.featureEnabled == nil)
         XCTAssert(model.variables == nil)
     }
-    
 
     func testDecodeFailWithMissingId() {
         let data: [String: Any] = ["key": "house"]

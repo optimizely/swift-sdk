@@ -48,7 +48,6 @@ class DecisionServiceTests_Features: XCTestCase {
     var featureFlag: FeatureFlag!
     var result: Bool!
     
-    
     // MARK: - Sample datafile data
     
     let emptyExperimentData: [String: Any] = [
@@ -96,7 +95,7 @@ class DecisionServiceTests_Features: XCTestCase {
                     "key": kVariationKeyD
                 ]
             ],
-            "forcedVariations":[:]
+            "forcedVariations": [:]
         ]
     }
     
@@ -119,7 +118,7 @@ class DecisionServiceTests_Features: XCTestCase {
         [
             "id": "553339214",
             "key": "house",
-            "experimentIds":[kExperimentId],
+            "experimentIds": [kExperimentId],
             "rolloutId": "",
             "variables": []
         ]
@@ -153,10 +152,9 @@ class DecisionServiceTests_Features: XCTestCase {
                     "featureEnabled": true
                 ]
             ],
-            "forcedVariations":[:]
+            "forcedVariations": [:]
         ]
     }
-    
     
     // MARK: - Setup
     
@@ -299,4 +297,3 @@ extension DecisionServiceTests_Features {
     }
     
 }
-

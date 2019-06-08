@@ -21,9 +21,9 @@ import XCTest
 class FeatureFlagTests: XCTestCase {
     static var sampleData: [String: Any] = ["id": "553339214",
                                             "key": "house",
-                                            "experimentIds":["12345", "12346"],
-                                            "rolloutId":"34567",
-                                            "variables":[FeatureVariableTests.sampleData]]
+                                            "experimentIds": ["12345", "12346"],
+                                            "rolloutId": "34567",
+                                            "variables": [FeatureVariableTests.sampleData]]
 }
 
 // MARK: - Decode
@@ -44,9 +44,9 @@ extension FeatureFlagTests {
     func testDecodeSuccessWithJSONValid2() {
         let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
-                                   "experimentIds":[],
-                                   "rolloutId":"34567",
-                                   "variables":[]]
+                                   "experimentIds": [],
+                                   "rolloutId": "34567",
+                                   "variables": []]
         let model: FeatureFlag = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
@@ -58,18 +58,18 @@ extension FeatureFlagTests {
 
     func testDecodeFailWithMissingId() {
         let data: [String: Any] = ["key": "house",
-                                   "experimentIds":[],
-                                   "rolloutId":"34567",
-                                   "variables":[]]
+                                   "experimentIds": [],
+                                   "rolloutId": "34567",
+                                   "variables": []]
         let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
     
     func testDecodeFailWithMissingKey() {
         let data: [String: Any] = ["id": "553339214",
-                                   "experimentIds":[],
-                                   "rolloutId":"34567",
-                                   "variables":[]]
+                                   "experimentIds": [],
+                                   "rolloutId": "34567",
+                                   "variables": []]
         let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
@@ -77,8 +77,8 @@ extension FeatureFlagTests {
     func testDecodeFailWithMissingRolloutId() {
         let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
-                                   "experimentIds":[],
-                                   "variables":[]]
+                                   "experimentIds": [],
+                                   "variables": []]
         let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
@@ -86,8 +86,8 @@ extension FeatureFlagTests {
     func testDecodeFailWithMissingExperimentIds() {
         let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
-                                   "rolloutId":"34567",
-                                   "variables":[]]
+                                   "rolloutId": "34567",
+                                   "variables": []]
         let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
@@ -95,8 +95,8 @@ extension FeatureFlagTests {
     func testDecodeFailWithMissingVariables() {
         let data: [String: Any] = ["id": "553339214",
                                    "key": "house",
-                                   "rolloutId":"34567",
-                                   "experimentIds":[]]
+                                   "rolloutId": "34567",
+                                   "experimentIds": []]
         let model: FeatureFlag? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }

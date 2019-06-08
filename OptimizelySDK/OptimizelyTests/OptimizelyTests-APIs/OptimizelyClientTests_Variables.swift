@@ -47,14 +47,14 @@ class OptimizelyClientTests_Variables: XCTestCase {
                     "key": "16456523121"
                 ]
             ],
-            "forcedVariations":[:]
+            "forcedVariations": [:]
         ]
     }
     var sampleFeatureFlagData: [String: Any] { return
         [
             "id": "553339214",
             "key": "house",
-            "experimentIds":[kExperimentId],
+            "experimentIds": [kExperimentId],
             "rolloutId": "",
             "variables": [
                 [
@@ -80,7 +80,6 @@ class OptimizelyClientTests_Variables: XCTestCase {
         let featureFlag: FeatureFlag = try! OTUtils.model(from: sampleFeatureFlagData)
         optimizely.config!.project.featureFlags = [featureFlag]
     }
-
 
     func testFeatureVariableWhenFeatureEnabled() {
         var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)

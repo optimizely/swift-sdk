@@ -18,9 +18,9 @@ import Foundation
 
 struct Constants {
     struct Attributes {
-        static let OptimizelyBucketIdAttribute = "$opt_bucketing_id";
-        static let OptimizelyBotFilteringAttribute = "$opt_bot_filtering";
-        static let OptimizelyUserAgent = "$opt_user_agent";
+        static let OptimizelyBucketIdAttribute = "$opt_bucketing_id"
+        static let OptimizelyBotFilteringAttribute = "$opt_bot_filtering"
+        static let OptimizelyUserAgent = "$opt_user_agent"
     }
     
     struct DecisionTypeKeys {

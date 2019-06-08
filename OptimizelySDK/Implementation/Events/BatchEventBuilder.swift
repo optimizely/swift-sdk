@@ -81,8 +81,7 @@ class BatchEventBuilder {
                                  userId: String,
                                  attributes: OptimizelyAttributes?,
                                  decisions: [Decision]?,
-                                 dispatchEvents: [DispatchEvent]) -> Data?
-    {
+                                 dispatchEvents: [DispatchEvent]) -> Data? {
         let snapShot = Snapshot(decisions: decisions, events: dispatchEvents)
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
@@ -119,7 +118,7 @@ class BatchEventBuilder {
     }
     
     static func filterTagsWithInvalidTypes(_ eventTags: [String: Any]) -> [String: AttributeValue] {
-        let filteredTags = eventTags.mapValues { AttributeValue(value:$0) }.filter { $0.value != nil } as? [String: AttributeValue]
+        let filteredTags = eventTags.mapValues { AttributeValue(value: $0) }.filter { $0.value != nil } as? [String: AttributeValue]
         return filteredTags ?? [:]
     }
     
@@ -191,8 +190,7 @@ class BatchEventBuilder {
                                                             entityID: attributeId)
                         eventAttributes.append(eventAttribute)
                     }
-                }
-                else {
+                } else {
                     logger.d(.unrecognizedAttribute(attr))
                 }
             }
@@ -201,7 +199,7 @@ class BatchEventBuilder {
         if let botFiltering = config.project.botFiltering, let eventValue = AttributeValue(value: botFiltering) {
             let botAttr = EventAttribute(value: eventValue,
                                          key: Constants.Attributes.OptimizelyBotFilteringAttribute,
-                                         type:"custom",
+                                         type: "custom",
                                          entityID: Constants.Attributes.OptimizelyBotFilteringAttribute)
             eventAttributes.append(botAttr)
         }

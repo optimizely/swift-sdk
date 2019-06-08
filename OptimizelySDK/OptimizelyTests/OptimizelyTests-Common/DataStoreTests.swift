@@ -14,7 +14,6 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
 
 import XCTest
 
@@ -26,8 +25,7 @@ class DataStoreTests: XCTestCase {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-                }
-                catch {
+                } catch {
                     print(error)
                 }
                 

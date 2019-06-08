@@ -121,8 +121,7 @@ struct DispatchEvent: Codable, Equatable {
          uuid: String,
          tags: [String: AttributeValue]? = [:],
          value: AttributeValue? = nil,
-         revenue: AttributeValue? = nil)
-    {
+         revenue: AttributeValue? = nil) {
         
         // TODO: add validation and throw here for invalid value (int, double) and revenue (int) types
 

@@ -117,11 +117,7 @@ extension BucketTests_ExpToVariation {
         
         for (idx, test) in tests.enumerated() {
             variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)
-            if let _ = test["expect"] {
-                XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
-            } else {
-                XCTAssertNil(experiment)
-            }
+            XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
         }
     }
     

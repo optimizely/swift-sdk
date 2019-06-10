@@ -62,21 +62,19 @@ class DataStoreTests: XCTestCase {
     }
     
     func testBackgroundSave() {
-        let datastore = DataStoreMemory<String>(storeName: "testingDataStoreMemory")
+        let datastore = DataStoreMemory<String>(storeName: "testingBackgroundSave")
         
-        datastore.saveItem(forKey: "testString", value: "value")
+        datastore.saveItem(forKey: "testString1", value: "value")
         
         datastore.applicationDidEnterBackground()
-        
-        datastore.data = nil
         
         datastore.applicationDidBecomeActive()
         
         XCTAssertNotNil(datastore.data)
         
-        datastore.save(forKey: "testString", value: 100)
+        datastore.save(forKey: "testString1", value: 100)
         
-        datastore.load(forKey: "testingDataStoreMemory")
+        datastore.load(forKey: "testingBackgroundSave")
         
         XCTAssertEqual(datastore.data, "value")
     }

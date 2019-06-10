@@ -165,7 +165,9 @@ class OptimizelyClientTests_Others: XCTestCase {
     func testSendImpressionEvent_FailToCreateEvent() {
         let experiment = optimizely.config!.getExperiment(key: kExperimentKey)!
         let variation = experiment.getVariation(key: kVariationKey)!
-        let attributes = ["x": 1]
+        
+        // set invalid (infinity) to attribute values, which will cause JSONEncoder.encode exception
+        let attributes = ["testvar": Double.infinity]
         
         optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId, attributes: attributes)
         XCTAssert(eventDispatcher.events.count == 0)

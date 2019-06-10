@@ -61,8 +61,10 @@ class HandlerRegistryService {
             _ = injectComponent(service: service, sdkKey: sdkKey, isReintialize: true)
     }
     
-    func lookupComponents(sdkKey: String)->[Any?] {
-        let value = self.binders.keys.filter({$0.sdkKey == sdkKey}).map({self.injectComponent(service: self.binders[$0]!.service, sdkKey: sdkKey)!})
+    func lookupComponents(sdkKey: String)->[Any] {
+        let value = self.binders.keys
+            .filter({$0.sdkKey == sdkKey})
+            .compactMap({ self.injectComponent(service: self.binders[$0]!.service, sdkKey: sdkKey) })
         
         return value
     }
@@ -83,7 +85,7 @@ protocol BinderProtocol {
     var instance: Any? { get set }
     
 }
-class Binder<T> : BinderProtocol {
+class Binder<T>: BinderProtocol {
     var sdkKey: String?
     var service: Any
     var strategy: ReInitializeStrategy = .reCreate

@@ -30,6 +30,7 @@ class OptimizelyClientTests_Others: XCTestCase {
     let kInvalidVariableKeyString = "invalid_key"
 
     let kUserId = "user"
+    let kNotRealSdkKey = "notrealkey123"
     
     var optimizely: OptimizelyClient!
     let eventDispatcher = FakeEventDispatcher()
@@ -127,6 +128,40 @@ class OptimizelyClientTests_Others: XCTestCase {
         XCTAssert(value == variableDefaultValue)
     }
     
+    func testGetFeatureVariable_MissingDefaultValue() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
+                                                  clearUserProfileService: true)!
+        
+        let featureKey = "feature_running_exp_enabled_targeted_with_variable_overrides"
+        let attributeKey = "string_attribute"
+        
+        let variableKey = "s_foo"
+        let variableDefaultValue = "foo"
+        
+        let userId = "user"
+        let attributesNotMatch: [String: Any] = [attributeKey: "wrong_value"]
+        
+        var valueString = try? optimizely.getFeatureVariableString(featureKey: featureKey,
+                                                                   variableKey: variableKey,
+                                                                   userId: userId,
+                                                                   attributes: attributesNotMatch)
+        XCTAssert(valueString == variableDefaultValue)
+        
+        // remove defaultValue of the target featureFlag variable
+        
+        var featureFlag = optimizely.config!.getFeatureFlag(key: featureKey)!
+        var variable = featureFlag.getVariable(key: variableKey)!
+        variable.defaultValue = nil
+        featureFlag.variables = [variable]
+        optimizely.config!.featureFlagKeyMap[featureKey] = featureFlag
+        
+        valueString = try? optimizely.getFeatureVariableString(featureKey: featureKey,
+                                                               variableKey: variableKey,
+                                                               userId: userId,
+                                                               attributes: attributesNotMatch)
+        XCTAssert(valueString == "", "Should return empty string when default value is not defined")
+    }
+    
     func testSendImpressionEvent_FailToCreateEvent() {
         let experiment = optimizely.config!.getExperiment(key: kExperimentKey)!
         let variation = experiment.getVariation(key: kVariationKey)!
@@ -151,6 +186,23 @@ class OptimizelyClientTests_Others: XCTestCase {
         XCTAssert(eventDispatcher.events.count == 2)
     }
     
+    func testSendEvent_ConfigNotReady() {
+        let experiment = optimizely.config!.getExperiment(key: kExperimentKey)!
+        let variation = experiment.getVariation(key: kVariationKey)!
+        
+        let kEventKey = "event1"
+        let kUserId = "user"
+        
+        // force condition for sdk-not-ready
+        optimizely.config = nil
+        
+        optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId)
+        XCTAssert(eventDispatcher.events.isEmpty, "event should not be sent out sdk is not configured properly")
+
+        optimizely.sendConversionEvent(eventKey: kEventKey, userId: kUserId)
+        XCTAssert(eventDispatcher.events.isEmpty, "event should not be sent out sdk is not configured properly")
+    }
+    
     func testFetchedDatafileInvalid() {
         
         class FakeDatafileHandler: DefaultDatafileHandler {
@@ -164,13 +216,13 @@ class OptimizelyClientTests_Others: XCTestCase {
         
         let handler = FakeDatafileHandler()
         HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
-            .sdkKey(key: "notrealkey123")
+            .sdkKey(key: kNotRealSdkKey)
             .using(instance: handler)
             .to(factory: FakeDatafileHandler.init)
             .reInitializeStrategy(strategy: .reUse)
             .singetlon())
         
-        let optimizely = OptimizelyClient(sdkKey: "notrealkey123")
+        let optimizely = OptimizelyClient(sdkKey: kNotRealSdkKey)
         
         let exp = expectation(description: "a")
         
@@ -190,4 +242,49 @@ class OptimizelyClientTests_Others: XCTestCase {
         wait(for: [exp], timeout: 10)
     }
     
+    func testHandlerReinitializeOnBackgroundDatafileUpdate() {
+        
+        // mock background datafile fetch to test handler re-init on datafile update
+        
+        class FakeDatafileHandler: DefaultDatafileHandler {
+            override func startUpdates(sdkKey: String, datafileChangeNotification: ((Data) -> Void)?) {
+                let newDatafile = OTUtils.loadJSONDatafile("empty_datafile")!
+                datafileChangeNotification?(newDatafile)
+            }
+        }
+
+        let handler = FakeDatafileHandler()
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
+            .sdkKey(key: kNotRealSdkKey)
+            .using(instance: handler)
+            .to(factory: FakeDatafileHandler.init)
+            .reInitializeStrategy(strategy: .reUse)
+            .singetlon())
+
+        
+        let optimizely = OptimizelyClient(sdkKey: kNotRealSdkKey)
+
+        // all handlers before transfer
+        
+        var handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.keys.filter { $0.sdkKey == kNotRealSdkKey }
+        let oldHandlersCount = handlersForCurrentSdkKey.count
+
+        // remove one of the handler to test nil-handlers
+
+        let testKey = handlersForCurrentSdkKey.filter { $0.service.contains("EventDispatcher") }.first!
+        HandlerRegistryService.shared.binders[testKey] = nil
+        
+        // this will replace config, which will transfer all handlers
+        
+        try? optimizely.configSDK(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
+
+        // nil handlers must be cleaned up when re-init
+        
+        handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.keys.filter { $0.sdkKey == kNotRealSdkKey }
+        let newHandlersCount = handlersForCurrentSdkKey.count
+        
+        XCTAssertEqual(newHandlersCount, oldHandlersCount - 1, "nil handlers should be filtered out")
+    }
+    
+
 }

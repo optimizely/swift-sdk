@@ -79,7 +79,7 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
         }
     }
 
-    private func save(forKey: String, value: Any) {
+    func save(forKey: String, value: Any) {
         lock.async {
             do {
                 if let value = value as? T {

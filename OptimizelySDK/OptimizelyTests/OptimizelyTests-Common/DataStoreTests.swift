@@ -60,6 +60,26 @@ class DataStoreTests: XCTestCase {
         
         XCTAssert(v2 == value)
     }
+    
+    func testBackgroundSave() {
+        let datastore = DataStoreMemory<String>(storeName: "testingDataStoreMemory")
+        
+        datastore.saveItem(forKey: "testString", value: "value")
+        
+        datastore.applicationDidEnterBackground()
+        
+        datastore.data = nil
+        
+        datastore.applicationDidBecomeActive()
+        
+        XCTAssertNotNil(datastore.data)
+        
+        datastore.save(forKey: "testString", value: 100)
+        
+        datastore.load(forKey: "testingDataStoreMemory")
+        
+        XCTAssertEqual(datastore.data, "value")
+    }
 
     func testFileStore() {
         // This is an example of a functional test case.

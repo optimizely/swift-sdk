@@ -46,8 +46,8 @@ jobs:
       branches:
         only:
           - master
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=9.3 NAME='iPhone 6'
-      name: PLATFORM='iOS Simulator' OS=9.3 NAME='iPhone 6'
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=10.0 NAME='iPad Air'
+      name: PLATFORM='iOS Simulator' OS=10.0 NAME='iPad Air'
       install:
         - gem install slather --no-document --quiet
         - gem install cocoapods -v '1.6.1'

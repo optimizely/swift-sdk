@@ -214,11 +214,6 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     TestOPTEventDispatcher *eventDispatcher = [[TestOPTEventDispatcher alloc] init];
     TestOPTUserProfileService *userProfileService = [[TestOPTUserProfileService alloc] init];
     
-    // check event init and members avialable to ObjC
-    EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil body:[NSData new]];
-    XCTAssertNotNil(event.url);
-    XCTAssert(event.body.length==0);
-    
     // check all SDK initialization APIs for ObjC
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kSdkKey];
     

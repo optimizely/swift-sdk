@@ -28,17 +28,17 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     static let MAX_FAILURE_COUNT = 3
     
     // default timerInterval
-    var timerInterval:TimeInterval // every minute
+    var timerInterval: TimeInterval // every minute
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
-    var batchSize:Int
+    var batchSize: Int
     // start trimming the front of the queue when we get to over maxQueueSize
     // TODO: implement
     var maxQueueSize: Int = 30000
     
     lazy var logger = OPTLoggerFactory.getLogger()
-    var backingStore:DataStoreType
-    var backingStoreName:String
+    var backingStore: DataStoreType
+    var backingStoreName: String
     
     // for dispatching events
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")

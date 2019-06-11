@@ -250,7 +250,7 @@ static NSString * const kSdkKey = @"12345";
     // check DefaultEventDispatcher work OK with ObjC clients
     MockOPTEventDispatcher *customEventDispatcher = [[MockOPTEventDispatcher alloc] init];
     
-    OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:kSdkKey
+    OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:[self randomSdkKey]
                                                                      logger:nil
                                                             eventDispatcher:customEventDispatcher
                                                          userProfileService:nil
@@ -260,8 +260,12 @@ static NSString * const kSdkKey = @"12345";
     [optimizely startWithDatafile:datafile error:nil];
     
     XCTAssertEqual(customEventDispatcher.eventCount, 0);
-    NSString *variationKey = [optimizely activateWithExperimentKey:kExperimentKey userId:kUserId attributes:nil error:nil];
+    [optimizely trackWithEventKey:kEventKey userId:kUserId attributes:nil eventTags:nil error:nil];
     XCTAssertEqual(customEventDispatcher.eventCount, 1);
+}
+
+-(NSString*)randomSdkKey {
+    return [NSString stringWithFormat:@"%u", arc4random()];
 }
 
 @end

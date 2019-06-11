@@ -125,6 +125,18 @@ class OTUtils {
     static var negativeTooBigValue: Double {
         return negativeMaxValueAllowed * 2.0
     }
+    
+    static func saveAFile(name:String, data:Data) -> URL? {
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            
+            let fileURL = dir.appendingPathComponent(name, isDirectory: false)
+            
+            try? data.write(to: fileURL, options: .atomic)
+            return fileURL
+        }
+        
+        return nil
+    }
 
 }
 

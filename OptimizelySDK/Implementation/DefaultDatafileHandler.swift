@@ -17,12 +17,17 @@
 import Foundation
 
 class DefaultDatafileHandler: OPTDatafileHandler {
+    // endpoint used to get the datafile.  This is settable after you create a OptimizelyClient instance.
     public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
-    lazy var logger = OPTLoggerFactory.getLogger()
-    var timers: AtomicProperty<[String:(timer: Timer?, interval: Int)]> = AtomicProperty(property: [String: (Timer?, Int)]())
-    let dataStore = DataStoreUserDefaults()
     
-    let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent, autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
+    // lazy load the logger from the logger factory.
+    lazy var logger = OPTLoggerFactory.getLogger()
+    // the timers for all sdk keys are atomic to allow for thread access.
+    var timers: AtomicProperty<[String:(timer: Timer?, interval: Int)]> = AtomicProperty(property: [String: (Timer?, Int)]())
+    // we will use a simple user defaults datastore
+    let dataStore = DataStoreUserDefaults()
+    // and our download queue to speed things up.
+    let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
     
     required init() {
         
@@ -74,8 +79,8 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         
         var request = URLRequest(url: url)
         
-        if let lastModified = dataStore.getItem(forKey: "OPTLastModified-" + sdkKey) {
-            request.addValue(lastModified as! String, forHTTPHeaderField: "If-Modified-Since")
+        if let lastModified = dataStore.getLastModified(sdkKey: sdkKey), isDatafileSaved(sdkKey: sdkKey) {
+            request.setLastModified(lastModified: lastModified)
         }
         
         return request
@@ -84,13 +89,10 @@ class DefaultDatafileHandler: OPTDatafileHandler {
     
     open func getResponseData(sdkKey: String, response: HTTPURLResponse, url: URL?) -> Data? {
         if let url = url, let data = try? Data(contentsOf: url) {
-            if let str = String(data: data, encoding: .utf8) {
-                self.logger.d(str)
-            }
+            self.logger.d { String(data: data, encoding: .utf8) ?? "" }
             self.saveDatafile(sdkKey: sdkKey, dataFile: data)
-            if let lastModified = response.allHeaderFields["Last-Modified"] {
-                self.dataStore.saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
-            }
+            if let lastModified = response.getLastModified() {
+                self.dataStore.setLastModified(sdkKey: sdkKey, lastModified: lastModified)            }
             
             return data
         }
@@ -315,5 +317,34 @@ class DefaultDatafileHandler: OPTDatafileHandler {
             }
         }
 
+    }
+}
+
+extension DataStoreUserDefaults {
+    func getLastModified(sdkKey: String) -> String? {
+        return getItem(forKey: "OPTLastModified-" + sdkKey) as? String
+    }
+    
+    func setLastModified(sdkKey: String, lastModified: String) {
+        saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
+    }
+}
+
+extension URLRequest {
+    mutating func setLastModified(lastModified: String?) {
+        if let lastModified = lastModified {
+            addValue(lastModified, forHTTPHeaderField: "If-Modified-Since")
+        }
+    }
+
+    func getLastModified() -> String? {
+        return value(forHTTPHeaderField: "If-Modified-Since")
+    }
+
+}
+
+extension HTTPURLResponse {
+    func getLastModified() -> String? {
+        return allHeaderFields["Last-Modified"] as? String
     }
 }

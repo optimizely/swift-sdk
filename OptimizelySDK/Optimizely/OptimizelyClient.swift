@@ -183,9 +183,6 @@ open class OptimizelyClient: NSObject {
     
     func fetchDatafileBackground(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
         
-        // TODO: fix downloadDatafile to throw OptimizelyError
-        //       those errors propagated instead of handling here
-        
         datafileHandler.downloadDatafile(sdkKey: self.sdkKey, resourceTimeoutInterval: resourceTimeout) { result in
             var fetchResult: OptimizelyResult<Data>
             

@@ -48,7 +48,7 @@ static NSString * const kSdkKey = @"12345";
 @property(nonatomic) NSDictionary * attributes;
 @end
 
-// MARK: - Customization Modules Protocols
+// MARK: - Custom Logger
 
 @interface TestOPTLogger: NSObject <OPTLogger>
 @end
@@ -67,6 +67,8 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
 }
 @end
 
+// MARK: - Custom EventDispatcher
+
 @interface TestOPTEventDispatcher: NSObject <OPTEventDispatcher>
 @end
 
@@ -79,6 +81,8 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     return;
 }
 @end
+
+// MARK: - Custom UserProfileService
 
 @interface TestOPTUserProfileService: NSObject<OPTUserProfileService>
 @end

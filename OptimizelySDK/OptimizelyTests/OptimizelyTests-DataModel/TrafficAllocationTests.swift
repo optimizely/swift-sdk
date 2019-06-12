@@ -50,37 +50,34 @@ extension TrafficAllocationTests {
     func testDecodeFailWithMissingEntityId() {
         let json: [String: Any] = ["endOfRange": 5000]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-
+        var model: TrafficAllocation?
         do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
+            model = try JSONDecoder().decode(modelType, from: jsonData)
         } catch {
-            XCTAssert(true)
         }
+        XCTAssertNil(model)
     }
 
     func testDecodeFailWithMissingEndOfRange() {
         let json: [String: Any] = ["entityId": "553339214"]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        
+        var model: TrafficAllocation?
         do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
+            model = try JSONDecoder().decode(modelType, from: jsonData)
         } catch {
-            XCTAssert(true)
         }
+        XCTAssertNil(model)
     }
 
     func testDecodeFailWithJSONEmpty() {
         let json = [String: Any]()
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
-        
+        var model: TrafficAllocation?
         do {
-            _ = try JSONDecoder().decode(modelType, from: jsonData)
-            XCTAssert(false)
+            model = try JSONDecoder().decode(modelType, from: jsonData)
         } catch {
-            XCTAssert(true)
         }
+        XCTAssertNil(model)
     }
 }
 

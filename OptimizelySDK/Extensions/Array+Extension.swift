@@ -67,11 +67,13 @@ extension Array where Element == ThrowableCondition {
             throw OptimizelyError.conditionInvalidFormat("NOT with empty items")
         }
 
+        var error: OptimizelyError!
         do {
             let result = try eval()
             return !result
-        } catch let error as OptimizelyError {
-            throw OptimizelyError.conditionInvalidFormat("NOT with invalid items [\(error.reason)]")
+        } catch let err as OptimizelyError {
+            error = OptimizelyError.conditionInvalidFormat("NOT with invalid items [\(err.reason)]")
         }
+        throw error
     }
 }

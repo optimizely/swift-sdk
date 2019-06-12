@@ -126,11 +126,10 @@ class ThrowableConditionListTest: XCTestCase {
     func evalsListFromBools(_ conditions: [Bool?]) -> [ThrowableCondition] {
         return conditions.map { value -> ThrowableCondition in
             return { () throws -> Bool in
-                if let value = value {
-                    return value
-                } else {
+                guard let value = value else {
                     throw OptimizelyError.conditionInvalidFormat("nil")
                 }
+                return value
             }
         }
     }

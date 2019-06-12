@@ -15,6 +15,7 @@
 ***************************************************************************/
 
 import Foundation
+import os.log
 
 open class DefaultLogger: OPTLogger {
     private static var _logLevel: OptimizelyLogLevel?
@@ -37,8 +38,22 @@ open class DefaultLogger: OPTLogger {
         if level > DefaultLogger.logLevel {
             return
         }
-        let message = "[OPTIMIZELY][" + level.name + "] " + message
-
-        NSLog(message)
+        
+        if #available(iOS 10.0, tvOS 10.0, *) {
+            let osLog = OSLog(subsystem: "com.optimizely", category: "OPTIMIZELY")
+            
+            var osLogType: OSLogType
+            switch level {
+            case .warning: osLogType = .info
+            case .info: osLogType = .info
+            case .debug: osLogType = .debug
+            default: osLogType = .default
+            }
+            
+            os_log("[%{PUBLIC}@] %{PUBLIC}@", log: osLog, type: osLogType, level.name, message)
+        } else {
+            let message = "[OPTIMIZELY][" + level.name + "] " + message
+            NSLog(message)
+        }
     }
 }

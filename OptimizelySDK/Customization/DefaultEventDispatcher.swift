@@ -47,7 +47,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    public init(batchSize:Int = 10, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*1 ) {
+    public init(batchSize: Int = 10, backingStore: DataStoreType = .file, dataStoreName: String = "OPTEventQueue", timerInterval: TimeInterval = 60*1 ) {
         self.batchSize = batchSize > 0 ? batchSize : 1
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
@@ -240,12 +240,11 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
                 self.dispatcher.async {
                     if self.dataStore.count == 0 {
-                        self.timer.performAtomic() { (timer) in
+                        self.timer.performAtomic {(timer) in
                             timer.invalidate()
                         }
                         self.timer.property = nil
-                    }
-                    else {
+                    } else {
                         self.flushEvents()
                     }
                 }

@@ -113,7 +113,7 @@ class DatafileHandlerTests: XCTestCase {
                 XCTAssert(data != nil)
                 expectation.fulfill()
             case .failure(let error):
-                XCTAssert(error != nil)
+                XCTAssert(error.errorDescription != nil)
             }
         }
         
@@ -161,7 +161,7 @@ class DatafileHandlerTests: XCTestCase {
                 XCTAssert(data == nil)
                 expectation.fulfill()
             case .failure(let error):
-                XCTAssert(error != nil)
+                XCTAssert(error.errorDescription != nil)
             }
         }
         

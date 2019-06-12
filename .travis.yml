@@ -52,9 +52,10 @@ jobs:
         - gem install slather --no-document --quiet
         - gem install cocoapods -v '1.6.1'
         - pod install --repo-update
+        # fix simulator known issue (https://developer.apple.com/documentation/xcode_release_notes/xcode_10_2_1_release_notes)
         - sudo mkdir '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 9.3.simruntime/Contents/Resources/RuntimeRoot/usr/lib/swift'
-        - Scripts/start_simulator.sh com.apple.CoreSimulator.SimDeviceType.iPad-Air com.apple.CoreSimulator.SimRuntime.iOS-9-3
-        - sleep 30
+        # preload simulator
+        - xcrun simctl boot $(xcrun simctl list --json | jq '.devices."'"$(echo $PLATFORM | awk '{print $1}') $OS"'"' | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
       script:
         - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi
         - cat buildoutput | xcpretty

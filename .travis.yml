@@ -56,6 +56,7 @@ jobs:
         - sudo mkdir '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 9.3.simruntime/Contents/Resources/RuntimeRoot/usr/lib/swift'
         # preload simulator
         - xcrun simctl boot $(xcrun simctl list --json | jq '.devices."'"$(echo $PLATFORM | awk '{print $1}') $OS"'"' | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
+        - xcrun simctl list | grep Booted
       script:
         - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi
         - cat buildoutput | xcpretty

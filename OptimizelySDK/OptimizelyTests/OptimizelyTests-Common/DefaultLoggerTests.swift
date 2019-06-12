@@ -1,3 +1,4 @@
+//
 /****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -13,11 +14,15 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
+    
 
-import Foundation
+import XCTest
 
-extension EventForDispatch {
-    public static func == (lhs: EventForDispatch, rhs: EventForDispatch) -> Bool {
-        return lhs.url == rhs.url && lhs.body == rhs.body
+class DefaultLoggerTests: XCTestCase {
+
+    func testLoggerDefaultsToInfoLogLevel() {
+        let logLevel = DefaultLogger.logLevel
+        XCTAssertEqual(logLevel, .info)
     }
+
 }

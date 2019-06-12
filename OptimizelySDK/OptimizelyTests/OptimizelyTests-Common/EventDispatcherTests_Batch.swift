@@ -51,6 +51,25 @@ class EventDispatcherTests_Batch: XCTestCase {
 // MARK: - Batch
 
 extension EventDispatcherTests_Batch {
+    
+    func testEmptyOrSingleEventBatch() {
+        var events = [EventForDispatch]()
+        var batch = events.batch()
+        XCTAssertNil(batch)
+        
+        let event = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        events.append(event)
+        batch = events.batch()
+        XCTAssertEqual(event, batch)
+    }
+    
+    func testNilEventDispatchBody() {
+        var events = [EventForDispatch]()
+        let event = EventForDispatch(url: URL(string: kUrlA), body: Data())
+        events.append(contentsOf: [event, event])
+        let batch = events.batch()
+        XCTAssertNil(batch)
+    }
 
     func testBatchingEvents() {
         let events: [EventForDispatch] = [
@@ -61,7 +80,9 @@ extension EventDispatcherTests_Batch {
         ]
 
         let batch = events.batch()!
+        XCTAssertNotNil(batch)
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertNotNil(batchedEvents)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.revision, kRevision)
         XCTAssertEqual(batchedEvents.accountID, kAccountId)

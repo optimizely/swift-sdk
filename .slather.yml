@@ -3,5 +3,3 @@ xcodeproj: OptimizelySDK/OptimizelySwiftSDK.xcodeproj
 scheme: OptimizelySwiftSDK-iOS
 workspace: OptimizelySDK.xcworkspace
 configuration: Release
-ignore: 
-    - "OptimizelySDK/OptimizelyTests/*"

@@ -55,6 +55,7 @@ jobs:
         # fix simulator known issue (https://developer.apple.com/documentation/xcode_release_notes/xcode_10_2_1_release_notes)
         - sudo mkdir '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 9.3.simruntime/Contents/Resources/RuntimeRoot/usr/lib/swift'
         # preload simulator
+        - brew install jq
         - xcrun simctl boot $(xcrun simctl list --json | jq '.devices."'"$(echo $PLATFORM | awk '{print $1}') $OS"'"' | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
         - xcrun simctl list | grep Booted
       script:

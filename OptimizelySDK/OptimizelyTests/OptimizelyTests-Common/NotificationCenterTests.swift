@@ -21,6 +21,7 @@ class NotificationCenterTests: XCTestCase {
     let notificationCenter: DefaultNotificationCenter = DefaultNotificationCenter()
     var experiment: Experiment?
     var variation: Variation?
+    var called = false
     
     static var sampleVariation: [String: Any] = ["id": "553339214",
                                   "key": "house",
@@ -72,15 +73,43 @@ class NotificationCenterTests: XCTestCase {
         notificationCenter.sendNotifications(type: NotificationType.datafileChange.rawValue, args: [Data()])
         
     }
+    
+    func addActivateListener() -> Int? {
+        let id = notificationCenter.addActivateNotificationListener { (_, _, _, _, _) in
+            self.called = true
+        }
+        return id
+    }
+    
+    func addTrackListener() -> Int? {
+        let id = notificationCenter.addTrackNotificationListener { (_, _, _, _, _) in
+            self.called = true
+        }
+        return id
+    }
+    
+    func addDecisionListener() -> Int? {
+        let id = notificationCenter.addDecisionNotificationListener { (_, _, _, _) in
+            self.called = true
+        }
+        return id
+    }
+    
+    func addDatafileChangeListener() -> Int? {
+        let id = notificationCenter.addDatafileChangeNotificationListener { (_) in
+            self.called = true
+        }
+        return id
+    }
+    
+    
 
     func testNotificationCenterAddRemoveActivate() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        var called = false
+        called = false
         
-        _ = notificationCenter.addActivateNotificationListener { (_, _, _, _, _) in
-                called = true
-        }
+        _ = self.addActivateListener()
         
         notificationCenter.clearNotificationListeners(type: .activate)
         
@@ -88,9 +117,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
 
-        let id = notificationCenter.addActivateNotificationListener { (_, _, _, _, _) in
-            called = true
-        }
+        let id = self.addActivateListener()
         
         notificationCenter.removeNotificationListener(notificationId: id!)
         
@@ -98,9 +125,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
 
-        _ = notificationCenter.addActivateNotificationListener { (_, _, _, _, _) in
-            called = true
-        }
+        _ = addActivateListener()
 
         sendActivate()
         
@@ -110,11 +135,9 @@ class NotificationCenterTests: XCTestCase {
     func testNotificationCenterAddRemoveTrack() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        var called = false
+        called = false
         
-        _ = notificationCenter.addTrackNotificationListener { (_, _, _, _, _) in
-            called = true
-        }
+        _ = self.addTrackListener()
         
         notificationCenter.clearNotificationListeners(type: .track)
         
@@ -122,9 +145,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
         
-        let id = notificationCenter.addTrackNotificationListener { (_, _, _, _, _) in
-            called = true
-        }
+        let id = self.addTrackListener()
 
         notificationCenter.removeNotificationListener(notificationId: id!)
         
@@ -132,9 +153,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
         
-        _ = notificationCenter.addTrackNotificationListener { (_, _, _, _, _) in
-            called = true
-        }
+        _ = self.addTrackListener()
 
         sendTrack()
         
@@ -144,11 +163,9 @@ class NotificationCenterTests: XCTestCase {
     func testNotificationCenterAddRemoveDecision() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        var called = false
+        called = false
         
-        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, _) in
-            called = true
-        }
+        _ = self.addDecisionListener()
         
         notificationCenter.clearNotificationListeners(type: .decision)
         
@@ -156,9 +173,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
         
-        let id = notificationCenter.addDecisionNotificationListener { (_, _, _, _) in
-            called = true
-        }
+        let id = self.addDecisionListener()
         
         notificationCenter.removeNotificationListener(notificationId: id!)
         
@@ -166,9 +181,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
         
-        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, _) in
-            called = true
-        }
+        _ = self.addDecisionListener()
         
         sendDecision()
         
@@ -178,11 +191,9 @@ class NotificationCenterTests: XCTestCase {
     func testNotificationCenterAddRemoveDatafileChange() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        var called = false
+        called = false
         
-        _ = notificationCenter.addDatafileChangeNotificationListener { (_) in
-            called = true
-        }
+        _ = self.addDatafileChangeListener()
         
         notificationCenter.clearNotificationListeners(type: .datafileChange)
         
@@ -190,9 +201,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
         
-        let id = notificationCenter.addDatafileChangeNotificationListener { (_) in
-            called = true
-        }
+        let id = self.addDatafileChangeListener()
 
         notificationCenter.removeNotificationListener(notificationId: id!)
         
@@ -200,9 +209,7 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertFalse(called)
         
-        _ = notificationCenter.addDatafileChangeNotificationListener { (_) in
-            called = true
-        }
+        _ = self.addDatafileChangeListener()
 
         sendDatafileChange()
         

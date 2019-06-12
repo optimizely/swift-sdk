@@ -127,11 +127,7 @@ extension BucketTests_GroupToExp {
         
         for (idx, test) in tests.enumerated() {
             let experiment = bucketer.bucketToExperiment(config: self.config, group: group!, bucketingId: test["userId"]!)
-            if let _ = test["expect"] {
-                XCTAssertEqual(test["expect"], experiment?.key, "test[\(idx)] failed")
-            } else {
-                XCTAssertNil(experiment)
-            }
+            XCTAssertEqual(test["expect"], experiment?.key, "test[\(idx)] failed")
         }
     }
     

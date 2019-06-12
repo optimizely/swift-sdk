@@ -279,12 +279,12 @@ extension BatchEventBuilderTests_Attributes {
         let eventForDispatch = eventDispatcher.events.first
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
+        var isIncluded = false
         if let botAttribute = event.getEventAttribute(key: botFilteringKey),
             botAttribute.entityID == botFilteringKey {
-            XCTAssertEqual(botAttribute.value, .bool(true))
-        } else {
-            XCTAssert(false, "$opt_bot_filtering should be included")
+            isIncluded = botAttribute.value == .bool(true)
         }
+        XCTAssert(isIncluded)
     }
     
     func testBotFilteringWhenFalse() {
@@ -300,12 +300,12 @@ extension BatchEventBuilderTests_Attributes {
         let eventForDispatch = eventDispatcher.events.first
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
+        var isIncluded = false
         if let botAttribute = event.getEventAttribute(key: botFilteringKey),
             botAttribute.entityID == botFilteringKey {
-            XCTAssertEqual(botAttribute.value, .bool(false))
-        } else {
-            XCTAssert(false, "$opt_bot_filtering should be included")
+            isIncluded = botAttribute.value == .bool(false)
         }
+        XCTAssert(isIncluded)
     }
     
     func testBotFilteringWhenNil() {
@@ -321,12 +321,8 @@ extension BatchEventBuilderTests_Attributes {
         let eventForDispatch = eventDispatcher.events.first
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
-        if let botAttribute = event.getEventAttribute(key: botFilteringKey),
-            botAttribute.entityID == botFilteringKey {
-            XCTAssert(false, "$opt_bot_filtering should not be included")
-        } else {
-            XCTAssert(true)
-        }
+        let isNotIncluded: Bool = event.getEventAttribute(key: botFilteringKey)?.entityID != botFilteringKey
+        XCTAssert(isNotIncluded)
     }
     
 }

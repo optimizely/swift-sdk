@@ -3,9 +3,9 @@ os: linux
 
 # Integration tests need to run first to reset the PR build status to pending
 stages:
-  - name: 'Trigger Integration Tests'
-    if: env(RUN_COMPAT_SUITE) = true
-  - name: 'SourceClear and Lint'
+#  - name: 'Trigger Integration Tests'
+#    if: env(RUN_COMPAT_SUITE) = true
+#  - name: 'SourceClear and Lint'
   - name: 'Unit Tests'
   - name: 'Prepare for release'
     if: env(PREP) = true and type = api
@@ -56,8 +56,7 @@ jobs:
         - sudo mkdir '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 9.3.simruntime/Contents/Resources/RuntimeRoot/usr/lib/swift'
         # preload simulator
         - brew install jq
-        - xcrun simctl list --json
-        - xcrun simctl list --json | jq '.devices."'"$(echo $PLATFORM | awk '{print $1}') $OS"'"'
+        #- xcrun simctl list --json | jq '.devices."'"$(echo $PLATFORM | awk '{print $1}') $OS"'"'
         - xcrun simctl list --json | jq '.devices."'"$(echo $PLATFORM | awk '{print $1}') $OS"'"' | jq -r '.[] | select(.name==env.NAME) | .udid'
         - xcrun simctl boot $(xcrun simctl list --json | jq '.devices."'"$(echo $PLATFORM | awk '{print $1}') $OS"'"' | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
         - xcrun simctl list | grep Booted

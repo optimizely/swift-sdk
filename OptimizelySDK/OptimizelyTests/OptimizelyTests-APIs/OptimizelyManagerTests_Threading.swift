@@ -33,16 +33,15 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         // datafile handler that uses two datafiles on/off
         let datafileHandler = makeDatafileHandler()
         // register our datafile handler for this sdk key
-        HandlerRegistryService.shared.registerBinding(binder:Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStrategy(strategy: .reUse).to(factory: type(of:datafileHandler).init).using(instance: datafileHandler).sdkKey(key: "12345"))
+        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStrategy(strategy: .reUse).to(factory: type(of: datafileHandler).init).using(instance: datafileHandler).sdkKey(key: "12345"))
         
         self.optimizely = OptimizelyManager(sdkKey: "12345",
                                             userProfileService: OTUtils.createClearUserProfileService(),
-                                            periodicDownloadInterval:1
+                                            periodicDownloadInterval: 1
         )
         do {
             try self.optimizely.initializeSDK(datafile: datafileOff)
-        }
-        catch {
+        } catch {
             print(error)
             XCTAssert(false)
         }
@@ -59,12 +58,11 @@ class OptimizelyManagerTests_Threading: XCTestCase {
     /// that switches between datafiles with the same project and feature.  one has the feature flag
     /// toggled on, another has it toggled off.
     func testFeatureToggle() {
-        let _ = self.optimizely.notificationCenter.addFeatureFlagRolloutChangeListener { (featureKey, toggle) in
+        _ = self.optimizely.notificationCenter.addFeatureFlagRolloutChangeListener { (featureKey, _) in
             do {
                 let value = try self.optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId)
                 XCTAssertNotNil(value)
-            }
-            catch {
+            } catch {
                 print(error)
                 XCTAssert(false)
             }
@@ -76,8 +74,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
                 do {
                     let value = try self.optimizely.isFeatureEnabled(featureKey: "show_coupon", userId: self.userId)
                     XCTAssertNotNil(value)
-                }
-                catch {
+                } catch {
                     print(error)
                     XCTAssert(false)
                 }
@@ -98,7 +95,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         
         let optimizely2 = OptimizelyManager(sdkKey: "123123",
                                             //userProfileService: OTUtils.createClearUserProfileService(),
-                                            periodicDownloadInterval:0
+                                            periodicDownloadInterval: 0
         )
         try? optimizely2.initializeSDK(datafile: datafile!)
         
@@ -108,7 +105,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
 
     /// Here we are testing 3 instances and calling activate and isFeature enabled on those instances.
     func testThreeInstances() {
-        class NoOpUserProfileService :OPTUserProfileService {
+        class NoOpUserProfileService: OPTUserProfileService {
             required init() {
                 
             }
@@ -124,11 +121,11 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         
         let optimizely2 = OptimizelyManager(sdkKey: "123123",
                                             userProfileService: NoOpUserProfileService(),
-            periodicDownloadInterval:0
+            periodicDownloadInterval: 0
         )
         let optimizely3 = OptimizelyManager(sdkKey: "999999",
                                             userProfileService: NoOpUserProfileService(),
-            periodicDownloadInterval:0
+            periodicDownloadInterval: 0
         )
         try? optimizely2.initializeSDK(datafile: datafile!)
         try? optimizely3.initializeSDK(datafile: OTUtils.loadJSONDatafile("ab_experiments")!)
@@ -142,7 +139,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
     /// Here we are creating 3 instances and calling activate/isFeatureEnabled 101 times on each using
     /// a dispatch queue for each.
     func testThreeInstancesThreads() {
-        class NoOpUserProfileService :OPTUserProfileService {
+        class NoOpUserProfileService: OPTUserProfileService {
             required init() {
                 
             }
@@ -158,11 +155,11 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         
         let optimizely2 = OptimizelyManager(sdkKey: "123123",
                                             userProfileService: NoOpUserProfileService(),
-            periodicDownloadInterval:0
+            periodicDownloadInterval: 0
         )
         let optimizely3 = OptimizelyManager(sdkKey: "999999",
                                             userProfileService: NoOpUserProfileService(),
-            periodicDownloadInterval:0
+            periodicDownloadInterval: 0
         )
         try? optimizely2.initializeSDK(datafile: datafile!)
         try? optimizely3.initializeSDK(datafile: OTUtils.loadJSONDatafile("ab_experiments")!)
@@ -176,7 +173,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         var backgroundResponse = [(enabled:Bool, variation:String)]()
         var myResponse = [(enabled:Bool, variation:String)]()
         for _ in 0...100 {
-            backgroundQueue.async  {
+            backgroundQueue.async {
                 let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
                 let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
                 
@@ -193,7 +190,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
                 XCTAssertNotNil(variation)
             }
 
-            myQueue.async  {
+            myQueue.async {
                 let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
                 let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
                 XCTAssertTrue(enabled!)
@@ -238,7 +235,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
 
     /// Concurrent testing.  We don't wrap all our entities so concurrent testing is not approved.  However, we should not crash.  We might want a concurrent option in which case we wrap every method with a lock
     func testConcurrentThreads() {
-        class NoOpUserProfileService :OPTUserProfileService {
+        class NoOpUserProfileService: OPTUserProfileService {
             required init() {
                 
             }
@@ -255,29 +252,29 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         let optimizely2 = OptimizelyManager(sdkKey: "concurrent1",
                                             eventDispatcher: makeEventHandler(),
                                             userProfileService: NoOpUserProfileService(),
-            periodicDownloadInterval:0
+            periodicDownloadInterval: 0
         )
         let optimizely3 = OptimizelyManager(sdkKey: "concurrent2",
                                             eventDispatcher: makeEventHandler(),
                                             userProfileService: NoOpUserProfileService(),
-            periodicDownloadInterval:0
+            periodicDownloadInterval: 0
         )
         try? optimizely2.initializeSDK(datafile: datafile!)
         try? optimizely3.initializeSDK(datafile: OTUtils.loadJSONDatafile("ab_experiments")!)
         
         //let expectationBackground = XCTestExpectation(description: "waiting for background thread")
         let backgroundQueue = DispatchQueue(label: "mybackground", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent)
-        let atomicBackground = AtomicProperty<[(enabled:Bool?, variation:String?)]>(property: [(enabled:Bool?, variation:String?)]())
+        let atomicBackground = AtomicProperty<[(enabled: Bool?, variation: String?)]>(property: [(enabled:Bool?, variation:String?)]())
         
         let dispatchGroup = DispatchGroup()
         
         for _ in 0...100 {
             dispatchGroup.enter()
-            backgroundQueue.async  {
+            backgroundQueue.async {
                 let enabled = try? optimizely2.isFeatureEnabled(featureKey: "feat", userId: self.userId, attributes: ["house": "Gryffindor"])
                 let variation = try? optimizely3.activate(experimentKey: "ab_running_exp_untargeted", userId: self.userId)
                 
-                atomicBackground.performAtomic() { (array) in
+                atomicBackground.performAtomic { (array) in
                     array.append((enabled: enabled!, variation: variation!))
                 }
                 
@@ -305,8 +302,6 @@ class OptimizelyManagerTests_Threading: XCTestCase {
         }
     }
 
-    
-
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {
@@ -316,10 +311,10 @@ class OptimizelyManagerTests_Threading: XCTestCase {
 
     func makeDatafileHandler() -> OPTDatafileHandler {
         class DatafileHandler: DefaultDatafileHandler {
-            var toggle = FeatureFlagToggle.off;
-            let on:Data
-            let off:Data
-            init(on:Data, off:Data) {
+            var toggle = FeatureFlagToggle.off
+            let on: Data
+            let off: Data
+            init(on: Data, off: Data) {
                 self.on = on
                 self.off = off
             }
@@ -344,7 +339,7 @@ class OptimizelyManagerTests_Threading: XCTestCase {
     }
     
     func makeEventHandler() -> OPTEventDispatcher {
-        class NoOpEventHandler : OPTEventDispatcher {
+        class NoOpEventHandler: OPTEventDispatcher {
             func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
                 
             }
@@ -352,7 +347,6 @@ class OptimizelyManagerTests_Threading: XCTestCase {
             func flushEvents() {
                 
             }
-            
             
         }
         

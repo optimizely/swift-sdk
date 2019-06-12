@@ -1,3 +1,4 @@
+//
 /****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -13,18 +14,32 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
+    
 
 import Foundation
 
-/// Simple DataStore using key value.  This abstracts away the datastore layer. The datastore should take into account synchronization.
-public protocol OPTDataStore {
-    
-    /// getItem - get an item by key.
-    /// - Parameter forKey: key to lookup datastore value.
-    /// - Returns: the value saved or nil
-    func getItem(forKey: String) -> Any?
-    /// saveItem - save the item to the datastore.
-    /// - Parameter forKey: key to save value
-    /// - Parameter value: value to save.
-    func saveItem(forKey: String, value: Any)
+
+class MockDownloadTask : URLSessionDownloadTask {
+    override func resume() {
+        
+    }
+}
+// session returns a download task that noop for resume.
+// crafts a httpurlresponse with 304
+// and returns that.
+// the response also includes the url for the data download.
+// the cdn url is used to get the datafile if the datafile is not in cache
+class MockUrlSession : URLSession {
+    var downloadCacheUrl:URL?
+
+    override func downloadTask(with request: URLRequest, completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionDownloadTask {
+        
+        let statusCode = request.getLastModified() != nil ? 304 : 200
+
+        let response = HTTPURLResponse(url: request.url!, statusCode: statusCode, httpVersion: nil, headerFields: nil)
+        
+        completionHandler(downloadCacheUrl!, response, nil )
+        
+        return MockDownloadTask()
+    }
 }

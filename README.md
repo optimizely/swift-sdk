@@ -15,7 +15,7 @@ Optimizely Rollouts is free feature flags for development teams. Easily roll out
 
 ### Using the SDK
 
-See the [Mobile developer documentation](https://docs.developers.optimizely.com/full-stack/docs/implement-the-ios-sdk-310-beta) or [OTT developer documentation](https://docs.developers.optimizely.com/full-stack/docs/implement-the-ios-sdk-310-beta) to learn how to set
+See the [Mobile developer documentation](https://docs.developers.optimizely.com/full-stack/docs/ios-swift-sdk-310-beta) or [OTT developer documentation](https://docs.developers.optimizely.com/full-stack/docs/ios-swift-sdk-310-beta) to learn how to set
 up an Optimizely X project and start using the SDK.
 
 ### Requirements
@@ -84,5 +84,6 @@ For the SDK:
 MurmurHash3:https://github.com/jpedrosa/sua/blob/master/Sources/murmurhash3.swift License (Apache 2.0):https://github.com/jpedrosa/sua/blob/master/LICENSE.txt
 Ported to Swift4.
 
-
+SwiftLint:https://github.com/realm/SwiftLint License (MIT):https://github.com/realm/SwiftLint/blob/master/LICENSE
+Used to enforce Swift style and conventions.
 

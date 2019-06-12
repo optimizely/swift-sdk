@@ -12,6 +12,6 @@ This modernized version of the SDK is meant to replace the Objective-C SDK.
 * On top of the above functionality, the developer may register for a datafile change notification.  This notification will be called anytime a new datafile is downloaded to cache and is used to reinitialize the optimizely client automatically.
 * The event handler batches events and will run every minute in the foreground to send events.  If there are no events in the queue it will not reschedule.
 
-### Bug Fixes:
+### Bug Fixes
 
 ### Breaking Changes

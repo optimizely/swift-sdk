@@ -107,17 +107,29 @@ class OTUtils {
     static var negativeTooBigValue: Double {
         return negativeMaxValueAllowed * 2.0
     }
+    
+    static func saveAFile(name:String, data:Data) -> URL? {
+        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            
+            let fileURL = dir.appendingPathComponent(name, isDirectory: false)
+            
+            try? data.write(to: fileURL, options: .atomic)
+            return fileURL
+        }
+        
+        return nil
+    }
 
 }
 
-class FakeEventDispatcher : OPTEventDispatcher {
+class FakeEventDispatcher: OPTEventDispatcher {
     
-    public var events:[EventForDispatch] = [EventForDispatch]()
+    public var events: [EventForDispatch] = [EventForDispatch]()
     required init() {
         
     }
     
-    func dispatchEvent(event:EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+    func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         events.append(event)
         //completionHandler(event)
     }
@@ -127,4 +139,3 @@ class FakeEventDispatcher : OPTEventDispatcher {
         events.removeAll()
     }
 }
-

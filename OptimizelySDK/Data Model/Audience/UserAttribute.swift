@@ -91,7 +91,7 @@ extension UserAttribute {
     func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
-        guard let _ = typeSupported else {
+        if typeSupported == nil {
             throw OptimizelyError.userAttributeInvalidType(self.type ?? "empty")
         }
 
@@ -137,4 +137,3 @@ extension UserAttribute {
     }
     
 }
-

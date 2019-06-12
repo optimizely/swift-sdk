@@ -51,7 +51,6 @@ class BucketTests_BucketVariation: XCTestCase {
     var experiment: Experiment!
     var variation: Variation!
     
-    
     // MARK: - Sample datafile data
     
     var sampleExperimentData: [String: Any] { return
@@ -89,7 +88,7 @@ class BucketTests_BucketVariation: XCTestCase {
                     "key": kVariationKeyD
                 ]
             ],
-            "forcedVariations":[:],
+            "forcedVariations": [:]
         ]
     }
     
@@ -102,7 +101,6 @@ class BucketTests_BucketVariation: XCTestCase {
          "experiments": [sampleExperimentData]
         ]
     }
-
     
     // MARK: - Setup
     
@@ -137,7 +135,7 @@ extension BucketTests_BucketVariation {
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
             } else {
-                XCTAssertNil(experiment);
+                XCTAssertNil(experiment)
             }
         }
     }
@@ -148,7 +146,6 @@ extension BucketTests_BucketVariation {
         
         let group: Group =  try! OTUtils.model(from: sampleGroupData)
         self.config.project.groups = [group]
-
         
         let tests = [["userId": "ppid1", "expect": kVariationKeyB],
                      ["userId": "ppid2", "expect": kVariationKeyD],
@@ -160,7 +157,7 @@ extension BucketTests_BucketVariation {
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
             } else {
-                XCTAssertNil(experiment);
+                XCTAssertNil(experiment)
             }
         }
     }
@@ -192,7 +189,6 @@ extension BucketTests_BucketVariation {
         group.policy = .overlapping
         self.config.project.groups = [group]
         
-        
         let tests = [["userId": "ppid1", "expect": kVariationKeyB],
                      ["userId": "ppid2", "expect": kVariationKeyD],
                      ["userId": "ppid3", "expect": kVariationKeyA],
@@ -203,7 +199,7 @@ extension BucketTests_BucketVariation {
             if let _ = test["expect"] {
                 XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
             } else {
-                XCTAssertNil(experiment);
+                XCTAssertNil(experiment)
             }
         }
     }

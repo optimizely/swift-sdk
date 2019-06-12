@@ -51,7 +51,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
                                      attributes: attributes)
         
         let eventForDispatch = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! Dictionary<String,Any>
+        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! Dictionary<String, Any>
         let event = json
         
         XCTAssertEqual((event["revision"] as! String), project.revision)
@@ -62,23 +62,23 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(event["anonymize_ip"] as! Bool, project.anonymizeIP)
         XCTAssertEqual(event["enrich_decisions"] as! Bool, true)
         
-        let visitor = (event["visitors"] as! Array<Dictionary<String,Any>>)[0]
+        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(visitor["visitor_id"] as! String, userId)
 
-        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String,Any>>)[0]
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
         
         // attributes contents are tested separately in "BatchEventBuilder_Attributes.swift"
-        let eventAttributes = visitor["attributes"] as! Array<Dictionary<String,Any>>
+        let eventAttributes = visitor["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssertEqual(eventAttributes.count, attributes.count)
 
-        let decision = (snapshot["decisions"]  as! Array<Dictionary<String,Any>>)[0]
+        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(decision["variation_id"] as! String, expVariationId)
         XCTAssertEqual(decision["campaign_id"] as! String, expCampaignId)
         XCTAssertEqual(decision["experiment_id"] as! String, expExperimentId)
         
-        let de = (snapshot["events"]  as! Array<Dictionary<String,Any>>)[0]
+        let de = (snapshot["events"]  as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(de["entity_id"] as! String, expCampaignId)
         XCTAssertEqual(de["key"] as! String, "campaign_activated")
@@ -88,7 +88,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         // cannot validate randomly-generated string. check if long enough.
         XCTAssert((de["uuid"] as! String).count > 20)
         // event tags are tested separately below
-        XCTAssert((de["tags"] as! Dictionary<String,Any>).count==0)
+        XCTAssert((de["tags"] as! Dictionary<String, Any>).count==0)
         XCTAssertNil(de["revenue"])
         XCTAssertNil(de["value"])
     }
@@ -105,7 +105,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
                               attributes: attributes,
                               eventTags: eventTags)
         let eventForDispatch = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! Dictionary<String,Any>
+        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! Dictionary<String, Any>
         let event = json
         
         XCTAssertEqual(event["revision"] as! String, project.revision)
@@ -116,14 +116,14 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(event["anonymize_ip"] as! Bool, project.anonymizeIP)
         XCTAssertEqual(event["enrich_decisions"] as! Bool, true)
         
-        let visitor = (event["visitors"] as! Array<Dictionary<String,Any>>)[0]
+        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(visitor["visitor_id"] as! String, userId)
         
-        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String,Any>>)[0]
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
         
         // attributes contents are tested separately in "BatchEventBuilder_Attributes.swift"
-        let eventAttributes = visitor["attributes"] as! Array<Dictionary<String,Any>>
+        let eventAttributes = visitor["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssertEqual(eventAttributes[0]["key"] as! String, "s_foo")
         XCTAssertEqual(eventAttributes[0]["value"] as! String, "bar")
 
@@ -131,7 +131,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         
         XCTAssertNil(decisions)
         
-        let de = (snapshot["events"] as! Array<Dictionary<String,Any>>)[0]
+        let de = (snapshot["events"] as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(de["entity_id"] as! String, eventId)
         XCTAssertEqual(de["key"] as! String, eventKey)
@@ -141,7 +141,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         // cannot validate randomly-generated string. check if long enough.
         XCTAssert((de["uuid"] as!String).count > 20)
         // {tags, revenue, value} are tested separately below
-        XCTAssertEqual((de["tags"] as! Dictionary<String,Any>)["browser"] as! String, "chrome")
+        XCTAssertEqual((de["tags"] as! Dictionary<String, Any>)["browser"] as! String, "chrome")
         XCTAssertNil(de["revenue"])
         XCTAssertNil(de["value"])
     }
@@ -166,4 +166,3 @@ class BatchEventBuilderTests_Events: XCTestCase {
     }
 
 }
-

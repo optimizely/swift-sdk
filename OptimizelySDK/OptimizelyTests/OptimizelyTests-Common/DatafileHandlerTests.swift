@@ -26,8 +26,7 @@ class DatafileHandlerTests: XCTestCase {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-                }
-                catch {
+                } catch {
                     print(error)
                 }
                 
@@ -77,8 +76,102 @@ class DatafileHandlerTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
     
+    func testDatafileDownload304NoCache() {
+        
+        var localUrl:URL?
+        
+        // create a dummy file at a url to use as or datafile cdn location
+        localUrl = OTUtils.saveAFile(name: "localcdn", data: Data())
+
+        // default datafile handler
+        class InnerDatafileHandler : DefaultDatafileHandler {
+            var localFileUrl:URL?
+            // override getSession to return our own session.
+            override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
+            
+                let session = MockUrlSession()
+                session.downloadCacheUrl = localFileUrl
+                
+                return session
+            }
+        }
+        
+        // create test datafile handler
+        let handler = InnerDatafileHandler()
+        //remove any cached datafile..
+        handler.removeSavedDatafile(sdkKey: "localcdnTestSDKKey")
+        // set the url to use as our datafile download url
+        handler.localFileUrl = localUrl
+        
+        let expectation = XCTestExpectation(description: "wait to get no-nil data")
+        
+        // initiate download task which should pass back a 304 but still return non nil
+        // since the datafile was not in cache.
+        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+            switch result {
+            case .success(let data):
+                XCTAssert(data != nil)
+                expectation.fulfill()
+            case .failure(let error):
+                XCTAssert(error != nil)
+            }
+        }
+        
+        wait(for: [expectation], timeout: 3)
+        // finally remove the datafile when complete.
+        try? FileManager.default.removeItem(at: localUrl!)
+    }
+
+    func testDatafileDownload304WithCache() {
+        
+        var fileUrl:URL?
+        
+        // create a dummy file at a url to use as our datafile local download location
+        fileUrl = OTUtils.saveAFile(name: "localcdn", data: Data())
+        
+        // default datafile handler
+        class InnerDatafileHandler : DefaultDatafileHandler {
+            var localFileUrl:URL?
+            // override getSession to return our own session.
+            override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
+
+                let session = MockUrlSession()
+                session.downloadCacheUrl = localFileUrl
+                
+                return session
+            }
+        }
+        
+        // create test datafile handler
+        let handler = InnerDatafileHandler()
+        //save the cached datafile..
+        handler.saveDatafile(sdkKey: "localcdnTestSDKKey", dataFile: "{}".data(using: .utf8)!)
+        handler.dataStore.setLastModified(sdkKey: "localcdnTestSDKKey", lastModified: "1234")
+        // set the url to use as our datafile download url
+        handler.localFileUrl = fileUrl
+        
+        let expectation = XCTestExpectation(description: "wait to get no-nil data")
+        
+        // initiate download task which should pass back a 304 but still return non nil
+        // since the datafile was not in cache.
+        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+            switch result {
+            case .success(let data):
+                // should come back as nil since got 304 and datafile in cache.
+                XCTAssert(data == nil)
+                expectation.fulfill()
+            case .failure(let error):
+                XCTAssert(error != nil)
+            }
+        }
+        
+        wait(for: [expectation], timeout: 3)
+        // finally remove the datafile when complete.
+        try? FileManager.default.removeItem(at: fileUrl!)
+    }
+
     func testPeriodicDownload() {
-        class FakeDatafileHandler : DefaultDatafileHandler {
+        class FakeDatafileHandler: DefaultDatafileHandler {
             let data = Data()
             override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 completionHandler(.success(data))
@@ -87,9 +180,9 @@ class DatafileHandlerTests: XCTestCase {
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
         let handler = FakeDatafileHandler()
         let now = Date()
-        var count = 0;
+        var count = 0
         var seconds = 0
-        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: 1) { (data) in
+        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: 1) { (_) in
             count += 1
             if count == 10 {
                 handler.stopPeriodicUpdates()
@@ -103,11 +196,10 @@ class DatafileHandlerTests: XCTestCase {
         XCTAssert(count == 10)
         XCTAssert(seconds == 10)
         
-        
     }
     
     func testPeriodicDownloadWithOptimizlyClient() {
-        class FakeDatafileHandler : DefaultDatafileHandler {
+        class FakeDatafileHandler: DefaultDatafileHandler {
             let data = OTUtils.loadJSONDatafile("typed_audience_datafile")
             override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 completionHandler(.success(data))
@@ -118,18 +210,18 @@ class DatafileHandlerTests: XCTestCase {
 
         HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
         
-        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval:1)
+        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval: 1)
 
         var count = 0
         
-        let _ = optimizely.notificationCenter.addDatafileChangeNotificationListener { (data) in
+        _ = optimizely.notificationCenter.addDatafileChangeNotificationListener { (_) in
             count += 1
             if count == 9 {
                 optimizely.datafileHandler.stopAllUpdates()
                 expection.fulfill()
             }
         }
-        optimizely.start() { (result) in
+        optimizely.start { (_) in
             XCTAssert(true)
         }
         wait(for: [expection], timeout: 10)
@@ -143,14 +235,13 @@ class DatafileHandlerTests: XCTestCase {
         handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
         
         let expectation = XCTestExpectation(description: "should fail before 10")
-        handler.downloadDatafile(sdkKey: "invalidKey1212121", resourceTimeoutInterval:3) { (result) in
+        handler.downloadDatafile(sdkKey: "invalidKey1212121", resourceTimeoutInterval: 3) { (result) in
             switch result {
             case .failure(let error):
                 print(error)
                 XCTAssert(true)
                 expectation.fulfill()
-            case .success(let data):
-                print(data)
+            case .success(_):
                 XCTAssert(false)
             }
         }

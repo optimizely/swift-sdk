@@ -30,8 +30,9 @@ jobs:
     - stage: 'SourceClear and Lint'
       language: swift
       os: osx
-      osx_image: xcode10.1
-      install: gem install cocoapods
+      osx_image: xcode10.2
+      install:
+        - gem install cocoapods -v '1.6.1'
       script:
         - pod spec lint --quick
       after_script:
@@ -41,18 +42,18 @@ jobs:
       stage: 'Unit Tests'
       language: swift
       os: osx
-      osx_image: xcode10.1
+      osx_image: xcode10.2
       branches:
         only:
           - master
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=9.1 NAME='iPad Air'
-      name: PLATFORM='iOS Simulator' OS=9.1 NAME='iPad Air'
-      before_install:
-        - gem install slather --no-document --quiet
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'
+      name: PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'
       install:
+        - gem install slather --no-document --quiet
+        - gem install cocoapods -v '1.6.1'
         - pod install --repo-update
+        - sudo mkdir '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 9.3.simruntime/Contents/Resources/RuntimeRoot/usr/lib/swift'
       script:
-        - pod spec lint --quick
         - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi
         - cat buildoutput | xcpretty
       after_success:
@@ -72,7 +73,7 @@ jobs:
       name: Prepare for release
       language: swift
       os: osx
-      osx_image: xcode10.1
+      osx_image: xcode10.2
       env:
         - VERSION=3.1.0-beta
       install:
@@ -87,7 +88,7 @@ jobs:
       name: Push to cocoapods.org
       language: minimal
       os: osx
-      osx_image: xcode10.1
+      osx_image: xcode10.2
       env:
         - VERSION=3.1.0-beta
       install:

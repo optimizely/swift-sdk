@@ -116,8 +116,11 @@ class ThrowableConditionListTest: XCTestCase {
         conditions = [nil, true]
         result = try? evalsListFromBools(conditions).not()
         XCTAssertNil(result)
+        
+        conditions = [Bool]()
+        result = try? evalsListFromBools(conditions).not()
+        XCTAssertNil(result)
     }
-    
     // MARK: - Utils
     
     func evalsListFromBools(_ conditions: [Bool?]) -> [ThrowableCondition] {

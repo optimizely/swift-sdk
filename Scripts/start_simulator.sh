@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -eou pipefail
 
+# expects the following environment variables defined
+# PLATFORM (eg. iOS Simulator)
+# OS (eg. 12.0)
+# NAME (eg. iPad Air)
+
 # prep jq arg because it doesnt allow parameter expansion within its single quotes
 echo ".devices.\"com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS/./-}\"" > /tmp/jq_file
 

@@ -196,12 +196,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+//        let vvc = self.window?.rootViewController as! VariationViewController
+//        vvc.dispatcherLabel2.text = "# events in backgrounding: " + String(vvc.countDispatchQueue())
+//        vvc.dispatcherLabel2.backgroundColor = .black
+//        vvc.dispatcherLabel2.textColor = .white
+//        vvc.view.addSubview(vvc.dispatcherLabel2)
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        let vvc = self.window?.rootViewController as! VariationViewController
+        vvc.dispatcherLabel2.text = "applicationWillEnterForeground: " + String(vvc.countDispatchQueue())
+        vvc.dispatcherLabel2.backgroundColor = .darkGray
+        vvc.dispatcherLabel2.textColor = .white
+        vvc.view.addSubview(vvc.dispatcherLabel2)
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        guard let vvc = self.window?.rootViewController as? VariationViewController else {
+            return
+        }
+        vvc.dispatcherLabel3.text = "applicationDidBecomeActive: " + String(vvc.countDispatchQueue())
+        vvc.dispatcherLabel3.backgroundColor = .black
+        vvc.dispatcherLabel3.textColor = .white
+        vvc.view.addSubview(vvc.dispatcherLabel3)
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

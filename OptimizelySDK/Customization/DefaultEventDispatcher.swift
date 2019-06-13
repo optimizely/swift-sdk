@@ -22,7 +22,7 @@ public enum DataStoreType {
 
 open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
-    static let sharedInstance = DefaultEventDispatcher()
+    public static let sharedInstance = DefaultEventDispatcher()
     
     // the max failure count.  there is no backoff timer.
     static let MAX_FAILURE_COUNT = 3
@@ -43,7 +43,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // for dispatching events
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
-    let dataStore: DataStoreQueueStackImpl<EventForDispatch>
+    public let dataStore: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
     
@@ -85,6 +85,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     let notify = DispatchGroup()
     
     open func flushEvents() {
+        print("flushing" )
         dispatcher.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0

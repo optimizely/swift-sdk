@@ -64,6 +64,4 @@ class EventForDispatchTests: XCTestCase {
         XCTAssert(desc.contains("UNKNOWN"))
     }
     
-    
-
 }

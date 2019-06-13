@@ -58,7 +58,7 @@ struct UserAttribute: Codable, Equatable {
         
         return ConditionMatch(rawValue: rawMatch)
     }
-
+    
     // MARK: - init
     
     init(from decoder: Decoder) throws {
@@ -97,7 +97,7 @@ extension UserAttribute {
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            throw OptimizelyError.userAttributeInvalidMatch(self.match!)
+            throw OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty")
         }
         
         guard let nameFinal = name else {

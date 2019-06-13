@@ -35,13 +35,7 @@ import Foundation
 }
 
 extension EventForDispatch {
-    
     override public var description: String {
         return "[url] \(url) (" + (String(data: body, encoding: .utf8) ?? "UNKNOWN") + ")"
     }
-    
-    public static func == (lhs: EventForDispatch, rhs: EventForDispatch) -> Bool {
-        return lhs.url == rhs.url && lhs.body == rhs.body
-    }
-    
 }

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Optimizely
+//import Optimizely
 
 class CustomLogger: OPTLogger {
     public static var logLevel: OptimizelyLogLevel = .info

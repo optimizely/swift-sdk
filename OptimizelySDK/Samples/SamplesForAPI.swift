@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 import Foundation
-import Optimizely
+//import Optimizely
 
 class SamplesForAPI {
 

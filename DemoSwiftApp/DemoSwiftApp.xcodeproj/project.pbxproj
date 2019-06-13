@@ -35,13 +35,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6D661BB222B2F89F0071B113 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6D661B8622B2F2E30071B113;
-			remoteInfo = "OptimizelyTests-DemoSwiftiOS";
-		};
 		6D661BB422B2F89F0071B113 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
@@ -185,6 +178,8 @@
 		0B886F5E161647DB427A8FBC /* Pods_DemoSwiftiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoSwiftiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		252D7DED21C8800800134A7A /* DemoSwiftiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwiftiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwifttvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D626D8822B3027F0065A990 /* OptimizelyTests_DemoSwiftiOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyTests_DemoSwiftiOS.swift; sourceTree = "<group>"; };
+		6D626D8A22B3027F0065A990 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D75853422B02917005A9DF7 /* DemoSwiftiOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoSwiftiOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D75853622B02917005A9DF7 /* DemoSwiftiOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSwiftiOSUITests.swift; sourceTree = "<group>"; };
 		6D75853822B02917005A9DF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -249,6 +244,15 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		6D626D8722B3027F0065A990 /* OptimizelyTests-DemoSwiftiOS */ = {
+			isa = PBXGroup;
+			children = (
+				6D626D8822B3027F0065A990 /* OptimizelyTests_DemoSwiftiOS.swift */,
+				6D626D8A22B3027F0065A990 /* Info.plist */,
+			);
+			path = "OptimizelyTests-DemoSwiftiOS";
+			sourceTree = "<group>";
+		};
 		6D75853522B02917005A9DF7 /* DemoSwiftiOSUITests */ = {
 			isa = PBXGroup;
 			children = (
@@ -273,7 +277,6 @@
 				6EDBCDE42270FBDE009DF724 /* OptimizelyTests-Common-tvOS.xctest */,
 				6EDBCDE62270FBDE009DF724 /* OptimizelyTests-DataModel-tvOS.xctest */,
 				6EDBCDE82270FBDE009DF724 /* OptimizelyTests-Others-tvOS.xctest */,
-				6D661BB322B2F89F0071B113 /* OptimizelyTests-DemoSwiftiOS.xctest */,
 				6D661BB522B2F89F0071B113 /* DemoSwiftiOS.app */,
 			);
 			name = Products;
@@ -351,6 +354,7 @@
 				EA299ED51E5530A400931399 /* DemoSwifttvOS */,
 				6E96818C21EEA391009B7FEC /* SharedResources */,
 				6D75853522B02917005A9DF7 /* DemoSwiftiOSUITests */,
+				6D626D8722B3027F0065A990 /* OptimizelyTests-DemoSwiftiOS */,
 				EA5246BE1DC7186800AF6685 /* Products */,
 				EA5248C31DC72E8300AF6685 /* Frameworks */,
 				5D9DAC78D3124F03BF2A7CC8 /* Pods */,
@@ -511,13 +515,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		6D661BB322B2F89F0071B113 /* OptimizelyTests-DemoSwiftiOS.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "OptimizelyTests-DemoSwiftiOS.xctest";
-			remoteRef = 6D661BB222B2F89F0071B113 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		6D661BB522B2F89F0071B113 /* DemoSwiftiOS.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;

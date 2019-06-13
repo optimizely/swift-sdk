@@ -1,34 +1,34 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019, Optimizely, Inc. and contributors                        *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import UIKit
-import Optimizely
+//import Optimizely
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let logLevel = OptimizelyLogLevel.debug
-
+    
     let sdkKey = "FCnSegiEkRry9rhVMroit4"
     let datafileName = "demoTestDatafile"
     let experimentKey = "background_experiment"
     let eventKey = "sample_conversion"
-
+    
     let userId = String(Int.random(in: 0..<100000))
     let attributes: [String: Any?] = ["browser_type": "safari", "bool_attr": false]
-
+    
     var window: UIWindow?
     var eventHandler: DefaultEventDispatcher!
     var optimizely: OptimizelyClient!
@@ -39,13 +39,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UIStoryboard(name: "tvOSMain", bundle: nil)
         #endif
     }
-
+    
     func applicationDidFinishLaunching(_ application: UIApplication) {
         
         if (ProcessInfo.processInfo.environment["UITEST_DISABLE_ANIMATIONS"] == "YES") {
             UIView.setAnimationsEnabled(false)
         }
-
+        
         // initialize SDK in one of these two ways:
         // (1) asynchronous SDK initialization (RECOMMENDED)
         //     - fetch a JSON datafile from the server
@@ -56,14 +56,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         initializeOptimizelySDKWithCustomization()
     }
-
+    
     // MARK: - Initialization Examples
-
+    
     func initializeOptimizelySDKAsynchronous() {
         optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
-
+        
         addListeners()
-
+        
         optimizely.start { result in
             switch result {
             case .failure(let error):
@@ -71,20 +71,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             case .success:
                 print("Optimizely SDK initialized successfully!")
             }
-
+            
             self.startWithRootViewController()
         }
     }
-
+    
     func initializeOptimizelySDKSynchronous() {
         guard let localDatafilePath = Bundle.main.path(forResource: datafileName, ofType: "json") else {
             fatalError("Local datafile cannot be found")
         }
-
+        
         optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
         
         addListeners()
-
+        
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
             try optimizely!.start(datafile: datafileJSON)
@@ -93,13 +93,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             print("Optimizely SDK initiliazation failed: \(error)")
         }
-
+        
         startWithRootViewController()
     }
-
+    
     func initializeOptimizelySDKWithCustomization() {
         // customization example (optional)
-
+        
         let customLogger = CustomLogger()
         // 30 sec interval may be too frequent. This is for demo purpose.
         // This should be should be much larger (default = 10 mins).
@@ -107,13 +107,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Event dispatcher instance for backgrounding and foregrounding UI Tests.
         eventHandler = DefaultEventDispatcher(dataStoreName:"MyAppsOptimizelyEvents")
-
+        
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                       logger: customLogger,
                                       eventDispatcher: eventHandler,
                                       periodicDownloadInterval: customDownloadIntervalInSecs,
                                       defaultLogLevel: logLevel)
-    
+        
         addListeners()
         
         // initialize SDK
@@ -130,7 +130,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func addListeners() {
         // notification listeners
-
+        
         _ = optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
             print("Received decision notification: \(type) \(userId) \(String(describing: attributes)) \(decisionInfo)")
         })
@@ -138,7 +138,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = optimizely.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
             print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
         })
-
+        
         _ = optimizely.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (_) in
             DispatchQueue.main.async {
                 #if os(iOS)
@@ -150,7 +150,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 #else
                 print("Datafile changed")
                 #endif
-
+                
                 if let controller = self.window?.rootViewController as? VariationViewController {
                     //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
                     controller.showCoupon = self.optimizely.isFeatureEnabled(featureKey: "show_coupon",
@@ -158,19 +158,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         })
-
+        
     }
-
+    
     // MARK: - ViewControl
-
+    
     func startWithRootViewController() {
         DispatchQueue.main.async {
             do {
                 // For sample codes for other APIs, see "Samples/SamplesForAPI.swift"
-
+                
                 let variationKey = try self.optimizely.activate(experimentKey: self.experimentKey,
-                                                           userId: self.userId,
-                                                           attributes: self.attributes)
+                                                                userId: self.userId,
+                                                                attributes: self.attributes)
                 self.openVariationView(variationKey: variationKey)
             } catch OptimizelyError.variationUnknown(self.userId, self.experimentKey) {
                 print("Optimizely SDK activation cannot map this user to experiemnt")
@@ -181,20 +181,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
+    
     func openVariationView(variationKey: String?) {
         let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as! VariationViewController
-
+        
         variationViewController.showCoupon = optimizely.isFeatureEnabled(featureKey: "show_coupon",
                                                                          userId: userId)
         variationViewController.optimizely = optimizely
         variationViewController.userId = userId
         variationViewController.variationKey = variationKey
         variationViewController.eventKey = eventKey
-
+        
         window?.rootViewController = variationViewController
     }
-
+    
     func openFailureView() {
         window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
     }
@@ -202,32 +202,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func countDispatchQueue() -> Int {
         return self.eventHandler.dataStore.count
     }
-
+    
     // MARK: - AppDelegate
-
+    
     func applicationWillResignActive(_ application: UIApplication) {
     }
-
+    
     func applicationDidEnterBackground(_ application: UIApplication) {
     }
-
+    
     func applicationWillEnterForeground(_ application: UIApplication) {
     }
-
+    
     func applicationDidBecomeActive(_ application: UIApplication) {
         guard let vvc = self.window?.rootViewController as? VariationViewController else {
             return
         }
         vvc.queueSizeLabel.text = String(self.countDispatchQueue())
     }
-
+    
     func applicationWillTerminate(_ application: UIApplication) {
     }
-
+    
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-
+        
         // add background fetch task here
-
+        
         completionHandler(.newData)
     }
 }

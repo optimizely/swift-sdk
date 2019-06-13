@@ -42,9 +42,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6D75853322B02917005A9DF7"
-               BuildableName = "DemoSwiftiOSUITests.xctest"
-               BlueprintName = "DemoSwiftiOSUITests"
+               BlueprintIdentifier = "6D626D8522B3027F0065A990"
+               BuildableName = "OptimizelyTests-DemoSwiftiOS.xctest"
+               BlueprintName = "OptimizelyTests-DemoSwiftiOS"
                ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -52,10 +52,10 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6D626D8522B3027F0065A990"
-               BuildableName = "OptimizelyTests-DemoSwiftiOS.xctest"
-               BlueprintName = "OptimizelyTests-DemoSwiftiOS"
-               ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
+               BlueprintIdentifier = "6D626DA222B304610065A990"
+               BuildableName = "OptimizelyTests-UI-DemoSwiftiOS.xctest"
+               BlueprintName = "OptimizelyTests-UI-DemoSwiftiOS"
+               ReferencedContainer = "container:../OptimizelySDK/OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6D661B9122B2F4140071B113"
-               BuildableName = "DemoSwiftiOS.app"
-               BlueprintName = "DemoSwiftiOS"
+               BuildableName = "DemoSwiftiOS-SDK.app"
+               BlueprintName = "DemoSwiftiOS-SDK"
                ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -73,8 +73,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6D661B9122B2F4140071B113"
-            BuildableName = "DemoSwiftiOS.app"
-            BlueprintName = "DemoSwiftiOS"
+            BuildableName = "DemoSwiftiOS-SDK.app"
+            BlueprintName = "DemoSwiftiOS-SDK"
             ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -96,8 +96,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6D661B9122B2F4140071B113"
-            BuildableName = "DemoSwiftiOS.app"
-            BlueprintName = "DemoSwiftiOS"
+            BuildableName = "DemoSwiftiOS-SDK.app"
+            BlueprintName = "DemoSwiftiOS-SDK"
             ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -115,8 +115,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6D661B9122B2F4140071B113"
-            BuildableName = "DemoSwiftiOS.app"
-            BlueprintName = "DemoSwiftiOS"
+            BuildableName = "DemoSwiftiOS-SDK.app"
+            BlueprintName = "DemoSwiftiOS-SDK"
             ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

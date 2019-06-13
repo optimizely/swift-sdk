@@ -165,6 +165,7 @@ class OptimizelyTests_UI_DemoSwiftiOS: XCTestCase {
         
         // Background and foreground
         XCUIDevice.shared.press(XCUIDevice.Button.home)
+        sleep(2)
         app.activate()
         
         // async check if # of events flushes to 0.

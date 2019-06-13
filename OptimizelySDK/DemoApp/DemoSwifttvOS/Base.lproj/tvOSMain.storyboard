@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="14490.70" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="appleTV" orientation="landscape">
+        <adaptation id="light"/>
+    </device>
+    <dependencies>
+        <deployment identifier="tvOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="ProximaNova-Regular.otf">
+            <string>ProximaNova-Regular</string>
+        </array>
+        <array key="Roboto-Medium.ttf">
+            <string>Roboto-Medium</string>
+        </array>
+    </customFonts>
+    <scenes>
+        <!--Splash Screen View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController storyboardIdentifier="SplashScreenViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" userLabel="Splash Screen View Controller" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="KSO-Tl-shb">
+                                <rect key="frame" x="869" y="451" width="183" height="178"/>
+                                <color key="backgroundColor" red="0.015686274509803921" green="0.16862745098039217" blue="0.25098039215686274" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="tintColor" red="0.015686274509803921" green="0.16862745098039217" blue="0.25098039215686274" alpha="1" colorSpace="calibratedRGB"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.015686274509803921" green="0.16862745098039217" blue="0.25098039215686274" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="KSO-Tl-shb" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="3sE-ZL-VJY"/>
+                            <constraint firstItem="KSO-Tl-shb" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Nxw-dR-6SA"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1595" y="-503"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="tuC-ag-DcX">
+            <objects>
+                <viewController storyboardIdentifier="FailureViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Dne-99-XyY" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="AdG-n6-YDN"/>
+                        <viewControllerLayoutGuide type="bottom" id="41k-LG-Ek5"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Iok-Jh-ZED">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" restorationIdentifier="FailureImageView" image="background_error" translatesAutoresizingMaskIntoConstraints="NO" id="QKm-lz-bUE">
+                                <rect key="frame" x="0.0" y="60" width="1920" height="960"/>
+                            </imageView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" text="Oops! Let's try this again." textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="iKU-z4-P8h">
+                                <rect key="frame" x="569" y="489" width="782" height="102"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="ProximaNova-Regular" family="Proxima Nova" pointSize="58"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="QKm-lz-bUE" firstAttribute="bottom" secondItem="41k-LG-Ek5" secondAttribute="top" id="6Js-fh-bXY"/>
+                            <constraint firstAttribute="trailing" secondItem="QKm-lz-bUE" secondAttribute="trailing" id="VrG-ay-BI5"/>
+                            <constraint firstItem="QKm-lz-bUE" firstAttribute="leading" secondItem="Iok-Jh-ZED" secondAttribute="leading" id="nfJ-mj-HjR"/>
+                            <constraint firstItem="QKm-lz-bUE" firstAttribute="top" secondItem="AdG-n6-YDN" secondAttribute="bottom" id="uXm-gD-ipq"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="D28-hE-PB7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1461" y="1409"/>
+        </scene>
+        <!--Variation View Controller-->
+        <scene sceneID="ihc-AL-Y2u">
+            <objects>
+                <viewController storyboardIdentifier="VariationViewController" id="Gt1-ok-FkN" customClass="VariationViewController" customModule="DemoSwifttvOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="LE4-TO-HJE"/>
+                        <viewControllerLayoutGuide type="bottom" id="WeV-sX-2WA"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Pxf-lJ-vhB">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZDA-v7-RgX">
+                                <rect key="frame" x="0.0" y="60" width="1920" height="960"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" fixedFrame="YES" text="A" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GuL-M1-dn2">
+                                <rect key="frame" x="913" y="275" width="95" height="144"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="ProximaNova-Regular" family="Proxima Nova" pointSize="144"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="VARIATION" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8CQ-8i-O97">
+                                <rect key="frame" x="885" y="427" width="155" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="ProximaNova-Regular" family="Proxima Nova" pointSize="31"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="efT-hv-nBS">
+                                <rect key="frame" x="825" y="617" width="274" height="66"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="0.12941176469999999" blue="0.1137254902" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="Roboto-Medium" family="Roboto" pointSize="22"/>
+                                <inset key="contentEdgeInsets" minX="40" minY="20" maxX="40" maxY="20"/>
+                                <state key="normal" title="TEST CONVERSION"/>
+                                <connections>
+                                    <action selector="attemptTrackAndShowSuccessOrFailure:" destination="Gt1-ok-FkN" eventType="primaryActionTriggered" id="Hhr-Pk-bEH"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="ZDA-v7-RgX" secondAttribute="trailing" id="NW1-x7-RGZ"/>
+                            <constraint firstItem="ZDA-v7-RgX" firstAttribute="leading" secondItem="Pxf-lJ-vhB" secondAttribute="leading" id="TVF-sf-Um5"/>
+                            <constraint firstItem="ZDA-v7-RgX" firstAttribute="bottom" secondItem="WeV-sX-2WA" secondAttribute="top" id="ehV-qY-JEp"/>
+                            <constraint firstItem="ZDA-v7-RgX" firstAttribute="top" secondItem="LE4-TO-HJE" secondAttribute="bottom" id="wpf-2t-KbD"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="variationBackgroundImage" destination="ZDA-v7-RgX" id="AKv-Db-rac"/>
+                        <outlet property="variationLetterLabel" destination="GuL-M1-dn2" id="SPr-SQ-HLQ"/>
+                        <outlet property="variationSubheaderLabel" destination="8CQ-8i-O97" id="Nqm-sd-3cV"/>
+                        <segue destination="HJm-I5-YSq" kind="presentation" identifier="ConversionSuccessSegue" id="T9x-f2-ZEE"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZfO-yh-LYQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-89" y="-2489"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="thi-5V-klT">
+            <objects>
+                <viewController storyboardIdentifier="ConversionSuccessViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="HJm-I5-YSq" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="0j4-IK-nUn"/>
+                        <viewControllerLayoutGuide type="bottom" id="ARR-Gc-cn2"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="yBM-xo-e29">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" restorationIdentifier="ConversionSuccessImageView" image="background_confirmation" translatesAutoresizingMaskIntoConstraints="NO" id="GEt-Bf-Es2">
+                                <rect key="frame" x="110" y="60" width="1700" height="960"/>
+                            </imageView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Conversion event recorded to Optimizely." textAlignment="center" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CRh-TJ-NCw">
+                                <rect key="frame" x="480" y="286" width="960" height="149"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="149" id="r16-vd-lLb"/>
+                                </constraints>
+                                <color key="textColor" red="0.019607843137254902" green="0.16862745098039217" blue="0.25490196078431371" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="ProximaNova-Regular" family="Proxima Nova" pointSize="58"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nce-X9-6iR">
+                                <rect key="frame" x="888" y="685" width="145" height="70"/>
+                                <color key="backgroundColor" red="1" green="0.12941176469999999" blue="0.1137254902" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="Roboto-Medium" family="Roboto" pointSize="25"/>
+                                <inset key="contentEdgeInsets" minX="40" minY="20" maxX="40" maxY="20"/>
+                                <state key="normal" title="BACK"/>
+                                <connections>
+                                    <segue destination="fdp-bn-DAy" kind="unwind" unwindAction="unwindToVariationActionWithUnwindSegue:" id="q5o-Tx-Eqh"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="GEt-Bf-Es2" firstAttribute="top" secondItem="0j4-IK-nUn" secondAttribute="bottom" id="4w9-09-r3p"/>
+                            <constraint firstItem="CRh-TJ-NCw" firstAttribute="width" secondItem="yBM-xo-e29" secondAttribute="width" multiplier="1/2" id="5CR-b4-gHy"/>
+                            <constraint firstItem="Nce-X9-6iR" firstAttribute="centerY" secondItem="yBM-xo-e29" secondAttribute="baseline" multiplier="2/3" id="CT8-Hk-3Gm"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="GEt-Bf-Es2" secondAttribute="trailing" id="TXd-lO-gqa"/>
+                            <constraint firstItem="GEt-Bf-Es2" firstAttribute="leading" secondItem="yBM-xo-e29" secondAttribute="leadingMargin" id="YL3-jq-NMu"/>
+                            <constraint firstItem="CRh-TJ-NCw" firstAttribute="centerY" secondItem="yBM-xo-e29" secondAttribute="baseline" multiplier="1/3" id="bEy-56-N0z"/>
+                            <constraint firstItem="GEt-Bf-Es2" firstAttribute="bottom" secondItem="ARR-Gc-cn2" secondAttribute="top" id="uDT-Hk-eQH"/>
+                            <constraint firstItem="CRh-TJ-NCw" firstAttribute="centerX" secondItem="yBM-xo-e29" secondAttribute="centerX" id="vc8-0L-dDz"/>
+                            <constraint firstItem="Nce-X9-6iR" firstAttribute="centerX" secondItem="yBM-xo-e29" secondAttribute="centerX" id="yC2-40-HQX"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8Td-j6-SDi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="fdp-bn-DAy" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="1461" y="-563"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="background_confirmation" width="375" height="667"/>
+        <image name="background_error" width="375" height="667"/>
+        <image name="logo" width="183" height="178"/>
+    </resources>
+</document>

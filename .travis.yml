@@ -59,7 +59,8 @@ jobs:
         # prep jq arg because it doesnt allow parameter expansion within its single quotes
         - echo ".devices.\"${PLATFORM% Simulator} $OS\"" > /tmp/jq_file && cat /tmp/jq_file
         # preload simulator
-        - xcrun simctl boot $(xcrun simctl list --json | jq -f /tmp/jq_file
+        #- xcrun simctl boot $(
+        - xcrun simctl list --json | jq -f /tmp/jq_file
          # | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
         # verify that the simulator is up
         - xcrun simctl list | grep Booted

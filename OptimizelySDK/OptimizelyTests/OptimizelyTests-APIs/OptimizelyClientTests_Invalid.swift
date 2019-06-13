@@ -128,18 +128,4 @@ extension OptimizelyClientTests_Invalid {
 
 }
 
-// MARK: - Invalid Datafile
-
-extension OptimizelyClientTests_Invalid {
-    
-//    func testActivate_WhenManagerNonInitialized() {
-//        do {
-//            try self.optimizely.track(eventKey: "somecrazytrackingidthatdoesntexist", userId: kUserId)
-//            XCTAssert(false)
-//        } catch {
-//            XCTAssert(true)
-//        }
-//    }
-    
-}
 

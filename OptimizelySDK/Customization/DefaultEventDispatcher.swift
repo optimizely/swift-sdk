@@ -22,7 +22,7 @@ public enum DataStoreType {
 
 open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
-    public static let sharedInstance = DefaultEventDispatcher()
+    static let sharedInstance = DefaultEventDispatcher()
     
     // the max failure count.  there is no backoff timer.
     static let MAX_FAILURE_COUNT = 3

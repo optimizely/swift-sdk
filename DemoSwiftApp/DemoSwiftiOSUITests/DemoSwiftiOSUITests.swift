@@ -30,6 +30,9 @@ class DemoSwiftiOSUITests: XCTestCase {
 
         // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
         app = XCUIApplication()
+        
+        // To disable animations during UI Test, uncomment line below.
+        // app.launchEnvironment = ["UITEST_DISABLE_ANIMATIONS" : "YES"]
         app.launch()
 
         // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
@@ -151,10 +154,23 @@ class DemoSwiftiOSUITests: XCTestCase {
     }
     
     func testFlushBackground() {
-        // given
-        let beforeLabel = app.staticTexts["# events before backgrounding: "]
-        let afterLabel = app.staticTexts["# events after backgrounding: "]
+        let staticLabel = app.staticTexts["Current # of Optimizely events:"]
+        let testConversionButton = app.buttons["TEST CONVERSION"]
+        let backButton = app.buttons["BACK"]
+        XCTAssertTrue(staticLabel.exists)
         
+        // Perform one conversion
+        testConversionButton.tap()
+        backButton.tap()
+        
+        // Background and foreground
+        XCUIDevice.shared.press(XCUIDevice.Button.home)
+        app.activate()
+        
+        // async check if # of events flushes to 0.
+        let zeroLabel = app.staticTexts["0"]
+        let exists = NSPredicate(format: "exists == 1")
+        expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
-        
 }

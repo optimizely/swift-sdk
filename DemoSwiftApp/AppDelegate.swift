@@ -30,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let attributes: [String: Any?] = ["browser_type": "safari", "bool_attr": false]
 
     var window: UIWindow?
+    var eventHandler: DefaultEventDispatcher!
     var optimizely: OptimizelyClient!
     var storyboard: UIStoryboard {
         #if os(iOS)
@@ -40,6 +41,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ application: UIApplication) {
+        
+        if (ProcessInfo.processInfo.environment["UITEST_DISABLE_ANIMATIONS"] == "YES") {
+            UIView.setAnimationsEnabled(false)
+        }
 
         // initialize SDK in one of these two ways:
         // (1) asynchronous SDK initialization (RECOMMENDED)
@@ -99,11 +104,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // 30 sec interval may be too frequent. This is for demo purpose.
         // This should be should be much larger (default = 10 mins).
         let customDownloadIntervalInSecs = 30
+        
+        // Event dispatcher instance for backgrounding and foregrounding UI Tests.
+        eventHandler = DefaultEventDispatcher(dataStoreName:"MyAppsOptimizelyEvents")
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,
-                                       logger: customLogger,
-                                       periodicDownloadInterval: customDownloadIntervalInSecs,
-                                       defaultLogLevel: logLevel)
+                                      logger: customLogger,
+                                      eventDispatcher: eventHandler,
+                                      periodicDownloadInterval: customDownloadIntervalInSecs,
+                                      defaultLogLevel: logLevel)
     
         addListeners()
         
@@ -189,6 +198,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func openFailureView() {
         window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
     }
+    
+    func countDispatchQueue() -> Int {
+        return self.eventHandler.dataStore.count
+    }
 
     // MARK: - AppDelegate
 
@@ -196,29 +209,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-//        let vvc = self.window?.rootViewController as! VariationViewController
-//        vvc.dispatcherLabel2.text = "# events in backgrounding: " + String(vvc.countDispatchQueue())
-//        vvc.dispatcherLabel2.backgroundColor = .black
-//        vvc.dispatcherLabel2.textColor = .white
-//        vvc.view.addSubview(vvc.dispatcherLabel2)
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        let vvc = self.window?.rootViewController as! VariationViewController
-        vvc.dispatcherLabel2.text = "applicationWillEnterForeground: " + String(vvc.countDispatchQueue())
-        vvc.dispatcherLabel2.backgroundColor = .darkGray
-        vvc.dispatcherLabel2.textColor = .white
-        vvc.view.addSubview(vvc.dispatcherLabel2)
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         guard let vvc = self.window?.rootViewController as? VariationViewController else {
             return
         }
-        vvc.dispatcherLabel3.text = "applicationDidBecomeActive: " + String(vvc.countDispatchQueue())
-        vvc.dispatcherLabel3.backgroundColor = .black
-        vvc.dispatcherLabel3.textColor = .white
-        vvc.view.addSubview(vvc.dispatcherLabel3)
+        vvc.queueSizeLabel.text = String(self.countDispatchQueue())
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

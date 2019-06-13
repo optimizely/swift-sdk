@@ -32,10 +32,7 @@ class VariationViewController: UIViewController {
     }
     
     var dispatcherLabel: UILabel!
-    var dispatcherLabel2: UILabel!
-    var dispatcherLabel3: UILabel!
-    var dispatchButton: UIButton!
-    
+    var queueSizeLabel: UILabel!
 
     @IBOutlet weak var couponView: UIView!
     @IBOutlet weak var variationLetterLabel: UILabel!
@@ -87,39 +84,20 @@ class VariationViewController: UIViewController {
         dispatcherLabel.center = CGPoint.init(x: view.frame.width/2, y: 80)
         dispatcherLabel.textAlignment = .center
         dispatcherLabel.backgroundColor = .white
-        dispatcherLabel.text = "onButtonClick:"
+        dispatcherLabel.text = "Current # of Optimizely events:"
         self.view.addSubview(dispatcherLabel)
         
-        dispatcherLabel2 = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 24))
-        dispatcherLabel2.center = CGPoint.init(x: view.frame.width/2, y: 120)
-        dispatcherLabel2.textAlignment = .center
-        dispatcherLabel2.backgroundColor = .white
-        dispatcherLabel2.text = "applicationWillEnterForeground:"
-        self.view.addSubview(dispatcherLabel2)
-
-        dispatcherLabel3 = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 24))
-        dispatcherLabel3.center = CGPoint.init(x: view.frame.width/2, y: 160)
-        dispatcherLabel3.textAlignment = .center
-        dispatcherLabel3.backgroundColor = .white
-        dispatcherLabel3.text = "applicationDidBecomeActive:"
-        self.view.addSubview(dispatcherLabel3)
-        
-        dispatchButton = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 40))
-        dispatchButton.center = CGPoint.init(x: view.frame.width/2, y: 220)
-        dispatchButton.backgroundColor = .red
-        dispatchButton.setTitle("DISPATCH", for: .normal)
-        dispatchButton.addTarget(self, action: "onButtonClick", for: .touchUpInside)
-        self.view.addSubview(dispatchButton)
+        queueSizeLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 32))
+        queueSizeLabel.center = CGPoint.init(x: view.frame.width/2, y: 108)
+        queueSizeLabel.textAlignment = .center
+        queueSizeLabel.backgroundColor = .white
+        queueSizeLabel.text = "nil"
+        self.view.addSubview(queueSizeLabel)
     }
     
-    @objc func onButtonClick() {
-        let ret = self.countDispatchQueue()
-        dispatcherLabel.text = "onButtonClick: " + String(self.countDispatchQueue())
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        queueSizeLabel.text = String(appDelegate.countDispatchQueue())
     }
-    
-    func countDispatchQueue() -> (Int) {
-        let dispatcher = DefaultEventDispatcher.sharedInstance
-        return dispatcher.dataStore.count
-    }
-
 }

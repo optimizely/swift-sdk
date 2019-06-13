@@ -56,18 +56,8 @@ jobs:
         - sudo mkdir '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 9.3.simruntime/Contents/Resources/RuntimeRoot/usr/lib/swift'
         # install jq without cleaning up
         - HOMEBREW_NO_INSTALL_CLEANUP=true brew install jq
-        # prep jq arg because it doesnt allow parameter expansion within its single quotes
-        - echo ".[].\"com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS/./-}\"" > /tmp/jq_file && cat /tmp/jq_file
         # preload simulator
-        #- xcrun simctl boot $(
-        #- xcrun simctl list --json | jq -f /tmp/jq_file
-         # | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
-         #
-        - xcrun simctl list -j devices > /tmp/jq_devices
-        - ls -alh /tmp/jq_devices
-        - jq -f /tmp/jq_file /tmp/jq_devices
-        # verify that the simulator is up
-        - xcrun simctl list | grep Booted
+        - Scripts/start_simulator.sh
       script:
         - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi
         - cat buildoutput | xcpretty

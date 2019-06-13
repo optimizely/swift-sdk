@@ -3,9 +3,9 @@ os: linux
 
 # Integration tests need to run first to reset the PR build status to pending
 stages:
-#  - name: 'Trigger Integration Tests'
-#    if: env(RUN_COMPAT_SUITE) = true
-#  - name: 'SourceClear and Lint'
+  - name: 'Trigger Integration Tests'
+    if: env(RUN_COMPAT_SUITE) = true
+  - name: 'SourceClear and Lint'
   - name: 'Unit Tests'
   - name: 'Prepare for release'
     if: env(PREP) = true and type = api

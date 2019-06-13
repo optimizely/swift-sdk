@@ -60,8 +60,12 @@ jobs:
         - echo ".devices.\"${PLATFORM% Simulator} $OS\"" > /tmp/jq_file && cat /tmp/jq_file
         # preload simulator
         #- xcrun simctl boot $(
-        - xcrun simctl list --json | jq -f /tmp/jq_file
+        #- xcrun simctl list --json | jq -f /tmp/jq_file
          # | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
+         #
+        - xcrun simctl list -j devices > /tmp/jq_devices
+        - cat /tmp/jq_devices
+        - jq -f /tmp/jq_file /tmp/jq_devices
         # verify that the simulator is up
         - xcrun simctl list | grep Booted
       script:

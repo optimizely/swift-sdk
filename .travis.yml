@@ -57,7 +57,9 @@ jobs:
         # preload simulator
         - HOMEBREW_NO_INSTALL_CLEANUP=true brew install jq
         #- Scripts/start_simulator.sh && sleep 30
-        - xcrun simctl boot $(xcrun simctl list --json | jq '.devices.\"${PLATFORM% Simulator} $OS\"' | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
+        # gotta do this because jq doesnt allow parameter expansion within its single quotes
+        - export JQ_CMD="jq '.devices.\"${PLATFORM% Simulator} $OS\"'" && echo $JQ_CMD
+        - xcrun simctl boot $(xcrun simctl list --json | $JQ_CMD | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
         - xcrun simctl list | grep Booted
       script:
         - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi

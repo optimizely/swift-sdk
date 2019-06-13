@@ -57,7 +57,7 @@ jobs:
         # install jq without cleaning up
         - HOMEBREW_NO_INSTALL_CLEANUP=true brew install jq
         # prep jq arg because it doesnt allow parameter expansion within its single quotes
-        - echo ".devices.\"${PLATFORM% Simulator} $OS\"" > /tmp/jq_file && cat /tmp/jq_file
+        - echo ".devices.\"com.apple.CoreSimulator.SimRuntime.${PLATFORM% Simulator}-${OS/./-}\"" > /tmp/jq_file && cat /tmp/jq_file
         # preload simulator
         #- xcrun simctl boot $(
         #- xcrun simctl list --json | jq -f /tmp/jq_file

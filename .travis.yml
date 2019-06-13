@@ -64,7 +64,7 @@ jobs:
          # | jq -r '.[] | select(.name==env.NAME) | .udid') && sleep 30
          #
         - xcrun simctl list -j devices > /tmp/jq_devices
-        - cat /tmp/jq_devices
+        - ls -alh /tmp/jq_devices
         - jq -f /tmp/jq_file /tmp/jq_devices
         # verify that the simulator is up
         - xcrun simctl list | grep Booted

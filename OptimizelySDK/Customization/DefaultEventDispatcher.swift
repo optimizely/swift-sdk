@@ -43,7 +43,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // for dispatching events
     let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
-    public let dataStore: DataStoreQueueStackImpl<EventForDispatch>
+    let dataStore: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
     

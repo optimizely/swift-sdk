@@ -31,6 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var eventHandler: DefaultEventDispatcher!
+    var dataStore: DataStoreQueueStackImpl<EventForDispatch>!
     var optimizely: OptimizelyClient!
     var storyboard: UIStoryboard {
         #if os(iOS)
@@ -200,7 +201,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func countDispatchQueue() -> Int {
-        return self.eventHandler.dataStore.count
+        // return self.eventHandler.dataStore.count     // not accessible
+        return -1
     }
 
     // MARK: - AppDelegate

@@ -154,10 +154,8 @@ class OptimizelyTests_UI_DemoSwiftiOS: XCTestCase {
     }
     
     func testFlushBackground() {
-        let staticLabel = app.staticTexts["Current # of Optimizely events:"]
         let testConversionButton = app.buttons["TEST CONVERSION"]
         let backButton = app.buttons["BACK"]
-        XCTAssertTrue(staticLabel.exists)
         
         // Perform one conversion
         testConversionButton.tap()

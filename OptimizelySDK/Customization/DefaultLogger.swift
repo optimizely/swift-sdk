@@ -31,8 +31,6 @@ open class DefaultLogger: OPTLogger {
         }
     }
     
-    var osLogUsed = false
-    
     required public init() {
     }
     
@@ -52,7 +50,6 @@ open class DefaultLogger: OPTLogger {
             }
             
             os_log("[%{public}@] %{public}@", log: .optimizely, type: osLogType, level.name, message)
-            osLogUsed = true
         } else {
             let message = "[OPTIMIZELY][" + level.name + "] " + message
             NSLog(message)

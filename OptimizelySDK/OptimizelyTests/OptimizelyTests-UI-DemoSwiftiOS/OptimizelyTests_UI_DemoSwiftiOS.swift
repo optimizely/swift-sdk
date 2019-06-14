@@ -172,5 +172,13 @@ class OptimizelyTests_UI_DemoSwiftiOS: XCTestCase {
         expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testSDKVersion() {
+        guard let expectedSDKVersion = ProcessInfo.processInfo.environment["EXP_SDK_VERSION"],
+        expectedSDKVersion.count > 0  else {
+            XCTAssert(false, "failure: check if TEST_SDK_VERSION specified in 'Scripts/test_all.sh' and EXP_SDK_VERSION set in schemes")
+            return
+        }
+    }
 }
 

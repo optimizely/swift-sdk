@@ -189,22 +189,28 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         let config = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: config)
+//        let session = URLSession(configuration: config)
+        let delegate = DefaultURLSessionDelegate()
+        delegate.completionHandler = print()
+        // Use current or main queue?
+        let session = URLSession.init(configuration: config, delegate: delegate, delegateQueue: OperationQueue.current)
         var request = URLRequest(url: event.url)
         request.httpMethod = "POST"
         request.httpBody = event.body
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
-            self.logger.d(response.debugDescription)
-            
-            if let error = error {
-                completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
-            } else {
-                self.logger.d("Event Sent")
-                completionHandler(.success(event.body))
-            }
-        }
+        let task = session.uploadTask(with: request, from: event.body)
+        
+//        let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
+//            self.logger.d(response.debugDescription)
+//
+//            if let error = error {
+//                completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
+//            } else {
+//                self.logger.d("Event Sent")
+//                completionHandler(.success(event.body))
+//            }
+//        }
         
         task.resume()
         

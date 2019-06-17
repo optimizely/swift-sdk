@@ -113,7 +113,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 }
                 
             }
-        while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
+        if let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
             print("batchSize:", self.batchSize, ";; dataStore size:", self.dataStore.count)
 //            let eventsToSend: [EventForDispatch]? = self.dataStore.getFirstItems(count: self.batchSize)
             let actualEventsSize = eventsToSend.count
@@ -223,9 +223,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                     }
                 }
                 self.sendEvent(event: event, flushDataStore: flushDataStore)
-                self.dataStore.removeFirstItems(count: self.batchSize)
-            }
-//        }
+//                self.dataStore.removeFirstItems(count: self.batchSize)
+        }
 
     }
     

@@ -113,23 +113,24 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 }
                 
             }
-//            while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
-            let eventsToSend: [EventForDispatch]? = self.dataStore.getFirstItems(count: self.batchSize)
-            let actualEventsSize = eventsToSend?.count
-                var eventToSend = eventsToSend?.batch()
+        while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
+            print("batchSize:", self.batchSize, ";; dataStore size:", self.dataStore.count)
+//            let eventsToSend: [EventForDispatch]? = self.dataStore.getFirstItems(count: self.batchSize)
+            let actualEventsSize = eventsToSend.count
+                var eventToSend = eventsToSend.batch()
                 if eventToSend != nil {
                     // we merged the event and ready for batch
                     // if the bacth size is not equal to the actual event size,
                     // then setup the batchSizeHolder to be the size of the event.
                     if actualEventsSize != self.batchSize {
                         batchSizeHolder = self.batchSize
-                        self.batchSize = actualEventsSize!
-                        sendCount = actualEventsSize! - 1
+                        self.batchSize = actualEventsSize
+                        sendCount = actualEventsSize - 1
                     }
                 } else {
                     failedBatch()
                     // just send the first one and let the rest be sent until sendCount == batchSizeHolder
-                    eventToSend = eventsToSend?.first
+                    eventToSend = eventsToSend.first
                 }
                 
                 guard let event = eventToSend else {
@@ -191,9 +192,11 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 let flushDataStore = { (result: OptimizelyResult<Data>) -> Void in
                     switch result {
                     case .failure(let error):
+                        print(error.reason)
                         self.logger.e(error.reason)
                         failureCount += 1
                     case .success:
+                        print("success!")
                         // we succeeded. remove the batch size sent.
                         if let removedItem: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
                             if self.batchSize == 1 && removedItem.first != event {
@@ -220,7 +223,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                     }
                 }
                 self.sendEvent(event: event, flushDataStore: flushDataStore)
-//            }
+                self.dataStore.removeFirstItems(count: self.batchSize)
+            }
 //        }
 
     }
@@ -250,7 +254,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         let config = URLSessionConfiguration.ephemeral
         let delegate = DefaultURLSessionDelegate(event, flushDataStore)
         //         Use current or main queue?
-        let session = URLSession.init(configuration: config, delegate: delegate, delegateQueue: OperationQueue.main)
+//        let session = URLSession.init(configuration: config, delegate: delegate, delegateQueue: OperationQueue.main)
+        // can delegateQueue be nil?
+        let session = URLSession.init(configuration: config, delegate: delegate, delegateQueue: nil)
         var request = URLRequest(url: event.url)
         request.httpMethod = "POST"
         request.httpBody = event.body

@@ -246,7 +246,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
 //                self.logger.d("Event Sent")
 //                completionHandler(.success(event.body))
 //            }
-//        }
+//        }g
 //    }
     
     open func sendEvent(event: EventForDispatch, flushDataStore: @escaping (_ result: OptimizelyResult<Data>) -> Void) {

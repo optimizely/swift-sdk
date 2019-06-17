@@ -21,18 +21,31 @@ import Foundation
 
 open class DefaultURLSessionDelegate: NSObject, URLSessionDelegate, URLSessionDataDelegate {
     
+    var event: EventForDispatch
+    var flushDataStore: (_ result: OptimizelyResult<Data>) -> Void
+    
+    public init(_ event: EventForDispatch, _ flushDataStore: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
+        self.event = event
+        self.flushDataStore = flushDataStore
+    }
+    
+    
     let logger = OPTLoggerFactory.getLogger()
     
     // delegate methods
     
+    // called, but nothing notable is performed
     public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        <#code#>
+        print("challenge:", challenge.description)
+        completionHandler(URLSession.AuthChallengeDisposition.performDefaultHandling, nil)
     }
     
+    // not called
     public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        <#code#>
+        print("did finish events")
     }
     
+    // not called
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         guard let error = error else {
             logger.d("Explicit invalidation.")
@@ -45,15 +58,9 @@ open class DefaultURLSessionDelegate: NSObject, URLSessionDelegate, URLSessionDa
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let error = error {
-            logger.d(OptimizelyError.eventDispatchFailed(error.localizedDescription))
-            // Should we continue/return/exit after error?
+            flushDataStore(.failure(.eventDispatchFailed(error.localizedDescription)))
+        } else {
+            flushDataStore(.success(event.body))
         }
-        guard task.state == URLSessionTask.State.completed else {
-            task.resume()
-        }
-        
-        
     }
-    
-    
 }

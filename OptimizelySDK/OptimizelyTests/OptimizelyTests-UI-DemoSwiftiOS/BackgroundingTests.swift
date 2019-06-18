@@ -63,10 +63,45 @@ class BackgroundingTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
+    func testEmptyQueueFlush() {
+        // Tests to ensure nothing breaks when backgrounding with an empty queue.
+        let testConversionButton = app.buttons["TEST CONVERSION"]
+        let backButton = app.buttons["BACK"]
+        
+        // Perform 1 conversion
+        testConversionButton.tap()
+        backButton.tap()
+        
+        // Background and foreground
+        XCUIDevice.shared.press(XCUIDevice.Button.home)
+        sleep(2)
+        app.activate()
+        
+        // async check if dataStore queue size is 0.
+        let zeroLabel = app.staticTexts["0"]
+        let exists = NSPredicate(format: "exists == 1")
+        expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
+        
+        // Background and foreground again
+        XCUIDevice.shared.press(XCUIDevice.Button.home)
+        sleep(2)
+        app.activate()
+        
+        // check again if queue size is 0.
+        expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+    
     func testBatchFlush() {
         // Tests if dataStore queue size flushes to 0 after performing five conversions and backgrounding.
         let testConversionButton = app.buttons["TEST CONVERSION"]
         let backButton = app.buttons["BACK"]
+        
+        // Initial queue flush.
+        XCUIDevice.shared.press(XCUIDevice.Button.home)
+        sleep(2)
+        app.activate()
         
         // Perform 5 conversions
         for _ in 1...5 {
@@ -91,11 +126,7 @@ class BackgroundingTests: XCTestCase {
         let testConversionButton = app.buttons["TEST CONVERSION"]
         let backButton = app.buttons["BACK"]
         
-        // Perform 1 conversion
-        testConversionButton.tap()
-        backButton.tap()
-        
-        // Background and foreground
+        // Initial queue flush.
         XCUIDevice.shared.press(XCUIDevice.Button.home)
         sleep(2)
         app.activate()
@@ -129,11 +160,7 @@ class BackgroundingTests: XCTestCase {
         let testConversionButton = app.buttons["TEST CONVERSION"]
         let backButton = app.buttons["BACK"]
         
-        // Perform one conversion
-        testConversionButton.tap()
-        backButton.tap()
-        
-        // Background and foreground
+        // Initial queue flush.
         XCUIDevice.shared.press(XCUIDevice.Button.home)
         sleep(2)
         app.activate()

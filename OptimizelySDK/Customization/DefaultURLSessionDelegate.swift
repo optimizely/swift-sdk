@@ -23,35 +23,32 @@ open class DefaultURLSessionDelegate: NSObject, URLSessionDelegate, URLSessionDa
     
     var event: EventForDispatch
     var flushDataStore: (_ result: OptimizelyResult<Data>) -> Void
+//    let logger = OPTLoggerFactory.getLogger()
     
     public init(_ event: EventForDispatch, _ flushDataStore: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
         self.event = event
         self.flushDataStore = flushDataStore
     }
     
-    
-    let logger = OPTLoggerFactory.getLogger()
-    
     // delegate methods
     
-    // called, but nothing notable is performed
+    // called, performDefaultHandling so didCompleteWithError is called later
     public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        print("challenge:", challenge.description)
         completionHandler(URLSession.AuthChallengeDisposition.performDefaultHandling, nil)
     }
     
     // not called
     public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        print("did finish events")
+//        print("did finish events")
     }
     
     // not called
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        guard let error = error else {
-            logger.d("Explicit invalidation.")
-            return
-        }
-        logger.d(OptimizelyError.eventDispatchFailed(error.localizedDescription))
+//        guard let error = error else {
+//            logger.d("Explicit invalidation.")
+//            return
+//        }
+//        logger.d(OptimizelyError.eventDispatchFailed(error.localizedDescription))
     }
     
     // data delegate methods

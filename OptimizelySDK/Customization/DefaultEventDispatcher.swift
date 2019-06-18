@@ -79,10 +79,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
 
         setTimer()
     }
-
-    // notify group used to ensure that the sendEvent is synchronous.
-    // used in flushEvents
-    let notify = DispatchGroup()
     
     open func flushEvents() {
         print("flushing" )

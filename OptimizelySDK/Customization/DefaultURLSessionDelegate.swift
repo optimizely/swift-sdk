@@ -19,45 +19,40 @@
 
 import Foundation
 
+// delegate used for URLSessions, methods called during sendEvent
 open class DefaultURLSessionDelegate: NSObject, URLSessionDelegate, URLSessionDataDelegate {
     
     var event: EventForDispatch
-    var flushDataStore: (_ result: OptimizelyResult<Data>) -> Void
-//    let logger = OPTLoggerFactory.getLogger()
+    var flushBatch: (_ result: OptimizelyResult<Data>) -> Void
     
-    public init(_ event: EventForDispatch, _ flushDataStore: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
+    public init(_ event: EventForDispatch, _ flushBatch: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
         self.event = event
-        self.flushDataStore = flushDataStore
+        self.flushBatch = flushBatch
     }
     
-    // delegate methods
+    // URLSessionDelegate Methods //
     
-    // called, performDefaultHandling so didCompleteWithError is called later
+    // performDefaultHandling so didCompleteWithError is called later
     public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         completionHandler(URLSession.AuthChallengeDisposition.performDefaultHandling, nil)
     }
     
     // not called
     public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-//        print("did finish events")
     }
     
     // not called
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-//        guard let error = error else {
-//            logger.d("Explicit invalidation.")
-//            return
-//        }
-//        logger.d(OptimizelyError.eventDispatchFailed(error.localizedDescription))
     }
     
-    // data delegate methods
+    
+    // URLSessionDataDelegate Methods //
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let error = error {
-            flushDataStore(.failure(.eventDispatchFailed(error.localizedDescription)))
+            flushBatch(.failure(.eventDispatchFailed(error.localizedDescription)))
         } else {
-            flushDataStore(.success(event.body))
+            flushBatch(.success(event.body))
         }
     }
 }

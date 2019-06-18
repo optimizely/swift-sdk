@@ -47,8 +47,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-//    var flushDataStore: (_ result: OptimizelyResult<Data>) -> Void = nil
-    
     public init(batchSize:Int = 10, backingStore:DataStoreType = .file, dataStoreName:String = "OPTEventQueue", timerInterval:TimeInterval = 60*1 ) {
         self.batchSize = batchSize > 0 ? batchSize : 1
         self.backingStore = backingStore
@@ -88,184 +86,114 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     open func flushEvents() {
         print("flushing" )
-//        dispatcher.async {
-            // we don't remove anthing off of the queue unless it is successfully sent.
-            var failureCount = 0
-            // if we can't batch the events because they are not from the same project or
-            // are being sent to a different url.  we set the batchSizeHolder to batchSize
-            // and batchSize to 1 until we have sent the last batch that couldn't be batched.
-            var batchSizeHolder = 0
-            // the batch send count if the events failed to be batched.
-            var sendCount = 0
-            
-            let failedBatch = { () -> Void in
-                // hold the batch size
-                batchSizeHolder = self.batchSize
-                // set it to 1 until the last batch that couldn't be batched is sent
-                self.batchSize = 1
-            }
-            
-            let resetBatch = { () -> Void in
-                if batchSizeHolder != 0 {
-                    self.batchSize = batchSizeHolder
-                    sendCount = 0
-                    batchSizeHolder = 0
-                }
-                
-            }
-        if let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
-            print("batchSize:", self.batchSize, ";; dataStore size:", self.dataStore.count)
-//            let eventsToSend: [EventForDispatch]? = self.dataStore.getFirstItems(count: self.batchSize)
-            let actualEventsSize = eventsToSend.count
-                var eventToSend = eventsToSend.batch()
-                if eventToSend != nil {
-                    // we merged the event and ready for batch
-                    // if the bacth size is not equal to the actual event size,
-                    // then setup the batchSizeHolder to be the size of the event.
-                    if actualEventsSize != self.batchSize {
-                        batchSizeHolder = self.batchSize
-                        self.batchSize = actualEventsSize
-                        sendCount = actualEventsSize - 1
-                    }
-                } else {
-                    failedBatch()
-                    // just send the first one and let the rest be sent until sendCount == batchSizeHolder
-                    eventToSend = eventsToSend.first
-                }
-                
-                guard let event = eventToSend else {
-                    self.logger.e(.eventBatchFailed)
-                    resetBatch()
-//                    break
-                    return
-                }
-
-                // we've exhuasted our failure count.  Give up and try the next time a event
-                // is queued or someone calls flush.
-                if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
-                    self.logger.e(.eventSendRetyFailed(failureCount))
-                    failureCount = 0
-                    resetBatch()
-//                    break
-                    return
-                }
-
-//                // make the send event synchronous. enter our notify
-//                self.notify.enter()
-//                self.sendEvent(event: event) { (result) -> Void in
-//                    switch result {
-//                    case .failure(let error):
-//                        self.logger.e(error.reason)
-//                        failureCount += 1
-//                    case .success:
-//                        // we succeeded. remove the batch size sent.
-//                        if let removedItem: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
-//                            if self.batchSize == 1 && removedItem.first != event {
-//                                self.logger.e("Removed event different from sent event")
-//                            } else {
-//                                // avoid event-log-message preparation overheads with closure-logging
-//                                self.logger.d({ "Successfully sent event: \(event)" })
-//                            }
-//                        } else {
-//                            self.logger.e("Removed event nil for sent item")
-//                        }
-//                        // reset failureCount
-//                        failureCount = 0
-//                        // did we have to send a batch one at a time?
-//                        if batchSizeHolder != 0 {
-//                            sendCount += 1
-//                            // have we sent all the events in this batch?
-//                            if sendCount == self.batchSize {
-//                                resetBatch()
-//                            }
-//                        } else {
-//                            // batch had batchSize items
-//                        }
-//                    }
-//                    // our send is done.
-//                    self.notify.leave()
-//
-//                }
-//                // wait for send
-//                self.notify.wait()
-                
-                let flushDataStore = { (result: OptimizelyResult<Data>) -> Void in
-                    switch result {
-                    case .failure(let error):
-                        print(error.reason)
-                        self.logger.e(error.reason)
-                        failureCount += 1
-                    case .success:
-                        print("success!")
-                        // we succeeded. remove the batch size sent.
-                        if let removedItem: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
-                            if self.batchSize == 1 && removedItem.first != event {
-                                self.logger.e("Removed event different from sent event")
-                            } else {
-                                // avoid event-log-message preparation overheads with closure-logging
-                                self.logger.d({ "Successfully sent event: \(event)" })
-                            }
-                        } else {
-                            self.logger.e("Removed event nil for sent item")
-                        }
-                        // reset failureCount
-                        failureCount = 0
-                        // did we have to send a batch one at a time?
-                        if batchSizeHolder != 0 {
-                            sendCount += 1
-                            // have we sent all the events in this batch?
-                            if sendCount == self.batchSize {
-                                resetBatch()
-                            }
-                        } else {
-                            // batch had batchSize items
-                        }
-                    }
-                }
-                self.sendEvent(event: event, flushDataStore: flushDataStore)
-//                self.dataStore.removeFirstItems(count: self.batchSize)
+        // we don't remove anything off of the queue unless it is successfully sent.
+        var failureCount = 0
+        // if we can't batch the events because they are not from the same project or
+        // are being sent to a different url.  we set the batchSizeHolder to batchSize
+        // and batchSize to 1 until we have sent the last batch that couldn't be batched.
+        var batchSizeHolder = 0
+        // the batch send count if the events failed to be batched.
+        var sendCount = 0
+        
+        let failedBatch = { () -> Void in
+            // hold the batch size
+            batchSizeHolder = self.batchSize
+            // set it to 1 until the last batch that couldn't be batched is sent
+            self.batchSize = 1
         }
+        
+        let resetBatch = { () -> Void in
+            if batchSizeHolder != 0 {
+                self.batchSize = batchSizeHolder
+                sendCount = 0
+                batchSizeHolder = 0
+            }
+        }
+        
+        if let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
+            let actualEventsSize = eventsToSend.count
+            var eventToSend = eventsToSend.batch()
+            if eventToSend != nil {
+                // we merged the event and ready for batch
+                // if the bacth size is not equal to the actual event size,
+                // then setup the batchSizeHolder to be the size of the event.
+                if actualEventsSize != self.batchSize {
+                    batchSizeHolder = self.batchSize
+                    self.batchSize = actualEventsSize
+                    sendCount = actualEventsSize - 1
+                }
+            } else {
+                failedBatch()
+                // just send the first one and let the rest be sent until sendCount == batchSizeHolder
+                eventToSend = eventsToSend.first
+            }
+            
+            guard let event = eventToSend else {
+                self.logger.e(.eventBatchFailed)
+                resetBatch()
+                return
+            }
 
+            // we've exhuasted our failure count.  Give up and try the next time a event
+            // is queued or someone calls flush.
+            if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
+                self.logger.e(.eventSendRetyFailed(failureCount))
+                failureCount = 0
+                resetBatch()
+                return
+            }
+            
+            // create closure that is called when sendEvent task completes
+            let flushBatch = { (result: OptimizelyResult<Data>) -> Void in
+                // on success, removes a batch of events from queue
+                switch result {
+                case .failure(let error):
+                    self.logger.e(error.reason)
+                    failureCount += 1
+                case .success:
+                    // we succeeded. remove the batch size sent.
+                    if let removedItem: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
+                        if self.batchSize == 1 && removedItem.first != event {
+                            self.logger.e("Removed event different from sent event")
+                        } else {
+                            // avoid event-log-message preparation overheads with closure-logging
+                            self.logger.d({ "Successfully sent event: \(event)" })
+                        }
+                    } else {
+                        self.logger.e("Removed event nil for sent item")
+                    }
+                    // reset failureCount
+                    failureCount = 0
+                    // did we have to send a batch one at a time?
+                    if batchSizeHolder != 0 {
+                        sendCount += 1
+                        // have we sent all the events in this batch?
+                        if sendCount == self.batchSize {
+                            resetBatch()
+                        }
+                    } else {
+                        // batch had batchSize items
+                    }
+                }
+            }
+            // pass in closure as parameter so delegate can access
+            self.sendEvent(event: event, flushBatch: flushBatch)
+        }
     }
     
-//    open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
-//        let config = URLSessionConfiguration.ephemeral
-//        let session = URLSession(configuration: config)
-//        var request = URLRequest(url: event.url)
-//        request.httpMethod = "POST"
-//        request.httpBody = event.body
-//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//
-//        let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
-//            self.logger.d(response.debugDescription)
-//
-//            if let error = error {
-//                completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
-//            } else {
-//                self.logger.d("Event Sent")
-//                completionHandler(.success(event.body))
-//            }
-//        }g
-//    }
-    
-    open func sendEvent(event: EventForDispatch, flushDataStore: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
-        
+    open func sendEvent(event: EventForDispatch, flushBatch: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
+        // instantiate URLSession delegate
         let config = URLSessionConfiguration.ephemeral
-        let delegate = DefaultURLSessionDelegate(event, flushDataStore)
-        //         Use current or main queue?
-//        let session = URLSession.init(configuration: config, delegate: delegate, delegateQueue: OperationQueue.main)
-        // can delegateQueue be nil?
+        let delegate = DefaultURLSessionDelegate(event, flushBatch)
         let session = URLSession.init(configuration: config, delegate: delegate, delegateQueue: nil)
         var request = URLRequest(url: event.url)
         request.httpMethod = "POST"
         request.httpBody = event.body
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
+        // perform sendEvent task, DefaultURLSessionDelegate method called when task is complete
         let task = session.uploadTask(with: request, from: event.body)
-        
         task.resume()
-        print("task resumed in sendEvent")
-        
     }
     
     func applicationDidEnterBackground() {

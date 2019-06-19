@@ -84,7 +84,7 @@ class VariationViewController: UIViewController {
         dispatcherLabel.center = CGPoint.init(x: view.frame.width/2, y: 80)
         dispatcherLabel.textAlignment = .center
         dispatcherLabel.backgroundColor = .white
-        dispatcherLabel.text = "Current # of Optimizely events:"
+        dispatcherLabel.text = "Current data store queue size:"
         self.view.addSubview(dispatcherLabel)
         
         queueSizeLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 32))

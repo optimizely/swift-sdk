@@ -40,7 +40,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
     }
     
+    var timer: Timer!   // to refresh queue size label
+    
     func applicationDidFinishLaunching(_ application: UIApplication) {
+        
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateQueueSizeLabel), userInfo: nil, repeats: true)
         
         if (ProcessInfo.processInfo.environment["UITEST_DISABLE_ANIMATIONS"] == "YES") {
             UIView.setAnimationsEnabled(false)
@@ -199,13 +203,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
     }
     
+    // MARK: - DataStore Queue Size Label Update
+    
     func countDispatchQueue() -> Int {
         return self.eventHandler.dataStore.count
+    }
+    
+    @objc func updateQueueSizeLabel() {
+        guard let vvc = self.window?.rootViewController as? VariationViewController else {
+            return
+        }
+        vvc.queueSizeLabel.text = String(self.countDispatchQueue())
     }
     
     // MARK: - AppDelegate
     
     func applicationWillResignActive(_ application: UIApplication) {
+        timer.invalidate()
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -215,6 +229,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateQueueSizeLabel), userInfo: nil, repeats: true)
         guard let vvc = self.window?.rootViewController as? VariationViewController else {
             return
         }

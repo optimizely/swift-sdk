@@ -149,9 +149,8 @@ class BackgroundingTests: XCTestCase {
         app.activate()
         
         
-        // async check if 10 (batchSize) events are flushed, leaving 2 in the queue.
-        let twoLabel = app.staticTexts["2"]
-        expectation(for: exists, evaluatedWith: twoLabel, handler: nil)
+        // async check if entire queue is flushed.
+        expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -183,12 +182,11 @@ class BackgroundingTests: XCTestCase {
         app.activate()
         
         
-        // async check if 10 (batchSize) events are flushed, leaving 6 in the queue.
-        let sixLabel = app.staticTexts["6"]
-        expectation(for: exists, evaluatedWith: sixLabel, handler: nil)
+        // async check if all events are flushed.
+        expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
         
-        // Perform 7 more conversions, for a total of 13 events in the queue.
+        // Perform 7 more conversions.
         for _ in 1...7 {
             testConversionButton.tap()
             backButton.tap()
@@ -200,9 +198,8 @@ class BackgroundingTests: XCTestCase {
         app.activate()
         
         
-        // async check if 10 (batchSize) events are flushed, leaving 3 in the queue.
-        let threeLabel = app.staticTexts["3"]
-        expectation(for: exists, evaluatedWith: threeLabel, handler: nil)
+        // async check if all events are flushed.
+        expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
     }
 }

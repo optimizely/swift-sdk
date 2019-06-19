@@ -280,6 +280,8 @@ extension EventDispatcherTests_Batch {
 
 }
 
+// MARK: - to be added
+
 // MARK: - Timer-fired FlushEvents
 
 extension EventDispatcherTests_Batch {
@@ -573,16 +575,16 @@ class TestEventDispatcher: DefaultEventDispatcher {
         }
     }
     
-    override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    override func sendEvent(event: EventForDispatch, flushBatch: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
         sendRequestedEvents.append(event)
 
         // must call completionHandler to complete synchronization
         super.sendEvent(event: event) { _ in
             if self.forceError {
-                completionHandler(.failure(.eventDispatchFailed("forced")))
+                flushBatch(.failure(.eventDispatchFailed("forced")))
             } else {
                 // return success to clear store after sending events
-                completionHandler(.success(Data()))
+                flushBatch(.success(Data()))
             }
 
             self.exp?.fulfill()

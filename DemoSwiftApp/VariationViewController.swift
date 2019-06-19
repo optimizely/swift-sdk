@@ -80,24 +80,24 @@ class VariationViewController: UIViewController {
             self.variationSubheaderLabel.textColor = UIColor.white
         }
         
-        dispatcherLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 24))
-        dispatcherLabel.center = CGPoint.init(x: view.frame.width/2, y: 80)
-        dispatcherLabel.textAlignment = .center
-        dispatcherLabel.backgroundColor = .white
-        dispatcherLabel.text = "Current # of Optimizely events:"
-        self.view.addSubview(dispatcherLabel)
-        
-        queueSizeLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 32))
-        queueSizeLabel.center = CGPoint.init(x: view.frame.width/2, y: 108)
-        queueSizeLabel.textAlignment = .center
-        queueSizeLabel.backgroundColor = .white
-        queueSizeLabel.text = "nil"
-        self.view.addSubview(queueSizeLabel)
+//        dispatcherLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 24))
+//        dispatcherLabel.center = CGPoint.init(x: view.frame.width/2, y: 80)
+//        dispatcherLabel.textAlignment = .center
+//        dispatcherLabel.backgroundColor = .white
+//        dispatcherLabel.text = "Current # of Optimizely events:"
+//        self.view.addSubview(dispatcherLabel)
+//
+//        queueSizeLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 32))
+//        queueSizeLabel.center = CGPoint.init(x: view.frame.width/2, y: 108)
+//        queueSizeLabel.textAlignment = .center
+//        queueSizeLabel.backgroundColor = .white
+//        queueSizeLabel.text = "nil"
+//        self.view.addSubview(queueSizeLabel)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        queueSizeLabel.text = String(appDelegate.countDispatchQueue())
+//        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+//        queueSizeLabel.text = String(appDelegate.countDispatchQueue())
     }
 }

@@ -200,10 +200,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
     }
     
-    func countDispatchQueue() -> Int {
-        // return self.eventHandler.dataStore.count     // not accessible
-        return -1
-    }
+//    func countDispatchQueue() -> Int {
+//        // return self.eventHandler.dataStore.count     // not accessible
+//        return -1
+//    }
 
     // MARK: - AppDelegate
 
@@ -217,10 +217,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        guard let vvc = self.window?.rootViewController as? VariationViewController else {
-            return
-        }
-        vvc.queueSizeLabel.text = String(self.countDispatchQueue())
+//        guard let vvc = self.window?.rootViewController as? VariationViewController else {
+//            return
+//        }
+//        vvc.queueSizeLabel.text = String(self.countDispatchQueue())
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

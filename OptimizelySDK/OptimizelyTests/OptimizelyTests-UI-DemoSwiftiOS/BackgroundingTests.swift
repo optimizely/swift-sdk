@@ -122,7 +122,7 @@ class BackgroundingTests: XCTestCase {
     }
     
     func testGreaterThanBatchFlush() {
-        // Tests if dataStore queue size flushes to 2 after performing twelve conversions and backgrounding (batchSize=10).
+        // Tests if dataStore queue size flushes completely after performing twelve conversions and backgrounding.
         let testConversionButton = app.buttons["TEST CONVERSION"]
         let backButton = app.buttons["BACK"]
         
@@ -155,7 +155,7 @@ class BackgroundingTests: XCTestCase {
     }
     
     func testBackgroundingTwice() {
-        // Tests if backgrounding, adding more events to queue, and backgrounding again results in the correct queueSize.
+        // Tests if backgrounding, adding more events to queue, and backgrounding again flushes the queue completely.
         let testConversionButton = app.buttons["TEST CONVERSION"]
         let backButton = app.buttons["BACK"]
         

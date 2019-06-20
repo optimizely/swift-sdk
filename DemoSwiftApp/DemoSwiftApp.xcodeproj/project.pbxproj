@@ -14,7 +14,7 @@
 		25C6F3BF21C95D4800C2EBDD /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA299EDD1E55312200931399 /* iOSMain.storyboard */; };
 		5015D17687408F548F31F1A6 /* Pods_DemoSwifttvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC404BE4046CDA1D3A9C26B /* Pods_DemoSwifttvOS.framework */; };
 		6D61654A22BB0A050063F439 /* BackgroundingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D61654922BB0A050063F439 /* BackgroundingTests.swift */; };
-		6D75853722B02917005A9DF7 /* DemoSwiftiOSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D75853622B02917005A9DF7 /* DemoSwiftiOSUITests.swift */; };
+		6D75853722B02917005A9DF7 /* StaticUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D75853622B02917005A9DF7 /* StaticUITests.swift */; };
 		6E4DD95F21E679D500B0C2C7 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95821E679B900B0C2C7 /* Optimizely.framework */; };
 		6E4DD96021E679D500B0C2C7 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95821E679B900B0C2C7 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E4DD96721E67A3A00B0C2C7 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD95A21E679B900B0C2C7 /* Optimizely.framework */; };
@@ -188,7 +188,7 @@
 		252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwifttvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D61654922BB0A050063F439 /* BackgroundingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BackgroundingTests.swift; path = "/Users/bdavid/Documents/swift-sdk/DemoSwiftApp/DemoSwiftiOSUITests/BackgroundingTests.swift"; sourceTree = "<absolute>"; };
 		6D75853422B02917005A9DF7 /* DemoSwiftiOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoSwiftiOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6D75853622B02917005A9DF7 /* DemoSwiftiOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSwiftiOSUITests.swift; sourceTree = "<group>"; };
+		6D75853622B02917005A9DF7 /* StaticUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticUITests.swift; sourceTree = "<group>"; };
 		6D75853822B02917005A9DF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E4DD95021E679B900B0C2C7 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySDK/OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
 		6E96818E21EEA391009B7FEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -255,7 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				6D61654922BB0A050063F439 /* BackgroundingTests.swift */,
-				6D75853622B02917005A9DF7 /* DemoSwiftiOSUITests.swift */,
+				6D75853622B02917005A9DF7 /* StaticUITests.swift */,
 				6D75853822B02917005A9DF7 /* Info.plist */,
 			);
 			path = DemoSwiftiOSUITests;
@@ -723,7 +723,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D61654A22BB0A050063F439 /* BackgroundingTests.swift in Sources */,
-				6D75853722B02917005A9DF7 /* DemoSwiftiOSUITests.swift in Sources */,
+				6D75853722B02917005A9DF7 /* StaticUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

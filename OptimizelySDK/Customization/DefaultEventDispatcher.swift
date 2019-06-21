@@ -108,10 +108,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 }
             }
             
-            // make the send event synchronous. enter our notify
-            self.notify.enter()
             // iteratively batch and remove events from queue to send
-            while let eventsToSend: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
+            while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
                 let actualEventsSize = eventsToSend.count
                 var eventToSend = eventsToSend.batch()
                 if eventToSend != nil {
@@ -144,15 +142,27 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                     break
                 }
                 
-                // create closure that is called when sendEvent task completes
-                let flushBatch = { (result: OptimizelyResult<Data>) -> Void in
+                // make the send event synchronous. enter our notify
+                self.notify.enter()
+                self.sendEvent(event: event) { (result) -> Void in
                     // on success, removes a batch of events from queue
                     switch result {
                     case .failure(let error):
                         self.logger.e(error.reason)
                         failureCount += 1
                     case .success:
-                        self.logger.d({ "Successfully sent event: \(event)" })
+                        // we succeeded. remove the batch size sent.
+                        print("current dataStore queue size: ", self.dataStore.count)
+                        if let removedItem: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
+                            if self.batchSize == 1 && removedItem.first != event {
+                                self.logger.e("Removed event different from sent event")
+                            } else {
+                                // avoid event-log-message preparation overheads with closure-logging
+                                self.logger.d({ "Successfully sent event: \(event)" })
+                            }
+                        } else {
+                            self.logger.e("Removed event nil for sent item")
+                        }
                         // reset failureCount
                         failureCount = 0
                         // did we have to send a batch one at a time?
@@ -166,19 +176,20 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                             // batch had batchSize items
                         }
                     }
+                    // our send is done.
+                    self.notify.leave()
+                    print("dataStore size after send:", self.dataStore.count)
                 }
-                // pass in closure as parameter so delegate can access
-                self.sendEvent(event: event, flushBatch: flushBatch)
-                self.notify.leave()
+                // wait for send
+                self.notify.wait()
             }
-            self.notify.wait()
         } // end async
     }
     
-    open func sendEvent(event: EventForDispatch, flushBatch: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
+    public func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         // instantiate URLSession delegate
         let config = URLSessionConfiguration.ephemeral
-        let delegate = DefaultURLSessionDelegate(event, flushBatch)
+        let delegate = DefaultURLSessionDelegate(event, completionHandler)
         let session = URLSession.init(configuration: config, delegate: delegate, delegateQueue: nil)
         var request = URLRequest(url: event.url)
         request.httpMethod = "POST"

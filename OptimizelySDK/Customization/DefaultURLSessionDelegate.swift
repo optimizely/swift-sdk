@@ -23,11 +23,11 @@ import Foundation
 open class DefaultURLSessionDelegate: NSObject, URLSessionDelegate, URLSessionDataDelegate {
     
     var event: EventForDispatch
-    var flushBatch: (_ result: OptimizelyResult<Data>) -> Void
+    var completionHandler: DispatchCompletionHandler
     
-    public init(_ event: EventForDispatch, _ flushBatch: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
+    public init(_ event: EventForDispatch, _ completionHandler: @escaping DispatchCompletionHandler) {
         self.event = event
-        self.flushBatch = flushBatch
+        self.completionHandler = completionHandler
     }
     
     // URLSessionDelegate Methods //
@@ -50,9 +50,9 @@ open class DefaultURLSessionDelegate: NSObject, URLSessionDelegate, URLSessionDa
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let error = error {
-            flushBatch(.failure(.eventDispatchFailed(error.localizedDescription)))
+            completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
         } else {
-            flushBatch(.success(event.body))
+            completionHandler(.success(event.body))
         }
     }
 }

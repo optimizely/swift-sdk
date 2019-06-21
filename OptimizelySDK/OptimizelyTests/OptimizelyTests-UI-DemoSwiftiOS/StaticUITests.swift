@@ -29,7 +29,7 @@ class StaticUITests: XCTestCase {
         continueAfterFailure = false
         
         // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
-        app = XCUIApplication()
+        app = XCUIApplication(bundleIdentifier: "com.optimizely.DemoSwiftiOS")
         
         // To disable animations during UI Test, uncomment line below.
         // app.launchEnvironment = ["UITEST_DISABLE_ANIMATIONS" : "YES"]

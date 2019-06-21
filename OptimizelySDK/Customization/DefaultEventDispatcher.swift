@@ -79,6 +79,10 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
 
         setTimer()
     }
+    
+    open func getDataStoreCount() -> Int {
+        return self.dataStore.count
+    }
 
     // notify group used to ensure that the sendEvent is synchronous.
     // used in flushEvents

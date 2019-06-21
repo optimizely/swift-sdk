@@ -153,79 +153,7 @@
 		0BE644F6223821D3009A5D1D /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
 		3ED556094EFAEC27910E8680 /* Pods_OptimizelyTests_Common_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8268B42D4E084F1ED5D05151 /* Pods_OptimizelyTests_Common_iOS.framework */; };
 		5EB2A6FBEE9FA89D19BBA459 /* Pods_OptimizelyTests_Common_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 267A95DA08018A1800FDB35B /* Pods_OptimizelyTests_Common_tvOS.framework */; };
-		6D626D9C22B302F10065A990 /* CustomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D661BB722B2F9010071B113 /* CustomLogger.swift */; };
 		6D626DA622B304610065A990 /* StaticUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D626DA522B304610065A990 /* StaticUITests.swift */; };
-		6D661B9A22B2F4140071B113 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D661B9822B2F4140071B113 /* Main.storyboard */; };
-		6D661B9F22B2F4150071B113 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D661B9D22B2F4150071B113 /* LaunchScreen.storyboard */; };
-		6D661BCF22B2F9020071B113 /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D661BB922B2F9020071B113 /* iOSMain.storyboard */; };
-		6D661BD122B2F9020071B113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D661BBE22B2F9020071B113 /* Assets.xcassets */; };
-		6D661BD222B2F9020071B113 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D661BC022B2F9020071B113 /* Assets.xcassets */; };
-		6D661BD322B2F9020071B113 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D661BC222B2F9020071B113 /* Roboto-Medium.ttf */; };
-		6D661BD422B2F9020071B113 /* demoTestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D661BC322B2F9020071B113 /* demoTestDatafile.json */; };
-		6D661BD522B2F9020071B113 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6D661BC422B2F9020071B113 /* ProximaNova-Regular.otf */; };
-		6D80427B22B2FE98006EF6A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D661B9422B2F4140071B113 /* AppDelegate.swift */; };
-		6D80427C22B2FF22006EF6A0 /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D661B9622B2F4140071B113 /* VariationViewController.swift */; };
-		6D80427D22B2FF28006EF6A0 /* CustomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D661BB722B2F9010071B113 /* CustomLogger.swift */; };
-		6D80428022B30040006EF6A0 /* OptimizelyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD8F021E530A900B0C2C7 /* OptimizelyClient.swift */; };
-		6D80428622B30044006EF6A0 /* OptimizelyClient+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDBCE182272333A009DF724 /* OptimizelyClient+ObjC.swift */; };
-		6D80428722B30044006EF6A0 /* OptimizelyResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD8EE21E530A900B0C2C7 /* OptimizelyResult.swift */; };
-		6D80428822B30044006EF6A0 /* OptimizelyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4DD8EF21E530A900B0C2C7 /* OptimizelyError.swift */; };
-		6D80428922B30044006EF6A0 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7C0B7321F1372100ECFF34 /* OptimizelyLogLevel.swift */; };
-		6D80428D22B3004C006EF6A0 /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625E21B8C3A9000D7A28 /* DefaultLogger.swift */; };
-		6D80428E22B3004C006EF6A0 /* DefaultEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1521C312390090DDC8 /* DefaultEventDispatcher.swift */; };
-		6D80428F22B3004C006EF6A0 /* DefaultUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625921B870C6000D7A28 /* DefaultUserProfileService.swift */; };
-		6D80429322B30054006EF6A0 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624421B6F1B6000D7A28 /* OPTLogger.swift */; };
-		6D80429422B30054006EF6A0 /* OPTEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC821B5DE16001BE0FA /* OPTEventDispatcher.swift */; };
-		6D80429522B30054006EF6A0 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624021B6EC3F000D7A28 /* OPTUserProfileService.swift */; };
-		6D80429A22B3005A006EF6A0 /* DefaultBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624721B70D0F000D7A28 /* DefaultBucketer.swift */; };
-		6D80429B22B3005A006EF6A0 /* DefaultNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B54908A21C9602900BE04C5 /* DefaultNotificationCenter.swift */; };
-		6D80429C22B3005A006EF6A0 /* DefaultDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624F21B72DCB000D7A28 /* DefaultDecisionService.swift */; };
-		6D80429D22B3005A006EF6A0 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1B21C44E000090DDC8 /* DefaultDatafileHandler.swift */; };
-		6D8042A222B30061006EF6A0 /* DataStoreUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11FB21EE90F600D5B370 /* DataStoreUserDefaults.swift */; };
-		6D8042A322B30061006EF6A0 /* DataStoreQueueStackImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7B9EB921F29E3400056589 /* DataStoreQueueStackImpl.swift */; };
-		6D8042A422B30061006EF6A0 /* DataStoreFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7B9EC221F2ACB100056589 /* DataStoreFile.swift */; };
-		6D8042A522B30061006EF6A0 /* DataStoreMemory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7B18842231D8B800A1F85D /* DataStoreMemory.swift */; };
-		6D8042AD22B3006B006EF6A0 /* BackgroundingCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77D05722370526005AA83F /* BackgroundingCallbacks.swift */; };
-		6D8042AE22B3006B006EF6A0 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBB21B5BC45001BE0FA /* OPTBucketer.swift */; };
-		6D8042AF22B3006B006EF6A0 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC021B5D60B001BE0FA /* OPTDecisionService.swift */; };
-		6D8042B022B3006B006EF6A0 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623E21B6055F000D7A28 /* OPTDatafileHandler.swift */; };
-		6D8042B122B3006B006EF6A0 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61624221B6EDCC000D7A28 /* OPTNotificationCenter.swift */; };
-		6D8042B222B3006B006EF6A0 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2521CC62CD0049BC2C /* DataStoreQueueStack.swift */; };
-		6D8042B322B3006B006EF6A0 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B4E11F821EE8FF400D5B370 /* OPTDataStore.swift */; };
-		6D8042B622B30073006EF6A0 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BC621B5DD44001BE0FA /* EventForDispatch.swift */; };
-		6D8042B722B30073006EF6A0 /* BatchEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61623A21B60167000D7A28 /* BatchEvent.swift */; };
-		6D8042C922B30077006EF6A0 /* Audience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB10321AE053A007B77E5 /* Audience.swift */; };
-		6D8042CA22B30077006EF6A0 /* ConditionHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11C21B0BBE1007B77E5 /* ConditionHolder.swift */; };
-		6D8042CB22B30077006EF6A0 /* ConditionLeaf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E95C8B52217F10800B6EE06 /* ConditionLeaf.swift */; };
-		6D8042CC22B30077006EF6A0 /* UserAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB11821AF753D007B77E5 /* UserAttribute.swift */; };
-		6D8042CD22B30077006EF6A0 /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F0D7822133C5A00DD13A5 /* AttributeValue.swift */; };
-		6D8042CE22B30077006EF6A0 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0FC21AE0058007B77E5 /* ProjectConfig.swift */; };
-		6D8042CF22B30077006EF6A0 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4F0D962213A4EF00DD13A5 /* Project.swift */; };
-		6D8042D022B30077006EF6A0 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0FE21AE03A0007B77E5 /* Group.swift */; };
-		6D8042D122B30077006EF6A0 /* Rollout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F421ADFE27007B77E5 /* Rollout.swift */; };
-		6D8042D222B30077006EF6A0 /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F221ADF784007B77E5 /* Experiment.swift */; };
-		6D8042D322B30077006EF6A0 /* FeatureFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F821ADFF0F007B77E5 /* FeatureFlag.swift */; };
-		6D8042D422B30077006EF6A0 /* Variation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0EE21ADF6C1007B77E5 /* Variation.swift */; };
-		6D8042D522B30077006EF6A0 /* TrafficAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0EA21ADF4E6007B77E5 /* TrafficAllocation.swift */; };
-		6D8042D622B30077006EF6A0 /* Attribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB10021AE042E007B77E5 /* Attribute.swift */; };
-		6D8042D722B30077006EF6A0 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0EC21ADF6A2007B77E5 /* Variable.swift */; };
-		6D8042D822B30077006EF6A0 /* FeatureVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0F621ADFEBD007B77E5 /* FeatureVariable.swift */; };
-		6D8042D922B30077006EF6A0 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7CB0FA21ADFFFB007B77E5 /* Event.swift */; };
-		6D8042DF22B30080006EF6A0 /* EventForDispatch+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5ADA2A21CC739E0049BC2C /* EventForDispatch+Extension.swift */; };
-		6D8042E022B30080006EF6A0 /* DataStoreQueueStackImpl+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA22203764E003AFD71 /* DataStoreQueueStackImpl+Extension.swift */; };
-		6D8042E122B30080006EF6A0 /* ArrayEventForDispatch+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC48EA422038491003AFD71 /* ArrayEventForDispatch+Extension.swift */; };
-		6D8042E222B30080006EF6A0 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA4264E22191EEC00B074B5 /* Array+Extension.swift */; };
-		6D8042E322B30080006EF6A0 /* OptimizelyClient+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B77D03F22331D1E005AA83F /* OptimizelyClient+Extension.swift */; };
-		6D8042EB22B30086006EF6A0 /* MurmurHash3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B124BBE21B5C024001BE0FA /* MurmurHash3.swift */; };
-		6D8042EC22B30086006EF6A0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B61625121B731E8000D7A28 /* Constants.swift */; };
-		6D8042ED22B30086006EF6A0 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E341E3F2265060D005416B7 /* LogMessage.swift */; };
-		6D8042EE22B30086006EF6A0 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0590172209DC180007F4A2 /* HandlerRegistryService.swift */; };
-		6D8042EF22B30086006EF6A0 /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE644EC223821D3009A5D1D /* AtomicProperty.swift */; };
-		6D8042F022B30086006EF6A0 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA0721A223AC72D00F447CF /* Utils.swift */; };
-		6D8042F122B30086006EF6A0 /* SDKVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDF9DC0228242E500CCD8D1 /* SDKVersion.swift */; };
-		6D8042F322B30124006EF6A0 /* BatchEventBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B807B1021C2DD4E0090DDC8 /* BatchEventBuilder.swift */; };
-		6DA985B822B2FB7000E165BB /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D661B9622B2F4140071B113 /* VariationViewController.swift */; };
-		6DA985B922B2FB7000E165BB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D661B9422B2F4140071B113 /* AppDelegate.swift */; };
 		6DCCB29722B857ED00766648 /* BackgroundingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCB29622B857ED00766648 /* BackgroundingTests.swift */; };
 		6DCCB29822B857ED00766648 /* BackgroundingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCB29622B857ED00766648 /* BackgroundingTests.swift */; };
 		6E06451C226FD6A000F8A693 /* OtherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E06451B226FD6A000F8A693 /* OtherTests.swift */; };
@@ -1164,27 +1092,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6D626D9D22B303170065A990 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0B7CB0B921AC5FE2007B77E5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6D661B9122B2F4140071B113;
-			remoteInfo = DemoSwiftiOS;
-		};
-		6D626DA822B304610065A990 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0B7CB0B921AC5FE2007B77E5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6D661B9122B2F4140071B113;
-			remoteInfo = DemoSwiftiOS;
-		};
-		6D626DAE22B30D090065A990 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0B7CB0B921AC5FE2007B77E5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6D661B9122B2F4140071B113;
-			remoteInfo = DemoSwiftiOS;
-		};
 		6E614DD721E3F38A005982A1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0B7CB0B921AC5FE2007B77E5 /* Project object */;
@@ -1342,21 +1249,6 @@
 		6D626DA322B304610065A990 /* OptimizelyTests-UI-DemoSwiftiOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-UI-DemoSwiftiOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D626DA522B304610065A990 /* StaticUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticUITests.swift; sourceTree = "<group>"; };
 		6D626DA722B304610065A990 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6D661B9222B2F4140071B113 /* DemoSwiftiOS-SDK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DemoSwiftiOS-SDK.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6D661B9422B2F4140071B113 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		6D661B9622B2F4140071B113 /* VariationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariationViewController.swift; sourceTree = "<group>"; };
-		6D661B9922B2F4140071B113 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		6D661B9E22B2F4150071B113 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		6D661BA022B2F4150071B113 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6D661BB722B2F9010071B113 /* CustomLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomLogger.swift; sourceTree = "<group>"; };
-		6D661BBA22B2F9020071B113 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iOSMain.storyboard; sourceTree = "<group>"; };
-		6D661BBB22B2F9020071B113 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6D661BBE22B2F9020071B113 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		6D661BC022B2F9020071B113 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		6D661BC222B2F9020071B113 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
-		6D661BC322B2F9020071B113 /* demoTestDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafile.json; sourceTree = "<group>"; };
-		6D661BC422B2F9020071B113 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
-		6D661BCA22B2F9020071B113 /* SamplesForAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SamplesForAPI.swift; sourceTree = "<group>"; };
 		6DCCB29622B857ED00766648 /* BackgroundingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundingTests.swift; sourceTree = "<group>"; };
 		6E06451B226FD6A000F8A693 /* OtherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherTests.swift; sourceTree = "<group>"; };
 		6E0AFBB82257C49700BC7665 /* BucketTests_ExpToVariation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BucketTests_ExpToVariation.swift; sourceTree = "<group>"; };
@@ -1472,13 +1364,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6D626DA022B304610065A990 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6D661B8F22B2F4140071B113 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1725,7 +1610,6 @@
 				6EA4266A2219243D00B074B5 /* OptimizelyTests-Others-tvOS.xctest */,
 				6E636B8C2236C91F00AF3CEF /* OptimizelyTests-APIs-iOS.xctest */,
 				6E636B9B2236C96700AF3CEF /* OptimizelyTests-Legacy-iOS.xctest */,
-				6D661B9222B2F4140071B113 /* DemoSwiftiOS-SDK.app */,
 				6D626DA322B304610065A990 /* OptimizelyTests-UI-DemoSwiftiOS.xctest */,
 			);
 			name = Products;
@@ -1796,83 +1680,6 @@
 				6D626DA722B304610065A990 /* Info.plist */,
 			);
 			path = "OptimizelyTests-UI-DemoSwiftiOS";
-			sourceTree = "<group>";
-		};
-		6D626DAD22B30A350065A990 /* DemoSwiftApp */ = {
-			isa = PBXGroup;
-			children = (
-				6D661BA022B2F4150071B113 /* Info.plist */,
-				6D661B9422B2F4140071B113 /* AppDelegate.swift */,
-				6D661B9622B2F4140071B113 /* VariationViewController.swift */,
-				6D661BB622B2F9010071B113 /* Customization */,
-				6D661BB822B2F9020071B113 /* DemoSwiftiOS */,
-				6D661BC922B2F9020071B113 /* Samples */,
-				6D661BBC22B2F9020071B113 /* SharedResources */,
-				6D661B9822B2F4140071B113 /* Main.storyboard */,
-				6D661B9D22B2F4150071B113 /* LaunchScreen.storyboard */,
-			);
-			path = DemoSwiftApp;
-			sourceTree = "<group>";
-		};
-		6D661BB622B2F9010071B113 /* Customization */ = {
-			isa = PBXGroup;
-			children = (
-				6D661BB722B2F9010071B113 /* CustomLogger.swift */,
-			);
-			path = Customization;
-			sourceTree = "<group>";
-		};
-		6D661BB822B2F9020071B113 /* DemoSwiftiOS */ = {
-			isa = PBXGroup;
-			children = (
-				6D661BB922B2F9020071B113 /* iOSMain.storyboard */,
-				6D661BBB22B2F9020071B113 /* Info.plist */,
-			);
-			path = DemoSwiftiOS;
-			sourceTree = "<group>";
-		};
-		6D661BBC22B2F9020071B113 /* SharedResources */ = {
-			isa = PBXGroup;
-			children = (
-				6D661BBD22B2F9020071B113 /* DemoSwifttvOS */,
-				6D661BBF22B2F9020071B113 /* DemoSwiftiOS */,
-				6D661BC122B2F9020071B113 /* Resources */,
-			);
-			path = SharedResources;
-			sourceTree = "<group>";
-		};
-		6D661BBD22B2F9020071B113 /* DemoSwifttvOS */ = {
-			isa = PBXGroup;
-			children = (
-				6D661BBE22B2F9020071B113 /* Assets.xcassets */,
-			);
-			path = DemoSwifttvOS;
-			sourceTree = "<group>";
-		};
-		6D661BBF22B2F9020071B113 /* DemoSwiftiOS */ = {
-			isa = PBXGroup;
-			children = (
-				6D661BC022B2F9020071B113 /* Assets.xcassets */,
-			);
-			path = DemoSwiftiOS;
-			sourceTree = "<group>";
-		};
-		6D661BC122B2F9020071B113 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				6D661BC222B2F9020071B113 /* Roboto-Medium.ttf */,
-				6D661BC322B2F9020071B113 /* demoTestDatafile.json */,
-				6D661BC422B2F9020071B113 /* ProximaNova-Regular.otf */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		6D661BC922B2F9020071B113 /* Samples */ = {
-			isa = PBXGroup;
-			children = (
-				6D661BCA22B2F9020071B113 /* SamplesForAPI.swift */,
-			);
-			path = Samples;
 			sourceTree = "<group>";
 		};
 		6E0AFBB52257BEFB00BC7665 /* Recovered References */ = {
@@ -2030,7 +1837,6 @@
 		6EA4264B2218EB4200B074B5 /* OptimizelyTests */ = {
 			isa = PBXGroup;
 			children = (
-				6D626DAD22B30A350065A990 /* DemoSwiftApp */,
 				6EA4256B2218E60A00B074B5 /* OptimizelyTests-Common */,
 				6E636B8D2236C91F00AF3CEF /* OptimizelyTests-APIs */,
 				6EA4257A2218E61E00B074B5 /* OptimizelyTests-DataModel */,
@@ -2108,29 +1914,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				6D626DA922B304610065A990 /* PBXTargetDependency */,
 			);
 			name = "OptimizelyTests-UI-DemoSwiftiOS";
 			productName = "OptimizelyTests-UI-DemoSwiftiOS";
 			productReference = 6D626DA322B304610065A990 /* OptimizelyTests-UI-DemoSwiftiOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
-		};
-		6D661B9122B2F4140071B113 /* DemoSwiftiOS-SDK */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6D661BA122B2F4150071B113 /* Build configuration list for PBXNativeTarget "DemoSwiftiOS-SDK" */;
-			buildPhases = (
-				6D661B8E22B2F4140071B113 /* Sources */,
-				6D661B8F22B2F4140071B113 /* Frameworks */,
-				6D661B9022B2F4140071B113 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "DemoSwiftiOS-SDK";
-			productName = DemoSwiftiOS;
-			productReference = 6D661B9222B2F4140071B113 /* DemoSwiftiOS-SDK.app */;
-			productType = "com.apple.product-type.application";
 		};
 		6E614DCC21E3F389005982A1 /* OptimizelySwiftSDK-tvOS */ = {
 			isa = PBXNativeTarget;
@@ -2292,7 +2080,6 @@
 			);
 			dependencies = (
 				6EA426622219242100B074B5 /* PBXTargetDependency */,
-				6D626D9E22B303170065A990 /* PBXTargetDependency */,
 			);
 			name = "OptimizelyTests-Others-iOS";
 			productName = "OptimizelyTests-Others-iOS";
@@ -2311,7 +2098,6 @@
 			);
 			dependencies = (
 				6EA426712219243D00B074B5 /* PBXTargetDependency */,
-				6D626DAF22B30D090065A990 /* PBXTargetDependency */,
 			);
 			name = "OptimizelyTests-Others-tvOS";
 			productName = "OptimizelyTests-Others-tvOS";
@@ -2367,10 +2153,6 @@
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
 					6D626DA222B304610065A990 = {
-						CreatedOnToolsVersion = 10.2.1;
-						TestTargetID = 6D661B9122B2F4140071B113;
-					};
-					6D661B9122B2F4140071B113 = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
 					6E614DCC21E3F389005982A1 = {
@@ -2440,7 +2222,6 @@
 				6EA4255A2218E58400B074B5 /* OptimizelyTests-DataModel-tvOS */,
 				6EA426692219243D00B074B5 /* OptimizelyTests-Others-tvOS */,
 				6D626DA222B304610065A990 /* OptimizelyTests-UI-DemoSwiftiOS */,
-				6D661B9122B2F4140071B113 /* DemoSwiftiOS-SDK */,
 			);
 		};
 /* End PBXProject section */
@@ -2450,21 +2231,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6D661B9022B2F4140071B113 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6D661BD322B2F9020071B113 /* Roboto-Medium.ttf in Resources */,
-				6D661BD522B2F9020071B113 /* ProximaNova-Regular.otf in Resources */,
-				6D661B9F22B2F4150071B113 /* LaunchScreen.storyboard in Resources */,
-				6D661BCF22B2F9020071B113 /* iOSMain.storyboard in Resources */,
-				6D661BD422B2F9020071B113 /* demoTestDatafile.json in Resources */,
-				6D661BD222B2F9020071B113 /* Assets.xcassets in Resources */,
-				6D661BD122B2F9020071B113 /* Assets.xcassets in Resources */,
-				6D661B9A22B2F4140071B113 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2935,74 +2701,6 @@
 			files = (
 				6DCCB29822B857ED00766648 /* BackgroundingTests.swift in Sources */,
 				6D626DA622B304610065A990 /* StaticUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6D661B8E22B2F4140071B113 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6D8042F322B30124006EF6A0 /* BatchEventBuilder.swift in Sources */,
-				6D8042E022B30080006EF6A0 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
-				6D8042CE22B30077006EF6A0 /* ProjectConfig.swift in Sources */,
-				6D8042E122B30080006EF6A0 /* ArrayEventForDispatch+Extension.swift in Sources */,
-				6D8042F122B30086006EF6A0 /* SDKVersion.swift in Sources */,
-				6D8042D122B30077006EF6A0 /* Rollout.swift in Sources */,
-				6D8042CD22B30077006EF6A0 /* AttributeValue.swift in Sources */,
-				6D8042D522B30077006EF6A0 /* TrafficAllocation.swift in Sources */,
-				6D80428722B30044006EF6A0 /* OptimizelyResult.swift in Sources */,
-				6D80427C22B2FF22006EF6A0 /* VariationViewController.swift in Sources */,
-				6D80429C22B3005A006EF6A0 /* DefaultDecisionService.swift in Sources */,
-				6D8042CB22B30077006EF6A0 /* ConditionLeaf.swift in Sources */,
-				6D8042D022B30077006EF6A0 /* Group.swift in Sources */,
-				6D8042E222B30080006EF6A0 /* Array+Extension.swift in Sources */,
-				6D8042B722B30073006EF6A0 /* BatchEvent.swift in Sources */,
-				6D8042CC22B30077006EF6A0 /* UserAttribute.swift in Sources */,
-				6D8042D322B30077006EF6A0 /* FeatureFlag.swift in Sources */,
-				6D8042A222B30061006EF6A0 /* DataStoreUserDefaults.swift in Sources */,
-				6D80428D22B3004C006EF6A0 /* DefaultLogger.swift in Sources */,
-				6D80427B22B2FE98006EF6A0 /* AppDelegate.swift in Sources */,
-				6D8042C922B30077006EF6A0 /* Audience.swift in Sources */,
-				6D80429522B30054006EF6A0 /* OPTUserProfileService.swift in Sources */,
-				6D80428922B30044006EF6A0 /* OptimizelyLogLevel.swift in Sources */,
-				6D8042E322B30080006EF6A0 /* OptimizelyClient+Extension.swift in Sources */,
-				6D8042B022B3006B006EF6A0 /* OPTDatafileHandler.swift in Sources */,
-				6D8042EF22B30086006EF6A0 /* AtomicProperty.swift in Sources */,
-				6D8042AF22B3006B006EF6A0 /* OPTDecisionService.swift in Sources */,
-				6D8042B622B30073006EF6A0 /* EventForDispatch.swift in Sources */,
-				6D80428022B30040006EF6A0 /* OptimizelyClient.swift in Sources */,
-				6D80429B22B3005A006EF6A0 /* DefaultNotificationCenter.swift in Sources */,
-				6D80429422B30054006EF6A0 /* OPTEventDispatcher.swift in Sources */,
-				6D8042B122B3006B006EF6A0 /* OPTNotificationCenter.swift in Sources */,
-				6D8042F022B30086006EF6A0 /* Utils.swift in Sources */,
-				6D80429D22B3005A006EF6A0 /* DefaultDatafileHandler.swift in Sources */,
-				6D8042CA22B30077006EF6A0 /* ConditionHolder.swift in Sources */,
-				6D8042AE22B3006B006EF6A0 /* OPTBucketer.swift in Sources */,
-				6D8042A522B30061006EF6A0 /* DataStoreMemory.swift in Sources */,
-				6D8042CF22B30077006EF6A0 /* Project.swift in Sources */,
-				6D8042ED22B30086006EF6A0 /* LogMessage.swift in Sources */,
-				6D8042D622B30077006EF6A0 /* Attribute.swift in Sources */,
-				6D8042EB22B30086006EF6A0 /* MurmurHash3.swift in Sources */,
-				6D8042D422B30077006EF6A0 /* Variation.swift in Sources */,
-				6D8042AD22B3006B006EF6A0 /* BackgroundingCallbacks.swift in Sources */,
-				6D8042B222B3006B006EF6A0 /* DataStoreQueueStack.swift in Sources */,
-				6D80427D22B2FF28006EF6A0 /* CustomLogger.swift in Sources */,
-				6D80428E22B3004C006EF6A0 /* DefaultEventDispatcher.swift in Sources */,
-				6D8042EE22B30086006EF6A0 /* HandlerRegistryService.swift in Sources */,
-				6D8042A422B30061006EF6A0 /* DataStoreFile.swift in Sources */,
-				6D8042DF22B30080006EF6A0 /* EventForDispatch+Extension.swift in Sources */,
-				6D8042D822B30077006EF6A0 /* FeatureVariable.swift in Sources */,
-				6D8042D722B30077006EF6A0 /* Variable.swift in Sources */,
-				6D8042EC22B30086006EF6A0 /* Constants.swift in Sources */,
-				6D80428622B30044006EF6A0 /* OptimizelyClient+ObjC.swift in Sources */,
-				6D8042D922B30077006EF6A0 /* Event.swift in Sources */,
-				6D80429322B30054006EF6A0 /* OPTLogger.swift in Sources */,
-				6D8042A322B30061006EF6A0 /* DataStoreQueueStackImpl.swift in Sources */,
-				6D8042B322B3006B006EF6A0 /* OPTDataStore.swift in Sources */,
-				6D80428F22B3004C006EF6A0 /* DefaultUserProfileService.swift in Sources */,
-				6D8042D222B30077006EF6A0 /* Experiment.swift in Sources */,
-				6D80429A22B3005A006EF6A0 /* DefaultBucketer.swift in Sources */,
-				6D80428822B30044006EF6A0 /* OptimizelyError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3782,7 +3480,6 @@
 				6E4DD85121E5250200B0C2C7 /* OPTEventDispatcher.swift in Sources */,
 				0B7B18852231D8B800A1F85D /* DataStoreMemory.swift in Sources */,
 				0BDF9DC1228242E500CCD8D1 /* SDKVersion.swift in Sources */,
-				6DA985B822B2FB7000E165BB /* VariationViewController.swift in Sources */,
 				6EA4264F22191EEC00B074B5 /* Array+Extension.swift in Sources */,
 				6E4F0D972213A4EF00DD13A5 /* Project.swift in Sources */,
 				6E4DD87621E5251700B0C2C7 /* Group.swift in Sources */,
@@ -3800,7 +3497,6 @@
 				6E4DD83C21E524EF00B0C2C7 /* DefaultDatafileHandler.swift in Sources */,
 				6E4DD86821E5251200B0C2C7 /* UserAttribute.swift in Sources */,
 				6E4DD83921E524EF00B0C2C7 /* DefaultLogger.swift in Sources */,
-				6D626D9C22B302F10065A990 /* CustomLogger.swift in Sources */,
 				6E4DD83321E524E900B0C2C7 /* BatchEventBuilder.swift in Sources */,
 				6E4DD85521E5250200B0C2C7 /* OPTLogger.swift in Sources */,
 				6E4DD83721E524EF00B0C2C7 /* DefaultDecisionService.swift in Sources */,
@@ -3825,7 +3521,6 @@
 				6E4F0D7922133C5A00DD13A5 /* AttributeValue.swift in Sources */,
 				6E4DD83B21E524EF00B0C2C7 /* DefaultEventDispatcher.swift in Sources */,
 				6E4DD86721E5251200B0C2C7 /* Audience.swift in Sources */,
-				6DA985B922B2FB7000E165BB /* AppDelegate.swift in Sources */,
 				6E4DD84921E524FB00B0C2C7 /* Constants.swift in Sources */,
 				6E4DD86421E5250B00B0C2C7 /* BatchEvent.swift in Sources */,
 				6E4DD8F921E530A900B0C2C7 /* OptimizelyClient.swift in Sources */,
@@ -3911,21 +3606,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6D626D9E22B303170065A990 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6D661B9122B2F4140071B113 /* DemoSwiftiOS-SDK */;
-			targetProxy = 6D626D9D22B303170065A990 /* PBXContainerItemProxy */;
-		};
-		6D626DA922B304610065A990 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6D661B9122B2F4140071B113 /* DemoSwiftiOS-SDK */;
-			targetProxy = 6D626DA822B304610065A990 /* PBXContainerItemProxy */;
-		};
-		6D626DAF22B30D090065A990 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6D661B9122B2F4140071B113 /* DemoSwiftiOS-SDK */;
-			targetProxy = 6D626DAE22B30D090065A990 /* PBXContainerItemProxy */;
-		};
 		6E614DD821E3F38A005982A1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6E614DCC21E3F389005982A1 /* OptimizelySwiftSDK-tvOS */;
@@ -3977,33 +3657,6 @@
 			targetProxy = 6EBAEB7621E3FEF900D13AA9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		6D661B9822B2F4140071B113 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6D661B9922B2F4140071B113 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		6D661B9D22B2F4150071B113 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6D661B9E22B2F4150071B113 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		6D661BB922B2F9020071B113 /* iOSMain.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6D661BBA22B2F9020071B113 /* Base */,
-			);
-			name = iOSMain.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		0B7CB0D421AC5FE2007B77E5 /* Debug */ = {
@@ -4143,9 +3796,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "brandonhudavid.OptimizelyTests-UI-DemoSwiftiOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "DemoSwiftiOS-SDK";
 			};
 			name = Debug;
 		};
@@ -4163,45 +3816,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "brandonhudavid.OptimizelyTests-UI-DemoSwiftiOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "DemoSwiftiOS-SDK";
-			};
-			name = Release;
-		};
-		6D661BA222B2F4150071B113 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = ZR8862QZ87;
-				INFOPLIST_FILE = "$(SRCROOT)/OptimizelyTests/DemoSwiftApp/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "brandonhudavid.DemoSwiftiOS-SDK";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		6D661BA322B2F4150071B113 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = ZR8862QZ87;
-				INFOPLIST_FILE = "$(SRCROOT)/OptimizelyTests/DemoSwiftApp/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "brandonhudavid.DemoSwiftiOS-SDK";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -4721,15 +4336,6 @@
 			buildConfigurations = (
 				6D626DAB22B304610065A990 /* Debug */,
 				6D626DAC22B304610065A990 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		6D661BA122B2F4150071B113 /* Build configuration list for PBXNativeTarget "DemoSwiftiOS-SDK" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6D661BA222B2F4150071B113 /* Debug */,
-				6D661BA322B2F4150071B113 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

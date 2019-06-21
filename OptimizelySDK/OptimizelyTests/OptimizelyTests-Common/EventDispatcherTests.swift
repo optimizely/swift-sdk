@@ -82,13 +82,13 @@ class EventDispatcherTests: XCTestCase {
         class InnerEventDispatcher: DefaultEventDispatcher {
             var once = false
             var events: [EventForDispatch] = [EventForDispatch]()
-            override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+            override func sendEvent(event: EventForDispatch, flushBatch: @escaping (_ result: OptimizelyResult<Data>) -> Void) {
                 events.append(event)
                 if !once {
                     self.dataStore.save(item: EventForDispatch(body: Data()))
                     once = true
                 }
-                completionHandler(.success(Data()))
+                flushBatch(.success(Data()))
             }
         }
         

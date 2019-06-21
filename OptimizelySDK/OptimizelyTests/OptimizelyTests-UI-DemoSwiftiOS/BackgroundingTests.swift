@@ -181,7 +181,6 @@ class BackgroundingTests: XCTestCase {
         sleep(2)
         app.activate()
         
-        sleep(999999999)
         // async check if all events are flushed.
         expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)

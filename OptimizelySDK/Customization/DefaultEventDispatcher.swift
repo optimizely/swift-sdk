@@ -80,92 +80,99 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         setTimer()
     }
     
+    let notify = DispatchGroup()
+    
     open func flushEvents() {
-        print("flushing" )
-        // we don't remove anything off of the queue unless it is successfully sent.
-        var failureCount = 0
-        // if we can't batch the events because they are not from the same project or
-        // are being sent to a different url.  we set the batchSizeHolder to batchSize
-        // and batchSize to 1 until we have sent the last batch that couldn't be batched.
-        var batchSizeHolder = 0
-        // the batch send count if the events failed to be batched.
-        var sendCount = 0
-        
-        let failedBatch = { () -> Void in
-            // hold the batch size
-            batchSizeHolder = self.batchSize
-            // set it to 1 until the last batch that couldn't be batched is sent
-            self.batchSize = 1
-        }
-        
-        let resetBatch = { () -> Void in
-            if batchSizeHolder != 0 {
-                self.batchSize = batchSizeHolder
-                sendCount = 0
-                batchSizeHolder = 0
+        dispatcher.async {
+            // we don't remove anything off of the queue unless it is successfully sent.
+            var failureCount = 0
+            // if we can't batch the events because they are not from the same project or
+            // are being sent to a different url.  we set the batchSizeHolder to batchSize
+            // and batchSize to 1 until we have sent the last batch that couldn't be batched.
+            var batchSizeHolder = 0
+            // the batch send count if the events failed to be batched.
+            var sendCount = 0
+            
+            let failedBatch = { () -> Void in
+                // hold the batch size
+                batchSizeHolder = self.batchSize
+                // set it to 1 until the last batch that couldn't be batched is sent
+                self.batchSize = 1
             }
-        }
-        
-        // iteratively batch and remove events from queue to send
-        while let eventsToSend: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
-            let actualEventsSize = eventsToSend.count
-            var eventToSend = eventsToSend.batch()
-            if eventToSend != nil {
-                // we merged the event and ready for batch
-                // if the bacth size is not equal to the actual event size,
-                // then setup the batchSizeHolder to be the size of the event.
-                if actualEventsSize != self.batchSize {
-                    batchSizeHolder = self.batchSize
-                    self.batchSize = actualEventsSize
-                    sendCount = actualEventsSize - 1
+            
+            let resetBatch = { () -> Void in
+                if batchSizeHolder != 0 {
+                    self.batchSize = batchSizeHolder
+                    sendCount = 0
+                    batchSizeHolder = 0
                 }
-            } else {
-                failedBatch()
-                // just send the first one and let the rest be sent until sendCount == batchSizeHolder
-                eventToSend = eventsToSend.first
             }
             
-            guard let event = eventToSend else {
-                self.logger.e(.eventBatchFailed)
-                resetBatch()
-                return
-            }
+            // make the send event synchronous. enter our notify
+            self.notify.enter()
+            // iteratively batch and remove events from queue to send
+            while let eventsToSend: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
+                let actualEventsSize = eventsToSend.count
+                var eventToSend = eventsToSend.batch()
+                if eventToSend != nil {
+                    // we merged the event and ready for batch
+                    // if the bacth size is not equal to the actual event size,
+                    // then setup the batchSizeHolder to be the size of the event.
+                    if actualEventsSize != self.batchSize {
+                        batchSizeHolder = self.batchSize
+                        self.batchSize = actualEventsSize
+                        sendCount = actualEventsSize - 1
+                    }
+                } else {
+                    failedBatch()
+                    // just send the first one and let the rest be sent until sendCount == batchSizeHolder
+                    eventToSend = eventsToSend.first
+                }
+                
+                guard let event = eventToSend else {
+                    self.logger.e(.eventBatchFailed)
+                    resetBatch()
+                    break
+                }
 
-            // we've exhuasted our failure count.  Give up and try the next time a event
-            // is queued or someone calls flush.
-            if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
-                self.logger.e(.eventSendRetyFailed(failureCount))
-                failureCount = 0
-                resetBatch()
-                return
-            }
-            
-            // create closure that is called when sendEvent task completes
-            let flushBatch = { (result: OptimizelyResult<Data>) -> Void in
-                // on success, removes a batch of events from queue
-                switch result {
-                case .failure(let error):
-                    self.logger.e(error.reason)
-                    failureCount += 1
-                case .success:
-                    self.logger.d({ "Successfully sent event: \(event)" })
-                    // reset failureCount
+                // we've exhuasted our failure count.  Give up and try the next time a event
+                // is queued or someone calls flush.
+                if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
+                    self.logger.e(.eventSendRetyFailed(failureCount))
                     failureCount = 0
-                    // did we have to send a batch one at a time?
-                    if batchSizeHolder != 0 {
-                        sendCount += 1
-                        // have we sent all the events in this batch?
-                        if sendCount == self.batchSize {
-                            resetBatch()
+                    resetBatch()
+                    break
+                }
+                
+                // create closure that is called when sendEvent task completes
+                let flushBatch = { (result: OptimizelyResult<Data>) -> Void in
+                    // on success, removes a batch of events from queue
+                    switch result {
+                    case .failure(let error):
+                        self.logger.e(error.reason)
+                        failureCount += 1
+                    case .success:
+                        self.logger.d({ "Successfully sent event: \(event)" })
+                        // reset failureCount
+                        failureCount = 0
+                        // did we have to send a batch one at a time?
+                        if batchSizeHolder != 0 {
+                            sendCount += 1
+                            // have we sent all the events in this batch?
+                            if sendCount == self.batchSize {
+                                resetBatch()
+                            }
+                        } else {
+                            // batch had batchSize items
                         }
-                    } else {
-                        // batch had batchSize items
                     }
                 }
+                // pass in closure as parameter so delegate can access
+                self.sendEvent(event: event, flushBatch: flushBatch)
+                self.notify.leave()
             }
-            // pass in closure as parameter so delegate can access
-            self.sendEvent(event: event, flushBatch: flushBatch)
-        }
+            self.notify.wait()
+        } // end async
     }
     
     open func sendEvent(event: EventForDispatch, flushBatch: @escaping (_ result: OptimizelyResult<Data>) -> Void) {

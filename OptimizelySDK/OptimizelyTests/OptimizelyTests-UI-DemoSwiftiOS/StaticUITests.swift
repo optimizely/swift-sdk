@@ -18,7 +18,7 @@
 
 import XCTest
 
-class OptimizelyTests_UI_DemoSwiftiOS: XCTestCase {
+class StaticUITests: XCTestCase {
     
     var app: XCUIApplication!
     
@@ -69,7 +69,7 @@ class OptimizelyTests_UI_DemoSwiftiOS: XCTestCase {
     }
     
     func testConversion() {
-        // Tests if Test Conversion button works and variation persists.
+        // Tests if Test Conversion button works and variation stays the same.
         
         // given
         let variationText = app.staticTexts["VARIATION"]
@@ -124,6 +124,8 @@ class OptimizelyTests_UI_DemoSwiftiOS: XCTestCase {
     }
     
     func testVariationPersistsInBackground() {
+        // Tests if variation stays the same when app goes to background and then to foreground.
+        
         // given
         let A_Text = app.staticTexts["A"]
         let B_Text = app.staticTexts["B"]
@@ -152,24 +154,5 @@ class OptimizelyTests_UI_DemoSwiftiOS: XCTestCase {
             XCTAssertFalse(A_Text.exists)
         }
     }
-    
-    func testFlushBackground() {
-        let testConversionButton = app.buttons["TEST CONVERSION"]
-        let backButton = app.buttons["BACK"]
-        
-        // Perform one conversion
-        testConversionButton.tap()
-        backButton.tap()
-        
-        // Background and foreground
-        XCUIDevice.shared.press(XCUIDevice.Button.home)
-        sleep(2)
-        app.activate()
-        
-        // async check if # of events flushes to 0.
-        let zeroLabel = app.staticTexts["0"]
-        let exists = NSPredicate(format: "exists == 1")
-        expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
-        waitForExpectations(timeout: 5, handler: nil)
-    }
 }
+

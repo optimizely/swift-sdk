@@ -65,7 +65,7 @@ enum ConditionHolder: Codable, Equatable {
         switch self {
         case .logicalOp:
             //TODO: replace with logger
-            print("Logical operation not evaluated")
+            OPTLoggerFactory.getLogger().e("Logical operation not evaluated")
             return nil
         case .leaf(let conditionLeaf):
             return conditionLeaf.evaluate(project: project, attributes: attributes)
@@ -81,7 +81,7 @@ extension Array where Element == ConditionHolder {
     
     func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
         guard let firstItem = self.first else {
-            print("Empty condition array")
+            OPTLoggerFactory.getLogger().e("Empty condition array")
             return nil
         }
         
@@ -93,14 +93,14 @@ extension Array where Element == ConditionHolder {
             // implicit or
             return [[ConditionHolder.logicalOp(.or)],self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, attributes: attributes)
         default:
-            print("Invalid first item")
+            OPTLoggerFactory.getLogger().e("Invalid first item")
             return nil
         }
     }
     
     func evaluate(op: LogicalOp, project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
         guard self.count > 0 else {
-            print("Empty condition array")
+            OPTLoggerFactory.getLogger().e("Empty condition array")
             return nil
         }
         
@@ -119,7 +119,7 @@ extension Array where Element == ConditionHolder {
     // returns true only when all items are true and no-error
     func and(project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
         guard self.count > 0 else {
-            print(OptimizelyError.conditionInvalidFormat("AND with empty items"))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.conditionInvalidFormat("AND with empty items"))
             return nil
         }
         
@@ -130,14 +130,13 @@ extension Array where Element == ConditionHolder {
                 if !value {
                     return false
                 }
-            }
-            else {
+            } else {
                 foundError = true
             }
         }
         
         if foundError {
-            print(OptimizelyError.conditionInvalidFormat("AND with invalid items [\(self)]"))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.conditionInvalidFormat("AND with invalid items [\(self)]"))
             return nil
         }
         
@@ -153,14 +152,13 @@ extension Array where Element == ConditionHolder {
                 if value {
                     return true
                 }
-            }
-            else {
+            } else {
                 foundError = true
             }
         }
         
         if foundError {
-            print(OptimizelyError.conditionInvalidFormat("OR with invalid items [\(self)]"))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.conditionInvalidFormat("OR with invalid items [\(self)]"))
             return nil
         }
         
@@ -170,7 +168,7 @@ extension Array where Element == ConditionHolder {
     // evalute the 1st item only
     func not(project: ProjectProtocol?, attributes: OptimizelyAttributes?) -> Bool? {
         guard let eval = self.first else {
-            print(OptimizelyError.conditionInvalidFormat("NOT with empty items"))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.conditionInvalidFormat("NOT with empty items"))
             return nil
         }
         
@@ -178,7 +176,7 @@ extension Array where Element == ConditionHolder {
             return !result
         }
 
-        print(OptimizelyError.conditionInvalidFormat("NOT with invalid items [\(eval)]"))
+        OPTLoggerFactory.getLogger().e(OptimizelyError.conditionInvalidFormat("NOT with invalid items [\(eval)]"))
         return nil
     }
 

@@ -119,12 +119,12 @@ extension AttributeValue {
     
     func isExactMatch(with target: Any) -> Bool? {
         guard let targetValue = AttributeValue(value: target) else {
-            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
             return nil
         }
         
         guard self.isComparable(with: targetValue) else {
-            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
             return nil
         }
         
@@ -147,12 +147,12 @@ extension AttributeValue {
 
     func isSubstring(of target: Any) -> Bool? {
         guard case .string(let value) = self else {
-            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
             return nil
         }
         
         guard let targetStr = target as? String else {
-            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
             return nil
         }
         
@@ -161,13 +161,13 @@ extension AttributeValue {
     
     func isGreater(than target: Any) -> Bool? {
         guard let targetValue = AttributeValue(value: target) else {
-            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
             return nil
         }
         
         guard let currentDouble = self.doubleValue,
             let targetDouble = targetValue.doubleValue else {
-            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
             return nil
         }
         
@@ -180,13 +180,13 @@ extension AttributeValue {
     
     func isLess(than target: Any) -> Bool? {
         guard let targetValue = AttributeValue(value: target) else {
-            print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
             return nil
         }
         
         guard let currentDouble = self.doubleValue,
             let targetDouble = targetValue.doubleValue else {
-                print(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
+                OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target)))
                 return nil
         }
         
@@ -250,7 +250,7 @@ extension AttributeValue {
 
         // valid range: [-2^53, 2^53]
         if abs(num) > pow(2, 53) {
-            print(OptimizelyError.evaluateAttributeValueOutOfRange(prettySrc(caller, target: number)))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeValueOutOfRange(prettySrc(caller, target: number)))
             return false
         }
         

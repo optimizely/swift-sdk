@@ -25,6 +25,7 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     let lock: DispatchQueue
     let url: URL
     var data: T?
+    lazy var logger = OPTLoggerFactory.getLogger()
     
     init(storeName: String) {
         dataStoreName = storeName
@@ -36,7 +37,7 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
                     let data = try JSONEncoder().encode([Data]())
                     try data.write(to: self.url, options: .atomicWrite)
                 } catch let error {
-                    print(error.localizedDescription)
+                    logger.e(error.localizedDescription)
                 }
             }
         } else {
@@ -66,7 +67,7 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
                 let item = try JSONDecoder().decode(T.self, from: contents)
                 self.data = item
             } catch let errorr {
-                print(errorr.localizedDescription)
+                logger.e(errorr.localizedDescription)
             }
         }
     }
@@ -87,7 +88,7 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
                     try data.write(to: self.url, options: .atomic)
                 }
             } catch let error {
-                print(error.localizedDescription)
+                self.logger.e(error.localizedDescription)
             }
         }
     }

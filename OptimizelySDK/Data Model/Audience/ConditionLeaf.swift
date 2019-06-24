@@ -54,7 +54,7 @@ enum ConditionLeaf: Codable, Equatable {
         switch self {
         case .audienceId(let id):
             guard let project = project else {
-                print(" not evaluated audienceId: \(id)")
+                OPTLoggerFactory.getLogger().e(" not evaluated audienceId: \(id)")
                 return nil
             }
             

@@ -110,7 +110,7 @@ open class OptimizelyClient: NSObject {
                 } catch let error as OptimizelyError {
                     completion?(.failure(error))
                 } catch {
-                    print("Invalid error types: \(error)")
+                    self.logger.e("Invalid error types: \(error)")
                     completion?(.failure(OptimizelyError.datafileDownloadFailed("Unknown")))
                 }
             }

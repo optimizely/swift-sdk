@@ -92,18 +92,18 @@ extension UserAttribute {
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         guard let _ = typeSupported else {
-            print(OptimizelyError.userAttributeInvalidType(self.type ?? "empty"))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.userAttributeInvalidType(self.type ?? "empty"))
             return nil
         }
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            print(OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty"))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty"))
             return nil
         }
         
         guard let nameFinal = name else {
-            print(OptimizelyError.userAttributeInvalidFormat("empty name in condition"))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.userAttributeInvalidFormat("empty name in condition"))
             return nil
         }
         
@@ -113,12 +113,12 @@ extension UserAttribute {
         
         if matchFinal != .exists {
             if value == nil {
-                print(OptimizelyError.userAttributeInvalidFormat("missing value (\(nameFinal)) in condition)"))
+                OPTLoggerFactory.getLogger().e(OptimizelyError.userAttributeInvalidFormat("missing value (\(nameFinal)) in condition)"))
                 return nil
             }
             
             if rawAttributeValue == nil {
-                print(OptimizelyError.evaluateAttributeInvalidFormat("no attribute value for (\(nameFinal))"))
+                OPTLoggerFactory.getLogger().e(OptimizelyError.evaluateAttributeInvalidFormat("no attribute value for (\(nameFinal))"))
                 return nil
             }
         }

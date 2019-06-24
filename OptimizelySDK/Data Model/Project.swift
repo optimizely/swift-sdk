@@ -48,7 +48,7 @@ extension Project: ProjectProtocol {
     
     func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) -> Bool? {
         guard let audience = getAudience(id: audienceId) else {
-            print(OptimizelyError.conditionNoMatchingAudience(audienceId))
+            OPTLoggerFactory.getLogger().e(OptimizelyError.conditionNoMatchingAudience(audienceId))
             return nil
         }
         

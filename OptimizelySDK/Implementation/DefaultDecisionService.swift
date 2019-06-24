@@ -110,7 +110,7 @@ class DefaultDecisionService: OPTDecisionService {
                 
                 result = holder.evaluate(project: config.project, attributes: attributes) ?? false
             }
-<       }
+        }
         
         logger.i(.audienceEvaluationResultCombined(experiment.key, result.description))
 

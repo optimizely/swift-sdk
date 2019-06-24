@@ -16,7 +16,7 @@
 
 import Foundation
 
-@objc public enum OptimizelyLogLevel : Int {
+@objc public enum OptimizelyLogLevel: Int {
     
     /// If the filter level is set to OptimizelyLogLevelOff, all log messages will be suppressed.
     case off = 0
@@ -41,5 +41,11 @@ import Foundation
         case .debug:        return "DEBUG"
         case .verbose:      return "VERBOSE"
         }
+    }
+}
+
+extension OptimizelyLogLevel: Comparable {
+    public static func < (lhs: OptimizelyLogLevel, rhs: OptimizelyLogLevel) -> Bool {
+        return lhs.rawValue < rhs.rawValue
     }
 }

@@ -20,34 +20,33 @@ class ProjectConfig {
     
     var project: Project!
     
-    lazy var logger = HandlerRegistryService.shared.injectLogger()
+    lazy var logger = OPTLoggerFactory.getLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
     
     var whitelistUsers = [String: [String: String]]()
     
-    lazy var experimentKeyMap:[String:Experiment] = {
-        var map = [String:Experiment]()
+    lazy var experimentKeyMap: [String: Experiment] = {
+        var map = [String: Experiment]()
         allExperiments.forEach({map[$0.key] = $0})
         return map
     }()
 
-    lazy var experimentIdMap:[String:Experiment] = {
-        var map = [String:Experiment]()
+    lazy var experimentIdMap: [String: Experiment] = {
+        var map = [String: Experiment]()
         allExperiments.forEach({map[$0.id] = $0})
         return map
     }()
 
-    lazy var experimentFeatureMap:[String:[String]] = {
-        var experimentFeatureMap = [String:[String]]()
+    lazy var experimentFeatureMap: [String: [String]] = {
+        var experimentFeatureMap = [String: [String]]()
         project.featureFlags.forEach({ (ff) in
             ff.experimentIds.forEach({
                 if var arr = experimentFeatureMap[$0] {
                     arr.append(ff.id)
                     experimentFeatureMap[$0] = arr
-                }
-                else {
+                } else {
                     experimentFeatureMap[$0] = [ff.id]
                 }
             })
@@ -55,31 +54,31 @@ class ProjectConfig {
         return experimentFeatureMap
     }()
     
-    lazy var eventKeyMap:[String:Event] =  {
-        var eventKeyMap = [String:Event]()
+    lazy var eventKeyMap: [String: Event] = {
+        var eventKeyMap = [String: Event]()
         project.events.forEach({eventKeyMap[$0.key] = $0 })
         return eventKeyMap
     }()
     
-    lazy var attributeKeyMap:[String:Attribute] = {
-        var map = [String:Attribute]()
+    lazy var attributeKeyMap: [String: Attribute] = {
+        var map = [String: Attribute]()
         project.attributes.forEach({map[$0.key] = $0 })
         return map
     }()
 
-    lazy var featureFlagKeyMap:[String:FeatureFlag] = {
-        var map = [String:FeatureFlag]()
+    lazy var featureFlagKeyMap: [String: FeatureFlag] = {
+        var map = [String: FeatureFlag]()
         project.featureFlags.forEach({map[$0.key] = $0 })
         return map
     }()
 
-    lazy var rolloutIdMap:[String:Rollout] = {
-        var map = [String:Rollout]()
+    lazy var rolloutIdMap: [String: Rollout] = {
+        var map = [String: Rollout]()
         project.rollouts.forEach({map[$0.id] = $0 })
         return map
     }()
 
-    lazy var allExperiments:[Experiment] = {
+    lazy var allExperiments: [Experiment] = {
         return project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
     }()
     
@@ -106,8 +105,7 @@ class ProjectConfig {
     init() {
     }
     
-    class func DateFromString(dateString:String) -> NSDate
-    {
+    class func dateFromString(dateString: String) -> NSDate {
         let dateFormatter = DateFormatter()
         let enUSPosixLocale = NSLocale(localeIdentifier: "en_US_POSIX")
         dateFormatter.locale = enUSPosixLocale as Locale
@@ -120,9 +118,8 @@ extension ProjectConfig {
     private func whitelistUser(userId: String, experimentId: String, variationId: String) {
         if var dic = whitelistUsers[userId] {
             dic[experimentId] = variationId
-        }
-        else {
-            var dic = Dictionary<String,String>()
+        } else {
+            var dic = [String: String]()
             dic[experimentId] = variationId
             whitelistUsers[userId] = dic
         }
@@ -136,7 +133,7 @@ extension ProjectConfig {
         if var dic = whitelistUsers[userId] {
             return dic[experimentId]
         } else {
-            logger?.d(.userHasNoForcedVariation(userId))
+            logger.d(.userHasNoForcedVariation(userId))
             return nil
         }
     }
@@ -177,7 +174,7 @@ extension ProjectConfig {
      * Get a Group object for an Id.
      */
     func getGroup(id: String) -> Group? {
-        return project.groups.filter{ $0.id == id }.first
+        return project.groups.filter { $0.id == id }.first
     }
     
     /**
@@ -207,7 +204,6 @@ extension ProjectConfig {
     func getEventId(key: String) -> String? {
         return getEvent(key: key)?.id
     }
-    
     
     /**
      * Get an attribute for a given key.
@@ -246,15 +242,15 @@ extension ProjectConfig {
         }
         
         if let id = getWhitelistedVariationId(userId: userId, experimentId: experiment.id) {
-            if let variation = experiment.getVariation(id:id) {
-                logger?.d(.userHasForcedVariation(userId, experiment.key, variation.key))
+            if let variation = experiment.getVariation(id: id) {
+                logger.d(.userHasForcedVariation(userId, experiment.key, variation.key))
                 return variation
             } else {
-                logger?.d(.userHasForcedVariationButInvalid(userId, experiment.key))
+                logger.d(.userHasForcedVariationButInvalid(userId, experiment.key))
                 return nil
             }
         } else {
-            logger?.d(.userHasNoForcedVariationForExperiment(userId, experiment.key))
+            logger.d(.userHasNoForcedVariationForExperiment(userId, experiment.key))
             return nil
         }
     }
@@ -268,7 +264,7 @@ extension ProjectConfig {
         }
         
         guard var variationKey = variationKey else {
-            logger?.d(.variationRemovedForUser(userId, experimentKey))
+            logger.d(.variationRemovedForUser(userId, experimentKey))
             self.removeFromWhitelist(userId: userId, experimentId: experiment.id)
             return true
         }
@@ -277,16 +273,18 @@ extension ProjectConfig {
         variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
 
         guard !variationKey.isEmpty else {
+            logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
 
         guard let variation = experiment.variations.filter({$0.key == variationKey }).first else {
+            logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
         
         self.whitelistUser(userId: userId, experimentId: experiment.id, variationId: variation.id)
         
-        logger?.d(.userMappedToForcedVariation(userId, experiment.id, variation.id))
+        logger.d(.userMappedToForcedVariation(userId, experiment.id, variation.id))
         return true
     }
     

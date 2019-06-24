@@ -1,0 +1,5 @@
+coverage_service: coveralls
+xcodeproj: OptimizelySDK/OptimizelySwiftSDK.xcodeproj
+scheme: OptimizelySwiftSDK-iOS
+workspace: OptimizelySDK.xcworkspace
+configuration: Release

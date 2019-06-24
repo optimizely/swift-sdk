@@ -19,7 +19,7 @@ import Foundation
 class BatchEventBuilder {
     static private let swiftSdkClientName = "swift-sdk"
     
-    static private var logger = HandlerRegistryService.shared.injectLogger()
+    static private var logger = OPTLoggerFactory.getLogger()
     
     // MARK: - Impression Event
     
@@ -81,8 +81,7 @@ class BatchEventBuilder {
                                  userId: String,
                                  attributes: OptimizelyAttributes?,
                                  decisions: [Decision]?,
-                                 dispatchEvents: [DispatchEvent]) -> Data?
-    {
+                                 dispatchEvents: [DispatchEvent]) -> Data? {
         let snapShot = Snapshot(decisions: decisions, events: dispatchEvents)
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
@@ -119,7 +118,7 @@ class BatchEventBuilder {
     }
     
     static func filterTagsWithInvalidTypes(_ eventTags: [String: Any]) -> [String: AttributeValue] {
-        let filteredTags = eventTags.mapValues { AttributeValue(value:$0) }.filter { $0.value != nil } as? [String: AttributeValue]
+        let filteredTags = eventTags.mapValues { AttributeValue(value: $0) }.filter { $0.value != nil } as? [String: AttributeValue]
         return filteredTags ?? [:]
     }
     
@@ -140,9 +139,9 @@ class BatchEventBuilder {
         }
         
         if let value = value {
-            logger?.i(.extractValueFromEventTags(value.stringValue))
+            logger.i(.extractValueFromEventTags(value.stringValue))
         } else {
-            logger?.i(.failedToExtractValueFromEventTags(valueFromTags.stringValue))
+            logger.i(.failedToExtractValueFromEventTags(valueFromTags.stringValue))
         }
         
         return value
@@ -166,9 +165,9 @@ class BatchEventBuilder {
         }
         
         if let revenue = revenue {
-            logger?.i(.extractRevenueFromEventTags(revenue.stringValue))
+            logger.i(.extractRevenueFromEventTags(revenue.stringValue))
         } else {
-            logger?.i(.failedToExtractRevenueFromEventTags(revenueFromTags.stringValue))
+            logger.i(.failedToExtractRevenueFromEventTags(revenueFromTags.stringValue))
         }
         
         return revenue
@@ -191,9 +190,8 @@ class BatchEventBuilder {
                                                             entityID: attributeId)
                         eventAttributes.append(eventAttribute)
                     }
-                }
-                else {
-                    logger?.d(.unrecognizedAttribute(attr))
+                } else {
+                    logger.d(.unrecognizedAttribute(attr))
                 }
             }
         }
@@ -201,7 +199,7 @@ class BatchEventBuilder {
         if let botFiltering = config.project.botFiltering, let eventValue = AttributeValue(value: botFiltering) {
             let botAttr = EventAttribute(value: eventValue,
                                          key: Constants.Attributes.OptimizelyBotFilteringAttribute,
-                                         type:"custom",
+                                         type: "custom",
                                          entityID: Constants.Attributes.OptimizelyBotFilteringAttribute)
             eventAttributes.append(botAttr)
         }

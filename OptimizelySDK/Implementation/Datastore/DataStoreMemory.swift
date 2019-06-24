@@ -20,13 +20,13 @@ import UIKit
 /// Implementation of OPTDataStore as a generic for per type storeage in memory. On background and foreground
 /// the file is saved.
 /// This class should be used as a singleton per storeName and type (T)
-public class DataStoreMemory<T> : BackgroundingCallbacks, OPTDataStore where T:Codable {
-    let dataStoreName:String
-    let lock:DispatchQueue
-    let url:URL
-    var data:T?
+public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: Codable {
+    let dataStoreName: String
+    let lock: DispatchQueue
+    let url: URL
+    var data: T?
     
-    init(storeName:String) {
+    init(storeName: String) {
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -35,14 +35,12 @@ public class DataStoreMemory<T> : BackgroundingCallbacks, OPTDataStore where T:C
                 do {
                     let data = try JSONEncoder().encode([Data]())
                     try data.write(to: self.url, options: .atomicWrite)
-                }
-                catch let error {
+                } catch let error {
                     print(error.localizedDescription)
                 }
             }
-        }
-        else {
-            self.url = URL(fileURLWithPath:storeName)
+        } else {
+            self.url = URL(fileURLWithPath: storeName)
         }
         
         subscribe()
@@ -53,7 +51,7 @@ public class DataStoreMemory<T> : BackgroundingCallbacks, OPTDataStore where T:C
     }
     
     public func getItem(forKey: String) -> Any? {
-        var returnData:T?
+        var returnData: T?
         
         lock.sync {
             returnData = data
@@ -67,8 +65,7 @@ public class DataStoreMemory<T> : BackgroundingCallbacks, OPTDataStore where T:C
                 let contents = try Data(contentsOf: self.url)
                 let item = try JSONDecoder().decode(T.self, from: contents)
                 self.data = item
-            }
-            catch let errorr {
+            } catch let errorr {
                 print(errorr.localizedDescription)
             }
         }
@@ -82,15 +79,14 @@ public class DataStoreMemory<T> : BackgroundingCallbacks, OPTDataStore where T:C
         }
     }
 
-    private func save(forKey: String, value: Any) {
+    func save(forKey: String, value: Any) {
         lock.async {
             do {
                 if let value = value as? T {
                     let data = try JSONEncoder().encode(value)
                     try data.write(to: self.url, options: .atomic)
                 }
-            }
-            catch let error {
+            } catch let error {
                 print(error.localizedDescription)
             }
         }

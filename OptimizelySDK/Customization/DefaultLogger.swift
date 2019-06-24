@@ -16,14 +16,14 @@
 
 import Foundation
 
-open class DefaultLogger : OPTLogger {
+open class DefaultLogger: OPTLogger {
     private static var _logLevel: OptimizelyLogLevel?
     public static var logLevel: OptimizelyLogLevel {
         get {
             return _logLevel ?? .info
         }
-        set (newLevel){
-            guard let _ = _logLevel else {
+        set (newLevel) {
+            if _logLevel == nil {
                 _logLevel = newLevel
                 return
             }
@@ -34,10 +34,11 @@ open class DefaultLogger : OPTLogger {
     }
     
     open func log(level: OptimizelyLogLevel, message: String) {
-        if level.rawValue > DefaultLogger.logLevel.rawValue {
+        if level > DefaultLogger.logLevel {
             return
         }
         let message = "[OPTIMIZELY][" + level.name + "] " + message
+
         NSLog(message)
     }
 }

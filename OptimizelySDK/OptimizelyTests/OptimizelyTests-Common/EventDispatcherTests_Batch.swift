@@ -15,7 +15,6 @@
 ***************************************************************************/
 
 import XCTest
-import SwiftyJSON
 
 class EventDispatcherTests_Batch: XCTestCase {
     
@@ -52,6 +51,25 @@ class EventDispatcherTests_Batch: XCTestCase {
 // MARK: - Batch
 
 extension EventDispatcherTests_Batch {
+    
+    func testEmptyOrSingleEventBatch() {
+        var events = [EventForDispatch]()
+        var batch = events.batch()
+        XCTAssertNil(batch)
+        
+        let event = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        events.append(event)
+        batch = events.batch()
+        XCTAssertEqual(event, batch)
+    }
+    
+    func testNilEventDispatchBody() {
+        var events = [EventForDispatch]()
+        let event = EventForDispatch(url: URL(string: kUrlA), body: Data())
+        events.append(contentsOf: [event, event])
+        let batch = events.batch()
+        XCTAssertNil(batch)
+    }
 
     func testBatchingEvents() {
         let events: [EventForDispatch] = [
@@ -62,7 +80,9 @@ extension EventDispatcherTests_Batch {
         ]
 
         let batch = events.batch()!
+        XCTAssertNotNil(batch)
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertNotNil(batchedEvents)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.revision, kRevision)
         XCTAssertEqual(batchedEvents.accountID, kAccountId)
@@ -111,6 +131,8 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
+        XCTAssert(eventDispatcher.batchSize == 10)
+        
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventB), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
@@ -134,11 +156,16 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[2], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 3)
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        
+        XCTAssert(eventDispatcher.batchSize == 10)
+
     }
     
     func testFlushEventsWhenBatchFails() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
+        XCTAssert(eventDispatcher.batchSize == 10)
 
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
@@ -192,6 +219,8 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        
+        XCTAssert(eventDispatcher.batchSize == 10)        
     }
     
     func testFlushEventsWhenSendEventFails() {
@@ -206,7 +235,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
-        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.MAX_FAILURE_COUNT + 1
+        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.maxFailureCount + 1
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
         
@@ -239,7 +268,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
-        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.MAX_FAILURE_COUNT + 1
+        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.maxFailureCount + 1
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
         
@@ -297,7 +326,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.timerInterval = 0
 
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatcher.sync{}
+        eventDispatcher.dispatcher.sync {}
         
         let batch = eventDispatcher.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
@@ -332,6 +361,9 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventBatchedOnTimer_CheckNoRedundantSend() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+        
         eventDispatcher.timerInterval = 3
 
         eventDispatcher.exp = expectation(description: "timer")
@@ -427,8 +459,6 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.revision, kRevision)
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
     }
-
-    
     
     // TODO: [Tom] these 2 tests fails - please take a look
     
@@ -491,7 +521,6 @@ extension EventDispatcherTests_Batch {
 //    }
 
 }
-
 
 // MARK: - Utils
 
@@ -569,7 +598,7 @@ class TestEventDispatcher: DefaultEventDispatcher {
         sendRequestedEvents.append(event)
 
         // must call completionHandler to complete synchronization
-        super.sendEvent(event: event) { result in
+        super.sendEvent(event: event) { _ in
             if self.forceError {
                 completionHandler(.failure(.eventDispatchFailed("forced")))
             } else {
@@ -583,4 +612,3 @@ class TestEventDispatcher: DefaultEventDispatcher {
     }
     
 }
-

@@ -31,8 +31,7 @@ class BatchEventBuilderTests: XCTestCase {
         let datafile = OTUtils.loadJSONDatafile(datafileName)
         do {
             try optimizely?.start(datafile: datafile!)
-        }
-        catch {
+        } catch {
             print(error)
             XCTAssert(false)
         }
@@ -44,7 +43,7 @@ class BatchEventBuilderTests: XCTestCase {
     }
 
     func testConversionEventWithNoExperiment() {
-        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!,  eventKey: eventWithNoExperimentKey, userId: userId, attributes: ["anyattribute":"value", "broswer_type":"firefox"], eventTags: nil)
+        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!, eventKey: eventWithNoExperimentKey, userId: userId, attributes: ["anyattribute": "value", "broswer_type": "firefox"], eventTags: nil)
         
         XCTAssertNotNil(conversion)
         

@@ -49,7 +49,6 @@ class BucketTests_ExpToVariation: XCTestCase {
     var experiment: Experiment!
     var variation: Variation!
     
-    
     // MARK: - Sample datafile data
     
     var sampleExperimentData: [String: Any] { return
@@ -87,7 +86,7 @@ class BucketTests_ExpToVariation: XCTestCase {
                     "key": kVariationKeyD
                 ]
             ],
-            "forcedVariations":[:],
+            "forcedVariations": [:]
         ]
     }
     
@@ -118,11 +117,7 @@ extension BucketTests_ExpToVariation {
         
         for (idx, test) in tests.enumerated() {
             variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)
-            if let _ = test["expect"] {
-                XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
-            } else {
-                XCTAssertNil(experiment);
-            }
+            XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
         }
     }
     
@@ -137,7 +132,7 @@ extension BucketTests_ExpToVariation {
 
         for test in tests {
             variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)
-            XCTAssertNil(variation);
+            XCTAssertNil(variation)
         }
     }
 
@@ -153,7 +148,7 @@ extension BucketTests_ExpToVariation {
 
         for test in tests {
             variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)
-            XCTAssertNil(variation);
+            XCTAssertNil(variation)
         }
     }
 
@@ -164,7 +159,6 @@ extension BucketTests_ExpToVariation {
         experiment.trafficAllocation[2].endOfRange = 30
         experiment.trafficAllocation[3].endOfRange = 40
 
-
         let tests = [["userId": "ppid1"],
                      ["userId": "ppid2"],
                      ["userId": "ppid3"],
@@ -172,7 +166,7 @@ extension BucketTests_ExpToVariation {
 
         for test in tests {
             variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)
-            XCTAssertNil(variation);
+            XCTAssertNil(variation)
         }
     }
 

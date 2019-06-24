@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="14460.31" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="14490.70" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="appleTV" orientation="landscape">
         <adaptation id="light"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -19,7 +19,7 @@
         <!--Splash Screen View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="SplashScreenViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" userLabel="Splash Screen View Controller" customClass="SplashScreenViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SplashScreenViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" userLabel="Splash Screen View Controller" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -45,10 +45,10 @@
             </objects>
             <point key="canvasLocation" x="-1595" y="-503"/>
         </scene>
-        <!--Failure View Controller-->
+        <!--View Controller-->
         <scene sceneID="tuC-ag-DcX">
             <objects>
-                <viewController storyboardIdentifier="FailureViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Dne-99-XyY" customClass="FailureViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FailureViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Dne-99-XyY" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="AdG-n6-YDN"/>
                         <viewControllerLayoutGuide type="bottom" id="41k-LG-Ek5"/>
@@ -142,10 +142,10 @@
             </objects>
             <point key="canvasLocation" x="-89" y="-2489"/>
         </scene>
-        <!--Conversion Success View Controller-->
+        <!--View Controller-->
         <scene sceneID="thi-5V-klT">
             <objects>
-                <viewController storyboardIdentifier="ConversionSuccessViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="HJm-I5-YSq" customClass="ConversionSuccessViewController" customModule="DemoObjctvOS" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ConversionSuccessViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="HJm-I5-YSq" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="0j4-IK-nUn"/>
                         <viewControllerLayoutGuide type="bottom" id="ARR-Gc-cn2"/>

@@ -1,33 +1,47 @@
 workspace 'OptimizelySDK.xcworkspace'
 
 def analytics_pods
-  pod 'Amplitude-iOS'
-  pod 'Google/Analytics'
-  pod 'Localytics'
-  pod 'Mixpanel-swift', '2.5.7'
+#  pod 'Amplitude-iOS'
+#  pod 'Google/Analytics'
+#  pod 'Localytics'
+#  pod 'Mixpanel-swift', '2.5.7'
 end
 
-def test_pods
-  pod 'SwiftyJSON', '4.0'
+def linter_pods
+  # ignore all warnings from all dependencies
+  inhibit_all_warnings!
+  pod 'SwiftLint'
+end
+
+target 'OptimizelySwiftSDK-iOS' do
+  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
+  platform :ios, '9.0'
+  use_frameworks!
+  linter_pods
+end
+
+target 'OptimizelySwiftSDK-tvOS' do
+  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
+  platform :tvos, '9.0'
+  use_frameworks!
+  linter_pods
 end
 
 target 'OptimizelyTests-Common-iOS' do
   project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
-  platform :ios, '10.0'
+  platform :ios, '9.0'
   use_frameworks!
-  test_pods
 end
 
 target 'OptimizelyTests-Common-tvOS' do
   project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
-  platform :tvos, '10.0'
+  platform :tvos, '9.0'
   use_frameworks!
-  test_pods
 end
 
 target 'DemoSwiftiOS' do
   project 'DemoSwiftApp/DemoSwiftApp.xcodeproj/'
-  platform :ios, '10.0'
+  platform :ios, '9.0'
   use_frameworks!
   analytics_pods
   #pod 'OptimizelySwiftSDK','3.0.0'
@@ -35,14 +49,14 @@ end
 
 target 'DemoSwifttvOS' do
   project 'DemoSwiftApp/DemoSwiftApp.xcodeproj/'
-  platform :tvos, '10.0'
+  platform :tvos, '9.0'
   use_frameworks!
   #pod 'OptimizelySwiftSDK','3.0.0'
 end
 
 target 'DemoObjciOS' do
   project 'DemoObjcApp/DemoObjcApp.xcodeproj/'
-  platform :ios, '10.0'
+  platform :ios, '9.0'
   use_frameworks!
   analytics_pods
   #pod 'OptimizelySwiftSDK','3.0.0'
@@ -50,7 +64,7 @@ end
 
 target 'DemoObjctvOS' do
   project 'DemoObjcApp/DemoObjcApp.xcodeproj/'
-  platform :tvos, '10.0'
+  platform :tvos, '9.0'
   use_frameworks!
   #pod 'OptimizelySwiftSDK','3.0.0'
 end

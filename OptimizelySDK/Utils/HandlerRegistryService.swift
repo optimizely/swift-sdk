@@ -20,38 +20,35 @@ class HandlerRegistryService {
     
     static let shared = HandlerRegistryService()
     
-    struct ServiceKey : Hashable {
-        var service:String
-        var sdkKey:String?
+    struct ServiceKey: Hashable {
+        var service: String
+        var sdkKey: String?
     }
     
-    var binders:[ServiceKey:BinderProtocol] = [ServiceKey:BinderProtocol]()
+    var binders: [ServiceKey: BinderProtocol] = [ServiceKey: BinderProtocol]()
     
     private init() {
         
     }
     
-    func registerBinding(binder:BinderProtocol) {
+    func registerBinding(binder: BinderProtocol) {
         let sk = ServiceKey(service: "\(type(of: binder.service))", sdkKey: binder.sdkKey)
-        if let _ = binders[sk] {
-        }
-        else {
+        if binders[sk] != nil {
+        } else {
             binders[sk] = binder
         }
     }
     
-    func injectComponent(service:Any, sdkKey:String? = nil, isReintialize:Bool=false) -> Any? {
-        var result:Any?
-        let sk = ServiceKey(service: "\(type(of:service))", sdkKey: sdkKey)
+    func injectComponent(service: Any, sdkKey: String? = nil, isReintialize: Bool=false) -> Any? {
+        var result: Any?
+        let sk = ServiceKey(service: "\(type(of: service))", sdkKey: sdkKey)
         if var binder = binders[sk] {
             if isReintialize && binder.strategy == .reCreate {
                 binder.instance = binder.factory()
                 result = binder.instance
-            }
-            else if let inst = binder.instance, binder.isSingleton {
+            } else if let inst = binder.instance, binder.isSingleton {
                 result = inst
-            }
-            else {
+            } else {
                 let inst = binder.factory()
                 binder.instance = inst
                 result = inst
@@ -60,13 +57,13 @@ class HandlerRegistryService {
         return result
     }
     
-    func reInitializeComponent(service:Any, sdkKey:String? = nil) {
-            let _ = injectComponent(service: service, sdkKey: sdkKey, isReintialize: true)
+    func reInitializeComponent(service: Any, sdkKey: String? = nil) {
+            _ = injectComponent(service: service, sdkKey: sdkKey, isReintialize: true)
     }
     
-    func lookupComponents(sdkKey:String)->[Any?]? {
+    func lookupComponents(sdkKey: String)->[Any?]? {
         
-        let value = self.binders.keys.filter({$0.sdkKey == sdkKey}).map({self.injectComponent(service: self.binders[$0]!.service)!})
+        let value = self.binders.keys.filter({$0.sdkKey == sdkKey}).map({self.injectComponent(service: self.binders[$0]!.service, sdkKey: sdkKey)!})
         
         return value
     }
@@ -78,23 +75,23 @@ enum ReInitializeStrategy {
 }
 
 protocol BinderProtocol {
-    var sdkKey:String? { get }
-    var strategy:ReInitializeStrategy { get }
-    var service:Any { get }
-    var isSingleton:Bool { get }
+    var sdkKey: String? { get }
+    var strategy: ReInitializeStrategy { get }
+    var service: Any { get }
+    var isSingleton: Bool { get }
     var factory:()->Any? { get }
     //var configure:(_ inst:Any?)->Any? { get }
-    var instance:Any? { get set }
+    var instance: Any? { get set }
     
 }
-class Binder<T> : BinderProtocol {
-    var sdkKey:String?
+class Binder<T>: BinderProtocol {
+    var sdkKey: String?
     var service: Any
     var strategy: ReInitializeStrategy = .reCreate
     var factory: (() -> Any?) = { ()->Any? in { return nil as Any? }}
     //var configure: ((Any?) -> Any?) = { (_)->Any? in { return nil as Any? }}
     var isSingleton = false
-    var inst:T?
+    var inst: T?
     
     var instance: Any? {
         get {
@@ -107,11 +104,11 @@ class Binder<T> : BinderProtocol {
         }
     }
     
-    init(service:Any) {
+    init(service: Any) {
         self.service = service
     }
     
-    func sdkKey(key:String) -> Binder {
+    func sdkKey(key: String) -> Binder {
         self.sdkKey = key
         return self
     }
@@ -121,41 +118,40 @@ class Binder<T> : BinderProtocol {
         return self
     }
     
-    func reInitializeStrategy(strategy:ReInitializeStrategy) -> Binder {
+    func reInitializeStrategy(strategy: ReInitializeStrategy) -> Binder {
         self.strategy = strategy
         
         return self
     }
     
-    func using(instance:T) -> Binder {
+    func using(instance: T) -> Binder {
         self.inst = instance
         return self
     }
     
-    func to(factory:@escaping ()->T?) -> Binder {
+    func to(factory:@escaping () -> T?) -> Binder {
         self.factory = factory
         return self
     }
 }
 
 extension HandlerRegistryService {
-    func injectLogger(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTLogger? {
+    func injectLogger(sdkKey: String? = nil, isReintialize: Bool=false) -> OPTLogger? {
         return injectComponent(service: OPTLogger.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTLogger?
     }
     
-    func injectNotificationCenter(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTNotificationCenter? {
+    func injectNotificationCenter(sdkKey: String? = nil, isReintialize: Bool=false) -> OPTNotificationCenter? {
         return injectComponent(service: OPTNotificationCenter.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTNotificationCenter?
     }
-    func injectDecisionService(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTDecisionService? {
+    func injectDecisionService(sdkKey: String? = nil, isReintialize: Bool=false) -> OPTDecisionService? {
         return injectComponent(service: OPTDecisionService.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDecisionService?
     }
 
-    func injectEventDispatcher(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTEventDispatcher? {
+    func injectEventDispatcher(sdkKey: String? = nil, isReintialize: Bool=false) -> OPTEventDispatcher? {
         return injectComponent(service: OPTEventDispatcher.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTEventDispatcher?
     }
     
-    func injectDatafileHandler(sdkKey:String? = nil, isReintialize:Bool=false) -> OPTDatafileHandler? {
+    func injectDatafileHandler(sdkKey: String? = nil, isReintialize: Bool=false) -> OPTDatafileHandler? {
         return injectComponent(service: OPTDatafileHandler.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDatafileHandler?
     }    
 }
-

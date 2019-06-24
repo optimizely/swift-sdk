@@ -45,7 +45,6 @@ class DecisionServiceTests_Experiments: XCTestCase {
     var variation: Variation!
     var result: Bool!
     
-    
     // MARK: - Sample datafile data
     
     let emptyExperimentData: [String: Any] = [
@@ -93,7 +92,7 @@ class DecisionServiceTests_Experiments: XCTestCase {
                     "key": kVariationKeyD
                 ]
             ],
-            "forcedVariations":[:],
+            "forcedVariations": [:]
         ]
     }
     
@@ -200,7 +199,6 @@ extension DecisionServiceTests_Experiments {
         // UserProfileService data not updated for decisions by forcedVariations, so no change
         
         // (5) desicion + bucketing
-        
         
         // no variation mapped for invalid audience id
         variation = self.decisionService.getVariation(config: config,
@@ -430,4 +428,3 @@ extension DecisionServiceTests_Experiments {
     }
     
 }
-

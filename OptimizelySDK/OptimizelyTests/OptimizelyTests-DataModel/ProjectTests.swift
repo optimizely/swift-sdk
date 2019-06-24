@@ -156,7 +156,7 @@ extension ProjectTests {
         XCTAssertNil(model)
     }
     
-    //MARK: - Optional Fields
+    // MARK: - Optional Fields
 
     func testDecodeSuccessWithMissingTypedAudiences() {
         var data: [String: Any] = ProjectTests.sampleData
@@ -188,4 +188,3 @@ extension ProjectTests {
     }
     
 }
-

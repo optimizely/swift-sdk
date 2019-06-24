@@ -62,10 +62,8 @@ extension Project: ProjectProtocol {
 extension Project {
     
     func getAudience(id: String) -> Audience? {
-        return typedAudiences?.filter{ $0.id == id }.first ??
-            audiences.filter{ $0.id == id }.first
+        return typedAudiences?.filter { $0.id == id }.first ??
+            audiences.filter { $0.id == id }.first
     }
     
 }
-
-

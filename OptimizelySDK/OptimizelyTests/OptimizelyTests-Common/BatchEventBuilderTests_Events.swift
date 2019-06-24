@@ -15,7 +15,6 @@
 ***************************************************************************/
 
 import XCTest
-import SwiftyJSON
 
 class BatchEventBuilderTests_Events: XCTestCase {
 
@@ -52,44 +51,44 @@ class BatchEventBuilderTests_Events: XCTestCase {
                                      attributes: attributes)
         
         let eventForDispatch = eventDispatcher.events.first!
-        let json = JSON(eventForDispatch.body)
-        let event = json.dictionaryValue
+        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! Dictionary<String, Any>
+        let event = json
         
-        XCTAssertEqual(event["revision"]!.stringValue, project.revision)
-        XCTAssertEqual(event["account_id"]!.stringValue, project.accountId)
-        XCTAssertEqual(event["client_version"]!.stringValue, Utils.sdkVersion)
-        XCTAssertEqual(event["project_id"]!.stringValue, project.projectId)
-        XCTAssertEqual(event["client_name"]!.stringValue, "swift-sdk")
-        XCTAssertEqual(event["anonymize_ip"]!.boolValue, project.anonymizeIP)
-        XCTAssertEqual(event["enrich_decisions"]!.boolValue, true)
+        XCTAssertEqual((event["revision"] as! String), project.revision)
+        XCTAssertEqual((event["account_id"] as! String), project.accountId)
+        XCTAssertEqual(event["client_version"] as! String, Utils.sdkVersion)
+        XCTAssertEqual(event["project_id"] as! String, project.projectId)
+        XCTAssertEqual(event["client_name"] as! String, "swift-sdk")
+        XCTAssertEqual(event["anonymize_ip"] as! Bool, project.anonymizeIP)
+        XCTAssertEqual(event["enrich_decisions"] as! Bool, true)
         
-        let visitor = event["visitors"]![0].dictionaryValue
+        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
         
-        XCTAssertEqual(visitor["visitor_id"]!.stringValue, userId)
+        XCTAssertEqual(visitor["visitor_id"] as! String, userId)
 
-        let snapshot = visitor["snapshots"]![0].dictionaryValue
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
         
         // attributes contents are tested separately in "BatchEventBuilder_Attributes.swift"
-        let eventAttributes = visitor["attributes"]!.arrayValue
+        let eventAttributes = visitor["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssertEqual(eventAttributes.count, attributes.count)
 
-        let decision = snapshot["decisions"]![0].dictionaryValue
+        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
         
-        XCTAssertEqual(decision["variation_id"]!.stringValue, expVariationId)
-        XCTAssertEqual(decision["campaign_id"]!.stringValue, expCampaignId)
-        XCTAssertEqual(decision["experiment_id"]!.stringValue, expExperimentId)
+        XCTAssertEqual(decision["variation_id"] as! String, expVariationId)
+        XCTAssertEqual(decision["campaign_id"] as! String, expCampaignId)
+        XCTAssertEqual(decision["experiment_id"] as! String, expExperimentId)
         
-        let de = snapshot["events"]![0].dictionaryValue
+        let de = (snapshot["events"]  as! Array<Dictionary<String, Any>>)[0]
         
-        XCTAssertEqual(de["entity_id"]!.stringValue, expCampaignId)
-        XCTAssertEqual(de["key"]!.stringValue, "campaign_activated")
+        XCTAssertEqual(de["entity_id"] as! String, expCampaignId)
+        XCTAssertEqual(de["key"] as! String, "campaign_activated")
         let expTimestamp = Int64((Date.timeIntervalSinceReferenceDate + Date.timeIntervalBetween1970AndReferenceDate) * 1000)
         // divide by 1000 to ignore small time difference
-        XCTAssertEqual((de["timestamp"]!.int64Value)/1000, expTimestamp / 1000)
+        XCTAssertEqual((de["timestamp"] as! Int64)/1000, expTimestamp / 1000)
         // cannot validate randomly-generated string. check if long enough.
-        XCTAssert(de["uuid"]!.stringValue.count > 20)
+        XCTAssert((de["uuid"] as! String).count > 20)
         // event tags are tested separately below
-        XCTAssert(de["tags"]!.count==0)
+        XCTAssert((de["tags"] as! Dictionary<String, Any>).count==0)
         XCTAssertNil(de["revenue"])
         XCTAssertNil(de["value"])
     }
@@ -106,43 +105,43 @@ class BatchEventBuilderTests_Events: XCTestCase {
                               attributes: attributes,
                               eventTags: eventTags)
         let eventForDispatch = eventDispatcher.events.first!
-        let json = JSON(eventForDispatch.body)
-        let event = json.dictionaryValue
+        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! Dictionary<String, Any>
+        let event = json
         
-        XCTAssertEqual(event["revision"]!.stringValue, project.revision)
-        XCTAssertEqual(event["account_id"]!.stringValue, project.accountId)
-        XCTAssertEqual(event["client_version"]!.stringValue, Utils.sdkVersion)
-        XCTAssertEqual(event["project_id"]!.stringValue, project.projectId)
-        XCTAssertEqual(event["client_name"]!.stringValue, "swift-sdk")
-        XCTAssertEqual(event["anonymize_ip"]!.boolValue, project.anonymizeIP)
-        XCTAssertEqual(event["enrich_decisions"]!.boolValue, true)
+        XCTAssertEqual(event["revision"] as! String, project.revision)
+        XCTAssertEqual(event["account_id"] as! String, project.accountId)
+        XCTAssertEqual(event["client_version"] as! String, Utils.sdkVersion)
+        XCTAssertEqual(event["project_id"] as! String, project.projectId)
+        XCTAssertEqual(event["client_name"] as! String, "swift-sdk")
+        XCTAssertEqual(event["anonymize_ip"] as! Bool, project.anonymizeIP)
+        XCTAssertEqual(event["enrich_decisions"] as! Bool, true)
         
-        let visitor = event["visitors"]![0].dictionaryValue
+        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
         
-        XCTAssertEqual(visitor["visitor_id"]!.stringValue, userId)
+        XCTAssertEqual(visitor["visitor_id"] as! String, userId)
         
-        let snapshot = visitor["snapshots"]![0].dictionaryValue
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
         
         // attributes contents are tested separately in "BatchEventBuilder_Attributes.swift"
-        let eventAttributes = visitor["attributes"]!.arrayValue
-        XCTAssertEqual(eventAttributes[0]["key"], "s_foo")
-        XCTAssertEqual(eventAttributes[0]["value"], "bar")
+        let eventAttributes = visitor["attributes"] as! Array<Dictionary<String, Any>>
+        XCTAssertEqual(eventAttributes[0]["key"] as! String, "s_foo")
+        XCTAssertEqual(eventAttributes[0]["value"] as! String, "bar")
 
         let decisions = snapshot["decisions"]
         
         XCTAssertNil(decisions)
         
-        let de = snapshot["events"]![0].dictionaryValue
+        let de = (snapshot["events"] as! Array<Dictionary<String, Any>>)[0]
         
-        XCTAssertEqual(de["entity_id"]!.stringValue, eventId)
-        XCTAssertEqual(de["key"]!.stringValue, eventKey)
+        XCTAssertEqual(de["entity_id"] as! String, eventId)
+        XCTAssertEqual(de["key"] as! String, eventKey)
         let expTimestamp = Int64((Date.timeIntervalSinceReferenceDate + Date.timeIntervalBetween1970AndReferenceDate) * 1000)
         // divide by 1000 to ignore small time difference
-        XCTAssertEqual((de["timestamp"]!.int64Value)/1000, expTimestamp / 1000)
+        XCTAssertEqual((de["timestamp"] as! Int64)/1000, expTimestamp / 1000)
         // cannot validate randomly-generated string. check if long enough.
-        XCTAssert(de["uuid"]!.stringValue.count > 20)
+        XCTAssert((de["uuid"] as!String).count > 20)
         // {tags, revenue, value} are tested separately below
-        XCTAssertEqual(de["tags"]!["browser"].stringValue, "chrome")
+        XCTAssertEqual((de["tags"] as! Dictionary<String, Any>)["browser"] as! String, "chrome")
         XCTAssertNil(de["revenue"])
         XCTAssertNil(de["value"])
     }
@@ -167,4 +166,3 @@ class BatchEventBuilderTests_Events: XCTestCase {
     }
 
 }
-

@@ -16,21 +16,35 @@
 
 import Foundation
 
-class DefaultDatafileHandler : OPTDatafileHandler {
-    static public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
-    lazy var logger = HandlerRegistryService.shared.injectLogger()
-    var timers:AtomicProperty<[String:(timer:Timer, interval:Int)]> = AtomicProperty(property: [String:(Timer,Int)]())
-    let dataStore = DataStoreUserDefaults()
+class DefaultDatafileHandler: OPTDatafileHandler {
+    // endpoint used to get the datafile.  This is settable after you create a OptimizelyClient instance.
+    public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     
-    let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue", qos: DispatchQoS.default, attributes: DispatchQueue.Attributes.concurrent, autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: nil)
+    // lazy load the logger from the logger factory.
+    lazy var logger = OPTLoggerFactory.getLogger()
+    // the timers for all sdk keys are atomic to allow for thread access.
+    var timers: AtomicProperty<[String:(timer: Timer?, interval: Int)]> = AtomicProperty(property: [String: (Timer?, Int)]())
+    // we will use a simple user defaults datastore
+    let dataStore = DataStoreUserDefaults()
+    // and our download queue to speed things up.
+    let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
     
     required init() {
         
     }
     
+    func setTimer(sdkKey: String, interval: Int) {
+        timers.performAtomic { (timers) in
+            if timers[sdkKey] == nil {
+                timers[sdkKey] = (nil, interval)
+                return
+            }
+        }
+    }
+    
     func downloadDatafile(sdkKey: String) -> Data? {
         
-        var datafile:Data?
+        var datafile: Data?
         let group = DispatchGroup()
         
         group.enter()
@@ -40,7 +54,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             case .success(let data):
                 datafile = data
             case .failure(let error):
-                self.logger?.e(error.reason)
+                self.logger.e(error.reason)
             }
             group.leave()
         }
@@ -50,7 +64,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         return datafile
     }
     
-    open func getSession(resourceTimeoutInterval:Double?) -> URLSession {
+    open func getSession(resourceTimeoutInterval: Double?) -> URLSession {
         let config = URLSessionConfiguration.ephemeral
         if let resourceTimeoutInterval = resourceTimeoutInterval,
             resourceTimeoutInterval > 0 {
@@ -59,29 +73,26 @@ class DefaultDatafileHandler : OPTDatafileHandler {
         return URLSession(configuration: config)
     }
     
-    open func getRequest(sdkKey:String) -> URLRequest? {
-        let str = String(format: DefaultDatafileHandler.endPointStringFormat, sdkKey)
+    open func getRequest(sdkKey: String) -> URLRequest? {
+        let str = String(format: endPointStringFormat, sdkKey)
         guard let url = URL(string: str) else { return nil }
         
         var request = URLRequest(url: url)
         
-        if let lastModified = dataStore.getItem(forKey: "OPTLastModified-" + sdkKey) {
-            request.addValue(lastModified as! String, forHTTPHeaderField: "If-Modified-Since")
+        if let lastModified = dataStore.getLastModified(sdkKey: sdkKey), isDatafileSaved(sdkKey: sdkKey) {
+            request.setLastModified(lastModified: lastModified)
         }
         
         return request
 
     }
     
-    open func getResponseData(sdkKey:String, response:HTTPURLResponse, url:URL?) -> Data? {
+    open func getResponseData(sdkKey: String, response: HTTPURLResponse, url: URL?) -> Data? {
         if let url = url, let data = try? Data(contentsOf: url) {
-            if let str = String(data: data, encoding: .utf8) {
-                self.logger?.d(str)
-            }
+            self.logger.d { String(data: data, encoding: .utf8) ?? "" }
             self.saveDatafile(sdkKey: sdkKey, dataFile: data)
-            if let lastModified = response.allHeaderFields["Last-Modified"] {
-                self.dataStore.saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
-            }
+            if let lastModified = response.getLastModified() {
+                self.dataStore.setLastModified(sdkKey: sdkKey, lastModified: lastModified)            }
             
             return data
         }
@@ -90,7 +101,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     open func downloadDatafile(sdkKey: String,
-                               resourceTimeoutInterval:Double? = nil,
+                               resourceTimeoutInterval: Double? = nil,
                                completionHandler: @escaping DatafileDownloadCompletionHandler) {
         
         downloadQueue.async {
@@ -101,30 +112,30 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             let task = session.downloadTask(with: request) { (url, response, error) in
                 var result = OptimizelyResult<Data?>.failure(.datafileDownloadFailed("Failed to parse"))
                 
-                if let _ = error {
-                    self.logger?.e(error.debugDescription)
+                if error != nil {
+                    self.logger.e(error.debugDescription)
                     result = .failure(.datafileDownloadFailed(error.debugDescription))
                 } else if let response = response as? HTTPURLResponse {
                     if response.statusCode == 200 {
                         let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url)
                         result = .success(data)
-                    }
-                    else if response.statusCode == 304 {
-                        self.logger?.d("The datafile was not modified and won't be downloaded again")
+                    } else if response.statusCode == 304 {
+                        self.logger.d("The datafile was not modified and won't be downloaded again")
                         result = .success(nil)
                     }
                 }
                 
                 completionHandler(result)
                 
-                //self.logger?.d(response.debugDescription)                
+                // avoid event-log-message preparation overheads with closure-logging
+                self.logger.d({ response.debugDescription })
             }
             
             task.resume()
         }
     }
     
-    func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification:((Data)->Void)?) {
+    func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification: ((Data) -> Void)?) {
         
         let now = Date()
         if #available(iOS 10.0, tvOS 10.0, *) {
@@ -144,10 +155,9 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                 }
                 self.timers.performAtomic(atomicOperation: { (timers) in
                     if let interval = timers[sdkKey]?.interval {
-                        timers[sdkKey] = (timer,interval)
-                    }
-                    else {
-                        timers[sdkKey] = (timer,updateInterval)
+                        timers[sdkKey] = (timer, interval)
+                    } else {
+                        timers[sdkKey] = (timer, updateInterval)
                     }
                 })
             }
@@ -158,14 +168,13 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     return
                 }
 
-                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector:#selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval":  updateInterval, "datafileChangeNotification":datafileChangeNotification ?? { (data) in }], repeats: false)
+                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector: #selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval": updateInterval, "datafileChangeNotification": datafileChangeNotification ?? { (data) in }], repeats: false)
                 
                 self.timers.performAtomic(atomicOperation: { (timers) in
                     if let interval = timers[sdkKey]?.interval {
-                        timers[sdkKey] = (timer,interval)
-                    }
-                    else {
-                        timers[sdkKey] = (timer,updateInterval)
+                        timers[sdkKey] = (timer, interval)
+                    } else {
+                        timers[sdkKey] = (timer, updateInterval)
                     }
                 })
             }
@@ -174,12 +183,12 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     @objc
-    func timerFired(timer:Timer) {
-        if let info = timer.userInfo as? [String:Any],
+    func timerFired(timer: Timer) {
+        if let info = timer.userInfo as? [String: Any],
             let sdkKey = info["sdkKey"] as? String,
             let updateInterval = info["updateInterval"] as? Int,
             let startDate = info["startTime"] as? Date,
-            let datafileChangeNotification = info["datafileChangeNotification"] as? ((Data)->Void){
+            let datafileChangeNotification = info["datafileChangeNotification"] as? ((Data) -> Void) {
             self.performPerodicDownload(sdkKey: sdkKey, startTime: startDate, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
         }
         timer.invalidate()
@@ -189,7 +198,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func hasPeriodUpdates(sdkKey: String) -> Bool {
         var restart = true
         self.timers.performAtomic(atomicOperation: { (timers) in
-            if !timers.contains(where: { $0.key == sdkKey} ) {
+            if !timers.contains(where: { $0.key == sdkKey}) {
                 restart = false
             }
         })
@@ -198,9 +207,9 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     func performPerodicDownload(sdkKey: String,
-                                startTime:Date,
-                                updateInterval:Int,
-                                datafileChangeNotification:((Data)->Void)?) {
+                                startTime: Date,
+                                updateInterval: Int,
+                                datafileChangeNotification: ((Data) -> Void)?) {
         self.downloadDatafile(sdkKey: sdkKey) { (result) in
             switch result {
             case .success(let data):
@@ -209,7 +218,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     datafileChangeNotification(data)
                 }
             case .failure(let error):
-                self.logger?.e(error.reason)
+                self.logger.e(error.reason)
             }
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
@@ -220,7 +229,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
                     nextInterval -= actualDiff
                 }
                 
-                self.logger?.d("next datafile download is \(nextInterval) seconds \(Date())")
+                self.logger.d("next datafile download is \(nextInterval) seconds \(Date())")
                 self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: nextInterval, datafileChangeNotification: datafileChangeNotification)
             }
         }
@@ -229,9 +238,9 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func stopPeriodicUpdates(sdkKey: String) {
         timers.performAtomic { (timers) in
             if let timer = timers[sdkKey] {
-                logger?.i("Stopping timer for datafile updates sdkKey: \(sdkKey)")
+                logger.i("Stopping timer for datafile updates sdkKey: \(sdkKey)")
                 
-                timer.timer.invalidate()
+                timer.timer?.invalidate()
                 timers.removeValue(forKey: sdkKey)
             }
 
@@ -239,13 +248,26 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     }
     
     func stopPeriodicUpdates() {
-        for key in timers.property?.keys ?? Dictionary<String, (timer: Timer, interval: Int)>().keys {
-            logger?.i("Stopping timer for all datafile updates")
+        for key in timers.property?.keys ?? [String: (timer: Timer?, interval: Int)]().keys {
+            logger.i("Stopping timer for all datafile updates")
             stopPeriodicUpdates(sdkKey: key)
         }
         
     }
-
+    
+    func startUpdates(sdkKey: String, datafileChangeNotification: ((Data) -> Void)?) {
+        if let value = timers.property?[sdkKey], !(value.timer?.isValid ?? false) {
+            startPeriodicUpdates(sdkKey: sdkKey, updateInterval: value.interval, datafileChangeNotification: datafileChangeNotification)
+        }
+    }
+    
+    func stopUpdates(sdkKey: String) {
+        stopPeriodicUpdates(sdkKey: sdkKey)
+    }
+    
+    func stopAllUpdates() {
+        stopPeriodicUpdates()
+    }
     
     func saveDatafile(sdkKey: String, dataFile: Data) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -255,9 +277,8 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             //writing
             do {
                 try dataFile.write(to: fileURL, options: .atomic)
-            }
-            catch {/* error handling here */
-                logger?.e("Problem saving datafile for key " + sdkKey)
+            } catch {/* error handling here */
+                logger.e("Problem saving datafile for key " + sdkKey)
             }
         }
     }
@@ -271,9 +292,8 @@ class DefaultDatafileHandler : OPTDatafileHandler {
             do {
                 let data = try Data(contentsOf: fileURL)
                 return data
-            }
-            catch {/* error handling here */
-                logger?.e("Problem loading datafile for key " + sdkKey)
+            } catch {/* error handling here */
+                logger.e("Problem loading datafile for key " + sdkKey)
             }
         }
         
@@ -283,7 +303,7 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func isDatafileSaved(sdkKey: String) -> Bool {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let fileURL = dir.appendingPathComponent(sdkKey)
-            return FileManager.default.fileExists(atPath:fileURL.path)
+            return FileManager.default.fileExists(atPath: fileURL.path)
         }
         
         return false
@@ -292,10 +312,39 @@ class DefaultDatafileHandler : OPTDatafileHandler {
     func removeSavedDatafile(sdkKey: String) {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let fileURL = dir.appendingPathComponent(sdkKey)
-            if FileManager.default.fileExists(atPath:fileURL.path) {
+            if FileManager.default.fileExists(atPath: fileURL.path) {
                 try? FileManager.default.removeItem(at: fileURL)
             }
         }
 
+    }
+}
+
+extension DataStoreUserDefaults {
+    func getLastModified(sdkKey: String) -> String? {
+        return getItem(forKey: "OPTLastModified-" + sdkKey) as? String
+    }
+    
+    func setLastModified(sdkKey: String, lastModified: String) {
+        saveItem(forKey: "OPTLastModified-" + sdkKey, value: lastModified)
+    }
+}
+
+extension URLRequest {
+    mutating func setLastModified(lastModified: String?) {
+        if let lastModified = lastModified {
+            addValue(lastModified, forHTTPHeaderField: "If-Modified-Since")
+        }
+    }
+
+    func getLastModified() -> String? {
+        return value(forHTTPHeaderField: "If-Modified-Since")
+    }
+
+}
+
+extension HTTPURLResponse {
+    func getLastModified() -> String? {
+        return allHeaderFields["Last-Modified"] as? String
     }
 }

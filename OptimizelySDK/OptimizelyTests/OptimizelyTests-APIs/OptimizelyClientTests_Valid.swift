@@ -80,7 +80,7 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testSetForcedVariationKey() {
-        let _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
+        _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
                                                 userId: kUserId,
                                                 variationKey: kVariationOtherKey)
         let variationKey: String? = self.optimizely.getForcedVariation(experimentKey: kExperimentKey, userId: kUserId)!
@@ -88,7 +88,7 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testIsFeatureEnabled() {
-        let result: Bool = try! self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
+        let result = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         XCTAssertTrue(result)
     }
     
@@ -121,19 +121,18 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testGetEnabledFeatures() {
-        let result: [String] = try! self.optimizely.getEnabledFeatures(userId: kUserId)
+        let result: [String] = self.optimizely.getEnabledFeatures(userId: kUserId)
         XCTAssert(result == [kFeatureKey])
     }
     
     func testTrack() {
+        var trackSuccessful = false
         do {
             try self.optimizely.track(eventKey: kEventKey, userId: kUserId)
-            XCTAssert(true)
+            trackSuccessful = true
         } catch {
-            XCTAssert(false)
         }
+        XCTAssert(trackSuccessful)
     }
-
-
 
 }

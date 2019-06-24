@@ -14,7 +14,6 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
 
 import XCTest
 
@@ -26,8 +25,7 @@ class DataStoreTests: XCTestCase {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-                }
-                catch {
+                } catch {
                     print(error)
                 }
                 
@@ -61,6 +59,24 @@ class DataStoreTests: XCTestCase {
         let v2 = datastore.getItem(forKey: "testString") as! String
         
         XCTAssert(v2 == value)
+    }
+    
+    func testBackgroundSave() {
+        let datastore = DataStoreMemory<String>(storeName: "testingBackgroundSave")
+        
+        datastore.saveItem(forKey: "testString1", value: "value")
+        
+        datastore.applicationDidEnterBackground()
+        
+        datastore.applicationDidBecomeActive()
+        
+        XCTAssertNotNil(datastore.data)
+        
+        datastore.save(forKey: "testString1", value: 100)
+        
+        datastore.load(forKey: "testingBackgroundSave")
+        
+        XCTAssertEqual(datastore.data, "value")
     }
 
     func testFileStore() {

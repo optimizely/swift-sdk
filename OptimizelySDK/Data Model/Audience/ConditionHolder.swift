@@ -183,4 +183,3 @@ extension Array where Element == ConditionHolder {
     }
 
 }
-

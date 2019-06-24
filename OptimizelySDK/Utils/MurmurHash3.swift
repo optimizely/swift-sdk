@@ -15,7 +15,7 @@
 ***************************************************************************/
 
 import Foundation
-// Adapted from this github implementation:
+// Modified version of this github implementation:
 //https://github.com/jpedrosa/sua/blob/master/Sources/murmurhash3.swift
 public class MurmurHash3 {
     
@@ -239,12 +239,12 @@ public class MurmurHash3 {
     
     public static func hash128CChar(key: [CChar], maxBytes: Int,
                                     seed: UInt64 = 0) -> (h1: UInt64, h2: UInt64) {
-        return key.withUnsafeBufferPointer { (pointer) -> (h1:UInt64, h2:UInt64) in
+        return key.withUnsafeBufferPointer { (pointer) -> (h1: UInt64, h2: UInt64) in
             guard let baseAddress = pointer.baseAddress else {
                 return (0, 0)
             }
-            return baseAddress.withMemoryRebound(to: UInt8.self, capacity: pointer.count, { (uint8pointer) -> (h1:UInt64, h2:UInt64) in
-                return doHash128(key: uint8pointer , maxBytes: maxBytes, seed: seed)
+            return baseAddress.withMemoryRebound(to: UInt8.self, capacity: pointer.count, { (uint8pointer) -> (h1: UInt64, h2: UInt64) in
+                return doHash128(key: uint8pointer, maxBytes: maxBytes, seed: seed)
             })
         }
     }

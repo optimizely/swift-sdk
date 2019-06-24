@@ -18,45 +18,31 @@ import Foundation
 
 extension Array where Element == EventForDispatch {
     func batch() -> EventForDispatch? {
-        if count == 0 {
-            return nil
-        }
-        
-        if count == 1 {
+        if count < 2 {
             return first
         }
         
-        var visitors:[Visitor] = [Visitor]()
-        var url:URL?
-        var projectId:String?
+        var visitors: [Visitor] = [Visitor]()
+        var url: URL?
+        var projectId: String?
         
-        let checkUrl = { (event:EventForDispatch) -> Bool in
-            if let url = url {
-                if url != event.url {
-                    return false
-                }
-            }
-            else {
+        let checkUrl = { (event: EventForDispatch) -> Bool in
+            if url == nil {
                 url = event.url
+                return true
             }
-            
-            return true
+            return url == event.url
         }
         
-        let checkProjectId = { (batchEvent:BatchEvent) -> Bool in
-            if let projectId = projectId {
-                if projectId != batchEvent.projectID {
-                    return false
-                }
-            }
-            else {
+        let checkProjectId = { (batchEvent: BatchEvent) -> Bool in
+            if projectId == nil {
                 projectId = batchEvent.projectID
+                return true
             }
-            
-            return true
+            return projectId == batchEvent.projectID
         }
 
-        var firstBatchEvent:BatchEvent?
+        var firstBatchEvent: BatchEvent?
         
         for event in self {
             if let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: event.body) {
@@ -64,27 +50,28 @@ extension Array where Element == EventForDispatch {
                     return nil
                 }
                 visitors.append(contentsOf: batchEvent.visitors)
-                if let _ = firstBatchEvent {
-                }
-                else {
+                if firstBatchEvent != nil {
+                } else {
                     firstBatchEvent = batchEvent
                 }
             }
         }
         
-        if let first = firstBatchEvent {
-            let batchEvent = BatchEvent(revision: first.revision,
-                                        accountID: first.accountID,
-                                        clientVersion: first.clientVersion,
-                                        visitors: visitors,
-                                        projectID: first.projectID,
-                                        clientName: first.clientName,
-                                        anonymizeIP: first.anonymizeIP,
-                                        enrichDecisions: true)
-            
-            if let data = try? JSONEncoder().encode(batchEvent), let url = url {
-                return EventForDispatch(url: url, body: data)
-            }
+        guard let first = firstBatchEvent, let tmpUrl = url else {
+            return nil
+        }
+        
+        let batchEvent = BatchEvent(revision: first.revision,
+                                    accountID: first.accountID,
+                                    clientVersion: first.clientVersion,
+                                    visitors: visitors,
+                                    projectID: first.projectID,
+                                    clientName: first.clientName,
+                                    anonymizeIP: first.anonymizeIP,
+                                    enrichDecisions: true)
+        
+        if let data = try? JSONEncoder().encode(batchEvent) {
+            return EventForDispatch(url: tmpUrl, body: data)
         }
         return nil
     }

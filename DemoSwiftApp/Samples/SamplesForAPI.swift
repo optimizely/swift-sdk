@@ -15,26 +15,25 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
-
 import Foundation
 import Optimizely
 
 class SamplesForAPI {
-    
+
     static func run(optimizely: OptimizelyClient) {
-        
+
         let attributes: [String: Any] = [
             "device": "iPhone",
             "lifetime": 24738388,
-            "is_logged_in": true,
+            "is_logged_in": true
             ]
         let tags: [String: Any] = [
             "category": "shoes",
-            "count": 2,
+            "count": 2
             ]
-        
+
         // MARK: - activate
-        
+
         do {
             let variationKey = try optimizely.activate(experimentKey: "my_experiment_key",
                                                        userId: "user_123",
@@ -43,9 +42,9 @@ class SamplesForAPI {
         } catch {
             print(error)
         }
-        
+
         // MARK: - getVariationKey
-        
+
         do {
             let variationKey = try optimizely.getVariationKey(experimentKey: "my_experiment_key",
                                                               userId: "user_123",
@@ -54,13 +53,13 @@ class SamplesForAPI {
         } catch {
             print(error)
         }
-        
+
         // MARK: - getForcedVariation
-        
+
         if let variationKey = optimizely.getForcedVariation(experimentKey: "my_experiment_key", userId: "user_123") {
             print("[getForcedVariation] \(variationKey)")
         }
-        
+
         // MARK: - setForcedVariation
 
         if optimizely.setForcedVariation(experimentKey: "my_experiment_key",
@@ -68,18 +67,14 @@ class SamplesForAPI {
                                          variationKey: "some_variation_key") {
             print("[setForcedVariation]")
         }
-        
+
         // MARK: - isFeatureEnabled
 
-        do {
-            let enabled = try optimizely.isFeatureEnabled(featureKey: "my_feature_key",
+        let enabled = optimizely.isFeatureEnabled(featureKey: "my_feature_key",
                                                           userId: "user_123",
                                                           attributes: attributes)
-            print("[isFeatureEnabled] \(enabled)")
-        } catch {
-            print(error)
-        }
-        
+        print("[isFeatureEnabled] \(enabled)")
+
         // MARK: - getFeatureVariable
 
         do {
@@ -91,16 +86,12 @@ class SamplesForAPI {
         } catch {
             print(error)
         }
-        
+
         // MARK: - getEnabledFeatures
 
-        do {
-            let enabledFeatures = try optimizely.getEnabledFeatures(userId: "user_123", attributes: attributes)
-            print("[getEnabledFeatures] \(enabledFeatures)")
-        } catch {
-            print(error)
-        }
-        
+        let enabledFeatures = optimizely.getEnabledFeatures(userId: "user_123", attributes: attributes)
+        print("[getEnabledFeatures] \(enabledFeatures)")
+
         // MARK: - track
 
         do {
@@ -110,6 +101,5 @@ class SamplesForAPI {
             print(error)
         }
     }
-    
-    
+
 }

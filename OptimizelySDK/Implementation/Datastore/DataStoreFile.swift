@@ -18,12 +18,12 @@ import Foundation
 
 /// Implementation of OPTDataStore as a generic for per type storeage in a flat file.
 /// This class should be used as a singleton per storeName and type (T)
-public class DataStoreFile<T> : OPTDataStore where T:Codable {
-    let dataStoreName:String
-    let lock:DispatchQueue
-    let url:URL
+public class DataStoreFile<T>: OPTDataStore where T: Codable {
+    let dataStoreName: String
+    let lock: DispatchQueue
+    let url: URL
     
-    init(storeName:String) {
+    init(storeName: String) {
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -32,27 +32,24 @@ public class DataStoreFile<T> : OPTDataStore where T:Codable {
                 do {
                     let data = try JSONEncoder().encode([Data]())
                     try data.write(to: self.url, options: .atomicWrite)
-                }
-                catch let error {
+                } catch let error {
                     print(error.localizedDescription)
                 }
             }
-        }
-        else {
-            self.url = URL(fileURLWithPath:storeName)
+        } else {
+            self.url = URL(fileURLWithPath: storeName)
         }
     }
     
     public func getItem(forKey: String) -> Any? {
-        var returnItem:T?
+        var returnItem: T?
         
         lock.sync {
             do {
                 let contents = try Data(contentsOf: self.url)
                 let item = try JSONDecoder().decode(T.self, from: contents)
                 returnItem = item
-            }
-            catch let errorr {
+            } catch let errorr {
                     print(errorr.localizedDescription)
             }
         }
@@ -67,8 +64,7 @@ public class DataStoreFile<T> : OPTDataStore where T:Codable {
                     let data = try JSONEncoder().encode(value)
                     try data.write(to: self.url, options: .atomic)
                 }
-            }
-            catch let error {
+            } catch let error {
                 print(error.localizedDescription)
             }
         }

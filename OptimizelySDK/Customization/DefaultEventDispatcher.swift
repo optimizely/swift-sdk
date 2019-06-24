@@ -75,9 +75,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         dataStore.save(item: event)
         
-        // TODO: use or clean up completionHandler
-
         setTimer()
+        
+        completionHandler?(.success(event.body))
     }
 
     // notify group used to ensure that the sendEvent is synchronous.

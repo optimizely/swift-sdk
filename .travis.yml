@@ -59,11 +59,15 @@ jobs:
         # preload simulator
         - Scripts/start_simulator.sh
       script:
-        - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; fi
-        - cat buildoutput | xcpretty
+        - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; cat buildoutput | xcpretty; fi
       after_success:
         - slather
         - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
+      after_failure:
+        # install travis artifacts uploader
+        - sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
+        - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
+        - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
     - <<: *unittests
       env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
       name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'

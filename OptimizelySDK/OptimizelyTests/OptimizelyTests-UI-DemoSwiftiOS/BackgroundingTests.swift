@@ -148,7 +148,6 @@ class BackgroundingTests: XCTestCase {
         sleep(2)
         app.activate()
         
-        
         // async check if entire queue is flushed.
         expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
@@ -181,7 +180,6 @@ class BackgroundingTests: XCTestCase {
         sleep(2)
         app.activate()
         
-        
         // async check if all events are flushed.
         expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
@@ -197,10 +195,8 @@ class BackgroundingTests: XCTestCase {
         sleep(2)
         app.activate()
         
-        
         // async check if all events are flushed.
         expectation(for: exists, evaluatedWith: zeroLabel, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
     }
 }
-

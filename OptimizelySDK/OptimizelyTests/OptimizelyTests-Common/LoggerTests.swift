@@ -36,6 +36,20 @@ class LoggerTests: XCTestCase {
         }
         XCTAssertTrue(CustomLogger.logCount == 0)
     }
+
+    // MARK: - DefaultLogger Tests
+
+    func testLog_UseOSLog() {
+        let logger = DefaultLogger()
+        logger.i("Log Message")
+        
+        if #available(iOS 10.0, tvOS 10.0, *) {
+            XCTAssertTrue(logger.osLogUsed)
+        } else {
+            XCTAssertFalse(logger.osLogUsed)
+        }
+    }
+    
 }
 
 private class CustomLogger: OPTLogger {
@@ -57,3 +71,4 @@ private class CustomLogger: OPTLogger {
         CustomLogger.logCount += 1
     }
 }
+

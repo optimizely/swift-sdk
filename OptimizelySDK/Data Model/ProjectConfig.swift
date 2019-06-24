@@ -88,10 +88,10 @@ class ProjectConfig {
         } catch {
             throw OptimizelyError.dataFileInvalid
         }
+        
         if !isValidVersion(version: self.project.version) {
             throw OptimizelyError.dataFileVersionInvalid(self.project.version)
         }
-        
     }
     
     convenience init(datafile: String) throws {
@@ -167,6 +167,13 @@ extension ProjectConfig {
      */
     func getFeatureFlag(key: String) -> FeatureFlag? {
         return featureFlagKeyMap[key]
+    }
+    
+    /**
+     * Get all Feature Flag objects.
+     */
+    func getFeatureFlags() -> [FeatureFlag] {
+        return project.featureFlags
     }
     
     /**

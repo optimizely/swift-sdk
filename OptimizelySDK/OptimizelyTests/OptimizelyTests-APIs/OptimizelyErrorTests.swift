@@ -14,24 +14,29 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
-import Foundation
-import UIKit
 
-@objc protocol BackgroundingCallbacks {
-    func applicationDidEnterBackground()
-    func applicationDidBecomeActive()
-}
+import XCTest
 
-extension BackgroundingCallbacks {
-    func subscribe() {
-        // swift4.2+
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+class OptimizelyErrorTests: XCTestCase {
+
+    func testReason() {
+        let error = OptimizelyError.sdkNotReady
+        XCTAssert(error.reason.contains("Optimizely SDK not configured properly yet"))
     }
     
-    func unsubscribe()  {
-        // swift4.2+
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+    func testErrorDescription() {
+        let error = OptimizelyError.sdkNotReady
+        XCTAssert(error.reason == error.errorDescription)
+    }
+    
+    func testDescription() {
+        let error = OptimizelyError.sdkNotReady
+        XCTAssert(error.description.contains("[Optimizely][Error]"))
+        XCTAssert(error.description.contains(error.reason))
+    }
+    
+    func testLocalizedDescription() {
+        let error = OptimizelyError.sdkNotReady
+        XCTAssert(error.description == error.localizedDescription)
     }
 }

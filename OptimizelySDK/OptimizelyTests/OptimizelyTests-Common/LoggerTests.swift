@@ -1,3 +1,4 @@
+//
 /****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -13,25 +14,46 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
+    
 
-import Foundation
-import UIKit
+import XCTest
 
-@objc protocol BackgroundingCallbacks {
-    func applicationDidEnterBackground()
-    func applicationDidBecomeActive()
+class LoggerTests: XCTestCase {
+
+    func testDebugLog() {
+        CustomLogger.logCount = 0
+        let logger = CustomLogger()
+        CustomLogger.logLevel = .debug
+        logger.d { () -> String in
+            return "Log Message"
+        }
+        XCTAssertTrue(CustomLogger.logCount == 1)
+        
+        CustomLogger.logCount = 0
+        CustomLogger.logLevel = .info
+        logger.d { () -> String in
+            return "Log Message"
+        }
+        XCTAssertTrue(CustomLogger.logCount == 0)
+    }
 }
 
-extension BackgroundingCallbacks {
-    func subscribe() {
-        // swift4.2+
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+private class CustomLogger: OPTLogger {
+    public static var logCount = 0
+    private static var _logLevel: OptimizelyLogLevel?
+    public static var logLevel: OptimizelyLogLevel {
+        get {
+            return _logLevel ?? .info
+        }
+        set (newLevel) {
+            _logLevel = newLevel
+        }
     }
     
-    func unsubscribe()  {
-        // swift4.2+
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+    required public init() {
+    }
+    
+    func log(level: OptimizelyLogLevel, message: String) {
+        CustomLogger.logCount += 1
     }
 }

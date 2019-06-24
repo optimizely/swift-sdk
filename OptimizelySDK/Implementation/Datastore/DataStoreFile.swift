@@ -18,7 +18,7 @@ import Foundation
 
 /// Implementation of OPTDataStore as a generic for per type storeage in a flat file.
 /// This class should be used as a singleton per storeName and type (T)
-public class DataStoreFile<T> : OPTDataStore where T: Codable {
+public class DataStoreFile<T>: OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
     let url: URL

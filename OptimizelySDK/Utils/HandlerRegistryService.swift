@@ -84,7 +84,7 @@ protocol BinderProtocol {
     var instance: Any? { get set }
     
 }
-class Binder<T> : BinderProtocol {
+class Binder<T>: BinderProtocol {
     var sdkKey: String?
     var service: Any
     var strategy: ReInitializeStrategy = .reCreate

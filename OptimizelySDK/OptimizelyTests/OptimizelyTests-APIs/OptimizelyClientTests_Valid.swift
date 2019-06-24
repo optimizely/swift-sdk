@@ -126,12 +126,13 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testTrack() {
+        var trackSuccessful = false
         do {
             try self.optimizely.track(eventKey: kEventKey, userId: kUserId)
-            XCTAssert(true)
+            trackSuccessful = true
         } catch {
-            XCTAssert(false)
         }
+        XCTAssert(trackSuccessful)
     }
 
 }

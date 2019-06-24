@@ -1,3 +1,4 @@
+//
 /****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -13,25 +14,17 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-
-import Foundation
-import UIKit
-
-@objc protocol BackgroundingCallbacks {
-    func applicationDidEnterBackground()
-    func applicationDidBecomeActive()
-}
-
-extension BackgroundingCallbacks {
-    func subscribe() {
-        // swift4.2+
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-    }
     
-    func unsubscribe()  {
-        // swift4.2+
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+
+import XCTest
+
+class OptimizelyErrorTests: XCTestCase {
+
+    func testErrorDescription() {
+        let description = "10111"
+        let error = OptimizelyError.eventDispatchFailed(description)
+        XCTAssertTrue(error.localizedDescription.contains(description))
+        XCTAssertTrue(error.errorDescription!.contains(description))
     }
+
 }

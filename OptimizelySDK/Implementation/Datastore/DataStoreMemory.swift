@@ -20,7 +20,7 @@ import UIKit
 /// Implementation of OPTDataStore as a generic for per type storeage in memory. On background and foreground
 /// the file is saved.
 /// This class should be used as a singleton per storeName and type (T)
-public class DataStoreMemory<T> : BackgroundingCallbacks, OPTDataStore where T: Codable {
+public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
     let url: URL
@@ -79,7 +79,7 @@ public class DataStoreMemory<T> : BackgroundingCallbacks, OPTDataStore where T: 
         }
     }
 
-    private func save(forKey: String, value: Any) {
+    func save(forKey: String, value: Any) {
         lock.async {
             do {
                 if let value = value as? T {

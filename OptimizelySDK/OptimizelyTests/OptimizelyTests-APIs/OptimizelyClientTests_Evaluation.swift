@@ -244,14 +244,15 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
             "d_4_2": 4.3
         ]
         
+        var isEqual = false
         do {
             let variationKey = try optimizely.activate(experimentKey: experimentKey,
                                                        userId: kUserId,
                                                        attributes: attributes)
-            XCTAssert(variationKey == expectedVariationKey)
+            isEqual = variationKey == expectedVariationKey
         } catch {
-            XCTAssert(false)
         }
+        XCTAssert(isEqual)
     }
     
     func testBucketWithOptBucketId() {

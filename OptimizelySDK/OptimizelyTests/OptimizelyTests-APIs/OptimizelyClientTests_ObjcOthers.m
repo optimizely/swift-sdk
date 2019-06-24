@@ -58,9 +58,9 @@ static NSString * const kSdkKey = @"12345";
 
 @implementation OptimizelyClientTests_ObjcOthers
 
-// MARK: - Others
+// MARK: - Test notification listners
 
-- (void)testCustomNotificationCenter_Activate {
+- (void)testNotificationCenter_Activate {
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
     NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
@@ -85,7 +85,7 @@ static NSString * const kSdkKey = @"12345";
     NSLog(@"notification: (%@ %@)", num, variationKey);
 }
 
-- (void)testCustomNotificationCenter_Track {
+- (void)testNotificationCenter_Track {
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
     NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
@@ -108,7 +108,7 @@ static NSString * const kSdkKey = @"12345";
     NSLog(@"notification: (%@)", num);
 }
 
-- (void)testCustomNotificationCenter_Decision {
+- (void)testNotificationCenter_Decision {
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
     NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
@@ -130,7 +130,7 @@ static NSString * const kSdkKey = @"12345";
     NSLog(@"notification: (%@ %d)", num, enabled);
 }
 
-- (void)testCustomNotificationCenter_RemoveListener {
+- (void)testNotificationCenter_RemoveListener {
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
     NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
@@ -198,6 +198,8 @@ static NSString * const kSdkKey = @"12345";
     XCTAssertFalse(called);
     
 }
+
+// MARK: - Test custom EventDispatcher
 
 - (void)testCustomEventDispatcher_DefaultEventDispatcher {
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];

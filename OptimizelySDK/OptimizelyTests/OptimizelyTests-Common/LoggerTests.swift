@@ -36,12 +36,9 @@ class LoggerTests: XCTestCase {
         }
         XCTAssertTrue(CustomLogger.logCount == 0)
     }
-}
 
-// MARK: - DefaultLogger Tests
+    // MARK: - DefaultLogger Tests
 
-extension LoggerTests {
-    
     func testLog_UseOSLog() {
         let logger = DefaultLogger()
         logger.i("Log Message")

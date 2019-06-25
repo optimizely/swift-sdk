@@ -594,16 +594,16 @@ class TestEventDispatcher: DefaultEventDispatcher {
         }
     }
     
-    override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    override func sendEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         sendRequestedEvents.append(event)
 
         // must call completionHandler to complete synchronization
         super.sendEvent(event: event) { _ in
             if self.forceError {
-                completionHandler(.failure(.eventDispatchFailed("forced")))
+                completionHandler?(.failure(.eventDispatchFailed("forced")))
             } else {
                 // return success to clear store after sending events
-                completionHandler(.success(Data()))
+                completionHandler?(.success(Data()))
             }
 
             self.exp?.fulfill()

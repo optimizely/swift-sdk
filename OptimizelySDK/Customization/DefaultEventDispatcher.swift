@@ -80,6 +80,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         setTimer()
     }
     
+    // notify group used to ensure that the sendEvent is synchronous.
+    // used in flushEvents
     let notify = DispatchGroup()
     
     open func flushEvents() {
@@ -152,7 +154,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                         failureCount += 1
                     case .success:
                         // we succeeded. remove the batch size sent.
-                        print("current dataStore queue size: ", self.dataStore.count)
+                        self.logger.d("current dataStore queue size: \(self.dataStore.count)")
                         if let removedItem: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
                             if self.batchSize == 1 && removedItem.first != event {
                                 self.logger.e("Removed event different from sent event")
@@ -178,7 +180,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                     }
                     // our send is done.
                     self.notify.leave()
-                    print("dataStore size after send:", self.dataStore.count)
+                    self.logger.d("dataStore queue size after send: \(self.dataStore.count)")
                 }
                 // wait for send
                 self.notify.wait()
@@ -212,11 +214,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     func applicationDidBecomeActive() {
         if dataStore.count > 0 {
-            let contents: [EventForDispatch]! = dataStore.getFirstItems(count: dataStore.count)
-            print("printing contents of dataStore")
-            for content in contents {
-                print(content)
-            }
             setTimer()
         }
     }

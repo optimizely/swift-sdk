@@ -107,11 +107,8 @@ open class OptimizelyClient: NSObject {
                     try self.configSDK(datafile: datafile)
                     
                     completion?(result)
-                } catch let error as OptimizelyError {
-                    completion?(.failure(error))
                 } catch {
-                    self.logger.e("Invalid error types: \(error)")
-                    completion?(.failure(OptimizelyError.datafileDownloadFailed("Unknown")))
+                    completion?(.failure(error as! OptimizelyError))
                 }
             }
         }
@@ -124,10 +121,7 @@ open class OptimizelyClient: NSObject {
     ///             A cached copy from previous download is used if it's available.
     ///             The datafile will be updated from the server in the background thread.
     public func start(datafile: String) throws {
-        guard let datafileData = datafile.data(using: .utf8) else {
-            throw OptimizelyError.dataFileInvalid
-        }
-        
+        let datafileData = Data(datafile.utf8)
         try start(datafile: datafileData)
     }
     
@@ -154,10 +148,7 @@ open class OptimizelyClient: NSObject {
     func configSDK(datafile: Data) throws {
         do {
             self.config = try ProjectConfig(datafile: datafile)
-            
-            // this isn't really necessary because the try would throw if there is a problem.  But, we want to avoid using bang so we do another let binding.
-            guard let config = self.config else { throw OptimizelyError.dataFileInvalid }
-            
+                        
             datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in...
                 self.reInitLock.wait(); defer { self.reInitLock.signal() }
@@ -171,8 +162,7 @@ open class OptimizelyClient: NSObject {
                         
                         // call reinit on the services we know we are reinitializing.
                         
-                        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
-                            guard let component = component else { continue }
+                        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) {
                             HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
                         }
                         
@@ -183,13 +173,11 @@ open class OptimizelyClient: NSObject {
                     
                 }
             }
-        } catch let error as OptimizelyError {
+        } catch {
             // .datafileInvalid
             // .datafaileVersionInvalid
             // .datafaileLoadingFailed
             throw error
-        } catch {  // DecodingError, etc.
-            throw OptimizelyError.dataFileInvalid
         }
     }
     
@@ -604,11 +592,7 @@ open class OptimizelyClient: NSObject {
             return enabledFeatures
         }
         
-        guard let featureFlags = config.project?.featureFlags else {
-            return enabledFeatures
-        }
-        
-        enabledFeatures = featureFlags.filter {
+        enabledFeatures = config.getFeatureFlags().filter {
             isFeatureEnabled(featureKey: $0.key, userId: userId, attributes: attributes)
         }.map { $0.key }
         
@@ -660,14 +644,7 @@ extension OptimizelyClient {
         // because we are batching events, we cannot guarantee that the completion handler will be
         // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
         // onActivate only means the event has been queued and not necessarily sent.
-        self.eventDispatcher.dispatchEvent(event: event) { result in
-            switch result {
-            case .failure:
-                break
-            case .success:
-                break
-            }
-        }
+        self.eventDispatcher.dispatchEvent(event: event, completionHandler: nil)
         
         self.notificationCenter.sendNotifications(type: NotificationType.activate.rawValue, args: [experiment, userId, attributes, variation, ["url": event.url as Any, "body": event.body as Any]])
 
@@ -693,14 +670,8 @@ extension OptimizelyClient {
         // because we are batching events, we cannot guarantee that the completion handler will be
         // called.  So, for now, we are queuing and calling onTrack.  Maybe we should mention that
         // onTrack only means the event has been queued and not necessarily sent.
-        self.eventDispatcher.dispatchEvent(event: event) { result in
-            switch result {
-            case .failure:
-                break
-            case .success:
-                break
-            }
-        }
+        self.eventDispatcher.dispatchEvent(event: event, completionHandler: nil)
+        
         self.notificationCenter.sendNotifications(type: NotificationType.track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url": event.url as Any, "body": event.body as Any]])
 
     }

@@ -41,6 +41,24 @@ class OTUtils {
         return String(data: jsonDataFromNative(raw), encoding: .utf8)!
     }
     
+    static var emptyDatafile = """
+            {
+                "version": "4",
+                "rollouts": [],
+                "anonymizeIP": true,
+                "projectId": "10431130345",
+                "variables": [],
+                "featureFlags": [],
+                "experiments": [],
+                "audiences": [],
+                "groups": [],
+                "attributes": [],
+                "accountId": "10367498574",
+                "events": [],
+                "revision": "241"
+            }
+        """
+    
     static func model<T: Codable>(from raw: Any) throws -> T {
         return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
     }
@@ -129,7 +147,6 @@ class FakeEventDispatcher: OPTEventDispatcher {
     
     func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         events.append(event)
-        //completionHandler(event)
     }
     
     /// Attempts to flush the event queue if there are any events to process.

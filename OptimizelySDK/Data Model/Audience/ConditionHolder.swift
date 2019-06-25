@@ -95,6 +95,9 @@ extension Array where Element == ConditionHolder {
     }
     
     func evaluate(op: LogicalOp, project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+        guard self.count > 0 else {
+            throw OptimizelyError.conditionInvalidFormat("Empty condition array")
+        }
         
         let itemsAfterOpTrimmed = Array(self[1...])
         

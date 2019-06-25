@@ -396,17 +396,79 @@ extension EventDispatcherTests_Batch {
 
 }
 
-// MARK: - queueSize larger than batchSize
+// MARK: - tests with varying queueSize
+
 extension EventDispatcherTests_Batch {
     
-    func testFlushQueueLargerThanBatchSize_File() {
-        // .file backingStore
-        eventDispatcher.timerInterval = 5
+    func testFlushQueueEmpty() {
         eventDispatcher.batchSize = 10
-        eventDispatcher.exp = expectation(description: "timer")
+        
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+
+        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+        
+        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+    }
+    
+    func testFlushQueueSmallerThanBatchSize() {
+        eventDispatcher.batchSize = 10
         
         // flush any events that may currently be in the queue
         eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+        
+        // add 12 events to queue
+        for _ in 1...6 {
+            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        }
+        XCTAssertEqual(eventDispatcher.dataStore.count, 6)
+        
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+        
+        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+    }
+    
+    func testFlushQueueSmallerThanBatchSizeTwice() {
+        eventDispatcher.batchSize = 10
+        
+        // flush any events that may currently be in the queue
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+        
+        // add 12 events to queue
+        for _ in 1...6 {
+            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        }
+        XCTAssertEqual(eventDispatcher.dataStore.count, 6)
+        
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+        
+        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        
+        // add 4 more events to queue
+        for _ in 1...4 {
+            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        }
+        XCTAssertEqual(eventDispatcher.dataStore.count, 4)
+        
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+        
+        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+    }
+    
+    func testFlushQueueLargerThanBatchSize() {
+        eventDispatcher.batchSize = 10
+        
+        // flush any events that may currently be in the queue
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
         
         // add 12 events to queue
         for _ in 1...12 {
@@ -415,24 +477,22 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(eventDispatcher.dataStore.count, 12)
         
         eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
         
-        eventDispatcher.exp = expectation(description: "timer")
-        wait(for: [eventDispatcher.exp!], timeout: 10)
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
     }
     
-    func testFlushQueueLargerThanBatchSizeTwice_File() {
-        // .file backingStore
+    func testFlushQueueLargerThanBatchSizeTwice() {
         eventDispatcher.batchSize = 10
         
         // flush any events that may currently be in the queue
         eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
         
         // add 16 events to queue
         for _ in 1...16 {
             eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         }
-        eventDispatcher.dispatcher.sync {}
         XCTAssertEqual(eventDispatcher.dataStore.count, 16)
         
         eventDispatcher.flushEvents()
@@ -443,57 +503,11 @@ extension EventDispatcherTests_Batch {
         for _ in 1...17 {
             eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         }
-        eventDispatcher.dispatcher.sync {}
         XCTAssertEqual(eventDispatcher.dataStore.count, 17)
         
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
-    }
-    
-    func testFlushQueueLargerThanBatchSize_Memory() {
-        // .memory backingStore
-        let memoryEventDispatcher = DefaultEventDispatcher.init(batchSize: 10, backingStore: .memory, dataStoreName: "OPTEventQueue", timerInterval: 60*1)
-        let exp: XCTestExpectation = expectation(description: "timer")
-        
-        // flush any events that may currently be in the queue
-        memoryEventDispatcher.flushEvents()
-        
-        // add 12 events to queue
-        for _ in 1...12 {
-            memoryEventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        }
-        XCTAssertEqual(memoryEventDispatcher.dataStore.count, 12)
-        
-        memoryEventDispatcher.flushEvents()
-        wait(for: [exp], timeout: 50)
-        XCTAssertEqual(memoryEventDispatcher.dataStore.count, 0)
-    }
-    
-    func testFlushQueueLargerThanBatchSizeTwice_Memory() {
-        // .memory backingStore
-        let memoryEventDispatcher = DefaultEventDispatcher.init(batchSize: 10, backingStore: .memory, dataStoreName: "OPTEventQueue", timerInterval: 60*1)
-        
-        // flush any events that may currently be in the queue
-        memoryEventDispatcher.flushEvents()
-        
-        // add 16 events to queue
-        for _ in 1...16 {
-            memoryEventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        }
-        XCTAssertEqual(memoryEventDispatcher.dataStore.count, 16)
-        
-        memoryEventDispatcher.flushEvents()
-        XCTAssertEqual(memoryEventDispatcher.dataStore.count, 0)
-        
-        // add 17 more events to queue
-        for _ in 1...17 {
-            memoryEventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        }
-        XCTAssertEqual(memoryEventDispatcher.dataStore.count, 17)
-        
-        memoryEventDispatcher.flushEvents()
-        XCTAssertEqual(memoryEventDispatcher.dataStore.count, 0)
     }
 }
 

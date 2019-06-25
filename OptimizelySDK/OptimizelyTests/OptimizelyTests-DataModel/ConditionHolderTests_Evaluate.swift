@@ -60,6 +60,21 @@ class ConditionHolderTests_Evaluate: XCTestCase {
         XCTAssertNil(try? model.evaluate(project: project, attributes: attributeData))
     }
     
+    func testEvaluate_AinArray() {
+        let model = ConditionHolder.array([.logicalOp(.and)])
+        XCTAssertNil(try? model.evaluate(project: project, attributes: attributeData))
+    }
+    
+    func testEvaluate_OinArray() {
+        let model = ConditionHolder.array([.logicalOp(.or)])
+        XCTAssertFalse(try! model.evaluate(project: project, attributes: attributeData))
+    }
+    
+    func testEvaluate_NinArray() {
+        let model = ConditionHolder.array([.logicalOp(.not)])
+        XCTAssertNil(try? model.evaluate(project: project, attributes: attributeData))
+    }
+
     func testEvaluate_AI() {
         let model = ConditionHolder.array([
             .logicalOp(.and),
@@ -159,6 +174,42 @@ extension ConditionHolderTests_Evaluate {
     func testEvaluate_NU() {
         let model: ConditionHolder = try! OTUtils.model(from: ["not", userAttributeData])
         XCTAssertFalse(try! model.evaluate(project: project, attributes: attributeData))
+    }
+
+}
+
+// MARK: - Others
+
+extension ConditionHolderTests_Evaluate {
+
+    func testEvaluate_Empty() {
+        let model: ConditionHolder = try! OTUtils.model(from: [])
+        do {
+            _ = try model.evaluate(project: project, attributes: attributeData)
+            XCTAssert(false, "cannot evaluate empty condtion")
+        } catch {
+            XCTAssert(true)
+        }
+    }
+    
+    func testEvaluate_InvalidFirstItem() {
+        let model: ConditionHolder = try! OTUtils.model(from: [["and", userAttributeData]])
+        do {
+            _ = try model.evaluate(project: project, attributes: attributeData)
+            XCTAssert(false, "only operator or leaf node can be the first item")
+        } catch {
+            XCTAssert(true)
+        }
+    }
+    
+    func testEvaluate_OperatorOnly() {
+        let model: ConditionHolder = try! OTUtils.model(from: ["and"])
+        do {
+            _ = try model.evaluate(project: project, attributes: attributeData)
+            XCTAssert(false, "only operator or leaf node can be the first item")
+        } catch {
+            XCTAssert(true)
+        }
     }
 
 }

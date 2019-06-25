@@ -286,3 +286,29 @@ extension ConditionHolderTests {
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
 }
+
+// MARK: - Others
+
+extension ConditionHolderTests {
+
+    func testDecode_Invalid() {
+        do {
+            let _: ConditionHolder = try OTUtils.model(from: [120])
+            XCTAssert(false)
+        } catch {
+            XCTAssert(true)
+        }
+    }
+    
+    func testOperaterOnEmptyConditionArray() {
+        let array: [ConditionHolder] = []
+        
+        do {
+            _ = try array.evaluate(op: .and, project: nil, attributes: nil)
+            XCTAssert(false, "evaluate on empty array must throw exception")
+        } catch {
+            XCTAssert(true)
+        }
+    }
+
+}

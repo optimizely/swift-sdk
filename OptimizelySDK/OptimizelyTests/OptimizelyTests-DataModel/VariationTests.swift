@@ -127,3 +127,20 @@ extension VariationTests {
     }
     
 }
+
+// MARK: - Others
+
+extension VariationTests {
+    
+    func testGetVariable() {
+        let data: [String: Any] = ["id": "553339214",
+                                   "key": "house",
+                                   "featureEnabled": true,
+                                   "variables": [["id": "123450", "value": "100"], ["id": "123451", "value": "200"]]]
+        let model: Variation = try! OTUtils.model(from: data)
+        
+        let variable = model.getVariable(id: "123450")!
+        XCTAssert(variable.value == "100")
+    }
+    
+}

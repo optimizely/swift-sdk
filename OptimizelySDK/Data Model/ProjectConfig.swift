@@ -95,34 +95,19 @@ class ProjectConfig {
     }
     
     convenience init(datafile: String) throws {
-        guard let data = datafile.data(using: .utf8) else {
-            throw OptimizelyError.dataFileInvalid
-        }
-        
-        try self.init(datafile: data)
+        try self.init(datafile: Data(datafile.utf8))
    }
     
     init() {
     }
     
-    class func dateFromString(dateString: String) -> NSDate {
-        let dateFormatter = DateFormatter()
-        let enUSPosixLocale = NSLocale(localeIdentifier: "en_US_POSIX")
-        dateFormatter.locale = enUSPosixLocale as Locale
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-        return dateFormatter.date(from: dateString)! as NSDate
-    }
 }
 
 extension ProjectConfig {
     private func whitelistUser(userId: String, experimentId: String, variationId: String) {
-        if var dic = whitelistUsers[userId] {
-            dic[experimentId] = variationId
-        } else {
-            var dic = [String: String]()
-            dic[experimentId] = variationId
-            whitelistUsers[userId] = dic
-        }
+        var dic = whitelistUsers[userId] ?? [String: String]()
+        dic[experimentId] = variationId
+        whitelistUsers[userId] = dic
     }
     
     private func removeFromWhitelist(userId: String, experimentId: String) {
@@ -132,10 +117,10 @@ extension ProjectConfig {
     private func getWhitelistedVariationId(userId: String, experimentId: String) -> String? {
         if var dic = whitelistUsers[userId] {
             return dic[experimentId]
-        } else {
-            logger.d(.userHasNoForcedVariation(userId))
-            return nil
         }
+        
+        logger.d(.userHasNoForcedVariation(userId))
+        return nil
     }
     
     private func isValidVersion(version: String) -> Bool {
@@ -252,14 +237,14 @@ extension ProjectConfig {
             if let variation = experiment.getVariation(id: id) {
                 logger.d(.userHasForcedVariation(userId, experiment.key, variation.key))
                 return variation
-            } else {
-                logger.d(.userHasForcedVariationButInvalid(userId, experiment.key))
-                return nil
             }
-        } else {
-            logger.d(.userHasNoForcedVariationForExperiment(userId, experiment.key))
+            
+            logger.d(.userHasForcedVariationButInvalid(userId, experiment.key))
             return nil
         }
+        
+        logger.d(.userHasNoForcedVariationForExperiment(userId, experiment.key))
+        return nil
     }
     
     /**
@@ -284,7 +269,7 @@ extension ProjectConfig {
             return false
         }
 
-        guard let variation = experiment.variations.filter({$0.key == variationKey }).first else {
+        guard let variation = experiment.getVariation(key: variationKey) else {
             logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }

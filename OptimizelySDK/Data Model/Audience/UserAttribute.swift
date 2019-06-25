@@ -58,7 +58,7 @@ struct UserAttribute: Codable, Equatable {
         
         return ConditionMatch(rawValue: rawMatch)
     }
-
+    
     // MARK: - init
     
     init(from decoder: Decoder) throws {

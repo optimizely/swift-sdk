@@ -29,12 +29,7 @@ class BatchEventBuilderTests: XCTestCase {
         optimizely = OptimizelyClient(sdkKey: "", periodicDownloadInterval: 0)
         
         let datafile = OTUtils.loadJSONDatafile(datafileName)
-        do {
-            try optimizely?.start(datafile: datafile!)
-        } catch {
-            print(error)
-            XCTAssert(false)
-        }
+        XCTAssertNoThrow(try optimizely?.start(datafile: datafile!))
     }
 
     override func tearDown() {

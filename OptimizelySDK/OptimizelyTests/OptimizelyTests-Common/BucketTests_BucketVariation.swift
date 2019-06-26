@@ -132,11 +132,7 @@ extension BucketTests_BucketVariation {
 
         for (idx, test) in tests.enumerated() {
             variation = bucketer.bucketExperiment(config: self.config, experiment: experiment, bucketingId: test["userId"]!)
-            if let _ = test["expect"] {
-                XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
-            } else {
-                XCTAssertNil(experiment)
-            }
+            XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
         }
     }
     
@@ -154,11 +150,7 @@ extension BucketTests_BucketVariation {
 
         for (idx, test) in tests.enumerated() {
             variation = bucketer.bucketExperiment(config: self.config, experiment: experiment, bucketingId: test["userId"]!)
-            if let _ = test["expect"] {
-                XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
-            } else {
-                XCTAssertNil(experiment)
-            }
+            XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
         }
     }
     
@@ -196,11 +188,7 @@ extension BucketTests_BucketVariation {
 
         for (idx, test) in tests.enumerated() {
             variation = bucketer.bucketExperiment(config: self.config, experiment: experiment, bucketingId: test["userId"]!)
-            if let _ = test["expect"] {
-                XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
-            } else {
-                XCTAssertNil(experiment)
-            }
+            XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
         }
     }
     

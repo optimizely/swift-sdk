@@ -229,13 +229,9 @@ class OptimizelyClientTests_Others: XCTestCase {
         let exp = expectation(description: "a")
         
         optimizely.start { result in
-            switch result {
-            case .success:
-                XCTAssert(false)
-            case .failure(OptimizelyError.dataFileVersionInvalid):
+            
+            if case .failure(OptimizelyError.dataFileVersionInvalid) = result  {
                 XCTAssert(true)
-            case .failure(let error):
-                XCTAssert(false, "wrong error type: \(error)")
             }
             
             exp.fulfill()

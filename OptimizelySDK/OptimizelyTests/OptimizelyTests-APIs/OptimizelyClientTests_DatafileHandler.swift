@@ -64,12 +64,9 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         let expectation = XCTestExpectation(description: "get datafile from cache")
         
         client.start() { (result) in
-            switch result {
-            case .success(let data):
+            if case let .success(data) = result{
                 XCTAssert(!data.isEmpty)
                 expectation.fulfill()
-            case .failure:
-                XCTAssert(false)
             }
         }
         

@@ -26,11 +26,7 @@ class BucketTests_Others: XCTestCase {
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         let data = OTUtils.loadJSONDatafile("grouped_experiments")
-        do {
-            config = try ProjectConfig(datafile: data!)
-        } catch {
-            print(error.localizedDescription)
-        }
+        config = try? ProjectConfig(datafile: data!)
     }
 
     override func tearDown() {
@@ -84,11 +80,7 @@ extension BucketTests_Others {
         
         for test in tests {
             let experiment = bucketer.bucketToExperiment(config: config!, group: group!, bucketingId: test["userId"]!)
-            if let _ = test["expect"] {
-                XCTAssertEqual(test["expect"]!, experiment?.key)
-            } else {
-                XCTAssertNil(experiment)
-            }
+            XCTAssertEqual(test["expect"]!, experiment?.key)
         }
     }
     

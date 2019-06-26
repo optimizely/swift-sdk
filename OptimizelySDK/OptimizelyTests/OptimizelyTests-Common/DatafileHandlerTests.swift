@@ -108,12 +108,10 @@ class DatafileHandlerTests: XCTestCase {
         // initiate download task which should pass back a 304 but still return non nil
         // since the datafile was not in cache.
         handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
-            switch result {
-            case .success(let data):
+            
+            if case let .success(data) = result  {
                 XCTAssert(data != nil)
                 expectation.fulfill()
-            case .failure(let error):
-                XCTAssert(error.errorDescription != nil)
             }
         }
         
@@ -155,13 +153,10 @@ class DatafileHandlerTests: XCTestCase {
         // initiate download task which should pass back a 304 but still return non nil
         // since the datafile was not in cache.
         handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
-            switch result {
-            case .success(let data):
+            if case let .success(data) = result  {
                 // should come back as nil since got 304 and datafile in cache.
                 XCTAssert(data == nil)
                 expectation.fulfill()
-            case .failure(let error):
-                XCTAssert(error.errorDescription != nil)
             }
         }
         
@@ -236,18 +231,16 @@ class DatafileHandlerTests: XCTestCase {
         
         let expectation = XCTestExpectation(description: "should fail before 10")
         handler.downloadDatafile(sdkKey: "invalidKey1212121", resourceTimeoutInterval: 3) { (result) in
-            switch result {
-            case .failure(let error):
+            
+            if case let .failure(error) = result  {
                 print(error)
                 XCTAssert(true)
                 expectation.fulfill()
-            case .success(_):
-                XCTAssert(false)
             }
         }
         
         wait(for: [expectation], timeout: 5.0)
-        
+
     }
     
     func testDownloadWithoutTimeout() {
@@ -256,11 +249,8 @@ class DatafileHandlerTests: XCTestCase {
         
         let expectation = XCTestExpectation(description: "will wait for response.")
         handler.downloadDatafile(sdkKey: "invalidKeyXXXXX") { (result) in
-            switch result {
-            case .failure(let error):
-                print(error)
-                XCTAssert(false)
-            case .success(let data):
+            
+            if case let .success(data) = result  {
                 print(data ?? "")
                 XCTAssert(true)
                 expectation.fulfill()

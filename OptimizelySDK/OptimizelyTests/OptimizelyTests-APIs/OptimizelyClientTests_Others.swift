@@ -268,24 +268,24 @@ class OptimizelyClientTests_Others: XCTestCase {
 
         // all handlers before transfer
         
-        var handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.keys.filter { $0.sdkKey == kNotRealSdkKey }
-        let oldHandlersCount = handlersForCurrentSdkKey.count
+        var handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.property?.keys.filter { $0.sdkKey == kNotRealSdkKey }
+        let oldHandlersCount = handlersForCurrentSdkKey?.count
 
         // remove one of the handler to test nil-handlers
 
-        let testKey = handlersForCurrentSdkKey.filter { $0.service.contains("EventDispatcher") }.first!
-        HandlerRegistryService.shared.binders[testKey] = nil
-        
+        let testKey = handlersForCurrentSdkKey!.filter { $0.service.contains("EventDispatcher")}.first!
+        HandlerRegistryService.shared.binders.property?[testKey] = nil
+    
         // this will replace config, which will transfer all handlers
         
         try? optimizely.configSDK(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
 
         // nil handlers must be cleaned up when re-init
         
-        handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.keys.filter { $0.sdkKey == kNotRealSdkKey }
-        let newHandlersCount = handlersForCurrentSdkKey.count
+        handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.property?.keys.filter { $0.sdkKey == kNotRealSdkKey }
+        let newHandlersCount = handlersForCurrentSdkKey?.count
         
-        XCTAssertEqual(newHandlersCount, oldHandlersCount - 1, "nil handlers should be filtered out")
+        XCTAssertEqual(newHandlersCount, oldHandlersCount! - 1, "nil handlers should be filtered out")
     }
     
 

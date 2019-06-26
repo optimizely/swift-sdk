@@ -79,7 +79,7 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         
         client.datafileHandler.stopAllUpdates()
         
-        HandlerRegistryService.shared.binders.removeAll()
+        HandlerRegistryService.shared.binders.property?.removeAll()
 
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.

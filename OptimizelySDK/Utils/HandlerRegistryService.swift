@@ -25,7 +25,12 @@ class HandlerRegistryService {
         var sdkKey: String?
     }
     
-    var binders: [ServiceKey: BinderProtocol] = [ServiceKey: BinderProtocol]()
+    var binders: AtomicProperty<[ServiceKey: BinderProtocol]> =  {
+        
+        var binders = AtomicProperty<[ServiceKey: BinderProtocol]>()
+        binders.property = [ServiceKey: BinderProtocol]()
+        return binders
+    }()
     
     private init() {
         
@@ -33,16 +38,16 @@ class HandlerRegistryService {
     
     func registerBinding(binder: BinderProtocol) {
         let sk = ServiceKey(service: "\(type(of: binder.service))", sdkKey: binder.sdkKey)
-        if binders[sk] != nil {
+        if binders.property?[sk] != nil {
         } else {
-            binders[sk] = binder
+            binders.property?[sk] = binder
         }
     }
     
     func injectComponent(service: Any, sdkKey: String? = nil, isReintialize: Bool=false) -> Any? {
         var result: Any?
         let sk = ServiceKey(service: "\(type(of: service))", sdkKey: sdkKey)
-        if var binder = binders[sk] {
+        if var binder = binders.property?[sk] {
             if isReintialize && binder.strategy == .reCreate {
                 binder.instance = binder.factory()
                 result = binder.instance
@@ -61,12 +66,14 @@ class HandlerRegistryService {
             _ = injectComponent(service: service, sdkKey: sdkKey, isReintialize: true)
     }
     
-    func lookupComponents(sdkKey: String)->[Any] {
-        let value = self.binders.keys
+    func lookupComponents(sdkKey: String)->[Any]? {
+        if let value = self.binders.property?.keys
             .filter({$0.sdkKey == sdkKey})
-            .compactMap({ self.injectComponent(service: self.binders[$0]!.service, sdkKey: sdkKey) })
+            .compactMap({ self.injectComponent(service: self.binders.property![$0]!.service, sdkKey: sdkKey) }) {
+            return value
+        }
         
-        return value
+        return nil
     }
 }
 

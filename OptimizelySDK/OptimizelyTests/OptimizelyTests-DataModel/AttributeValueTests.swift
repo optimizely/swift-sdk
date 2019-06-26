@@ -340,43 +340,46 @@ extension AttributeValueTests {
     
     func testIsExactMatchWithInvalid() {
         let attr = AttributeValue.string("string")
+        var tmpError: Error?
         do {
             _ = try attr.isExactMatch(with: ["invalidType"])
-            XCTAssert(false)
         } catch {
-            XCTAssert(true)
+            tmpError = error
         }
+        XCTAssertTrue(tmpError != nil)
     }
     
     func testIsGreaterWithInvalid() {
         let attr = AttributeValue.string("string")
+        var tmpError: Error?
         do {
             _ = try attr.isSubstring(of: ["invalidType"])
-            XCTAssert(false)
         } catch {
-            XCTAssert(true)
+            tmpError = error
         }
+        XCTAssertTrue(tmpError != nil)
     }
 
     func testIsLessWithInvalid() {
         let attr = AttributeValue.double(100.23)
+        var tmpError: Error?
         do {
             _ = try attr.isGreater(than: ["invalidType"])
-            XCTAssert(false)
         } catch {
-            XCTAssert(true)
+            tmpError = error
         }
+        XCTAssertTrue(tmpError != nil)
     }
     
     func testIsSubstringWithInvalid() {
         let attr = AttributeValue.double(100.23)
+        var tmpError: Error?
         do {
             _ = try attr.isLess(than: ["invalidType"])
-            XCTAssert(false)
         } catch {
-            XCTAssert(true)
+            tmpError = error
         }
+        XCTAssertTrue(tmpError != nil)
     }
     
-
 }

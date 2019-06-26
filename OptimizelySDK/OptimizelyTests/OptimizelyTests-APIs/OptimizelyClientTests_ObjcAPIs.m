@@ -215,8 +215,16 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     NSData *datafileData = [datafile dataUsingEncoding:NSUTF8StringEncoding];
 
     TestOPTLogger *logger = [[TestOPTLogger alloc] init];
+    XCTAssertEqual(TestOPTLogger.logLevel, OptimizelyLogLevelInfo);
+    
     TestOPTEventDispatcher *eventDispatcher = [[TestOPTEventDispatcher alloc] init];
+    EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil body:[[NSData alloc] init]];
+    [eventDispatcher dispatchEventWithEvent:event completionHandler:nil];
+    [eventDispatcher flushEvents];
+    
     TestOPTUserProfileService *userProfileService = [[TestOPTUserProfileService alloc] init];
+    (void)[userProfileService lookupWithUserId:@"dummy"];
+    [userProfileService saveWithUserProfile:@{}];
     
     // check all SDK initialization APIs for ObjC
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kSdkKey];
@@ -228,7 +236,7 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
                                        periodicDownloadInterval:@(50)
                                                  defaultLogLevel:OptimizelyLogLevelInfo];
     
-    [self.optimizely startWithCompletion:^(NSData * _Nullable data, NSError * _Nullable error) {}];
+    [self.optimizely startWithCompletion:nil];
     
     [self.optimizely startWithDatafile:datafile error:nil];
     

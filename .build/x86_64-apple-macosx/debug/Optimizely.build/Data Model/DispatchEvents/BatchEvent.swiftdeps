@@ -1,0 +1,619 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "BatchEvent"
+- "Visitor"
+- "EventAttribute"
+- "Snapshot"
+- "Decision"
+- "DispatchEvent"
+provides-nominal:
+- "10Optimizely10BatchEventV"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely7VisitorV"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely14EventAttributeV"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely8SnapshotV"
+- "10Optimizely8DecisionV"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely13DispatchEventV"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+provides-member:
+- ["10Optimizely10BatchEventV", ""]
+- ["10Optimizely10BatchEventV10CodingKeysO", ""]
+- ["10Optimizely7VisitorV", ""]
+- ["10Optimizely7VisitorV10CodingKeysO", ""]
+- ["10Optimizely14EventAttributeV", ""]
+- ["10Optimizely14EventAttributeV10CodingKeysO", ""]
+- ["10Optimizely8SnapshotV", ""]
+- ["10Optimizely8DecisionV", ""]
+- ["10Optimizely8DecisionV10CodingKeysO", ""]
+- ["10Optimizely13DispatchEventV", ""]
+- ["10Optimizely13DispatchEventV10CodingKeysO", ""]
+provides-dynamic-lookup:
+depends-top-level:
+- "=="
+- "AssignmentPrecedence"
+- "AttributeValue"
+- "BatchEvent"
+- "Bool"
+- "Codable"
+- "CodingKey"
+- "Decision"
+- "DispatchEvent"
+- "Equatable"
+- "EventAttribute"
+- "Int64"
+- "Snapshot"
+- "String"
+- "Visitor"
+- !private "_findStringSwitchCase"
+- !private "~="
+depends-member:
+- !private ["Sa", "filter"]
+- !private ["Sa", "first"]
+- ["10Optimizely14AttributeValueO", "deinit"]
+- ["10Optimizely10BatchEventV", "=="]
+- ["10Optimizely10BatchEventV", "Bool"]
+- ["10Optimizely10BatchEventV", "CodingKey"]
+- ["10Optimizely10BatchEventV", "CodingKeys"]
+- ["10Optimizely10BatchEventV", "EventAttribute"]
+- ["10Optimizely10BatchEventV", "String"]
+- ["10Optimizely10BatchEventV", "Visitor"]
+- ["10Optimizely10BatchEventV", "__derived_struct_equals"]
+- !private ["10Optimizely10BatchEventV", "_findStringSwitchCase"]
+- ["10Optimizely10BatchEventV", "accountID"]
+- ["10Optimizely10BatchEventV", "anonymizeIP"]
+- ["10Optimizely10BatchEventV", "clientName"]
+- ["10Optimizely10BatchEventV", "clientVersion"]
+- ["10Optimizely10BatchEventV", "deinit"]
+- ["10Optimizely10BatchEventV", "encode"]
+- ["10Optimizely10BatchEventV", "enrichDecisions"]
+- ["10Optimizely10BatchEventV", "getEventAttribute"]
+- ["10Optimizely10BatchEventV", "init"]
+- ["10Optimizely10BatchEventV", "projectID"]
+- ["10Optimizely10BatchEventV", "revision"]
+- ["10Optimizely10BatchEventV", "visitors"]
+- !private ["SK", "filter"]
+- !private ["SK", "first"]
+- !private ["s7CVarArgP", "filter"]
+- !private ["s7CVarArgP", "first"]
+- ["s9CodingKeyP", "=="]
+- ["s9CodingKeyP", "RawValue"]
+- ["s9CodingKeyP", ""]
+- ["s9CodingKeyP", "_Default_RawValue"]
+- !private ["s9CodingKeyP", "_findStringSwitchCase"]
+- ["s9CodingKeyP", "_rawHashValue"]
+- ["s9CodingKeyP", "debugDescription"]
+- ["s9CodingKeyP", "description"]
+- ["s9CodingKeyP", "hash"]
+- ["s9CodingKeyP", "hashValue"]
+- ["s9CodingKeyP", "init"]
+- ["s9CodingKeyP", "intValue"]
+- ["s9CodingKeyP", "rawValue"]
+- ["s9CodingKeyP", "stringValue"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "=="]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "=="]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "=="]
+- ["10Optimizely7VisitorV10CodingKeysO", "=="]
+- ["10Optimizely8DecisionV10CodingKeysO", "=="]
+- ["10Optimizely10BatchEventV10CodingKeysO", "RawValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "RawValue"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "RawValue"]
+- ["10Optimizely7VisitorV10CodingKeysO", "RawValue"]
+- ["10Optimizely8DecisionV10CodingKeysO", "RawValue"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "_Default_RawValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "_Default_RawValue"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "_Default_RawValue"]
+- ["10Optimizely7VisitorV10CodingKeysO", "_Default_RawValue"]
+- ["10Optimizely8DecisionV10CodingKeysO", "_Default_RawValue"]
+- !private ["10Optimizely10BatchEventV10CodingKeysO", "_findStringSwitchCase"]
+- !private ["10Optimizely13DispatchEventV10CodingKeysO", "_findStringSwitchCase"]
+- !private ["10Optimizely14EventAttributeV10CodingKeysO", "_findStringSwitchCase"]
+- !private ["10Optimizely7VisitorV10CodingKeysO", "_findStringSwitchCase"]
+- !private ["10Optimizely8DecisionV10CodingKeysO", "_findStringSwitchCase"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "_rawHashValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "_rawHashValue"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "_rawHashValue"]
+- ["10Optimizely7VisitorV10CodingKeysO", "_rawHashValue"]
+- ["10Optimizely8DecisionV10CodingKeysO", "_rawHashValue"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "accountID"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "anonymizeIP"]
+- ["10Optimizely7VisitorV10CodingKeysO", "attributes"]
+- ["10Optimizely8DecisionV10CodingKeysO", "campaignID"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "clientName"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "clientVersion"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "debugDescription"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "debugDescription"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "debugDescription"]
+- ["10Optimizely7VisitorV10CodingKeysO", "debugDescription"]
+- ["10Optimizely8DecisionV10CodingKeysO", "debugDescription"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "deinit"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "deinit"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "deinit"]
+- ["10Optimizely7VisitorV10CodingKeysO", "deinit"]
+- ["10Optimizely8DecisionV10CodingKeysO", "deinit"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "description"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "description"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "description"]
+- ["10Optimizely7VisitorV10CodingKeysO", "description"]
+- ["10Optimizely8DecisionV10CodingKeysO", "description"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "enrichDecisions"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "entityID"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "entityID"]
+- ["10Optimizely8DecisionV10CodingKeysO", "experimentID"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "hash"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "hash"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "hash"]
+- ["10Optimizely7VisitorV10CodingKeysO", "hash"]
+- ["10Optimizely8DecisionV10CodingKeysO", "hash"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "hashValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "hashValue"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "hashValue"]
+- ["10Optimizely7VisitorV10CodingKeysO", "hashValue"]
+- ["10Optimizely8DecisionV10CodingKeysO", "hashValue"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "init"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "init"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "init"]
+- ["10Optimizely7VisitorV10CodingKeysO", "init"]
+- ["10Optimizely8DecisionV10CodingKeysO", "init"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "intValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "intValue"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "intValue"]
+- ["10Optimizely7VisitorV10CodingKeysO", "intValue"]
+- ["10Optimizely8DecisionV10CodingKeysO", "intValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "key"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "key"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "projectID"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "rawValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "rawValue"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "rawValue"]
+- ["10Optimizely7VisitorV10CodingKeysO", "rawValue"]
+- ["10Optimizely8DecisionV10CodingKeysO", "rawValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "revenue"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "revision"]
+- ["10Optimizely7VisitorV10CodingKeysO", "snapshots"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "stringValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "stringValue"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "stringValue"]
+- ["10Optimizely7VisitorV10CodingKeysO", "stringValue"]
+- ["10Optimizely8DecisionV10CodingKeysO", "stringValue"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "tags"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "timestamp"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "type"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "uuid"]
+- ["10Optimizely13DispatchEventV10CodingKeysO", "value"]
+- ["10Optimizely14EventAttributeV10CodingKeysO", "value"]
+- ["10Optimizely8DecisionV10CodingKeysO", "variationID"]
+- ["10Optimizely7VisitorV10CodingKeysO", "visitorID"]
+- ["10Optimizely10BatchEventV10CodingKeysO", "visitors"]
+- !private ["Sl", "filter"]
+- !private ["Sl", "first"]
+- !private ["10Foundation15ContiguousBytesP", "filter"]
+- !private ["10Foundation15ContiguousBytesP", "first"]
+- ["s28CustomDebugStringConvertibleP", "=="]
+- ["s28CustomDebugStringConvertibleP", "RawValue"]
+- ["s28CustomDebugStringConvertibleP", ""]
+- ["s28CustomDebugStringConvertibleP", "_Default_RawValue"]
+- !private ["s28CustomDebugStringConvertibleP", "_findStringSwitchCase"]
+- ["s28CustomDebugStringConvertibleP", "_rawHashValue"]
+- ["s28CustomDebugStringConvertibleP", "debugDescription"]
+- ["s28CustomDebugStringConvertibleP", "description"]
+- !private ["s28CustomDebugStringConvertibleP", "filter"]
+- !private ["s28CustomDebugStringConvertibleP", "first"]
+- ["s28CustomDebugStringConvertibleP", "hash"]
+- ["s28CustomDebugStringConvertibleP", "hashValue"]
+- ["s28CustomDebugStringConvertibleP", "init"]
+- ["s28CustomDebugStringConvertibleP", "intValue"]
+- ["s28CustomDebugStringConvertibleP", "rawValue"]
+- ["s28CustomDebugStringConvertibleP", "stringValue"]
+- !private ["s17CustomReflectableP", "filter"]
+- !private ["s17CustomReflectableP", "first"]
+- ["s23CustomStringConvertibleP", "=="]
+- ["s23CustomStringConvertibleP", "RawValue"]
+- ["s23CustomStringConvertibleP", ""]
+- ["s23CustomStringConvertibleP", "_Default_RawValue"]
+- !private ["s23CustomStringConvertibleP", "_findStringSwitchCase"]
+- ["s23CustomStringConvertibleP", "_rawHashValue"]
+- ["s23CustomStringConvertibleP", "debugDescription"]
+- ["s23CustomStringConvertibleP", "description"]
+- !private ["s23CustomStringConvertibleP", "filter"]
+- !private ["s23CustomStringConvertibleP", "first"]
+- ["s23CustomStringConvertibleP", "hash"]
+- ["s23CustomStringConvertibleP", "hashValue"]
+- ["s23CustomStringConvertibleP", "init"]
+- ["s23CustomStringConvertibleP", "intValue"]
+- ["s23CustomStringConvertibleP", "rawValue"]
+- ["s23CustomStringConvertibleP", "stringValue"]
+- !private ["10Foundation12DataProtocolP", "filter"]
+- !private ["10Foundation12DataProtocolP", "first"]
+- ["10Optimizely8DecisionV", "=="]
+- ["10Optimizely8DecisionV", "CodingKey"]
+- ["10Optimizely8DecisionV", "CodingKeys"]
+- ["10Optimizely8DecisionV", "String"]
+- ["10Optimizely8DecisionV", "__derived_struct_equals"]
+- !private ["10Optimizely8DecisionV", "_findStringSwitchCase"]
+- ["10Optimizely8DecisionV", "campaignID"]
+- ["10Optimizely8DecisionV", "deinit"]
+- ["10Optimizely8DecisionV", "encode"]
+- ["10Optimizely8DecisionV", "experimentID"]
+- ["10Optimizely8DecisionV", "init"]
+- ["10Optimizely8DecisionV", "variationID"]
+- ["Se", "=="]
+- ["Se", ""]
+- !private ["Se", "_findStringSwitchCase"]
+- !private ["Se", "accountID"]
+- !private ["Se", "anonymizeIP"]
+- !private ["Se", "attributes"]
+- !private ["Se", "campaignID"]
+- !private ["Se", "clientName"]
+- !private ["Se", "clientVersion"]
+- !private ["Se", "decisions"]
+- ["Se", "encode"]
+- !private ["Se", "enrichDecisions"]
+- !private ["Se", "entityID"]
+- !private ["Se", "events"]
+- !private ["Se", "experimentID"]
+- !private ["Se", "filter"]
+- !private ["Se", "first"]
+- ["Se", "init"]
+- !private ["Se", "key"]
+- !private ["Se", "projectID"]
+- !private ["Se", "revenue"]
+- !private ["Se", "revision"]
+- !private ["Se", "snapshots"]
+- !private ["Se", "tags"]
+- !private ["Se", "timestamp"]
+- !private ["Se", "type"]
+- !private ["Se", "uuid"]
+- !private ["Se", "value"]
+- !private ["Se", "variationID"]
+- !private ["Se", "visitorID"]
+- !private ["Se", "visitors"]
+- !private ["s7DecoderP", "container"]
+- ["10Optimizely13DispatchEventV", "=="]
+- ["10Optimizely13DispatchEventV", "AttributeValue"]
+- ["10Optimizely13DispatchEventV", "CodingKey"]
+- ["10Optimizely13DispatchEventV", "CodingKeys"]
+- ["10Optimizely13DispatchEventV", "Int64"]
+- ["10Optimizely13DispatchEventV", "String"]
+- ["10Optimizely13DispatchEventV", "__derived_struct_equals"]
+- !private ["10Optimizely13DispatchEventV", "_findStringSwitchCase"]
+- ["10Optimizely13DispatchEventV", "activateEventKey"]
+- ["10Optimizely13DispatchEventV", "deinit"]
+- ["10Optimizely13DispatchEventV", "encode"]
+- ["10Optimizely13DispatchEventV", "entityID"]
+- ["10Optimizely13DispatchEventV", "init"]
+- ["10Optimizely13DispatchEventV", "key"]
+- ["10Optimizely13DispatchEventV", "revenue"]
+- ["10Optimizely13DispatchEventV", "revenueKey"]
+- ["10Optimizely13DispatchEventV", "tags"]
+- ["10Optimizely13DispatchEventV", "timestamp"]
+- ["10Optimizely13DispatchEventV", "uuid"]
+- ["10Optimizely13DispatchEventV", "value"]
+- ["10Optimizely13DispatchEventV", "valueKey"]
+- ["SE", "=="]
+- ["SE", ""]
+- !private ["SE", "_findStringSwitchCase"]
+- !private ["SE", "accountID"]
+- !private ["SE", "anonymizeIP"]
+- !private ["SE", "attributes"]
+- !private ["SE", "campaignID"]
+- !private ["SE", "clientName"]
+- !private ["SE", "clientVersion"]
+- !private ["SE", "decisions"]
+- ["SE", "encode"]
+- !private ["SE", "enrichDecisions"]
+- !private ["SE", "entityID"]
+- !private ["SE", "events"]
+- !private ["SE", "experimentID"]
+- !private ["SE", "filter"]
+- !private ["SE", "first"]
+- ["SE", "init"]
+- !private ["SE", "key"]
+- !private ["SE", "projectID"]
+- !private ["SE", "revenue"]
+- !private ["SE", "revision"]
+- !private ["SE", "snapshots"]
+- !private ["SE", "tags"]
+- !private ["SE", "timestamp"]
+- !private ["SE", "type"]
+- !private ["SE", "uuid"]
+- !private ["SE", "value"]
+- !private ["SE", "variationID"]
+- !private ["SE", "visitorID"]
+- !private ["SE", "visitors"]
+- !private ["s7EncoderP", "container"]
+- ["SQ", "=="]
+- ["SQ", "RawValue"]
+- ["SQ", ""]
+- ["SQ", "_Default_RawValue"]
+- !private ["SQ", "_findStringSwitchCase"]
+- ["SQ", "_rawHashValue"]
+- !private ["SQ", "accountID"]
+- !private ["SQ", "anonymizeIP"]
+- !private ["SQ", "attributes"]
+- !private ["SQ", "campaignID"]
+- !private ["SQ", "clientName"]
+- !private ["SQ", "clientVersion"]
+- ["SQ", "debugDescription"]
+- !private ["SQ", "decisions"]
+- ["SQ", "description"]
+- ["SQ", "encode"]
+- !private ["SQ", "enrichDecisions"]
+- !private ["SQ", "entityID"]
+- !private ["SQ", "events"]
+- !private ["SQ", "experimentID"]
+- !private ["SQ", "filter"]
+- !private ["SQ", "first"]
+- ["SQ", "hash"]
+- ["SQ", "hashValue"]
+- ["SQ", "init"]
+- ["SQ", "intValue"]
+- !private ["SQ", "key"]
+- !private ["SQ", "projectID"]
+- ["SQ", "rawValue"]
+- !private ["SQ", "revenue"]
+- !private ["SQ", "revision"]
+- !private ["SQ", "snapshots"]
+- ["SQ", "stringValue"]
+- !private ["SQ", "tags"]
+- !private ["SQ", "timestamp"]
+- !private ["SQ", "type"]
+- !private ["SQ", "uuid"]
+- !private ["SQ", "value"]
+- !private ["SQ", "variationID"]
+- !private ["SQ", "visitorID"]
+- !private ["SQ", "visitors"]
+- ["10Optimizely14EventAttributeV", "=="]
+- ["10Optimizely14EventAttributeV", "AttributeValue"]
+- ["10Optimizely14EventAttributeV", "CodingKey"]
+- ["10Optimizely14EventAttributeV", "CodingKeys"]
+- ["10Optimizely14EventAttributeV", "String"]
+- ["10Optimizely14EventAttributeV", "__derived_struct_equals"]
+- !private ["10Optimizely14EventAttributeV", "_findStringSwitchCase"]
+- ["10Optimizely14EventAttributeV", "deinit"]
+- ["10Optimizely14EventAttributeV", "encode"]
+- ["10Optimizely14EventAttributeV", "entityID"]
+- ["10Optimizely14EventAttributeV", "init"]
+- ["10Optimizely14EventAttributeV", "key"]
+- ["10Optimizely14EventAttributeV", "type"]
+- ["10Optimizely14EventAttributeV", "value"]
+- !private ["s25ExpressibleByArrayLiteralP", "filter"]
+- !private ["s25ExpressibleByArrayLiteralP", "first"]
+- ["SH", "=="]
+- ["SH", "RawValue"]
+- ["SH", ""]
+- ["SH", "_Default_RawValue"]
+- !private ["SH", "_findStringSwitchCase"]
+- ["SH", "_rawHashValue"]
+- ["SH", "debugDescription"]
+- ["SH", "description"]
+- !private ["SH", "filter"]
+- !private ["SH", "first"]
+- ["SH", "hash"]
+- ["SH", "hashValue"]
+- ["SH", "init"]
+- ["SH", "intValue"]
+- ["SH", "rawValue"]
+- ["SH", "stringValue"]
+- !private ["s6HasherV", "combine"]
+- !private ["s22KeyedDecodingContainerV", "decode"]
+- !private ["s22KeyedDecodingContainerV", "decodeIfPresent"]
+- !private ["s30KeyedDecodingContainerProtocolP", "decode"]
+- !private ["s30KeyedDecodingContainerProtocolP", "decodeIfPresent"]
+- !private ["s22KeyedEncodingContainerV", "encode"]
+- !private ["s22KeyedEncodingContainerV", "encodeIfPresent"]
+- !private ["s30KeyedEncodingContainerProtocolP", "encode"]
+- !private ["s30KeyedEncodingContainerProtocolP", "encodeIfPresent"]
+- !private ["SM", "filter"]
+- !private ["SM", "first"]
+- !private ["10Foundation19MutableDataProtocolP", "filter"]
+- !private ["10Foundation19MutableDataProtocolP", "first"]
+- !private ["Sk", "filter"]
+- !private ["Sk", "first"]
+- !private ["Sm", "filter"]
+- !private ["Sm", "first"]
+- ["SY", "=="]
+- ["SY", "RawValue"]
+- ["SY", ""]
+- ["SY", "_Default_RawValue"]
+- !private ["SY", "_findStringSwitchCase"]
+- ["SY", "_rawHashValue"]
+- ["SY", "debugDescription"]
+- ["SY", "description"]
+- ["SY", "hash"]
+- ["SY", "hashValue"]
+- ["SY", "init"]
+- ["SY", "intValue"]
+- ["SY", "rawValue"]
+- ["SY", "stringValue"]
+- !private ["ST", "filter"]
+- !private ["ST", "first"]
+- ["10Optimizely8SnapshotV", "=="]
+- ["10Optimizely8SnapshotV", "Decision"]
+- ["10Optimizely8SnapshotV", "DispatchEvent"]
+- ["10Optimizely8SnapshotV", "__derived_struct_equals"]
+- ["10Optimizely8SnapshotV", "decisions"]
+- ["10Optimizely8SnapshotV", "deinit"]
+- ["10Optimizely8SnapshotV", "encode"]
+- ["10Optimizely8SnapshotV", "events"]
+- ["10Optimizely8SnapshotV", "init"]
+- ["10Optimizely7VisitorV", "=="]
+- ["10Optimizely7VisitorV", "CodingKey"]
+- ["10Optimizely7VisitorV", "CodingKeys"]
+- ["10Optimizely7VisitorV", "EventAttribute"]
+- ["10Optimizely7VisitorV", "Snapshot"]
+- ["10Optimizely7VisitorV", "String"]
+- ["10Optimizely7VisitorV", "__derived_struct_equals"]
+- !private ["10Optimizely7VisitorV", "_findStringSwitchCase"]
+- ["10Optimizely7VisitorV", "attributes"]
+- ["10Optimizely7VisitorV", "deinit"]
+- ["10Optimizely7VisitorV", "encode"]
+- ["10Optimizely7VisitorV", "init"]
+- ["10Optimizely7VisitorV", "snapshots"]
+- ["10Optimizely7VisitorV", "visitorID"]
+- !private ["s14_ArrayProtocolP", "filter"]
+- !private ["s14_ArrayProtocolP", "first"]
+- !private ["s24_DestructorSafeContainerP", "filter"]
+- !private ["s24_DestructorSafeContainerP", "first"]
+- !private ["s19_HasContiguousBytesP", "filter"]
+- !private ["s19_HasContiguousBytesP", "first"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "filter"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "first"]
+- !private ["s21_ObjectiveCBridgeableP", "filter"]
+- !private ["s21_ObjectiveCBridgeableP", "first"]
+depends-nominal:
+- !private "Sa"
+- "10Optimizely14AttributeValueO"
+- "10Optimizely10BatchEventV"
+- !private "SK"
+- !private "s7CVarArgP"
+- "s9CodingKeyP"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- !private "10Optimizely10BatchEventV10CodingKeysO"
+- !private "10Optimizely13DispatchEventV10CodingKeysO"
+- !private "10Optimizely14EventAttributeV10CodingKeysO"
+- !private "10Optimizely7VisitorV10CodingKeysO"
+- !private "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely13DispatchEventV10CodingKeysO"
+- "10Optimizely14EventAttributeV10CodingKeysO"
+- "10Optimizely8DecisionV10CodingKeysO"
+- "10Optimizely7VisitorV10CodingKeysO"
+- "10Optimizely10BatchEventV10CodingKeysO"
+- !private "Sl"
+- !private "10Foundation15ContiguousBytesP"
+- "s28CustomDebugStringConvertibleP"
+- !private "s17CustomReflectableP"
+- "s23CustomStringConvertibleP"
+- !private "10Foundation12DataProtocolP"
+- "10Optimizely8DecisionV"
+- "Se"
+- !private "s7DecoderP"
+- "10Optimizely13DispatchEventV"
+- "SE"
+- !private "s7EncoderP"
+- "SQ"
+- "10Optimizely14EventAttributeV"
+- !private "s25ExpressibleByArrayLiteralP"
+- "SH"
+- !private "s6HasherV"
+- !private "s22KeyedDecodingContainerV"
+- !private "s30KeyedDecodingContainerProtocolP"
+- !private "s22KeyedEncodingContainerV"
+- !private "s30KeyedEncodingContainerProtocolP"
+- !private "SM"
+- !private "10Foundation19MutableDataProtocolP"
+- !private "Sk"
+- !private "Sm"
+- "SY"
+- !private "ST"
+- "10Optimizely8SnapshotV"
+- "10Optimizely7VisitorV"
+- !private "s14_ArrayProtocolP"
+- !private "s24_DestructorSafeContainerP"
+- !private "s19_HasContiguousBytesP"
+- !private "s35_HasCustomAnyHashableRepresentationP"
+- !private "s21_ObjectiveCBridgeableP"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "c57a6ec55207710c19c795638d496d88"

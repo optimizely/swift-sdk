@@ -1,0 +1,158 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "LogMessage"
+provides-nominal:
+- "10Optimizely10LogMessageO"
+provides-member:
+- ["10Optimizely10LogMessageO", ""]
+provides-dynamic-lookup:
+depends-top-level:
+- "AssignmentPrecedence"
+- "CustomStringConvertible"
+- "Int"
+- "LogMessage"
+- "String"
+- !private "UnicodeScalarType"
+depends-member:
+- ["s23CustomStringConvertibleP", ""]
+- !private ["s23CustomStringConvertibleP", "appendInterpolation"]
+- !private ["s23CustomStringConvertibleP", "appendLiteral"]
+- ["s23CustomStringConvertibleP", "audienceEvaluationResult"]
+- ["s23CustomStringConvertibleP", "audienceEvaluationResultCombined"]
+- ["s23CustomStringConvertibleP", "description"]
+- ["s23CustomStringConvertibleP", "eventBatchFailed"]
+- ["s23CustomStringConvertibleP", "eventSendRetyFailed"]
+- ["s23CustomStringConvertibleP", "experimentNotRunning"]
+- ["s23CustomStringConvertibleP", "extractRevenueFromEventTags"]
+- ["s23CustomStringConvertibleP", "extractValueFromEventTags"]
+- ["s23CustomStringConvertibleP", "failedToExtractRevenueFromEventTags"]
+- ["s23CustomStringConvertibleP", "failedToExtractValueFromEventTags"]
+- ["s23CustomStringConvertibleP", "featureEnabledForUser"]
+- ["s23CustomStringConvertibleP", "featureHasNoExperiments"]
+- ["s23CustomStringConvertibleP", "featureNotEnabledForUser"]
+- ["s23CustomStringConvertibleP", "featureNotEnabledReturnDefaultVariableValue"]
+- ["s23CustomStringConvertibleP", "forcedVariationFound"]
+- ["s23CustomStringConvertibleP", "forcedVariationFoundButInvalid"]
+- ["s23CustomStringConvertibleP", "gotVariationFromUserProfile"]
+- ["s23CustomStringConvertibleP", "noRolloutExists"]
+- ["s23CustomStringConvertibleP", "rolloutHasNoExperiments"]
+- ["s23CustomStringConvertibleP", "savedVariationInUserProfile"]
+- ["s23CustomStringConvertibleP", "unrecognizedAttribute"]
+- ["s23CustomStringConvertibleP", "userAssignedToExperimentBucketValue"]
+- ["s23CustomStringConvertibleP", "userAssignedToVariationBucketValue"]
+- ["s23CustomStringConvertibleP", "userBucketedIntoEveryoneTargetingRule"]
+- ["s23CustomStringConvertibleP", "userBucketedIntoExperimentInGroup"]
+- ["s23CustomStringConvertibleP", "userBucketedIntoInvalidExperiment"]
+- ["s23CustomStringConvertibleP", "userBucketedIntoInvalidVariation"]
+- ["s23CustomStringConvertibleP", "userBucketedIntoTargetingRule"]
+- ["s23CustomStringConvertibleP", "userBucketedIntoVariationInExperiment"]
+- ["s23CustomStringConvertibleP", "userDoesntMeetConditionsForTargetingRule"]
+- ["s23CustomStringConvertibleP", "userHasForcedVariation"]
+- ["s23CustomStringConvertibleP", "userHasForcedVariationButInvalid"]
+- ["s23CustomStringConvertibleP", "userHasNoForcedVariation"]
+- ["s23CustomStringConvertibleP", "userHasNoForcedVariationForExperiment"]
+- ["s23CustomStringConvertibleP", "userInFeatureExperiment"]
+- ["s23CustomStringConvertibleP", "userInRollout"]
+- ["s23CustomStringConvertibleP", "userMappedToForcedVariation"]
+- ["s23CustomStringConvertibleP", "userMeetsConditionsForTargetingRule"]
+- ["s23CustomStringConvertibleP", "userNotBucketedIntoAnyExperimentInGroup"]
+- ["s23CustomStringConvertibleP", "userNotBucketedIntoEveryoneTargetingRule"]
+- ["s23CustomStringConvertibleP", "userNotBucketedIntoExperimentInGroup"]
+- ["s23CustomStringConvertibleP", "userNotBucketedIntoTargetingRule"]
+- ["s23CustomStringConvertibleP", "userNotBucketedIntoVariationInExperiment"]
+- ["s23CustomStringConvertibleP", "userNotInExperiment"]
+- ["s23CustomStringConvertibleP", "userNotInFeatureExperiment"]
+- ["s23CustomStringConvertibleP", "userNotInRollout"]
+- ["s23CustomStringConvertibleP", "userReceivedDefaultVariableValue"]
+- ["s23CustomStringConvertibleP", "userReceivedVariableValue"]
+- ["s23CustomStringConvertibleP", "variableNotUsedReturnDefaultVariableValue"]
+- ["s23CustomStringConvertibleP", "variationRemovedForUser"]
+- !private ["s26DefaultStringInterpolationV", "appendInterpolation"]
+- !private ["s26DefaultStringInterpolationV", "appendLiteral"]
+- ["10Optimizely10LogMessageO", "Int"]
+- ["10Optimizely10LogMessageO", "String"]
+- ["10Optimizely10LogMessageO", "audienceEvaluationResult"]
+- ["10Optimizely10LogMessageO", "audienceEvaluationResultCombined"]
+- ["10Optimizely10LogMessageO", "deinit"]
+- ["10Optimizely10LogMessageO", "description"]
+- ["10Optimizely10LogMessageO", "eventBatchFailed"]
+- ["10Optimizely10LogMessageO", "eventSendRetyFailed"]
+- ["10Optimizely10LogMessageO", "experimentNotRunning"]
+- ["10Optimizely10LogMessageO", "extractRevenueFromEventTags"]
+- ["10Optimizely10LogMessageO", "extractValueFromEventTags"]
+- ["10Optimizely10LogMessageO", "failedToExtractRevenueFromEventTags"]
+- ["10Optimizely10LogMessageO", "failedToExtractValueFromEventTags"]
+- ["10Optimizely10LogMessageO", "featureEnabledForUser"]
+- ["10Optimizely10LogMessageO", "featureHasNoExperiments"]
+- ["10Optimizely10LogMessageO", "featureNotEnabledForUser"]
+- ["10Optimizely10LogMessageO", "featureNotEnabledReturnDefaultVariableValue"]
+- ["10Optimizely10LogMessageO", "forcedVariationFound"]
+- ["10Optimizely10LogMessageO", "forcedVariationFoundButInvalid"]
+- ["10Optimizely10LogMessageO", "gotVariationFromUserProfile"]
+- ["10Optimizely10LogMessageO", "noRolloutExists"]
+- ["10Optimizely10LogMessageO", "rolloutHasNoExperiments"]
+- ["10Optimizely10LogMessageO", "savedVariationInUserProfile"]
+- ["10Optimizely10LogMessageO", "unrecognizedAttribute"]
+- ["10Optimizely10LogMessageO", "userAssignedToExperimentBucketValue"]
+- ["10Optimizely10LogMessageO", "userAssignedToVariationBucketValue"]
+- ["10Optimizely10LogMessageO", "userBucketedIntoEveryoneTargetingRule"]
+- ["10Optimizely10LogMessageO", "userBucketedIntoExperimentInGroup"]
+- ["10Optimizely10LogMessageO", "userBucketedIntoInvalidExperiment"]
+- ["10Optimizely10LogMessageO", "userBucketedIntoInvalidVariation"]
+- ["10Optimizely10LogMessageO", "userBucketedIntoTargetingRule"]
+- ["10Optimizely10LogMessageO", "userBucketedIntoVariationInExperiment"]
+- ["10Optimizely10LogMessageO", "userDoesntMeetConditionsForTargetingRule"]
+- ["10Optimizely10LogMessageO", "userHasForcedVariation"]
+- ["10Optimizely10LogMessageO", "userHasForcedVariationButInvalid"]
+- ["10Optimizely10LogMessageO", "userHasNoForcedVariation"]
+- ["10Optimizely10LogMessageO", "userHasNoForcedVariationForExperiment"]
+- ["10Optimizely10LogMessageO", "userInFeatureExperiment"]
+- ["10Optimizely10LogMessageO", "userInRollout"]
+- ["10Optimizely10LogMessageO", "userMappedToForcedVariation"]
+- ["10Optimizely10LogMessageO", "userMeetsConditionsForTargetingRule"]
+- ["10Optimizely10LogMessageO", "userNotBucketedIntoAnyExperimentInGroup"]
+- ["10Optimizely10LogMessageO", "userNotBucketedIntoEveryoneTargetingRule"]
+- ["10Optimizely10LogMessageO", "userNotBucketedIntoExperimentInGroup"]
+- ["10Optimizely10LogMessageO", "userNotBucketedIntoTargetingRule"]
+- ["10Optimizely10LogMessageO", "userNotBucketedIntoVariationInExperiment"]
+- ["10Optimizely10LogMessageO", "userNotInExperiment"]
+- ["10Optimizely10LogMessageO", "userNotInFeatureExperiment"]
+- ["10Optimizely10LogMessageO", "userNotInRollout"]
+- ["10Optimizely10LogMessageO", "userReceivedDefaultVariableValue"]
+- ["10Optimizely10LogMessageO", "userReceivedVariableValue"]
+- ["10Optimizely10LogMessageO", "variableNotUsedReturnDefaultVariableValue"]
+- ["10Optimizely10LogMessageO", "variationRemovedForUser"]
+- !private ["s27StringInterpolationProtocolP", "appendInterpolation"]
+- !private ["s27StringInterpolationProtocolP", "appendLiteral"]
+- !private ["s16TextOutputStreamP", "appendInterpolation"]
+- !private ["s16TextOutputStreamP", "appendLiteral"]
+depends-nominal:
+- "s23CustomStringConvertibleP"
+- !private "s26DefaultStringInterpolationV"
+- "10Optimizely10LogMessageO"
+- !private "s27StringInterpolationProtocolP"
+- !private "s16TextOutputStreamP"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "d3ce0732bc66073c924289380486371c"

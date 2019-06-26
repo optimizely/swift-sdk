@@ -1,0 +1,575 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "_ObjcOPTEventDispatcher"
+- "ObjEventDispatcher"
+provides-nominal:
+- "10Optimizely0A6ClientC20SwiftEventDispatcherC"
+- "10Optimizely23_ObjcOPTEventDispatcherP"
+- "10Optimizely18ObjEventDispatcherC"
+provides-member:
+- ["10Optimizely0A6ClientC", ""]
+- ["10Optimizely0A6ClientC20SwiftEventDispatcherC", ""]
+- ["10Optimizely23_ObjcOPTEventDispatcherP", ""]
+- ["10Optimizely18ObjEventDispatcherC", ""]
+- ["10Optimizely0A6ClientC", "init"]
+- ["10Optimizely0A6ClientC", "init"]
+- ["10Optimizely0A6ClientC", "objcStart"]
+- ["10Optimizely0A6ClientC", "objcStartWith"]
+- ["10Optimizely0A6ClientC", "objcStart"]
+- ["10Optimizely0A6ClientC", "objcActivate"]
+- ["10Optimizely0A6ClientC", "objcGetVariationKey"]
+- ["10Optimizely0A6ClientC", "objcGetForcedVariation"]
+- ["10Optimizely0A6ClientC", "objcSetForcedVariation"]
+- ["10Optimizely0A6ClientC", "objcIsFeatureEnabled"]
+- ["10Optimizely0A6ClientC", "objcGetFeatureVariableBoolean"]
+- ["10Optimizely0A6ClientC", "objcGetFeatureVariableDouble"]
+- ["10Optimizely0A6ClientC", "objcGetFeatureVariableInteger"]
+- ["10Optimizely0A6ClientC", "objcGetFeatureVariableString"]
+- ["10Optimizely0A6ClientC", "objcGetEnabledFeatures"]
+- ["10Optimizely0A6ClientC", "objcTrack"]
+- ["10Optimizely0A6ClientC", "SwiftEventDispatcher"]
+- ["10Optimizely0A6ClientC", "objcNotificationCenter"]
+provides-dynamic-lookup:
+- "dispatchEvent"
+- "flushEvents"
+- "objcActivate"
+- "objcGetEnabledFeatures"
+- "objcGetFeatureVariableBoolean"
+- "objcGetFeatureVariableDouble"
+- "objcGetFeatureVariableInteger"
+- "objcGetFeatureVariableString"
+- "objcGetForcedVariation"
+- "objcGetVariationKey"
+- "objcIsFeatureEnabled"
+- "objcNotificationCenter"
+- "objcSetForcedVariation"
+- "objcStart"
+- "objcStartWith"
+- "objcTrack"
+depends-top-level:
+- !private "??"
+- "AssignmentPrecedence"
+- "Bool"
+- "CastingPrecedence"
+- "Data"
+- "DefaultEventDispatcher"
+- "DispatchCompletionHandler"
+- "EventForDispatch"
+- !private "Int"
+- "NSError"
+- !private "NSNull"
+- "NSNumber"
+- "NSObject"
+- !private "NotificationType"
+- "OPTEventDispatcher"
+- "OPTLogger"
+- !private "OPTNotificationCenter"
+- "OPTUserProfileService"
+- "ObjEventDispatcher"
+- "ObjcOPTNotificationCenter"
+- !private "OptimizelyAttributes"
+- "OptimizelyClient"
+- "OptimizelyLogLevel"
+- !private "OptimizelyResult"
+- "String"
+- "TimeInterval"
+- "Void"
+- "_ObjcOPTEventDispatcher"
+depends-member:
+- !private ["10Optimizely22BackgroundingCallbacksP", "dispatchEvent"]
+- !private ["10Optimizely22BackgroundingCallbacksP", "flushEvents"]
+- !private ["10Optimizely22BackgroundingCallbacksP", "init"]
+- !private ["SK", "init"]
+- !private ["s7CVarArgP", "Data"]
+- !private ["s7CVarArgP", "DefaultEventDispatcher"]
+- !private ["s7CVarArgP", "NSNull"]
+- !private ["s7CVarArgP", "NSNumber"]
+- !private ["s7CVarArgP", "SwiftEventDispatcher"]
+- ["s7CVarArgP", ""]
+- !private ["s7CVarArgP", "activate"]
+- ["s7CVarArgP", "dispatchEvent"]
+- ["s7CVarArgP", "flushEvents"]
+- !private ["s7CVarArgP", "getEnabledFeatures"]
+- !private ["s7CVarArgP", "getFeatureVariableBoolean"]
+- !private ["s7CVarArgP", "getFeatureVariableDouble"]
+- !private ["s7CVarArgP", "getFeatureVariableInteger"]
+- !private ["s7CVarArgP", "getFeatureVariableString"]
+- !private ["s7CVarArgP", "getForcedVariation"]
+- !private ["s7CVarArgP", "getVariationKey"]
+- !private ["s7CVarArgP", "init"]
+- !private ["s7CVarArgP", "innerEventDispatcher"]
+- !private ["s7CVarArgP", "intValue"]
+- !private ["s7CVarArgP", "isFeatureEnabled"]
+- !private ["s7CVarArgP", "localizedDescription"]
+- !private ["s7CVarArgP", "mapValues"]
+- !private ["s7CVarArgP", "notificationCenter"]
+- !private ["s7CVarArgP", "setForcedVariation"]
+- !private ["s7CVarArgP", "start"]
+- !private ["s7CVarArgP", "track"]
+- !private ["Sl", "init"]
+- !private ["Sl", "mapValues"]
+- !private ["SL", "info"]
+- !private ["10Foundation15ContiguousBytesP", "init"]
+- !private ["s28CustomDebugStringConvertibleP", "Data"]
+- !private ["s28CustomDebugStringConvertibleP", "DefaultEventDispatcher"]
+- !private ["s28CustomDebugStringConvertibleP", "NSNull"]
+- !private ["s28CustomDebugStringConvertibleP", "NSNumber"]
+- !private ["s28CustomDebugStringConvertibleP", "SwiftEventDispatcher"]
+- ["s28CustomDebugStringConvertibleP", ""]
+- !private ["s28CustomDebugStringConvertibleP", "activate"]
+- ["s28CustomDebugStringConvertibleP", "dispatchEvent"]
+- ["s28CustomDebugStringConvertibleP", "flushEvents"]
+- !private ["s28CustomDebugStringConvertibleP", "getEnabledFeatures"]
+- !private ["s28CustomDebugStringConvertibleP", "getFeatureVariableBoolean"]
+- !private ["s28CustomDebugStringConvertibleP", "getFeatureVariableDouble"]
+- !private ["s28CustomDebugStringConvertibleP", "getFeatureVariableInteger"]
+- !private ["s28CustomDebugStringConvertibleP", "getFeatureVariableString"]
+- !private ["s28CustomDebugStringConvertibleP", "getForcedVariation"]
+- !private ["s28CustomDebugStringConvertibleP", "getVariationKey"]
+- !private ["s28CustomDebugStringConvertibleP", "info"]
+- !private ["s28CustomDebugStringConvertibleP", "init"]
+- !private ["s28CustomDebugStringConvertibleP", "innerEventDispatcher"]
+- !private ["s28CustomDebugStringConvertibleP", "intValue"]
+- !private ["s28CustomDebugStringConvertibleP", "isFeatureEnabled"]
+- !private ["s28CustomDebugStringConvertibleP", "localizedDescription"]
+- !private ["s28CustomDebugStringConvertibleP", "mapValues"]
+- !private ["s28CustomDebugStringConvertibleP", "notificationCenter"]
+- !private ["s28CustomDebugStringConvertibleP", "setForcedVariation"]
+- !private ["s28CustomDebugStringConvertibleP", "start"]
+- !private ["s28CustomDebugStringConvertibleP", "track"]
+- !private ["s17CustomReflectableP", "info"]
+- !private ["s17CustomReflectableP", "init"]
+- !private ["s17CustomReflectableP", "mapValues"]
+- !private ["s23CustomStringConvertibleP", "Data"]
+- !private ["s23CustomStringConvertibleP", "DefaultEventDispatcher"]
+- !private ["s23CustomStringConvertibleP", "NSNull"]
+- !private ["s23CustomStringConvertibleP", "NSNumber"]
+- !private ["s23CustomStringConvertibleP", "SwiftEventDispatcher"]
+- ["s23CustomStringConvertibleP", ""]
+- !private ["s23CustomStringConvertibleP", "activate"]
+- ["s23CustomStringConvertibleP", "dispatchEvent"]
+- !private ["s23CustomStringConvertibleP", "eventDispatchFailed"]
+- ["s23CustomStringConvertibleP", "flushEvents"]
+- !private ["s23CustomStringConvertibleP", "getEnabledFeatures"]
+- !private ["s23CustomStringConvertibleP", "getFeatureVariableBoolean"]
+- !private ["s23CustomStringConvertibleP", "getFeatureVariableDouble"]
+- !private ["s23CustomStringConvertibleP", "getFeatureVariableInteger"]
+- !private ["s23CustomStringConvertibleP", "getFeatureVariableString"]
+- !private ["s23CustomStringConvertibleP", "getForcedVariation"]
+- !private ["s23CustomStringConvertibleP", "getVariationKey"]
+- !private ["s23CustomStringConvertibleP", "init"]
+- !private ["s23CustomStringConvertibleP", "innerEventDispatcher"]
+- !private ["s23CustomStringConvertibleP", "intValue"]
+- !private ["s23CustomStringConvertibleP", "isFeatureEnabled"]
+- !private ["s23CustomStringConvertibleP", "localizedDescription"]
+- !private ["s23CustomStringConvertibleP", "mapValues"]
+- !private ["s23CustomStringConvertibleP", "notificationCenter"]
+- !private ["s23CustomStringConvertibleP", "setForcedVariation"]
+- !private ["s23CustomStringConvertibleP", "start"]
+- !private ["s23CustomStringConvertibleP", "track"]
+- !private ["10Foundation4DataV", "init"]
+- !private ["10Foundation12DataProtocolP", "init"]
+- !private ["Se", "info"]
+- !private ["Se", "init"]
+- !private ["Se", "mapValues"]
+- !private ["10Optimizely22DefaultEventDispatcherC", "deinit"]
+- !private ["10Optimizely22DefaultEventDispatcherC", "dispatchEvent"]
+- !private ["10Optimizely22DefaultEventDispatcherC", "flushEvents"]
+- !private ["10Optimizely22DefaultEventDispatcherC", "init"]
+- !private ["SD", "mapValues"]
+- !private ["SE", "info"]
+- !private ["SE", "init"]
+- !private ["SE", "mapValues"]
+- !private ["SQ", "Data"]
+- !private ["SQ", "DefaultEventDispatcher"]
+- !private ["SQ", "NSNull"]
+- !private ["SQ", "NSNumber"]
+- !private ["SQ", "SwiftEventDispatcher"]
+- ["SQ", ""]
+- !private ["SQ", "activate"]
+- ["SQ", "dispatchEvent"]
+- ["SQ", "flushEvents"]
+- !private ["SQ", "getEnabledFeatures"]
+- !private ["SQ", "getFeatureVariableBoolean"]
+- !private ["SQ", "getFeatureVariableDouble"]
+- !private ["SQ", "getFeatureVariableInteger"]
+- !private ["SQ", "getFeatureVariableString"]
+- !private ["SQ", "getForcedVariation"]
+- !private ["SQ", "getVariationKey"]
+- !private ["SQ", "info"]
+- !private ["SQ", "init"]
+- !private ["SQ", "innerEventDispatcher"]
+- !private ["SQ", "intValue"]
+- !private ["SQ", "isFeatureEnabled"]
+- !private ["SQ", "localizedDescription"]
+- !private ["SQ", "mapValues"]
+- !private ["SQ", "notificationCenter"]
+- !private ["SQ", "setForcedVariation"]
+- !private ["SQ", "start"]
+- !private ["SQ", "track"]
+- !private ["s5ErrorP", "eventDispatchFailed"]
+- !private ["s5ErrorP", "localizedDescription"]
+- !private ["s27ExpressibleByBooleanLiteralP", "init"]
+- !private ["s27ExpressibleByBooleanLiteralP", "intValue"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "mapValues"]
+- !private ["s25ExpressibleByFloatLiteralP", "init"]
+- !private ["s25ExpressibleByFloatLiteralP", "intValue"]
+- !private ["s27ExpressibleByIntegerLiteralP", "init"]
+- !private ["s27ExpressibleByIntegerLiteralP", "intValue"]
+- !private ["s23ExpressibleByNilLiteralP", "info"]
+- !private ["SH", "Data"]
+- !private ["SH", "DefaultEventDispatcher"]
+- !private ["SH", "NSNull"]
+- !private ["SH", "NSNumber"]
+- !private ["SH", "SwiftEventDispatcher"]
+- ["SH", ""]
+- !private ["SH", "activate"]
+- ["SH", "dispatchEvent"]
+- ["SH", "flushEvents"]
+- !private ["SH", "getEnabledFeatures"]
+- !private ["SH", "getFeatureVariableBoolean"]
+- !private ["SH", "getFeatureVariableDouble"]
+- !private ["SH", "getFeatureVariableInteger"]
+- !private ["SH", "getFeatureVariableString"]
+- !private ["SH", "getForcedVariation"]
+- !private ["SH", "getVariationKey"]
+- !private ["SH", "info"]
+- !private ["SH", "init"]
+- !private ["SH", "innerEventDispatcher"]
+- !private ["SH", "intValue"]
+- !private ["SH", "isFeatureEnabled"]
+- !private ["SH", "localizedDescription"]
+- !private ["SH", "mapValues"]
+- !private ["SH", "notificationCenter"]
+- !private ["SH", "setForcedVariation"]
+- !private ["SH", "start"]
+- !private ["SH", "track"]
+- !private ["10Foundation14LocalizedErrorP", "eventDispatchFailed"]
+- !private ["SM", "init"]
+- !private ["10Foundation19MutableDataProtocolP", "init"]
+- !private ["So8NSCodingP", "init"]
+- !private ["So8NSCodingP", "intValue"]
+- !private ["So8NSCodingP", "localizedDescription"]
+- !private ["So9NSCopyingP", "init"]
+- !private ["So9NSCopyingP", "intValue"]
+- !private ["So9NSCopyingP", "localizedDescription"]
+- !private ["So7NSErrorC", "localizedDescription"]
+- !private ["So6NSNullC", "init"]
+- !private ["So8NSNumberC", "init"]
+- !private ["So8NSNumberC", "intValue"]
+- ["So8NSObjectC", "Bool"]
+- ["So8NSObjectC", "Data"]
+- ["So8NSObjectC", "DefaultEventDispatcher"]
+- ["So8NSObjectC", "DispatchCompletionHandler"]
+- ["So8NSObjectC", "EventForDispatch"]
+- !private ["So8NSObjectC", "Int"]
+- ["So8NSObjectC", "NSError"]
+- !private ["So8NSObjectC", "NSNull"]
+- ["So8NSObjectC", "NSNumber"]
+- !private ["So8NSObjectC", "NotificationType"]
+- ["So8NSObjectC", "OPTEventDispatcher"]
+- ["So8NSObjectC", "OPTLogger"]
+- !private ["So8NSObjectC", "OPTNotificationCenter"]
+- ["So8NSObjectC", "OPTUserProfileService"]
+- ["So8NSObjectC", "ObjcOPTNotificationCenter"]
+- !private ["So8NSObjectC", "OptimizelyAttributes"]
+- ["So8NSObjectC", "OptimizelyLogLevel"]
+- !private ["So8NSObjectC", "OptimizelyResult"]
+- ["So8NSObjectC", "String"]
+- !private ["So8NSObjectC", "SwiftEventDispatcher"]
+- ["So8NSObjectC", "TimeInterval"]
+- ["So8NSObjectC", "Void"]
+- ["So8NSObjectC", ""]
+- ["So8NSObjectC", "_ObjcOPTEventDispatcher"]
+- !private ["So8NSObjectC", "activate"]
+- ["So8NSObjectC", "dispatchEvent"]
+- ["So8NSObjectC", "flushEvents"]
+- !private ["So8NSObjectC", "getEnabledFeatures"]
+- !private ["So8NSObjectC", "getFeatureVariableBoolean"]
+- !private ["So8NSObjectC", "getFeatureVariableDouble"]
+- !private ["So8NSObjectC", "getFeatureVariableInteger"]
+- !private ["So8NSObjectC", "getFeatureVariableString"]
+- !private ["So8NSObjectC", "getForcedVariation"]
+- !private ["So8NSObjectC", "getVariationKey"]
+- ["So8NSObjectC", "init"]
+- ["So8NSObjectC", "innerEventDispatcher"]
+- !private ["So8NSObjectC", "intValue"]
+- !private ["So8NSObjectC", "isFeatureEnabled"]
+- !private ["So8NSObjectC", "localizedDescription"]
+- !private ["So8NSObjectC", "notificationCenter"]
+- ["So8NSObjectC", "objcActivate"]
+- ["So8NSObjectC", "objcGetEnabledFeatures"]
+- ["So8NSObjectC", "objcGetFeatureVariableBoolean"]
+- ["So8NSObjectC", "objcGetFeatureVariableDouble"]
+- ["So8NSObjectC", "objcGetFeatureVariableInteger"]
+- ["So8NSObjectC", "objcGetFeatureVariableString"]
+- ["So8NSObjectC", "objcGetForcedVariation"]
+- ["So8NSObjectC", "objcGetVariationKey"]
+- ["So8NSObjectC", "objcIsFeatureEnabled"]
+- ["So8NSObjectC", "objcNotificationCenter"]
+- ["So8NSObjectC", "objcSetForcedVariation"]
+- ["So8NSObjectC", "objcStart"]
+- ["So8NSObjectC", "objcStartWith"]
+- ["So8NSObjectC", "objcTrack"]
+- !private ["So8NSObjectC", "setForcedVariation"]
+- !private ["So8NSObjectC", "start"]
+- !private ["So8NSObjectC", "track"]
+- !private ["So8NSObjectP", "Data"]
+- !private ["So8NSObjectP", "DefaultEventDispatcher"]
+- !private ["So8NSObjectP", "NSNull"]
+- !private ["So8NSObjectP", "NSNumber"]
+- !private ["So8NSObjectP", "SwiftEventDispatcher"]
+- ["So8NSObjectP", ""]
+- !private ["So8NSObjectP", "activate"]
+- ["So8NSObjectP", "dispatchEvent"]
+- ["So8NSObjectP", "flushEvents"]
+- !private ["So8NSObjectP", "getEnabledFeatures"]
+- !private ["So8NSObjectP", "getFeatureVariableBoolean"]
+- !private ["So8NSObjectP", "getFeatureVariableDouble"]
+- !private ["So8NSObjectP", "getFeatureVariableInteger"]
+- !private ["So8NSObjectP", "getFeatureVariableString"]
+- !private ["So8NSObjectP", "getForcedVariation"]
+- !private ["So8NSObjectP", "getVariationKey"]
+- !private ["So8NSObjectP", "init"]
+- !private ["So8NSObjectP", "innerEventDispatcher"]
+- !private ["So8NSObjectP", "intValue"]
+- !private ["So8NSObjectP", "isFeatureEnabled"]
+- !private ["So8NSObjectP", "localizedDescription"]
+- !private ["So8NSObjectP", "notificationCenter"]
+- !private ["So8NSObjectP", "setForcedVariation"]
+- !private ["So8NSObjectP", "start"]
+- !private ["So8NSObjectP", "track"]
+- !private ["So14NSSecureCodingP", "init"]
+- !private ["So14NSSecureCodingP", "intValue"]
+- !private ["So14NSSecureCodingP", "localizedDescription"]
+- !private ["So7NSValueC", "init"]
+- !private ["So7NSValueC", "intValue"]
+- !private ["10Optimizely18OPTEventDispatcherP", "Data"]
+- ["10Optimizely18OPTEventDispatcherP", ""]
+- ["10Optimizely18OPTEventDispatcherP", "dispatchEvent"]
+- ["10Optimizely18OPTEventDispatcherP", "flushEvents"]
+- !private ["10Optimizely18OPTEventDispatcherP", "init"]
+- !private ["10Optimizely18OPTEventDispatcherP", "objcEventDispatcher"]
+- !private ["10Optimizely21OPTNotificationCenterP", "addActivateNotificationListener"]
+- !private ["10Optimizely21OPTNotificationCenterP", "addDatafileChangeNotificationListener"]
+- !private ["10Optimizely21OPTNotificationCenterP", "addDecisionNotificationListener"]
+- !private ["10Optimizely21OPTNotificationCenterP", "addTrackNotificationListener"]
+- !private ["10Optimizely21OPTNotificationCenterP", "clearAllNotificationListeners"]
+- !private ["10Optimizely21OPTNotificationCenterP", "clearNotificationListeners"]
+- !private ["10Optimizely21OPTNotificationCenterP", "removeNotificationListener"]
+- ["10Optimizely18ObjEventDispatcherC", "Data"]
+- ["10Optimizely18ObjEventDispatcherC", "DefaultEventDispatcher"]
+- ["10Optimizely18ObjEventDispatcherC", "EventForDispatch"]
+- ["10Optimizely18ObjEventDispatcherC", "NSError"]
+- ["10Optimizely18ObjEventDispatcherC", "TimeInterval"]
+- ["10Optimizely18ObjEventDispatcherC", "Void"]
+- ["10Optimizely18ObjEventDispatcherC", "deinit"]
+- ["10Optimizely18ObjEventDispatcherC", "dispatchEvent"]
+- ["10Optimizely18ObjEventDispatcherC", "flushEvents"]
+- ["10Optimizely18ObjEventDispatcherC", "init"]
+- ["10Optimizely18ObjEventDispatcherC", "innerEventDispatcher"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "NSNull"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "NSNumber"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", ""]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "addActivateNotificationListener"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "addDatafileChangeNotificationListener"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "addDecisionNotificationListener"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "addTrackNotificationListener"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "clearAllNotificationListeners"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "clearNotificationListeners"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "convertAttribues"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "init"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "notifications"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "removeNotificationListener"]
+- !private ["10Optimizely25ObjcOPTNotificationCenterP", "returnVal"]
+- ["10Optimizely0A6ClientC", "Bool"]
+- ["10Optimizely0A6ClientC", "Data"]
+- ["10Optimizely0A6ClientC", "DispatchCompletionHandler"]
+- ["10Optimizely0A6ClientC", "EventForDispatch"]
+- !private ["10Optimizely0A6ClientC", "Int"]
+- ["10Optimizely0A6ClientC", "NSError"]
+- !private ["10Optimizely0A6ClientC", "NSNull"]
+- ["10Optimizely0A6ClientC", "NSNumber"]
+- !private ["10Optimizely0A6ClientC", "NotificationType"]
+- ["10Optimizely0A6ClientC", "OPTEventDispatcher"]
+- ["10Optimizely0A6ClientC", "OPTLogger"]
+- !private ["10Optimizely0A6ClientC", "OPTNotificationCenter"]
+- ["10Optimizely0A6ClientC", "OPTUserProfileService"]
+- ["10Optimizely0A6ClientC", "ObjcOPTNotificationCenter"]
+- !private ["10Optimizely0A6ClientC", "OptimizelyAttributes"]
+- ["10Optimizely0A6ClientC", "OptimizelyLogLevel"]
+- !private ["10Optimizely0A6ClientC", "OptimizelyResult"]
+- ["10Optimizely0A6ClientC", "String"]
+- ["10Optimizely0A6ClientC", "SwiftEventDispatcher"]
+- ["10Optimizely0A6ClientC", "Void"]
+- ["10Optimizely0A6ClientC", "_ObjcOPTEventDispatcher"]
+- !private ["10Optimizely0A6ClientC", "activate"]
+- !private ["10Optimizely0A6ClientC", "getEnabledFeatures"]
+- !private ["10Optimizely0A6ClientC", "getFeatureVariableBoolean"]
+- !private ["10Optimizely0A6ClientC", "getFeatureVariableDouble"]
+- !private ["10Optimizely0A6ClientC", "getFeatureVariableInteger"]
+- !private ["10Optimizely0A6ClientC", "getFeatureVariableString"]
+- !private ["10Optimizely0A6ClientC", "getForcedVariation"]
+- !private ["10Optimizely0A6ClientC", "getVariationKey"]
+- ["10Optimizely0A6ClientC", "init"]
+- !private ["10Optimizely0A6ClientC", "isFeatureEnabled"]
+- !private ["10Optimizely0A6ClientC", "notificationCenter"]
+- ["10Optimizely0A6ClientC", "objcActivate"]
+- ["10Optimizely0A6ClientC", "objcGetEnabledFeatures"]
+- ["10Optimizely0A6ClientC", "objcGetFeatureVariableBoolean"]
+- ["10Optimizely0A6ClientC", "objcGetFeatureVariableDouble"]
+- ["10Optimizely0A6ClientC", "objcGetFeatureVariableInteger"]
+- ["10Optimizely0A6ClientC", "objcGetFeatureVariableString"]
+- ["10Optimizely0A6ClientC", "objcGetForcedVariation"]
+- ["10Optimizely0A6ClientC", "objcGetVariationKey"]
+- ["10Optimizely0A6ClientC", "objcIsFeatureEnabled"]
+- ["10Optimizely0A6ClientC", "objcNotificationCenter"]
+- ["10Optimizely0A6ClientC", "objcSetForcedVariation"]
+- ["10Optimizely0A6ClientC", "objcStart"]
+- ["10Optimizely0A6ClientC", "objcStartWith"]
+- ["10Optimizely0A6ClientC", "objcTrack"]
+- !private ["10Optimizely0A6ClientC", "setForcedVariation"]
+- !private ["10Optimizely0A6ClientC", "start"]
+- !private ["10Optimizely0A6ClientC", "track"]
+- !private ["10Optimizely0A5ErrorO", "eventDispatchFailed"]
+- !private ["10Optimizely0A8LogLevelO", "info"]
+- !private ["10Optimizely0A6ResultO", "failure"]
+- !private ["10Optimizely0A6ResultO", "success"]
+- !private ["Sq", "info"]
+- !private ["Sk", "init"]
+- !private ["Sm", "init"]
+- !private ["SY", "info"]
+- !private ["10Foundation20ReferenceConvertibleP", "init"]
+- !private ["ST", "init"]
+- !private ["ST", "mapValues"]
+- !private ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "Data"]
+- ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "DispatchCompletionHandler"]
+- ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "EventForDispatch"]
+- !private ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "NSError"]
+- !private ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "OptimizelyResult"]
+- !private ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "Void"]
+- ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "_ObjcOPTEventDispatcher"]
+- ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "deinit"]
+- ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "dispatchEvent"]
+- ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "flushEvents"]
+- ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "init"]
+- ["10Optimizely0A6ClientC20SwiftEventDispatcherC", "objcEventDispatcher"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "init"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "intValue"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "mapValues"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "Data"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "DefaultEventDispatcher"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "NSNull"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "NSNumber"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "SwiftEventDispatcher"]
+- ["10Foundation27_KeyValueCodingAndObservingP", ""]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "activate"]
+- ["10Foundation27_KeyValueCodingAndObservingP", "dispatchEvent"]
+- ["10Foundation27_KeyValueCodingAndObservingP", "flushEvents"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "getEnabledFeatures"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "getFeatureVariableBoolean"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "getFeatureVariableDouble"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "getFeatureVariableInteger"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "getFeatureVariableString"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "getForcedVariation"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "getVariationKey"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "init"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "innerEventDispatcher"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "intValue"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "isFeatureEnabled"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "localizedDescription"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "notificationCenter"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "setForcedVariation"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "start"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "track"]
+- ["10Optimizely23_ObjcOPTEventDispatcherP", "Data"]
+- !private ["10Optimizely23_ObjcOPTEventDispatcherP", "DefaultEventDispatcher"]
+- ["10Optimizely23_ObjcOPTEventDispatcherP", "EventForDispatch"]
+- ["10Optimizely23_ObjcOPTEventDispatcherP", "NSError"]
+- ["10Optimizely23_ObjcOPTEventDispatcherP", "Void"]
+- ["10Optimizely23_ObjcOPTEventDispatcherP", ""]
+- ["10Optimizely23_ObjcOPTEventDispatcherP", "dispatchEvent"]
+- ["10Optimizely23_ObjcOPTEventDispatcherP", "flushEvents"]
+- !private ["10Optimizely23_ObjcOPTEventDispatcherP", "innerEventDispatcher"]
+- !private ["s21_ObjectiveCBridgeableP", "info"]
+- !private ["s21_ObjectiveCBridgeableP", "init"]
+- !private ["s21_ObjectiveCBridgeableP", "mapValues"]
+depends-nominal:
+- !private "10Optimizely22BackgroundingCallbacksP"
+- !private "SK"
+- "s7CVarArgP"
+- !private "Sl"
+- !private "SL"
+- !private "10Foundation15ContiguousBytesP"
+- "s28CustomDebugStringConvertibleP"
+- !private "s17CustomReflectableP"
+- "s23CustomStringConvertibleP"
+- !private "10Foundation4DataV"
+- !private "10Foundation12DataProtocolP"
+- !private "Se"
+- !private "10Optimizely22DefaultEventDispatcherC"
+- !private "SD"
+- !private "SE"
+- "SQ"
+- !private "s5ErrorP"
+- !private "s27ExpressibleByBooleanLiteralP"
+- !private "s30ExpressibleByDictionaryLiteralP"
+- !private "s25ExpressibleByFloatLiteralP"
+- !private "s27ExpressibleByIntegerLiteralP"
+- !private "s23ExpressibleByNilLiteralP"
+- "SH"
+- !private "10Foundation14LocalizedErrorP"
+- !private "SM"
+- !private "10Foundation19MutableDataProtocolP"
+- !private "So8NSCodingP"
+- !private "So9NSCopyingP"
+- !private "So7NSErrorC"
+- !private "So6NSNullC"
+- !private "So8NSNumberC"
+- "So8NSObjectC"
+- "So8NSObjectP"
+- !private "So14NSSecureCodingP"
+- !private "So7NSValueC"
+- "10Optimizely18OPTEventDispatcherP"
+- !private "10Optimizely21OPTNotificationCenterP"
+- "10Optimizely18ObjEventDispatcherC"
+- !private "10Optimizely25ObjcOPTNotificationCenterP"
+- "10Optimizely0A6ClientC"
+- !private "10Optimizely0A5ErrorO"
+- !private "10Optimizely0A8LogLevelO"
+- !private "10Optimizely0A6ResultO"
+- !private "Sq"
+- !private "Sk"
+- !private "Sm"
+- !private "SY"
+- !private "10Foundation20ReferenceConvertibleP"
+- !private "ST"
+- "10Optimizely0A6ClientC20SwiftEventDispatcherC"
+- !private "s35_HasCustomAnyHashableRepresentationP"
+- "10Foundation27_KeyValueCodingAndObservingP"
+- "10Optimizely23_ObjcOPTEventDispatcherP"
+- !private "s21_ObjectiveCBridgeableP"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "da85805dc172541df83fe755bfaca9c8"

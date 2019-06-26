@@ -1,0 +1,360 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+provides-nominal:
+provides-member:
+- ["Sa", ""]
+- ["Sa", "batch"]
+provides-dynamic-lookup:
+depends-top-level:
+- !private "!"
+- !private "!="
+- !private "<"
+- !private "=="
+- "Array"
+- "AssignmentPrecedence"
+- !private "BatchEvent"
+- !private "Bool"
+- "EventForDispatch"
+- !private "JSONDecoder"
+- !private "JSONEncoder"
+- !private "String"
+- !private "URL"
+- !private "Visitor"
+- !private "||"
+depends-member:
+- !private ["Sa", "BatchEvent"]
+- !private ["Sa", "Bool"]
+- ["Sa", "EventForDispatch"]
+- !private ["Sa", "JSONDecoder"]
+- !private ["Sa", "JSONEncoder"]
+- !private ["Sa", "String"]
+- !private ["Sa", "URL"]
+- !private ["Sa", "Visitor"]
+- !private ["Sa", "append"]
+- ["Sa", "batch"]
+- !private ["Sa", "count"]
+- !private ["Sa", "first"]
+- !private ["Sa", "init"]
+- !private ["10Optimizely10BatchEventV", "accountID"]
+- !private ["10Optimizely10BatchEventV", "anonymizeIP"]
+- !private ["10Optimizely10BatchEventV", "clientName"]
+- !private ["10Optimizely10BatchEventV", "clientVersion"]
+- !private ["10Optimizely10BatchEventV", "deinit"]
+- !private ["10Optimizely10BatchEventV", "init"]
+- !private ["10Optimizely10BatchEventV", "projectID"]
+- !private ["10Optimizely10BatchEventV", "revision"]
+- !private ["10Optimizely10BatchEventV", "visitors"]
+- !private ["SK", "BatchEvent"]
+- !private ["SK", "EventForDispatch"]
+- !private ["SK", "JSONDecoder"]
+- !private ["SK", "JSONEncoder"]
+- !private ["SK", "Visitor"]
+- !private ["SK", "append"]
+- !private ["SK", "count"]
+- !private ["SK", "first"]
+- !private ["SK", "init"]
+- !private ["s7CVarArgP", "BatchEvent"]
+- !private ["s7CVarArgP", "EventForDispatch"]
+- !private ["s7CVarArgP", "JSONDecoder"]
+- !private ["s7CVarArgP", "JSONEncoder"]
+- !private ["s7CVarArgP", "Visitor"]
+- !private ["s7CVarArgP", "append"]
+- !private ["s7CVarArgP", "body"]
+- !private ["s7CVarArgP", "count"]
+- !private ["s7CVarArgP", "first"]
+- !private ["s7CVarArgP", "init"]
+- !private ["s7CVarArgP", "url"]
+- !private ["Sl", "BatchEvent"]
+- !private ["Sl", "EventForDispatch"]
+- !private ["Sl", "JSONDecoder"]
+- !private ["Sl", "JSONEncoder"]
+- !private ["Sl", "Visitor"]
+- !private ["Sl", "append"]
+- !private ["Sl", "count"]
+- !private ["Sl", "first"]
+- !private ["Sl", "init"]
+- !private ["10Foundation15ContiguousBytesP", "BatchEvent"]
+- !private ["10Foundation15ContiguousBytesP", "EventForDispatch"]
+- !private ["10Foundation15ContiguousBytesP", "JSONDecoder"]
+- !private ["10Foundation15ContiguousBytesP", "JSONEncoder"]
+- !private ["10Foundation15ContiguousBytesP", "Visitor"]
+- !private ["10Foundation15ContiguousBytesP", "append"]
+- !private ["10Foundation15ContiguousBytesP", "count"]
+- !private ["10Foundation15ContiguousBytesP", "first"]
+- !private ["10Foundation15ContiguousBytesP", "init"]
+- !private ["s28CustomDebugStringConvertibleP", "BatchEvent"]
+- !private ["s28CustomDebugStringConvertibleP", "EventForDispatch"]
+- !private ["s28CustomDebugStringConvertibleP", "JSONDecoder"]
+- !private ["s28CustomDebugStringConvertibleP", "JSONEncoder"]
+- !private ["s28CustomDebugStringConvertibleP", "Visitor"]
+- !private ["s28CustomDebugStringConvertibleP", "append"]
+- !private ["s28CustomDebugStringConvertibleP", "body"]
+- !private ["s28CustomDebugStringConvertibleP", "count"]
+- !private ["s28CustomDebugStringConvertibleP", "first"]
+- !private ["s28CustomDebugStringConvertibleP", "init"]
+- !private ["s28CustomDebugStringConvertibleP", "url"]
+- !private ["s17CustomReflectableP", "BatchEvent"]
+- !private ["s17CustomReflectableP", "EventForDispatch"]
+- !private ["s17CustomReflectableP", "JSONDecoder"]
+- !private ["s17CustomReflectableP", "JSONEncoder"]
+- !private ["s17CustomReflectableP", "Visitor"]
+- !private ["s17CustomReflectableP", "append"]
+- !private ["s17CustomReflectableP", "count"]
+- !private ["s17CustomReflectableP", "first"]
+- !private ["s17CustomReflectableP", "init"]
+- !private ["s23CustomStringConvertibleP", "BatchEvent"]
+- !private ["s23CustomStringConvertibleP", "EventForDispatch"]
+- !private ["s23CustomStringConvertibleP", "JSONDecoder"]
+- !private ["s23CustomStringConvertibleP", "JSONEncoder"]
+- !private ["s23CustomStringConvertibleP", "Visitor"]
+- !private ["s23CustomStringConvertibleP", "append"]
+- !private ["s23CustomStringConvertibleP", "body"]
+- !private ["s23CustomStringConvertibleP", "count"]
+- !private ["s23CustomStringConvertibleP", "first"]
+- !private ["s23CustomStringConvertibleP", "init"]
+- !private ["s23CustomStringConvertibleP", "url"]
+- !private ["10Foundation12DataProtocolP", "BatchEvent"]
+- !private ["10Foundation12DataProtocolP", "EventForDispatch"]
+- !private ["10Foundation12DataProtocolP", "JSONDecoder"]
+- !private ["10Foundation12DataProtocolP", "JSONEncoder"]
+- !private ["10Foundation12DataProtocolP", "Visitor"]
+- !private ["10Foundation12DataProtocolP", "append"]
+- !private ["10Foundation12DataProtocolP", "count"]
+- !private ["10Foundation12DataProtocolP", "first"]
+- !private ["10Foundation12DataProtocolP", "init"]
+- !private ["Se", "BatchEvent"]
+- !private ["Se", "EventForDispatch"]
+- !private ["Se", "JSONDecoder"]
+- !private ["Se", "JSONEncoder"]
+- !private ["Se", "Visitor"]
+- !private ["Se", "accountID"]
+- !private ["Se", "anonymizeIP"]
+- !private ["Se", "append"]
+- !private ["Se", "body"]
+- !private ["Se", "clientName"]
+- !private ["Se", "clientVersion"]
+- !private ["Se", "count"]
+- !private ["Se", "first"]
+- !private ["Se", "init"]
+- !private ["Se", "projectID"]
+- !private ["Se", "revision"]
+- !private ["Se", "url"]
+- !private ["Se", "visitors"]
+- !private ["SE", "BatchEvent"]
+- !private ["SE", "EventForDispatch"]
+- !private ["SE", "JSONDecoder"]
+- !private ["SE", "JSONEncoder"]
+- !private ["SE", "Visitor"]
+- !private ["SE", "accountID"]
+- !private ["SE", "anonymizeIP"]
+- !private ["SE", "append"]
+- !private ["SE", "body"]
+- !private ["SE", "clientName"]
+- !private ["SE", "clientVersion"]
+- !private ["SE", "count"]
+- !private ["SE", "first"]
+- !private ["SE", "init"]
+- !private ["SE", "projectID"]
+- !private ["SE", "revision"]
+- !private ["SE", "url"]
+- !private ["SE", "visitors"]
+- !private ["SQ", "BatchEvent"]
+- !private ["SQ", "EventForDispatch"]
+- !private ["SQ", "JSONDecoder"]
+- !private ["SQ", "JSONEncoder"]
+- !private ["SQ", "Visitor"]
+- !private ["SQ", "accountID"]
+- !private ["SQ", "anonymizeIP"]
+- !private ["SQ", "append"]
+- !private ["SQ", "body"]
+- !private ["SQ", "clientName"]
+- !private ["SQ", "clientVersion"]
+- !private ["SQ", "count"]
+- !private ["SQ", "first"]
+- !private ["SQ", "init"]
+- !private ["SQ", "projectID"]
+- !private ["SQ", "revision"]
+- !private ["SQ", "url"]
+- !private ["SQ", "visitors"]
+- !private ["10Optimizely16EventForDispatchC", "body"]
+- !private ["10Optimizely16EventForDispatchC", "deinit"]
+- !private ["10Optimizely16EventForDispatchC", "init"]
+- !private ["10Optimizely16EventForDispatchC", "url"]
+- !private ["s25ExpressibleByArrayLiteralP", "BatchEvent"]
+- !private ["s25ExpressibleByArrayLiteralP", "EventForDispatch"]
+- !private ["s25ExpressibleByArrayLiteralP", "JSONDecoder"]
+- !private ["s25ExpressibleByArrayLiteralP", "JSONEncoder"]
+- !private ["s25ExpressibleByArrayLiteralP", "Visitor"]
+- !private ["s25ExpressibleByArrayLiteralP", "append"]
+- !private ["s25ExpressibleByArrayLiteralP", "count"]
+- !private ["s25ExpressibleByArrayLiteralP", "first"]
+- !private ["s25ExpressibleByArrayLiteralP", "init"]
+- !private ["SH", "BatchEvent"]
+- !private ["SH", "EventForDispatch"]
+- !private ["SH", "JSONDecoder"]
+- !private ["SH", "JSONEncoder"]
+- !private ["SH", "Visitor"]
+- !private ["SH", "append"]
+- !private ["SH", "body"]
+- !private ["SH", "count"]
+- !private ["SH", "first"]
+- !private ["SH", "init"]
+- !private ["SH", "url"]
+- !private ["10Foundation11JSONDecoderC", "decode"]
+- !private ["10Foundation11JSONDecoderC", "init"]
+- !private ["10Foundation11JSONEncoderC", "encode"]
+- !private ["10Foundation11JSONEncoderC", "init"]
+- !private ["SM", "BatchEvent"]
+- !private ["SM", "EventForDispatch"]
+- !private ["SM", "JSONDecoder"]
+- !private ["SM", "JSONEncoder"]
+- !private ["SM", "Visitor"]
+- !private ["SM", "append"]
+- !private ["SM", "count"]
+- !private ["SM", "first"]
+- !private ["SM", "init"]
+- !private ["10Foundation19MutableDataProtocolP", "BatchEvent"]
+- !private ["10Foundation19MutableDataProtocolP", "EventForDispatch"]
+- !private ["10Foundation19MutableDataProtocolP", "JSONDecoder"]
+- !private ["10Foundation19MutableDataProtocolP", "JSONEncoder"]
+- !private ["10Foundation19MutableDataProtocolP", "Visitor"]
+- !private ["10Foundation19MutableDataProtocolP", "append"]
+- !private ["10Foundation19MutableDataProtocolP", "count"]
+- !private ["10Foundation19MutableDataProtocolP", "first"]
+- !private ["10Foundation19MutableDataProtocolP", "init"]
+- !private ["So8NSObjectC", "body"]
+- !private ["So8NSObjectC", "url"]
+- !private ["So8NSObjectP", "body"]
+- !private ["So8NSObjectP", "init"]
+- !private ["So8NSObjectP", "url"]
+- !private ["Sk", "BatchEvent"]
+- !private ["Sk", "EventForDispatch"]
+- !private ["Sk", "JSONDecoder"]
+- !private ["Sk", "JSONEncoder"]
+- !private ["Sk", "Visitor"]
+- !private ["Sk", "append"]
+- !private ["Sk", "count"]
+- !private ["Sk", "first"]
+- !private ["Sk", "init"]
+- !private ["Sm", "BatchEvent"]
+- !private ["Sm", "EventForDispatch"]
+- !private ["Sm", "JSONDecoder"]
+- !private ["Sm", "JSONEncoder"]
+- !private ["Sm", "Visitor"]
+- !private ["Sm", "append"]
+- !private ["Sm", "count"]
+- !private ["Sm", "first"]
+- !private ["Sm", "init"]
+- !private ["ST", "BatchEvent"]
+- !private ["ST", "EventForDispatch"]
+- !private ["ST", "JSONDecoder"]
+- !private ["ST", "JSONEncoder"]
+- !private ["ST", "Visitor"]
+- !private ["ST", "append"]
+- !private ["ST", "count"]
+- !private ["ST", "first"]
+- !private ["ST", "init"]
+- !private ["s14_ArrayProtocolP", "BatchEvent"]
+- !private ["s14_ArrayProtocolP", "EventForDispatch"]
+- !private ["s14_ArrayProtocolP", "JSONDecoder"]
+- !private ["s14_ArrayProtocolP", "JSONEncoder"]
+- !private ["s14_ArrayProtocolP", "Visitor"]
+- !private ["s14_ArrayProtocolP", "append"]
+- !private ["s14_ArrayProtocolP", "count"]
+- !private ["s14_ArrayProtocolP", "first"]
+- !private ["s14_ArrayProtocolP", "init"]
+- !private ["s24_DestructorSafeContainerP", "BatchEvent"]
+- !private ["s24_DestructorSafeContainerP", "EventForDispatch"]
+- !private ["s24_DestructorSafeContainerP", "JSONDecoder"]
+- !private ["s24_DestructorSafeContainerP", "JSONEncoder"]
+- !private ["s24_DestructorSafeContainerP", "Visitor"]
+- !private ["s24_DestructorSafeContainerP", "append"]
+- !private ["s24_DestructorSafeContainerP", "count"]
+- !private ["s24_DestructorSafeContainerP", "first"]
+- !private ["s24_DestructorSafeContainerP", "init"]
+- !private ["s19_HasContiguousBytesP", "BatchEvent"]
+- !private ["s19_HasContiguousBytesP", "EventForDispatch"]
+- !private ["s19_HasContiguousBytesP", "JSONDecoder"]
+- !private ["s19_HasContiguousBytesP", "JSONEncoder"]
+- !private ["s19_HasContiguousBytesP", "Visitor"]
+- !private ["s19_HasContiguousBytesP", "append"]
+- !private ["s19_HasContiguousBytesP", "count"]
+- !private ["s19_HasContiguousBytesP", "first"]
+- !private ["s19_HasContiguousBytesP", "init"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "BatchEvent"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "EventForDispatch"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "JSONDecoder"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "JSONEncoder"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "Visitor"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "append"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "count"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "first"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "init"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "body"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "init"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "url"]
+- !private ["s21_ObjectiveCBridgeableP", "BatchEvent"]
+- !private ["s21_ObjectiveCBridgeableP", "EventForDispatch"]
+- !private ["s21_ObjectiveCBridgeableP", "JSONDecoder"]
+- !private ["s21_ObjectiveCBridgeableP", "JSONEncoder"]
+- !private ["s21_ObjectiveCBridgeableP", "Visitor"]
+- !private ["s21_ObjectiveCBridgeableP", "append"]
+- !private ["s21_ObjectiveCBridgeableP", "count"]
+- !private ["s21_ObjectiveCBridgeableP", "first"]
+- !private ["s21_ObjectiveCBridgeableP", "init"]
+depends-nominal:
+- "Sa"
+- !private "10Optimizely10BatchEventV"
+- !private "SK"
+- !private "s7CVarArgP"
+- !private "Sl"
+- !private "10Foundation15ContiguousBytesP"
+- !private "s28CustomDebugStringConvertibleP"
+- !private "s17CustomReflectableP"
+- !private "s23CustomStringConvertibleP"
+- !private "10Foundation12DataProtocolP"
+- !private "Se"
+- !private "SE"
+- !private "SQ"
+- !private "10Optimizely16EventForDispatchC"
+- !private "s25ExpressibleByArrayLiteralP"
+- !private "SH"
+- !private "10Foundation11JSONDecoderC"
+- !private "10Foundation11JSONEncoderC"
+- !private "SM"
+- !private "10Foundation19MutableDataProtocolP"
+- !private "So8NSObjectC"
+- !private "So8NSObjectP"
+- !private "Sk"
+- !private "Sm"
+- !private "ST"
+- !private "s14_ArrayProtocolP"
+- !private "s24_DestructorSafeContainerP"
+- !private "s19_HasContiguousBytesP"
+- !private "s35_HasCustomAnyHashableRepresentationP"
+- !private "10Foundation27_KeyValueCodingAndObservingP"
+- !private "s21_ObjectiveCBridgeableP"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "9a60d9b61aea806b838c7634e78a80b7"

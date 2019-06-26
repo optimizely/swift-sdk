@@ -1,0 +1,323 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "DefaultNotificationCenter"
+provides-nominal:
+- "10Optimizely25DefaultNotificationCenterC"
+provides-member:
+- ["10Optimizely25DefaultNotificationCenterC", ""]
+provides-dynamic-lookup:
+depends-top-level:
+- !private "!="
+- !private "+="
+- !private "<"
+- !private "=="
+- !private "??"
+- "AssignmentPrecedence"
+- !private "CastingPrecedence"
+- !private "Data"
+- "DatafileChangeListener"
+- "DefaultNotificationCenter"
+- !private "Experiment"
+- "FloatLiteralType"
+- "GenericListener"
+- "Int"
+- "IntegerLiteralType"
+- "NotificationType"
+- "OPTNotificationCenter"
+- "OptimizelyAttributes"
+- "OptimizelyExperimentData"
+- "OptimizelyVariationData"
+- "String"
+- "StringLiteralType"
+- !private "Variation"
+- "Void"
+depends-member:
+- !private ["Sa", "append"]
+- !private ["Sa", "count"]
+- !private ["Sa", "init"]
+- !private ["Sa", "subscript"]
+- !private ["SK", "append"]
+- !private ["SK", "count"]
+- !private ["SK", "init"]
+- !private ["SK", "subscript"]
+- !private ["s7CVarArgP", "append"]
+- !private ["s7CVarArgP", "count"]
+- !private ["s7CVarArgP", "filter"]
+- ["s7CVarArgP", "init"]
+- !private ["s7CVarArgP", "removeAll"]
+- !private ["s7CVarArgP", "removeValue"]
+- !private ["s7CVarArgP", "subscript"]
+- !private ["s7CVarArgP", "values"]
+- !private ["Sl", "append"]
+- !private ["Sl", "count"]
+- !private ["Sl", "filter"]
+- ["Sl", "init"]
+- !private ["Sl", "removeAll"]
+- !private ["Sl", "removeValue"]
+- !private ["Sl", "subscript"]
+- !private ["Sl", "values"]
+- !private ["10Foundation15ContiguousBytesP", "append"]
+- !private ["10Foundation15ContiguousBytesP", "count"]
+- !private ["10Foundation15ContiguousBytesP", "init"]
+- !private ["10Foundation15ContiguousBytesP", "subscript"]
+- !private ["s28CustomDebugStringConvertibleP", "append"]
+- !private ["s28CustomDebugStringConvertibleP", "count"]
+- !private ["s28CustomDebugStringConvertibleP", "filter"]
+- ["s28CustomDebugStringConvertibleP", "init"]
+- !private ["s28CustomDebugStringConvertibleP", "removeAll"]
+- !private ["s28CustomDebugStringConvertibleP", "removeValue"]
+- !private ["s28CustomDebugStringConvertibleP", "subscript"]
+- !private ["s28CustomDebugStringConvertibleP", "values"]
+- !private ["s17CustomReflectableP", "append"]
+- !private ["s17CustomReflectableP", "count"]
+- !private ["s17CustomReflectableP", "filter"]
+- ["s17CustomReflectableP", "init"]
+- !private ["s17CustomReflectableP", "removeAll"]
+- !private ["s17CustomReflectableP", "removeValue"]
+- !private ["s17CustomReflectableP", "subscript"]
+- !private ["s17CustomReflectableP", "values"]
+- !private ["s23CustomStringConvertibleP", "append"]
+- !private ["s23CustomStringConvertibleP", "count"]
+- !private ["s23CustomStringConvertibleP", "filter"]
+- ["s23CustomStringConvertibleP", "init"]
+- !private ["s23CustomStringConvertibleP", "removeAll"]
+- !private ["s23CustomStringConvertibleP", "removeValue"]
+- !private ["s23CustomStringConvertibleP", "subscript"]
+- !private ["s23CustomStringConvertibleP", "values"]
+- !private ["10Foundation12DataProtocolP", "append"]
+- !private ["10Foundation12DataProtocolP", "count"]
+- !private ["10Foundation12DataProtocolP", "init"]
+- !private ["10Foundation12DataProtocolP", "subscript"]
+- !private ["Se", "append"]
+- !private ["Se", "count"]
+- !private ["Se", "filter"]
+- !private ["Se", "id"]
+- ["Se", "init"]
+- !private ["Se", "key"]
+- !private ["Se", "removeAll"]
+- !private ["Se", "removeValue"]
+- !private ["Se", "subscript"]
+- !private ["Se", "values"]
+- !private ["10Optimizely25DefaultNotificationCenterC", "Data"]
+- ["10Optimizely25DefaultNotificationCenterC", "DatafileChangeListener"]
+- !private ["10Optimizely25DefaultNotificationCenterC", "Experiment"]
+- ["10Optimizely25DefaultNotificationCenterC", "GenericListener"]
+- ["10Optimizely25DefaultNotificationCenterC", "Int"]
+- ["10Optimizely25DefaultNotificationCenterC", "NotificationType"]
+- ["10Optimizely25DefaultNotificationCenterC", "OptimizelyAttributes"]
+- ["10Optimizely25DefaultNotificationCenterC", "OptimizelyExperimentData"]
+- ["10Optimizely25DefaultNotificationCenterC", "OptimizelyVariationData"]
+- ["10Optimizely25DefaultNotificationCenterC", "String"]
+- !private ["10Optimizely25DefaultNotificationCenterC", "Variation"]
+- ["10Optimizely25DefaultNotificationCenterC", "Void"]
+- ["10Optimizely25DefaultNotificationCenterC", "addActivateNotificationListener"]
+- ["10Optimizely25DefaultNotificationCenterC", "addDatafileChangeNotificationListener"]
+- ["10Optimizely25DefaultNotificationCenterC", "addDecisionNotificationListener"]
+- ["10Optimizely25DefaultNotificationCenterC", "addGenericNotificationListener"]
+- ["10Optimizely25DefaultNotificationCenterC", "addTrackNotificationListener"]
+- ["10Optimizely25DefaultNotificationCenterC", "clearAllNotificationListeners"]
+- ["10Optimizely25DefaultNotificationCenterC", "clearNotificationListeners"]
+- ["10Optimizely25DefaultNotificationCenterC", "deinit"]
+- ["10Optimizely25DefaultNotificationCenterC", "getArgumentsForDecisionListener"]
+- ["10Optimizely25DefaultNotificationCenterC", "incrementNotificationId"]
+- ["10Optimizely25DefaultNotificationCenterC", "init"]
+- ["10Optimizely25DefaultNotificationCenterC", "notificationId"]
+- ["10Optimizely25DefaultNotificationCenterC", "notificationListeners"]
+- ["10Optimizely25DefaultNotificationCenterC", "removeNotificationListener"]
+- ["10Optimizely25DefaultNotificationCenterC", "sendNotifications"]
+- !private ["SD", "filter"]
+- ["SD", "init"]
+- !private ["SD", "removeAll"]
+- !private ["SD", "removeValue"]
+- !private ["SD", "subscript"]
+- !private ["SD", "values"]
+- !private ["SE", "append"]
+- !private ["SE", "count"]
+- !private ["SE", "filter"]
+- !private ["SE", "id"]
+- ["SE", "init"]
+- !private ["SE", "key"]
+- !private ["SE", "removeAll"]
+- !private ["SE", "removeValue"]
+- !private ["SE", "subscript"]
+- !private ["SE", "values"]
+- !private ["SQ", "activate"]
+- !private ["SQ", "append"]
+- !private ["SQ", "count"]
+- !private ["SQ", "datafileChange"]
+- !private ["SQ", "decision"]
+- !private ["SQ", "filter"]
+- !private ["SQ", "id"]
+- ["SQ", "init"]
+- !private ["SQ", "key"]
+- !private ["SQ", "rawValue"]
+- !private ["SQ", "removeAll"]
+- !private ["SQ", "removeValue"]
+- !private ["SQ", "subscript"]
+- !private ["SQ", "track"]
+- !private ["SQ", "values"]
+- !private ["10Optimizely10ExperimentV", "id"]
+- !private ["10Optimizely10ExperimentV", "key"]
+- !private ["s25ExpressibleByArrayLiteralP", "append"]
+- !private ["s25ExpressibleByArrayLiteralP", "count"]
+- !private ["s25ExpressibleByArrayLiteralP", "init"]
+- !private ["s25ExpressibleByArrayLiteralP", "subscript"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "filter"]
+- ["s30ExpressibleByDictionaryLiteralP", "init"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "removeAll"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "removeValue"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "subscript"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "values"]
+- !private ["SH", "activate"]
+- !private ["SH", "append"]
+- !private ["SH", "count"]
+- !private ["SH", "datafileChange"]
+- !private ["SH", "decision"]
+- !private ["SH", "filter"]
+- ["SH", "init"]
+- !private ["SH", "rawValue"]
+- !private ["SH", "removeAll"]
+- !private ["SH", "removeValue"]
+- !private ["SH", "subscript"]
+- !private ["SH", "track"]
+- !private ["SH", "values"]
+- !private ["SM", "append"]
+- !private ["SM", "count"]
+- !private ["SM", "init"]
+- !private ["SM", "subscript"]
+- !private ["10Foundation19MutableDataProtocolP", "append"]
+- !private ["10Foundation19MutableDataProtocolP", "count"]
+- !private ["10Foundation19MutableDataProtocolP", "init"]
+- !private ["10Foundation19MutableDataProtocolP", "subscript"]
+- !private ["10Optimizely16NotificationTypeO", "activate"]
+- !private ["10Optimizely16NotificationTypeO", "datafileChange"]
+- !private ["10Optimizely16NotificationTypeO", "decision"]
+- !private ["10Optimizely16NotificationTypeO", "deinit"]
+- !private ["10Optimizely16NotificationTypeO", "rawValue"]
+- !private ["10Optimizely16NotificationTypeO", "track"]
+- ["10Optimizely21OPTNotificationCenterP", "GenericListener"]
+- ["10Optimizely21OPTNotificationCenterP", "Int"]
+- !private ["10Optimizely21OPTNotificationCenterP", "NotificationType"]
+- !private ["10Optimizely21OPTNotificationCenterP", "OptimizelyAttributes"]
+- ["10Optimizely21OPTNotificationCenterP", ""]
+- ["10Optimizely21OPTNotificationCenterP", "addActivateNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "addDatafileChangeNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "addDecisionNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "addGenericNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "addTrackNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "clearAllNotificationListeners"]
+- ["10Optimizely21OPTNotificationCenterP", "clearNotificationListeners"]
+- !private ["10Optimizely21OPTNotificationCenterP", "incrementNotificationId"]
+- ["10Optimizely21OPTNotificationCenterP", "init"]
+- ["10Optimizely21OPTNotificationCenterP", "notificationId"]
+- !private ["10Optimizely21OPTNotificationCenterP", "notificationListeners"]
+- ["10Optimizely21OPTNotificationCenterP", "removeNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "sendNotifications"]
+- !private ["Sk", "append"]
+- !private ["Sk", "count"]
+- !private ["Sk", "init"]
+- !private ["Sk", "subscript"]
+- !private ["Sm", "append"]
+- !private ["Sm", "count"]
+- !private ["Sm", "init"]
+- !private ["Sm", "subscript"]
+- !private ["SY", "activate"]
+- !private ["SY", "datafileChange"]
+- !private ["SY", "decision"]
+- !private ["SY", "rawValue"]
+- !private ["SY", "track"]
+- !private ["ST", "append"]
+- !private ["ST", "count"]
+- !private ["ST", "filter"]
+- ["ST", "init"]
+- !private ["ST", "removeAll"]
+- !private ["ST", "removeValue"]
+- !private ["ST", "subscript"]
+- !private ["ST", "values"]
+- !private ["10Optimizely9VariationV", "id"]
+- !private ["10Optimizely9VariationV", "key"]
+- !private ["s14_ArrayProtocolP", "append"]
+- !private ["s14_ArrayProtocolP", "count"]
+- !private ["s14_ArrayProtocolP", "init"]
+- !private ["s14_ArrayProtocolP", "subscript"]
+- !private ["s24_DestructorSafeContainerP", "append"]
+- !private ["s24_DestructorSafeContainerP", "count"]
+- !private ["s24_DestructorSafeContainerP", "init"]
+- !private ["s24_DestructorSafeContainerP", "subscript"]
+- !private ["s19_HasContiguousBytesP", "append"]
+- !private ["s19_HasContiguousBytesP", "count"]
+- !private ["s19_HasContiguousBytesP", "init"]
+- !private ["s19_HasContiguousBytesP", "subscript"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "append"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "count"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "filter"]
+- ["s35_HasCustomAnyHashableRepresentationP", "init"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "removeAll"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "removeValue"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "subscript"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "values"]
+- !private ["s21_ObjectiveCBridgeableP", "append"]
+- !private ["s21_ObjectiveCBridgeableP", "count"]
+- !private ["s21_ObjectiveCBridgeableP", "filter"]
+- ["s21_ObjectiveCBridgeableP", "init"]
+- !private ["s21_ObjectiveCBridgeableP", "removeAll"]
+- !private ["s21_ObjectiveCBridgeableP", "removeValue"]
+- !private ["s21_ObjectiveCBridgeableP", "subscript"]
+- !private ["s21_ObjectiveCBridgeableP", "values"]
+depends-nominal:
+- !private "Sa"
+- !private "SK"
+- "s7CVarArgP"
+- "Sl"
+- !private "10Foundation15ContiguousBytesP"
+- "s28CustomDebugStringConvertibleP"
+- "s17CustomReflectableP"
+- "s23CustomStringConvertibleP"
+- !private "10Foundation12DataProtocolP"
+- "Se"
+- "10Optimizely25DefaultNotificationCenterC"
+- "SD"
+- "SE"
+- "SQ"
+- !private "10Optimizely10ExperimentV"
+- !private "s25ExpressibleByArrayLiteralP"
+- "s30ExpressibleByDictionaryLiteralP"
+- "SH"
+- !private "SM"
+- !private "10Foundation19MutableDataProtocolP"
+- !private "10Optimizely16NotificationTypeO"
+- "10Optimizely21OPTNotificationCenterP"
+- !private "Sk"
+- !private "Sm"
+- !private "SY"
+- "ST"
+- !private "10Optimizely9VariationV"
+- !private "s14_ArrayProtocolP"
+- !private "s24_DestructorSafeContainerP"
+- !private "s19_HasContiguousBytesP"
+- "s35_HasCustomAnyHashableRepresentationP"
+- "s21_ObjectiveCBridgeableP"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "3df13e7938f89da9cbb5b14c85e9dfb3"

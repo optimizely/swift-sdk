@@ -1,0 +1,190 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "DefaultUserProfileService"
+provides-nominal:
+- "10Optimizely25DefaultUserProfileServiceC"
+provides-member:
+- ["10Optimizely25DefaultUserProfileServiceC", ""]
+provides-dynamic-lookup:
+- "lookup"
+- "save"
+depends-top-level:
+- !private "??"
+- !private "AssignmentPrecedence"
+- "CastingPrecedence"
+- "DefaultUserProfileService"
+- "DispatchQueue"
+- "OPTUserProfileService"
+- "String"
+- "UPProfile"
+- !private "UserDefaults"
+- !private "UserProfileKeys"
+depends-member:
+- !private ["s7CVarArgP", "async"]
+- !private ["s7CVarArgP", "dictionary"]
+- ["s7CVarArgP", "init"]
+- !private ["s7CVarArgP", "set"]
+- !private ["s7CVarArgP", "standard"]
+- !private ["s7CVarArgP", "subscript"]
+- !private ["s7CVarArgP", "sync"]
+- !private ["s7CVarArgP", "synchronize"]
+- !private ["Sl", "init"]
+- !private ["Sl", "subscript"]
+- !private ["s28CustomDebugStringConvertibleP", "async"]
+- !private ["s28CustomDebugStringConvertibleP", "dictionary"]
+- ["s28CustomDebugStringConvertibleP", "init"]
+- !private ["s28CustomDebugStringConvertibleP", "set"]
+- !private ["s28CustomDebugStringConvertibleP", "standard"]
+- !private ["s28CustomDebugStringConvertibleP", "subscript"]
+- !private ["s28CustomDebugStringConvertibleP", "sync"]
+- !private ["s28CustomDebugStringConvertibleP", "synchronize"]
+- !private ["s17CustomReflectableP", "init"]
+- !private ["s17CustomReflectableP", "subscript"]
+- !private ["s23CustomStringConvertibleP", "async"]
+- !private ["s23CustomStringConvertibleP", "dictionary"]
+- ["s23CustomStringConvertibleP", "init"]
+- !private ["s23CustomStringConvertibleP", "set"]
+- !private ["s23CustomStringConvertibleP", "standard"]
+- !private ["s23CustomStringConvertibleP", "subscript"]
+- !private ["s23CustomStringConvertibleP", "sync"]
+- !private ["s23CustomStringConvertibleP", "synchronize"]
+- !private ["Se", "init"]
+- !private ["Se", "subscript"]
+- ["10Optimizely25DefaultUserProfileServiceC", "DispatchQueue"]
+- ["10Optimizely25DefaultUserProfileServiceC", "String"]
+- ["10Optimizely25DefaultUserProfileServiceC", "UPProfile"]
+- !private ["10Optimizely25DefaultUserProfileServiceC", "UserDefaults"]
+- ["10Optimizely25DefaultUserProfileServiceC", "UserProfileData"]
+- !private ["10Optimizely25DefaultUserProfileServiceC", "UserProfileKeys"]
+- ["10Optimizely25DefaultUserProfileServiceC", "deinit"]
+- ["10Optimizely25DefaultUserProfileServiceC", "init"]
+- ["10Optimizely25DefaultUserProfileServiceC", "kStorageName"]
+- ["10Optimizely25DefaultUserProfileServiceC", "lock"]
+- ["10Optimizely25DefaultUserProfileServiceC", "lookup"]
+- ["10Optimizely25DefaultUserProfileServiceC", "profiles"]
+- ["10Optimizely25DefaultUserProfileServiceC", "reset"]
+- ["10Optimizely25DefaultUserProfileServiceC", "save"]
+- !private ["SD", "init"]
+- !private ["SD", "subscript"]
+- !private ["So18OS_dispatch_objectC", "async"]
+- ["So18OS_dispatch_objectC", "init"]
+- !private ["So18OS_dispatch_objectC", "sync"]
+- !private ["So17OS_dispatch_queueC", "async"]
+- ["So17OS_dispatch_queueC", "init"]
+- !private ["So17OS_dispatch_queueC", "sync"]
+- !private ["SE", "init"]
+- !private ["SE", "subscript"]
+- !private ["SQ", "async"]
+- !private ["SQ", "dictionary"]
+- ["SQ", "init"]
+- !private ["SQ", "set"]
+- !private ["SQ", "standard"]
+- !private ["SQ", "subscript"]
+- !private ["SQ", "sync"]
+- !private ["SQ", "synchronize"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "init"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "subscript"]
+- !private ["SH", "async"]
+- !private ["SH", "dictionary"]
+- ["SH", "init"]
+- !private ["SH", "set"]
+- !private ["SH", "standard"]
+- !private ["SH", "subscript"]
+- !private ["SH", "sync"]
+- !private ["SH", "synchronize"]
+- !private ["So8NSObjectC", "async"]
+- !private ["So8NSObjectC", "dictionary"]
+- ["So8NSObjectC", "init"]
+- !private ["So8NSObjectC", "set"]
+- !private ["So8NSObjectC", "standard"]
+- !private ["So8NSObjectC", "sync"]
+- !private ["So8NSObjectC", "synchronize"]
+- !private ["So8NSObjectP", "async"]
+- !private ["So8NSObjectP", "dictionary"]
+- ["So8NSObjectP", "init"]
+- !private ["So8NSObjectP", "set"]
+- !private ["So8NSObjectP", "standard"]
+- !private ["So8NSObjectP", "sync"]
+- !private ["So8NSObjectP", "synchronize"]
+- ["10Optimizely21OPTUserProfileServiceP", "DispatchQueue"]
+- ["10Optimizely21OPTUserProfileServiceP", "UPProfile"]
+- !private ["10Optimizely21OPTUserProfileServiceP", "UserDefaults"]
+- !private ["10Optimizely21OPTUserProfileServiceP", "UserProfileData"]
+- !private ["10Optimizely21OPTUserProfileServiceP", "UserProfileKeys"]
+- ["10Optimizely21OPTUserProfileServiceP", ""]
+- ["10Optimizely21OPTUserProfileServiceP", "init"]
+- !private ["10Optimizely21OPTUserProfileServiceP", "kStorageName"]
+- !private ["10Optimizely21OPTUserProfileServiceP", "lock"]
+- ["10Optimizely21OPTUserProfileServiceP", "lookup"]
+- !private ["10Optimizely21OPTUserProfileServiceP", "profiles"]
+- ["10Optimizely21OPTUserProfileServiceP", "save"]
+- !private ["So9OS_objectC", "async"]
+- ["So9OS_objectC", "init"]
+- !private ["So9OS_objectC", "sync"]
+- !private ["ST", "init"]
+- !private ["ST", "subscript"]
+- !private ["So14NSUserDefaultsC", "dictionary"]
+- !private ["So14NSUserDefaultsC", "set"]
+- !private ["So14NSUserDefaultsC", "standard"]
+- !private ["So14NSUserDefaultsC", "synchronize"]
+- !private ["10Optimizely15UserProfileKeysV", "kUserId"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "init"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "subscript"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "async"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "dictionary"]
+- ["10Foundation27_KeyValueCodingAndObservingP", "init"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "set"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "standard"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "sync"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "synchronize"]
+- !private ["s21_ObjectiveCBridgeableP", "init"]
+- !private ["s21_ObjectiveCBridgeableP", "subscript"]
+depends-nominal:
+- "s7CVarArgP"
+- !private "Sl"
+- "s28CustomDebugStringConvertibleP"
+- !private "s17CustomReflectableP"
+- "s23CustomStringConvertibleP"
+- !private "Se"
+- "10Optimizely25DefaultUserProfileServiceC"
+- !private "SD"
+- "So18OS_dispatch_objectC"
+- "So17OS_dispatch_queueC"
+- !private "SE"
+- "SQ"
+- !private "s30ExpressibleByDictionaryLiteralP"
+- "SH"
+- "So8NSObjectC"
+- "So8NSObjectP"
+- "10Optimizely21OPTUserProfileServiceP"
+- "So9OS_objectC"
+- !private "ST"
+- !private "So14NSUserDefaultsC"
+- !private "10Optimizely15UserProfileKeysV"
+- !private "s35_HasCustomAnyHashableRepresentationP"
+- "10Foundation27_KeyValueCodingAndObservingP"
+- !private "s21_ObjectiveCBridgeableP"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "42ae9f3abfa3a6a25ef7f5594bf7e4e3"

@@ -1,0 +1,703 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "BatchEventBuilder"
+provides-nominal:
+- "10Optimizely17BatchEventBuilderC"
+provides-member:
+- ["10Optimizely17BatchEventBuilderC", ""]
+provides-dynamic-lookup:
+depends-top-level:
+- !private "!="
+- !private "*"
+- !private "+"
+- !private "??"
+- "AssignmentPrecedence"
+- "AttributeValue"
+- !private "BatchEvent"
+- "BatchEventBuilder"
+- !private "BooleanLiteralType"
+- "CastingPrecedence"
+- !private "Constants"
+- "Data"
+- !private "Date"
+- "Decision"
+- "DispatchEvent"
+- !private "Double"
+- "EventAttribute"
+- "Experiment"
+- "Int64"
+- !private "JSONEncoder"
+- "OPTLoggerFactory"
+- "OptimizelyAttributes"
+- "ProjectConfig"
+- !private "Snapshot"
+- "String"
+- "TernaryPrecedence"
+- !private "UUID"
+- !private "Utils"
+- "Variation"
+- !private "Visitor"
+depends-member:
+- !private ["s18AdditiveArithmeticP", "init"]
+- !private ["Sa", "append"]
+- !private ["Sa", "init"]
+- !private ["10Optimizely14AttributeValueO", "deinit"]
+- ["10Optimizely14AttributeValueO", "double"]
+- !private ["10Optimizely14AttributeValueO", "init"]
+- ["10Optimizely14AttributeValueO", "int"]
+- !private ["10Optimizely14AttributeValueO", "stringValue"]
+- !private ["10Optimizely9ConstantsV10AttributesV", "OptimizelyBotFilteringAttribute"]
+- !private ["10Optimizely10BatchEventV", "deinit"]
+- !private ["10Optimizely10BatchEventV", "init"]
+- ["10Optimizely17BatchEventBuilderC", "AttributeValue"]
+- !private ["10Optimizely17BatchEventBuilderC", "BatchEvent"]
+- !private ["10Optimizely17BatchEventBuilderC", "Constants"]
+- ["10Optimizely17BatchEventBuilderC", "Data"]
+- !private ["10Optimizely17BatchEventBuilderC", "Date"]
+- ["10Optimizely17BatchEventBuilderC", "Decision"]
+- ["10Optimizely17BatchEventBuilderC", "DispatchEvent"]
+- !private ["10Optimizely17BatchEventBuilderC", "Double"]
+- ["10Optimizely17BatchEventBuilderC", "EventAttribute"]
+- ["10Optimizely17BatchEventBuilderC", "Experiment"]
+- ["10Optimizely17BatchEventBuilderC", "Int64"]
+- !private ["10Optimizely17BatchEventBuilderC", "JSONEncoder"]
+- ["10Optimizely17BatchEventBuilderC", "OPTLoggerFactory"]
+- ["10Optimizely17BatchEventBuilderC", "OptimizelyAttributes"]
+- ["10Optimizely17BatchEventBuilderC", "ProjectConfig"]
+- !private ["10Optimizely17BatchEventBuilderC", "Snapshot"]
+- ["10Optimizely17BatchEventBuilderC", "String"]
+- !private ["10Optimizely17BatchEventBuilderC", "UUID"]
+- !private ["10Optimizely17BatchEventBuilderC", "Utils"]
+- ["10Optimizely17BatchEventBuilderC", "Variation"]
+- !private ["10Optimizely17BatchEventBuilderC", "Visitor"]
+- ["10Optimizely17BatchEventBuilderC", "createBatchEvent"]
+- ["10Optimizely17BatchEventBuilderC", "createConversionEvent"]
+- ["10Optimizely17BatchEventBuilderC", "createImpressionEvent"]
+- ["10Optimizely17BatchEventBuilderC", "extractRevenueEventTag"]
+- ["10Optimizely17BatchEventBuilderC", "extractValueEventTag"]
+- ["10Optimizely17BatchEventBuilderC", "filterEventTags"]
+- ["10Optimizely17BatchEventBuilderC", "filterTagsWithInvalidTypes"]
+- ["10Optimizely17BatchEventBuilderC", "getEventAttributes"]
+- ["10Optimizely17BatchEventBuilderC", "init"]
+- !private ["10Optimizely17BatchEventBuilderC", "logger"]
+- !private ["10Optimizely17BatchEventBuilderC", "swiftSdkClientName"]
+- ["10Optimizely17BatchEventBuilderC", "timestampSince1970"]
+- ["10Optimizely17BatchEventBuilderC", "uuid"]
+- !private ["SK", "append"]
+- !private ["SK", "extractRevenueFromEventTags"]
+- !private ["SK", "extractValueFromEventTags"]
+- !private ["SK", "failedToExtractRevenueFromEventTags"]
+- !private ["SK", "failedToExtractValueFromEventTags"]
+- !private ["SK", "hasPrefix"]
+- !private ["SK", "init"]
+- !private ["SK", "unrecognizedAttribute"]
+- !private ["SB", "init"]
+- !private ["Sz", "init"]
+- !private ["s7CVarArgP", "append"]
+- !private ["s7CVarArgP", "extractRevenueFromEventTags"]
+- !private ["s7CVarArgP", "extractValueFromEventTags"]
+- !private ["s7CVarArgP", "failedToExtractRevenueFromEventTags"]
+- !private ["s7CVarArgP", "failedToExtractValueFromEventTags"]
+- !private ["s7CVarArgP", "filter"]
+- ["s7CVarArgP", "getLogger"]
+- !private ["s7CVarArgP", "hasPrefix"]
+- !private ["s7CVarArgP", "init"]
+- !private ["s7CVarArgP", "keys"]
+- !private ["s7CVarArgP", "mapValues"]
+- !private ["s7CVarArgP", "subscript"]
+- !private ["s7CVarArgP", "unrecognizedAttribute"]
+- !private ["Sl", "append"]
+- !private ["Sl", "extractRevenueFromEventTags"]
+- !private ["Sl", "extractValueFromEventTags"]
+- !private ["Sl", "failedToExtractRevenueFromEventTags"]
+- !private ["Sl", "failedToExtractValueFromEventTags"]
+- !private ["Sl", "filter"]
+- !private ["Sl", "hasPrefix"]
+- !private ["Sl", "init"]
+- !private ["Sl", "keys"]
+- !private ["Sl", "mapValues"]
+- !private ["Sl", "subscript"]
+- !private ["Sl", "unrecognizedAttribute"]
+- !private ["SL", "extractRevenueFromEventTags"]
+- !private ["SL", "extractValueFromEventTags"]
+- !private ["SL", "failedToExtractRevenueFromEventTags"]
+- !private ["SL", "failedToExtractValueFromEventTags"]
+- !private ["SL", "hasPrefix"]
+- !private ["SL", "init"]
+- !private ["SL", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["SL", "timeIntervalSinceReferenceDate"]
+- !private ["SL", "unrecognizedAttribute"]
+- !private ["10Optimizely9ConstantsV", "Attributes"]
+- !private ["10Foundation15ContiguousBytesP", "append"]
+- !private ["10Foundation15ContiguousBytesP", "init"]
+- !private ["s28CustomDebugStringConvertibleP", "accountId"]
+- !private ["s28CustomDebugStringConvertibleP", "anonymizeIP"]
+- !private ["s28CustomDebugStringConvertibleP", "append"]
+- !private ["s28CustomDebugStringConvertibleP", "botFiltering"]
+- !private ["s28CustomDebugStringConvertibleP", "extractRevenueFromEventTags"]
+- !private ["s28CustomDebugStringConvertibleP", "extractValueFromEventTags"]
+- !private ["s28CustomDebugStringConvertibleP", "failedToExtractRevenueFromEventTags"]
+- !private ["s28CustomDebugStringConvertibleP", "failedToExtractValueFromEventTags"]
+- !private ["s28CustomDebugStringConvertibleP", "filter"]
+- ["s28CustomDebugStringConvertibleP", "getLogger"]
+- !private ["s28CustomDebugStringConvertibleP", "hasPrefix"]
+- !private ["s28CustomDebugStringConvertibleP", "init"]
+- !private ["s28CustomDebugStringConvertibleP", "keys"]
+- !private ["s28CustomDebugStringConvertibleP", "mapValues"]
+- !private ["s28CustomDebugStringConvertibleP", "projectId"]
+- !private ["s28CustomDebugStringConvertibleP", "revision"]
+- !private ["s28CustomDebugStringConvertibleP", "subscript"]
+- !private ["s28CustomDebugStringConvertibleP", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["s28CustomDebugStringConvertibleP", "timeIntervalSinceReferenceDate"]
+- !private ["s28CustomDebugStringConvertibleP", "unrecognizedAttribute"]
+- !private ["s28CustomDebugStringConvertibleP", "uuidString"]
+- !private ["s17CustomReflectableP", "accountId"]
+- !private ["s17CustomReflectableP", "anonymizeIP"]
+- !private ["s17CustomReflectableP", "append"]
+- !private ["s17CustomReflectableP", "botFiltering"]
+- !private ["s17CustomReflectableP", "extractRevenueFromEventTags"]
+- !private ["s17CustomReflectableP", "extractValueFromEventTags"]
+- !private ["s17CustomReflectableP", "failedToExtractRevenueFromEventTags"]
+- !private ["s17CustomReflectableP", "failedToExtractValueFromEventTags"]
+- !private ["s17CustomReflectableP", "filter"]
+- !private ["s17CustomReflectableP", "hasPrefix"]
+- !private ["s17CustomReflectableP", "init"]
+- !private ["s17CustomReflectableP", "keys"]
+- !private ["s17CustomReflectableP", "mapValues"]
+- !private ["s17CustomReflectableP", "projectId"]
+- !private ["s17CustomReflectableP", "revision"]
+- !private ["s17CustomReflectableP", "subscript"]
+- !private ["s17CustomReflectableP", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["s17CustomReflectableP", "timeIntervalSinceReferenceDate"]
+- !private ["s17CustomReflectableP", "unrecognizedAttribute"]
+- !private ["s17CustomReflectableP", "uuidString"]
+- !private ["s23CustomStringConvertibleP", "append"]
+- ["s23CustomStringConvertibleP", "double"]
+- !private ["s23CustomStringConvertibleP", "extractRevenueFromEventTags"]
+- !private ["s23CustomStringConvertibleP", "extractValueFromEventTags"]
+- !private ["s23CustomStringConvertibleP", "failedToExtractRevenueFromEventTags"]
+- !private ["s23CustomStringConvertibleP", "failedToExtractValueFromEventTags"]
+- !private ["s23CustomStringConvertibleP", "filter"]
+- ["s23CustomStringConvertibleP", "getLogger"]
+- !private ["s23CustomStringConvertibleP", "hasPrefix"]
+- !private ["s23CustomStringConvertibleP", "init"]
+- ["s23CustomStringConvertibleP", "int"]
+- !private ["s23CustomStringConvertibleP", "keys"]
+- !private ["s23CustomStringConvertibleP", "mapValues"]
+- !private ["s23CustomStringConvertibleP", "stringValue"]
+- !private ["s23CustomStringConvertibleP", "subscript"]
+- !private ["s23CustomStringConvertibleP", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["s23CustomStringConvertibleP", "timeIntervalSinceReferenceDate"]
+- !private ["s23CustomStringConvertibleP", "unrecognizedAttribute"]
+- !private ["s23CustomStringConvertibleP", "uuidString"]
+- !private ["10Foundation12DataProtocolP", "append"]
+- !private ["10Foundation12DataProtocolP", "init"]
+- !private ["10Foundation4DateV", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["10Foundation4DateV", "timeIntervalSinceReferenceDate"]
+- !private ["10Optimizely8DecisionV", "deinit"]
+- !private ["10Optimizely8DecisionV", "init"]
+- !private ["Se", "accountId"]
+- !private ["Se", "activateEventKey"]
+- !private ["Se", "anonymizeIP"]
+- !private ["Se", "append"]
+- !private ["Se", "botFiltering"]
+- ["Se", "double"]
+- !private ["Se", "extractRevenueFromEventTags"]
+- !private ["Se", "extractValueFromEventTags"]
+- !private ["Se", "failedToExtractRevenueFromEventTags"]
+- !private ["Se", "failedToExtractValueFromEventTags"]
+- !private ["Se", "filter"]
+- !private ["Se", "hasPrefix"]
+- !private ["Se", "id"]
+- !private ["Se", "init"]
+- ["Se", "int"]
+- !private ["Se", "key"]
+- !private ["Se", "keys"]
+- !private ["Se", "layerId"]
+- !private ["Se", "mapValues"]
+- !private ["Se", "projectId"]
+- !private ["Se", "revenueKey"]
+- !private ["Se", "revision"]
+- !private ["Se", "stringValue"]
+- !private ["Se", "subscript"]
+- !private ["Se", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["Se", "timeIntervalSinceReferenceDate"]
+- !private ["Se", "unrecognizedAttribute"]
+- !private ["Se", "uuidString"]
+- !private ["Se", "valueKey"]
+- !private ["SD", "filter"]
+- !private ["SD", "keys"]
+- !private ["SD", "mapValues"]
+- !private ["SD", "subscript"]
+- !private ["10Optimizely13DispatchEventV", "activateEventKey"]
+- !private ["10Optimizely13DispatchEventV", "deinit"]
+- !private ["10Optimizely13DispatchEventV", "init"]
+- !private ["10Optimizely13DispatchEventV", "revenueKey"]
+- !private ["10Optimizely13DispatchEventV", "valueKey"]
+- !private ["Sd", "init"]
+- !private ["SE", "accountId"]
+- !private ["SE", "activateEventKey"]
+- !private ["SE", "anonymizeIP"]
+- !private ["SE", "append"]
+- !private ["SE", "botFiltering"]
+- ["SE", "double"]
+- !private ["SE", "extractRevenueFromEventTags"]
+- !private ["SE", "extractValueFromEventTags"]
+- !private ["SE", "failedToExtractRevenueFromEventTags"]
+- !private ["SE", "failedToExtractValueFromEventTags"]
+- !private ["SE", "filter"]
+- !private ["SE", "hasPrefix"]
+- !private ["SE", "id"]
+- !private ["SE", "init"]
+- ["SE", "int"]
+- !private ["SE", "key"]
+- !private ["SE", "keys"]
+- !private ["SE", "layerId"]
+- !private ["SE", "mapValues"]
+- !private ["SE", "projectId"]
+- !private ["SE", "revenueKey"]
+- !private ["SE", "revision"]
+- !private ["SE", "stringValue"]
+- !private ["SE", "subscript"]
+- !private ["SE", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["SE", "timeIntervalSinceReferenceDate"]
+- !private ["SE", "unrecognizedAttribute"]
+- !private ["SE", "uuidString"]
+- !private ["SE", "valueKey"]
+- !private ["SQ", "accountId"]
+- !private ["SQ", "activateEventKey"]
+- !private ["SQ", "anonymizeIP"]
+- !private ["SQ", "append"]
+- !private ["SQ", "botFiltering"]
+- ["SQ", "double"]
+- !private ["SQ", "extractRevenueFromEventTags"]
+- !private ["SQ", "extractValueFromEventTags"]
+- !private ["SQ", "failedToExtractRevenueFromEventTags"]
+- !private ["SQ", "failedToExtractValueFromEventTags"]
+- !private ["SQ", "filter"]
+- ["SQ", "getLogger"]
+- !private ["SQ", "hasPrefix"]
+- !private ["SQ", "id"]
+- !private ["SQ", "init"]
+- ["SQ", "int"]
+- !private ["SQ", "key"]
+- !private ["SQ", "keys"]
+- !private ["SQ", "layerId"]
+- !private ["SQ", "mapValues"]
+- !private ["SQ", "projectId"]
+- !private ["SQ", "revenueKey"]
+- !private ["SQ", "revision"]
+- !private ["SQ", "stringValue"]
+- !private ["SQ", "subscript"]
+- !private ["SQ", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["SQ", "timeIntervalSinceReferenceDate"]
+- !private ["SQ", "unrecognizedAttribute"]
+- !private ["SQ", "uuidString"]
+- !private ["SQ", "valueKey"]
+- !private ["s5ErrorP", "extractRevenueFromEventTags"]
+- !private ["s5ErrorP", "extractValueFromEventTags"]
+- !private ["s5ErrorP", "failedToExtractRevenueFromEventTags"]
+- !private ["s5ErrorP", "failedToExtractValueFromEventTags"]
+- !private ["s5ErrorP", "unrecognizedAttribute"]
+- !private ["10Optimizely5EventV", "id"]
+- !private ["10Optimizely5EventV", "key"]
+- !private ["10Optimizely14EventAttributeV", "deinit"]
+- !private ["10Optimizely14EventAttributeV", "init"]
+- !private ["10Optimizely10ExperimentV", "id"]
+- !private ["10Optimizely10ExperimentV", "layerId"]
+- !private ["s25ExpressibleByArrayLiteralP", "append"]
+- !private ["s25ExpressibleByArrayLiteralP", "init"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "filter"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "keys"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "mapValues"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "subscript"]
+- !private ["s43ExpressibleByExtendedGraphemeClusterLiteralP", "extractRevenueFromEventTags"]
+- !private ["s43ExpressibleByExtendedGraphemeClusterLiteralP", "extractValueFromEventTags"]
+- !private ["s43ExpressibleByExtendedGraphemeClusterLiteralP", "failedToExtractRevenueFromEventTags"]
+- !private ["s43ExpressibleByExtendedGraphemeClusterLiteralP", "failedToExtractValueFromEventTags"]
+- !private ["s43ExpressibleByExtendedGraphemeClusterLiteralP", "hasPrefix"]
+- !private ["s43ExpressibleByExtendedGraphemeClusterLiteralP", "unrecognizedAttribute"]
+- !private ["s25ExpressibleByFloatLiteralP", "init"]
+- !private ["s27ExpressibleByIntegerLiteralP", "init"]
+- !private ["s23ExpressibleByNilLiteralP", "accountId"]
+- !private ["s23ExpressibleByNilLiteralP", "anonymizeIP"]
+- !private ["s23ExpressibleByNilLiteralP", "botFiltering"]
+- !private ["s23ExpressibleByNilLiteralP", "extractRevenueFromEventTags"]
+- !private ["s23ExpressibleByNilLiteralP", "extractValueFromEventTags"]
+- !private ["s23ExpressibleByNilLiteralP", "failedToExtractRevenueFromEventTags"]
+- !private ["s23ExpressibleByNilLiteralP", "failedToExtractValueFromEventTags"]
+- !private ["s23ExpressibleByNilLiteralP", "projectId"]
+- !private ["s23ExpressibleByNilLiteralP", "revision"]
+- !private ["s23ExpressibleByNilLiteralP", "unrecognizedAttribute"]
+- !private ["s32ExpressibleByStringInterpolationP", "extractRevenueFromEventTags"]
+- !private ["s32ExpressibleByStringInterpolationP", "extractValueFromEventTags"]
+- !private ["s32ExpressibleByStringInterpolationP", "failedToExtractRevenueFromEventTags"]
+- !private ["s32ExpressibleByStringInterpolationP", "failedToExtractValueFromEventTags"]
+- !private ["s32ExpressibleByStringInterpolationP", "hasPrefix"]
+- !private ["s32ExpressibleByStringInterpolationP", "unrecognizedAttribute"]
+- !private ["s26ExpressibleByStringLiteralP", "extractRevenueFromEventTags"]
+- !private ["s26ExpressibleByStringLiteralP", "extractValueFromEventTags"]
+- !private ["s26ExpressibleByStringLiteralP", "failedToExtractRevenueFromEventTags"]
+- !private ["s26ExpressibleByStringLiteralP", "failedToExtractValueFromEventTags"]
+- !private ["s26ExpressibleByStringLiteralP", "hasPrefix"]
+- !private ["s26ExpressibleByStringLiteralP", "unrecognizedAttribute"]
+- !private ["s33ExpressibleByUnicodeScalarLiteralP", "extractRevenueFromEventTags"]
+- !private ["s33ExpressibleByUnicodeScalarLiteralP", "extractValueFromEventTags"]
+- !private ["s33ExpressibleByUnicodeScalarLiteralP", "failedToExtractRevenueFromEventTags"]
+- !private ["s33ExpressibleByUnicodeScalarLiteralP", "failedToExtractValueFromEventTags"]
+- !private ["s33ExpressibleByUnicodeScalarLiteralP", "hasPrefix"]
+- !private ["s33ExpressibleByUnicodeScalarLiteralP", "unrecognizedAttribute"]
+- !private ["s17FixedWidthIntegerP", "init"]
+- !private ["SF", "init"]
+- !private ["SH", "accountId"]
+- !private ["SH", "anonymizeIP"]
+- !private ["SH", "append"]
+- !private ["SH", "botFiltering"]
+- !private ["SH", "extractRevenueFromEventTags"]
+- !private ["SH", "extractValueFromEventTags"]
+- !private ["SH", "failedToExtractRevenueFromEventTags"]
+- !private ["SH", "failedToExtractValueFromEventTags"]
+- !private ["SH", "filter"]
+- ["SH", "getLogger"]
+- !private ["SH", "hasPrefix"]
+- !private ["SH", "init"]
+- !private ["SH", "keys"]
+- !private ["SH", "mapValues"]
+- !private ["SH", "projectId"]
+- !private ["SH", "revision"]
+- !private ["SH", "subscript"]
+- !private ["SH", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["SH", "timeIntervalSinceReferenceDate"]
+- !private ["SH", "unrecognizedAttribute"]
+- !private ["SH", "uuidString"]
+- !private ["s5Int64V", "init"]
+- !private ["10Foundation11JSONEncoderC", "encode"]
+- !private ["10Foundation11JSONEncoderC", "init"]
+- !private ["10Foundation14LocalizedErrorP", "extractRevenueFromEventTags"]
+- !private ["10Foundation14LocalizedErrorP", "extractValueFromEventTags"]
+- !private ["10Foundation14LocalizedErrorP", "failedToExtractRevenueFromEventTags"]
+- !private ["10Foundation14LocalizedErrorP", "failedToExtractValueFromEventTags"]
+- !private ["10Foundation14LocalizedErrorP", "unrecognizedAttribute"]
+- !private ["10Optimizely10LogMessageO", "extractRevenueFromEventTags"]
+- !private ["10Optimizely10LogMessageO", "extractValueFromEventTags"]
+- !private ["10Optimizely10LogMessageO", "failedToExtractRevenueFromEventTags"]
+- !private ["10Optimizely10LogMessageO", "failedToExtractValueFromEventTags"]
+- !private ["10Optimizely10LogMessageO", "unrecognizedAttribute"]
+- !private ["s25LosslessStringConvertibleP", "extractRevenueFromEventTags"]
+- !private ["s25LosslessStringConvertibleP", "extractValueFromEventTags"]
+- !private ["s25LosslessStringConvertibleP", "failedToExtractRevenueFromEventTags"]
+- !private ["s25LosslessStringConvertibleP", "failedToExtractValueFromEventTags"]
+- !private ["s25LosslessStringConvertibleP", "hasPrefix"]
+- !private ["s25LosslessStringConvertibleP", "init"]
+- !private ["s25LosslessStringConvertibleP", "unrecognizedAttribute"]
+- !private ["s10MirrorPathP", "extractRevenueFromEventTags"]
+- !private ["s10MirrorPathP", "extractValueFromEventTags"]
+- !private ["s10MirrorPathP", "failedToExtractRevenueFromEventTags"]
+- !private ["s10MirrorPathP", "failedToExtractValueFromEventTags"]
+- !private ["s10MirrorPathP", "hasPrefix"]
+- !private ["s10MirrorPathP", "unrecognizedAttribute"]
+- !private ["SM", "append"]
+- !private ["SM", "init"]
+- !private ["10Foundation19MutableDataProtocolP", "append"]
+- !private ["10Foundation19MutableDataProtocolP", "init"]
+- !private ["So8NSCodingP", "hasPrefix"]
+- !private ["So9NSCopyingP", "hasPrefix"]
+- !private ["So21NSItemProviderReadingP", "hasPrefix"]
+- !private ["So21NSItemProviderWritingP", "hasPrefix"]
+- !private ["So16NSMutableCopyingP", "hasPrefix"]
+- ["So8NSObjectC", "getLogger"]
+- !private ["So8NSObjectC", "hasPrefix"]
+- ["So8NSObjectP", "getLogger"]
+- !private ["So8NSObjectP", "hasPrefix"]
+- !private ["So14NSSecureCodingP", "hasPrefix"]
+- !private ["So8NSStringC", "hasPrefix"]
+- !private ["Sj", "init"]
+- !private ["10Optimizely9OPTLoggerP", "d"]
+- !private ["10Optimizely9OPTLoggerP", "i"]
+- ["10Optimizely16OPTLoggerFactoryC", "getLogger"]
+- !private ["10Optimizely0A5ErrorO", "extractRevenueFromEventTags"]
+- !private ["10Optimizely0A5ErrorO", "extractValueFromEventTags"]
+- !private ["10Optimizely0A5ErrorO", "failedToExtractRevenueFromEventTags"]
+- !private ["10Optimizely0A5ErrorO", "failedToExtractValueFromEventTags"]
+- !private ["10Optimizely0A5ErrorO", "unrecognizedAttribute"]
+- !private ["Sq", "accountId"]
+- !private ["Sq", "anonymizeIP"]
+- !private ["Sq", "botFiltering"]
+- !private ["Sq", "extractRevenueFromEventTags"]
+- !private ["Sq", "extractValueFromEventTags"]
+- !private ["Sq", "failedToExtractRevenueFromEventTags"]
+- !private ["Sq", "failedToExtractValueFromEventTags"]
+- !private ["Sq", "projectId"]
+- !private ["Sq", "revision"]
+- !private ["Sq", "unrecognizedAttribute"]
+- !private ["10Optimizely7ProjectV", "accountId"]
+- !private ["10Optimizely7ProjectV", "anonymizeIP"]
+- !private ["10Optimizely7ProjectV", "botFiltering"]
+- !private ["10Optimizely7ProjectV", "projectId"]
+- !private ["10Optimizely7ProjectV", "revision"]
+- !private ["10Optimizely13ProjectConfigC", "getAttributeId"]
+- !private ["10Optimizely13ProjectConfigC", "getEvent"]
+- !private ["10Optimizely13ProjectConfigC", "project"]
+- !private ["10Optimizely15ProjectProtocolP", "accountId"]
+- !private ["10Optimizely15ProjectProtocolP", "anonymizeIP"]
+- !private ["10Optimizely15ProjectProtocolP", "botFiltering"]
+- !private ["10Optimizely15ProjectProtocolP", "projectId"]
+- !private ["10Optimizely15ProjectProtocolP", "revision"]
+- !private ["Sk", "append"]
+- !private ["Sk", "init"]
+- !private ["Sm", "append"]
+- !private ["Sm", "extractRevenueFromEventTags"]
+- !private ["Sm", "extractValueFromEventTags"]
+- !private ["Sm", "failedToExtractRevenueFromEventTags"]
+- !private ["Sm", "failedToExtractValueFromEventTags"]
+- !private ["Sm", "hasPrefix"]
+- !private ["Sm", "init"]
+- !private ["Sm", "unrecognizedAttribute"]
+- !private ["10Foundation20ReferenceConvertibleP", "init"]
+- !private ["10Foundation20ReferenceConvertibleP", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["10Foundation20ReferenceConvertibleP", "timeIntervalSinceReferenceDate"]
+- !private ["10Foundation20ReferenceConvertibleP", "uuidString"]
+- !private ["s10SIMDScalarP", "init"]
+- !private ["ST", "append"]
+- !private ["ST", "extractRevenueFromEventTags"]
+- !private ["ST", "extractValueFromEventTags"]
+- !private ["ST", "failedToExtractRevenueFromEventTags"]
+- !private ["ST", "failedToExtractValueFromEventTags"]
+- !private ["ST", "filter"]
+- !private ["ST", "hasPrefix"]
+- !private ["ST", "init"]
+- !private ["ST", "keys"]
+- !private ["ST", "mapValues"]
+- !private ["ST", "subscript"]
+- !private ["ST", "unrecognizedAttribute"]
+- !private ["SZ", "init"]
+- !private ["s13SignedNumericP", "init"]
+- !private ["10Optimizely8SnapshotV", "deinit"]
+- !private ["10Optimizely8SnapshotV", "init"]
+- !private ["Sx", "init"]
+- !private ["SS", "extractRevenueFromEventTags"]
+- !private ["SS", "extractValueFromEventTags"]
+- !private ["SS", "failedToExtractRevenueFromEventTags"]
+- !private ["SS", "failedToExtractValueFromEventTags"]
+- !private ["SS", "hasPrefix"]
+- !private ["SS", "unrecognizedAttribute"]
+- !private ["Sy", "extractRevenueFromEventTags"]
+- !private ["Sy", "extractValueFromEventTags"]
+- !private ["Sy", "failedToExtractRevenueFromEventTags"]
+- !private ["Sy", "failedToExtractValueFromEventTags"]
+- !private ["Sy", "hasPrefix"]
+- !private ["Sy", "unrecognizedAttribute"]
+- !private ["s16TextOutputStreamP", "extractRevenueFromEventTags"]
+- !private ["s16TextOutputStreamP", "extractValueFromEventTags"]
+- !private ["s16TextOutputStreamP", "failedToExtractRevenueFromEventTags"]
+- !private ["s16TextOutputStreamP", "failedToExtractValueFromEventTags"]
+- !private ["s16TextOutputStreamP", "hasPrefix"]
+- !private ["s16TextOutputStreamP", "unrecognizedAttribute"]
+- !private ["s20TextOutputStreamableP", "extractRevenueFromEventTags"]
+- !private ["s20TextOutputStreamableP", "extractValueFromEventTags"]
+- !private ["s20TextOutputStreamableP", "failedToExtractRevenueFromEventTags"]
+- !private ["s20TextOutputStreamableP", "failedToExtractValueFromEventTags"]
+- !private ["s20TextOutputStreamableP", "hasPrefix"]
+- !private ["s20TextOutputStreamableP", "init"]
+- !private ["s20TextOutputStreamableP", "unrecognizedAttribute"]
+- !private ["10Foundation4UUIDV", "init"]
+- !private ["10Foundation4UUIDV", "uuidString"]
+- !private ["10Optimizely5UtilsC", "sdkVersion"]
+- !private ["10Optimizely9VariationV", "id"]
+- !private ["10Optimizely7VisitorV", "deinit"]
+- !private ["10Optimizely7VisitorV", "init"]
+- !private ["s14_ArrayProtocolP", "append"]
+- !private ["s14_ArrayProtocolP", "init"]
+- !private ["s15_CVarArgAlignedP", "init"]
+- !private ["s22_CVarArgPassedAsDoubleP", "init"]
+- !private ["s30_CustomPlaygroundQuickLookableP", "extractRevenueFromEventTags"]
+- !private ["s30_CustomPlaygroundQuickLookableP", "extractValueFromEventTags"]
+- !private ["s30_CustomPlaygroundQuickLookableP", "failedToExtractRevenueFromEventTags"]
+- !private ["s30_CustomPlaygroundQuickLookableP", "failedToExtractValueFromEventTags"]
+- !private ["s30_CustomPlaygroundQuickLookableP", "hasPrefix"]
+- !private ["s30_CustomPlaygroundQuickLookableP", "init"]
+- !private ["s30_CustomPlaygroundQuickLookableP", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["s30_CustomPlaygroundQuickLookableP", "timeIntervalSinceReferenceDate"]
+- !private ["s30_CustomPlaygroundQuickLookableP", "unrecognizedAttribute"]
+- !private ["s24_DestructorSafeContainerP", "append"]
+- !private ["s24_DestructorSafeContainerP", "init"]
+- !private ["s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP", "extractRevenueFromEventTags"]
+- !private ["s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP", "extractValueFromEventTags"]
+- !private ["s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP", "failedToExtractRevenueFromEventTags"]
+- !private ["s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP", "failedToExtractValueFromEventTags"]
+- !private ["s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP", "hasPrefix"]
+- !private ["s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP", "unrecognizedAttribute"]
+- !private ["s33_ExpressibleByBuiltinFloatLiteralP", "init"]
+- !private ["s35_ExpressibleByBuiltinIntegerLiteralP", "init"]
+- !private ["s34_ExpressibleByBuiltinStringLiteralP", "extractRevenueFromEventTags"]
+- !private ["s34_ExpressibleByBuiltinStringLiteralP", "extractValueFromEventTags"]
+- !private ["s34_ExpressibleByBuiltinStringLiteralP", "failedToExtractRevenueFromEventTags"]
+- !private ["s34_ExpressibleByBuiltinStringLiteralP", "failedToExtractValueFromEventTags"]
+- !private ["s34_ExpressibleByBuiltinStringLiteralP", "hasPrefix"]
+- !private ["s34_ExpressibleByBuiltinStringLiteralP", "unrecognizedAttribute"]
+- !private ["s41_ExpressibleByBuiltinUnicodeScalarLiteralP", "extractRevenueFromEventTags"]
+- !private ["s41_ExpressibleByBuiltinUnicodeScalarLiteralP", "extractValueFromEventTags"]
+- !private ["s41_ExpressibleByBuiltinUnicodeScalarLiteralP", "failedToExtractRevenueFromEventTags"]
+- !private ["s41_ExpressibleByBuiltinUnicodeScalarLiteralP", "failedToExtractValueFromEventTags"]
+- !private ["s41_ExpressibleByBuiltinUnicodeScalarLiteralP", "hasPrefix"]
+- !private ["s41_ExpressibleByBuiltinUnicodeScalarLiteralP", "unrecognizedAttribute"]
+- !private ["s19_HasContiguousBytesP", "append"]
+- !private ["s19_HasContiguousBytesP", "extractRevenueFromEventTags"]
+- !private ["s19_HasContiguousBytesP", "extractValueFromEventTags"]
+- !private ["s19_HasContiguousBytesP", "failedToExtractRevenueFromEventTags"]
+- !private ["s19_HasContiguousBytesP", "failedToExtractValueFromEventTags"]
+- !private ["s19_HasContiguousBytesP", "hasPrefix"]
+- !private ["s19_HasContiguousBytesP", "init"]
+- !private ["s19_HasContiguousBytesP", "unrecognizedAttribute"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "append"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "filter"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "hasPrefix"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "init"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "keys"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "mapValues"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "subscript"]
+- ["10Foundation27_KeyValueCodingAndObservingP", "getLogger"]
+- !private ["10Foundation27_KeyValueCodingAndObservingP", "hasPrefix"]
+- !private ["s21_ObjectiveCBridgeableP", "accountId"]
+- !private ["s21_ObjectiveCBridgeableP", "anonymizeIP"]
+- !private ["s21_ObjectiveCBridgeableP", "append"]
+- !private ["s21_ObjectiveCBridgeableP", "botFiltering"]
+- !private ["s21_ObjectiveCBridgeableP", "extractRevenueFromEventTags"]
+- !private ["s21_ObjectiveCBridgeableP", "extractValueFromEventTags"]
+- !private ["s21_ObjectiveCBridgeableP", "failedToExtractRevenueFromEventTags"]
+- !private ["s21_ObjectiveCBridgeableP", "failedToExtractValueFromEventTags"]
+- !private ["s21_ObjectiveCBridgeableP", "filter"]
+- !private ["s21_ObjectiveCBridgeableP", "hasPrefix"]
+- !private ["s21_ObjectiveCBridgeableP", "init"]
+- !private ["s21_ObjectiveCBridgeableP", "keys"]
+- !private ["s21_ObjectiveCBridgeableP", "mapValues"]
+- !private ["s21_ObjectiveCBridgeableP", "projectId"]
+- !private ["s21_ObjectiveCBridgeableP", "revision"]
+- !private ["s21_ObjectiveCBridgeableP", "subscript"]
+- !private ["s21_ObjectiveCBridgeableP", "timeIntervalBetween1970AndReferenceDate"]
+- !private ["s21_ObjectiveCBridgeableP", "timeIntervalSinceReferenceDate"]
+- !private ["s21_ObjectiveCBridgeableP", "unrecognizedAttribute"]
+- !private ["s21_ObjectiveCBridgeableP", "uuidString"]
+depends-nominal:
+- !private "s18AdditiveArithmeticP"
+- !private "Sa"
+- "10Optimizely14AttributeValueO"
+- !private "10Optimizely9ConstantsV10AttributesV"
+- !private "10Optimizely10BatchEventV"
+- "10Optimizely17BatchEventBuilderC"
+- !private "SK"
+- !private "SB"
+- !private "Sz"
+- "s7CVarArgP"
+- !private "Sl"
+- !private "SL"
+- !private "10Optimizely9ConstantsV"
+- !private "10Foundation15ContiguousBytesP"
+- "s28CustomDebugStringConvertibleP"
+- !private "s17CustomReflectableP"
+- "s23CustomStringConvertibleP"
+- !private "10Foundation12DataProtocolP"
+- !private "10Foundation4DateV"
+- !private "10Optimizely8DecisionV"
+- "Se"
+- !private "SD"
+- !private "10Optimizely13DispatchEventV"
+- !private "Sd"
+- "SE"
+- "SQ"
+- !private "s5ErrorP"
+- !private "10Optimizely5EventV"
+- !private "10Optimizely14EventAttributeV"
+- !private "10Optimizely10ExperimentV"
+- !private "s25ExpressibleByArrayLiteralP"
+- !private "s30ExpressibleByDictionaryLiteralP"
+- !private "s43ExpressibleByExtendedGraphemeClusterLiteralP"
+- !private "s25ExpressibleByFloatLiteralP"
+- !private "s27ExpressibleByIntegerLiteralP"
+- !private "s23ExpressibleByNilLiteralP"
+- !private "s32ExpressibleByStringInterpolationP"
+- !private "s26ExpressibleByStringLiteralP"
+- !private "s33ExpressibleByUnicodeScalarLiteralP"
+- !private "s17FixedWidthIntegerP"
+- !private "SF"
+- "SH"
+- !private "s5Int64V"
+- !private "10Foundation11JSONEncoderC"
+- !private "10Foundation14LocalizedErrorP"
+- !private "10Optimizely10LogMessageO"
+- !private "s25LosslessStringConvertibleP"
+- !private "s10MirrorPathP"
+- !private "SM"
+- !private "10Foundation19MutableDataProtocolP"
+- !private "So8NSCodingP"
+- !private "So9NSCopyingP"
+- !private "So21NSItemProviderReadingP"
+- !private "So21NSItemProviderWritingP"
+- !private "So16NSMutableCopyingP"
+- "So8NSObjectC"
+- "So8NSObjectP"
+- !private "So14NSSecureCodingP"
+- !private "So8NSStringC"
+- !private "Sj"
+- !private "10Optimizely9OPTLoggerP"
+- "10Optimizely16OPTLoggerFactoryC"
+- !private "10Optimizely0A5ErrorO"
+- !private "Sq"
+- !private "10Optimizely7ProjectV"
+- !private "10Optimizely13ProjectConfigC"
+- !private "10Optimizely15ProjectProtocolP"
+- !private "Sk"
+- !private "Sm"
+- !private "10Foundation20ReferenceConvertibleP"
+- !private "s10SIMDScalarP"
+- !private "ST"
+- !private "SZ"
+- !private "s13SignedNumericP"
+- !private "10Optimizely8SnapshotV"
+- !private "Sx"
+- !private "SS"
+- !private "Sy"
+- !private "s16TextOutputStreamP"
+- !private "s20TextOutputStreamableP"
+- !private "10Foundation4UUIDV"
+- !private "10Optimizely5UtilsC"
+- !private "10Optimizely9VariationV"
+- !private "10Optimizely7VisitorV"
+- !private "s14_ArrayProtocolP"
+- !private "s15_CVarArgAlignedP"
+- !private "s22_CVarArgPassedAsDoubleP"
+- !private "s30_CustomPlaygroundQuickLookableP"
+- !private "s24_DestructorSafeContainerP"
+- !private "s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP"
+- !private "s33_ExpressibleByBuiltinFloatLiteralP"
+- !private "s35_ExpressibleByBuiltinIntegerLiteralP"
+- !private "s34_ExpressibleByBuiltinStringLiteralP"
+- !private "s41_ExpressibleByBuiltinUnicodeScalarLiteralP"
+- !private "s19_HasContiguousBytesP"
+- !private "s35_HasCustomAnyHashableRepresentationP"
+- "10Foundation27_KeyValueCodingAndObservingP"
+- !private "s21_ObjectiveCBridgeableP"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "eb36ed312642d2b37338985a287a748d"

@@ -1,0 +1,347 @@
+{
+  "": {
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/master.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Customization/DefaultEventDispatcher.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultEventDispatcher.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultEventDispatcher.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultEventDispatcher~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultEventDispatcher.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Customization/DefaultLogger.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultLogger.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultLogger.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultLogger~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultLogger.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Customization/DefaultUserProfileService.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultUserProfileService.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultUserProfileService.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultUserProfileService~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/DefaultUserProfileService.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Customization/Protocols/OPTEventDispatcher.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTEventDispatcher.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTEventDispatcher.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTEventDispatcher~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTEventDispatcher.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Customization/Protocols/OPTLogger.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTLogger.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTLogger.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTLogger~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTLogger.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Customization/Protocols/OPTUserProfileService.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTUserProfileService.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTUserProfileService.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTUserProfileService~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Customization/Protocols/OPTUserProfileService.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Attribute.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Attribute.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Attribute.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Attribute~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Attribute.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Audience/AttributeValue.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/AttributeValue.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/AttributeValue.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/AttributeValue~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/AttributeValue.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Audience/Audience.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/Audience.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/Audience.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/Audience~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/Audience.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Audience/ConditionHolder.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/ConditionHolder.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/ConditionHolder.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/ConditionHolder~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/ConditionHolder.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Audience/ConditionLeaf.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/ConditionLeaf.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/ConditionLeaf.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/ConditionLeaf~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/ConditionLeaf.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Audience/UserAttribute.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/UserAttribute.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/UserAttribute.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/UserAttribute~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Audience/UserAttribute.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/DispatchEvents/BatchEvent.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/DispatchEvents/BatchEvent.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/DispatchEvents/BatchEvent.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/DispatchEvents/BatchEvent~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/DispatchEvents/BatchEvent.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/DispatchEvents/EventForDispatch.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/DispatchEvents/EventForDispatch.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/DispatchEvents/EventForDispatch.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/DispatchEvents/EventForDispatch~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/DispatchEvents/EventForDispatch.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Event.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Event.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Event.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Event~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Event.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Experiment.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Experiment.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Experiment.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Experiment~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Experiment.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/FeatureFlag.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/FeatureFlag.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/FeatureFlag.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/FeatureFlag~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/FeatureFlag.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/FeatureVariable.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/FeatureVariable.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/FeatureVariable.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/FeatureVariable~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/FeatureVariable.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Group.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Group.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Group.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Group~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Group.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Project.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Project.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Project.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Project~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Project.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/ProjectConfig.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/ProjectConfig.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/ProjectConfig.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/ProjectConfig~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/ProjectConfig.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Rollout.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Rollout.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Rollout.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Rollout~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Rollout.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/TrafficAllocation.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/TrafficAllocation.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/TrafficAllocation.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/TrafficAllocation~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/TrafficAllocation.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Variable.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Variable.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Variable.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Variable~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Variable.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Data Model/Variation.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Variation.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Variation.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Variation~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Data Model/Variation.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Extensions/Array+Extension.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/Array+Extension.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/Array+Extension.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/Array+Extension~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/Array+Extension.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Extensions/ArrayEventForDispatch+Extension.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/ArrayEventForDispatch+Extension.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/ArrayEventForDispatch+Extension.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/ArrayEventForDispatch+Extension~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/ArrayEventForDispatch+Extension.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Extensions/DataStoreQueueStackImpl+Extension.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/DataStoreQueueStackImpl+Extension.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/DataStoreQueueStackImpl+Extension.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/DataStoreQueueStackImpl+Extension~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/DataStoreQueueStackImpl+Extension.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Extensions/OptimizelyClient+Extension.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/OptimizelyClient+Extension.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/OptimizelyClient+Extension.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/OptimizelyClient+Extension~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Extensions/OptimizelyClient+Extension.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Implementation/Datastore/DataStoreFile.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreFile.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreFile.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreFile~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreFile.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Implementation/Datastore/DataStoreMemory.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreMemory.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreMemory.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreMemory~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreMemory.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Implementation/Datastore/DataStoreQueueStackImpl.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreQueueStackImpl.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreQueueStackImpl.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreQueueStackImpl~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreQueueStackImpl.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Implementation/Datastore/DataStoreUserDefaults.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreUserDefaults.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreUserDefaults.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreUserDefaults~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Datastore/DataStoreUserDefaults.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Implementation/DefaultBucketer.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultBucketer.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultBucketer.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultBucketer~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultBucketer.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Implementation/DefaultDatafileHandler.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultDatafileHandler.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultDatafileHandler.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultDatafileHandler~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultDatafileHandler.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Implementation/DefaultDecisionService.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultDecisionService.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultDecisionService.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultDecisionService~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultDecisionService.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Implementation/DefaultNotificationCenter.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultNotificationCenter.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultNotificationCenter.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultNotificationCenter~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/DefaultNotificationCenter.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Implementation/Events/BatchEventBuilder.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Events/BatchEventBuilder.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Events/BatchEventBuilder.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Events/BatchEventBuilder~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Implementation/Events/BatchEventBuilder.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Optimizely/OptimizelyClient+ObjC.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyClient+ObjC.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyClient+ObjC.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyClient+ObjC~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyClient+ObjC.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Optimizely/OptimizelyClient.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyClient.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyClient.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyClient.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Optimizely/OptimizelyError.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyError.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyError.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyError~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyError.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Optimizely/OptimizelyLogLevel.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyLogLevel.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyLogLevel.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyLogLevel~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyLogLevel.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Optimizely/OptimizelyResult.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyResult.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyResult.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyResult~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Optimizely/OptimizelyResult.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Protocols/BackgroundingCallbacks.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/BackgroundingCallbacks.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/BackgroundingCallbacks.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/BackgroundingCallbacks~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/BackgroundingCallbacks.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Protocols/DataStoreQueueStack.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/DataStoreQueueStack.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/DataStoreQueueStack.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/DataStoreQueueStack~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/DataStoreQueueStack.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Protocols/OPTBucketer.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTBucketer.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTBucketer.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTBucketer~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTBucketer.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Protocols/OPTDataStore.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDataStore.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDataStore.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDataStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDataStore.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Protocols/OPTDatafileHandler.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDatafileHandler.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDatafileHandler.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDatafileHandler~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDatafileHandler.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Protocols/OPTDecisionService.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDecisionService.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDecisionService.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDecisionService~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTDecisionService.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Protocols/OPTNotificationCenter.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTNotificationCenter.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTNotificationCenter.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTNotificationCenter~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Protocols/OPTNotificationCenter.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Utils/AtomicProperty.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/AtomicProperty.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/AtomicProperty.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/AtomicProperty~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/AtomicProperty.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Utils/Constants.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/Constants.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/Constants.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/Constants~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/Constants.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Utils/HandlerRegistryService.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/HandlerRegistryService.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/HandlerRegistryService.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/HandlerRegistryService~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/HandlerRegistryService.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Utils/LogMessage.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/LogMessage.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/LogMessage.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/LogMessage~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/LogMessage.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Utils/MurmurHash3.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/MurmurHash3.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/MurmurHash3.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/MurmurHash3~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/MurmurHash3.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Utils/SDKVersion.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/SDKVersion.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/SDKVersion.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/SDKVersion~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/SDKVersion.swiftdeps"
+  },
+  "/Users/jkim/Desktop/FS/swift-sdk/OptimizelySDK/Sources/Utils/Utils.swift": {
+    "dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/Utils.d",
+    "object": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/Utils.swift.o",
+    "swiftmodule": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/Utils~partial.swiftmodule",
+    "swift-dependencies": "/Users/jkim/Desktop/FS/swift-sdk/.build/x86_64-apple-macosx/debug/Optimizely.build/Utils/Utils.swiftdeps"
+  }
+}

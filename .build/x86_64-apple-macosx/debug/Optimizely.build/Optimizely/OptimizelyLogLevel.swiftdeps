@@ -1,0 +1,157 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "OptimizelyLogLevel"
+- "<"
+provides-nominal:
+- "10Optimizely0A8LogLevelO"
+provides-member:
+- ["10Optimizely0A8LogLevelO", ""]
+provides-dynamic-lookup:
+depends-top-level:
+- "<"
+- "<="
+- "=="
+- ">"
+- ">="
+- "Bool"
+- "Comparable"
+- "Int"
+- "OptimizelyLogLevel"
+- "String"
+- !private "unsafeBitCast"
+- !private "~="
+depends-member:
+- ["SL", "<"]
+- ["SL", "<="]
+- ["SL", "=="]
+- ["SL", ">"]
+- ["SL", ">="]
+- ["SL", "RawValue"]
+- ["SL", ""]
+- ["SL", "_Default_RawValue"]
+- ["SL", "_rawHashValue"]
+- ["SL", "debug"]
+- ["SL", "error"]
+- ["SL", "hash"]
+- ["SL", "hashValue"]
+- ["SL", "info"]
+- ["SL", "init"]
+- ["SL", "off"]
+- ["SL", "rawValue"]
+- !private ["SL", "unsafeBitCast"]
+- ["SL", "verbose"]
+- ["SL", "warning"]
+- ["SQ", "<"]
+- ["SQ", "<="]
+- ["SQ", "=="]
+- ["SQ", ">"]
+- ["SQ", ">="]
+- ["SQ", "RawValue"]
+- ["SQ", ""]
+- ["SQ", "_Default_RawValue"]
+- ["SQ", "_rawHashValue"]
+- ["SQ", "debug"]
+- ["SQ", "error"]
+- ["SQ", "hash"]
+- ["SQ", "hashValue"]
+- ["SQ", "info"]
+- ["SQ", "init"]
+- ["SQ", "off"]
+- ["SQ", "rawValue"]
+- !private ["SQ", "unsafeBitCast"]
+- ["SQ", "verbose"]
+- ["SQ", "warning"]
+- ["SH", "<"]
+- ["SH", "<="]
+- ["SH", "=="]
+- ["SH", ">"]
+- ["SH", ">="]
+- ["SH", "RawValue"]
+- ["SH", ""]
+- ["SH", "_Default_RawValue"]
+- ["SH", "_rawHashValue"]
+- ["SH", "debug"]
+- ["SH", "error"]
+- ["SH", "hash"]
+- ["SH", "hashValue"]
+- ["SH", "info"]
+- ["SH", "init"]
+- ["SH", "off"]
+- ["SH", "rawValue"]
+- !private ["SH", "unsafeBitCast"]
+- ["SH", "verbose"]
+- ["SH", "warning"]
+- ["10Optimizely0A8LogLevelO", "<"]
+- ["10Optimizely0A8LogLevelO", "<="]
+- ["10Optimizely0A8LogLevelO", "=="]
+- ["10Optimizely0A8LogLevelO", ">"]
+- ["10Optimizely0A8LogLevelO", ">="]
+- ["10Optimizely0A8LogLevelO", "Bool"]
+- ["10Optimizely0A8LogLevelO", "OptimizelyLogLevel"]
+- ["10Optimizely0A8LogLevelO", "RawValue"]
+- ["10Optimizely0A8LogLevelO", "String"]
+- ["10Optimizely0A8LogLevelO", "_Default_RawValue"]
+- ["10Optimizely0A8LogLevelO", "_rawHashValue"]
+- ["10Optimizely0A8LogLevelO", "debug"]
+- ["10Optimizely0A8LogLevelO", "deinit"]
+- ["10Optimizely0A8LogLevelO", "error"]
+- ["10Optimizely0A8LogLevelO", "hash"]
+- ["10Optimizely0A8LogLevelO", "hashValue"]
+- ["10Optimizely0A8LogLevelO", "info"]
+- ["10Optimizely0A8LogLevelO", "init"]
+- ["10Optimizely0A8LogLevelO", "name"]
+- ["10Optimizely0A8LogLevelO", "off"]
+- ["10Optimizely0A8LogLevelO", "rawValue"]
+- !private ["10Optimizely0A8LogLevelO", "unsafeBitCast"]
+- ["10Optimizely0A8LogLevelO", "verbose"]
+- ["10Optimizely0A8LogLevelO", "warning"]
+- ["SY", "<"]
+- ["SY", "<="]
+- ["SY", "=="]
+- ["SY", ">"]
+- ["SY", ">="]
+- ["SY", "RawValue"]
+- ["SY", ""]
+- ["SY", "_Default_RawValue"]
+- ["SY", "_rawHashValue"]
+- ["SY", "debug"]
+- ["SY", "error"]
+- ["SY", "hash"]
+- ["SY", "hashValue"]
+- ["SY", "info"]
+- ["SY", "init"]
+- ["SY", "off"]
+- ["SY", "rawValue"]
+- !private ["SY", "unsafeBitCast"]
+- ["SY", "verbose"]
+- ["SY", "warning"]
+depends-nominal:
+- "SL"
+- "SQ"
+- "SH"
+- "10Optimizely0A8LogLevelO"
+- "SY"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "20e89675986fc78b3824c7c54d051479"

@@ -1,0 +1,155 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "NotificationType"
+- "OptimizelyExperimentData"
+- "OptimizelyVariationData"
+- "GenericListener"
+- "ActivateListener"
+- "TrackListener"
+- "DecisionListener"
+- "DatafileChangeListener"
+- "OPTNotificationCenter"
+- "ObjcOPTNotificationCenter"
+provides-nominal:
+- "10Optimizely16NotificationTypeO"
+- "10Optimizely21OPTNotificationCenterP"
+- "10Optimizely25ObjcOPTNotificationCenterP"
+provides-member:
+- ["10Optimizely16NotificationTypeO", ""]
+- ["10Optimizely21OPTNotificationCenterP", ""]
+- ["10Optimizely25ObjcOPTNotificationCenterP", ""]
+provides-dynamic-lookup:
+- "addActivateNotificationListener"
+- "addDatafileChangeNotificationListener"
+- "addDecisionNotificationListener"
+- "addTrackNotificationListener"
+- "clearAllNotificationListeners"
+- "clearNotificationListeners"
+- "removeNotificationListener"
+depends-top-level:
+- "=="
+- "ActivateListener"
+- "Data"
+- "DatafileChangeListener"
+- "DecisionListener"
+- "GenericListener"
+- "Int"
+- "NSNumber"
+- "NotificationType"
+- "OPTNotificationCenter"
+- "ObjcOPTNotificationCenter"
+- "OptimizelyAttributes"
+- "OptimizelyExperimentData"
+- "OptimizelyVariationData"
+- "String"
+- "TrackListener"
+- "Void"
+- !private "unsafeBitCast"
+- !private "~="
+depends-member:
+- ["SQ", "=="]
+- ["SQ", "RawValue"]
+- ["SQ", ""]
+- ["SQ", "_Default_RawValue"]
+- ["SQ", "_rawHashValue"]
+- ["SQ", "hash"]
+- ["SQ", "hashValue"]
+- ["SQ", "init"]
+- ["SQ", "rawValue"]
+- !private ["SQ", "unsafeBitCast"]
+- ["SH", "=="]
+- ["SH", "RawValue"]
+- ["SH", ""]
+- ["SH", "_Default_RawValue"]
+- ["SH", "_rawHashValue"]
+- ["SH", "hash"]
+- ["SH", "hashValue"]
+- ["SH", "init"]
+- ["SH", "rawValue"]
+- !private ["SH", "unsafeBitCast"]
+- ["10Optimizely16NotificationTypeO", "=="]
+- ["10Optimizely16NotificationTypeO", "RawValue"]
+- ["10Optimizely16NotificationTypeO", "_Default_RawValue"]
+- ["10Optimizely16NotificationTypeO", "_rawHashValue"]
+- ["10Optimizely16NotificationTypeO", "activate"]
+- ["10Optimizely16NotificationTypeO", "datafileChange"]
+- ["10Optimizely16NotificationTypeO", "decision"]
+- ["10Optimizely16NotificationTypeO", "deinit"]
+- ["10Optimizely16NotificationTypeO", "hash"]
+- ["10Optimizely16NotificationTypeO", "hashValue"]
+- ["10Optimizely16NotificationTypeO", "init"]
+- ["10Optimizely16NotificationTypeO", "rawValue"]
+- ["10Optimizely16NotificationTypeO", "track"]
+- !private ["10Optimizely16NotificationTypeO", "unsafeBitCast"]
+- ["10Optimizely21OPTNotificationCenterP", "ActivateListener"]
+- ["10Optimizely21OPTNotificationCenterP", "DatafileChangeListener"]
+- ["10Optimizely21OPTNotificationCenterP", "DecisionListener"]
+- ["10Optimizely21OPTNotificationCenterP", "GenericListener"]
+- ["10Optimizely21OPTNotificationCenterP", "Int"]
+- ["10Optimizely21OPTNotificationCenterP", "NotificationType"]
+- ["10Optimizely21OPTNotificationCenterP", "TrackListener"]
+- ["10Optimizely21OPTNotificationCenterP", "addActivateNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "addDatafileChangeNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "addDecisionNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "addGenericNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "addTrackNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "clearAllNotificationListeners"]
+- ["10Optimizely21OPTNotificationCenterP", "clearNotificationListeners"]
+- ["10Optimizely21OPTNotificationCenterP", "init"]
+- ["10Optimizely21OPTNotificationCenterP", "notificationId"]
+- ["10Optimizely21OPTNotificationCenterP", "removeNotificationListener"]
+- ["10Optimizely21OPTNotificationCenterP", "sendNotifications"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "Data"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "Int"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "NSNumber"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "NotificationType"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "String"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "Void"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "addActivateNotificationListener"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "addDatafileChangeNotificationListener"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "addDecisionNotificationListener"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "addTrackNotificationListener"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "clearAllNotificationListeners"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "clearNotificationListeners"]
+- ["10Optimizely25ObjcOPTNotificationCenterP", "removeNotificationListener"]
+- ["SY", "=="]
+- ["SY", "RawValue"]
+- ["SY", ""]
+- ["SY", "_Default_RawValue"]
+- ["SY", "_rawHashValue"]
+- ["SY", "hash"]
+- ["SY", "hashValue"]
+- ["SY", "init"]
+- ["SY", "rawValue"]
+- !private ["SY", "unsafeBitCast"]
+depends-nominal:
+- "SQ"
+- "SH"
+- "10Optimizely16NotificationTypeO"
+- "10Optimizely21OPTNotificationCenterP"
+- "10Optimizely25ObjcOPTNotificationCenterP"
+- "SY"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "877cbcfde5eaf98fa5ac56f453098172"

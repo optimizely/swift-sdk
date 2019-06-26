@@ -1,0 +1,270 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "HandlerRegistryService"
+- "ReInitializeStrategy"
+- "BinderProtocol"
+- "Binder"
+provides-nominal:
+- "10Optimizely22HandlerRegistryServiceC"
+- "10Optimizely22HandlerRegistryServiceC0D3KeyV"
+- "10Optimizely20ReInitializeStrategyO"
+- "10Optimizely14BinderProtocolP"
+- "10Optimizely6BinderC"
+provides-member:
+- ["10Optimizely22HandlerRegistryServiceC", ""]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", ""]
+- ["10Optimizely20ReInitializeStrategyO", ""]
+- ["10Optimizely14BinderProtocolP", ""]
+- ["10Optimizely6BinderC", ""]
+- ["10Optimizely22HandlerRegistryServiceC", "injectLogger"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectNotificationCenter"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectDecisionService"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectEventDispatcher"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectDatafileHandler"]
+provides-dynamic-lookup:
+depends-top-level:
+- !private "!="
+- !private "&&"
+- "=="
+- "AssignmentPrecedence"
+- "Binder"
+- "BinderProtocol"
+- "Bool"
+- "BooleanLiteralType"
+- "CastingPrecedence"
+- "HandlerRegistryService"
+- "Hashable"
+- "OPTDatafileHandler"
+- "OPTDecisionService"
+- "OPTEventDispatcher"
+- "OPTLogger"
+- "OPTNotificationCenter"
+- "ReInitializeStrategy"
+- "String"
+- !private "type"
+depends-member:
+- !private ["Sa", "compactMap"]
+- !private ["SK", "compactMap"]
+- ["10Optimizely6BinderC", "Binder"]
+- ["10Optimizely6BinderC", "ReInitializeStrategy"]
+- ["10Optimizely6BinderC", "String"]
+- ["10Optimizely6BinderC", "deinit"]
+- ["10Optimizely6BinderC", "factory"]
+- ["10Optimizely6BinderC", "init"]
+- ["10Optimizely6BinderC", "inst"]
+- ["10Optimizely6BinderC", "instance"]
+- ["10Optimizely6BinderC", "isSingleton"]
+- ["10Optimizely6BinderC", "reInitializeStrategy"]
+- ["10Optimizely6BinderC", "sdkKey"]
+- ["10Optimizely6BinderC", "service"]
+- ["10Optimizely6BinderC", "singetlon"]
+- ["10Optimizely6BinderC", "strategy"]
+- ["10Optimizely6BinderC", "to"]
+- ["10Optimizely6BinderC", "using"]
+- ["10Optimizely14BinderProtocolP", "Bool"]
+- ["10Optimizely14BinderProtocolP", "ReInitializeStrategy"]
+- ["10Optimizely14BinderProtocolP", "String"]
+- ["10Optimizely14BinderProtocolP", ""]
+- ["10Optimizely14BinderProtocolP", "factory"]
+- !private ["10Optimizely14BinderProtocolP", "inst"]
+- ["10Optimizely14BinderProtocolP", "instance"]
+- ["10Optimizely14BinderProtocolP", "isSingleton"]
+- ["10Optimizely14BinderProtocolP", "sdkKey"]
+- ["10Optimizely14BinderProtocolP", "service"]
+- ["10Optimizely14BinderProtocolP", "strategy"]
+- !private ["s7CVarArgP", "compactMap"]
+- ["s7CVarArgP", "init"]
+- !private ["s7CVarArgP", "keys"]
+- !private ["s7CVarArgP", "subscript"]
+- !private ["Sl", "compactMap"]
+- !private ["Sl", "filter"]
+- ["Sl", "init"]
+- !private ["Sl", "keys"]
+- !private ["Sl", "subscript"]
+- !private ["10Foundation15ContiguousBytesP", "compactMap"]
+- !private ["s28CustomDebugStringConvertibleP", "compactMap"]
+- !private ["s28CustomDebugStringConvertibleP", "filter"]
+- ["s28CustomDebugStringConvertibleP", "init"]
+- !private ["s28CustomDebugStringConvertibleP", "keys"]
+- !private ["s28CustomDebugStringConvertibleP", "subscript"]
+- !private ["s17CustomReflectableP", "compactMap"]
+- ["s17CustomReflectableP", "init"]
+- !private ["s17CustomReflectableP", "keys"]
+- !private ["s17CustomReflectableP", "subscript"]
+- !private ["s23CustomStringConvertibleP", "appendInterpolation"]
+- !private ["s23CustomStringConvertibleP", "appendLiteral"]
+- !private ["s23CustomStringConvertibleP", "compactMap"]
+- !private ["s23CustomStringConvertibleP", "filter"]
+- ["s23CustomStringConvertibleP", "init"]
+- !private ["s23CustomStringConvertibleP", "keys"]
+- !private ["s23CustomStringConvertibleP", "subscript"]
+- !private ["10Foundation12DataProtocolP", "compactMap"]
+- !private ["Se", "compactMap"]
+- ["Se", "init"]
+- !private ["Se", "keys"]
+- !private ["Se", "subscript"]
+- !private ["s26DefaultStringInterpolationV", "appendInterpolation"]
+- !private ["s26DefaultStringInterpolationV", "appendLiteral"]
+- ["SD", "init"]
+- !private ["SD", "keys"]
+- !private ["SD", "subscript"]
+- !private ["SE", "compactMap"]
+- ["SE", "init"]
+- !private ["SE", "keys"]
+- !private ["SE", "subscript"]
+- ["SQ", "=="]
+- ["SQ", ""]
+- ["SQ", "_rawHashValue"]
+- !private ["SQ", "compactMap"]
+- !private ["SQ", "filter"]
+- ["SQ", "hash"]
+- ["SQ", "hashValue"]
+- ["SQ", "init"]
+- !private ["SQ", "keys"]
+- ["SQ", "reCreate"]
+- !private ["SQ", "sdkKey"]
+- !private ["SQ", "subscript"]
+- !private ["s25ExpressibleByArrayLiteralP", "compactMap"]
+- ["s30ExpressibleByDictionaryLiteralP", "init"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "keys"]
+- !private ["s30ExpressibleByDictionaryLiteralP", "subscript"]
+- ["10Optimizely22HandlerRegistryServiceC", "BinderProtocol"]
+- ["10Optimizely22HandlerRegistryServiceC", "Bool"]
+- ["10Optimizely22HandlerRegistryServiceC", "HandlerRegistryService"]
+- ["10Optimizely22HandlerRegistryServiceC", "Hashable"]
+- ["10Optimizely22HandlerRegistryServiceC", "OPTDatafileHandler"]
+- ["10Optimizely22HandlerRegistryServiceC", "OPTDecisionService"]
+- ["10Optimizely22HandlerRegistryServiceC", "OPTEventDispatcher"]
+- ["10Optimizely22HandlerRegistryServiceC", "OPTLogger"]
+- ["10Optimizely22HandlerRegistryServiceC", "OPTNotificationCenter"]
+- ["10Optimizely22HandlerRegistryServiceC", "ServiceKey"]
+- ["10Optimizely22HandlerRegistryServiceC", "String"]
+- ["10Optimizely22HandlerRegistryServiceC", "binders"]
+- ["10Optimizely22HandlerRegistryServiceC", "init"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectComponent"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectDatafileHandler"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectDecisionService"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectEventDispatcher"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectLogger"]
+- ["10Optimizely22HandlerRegistryServiceC", "injectNotificationCenter"]
+- ["10Optimizely22HandlerRegistryServiceC", "lookupComponents"]
+- ["10Optimizely22HandlerRegistryServiceC", "reInitializeComponent"]
+- ["10Optimizely22HandlerRegistryServiceC", "registerBinding"]
+- ["10Optimizely22HandlerRegistryServiceC", "shared"]
+- !private ["10Optimizely22HandlerRegistryServiceC", "type"]
+- ["SH", "=="]
+- ["SH", ""]
+- ["SH", "_rawHashValue"]
+- !private ["SH", "compactMap"]
+- ["SH", "hash"]
+- ["SH", "hashValue"]
+- ["SH", "init"]
+- !private ["SH", "keys"]
+- ["SH", "reCreate"]
+- !private ["SH", "sdkKey"]
+- !private ["SH", "subscript"]
+- !private ["s6HasherV", "combine"]
+- !private ["SD4KeysV", "filter"]
+- !private ["SM", "compactMap"]
+- !private ["10Foundation19MutableDataProtocolP", "compactMap"]
+- !private ["Sk", "compactMap"]
+- !private ["Sm", "compactMap"]
+- ["10Optimizely20ReInitializeStrategyO", "=="]
+- ["10Optimizely20ReInitializeStrategyO", "__derived_enum_equals"]
+- ["10Optimizely20ReInitializeStrategyO", "_rawHashValue"]
+- ["10Optimizely20ReInitializeStrategyO", "deinit"]
+- ["10Optimizely20ReInitializeStrategyO", "hash"]
+- ["10Optimizely20ReInitializeStrategyO", "hashValue"]
+- ["10Optimizely20ReInitializeStrategyO", "reCreate"]
+- ["10Optimizely20ReInitializeStrategyO", "reUse"]
+- !private ["ST", "compactMap"]
+- !private ["ST", "filter"]
+- ["ST", "init"]
+- !private ["ST", "keys"]
+- !private ["ST", "subscript"]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "=="]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "String"]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "__derived_struct_equals"]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "_rawHashValue"]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "deinit"]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "hash"]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "hashValue"]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "init"]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "sdkKey"]
+- ["10Optimizely22HandlerRegistryServiceC0D3KeyV", "service"]
+- !private ["s27StringInterpolationProtocolP", "appendInterpolation"]
+- !private ["s27StringInterpolationProtocolP", "appendLiteral"]
+- !private ["s16TextOutputStreamP", "appendInterpolation"]
+- !private ["s16TextOutputStreamP", "appendLiteral"]
+- !private ["s14_ArrayProtocolP", "compactMap"]
+- !private ["s24_DestructorSafeContainerP", "compactMap"]
+- !private ["s19_HasContiguousBytesP", "compactMap"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "compactMap"]
+- ["s35_HasCustomAnyHashableRepresentationP", "init"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "keys"]
+- !private ["s35_HasCustomAnyHashableRepresentationP", "subscript"]
+- !private ["s21_ObjectiveCBridgeableP", "compactMap"]
+- ["s21_ObjectiveCBridgeableP", "init"]
+- !private ["s21_ObjectiveCBridgeableP", "keys"]
+- !private ["s21_ObjectiveCBridgeableP", "subscript"]
+depends-nominal:
+- !private "Sa"
+- !private "SK"
+- "10Optimizely6BinderC"
+- "10Optimizely14BinderProtocolP"
+- "s7CVarArgP"
+- "Sl"
+- !private "10Foundation15ContiguousBytesP"
+- "s28CustomDebugStringConvertibleP"
+- "s17CustomReflectableP"
+- "s23CustomStringConvertibleP"
+- !private "10Foundation12DataProtocolP"
+- "Se"
+- !private "s26DefaultStringInterpolationV"
+- "SD"
+- "SE"
+- "SQ"
+- !private "s25ExpressibleByArrayLiteralP"
+- "s30ExpressibleByDictionaryLiteralP"
+- "10Optimizely22HandlerRegistryServiceC"
+- "SH"
+- !private "s6HasherV"
+- !private "SD4KeysV"
+- !private "SM"
+- !private "10Foundation19MutableDataProtocolP"
+- !private "Sk"
+- !private "Sm"
+- "10Optimizely20ReInitializeStrategyO"
+- "ST"
+- "10Optimizely22HandlerRegistryServiceC0D3KeyV"
+- !private "s27StringInterpolationProtocolP"
+- !private "s16TextOutputStreamP"
+- !private "s14_ArrayProtocolP"
+- !private "s24_DestructorSafeContainerP"
+- !private "s19_HasContiguousBytesP"
+- "s35_HasCustomAnyHashableRepresentationP"
+- "s21_ObjectiveCBridgeableP"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/XPC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreFoundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/IOKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/xpc/XPC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/objc/ObjectiveC.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/Dispatch.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/Darwin.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CoreGraphics.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/ApplicationServices.framework/Headers/ApplicationServices.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/x86_64/os.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/CoreText.framework/Headers/CoreText.apinotes"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Security.framework/Headers/Security.apinotes"
+interface-hash: "887876b81ea609a54d229a43f4a5d866"

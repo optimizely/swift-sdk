@@ -12,9 +12,8 @@ Pod::Spec.new do |s|
     :git => "https://github.com/optimizely/swift-sdk.git",
     :tag => "v"+s.version.to_s
   }
-  s.source_files            = "OptimizelySDK/**/*.{swift,h}"
-  s.public_header_files     = "OptimizelySDK/OptimizelySwiftSDK/*.h"
-  s.exclude_files           = "OptimizelySDK/Optimizely*Tests/**/*"
+  s.source_files            = "Sources/**/*.swift"
+  s.public_header_files     = "Sources/**/*.h"
   s.swift_version           = "4.2"
   s.framework               = "Foundation"
   s.requires_arc            = true

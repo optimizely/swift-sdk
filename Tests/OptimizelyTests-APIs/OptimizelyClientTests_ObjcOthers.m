@@ -226,11 +226,7 @@ static NSString * const kSdkKey = @"12345";
     
     __block BOOL status = false;
     [eventDispatcher dispatchEventWithEvent:event completionHandler:^(NSData * data, NSError * error) {
-        if(data != nil) {
-            status = true;
-        } else {
-            status = false;
-        }
+        status = (data != nil);
         
         [expectation fulfill];
     }];
@@ -251,6 +247,7 @@ static NSString * const kSdkKey = @"12345";
     
     // check DefaultEventDispatcher work OK with ObjC clients
     MockOPTEventDispatcher *customEventDispatcher = [[MockOPTEventDispatcher alloc] init];
+    [customEventDispatcher flushEvents];
     
     OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:[self randomSdkKey]
                                                                      logger:nil

@@ -35,29 +35,30 @@ class ConditionLeafTests: XCTestCase {
     }
 
     func testDecodeSample_Invalid() {
+        
+        var tmpError: Error?
         do {
             let invalidData = 100
             // JSON does not support raw string, so wrap in array for decode
             let _: [ConditionLeaf] = try OTUtils.model(from: [invalidData])
-            XCTAssert(false)
-        } catch is DecodingError {
-            XCTAssert(true)
         } catch {
-            XCTAssert(false)
+            tmpError = error
         }
+        XCTAssertTrue(tmpError != nil)
+        XCTAssertTrue(tmpError is DecodingError)
     }
     
     func testEvaluate_InvalidProject() {
         let audienceId = "12345"
         // JSON does not support raw string, so wrap in array for decode
         let model: [ConditionLeaf] = try! OTUtils.model(from: [audienceId])
-
+        var tmpError: Error?
         do {
             let _ = try model[0].evaluate(project: nil, attributes: ["country": "us"])
-            XCTAssert(false)
         } catch {
-            XCTAssert(true)
+            tmpError = error
         }
+        XCTAssertTrue(tmpError != nil)
     }
 
 }

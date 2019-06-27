@@ -12,7 +12,7 @@ let package = Package(
                  targets: ["Optimizely"])
     ],
     targets: [
-        .target(name: "Optimizely")
+        .target(name: "Optimizely", path: "Sources")
     ],
     swiftLanguageVersions: [.v5]
 )

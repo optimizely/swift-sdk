@@ -8,8 +8,278 @@
 
 /* Begin PBXBuildFile section */
 		0B11272E2242D817002A9C20 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
-		0BAB9B0122567E34000DC388 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		0BAB9B0122567E34000DC388 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		1AC1FAAF7AE02A88A559B48D /* Pods_OptimizelyTests_Common_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FF313D8B78869FFB167FC7D /* Pods_OptimizelyTests_Common_tvOS.framework */; };
+		6E12B1CA22C55A250005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B1CB22C55A250005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B1CC22C55A250005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B1CD22C55A250005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B1CE22C55A250005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B1CF22C55A250005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B1D022C55A250005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B1D122C55A250005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B1D222C55A250005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B1D322C55A250005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B1D422C55A250005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B1D522C55A250005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B1D622C55A250005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B1D722C55A250005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B1D822C55A250005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B1D922C55A250005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B1DA22C55A250005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B1DB22C55A250005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B1DC22C55A250005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B1DD22C55A250005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B1DE22C55A250005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B1DF22C55A250005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B1E022C55A250005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B1E122C55A250005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B1E222C55A260005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B1E322C55A260005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B1E422C55A260005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B1E522C55A260005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B1E622C55A260005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B1E722C55A260005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B1E822C55A260005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B1E922C55A260005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B1EA22C55A260005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B1EB22C55A260005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B1EC22C55A260005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B1ED22C55A260005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B1EE22C55A260005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B1EF22C55A260005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B1F022C55A260005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B1F122C55A260005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B1F222C55A260005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B1F322C55A260005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B1F422C55A260005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B1F522C55A260005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B1F622C55A260005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B1F722C55A260005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B1F822C55A260005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B1F922C55A260005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B1FA22C55A270005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B1FB22C55A270005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B1FC22C55A270005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B1FD22C55A270005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B1FE22C55A270005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B1FF22C55A270005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B20022C55A270005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B20122C55A270005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B20222C55A270005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B20322C55A270005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B20422C55A270005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B20522C55A270005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B20622C55A270005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B20722C55A270005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B20822C55A270005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B20922C55A270005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B20A22C55A270005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B20B22C55A270005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B20C22C55A270005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B20D22C55A270005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B20E22C55A270005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B20F22C55A270005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B21022C55A270005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B21122C55A270005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B21222C55A270005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B21322C55A270005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B21422C55A270005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B21522C55A270005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B21622C55A270005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B21722C55A270005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B21822C55A270005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B21922C55A270005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B21A22C55A270005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B21B22C55A270005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B21C22C55A270005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B21D22C55A270005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B21E22C55A270005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B21F22C55A270005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B22022C55A270005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B22122C55A270005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B22222C55A270005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B22322C55A270005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B22422C55A270005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B22522C55A270005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B22622C55A270005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B22722C55A270005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B22822C55A270005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B22922C55A270005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B22A22C55A280005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B22B22C55A280005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B22C22C55A280005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B22D22C55A280005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B22E22C55A280005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B22F22C55A280005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B23022C55A280005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B23122C55A280005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B23222C55A280005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B23322C55A280005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B23422C55A280005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B23522C55A280005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B23622C55A280005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B23722C55A280005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B23822C55A280005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B23922C55A280005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B23A22C55A280005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B23B22C55A280005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B23C22C55A280005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B23D22C55A280005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B23E22C55A280005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B23F22C55A280005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B24022C55A280005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B24122C55A280005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B24222C55A280005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B24322C55A280005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B24422C55A280005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B24522C55A280005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B24622C55A280005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B24722C55A280005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B24822C55A280005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B24922C55A280005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B24A22C55A280005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B24B22C55A280005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B24C22C55A280005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B24D22C55A280005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B24E22C55A280005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B24F22C55A280005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B25022C55A280005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B25122C55A280005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B25222C55A280005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B25322C55A280005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B25422C55A280005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B25522C55A280005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B25622C55A280005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B25722C55A280005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B25822C55A280005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B25922C55A280005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B25A22C55A290005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B25B22C55A290005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B25C22C55A290005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B25D22C55A290005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B25E22C55A290005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B25F22C55A290005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B26022C55A290005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B26122C55A290005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B26222C55A290005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B26322C55A290005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B26422C55A290005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B26522C55A290005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B26622C55A290005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B26722C55A290005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B26822C55A290005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B26922C55A290005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B26A22C55A290005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B26B22C55A290005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B26C22C55A290005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B26D22C55A290005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B26E22C55A290005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B26F22C55A290005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B27022C55A290005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B27122C55A290005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B27222C55A290005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B27322C55A290005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B27422C55A290005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B27522C55A290005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B27622C55A290005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B27722C55A290005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B27822C55A290005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B27922C55A290005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B27A22C55A290005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B27B22C55A290005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B27C22C55A290005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B27D22C55A290005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B27E22C55A290005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B27F22C55A290005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B28022C55A290005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B28122C55A290005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B28222C55A290005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B28322C55A290005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B28422C55A290005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B28522C55A290005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B28622C55A290005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B28722C55A290005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B28822C55A290005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B28922C55A290005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B28A22C55A2A0005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B28B22C55A2A0005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B28C22C55A2A0005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B28D22C55A2A0005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B28E22C55A2A0005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B28F22C55A2A0005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B29022C55A2A0005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B29122C55A2A0005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B29222C55A2A0005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B29322C55A2A0005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B29422C55A2A0005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B29522C55A2A0005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B29622C55A2A0005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B29722C55A2A0005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B29822C55A2A0005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B29922C55A2A0005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B29A22C55A2A0005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B29B22C55A2A0005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B29C22C55A2A0005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B29D22C55A2A0005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B29E22C55A2A0005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B29F22C55A2A0005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B2A022C55A2A0005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B2A122C55A2A0005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B2A222C55A2A0005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
+		6E12B2A322C55A2A0005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
+		6E12B2A422C55A2A0005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
+		6E12B2A522C55A2A0005E9E6 /* feature_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196922C5211100B2B157 /* feature_experiments.json */; };
+		6E12B2A622C55A2A0005E9E6 /* forced_variation.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196A22C5211100B2B157 /* forced_variation.json */; };
+		6E12B2A722C55A2A0005E9E6 /* unsupported_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196B22C5211100B2B157 /* unsupported_datafile.json */; };
+		6E12B2A822C55A2A0005E9E6 /* rollout_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196C22C5211100B2B157 /* rollout_bucketing.json */; };
+		6E12B2A922C55A2A0005E9E6 /* feature_management_experiment_bucketing.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196D22C5211100B2B157 /* feature_management_experiment_bucketing.json */; };
+		6E12B2AA22C55A2A0005E9E6 /* bucketing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196E22C5211100B2B157 /* bucketing_id.json */; };
+		6E12B2AB22C55A2A0005E9E6 /* feature_variables.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196F22C5211100B2B157 /* feature_variables.json */; };
+		6E12B2AC22C55A2A0005E9E6 /* api_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197022C5211100B2B157 /* api_datafile.json */; };
+		6E12B2AD22C55A2A0005E9E6 /* feature_flag.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197122C5211100B2B157 /* feature_flag.json */; };
+		6E12B2AE22C55A2A0005E9E6 /* grouped_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197222C5211100B2B157 /* grouped_experiments.json */; };
+		6E12B2AF22C55A2A0005E9E6 /* feature_rollouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197322C5211100B2B157 /* feature_rollouts.json */; };
+		6E12B2B022C55A2A0005E9E6 /* audience_targeting.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197422C5211100B2B157 /* audience_targeting.json */; };
+		6E12B2B122C55A2A0005E9E6 /* typed_audience_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197522C5211100B2B157 /* typed_audience_datafile.json */; };
+		6E12B2B222C55A2A0005E9E6 /* feature_exp.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197622C5211100B2B157 /* feature_exp.json */; };
+		6E12B2B322C55A2A0005E9E6 /* empty_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197722C5211100B2B157 /* empty_datafile.json */; };
+		6E12B2B422C55A2A0005E9E6 /* BucketerTestsDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197822C5211100B2B157 /* BucketerTestsDatafile.json */; };
+		6E12B2B522C55A2B0005E9E6 /* BucketerTestsDatafile2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197922C5211100B2B157 /* BucketerTestsDatafile2.json */; };
+		6E12B2B622C55A2B0005E9E6 /* ab_experiments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197A22C5211100B2B157 /* ab_experiments.json */; };
+		6E12B2B722C55A2B0005E9E6 /* bot_filtering_enabled.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197B22C5211100B2B157 /* bot_filtering_enabled.json */; };
+		6E12B2B822C55A2B0005E9E6 /* simple_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197C22C5211100B2B157 /* simple_datafile.json */; };
+		6E12B2B922C55A2B0005E9E6 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
+		6E12B2BA22C55A330005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2BB22C55A330005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2BC22C55A330005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6E12B2BD22C55A330005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2BE22C55A330005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2BF22C55A330005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6E12B2C022C55A340005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2C122C55A340005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2C222C55A340005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6E12B2C322C55A350005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2C422C55A350005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2C522C55A350005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6E12B2C622C55A350005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2C722C55A350005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2C822C55A350005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6E12B2C922C55A360005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2CA22C55A360005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2CB22C55A360005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6E12B2CC22C55A370005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2CD22C55A370005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2CE22C55A370005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6E12B2CF22C55A370005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2D022C55A370005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2D122C55A370005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6E12B2D222C55A380005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2D322C55A380005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2D422C55A380005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6E12B2D522C55A380005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
+		6E12B2D622C55A380005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
+		6E12B2D722C55A380005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
 		6E614DD621E3F38A005982A1 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6E636B912236C91F00AF3CEF /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6E636BA02236C96700AF3CEF /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
@@ -698,12 +968,146 @@
 		6E75195D22C520D500B2B157 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7516A522C520D400B2B157 /* OPTBucketer.swift */; };
 		6E75195E22C520D500B2B157 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7516A522C520D400B2B157 /* OPTBucketer.swift */; };
 		6E75195F22C520D500B2B157 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7516A522C520D400B2B157 /* OPTBucketer.swift */; };
+		6E9B114522C5486E00C22D81 /* MurmurTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75197F22C5211100B2B157 /* MurmurTests.swift */; };
+		6E9B114622C5486E00C22D81 /* DecisionServiceTests_Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198022C5211100B2B157 /* DecisionServiceTests_Experiments.swift */; };
+		6E9B114722C5486E00C22D81 /* OptimizelyErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198122C5211100B2B157 /* OptimizelyErrorTests.swift */; };
+		6E9B114822C5486E00C22D81 /* OptimizelySwiftSDKiOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198222C5211100B2B157 /* OptimizelySwiftSDKiOSTests.swift */; };
+		6E9B114922C5486E00C22D81 /* BucketTests_GroupToExp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198322C5211100B2B157 /* BucketTests_GroupToExp.swift */; };
+		6E9B114A22C5486E00C22D81 /* BucketTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198422C5211100B2B157 /* BucketTests_Others.swift */; };
+		6E9B114B22C5486E00C22D81 /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198522C5211100B2B157 /* BatchEventBuilderTest.swift */; };
+		6E9B114C22C5486E00C22D81 /* DecisionServiceTests_UserProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198622C5211100B2B157 /* DecisionServiceTests_UserProfiles.swift */; };
+		6E9B114D22C5486E00C22D81 /* BatchEventBuilderTests_Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198722C5211100B2B157 /* BatchEventBuilderTests_Events.swift */; };
+		6E9B114E22C5486E00C22D81 /* DefaultLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198822C5211100B2B157 /* DefaultLoggerTests.swift */; };
+		6E9B114F22C5486E00C22D81 /* DefaultUserProfileServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198922C5211100B2B157 /* DefaultUserProfileServiceTests.swift */; };
+		6E9B115022C5486E00C22D81 /* BucketTests_Base.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198A22C5211100B2B157 /* BucketTests_Base.swift */; };
+		6E9B115122C5486E00C22D81 /* NotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198B22C5211100B2B157 /* NotificationCenterTests.swift */; };
+		6E9B115222C5486E00C22D81 /* BucketTests_ExpToVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198C22C5211100B2B157 /* BucketTests_ExpToVariation.swift */; };
+		6E9B115322C5486E00C22D81 /* EventDispatcherTests_Batch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198D22C5211100B2B157 /* EventDispatcherTests_Batch.swift */; };
+		6E9B115422C5486E00C22D81 /* LoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198E22C5211100B2B157 /* LoggerTests.swift */; };
+		6E9B115522C5486E00C22D81 /* BucketTests_BucketVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198F22C5211100B2B157 /* BucketTests_BucketVariation.swift */; };
+		6E9B115622C5486E00C22D81 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199022C5211100B2B157 /* DecisionListenerTests.swift */; };
+		6E9B115722C5486E00C22D81 /* DecisionServiceTests_Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199122C5211100B2B157 /* DecisionServiceTests_Features.swift */; };
+		6E9B115822C5486E00C22D81 /* EventDispatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199222C5211100B2B157 /* EventDispatcherTests.swift */; };
+		6E9B115922C5486E00C22D81 /* BatchEventBuilderTests_Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199322C5211100B2B157 /* BatchEventBuilderTests_Attributes.swift */; };
+		6E9B115A22C5486E00C22D81 /* DecisionServiceTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199422C5211100B2B157 /* DecisionServiceTests_Others.swift */; };
+		6E9B115B22C5486E00C22D81 /* DecisionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199522C5211100B2B157 /* DecisionServiceTests.swift */; };
+		6E9B115C22C5486E00C22D81 /* DatafileHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199622C5211100B2B157 /* DatafileHandlerTests.swift */; };
+		6E9B115D22C5486E00C22D81 /* BatchEventBuilderTests_EventTags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199722C5211100B2B157 /* BatchEventBuilderTests_EventTags.swift */; };
+		6E9B115E22C5486E00C22D81 /* DataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199822C5211100B2B157 /* DataStoreTests.swift */; };
+		6E9B115F22C5487100C22D81 /* MurmurTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75197F22C5211100B2B157 /* MurmurTests.swift */; };
+		6E9B116022C5487100C22D81 /* DecisionServiceTests_Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198022C5211100B2B157 /* DecisionServiceTests_Experiments.swift */; };
+		6E9B116122C5487100C22D81 /* OptimizelyErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198122C5211100B2B157 /* OptimizelyErrorTests.swift */; };
+		6E9B116222C5487100C22D81 /* OptimizelySwiftSDKiOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198222C5211100B2B157 /* OptimizelySwiftSDKiOSTests.swift */; };
+		6E9B116322C5487100C22D81 /* BucketTests_GroupToExp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198322C5211100B2B157 /* BucketTests_GroupToExp.swift */; };
+		6E9B116422C5487100C22D81 /* BucketTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198422C5211100B2B157 /* BucketTests_Others.swift */; };
+		6E9B116522C5487100C22D81 /* BatchEventBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198522C5211100B2B157 /* BatchEventBuilderTest.swift */; };
+		6E9B116622C5487100C22D81 /* DecisionServiceTests_UserProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198622C5211100B2B157 /* DecisionServiceTests_UserProfiles.swift */; };
+		6E9B116722C5487100C22D81 /* BatchEventBuilderTests_Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198722C5211100B2B157 /* BatchEventBuilderTests_Events.swift */; };
+		6E9B116822C5487100C22D81 /* DefaultLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198822C5211100B2B157 /* DefaultLoggerTests.swift */; };
+		6E9B116922C5487100C22D81 /* DefaultUserProfileServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198922C5211100B2B157 /* DefaultUserProfileServiceTests.swift */; };
+		6E9B116A22C5487100C22D81 /* BucketTests_Base.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198A22C5211100B2B157 /* BucketTests_Base.swift */; };
+		6E9B116B22C5487100C22D81 /* NotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198B22C5211100B2B157 /* NotificationCenterTests.swift */; };
+		6E9B116C22C5487100C22D81 /* BucketTests_ExpToVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198C22C5211100B2B157 /* BucketTests_ExpToVariation.swift */; };
+		6E9B116D22C5487100C22D81 /* EventDispatcherTests_Batch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198D22C5211100B2B157 /* EventDispatcherTests_Batch.swift */; };
+		6E9B116E22C5487100C22D81 /* LoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198E22C5211100B2B157 /* LoggerTests.swift */; };
+		6E9B116F22C5487100C22D81 /* BucketTests_BucketVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198F22C5211100B2B157 /* BucketTests_BucketVariation.swift */; };
+		6E9B117022C5487100C22D81 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199022C5211100B2B157 /* DecisionListenerTests.swift */; };
+		6E9B117122C5487100C22D81 /* DecisionServiceTests_Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199122C5211100B2B157 /* DecisionServiceTests_Features.swift */; };
+		6E9B117222C5487100C22D81 /* EventDispatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199222C5211100B2B157 /* EventDispatcherTests.swift */; };
+		6E9B117322C5487100C22D81 /* BatchEventBuilderTests_Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199322C5211100B2B157 /* BatchEventBuilderTests_Attributes.swift */; };
+		6E9B117422C5487100C22D81 /* DecisionServiceTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199422C5211100B2B157 /* DecisionServiceTests_Others.swift */; };
+		6E9B117522C5487100C22D81 /* DecisionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199522C5211100B2B157 /* DecisionServiceTests.swift */; };
+		6E9B117622C5487100C22D81 /* DatafileHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199622C5211100B2B157 /* DatafileHandlerTests.swift */; };
+		6E9B117722C5487100C22D81 /* BatchEventBuilderTests_EventTags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199722C5211100B2B157 /* BatchEventBuilderTests_EventTags.swift */; };
+		6E9B117822C5487100C22D81 /* DataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199822C5211100B2B157 /* DataStoreTests.swift */; };
+		6E9B117922C5487A00C22D81 /* tvOSOnlyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199A22C5211100B2B157 /* tvOSOnlyTests.swift */; };
+		6E9B117A22C5488100C22D81 /* AttributeValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199C22C5211100B2B157 /* AttributeValueTests.swift */; };
+		6E9B117B22C5488100C22D81 /* EventForDispatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199D22C5211100B2B157 /* EventForDispatchTests.swift */; };
+		6E9B117C22C5488100C22D81 /* FeatureVariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199E22C5211100B2B157 /* FeatureVariableTests.swift */; };
+		6E9B117D22C5488100C22D81 /* AttributeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199F22C5211100B2B157 /* AttributeTests.swift */; };
+		6E9B117E22C5488100C22D81 /* VariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A022C5211100B2B157 /* VariableTests.swift */; };
+		6E9B117F22C5488100C22D81 /* FeatureFlagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A122C5211100B2B157 /* FeatureFlagTests.swift */; };
+		6E9B118022C5488100C22D81 /* AudienceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A222C5211100B2B157 /* AudienceTests.swift */; };
+		6E9B118122C5488100C22D81 /* ConditionLeafTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A322C5211100B2B157 /* ConditionLeafTests.swift */; };
+		6E9B118222C5488100C22D81 /* AudienceTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A422C5211100B2B157 /* AudienceTests_Evaluate.swift */; };
+		6E9B118322C5488100C22D81 /* UserAttributeTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A522C5211100B2B157 /* UserAttributeTests_Evaluate.swift */; };
+		6E9B118422C5488100C22D81 /* AttributeValueTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A622C5211100B2B157 /* AttributeValueTests_Evaluate.swift */; };
+		6E9B118522C5488100C22D81 /* RolloutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A722C5211100B2B157 /* RolloutTests.swift */; };
+		6E9B118622C5488100C22D81 /* ProjectConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A822C5211100B2B157 /* ProjectConfigTests.swift */; };
+		6E9B118722C5488100C22D81 /* UserAttributeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A922C5211100B2B157 /* UserAttributeTests.swift */; };
+		6E9B118822C5488100C22D81 /* GroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AA22C5211100B2B157 /* GroupTests.swift */; };
+		6E9B118922C5488100C22D81 /* VariationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AB22C5211100B2B157 /* VariationTests.swift */; };
+		6E9B118A22C5488100C22D81 /* ExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AC22C5211100B2B157 /* ExperimentTests.swift */; };
+		6E9B118B22C5488100C22D81 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AD22C5211100B2B157 /* EventTests.swift */; };
+		6E9B118C22C5488100C22D81 /* ConditionHolderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AE22C5211100B2B157 /* ConditionHolderTests.swift */; };
+		6E9B118D22C5488100C22D81 /* TrafficAllocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AF22C5211100B2B157 /* TrafficAllocationTests.swift */; };
+		6E9B118E22C5488100C22D81 /* ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B022C5211100B2B157 /* ProjectTests.swift */; };
+		6E9B118F22C5488100C22D81 /* ConditionHolderTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B122C5211100B2B157 /* ConditionHolderTests_Evaluate.swift */; };
+		6E9B119022C5488300C22D81 /* AttributeValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199C22C5211100B2B157 /* AttributeValueTests.swift */; };
+		6E9B119122C5488300C22D81 /* EventForDispatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199D22C5211100B2B157 /* EventForDispatchTests.swift */; };
+		6E9B119222C5488300C22D81 /* FeatureVariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199E22C5211100B2B157 /* FeatureVariableTests.swift */; };
+		6E9B119322C5488300C22D81 /* AttributeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199F22C5211100B2B157 /* AttributeTests.swift */; };
+		6E9B119422C5488300C22D81 /* VariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A022C5211100B2B157 /* VariableTests.swift */; };
+		6E9B119522C5488300C22D81 /* FeatureFlagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A122C5211100B2B157 /* FeatureFlagTests.swift */; };
+		6E9B119622C5488300C22D81 /* AudienceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A222C5211100B2B157 /* AudienceTests.swift */; };
+		6E9B119722C5488300C22D81 /* ConditionLeafTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A322C5211100B2B157 /* ConditionLeafTests.swift */; };
+		6E9B119822C5488300C22D81 /* AudienceTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A422C5211100B2B157 /* AudienceTests_Evaluate.swift */; };
+		6E9B119922C5488300C22D81 /* UserAttributeTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A522C5211100B2B157 /* UserAttributeTests_Evaluate.swift */; };
+		6E9B119A22C5488300C22D81 /* AttributeValueTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A622C5211100B2B157 /* AttributeValueTests_Evaluate.swift */; };
+		6E9B119B22C5488300C22D81 /* RolloutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A722C5211100B2B157 /* RolloutTests.swift */; };
+		6E9B119C22C5488300C22D81 /* ProjectConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A822C5211100B2B157 /* ProjectConfigTests.swift */; };
+		6E9B119D22C5488300C22D81 /* UserAttributeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519A922C5211100B2B157 /* UserAttributeTests.swift */; };
+		6E9B119E22C5488300C22D81 /* GroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AA22C5211100B2B157 /* GroupTests.swift */; };
+		6E9B119F22C5488300C22D81 /* VariationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AB22C5211100B2B157 /* VariationTests.swift */; };
+		6E9B11A022C5488300C22D81 /* ExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AC22C5211100B2B157 /* ExperimentTests.swift */; };
+		6E9B11A122C5488300C22D81 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AD22C5211100B2B157 /* EventTests.swift */; };
+		6E9B11A222C5488300C22D81 /* ConditionHolderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AE22C5211100B2B157 /* ConditionHolderTests.swift */; };
+		6E9B11A322C5488300C22D81 /* TrafficAllocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519AF22C5211100B2B157 /* TrafficAllocationTests.swift */; };
+		6E9B11A422C5488300C22D81 /* ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B022C5211100B2B157 /* ProjectTests.swift */; };
+		6E9B11A522C5488300C22D81 /* ConditionHolderTests_Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B122C5211100B2B157 /* ConditionHolderTests_Evaluate.swift */; };
+		6E9B11A622C5488900C22D81 /* iOSOnlyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B322C5211100B2B157 /* iOSOnlyTests.swift */; };
+		6E9B11A722C5489200C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11A822C5489200C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11A922C5489200C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11AA22C5489200C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11AB22C5489300C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11AC22C5489300C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11AD22C5489300C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11AE22C5489300C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11AF22C5489400C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11B022C5489400C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11B122C5489400C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11B222C5489400C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11B322C5489500C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11B422C5489500C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11B522C5489600C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11B622C5489600C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11B722C5489600C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11B822C5489600C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11B922C5489700C22D81 /* MockUrlSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B722C5211100B2B157 /* MockUrlSession.swift */; };
+		6E9B11BA22C5489700C22D81 /* OTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519B822C5211100B2B157 /* OTUtils.swift */; };
+		6E9B11D522C548A200C22D81 /* OptimizelyClientTests_Evaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519BA22C5211100B2B157 /* OptimizelyClientTests_Evaluation.swift */; };
+		6E9B11D622C548A200C22D81 /* OptimizelyClientTests_DatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519BB22C5211100B2B157 /* OptimizelyClientTests_DatafileHandler.swift */; };
+		6E9B11D722C548A200C22D81 /* OptimizelyErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519BC22C5211100B2B157 /* OptimizelyErrorTests.swift */; };
+		6E9B11D922C548A200C22D81 /* OptimizelyClientTests_Invalid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519BE22C5211100B2B157 /* OptimizelyClientTests_Invalid.swift */; };
+		6E9B11DA22C548A200C22D81 /* OptimizelyClientTests_ObjcAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519BF22C5211100B2B157 /* OptimizelyClientTests_ObjcAPIs.m */; };
+		6E9B11DB22C548A200C22D81 /* OptimizelyClientTests_Variables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C022C5211100B2B157 /* OptimizelyClientTests_Variables.swift */; };
+		6E9B11DC22C548A200C22D81 /* OptimizelyClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C122C5211100B2B157 /* OptimizelyClientTests.swift */; };
+		6E9B11DD22C548A200C22D81 /* OptimizelyClientTests_Valid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C222C5211100B2B157 /* OptimizelyClientTests_Valid.swift */; };
+		6E9B11DE22C548A200C22D81 /* OptimizelyClientTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C322C5211100B2B157 /* OptimizelyClientTests_Others.swift */; };
+		6E9B11DF22C548A200C22D81 /* OptimizelyClientTests_ForcedVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C422C5211100B2B157 /* OptimizelyClientTests_ForcedVariation.swift */; };
+		6E9B11E022C548A200C22D81 /* OptimizelyClientTests_Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C522C5211100B2B157 /* OptimizelyClientTests_Group.swift */; };
+		6E9B11E122C548A200C22D81 /* OptimizelyClientTests_ObjcOthers.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C622C5211100B2B157 /* OptimizelyClientTests_ObjcOthers.m */; };
+		6E9B11E222C548AF00C22D81 /* OtherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C822C5211100B2B157 /* OtherTests.swift */; };
+		6E9B11E322C548AF00C22D81 /* ThrowableConditionListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C922C5211100B2B157 /* ThrowableConditionListTest.swift */; };
+		6E9B11E422C548B100C22D81 /* OtherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C822C5211100B2B157 /* OtherTests.swift */; };
+		6E9B11E522C548B100C22D81 /* ThrowableConditionListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7519C922C5211100B2B157 /* ThrowableConditionListTest.swift */; };
 		6EA4250D2218E41600B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6EA425602218E58400B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6EA4256F2218E60A00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EA4257E2218E61F00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		6EA425962218E6AD00B074B5 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
-		6EA425A52218E6AE00B074B5 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		6EA425962218E6AD00B074B5 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		6EA425A52218E6AE00B074B5 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		6EA426602219242100B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EA4266F2219243D00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6ECB270222C526A7005D52DC /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E75167A22C520D400B2B157 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -937,7 +1341,6 @@
 		6E7519BA22C5211100B2B157 /* OptimizelyClientTests_Evaluation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Evaluation.swift; sourceTree = "<group>"; };
 		6E7519BB22C5211100B2B157 /* OptimizelyClientTests_DatafileHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_DatafileHandler.swift; sourceTree = "<group>"; };
 		6E7519BC22C5211100B2B157 /* OptimizelyErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyErrorTests.swift; sourceTree = "<group>"; };
-		6E7519BD22C5211100B2B157 /* OptimizelyManagerTests_Threading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyManagerTests_Threading.swift; sourceTree = "<group>"; };
 		6E7519BE22C5211100B2B157 /* OptimizelyClientTests_Invalid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Invalid.swift; sourceTree = "<group>"; };
 		6E7519BF22C5211100B2B157 /* OptimizelyClientTests_ObjcAPIs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OptimizelyClientTests_ObjcAPIs.m; sourceTree = "<group>"; };
 		6E7519C022C5211100B2B157 /* OptimizelyClientTests_Variables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Variables.swift; sourceTree = "<group>"; };
@@ -1110,7 +1513,6 @@
 				9AE15C4323F534C6D3C8F55E /* Pods-OptimizelyTests-Common-tvOS.debug.xcconfig */,
 				C06BB1C8B317DD5B44A739D2 /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -1298,16 +1700,16 @@
 		6E75196022C5211100B2B157 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				6E75196122C5211100B2B157 /* TestData */,
 				6E75197E22C5211100B2B157 /* OptimizelyTests-Common */,
 				6E75199922C5211100B2B157 /* OptimizelyTests-tvOS */,
 				6E75199B22C5211100B2B157 /* OptimizelyTests-DataModel */,
 				6E7519B222C5211100B2B157 /* OptimizelyTests-iOS */,
 				6E7519B422C5211100B2B157 /* Info.plist */,
 				6E7519B522C5211100B2B157 /* OptimizelyTests-Legacy */,
-				6E7519B622C5211100B2B157 /* TestUtils */,
 				6E7519B922C5211100B2B157 /* OptimizelyTests-APIs */,
 				6E7519C722C5211100B2B157 /* OptimizelyTests-Others */,
+				6E75196122C5211100B2B157 /* TestData */,
+				6E7519B622C5211100B2B157 /* TestUtils */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1315,8 +1717,8 @@
 		6E75196122C5211100B2B157 /* TestData */ = {
 			isa = PBXGroup;
 			children = (
-				6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */,
 				6E75196322C5211100B2B157 /* benchmark */,
+				6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */,
 				6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */,
 				6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */,
 				6E75196922C5211100B2B157 /* feature_experiments.json */,
@@ -1454,7 +1856,6 @@
 				6E7519BA22C5211100B2B157 /* OptimizelyClientTests_Evaluation.swift */,
 				6E7519BB22C5211100B2B157 /* OptimizelyClientTests_DatafileHandler.swift */,
 				6E7519BC22C5211100B2B157 /* OptimizelyErrorTests.swift */,
-				6E7519BD22C5211100B2B157 /* OptimizelyManagerTests_Threading.swift */,
 				6E7519BE22C5211100B2B157 /* OptimizelyClientTests_Invalid.swift */,
 				6E7519BF22C5211100B2B157 /* OptimizelyClientTests_ObjcAPIs.m */,
 				6E7519C022C5211100B2B157 /* OptimizelyClientTests_Variables.swift */,
@@ -1810,6 +2211,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B27122C55A290005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B26922C55A290005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B26722C55A290005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B26022C55A290005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B26222C55A290005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2CC22C55A370005E9E6 /* 10_entities.json in Resources */,
+				6E12B25E22C55A290005E9E6 /* forced_variation.json in Resources */,
+				6E12B26422C55A290005E9E6 /* api_datafile.json in Resources */,
+				6E12B27022C55A290005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2CE22C55A370005E9E6 /* 100_entities.json in Resources */,
+				6E12B25A22C55A290005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B26E22C55A290005E9E6 /* ab_experiments.json in Resources */,
+				6E12B26622C55A290005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B26322C55A290005E9E6 /* feature_variables.json in Resources */,
+				6E12B26822C55A290005E9E6 /* audience_targeting.json in Resources */,
+				6E12B25B22C55A290005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B25C22C55A290005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B25D22C55A290005E9E6 /* feature_experiments.json in Resources */,
+				6E12B26F22C55A290005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B26C22C55A290005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B26B22C55A290005E9E6 /* empty_datafile.json in Resources */,
+				6E12B26D22C55A290005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B26A22C55A290005E9E6 /* feature_exp.json in Resources */,
+				6E12B25F22C55A290005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B26522C55A290005E9E6 /* feature_flag.json in Resources */,
+				6E12B26122C55A290005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2CD22C55A370005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1817,6 +2245,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B21122C55A270005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B20922C55A270005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B20722C55A270005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B20022C55A270005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B20222C55A270005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2C022C55A340005E9E6 /* 10_entities.json in Resources */,
+				6E12B1FE22C55A270005E9E6 /* forced_variation.json in Resources */,
+				6E12B20422C55A270005E9E6 /* api_datafile.json in Resources */,
+				6E12B21022C55A270005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2C222C55A340005E9E6 /* 100_entities.json in Resources */,
+				6E12B1FA22C55A270005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B20E22C55A270005E9E6 /* ab_experiments.json in Resources */,
+				6E12B20622C55A270005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B20322C55A270005E9E6 /* feature_variables.json in Resources */,
+				6E12B20822C55A270005E9E6 /* audience_targeting.json in Resources */,
+				6E12B1FB22C55A270005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B1FC22C55A270005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B1FD22C55A270005E9E6 /* feature_experiments.json in Resources */,
+				6E12B20F22C55A270005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B20C22C55A270005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B20B22C55A270005E9E6 /* empty_datafile.json in Resources */,
+				6E12B20D22C55A270005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B20A22C55A270005E9E6 /* feature_exp.json in Resources */,
+				6E12B1FF22C55A270005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B20522C55A270005E9E6 /* feature_flag.json in Resources */,
+				6E12B20122C55A270005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2C122C55A340005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1824,6 +2279,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B25922C55A280005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B25122C55A280005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B24F22C55A280005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B24822C55A280005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B24A22C55A280005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2C922C55A360005E9E6 /* 10_entities.json in Resources */,
+				6E12B24622C55A280005E9E6 /* forced_variation.json in Resources */,
+				6E12B24C22C55A280005E9E6 /* api_datafile.json in Resources */,
+				6E12B25822C55A280005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2CB22C55A360005E9E6 /* 100_entities.json in Resources */,
+				6E12B24222C55A280005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B25622C55A280005E9E6 /* ab_experiments.json in Resources */,
+				6E12B24E22C55A280005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B24B22C55A280005E9E6 /* feature_variables.json in Resources */,
+				6E12B25022C55A280005E9E6 /* audience_targeting.json in Resources */,
+				6E12B24322C55A280005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B24422C55A280005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B24522C55A280005E9E6 /* feature_experiments.json in Resources */,
+				6E12B25722C55A280005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B25422C55A280005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B25322C55A280005E9E6 /* empty_datafile.json in Resources */,
+				6E12B25522C55A280005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B25222C55A280005E9E6 /* feature_exp.json in Resources */,
+				6E12B24722C55A280005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B24D22C55A280005E9E6 /* feature_flag.json in Resources */,
+				6E12B24922C55A280005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2CA22C55A360005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1831,6 +2313,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B28922C55A290005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B28122C55A290005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B27F22C55A290005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B27822C55A290005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B27A22C55A290005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2CF22C55A370005E9E6 /* 10_entities.json in Resources */,
+				6E12B27622C55A290005E9E6 /* forced_variation.json in Resources */,
+				6E12B27C22C55A290005E9E6 /* api_datafile.json in Resources */,
+				6E12B28822C55A290005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2D122C55A370005E9E6 /* 100_entities.json in Resources */,
+				6E12B27222C55A290005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B28622C55A290005E9E6 /* ab_experiments.json in Resources */,
+				6E12B27E22C55A290005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B27B22C55A290005E9E6 /* feature_variables.json in Resources */,
+				6E12B28022C55A290005E9E6 /* audience_targeting.json in Resources */,
+				6E12B27322C55A290005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B27422C55A290005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B27522C55A290005E9E6 /* feature_experiments.json in Resources */,
+				6E12B28722C55A290005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B28422C55A290005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B28322C55A290005E9E6 /* empty_datafile.json in Resources */,
+				6E12B28522C55A290005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B28222C55A290005E9E6 /* feature_exp.json in Resources */,
+				6E12B27722C55A290005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B27D22C55A290005E9E6 /* feature_flag.json in Resources */,
+				6E12B27922C55A290005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2D022C55A370005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1838,6 +2347,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B2A122C55A2A0005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B29922C55A2A0005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B29722C55A2A0005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B29022C55A2A0005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B29222C55A2A0005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2D222C55A380005E9E6 /* 10_entities.json in Resources */,
+				6E12B28E22C55A2A0005E9E6 /* forced_variation.json in Resources */,
+				6E12B29422C55A2A0005E9E6 /* api_datafile.json in Resources */,
+				6E12B2A022C55A2A0005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2D422C55A380005E9E6 /* 100_entities.json in Resources */,
+				6E12B28A22C55A2A0005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B29E22C55A2A0005E9E6 /* ab_experiments.json in Resources */,
+				6E12B29622C55A2A0005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B29322C55A2A0005E9E6 /* feature_variables.json in Resources */,
+				6E12B29822C55A2A0005E9E6 /* audience_targeting.json in Resources */,
+				6E12B28B22C55A2A0005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B28C22C55A2A0005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B28D22C55A2A0005E9E6 /* feature_experiments.json in Resources */,
+				6E12B29F22C55A2A0005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B29C22C55A2A0005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B29B22C55A2A0005E9E6 /* empty_datafile.json in Resources */,
+				6E12B29D22C55A2A0005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B29A22C55A2A0005E9E6 /* feature_exp.json in Resources */,
+				6E12B28F22C55A2A0005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B29522C55A2A0005E9E6 /* feature_flag.json in Resources */,
+				6E12B29122C55A2A0005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2D322C55A380005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1845,6 +2381,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B1F922C55A260005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B1F122C55A260005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B1EF22C55A260005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B1E822C55A260005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B1EA22C55A260005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2BD22C55A330005E9E6 /* 10_entities.json in Resources */,
+				6E12B1E622C55A260005E9E6 /* forced_variation.json in Resources */,
+				6E12B1EC22C55A260005E9E6 /* api_datafile.json in Resources */,
+				6E12B1F822C55A260005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2BF22C55A330005E9E6 /* 100_entities.json in Resources */,
+				6E12B1E222C55A260005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B1F622C55A260005E9E6 /* ab_experiments.json in Resources */,
+				6E12B1EE22C55A260005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B1EB22C55A260005E9E6 /* feature_variables.json in Resources */,
+				6E12B1F022C55A260005E9E6 /* audience_targeting.json in Resources */,
+				6E12B1E322C55A260005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B1E422C55A260005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B1E522C55A260005E9E6 /* feature_experiments.json in Resources */,
+				6E12B1F722C55A260005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B1F422C55A260005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B1F322C55A260005E9E6 /* empty_datafile.json in Resources */,
+				6E12B1F522C55A260005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B1F222C55A260005E9E6 /* feature_exp.json in Resources */,
+				6E12B1E722C55A260005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B1ED22C55A260005E9E6 /* feature_flag.json in Resources */,
+				6E12B1E922C55A260005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2BE22C55A330005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1852,6 +2415,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B22922C55A270005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B22122C55A270005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B21F22C55A270005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B21822C55A270005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B21A22C55A270005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2C322C55A350005E9E6 /* 10_entities.json in Resources */,
+				6E12B21622C55A270005E9E6 /* forced_variation.json in Resources */,
+				6E12B21C22C55A270005E9E6 /* api_datafile.json in Resources */,
+				6E12B22822C55A270005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2C522C55A350005E9E6 /* 100_entities.json in Resources */,
+				6E12B21222C55A270005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B22622C55A270005E9E6 /* ab_experiments.json in Resources */,
+				6E12B21E22C55A270005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B21B22C55A270005E9E6 /* feature_variables.json in Resources */,
+				6E12B22022C55A270005E9E6 /* audience_targeting.json in Resources */,
+				6E12B21322C55A270005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B21422C55A270005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B21522C55A270005E9E6 /* feature_experiments.json in Resources */,
+				6E12B22722C55A270005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B22422C55A270005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B22322C55A270005E9E6 /* empty_datafile.json in Resources */,
+				6E12B22522C55A270005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B22222C55A270005E9E6 /* feature_exp.json in Resources */,
+				6E12B21722C55A270005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B21D22C55A270005E9E6 /* feature_flag.json in Resources */,
+				6E12B21922C55A270005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2C422C55A350005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1859,6 +2449,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B24122C55A280005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B23922C55A280005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B23722C55A280005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B23022C55A280005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B23222C55A280005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2C622C55A350005E9E6 /* 10_entities.json in Resources */,
+				6E12B22E22C55A280005E9E6 /* forced_variation.json in Resources */,
+				6E12B23422C55A280005E9E6 /* api_datafile.json in Resources */,
+				6E12B24022C55A280005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2C822C55A350005E9E6 /* 100_entities.json in Resources */,
+				6E12B22A22C55A280005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B23E22C55A280005E9E6 /* ab_experiments.json in Resources */,
+				6E12B23622C55A280005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B23322C55A280005E9E6 /* feature_variables.json in Resources */,
+				6E12B23822C55A280005E9E6 /* audience_targeting.json in Resources */,
+				6E12B22B22C55A280005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B22C22C55A280005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B22D22C55A280005E9E6 /* feature_experiments.json in Resources */,
+				6E12B23F22C55A280005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B23C22C55A280005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B23B22C55A280005E9E6 /* empty_datafile.json in Resources */,
+				6E12B23D22C55A280005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B23A22C55A280005E9E6 /* feature_exp.json in Resources */,
+				6E12B22F22C55A280005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B23522C55A280005E9E6 /* feature_flag.json in Resources */,
+				6E12B23122C55A280005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2C722C55A350005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1866,6 +2483,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B2B922C55A2B0005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B2B122C55A2A0005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B2AF22C55A2A0005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B2A822C55A2A0005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B2AA22C55A2A0005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2D522C55A380005E9E6 /* 10_entities.json in Resources */,
+				6E12B2A622C55A2A0005E9E6 /* forced_variation.json in Resources */,
+				6E12B2AC22C55A2A0005E9E6 /* api_datafile.json in Resources */,
+				6E12B2B822C55A2B0005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2D722C55A380005E9E6 /* 100_entities.json in Resources */,
+				6E12B2A222C55A2A0005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B2B622C55A2B0005E9E6 /* ab_experiments.json in Resources */,
+				6E12B2AE22C55A2A0005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B2AB22C55A2A0005E9E6 /* feature_variables.json in Resources */,
+				6E12B2B022C55A2A0005E9E6 /* audience_targeting.json in Resources */,
+				6E12B2A322C55A2A0005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B2A422C55A2A0005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B2A522C55A2A0005E9E6 /* feature_experiments.json in Resources */,
+				6E12B2B722C55A2B0005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B2B422C55A2A0005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B2B322C55A2A0005E9E6 /* empty_datafile.json in Resources */,
+				6E12B2B522C55A2B0005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B2B222C55A2A0005E9E6 /* feature_exp.json in Resources */,
+				6E12B2A722C55A2A0005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B2AD22C55A2A0005E9E6 /* feature_flag.json in Resources */,
+				6E12B2A922C55A2A0005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2D622C55A380005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1880,6 +2524,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E12B1E122C55A250005E9E6 /* UnsupportedVersionDatafile.json in Resources */,
+				6E12B1D922C55A250005E9E6 /* typed_audience_datafile.json in Resources */,
+				6E12B1D722C55A250005E9E6 /* feature_rollouts.json in Resources */,
+				6E12B1D022C55A250005E9E6 /* rollout_bucketing.json in Resources */,
+				6E12B1D222C55A250005E9E6 /* bucketing_id.json in Resources */,
+				6E12B2BA22C55A330005E9E6 /* 10_entities.json in Resources */,
+				6E12B1CE22C55A250005E9E6 /* forced_variation.json in Resources */,
+				6E12B1D422C55A250005E9E6 /* api_datafile.json in Resources */,
+				6E12B1E022C55A250005E9E6 /* simple_datafile.json in Resources */,
+				6E12B2BC22C55A330005E9E6 /* 100_entities.json in Resources */,
+				6E12B1CA22C55A250005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E12B1DE22C55A250005E9E6 /* ab_experiments.json in Resources */,
+				6E12B1D622C55A250005E9E6 /* grouped_experiments.json in Resources */,
+				6E12B1D322C55A250005E9E6 /* feature_variables.json in Resources */,
+				6E12B1D822C55A250005E9E6 /* audience_targeting.json in Resources */,
+				6E12B1CB22C55A250005E9E6 /* feature_rollout_toggle_on.json in Resources */,
+				6E12B1CC22C55A250005E9E6 /* feature_rollout_toggle_off.json in Resources */,
+				6E12B1CD22C55A250005E9E6 /* feature_experiments.json in Resources */,
+				6E12B1DF22C55A250005E9E6 /* bot_filtering_enabled.json in Resources */,
+				6E12B1DC22C55A250005E9E6 /* BucketerTestsDatafile.json in Resources */,
+				6E12B1DB22C55A250005E9E6 /* empty_datafile.json in Resources */,
+				6E12B1DD22C55A250005E9E6 /* BucketerTestsDatafile2.json in Resources */,
+				6E12B1DA22C55A250005E9E6 /* feature_exp.json in Resources */,
+				6E12B1CF22C55A250005E9E6 /* unsupported_datafile.json in Resources */,
+				6E12B1D522C55A250005E9E6 /* feature_flag.json in Resources */,
+				6E12B1D122C55A250005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				6E12B2BB22C55A330005E9E6 /* 50_entities.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2099,6 +2770,7 @@
 				6E7518C022C520D400B2B157 /* Variable.swift in Sources */,
 				6E75181822C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E75185422C520D400B2B157 /* ProjectConfig.swift in Sources */,
+				6E9B11B422C5489500C22D81 /* OTUtils.swift in Sources */,
 				6E75173E22C520D400B2B157 /* MurmurHash3.swift in Sources */,
 				6E7516EA22C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
 				6E7518A822C520D400B2B157 /* FeatureFlag.swift in Sources */,
@@ -2118,6 +2790,7 @@
 				6E7518F022C520D500B2B157 /* ConditionHolder.swift in Sources */,
 				6E75183022C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6E75192022C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
+				6E9B117922C5487A00C22D81 /* tvOSOnlyTests.swift in Sources */,
 				6E7518B422C520D400B2B157 /* Group.swift in Sources */,
 				6E7518CC22C520D400B2B157 /* Audience.swift in Sources */,
 				6E75176E22C520D400B2B157 /* Utils.swift in Sources */,
@@ -2127,6 +2800,7 @@
 				6E75188422C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E7517D022C520D400B2B157 /* DefaultBucketer.swift in Sources */,
 				6E75180022C520D400B2B157 /* DataStoreUserDefaults.swift in Sources */,
+				6E9B11B322C5489500C22D81 /* MockUrlSession.swift in Sources */,
 				6E7517DC22C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
 				6E75178622C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E75171A22C520D400B2B157 /* OptimizelyClient+ObjC.swift in Sources */,
@@ -2143,7 +2817,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0BAB9B0122567E34000DC388 /* BuildFile in Sources */,
+				0BAB9B0122567E34000DC388 /* (null) in Sources */,
 				6E7517D822C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
 				6E75177622C520D400B2B157 /* SDKVersion.swift in Sources */,
 				6E7516FE22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
@@ -2151,32 +2825,41 @@
 				6E7517CC22C520D400B2B157 /* DefaultBucketer.swift in Sources */,
 				6E75178E22C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
 				6E75172E22C520D400B2B157 /* Constants.swift in Sources */,
+				6E9B11E022C548A200C22D81 /* OptimizelyClientTests_Group.swift in Sources */,
 				6E75187422C520D400B2B157 /* Variation.swift in Sources */,
+				6E9B11D622C548A200C22D81 /* OptimizelyClientTests_DatafileHandler.swift in Sources */,
 				6E7518C822C520D400B2B157 /* Audience.swift in Sources */,
 				6E75174622C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
 				6E75181422C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E7516C222C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
 				6E75188022C520D400B2B157 /* TrafficAllocation.swift in Sources */,
+				6E9B11DD22C548A200C22D81 /* OptimizelyClientTests_Valid.swift in Sources */,
 				6E7518D422C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E7518BC22C520D400B2B157 /* Variable.swift in Sources */,
 				6E75192822C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E7516B622C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E75195822C520D500B2B157 /* OPTBucketer.swift in Sources */,
 				6E75170A22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
+				6E9B11AC22C5489300C22D81 /* OTUtils.swift in Sources */,
 				6E75191C22C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75180822C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E7518EC22C520D400B2B157 /* ConditionHolder.swift in Sources */,
 				6E7516AA22C520D400B2B157 /* DefaultLogger.swift in Sources */,
 				6E75186822C520D400B2B157 /* Rollout.swift in Sources */,
+				6E9B11E122C548A200C22D81 /* OptimizelyClientTests_ObjcOthers.m in Sources */,
 				6E75188C22C520D400B2B157 /* Project.swift in Sources */,
 				6E75172222C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E7517E422C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
+				6E9B11D722C548A200C22D81 /* OptimizelyErrorTests.swift in Sources */,
 				6E75194C22C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E7517C022C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E75183822C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E75175222C520D400B2B157 /* LogMessage.swift in Sources */,
+				6E9B11DB22C548A200C22D81 /* OptimizelyClientTests_Variables.swift in Sources */,
 				6E75189822C520D400B2B157 /* Experiment.swift in Sources */,
+				6E9B11DF22C548A200C22D81 /* OptimizelyClientTests_ForcedVariation.swift in Sources */,
 				6E7516DA22C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
+				6E9B11DC22C548A200C22D81 /* OptimizelyClientTests.swift in Sources */,
 				6E7517FC22C520D400B2B157 /* DataStoreUserDefaults.swift in Sources */,
 				6E75178222C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E7518A422C520D400B2B157 /* FeatureFlag.swift in Sources */,
@@ -2184,6 +2867,9 @@
 				6E75176A22C520D400B2B157 /* Utils.swift in Sources */,
 				6E75171622C520D400B2B157 /* OptimizelyClient+ObjC.swift in Sources */,
 				6E7517F022C520D400B2B157 /* DataStoreMemory.swift in Sources */,
+				6E9B11D922C548A200C22D81 /* OptimizelyClientTests_Invalid.swift in Sources */,
+				6E9B11D522C548A200C22D81 /* OptimizelyClientTests_Evaluation.swift in Sources */,
+				6E9B11DA22C548A200C22D81 /* OptimizelyClientTests_ObjcAPIs.m in Sources */,
 				6E75179A22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E75182022C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
 				6E75184422C520D400B2B157 /* Event.swift in Sources */,
@@ -2192,10 +2878,12 @@
 				6E7518B022C520D400B2B157 /* Group.swift in Sources */,
 				6E75185022C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E7516CE22C520D400B2B157 /* OPTLogger.swift in Sources */,
+				6E9B11AB22C5489300C22D81 /* MockUrlSession.swift in Sources */,
 				6E75190422C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75193422C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75182C22C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6E75175E22C520D400B2B157 /* AtomicProperty.swift in Sources */,
+				6E9B11DE22C548A200C22D81 /* OptimizelyClientTests_Others.swift in Sources */,
 				6E7516E622C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
 				6E7518F822C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E7517A622C520D400B2B157 /* Array+Extension.swift in Sources */,
@@ -2234,6 +2922,7 @@
 				6E75187722C520D400B2B157 /* Variation.swift in Sources */,
 				6E7517F322C520D400B2B157 /* DataStoreMemory.swift in Sources */,
 				6E7518FB22C520D500B2B157 /* UserAttribute.swift in Sources */,
+				6E9B11B222C5489400C22D81 /* OTUtils.swift in Sources */,
 				6E7518D722C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E7516AD22C520D400B2B157 /* DefaultLogger.swift in Sources */,
 				6E75194F22C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
@@ -2248,6 +2937,7 @@
 				6E75182F22C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6E75191F22C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E7518B322C520D400B2B157 /* Group.swift in Sources */,
+				6E9B11B122C5489400C22D81 /* MockUrlSession.swift in Sources */,
 				6E7518CB22C520D400B2B157 /* Audience.swift in Sources */,
 				6E75176D22C520D400B2B157 /* Utils.swift in Sources */,
 				6E75182322C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
@@ -2272,19 +2962,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E9B117022C5487100C22D81 /* DecisionListenerTests.swift in Sources */,
+				6E9B116122C5487100C22D81 /* OptimizelyErrorTests.swift in Sources */,
+				6E9B116522C5487100C22D81 /* BatchEventBuilderTest.swift in Sources */,
+				6E9B117422C5487100C22D81 /* DecisionServiceTests_Others.swift in Sources */,
+				6E9B116E22C5487100C22D81 /* LoggerTests.swift in Sources */,
 				6E75180D22C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E75178722C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
+				6E9B117522C5487100C22D81 /* DecisionServiceTests.swift in Sources */,
 				6E75179F22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E7516BB22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E75184922C520D400B2B157 /* Event.swift in Sources */,
+				6E9B116C22C5487100C22D81 /* BucketTests_ExpToVariation.swift in Sources */,
 				6E75193922C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E7518C122C520D400B2B157 /* Variable.swift in Sources */,
 				6E75170F22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E7517E922C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
+				6E9B116A22C5487100C22D81 /* BucketTests_Base.swift in Sources */,
+				6E9B115F22C5487100C22D81 /* MurmurTests.swift in Sources */,
+				6E9B116022C5487100C22D81 /* DecisionServiceTests_Experiments.swift in Sources */,
+				6E9B116322C5487100C22D81 /* BucketTests_GroupToExp.swift in Sources */,
 				6E7516AF22C520D400B2B157 /* DefaultLogger.swift in Sources */,
 				6E75194522C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E75185522C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E7516C722C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
+				6E9B11B522C5489600C22D81 /* MockUrlSession.swift in Sources */,
 				6E7517C522C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E75190922C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75177B22C520D400B2B157 /* SDKVersion.swift in Sources */,
@@ -2300,31 +3002,47 @@
 				6E7517AB22C520D400B2B157 /* Array+Extension.swift in Sources */,
 				6E75186122C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E75172722C520D400B2B157 /* OptimizelyResult.swift in Sources */,
+				6E9B116222C5487100C22D81 /* OptimizelySwiftSDKiOSTests.swift in Sources */,
 				6E7518FD22C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E7518E522C520D400B2B157 /* ConditionLeaf.swift in Sources */,
+				6E9B117222C5487100C22D81 /* EventDispatcherTests.swift in Sources */,
+				6E9B116922C5487100C22D81 /* DefaultUserProfileServiceTests.swift in Sources */,
 				6E75192122C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75170322C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
+				6E9B116422C5487100C22D81 /* BucketTests_Others.swift in Sources */,
 				6E7518CD22C520D400B2B157 /* Audience.swift in Sources */,
+				6E9B117322C5487100C22D81 /* BatchEventBuilderTests_Attributes.swift in Sources */,
+				6E9B11B622C5489600C22D81 /* OTUtils.swift in Sources */,
 				6E75183122C520D400B2B157 /* BatchEvent.swift in Sources */,
+				6E9B117822C5487100C22D81 /* DataStoreTests.swift in Sources */,
 				6E75171B22C520D400B2B157 /* OptimizelyClient+ObjC.swift in Sources */,
 				6E75195122C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E75176322C520D400B2B157 /* AtomicProperty.swift in Sources */,
+				6E9B117722C5487100C22D81 /* BatchEventBuilderTests_EventTags.swift in Sources */,
 				6E7517DD22C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
+				6E9B116622C5487100C22D81 /* DecisionServiceTests_UserProfiles.swift in Sources */,
 				6E75173322C520D400B2B157 /* Constants.swift in Sources */,
 				6E7518A922C520D400B2B157 /* FeatureFlag.swift in Sources */,
 				6E75173F22C520D400B2B157 /* MurmurHash3.swift in Sources */,
 				6E75189D22C520D400B2B157 /* Experiment.swift in Sources */,
 				6E7518D922C520D400B2B157 /* AttributeValue.swift in Sources */,
+				6E9B116822C5487100C22D81 /* DefaultLoggerTests.swift in Sources */,
 				6E75179322C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
+				6E9B117122C5487100C22D81 /* DecisionServiceTests_Features.swift in Sources */,
+				6E9B116F22C5487100C22D81 /* BucketTests_BucketVariation.swift in Sources */,
 				6E75174B22C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
 				6E75187922C520D400B2B157 /* Variation.swift in Sources */,
 				6E75191522C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
 				6E75195D22C520D500B2B157 /* OPTBucketer.swift in Sources */,
+				6E9B117622C5487100C22D81 /* DatafileHandlerTests.swift in Sources */,
+				6E9B116722C5487100C22D81 /* BatchEventBuilderTests_Events.swift in Sources */,
 				6E75181922C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E75186D22C520D400B2B157 /* Rollout.swift in Sources */,
 				6E7518F122C520D500B2B157 /* ConditionHolder.swift in Sources */,
+				6E9B116D22C5487100C22D81 /* EventDispatcherTests_Batch.swift in Sources */,
 				6E7516DF22C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E7518B522C520D400B2B157 /* Group.swift in Sources */,
+				6E9B116B22C5487100C22D81 /* NotificationCenterTests.swift in Sources */,
 				6E7516F722C520D400B2B157 /* OptimizelyError.swift in Sources */,
 				6E75189122C520D400B2B157 /* Project.swift in Sources */,
 				6E7517F522C520D400B2B157 /* DataStoreMemory.swift in Sources */,
@@ -2336,15 +3054,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E9B119A22C5488300C22D81 /* AttributeValueTests_Evaluate.swift in Sources */,
+				6E9B11A322C5488300C22D81 /* TrafficAllocationTests.swift in Sources */,
+				6E9B119B22C5488300C22D81 /* RolloutTests.swift in Sources */,
 				6E75186222C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E7518C222C520D400B2B157 /* Variable.swift in Sources */,
 				6E75192E22C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E75172822C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E75170422C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
 				6E75187A22C520D400B2B157 /* Variation.swift in Sources */,
+				6E9B119C22C5488300C22D81 /* ProjectConfigTests.swift in Sources */,
 				6E7518FE22C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E7517F622C520D400B2B157 /* DataStoreMemory.swift in Sources */,
+				6E9B119322C5488300C22D81 /* AttributeTests.swift in Sources */,
+				6E9B11A122C5488300C22D81 /* EventTests.swift in Sources */,
 				6E75188622C520D400B2B157 /* TrafficAllocation.swift in Sources */,
+				6E9B119522C5488300C22D81 /* FeatureFlagTests.swift in Sources */,
 				6E75190A22C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75171022C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E7516C822C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
@@ -2354,18 +3079,27 @@
 				6E7517C622C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E75193A22C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75182622C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
+				6E9B119922C5488300C22D81 /* UserAttributeTests_Evaluate.swift in Sources */,
+				6E9B11A422C5488300C22D81 /* ProjectTests.swift in Sources */,
+				6E9B119622C5488300C22D81 /* AudienceTests.swift in Sources */,
 				6E7518B622C520D400B2B157 /* Group.swift in Sources */,
 				6E7516D422C520D400B2B157 /* OPTLogger.swift in Sources */,
 				6E75183222C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6E7518DA22C520D400B2B157 /* AttributeValue.swift in Sources */,
+				6E9B119822C5488300C22D81 /* AudienceTests_Evaluate.swift in Sources */,
 				6E75192222C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75177022C520D400B2B157 /* Utils.swift in Sources */,
 				6E7516E022C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
+				6E9B119D22C5488300C22D81 /* UserAttributeTests.swift in Sources */,
 				6E75183E22C520D400B2B157 /* EventForDispatch.swift in Sources */,
+				6E9B11A022C5488300C22D81 /* ExperimentTests.swift in Sources */,
 				6E7516EC22C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
 				6E75181A22C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
+				6E9B119722C5488300C22D81 /* ConditionLeafTests.swift in Sources */,
 				6E75184A22C520D400B2B157 /* Event.swift in Sources */,
 				6E75191622C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
+				6E9B11A522C5488300C22D81 /* ConditionHolderTests_Evaluate.swift in Sources */,
+				6E9B119122C5488300C22D81 /* EventForDispatchTests.swift in Sources */,
 				6E7517EA22C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E75171C22C520D400B2B157 /* OptimizelyClient+ObjC.swift in Sources */,
 				6E7516B022C520D400B2B157 /* DefaultLogger.swift in Sources */,
@@ -2374,16 +3108,24 @@
 				6E75186E22C520D400B2B157 /* Rollout.swift in Sources */,
 				6E7518E622C520D400B2B157 /* ConditionLeaf.swift in Sources */,
 				6E75179422C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
+				6E9B11B722C5489600C22D81 /* MockUrlSession.swift in Sources */,
+				6E9B119222C5488300C22D81 /* FeatureVariableTests.swift in Sources */,
 				6E75176422C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E7516BC22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E7517A022C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E7517AC22C520D400B2B157 /* Array+Extension.swift in Sources */,
-				6EA425A52218E6AE00B074B5 /* BuildFile in Sources */,
+				6EA425A52218E6AE00B074B5 /* (null) in Sources */,
 				6E75180E22C520D400B2B157 /* DataStoreFile.swift in Sources */,
+				6E9B11B822C5489600C22D81 /* OTUtils.swift in Sources */,
+				6E9B119022C5488300C22D81 /* AttributeValueTests.swift in Sources */,
 				6E75175822C520D400B2B157 /* LogMessage.swift in Sources */,
+				6E9B119422C5488300C22D81 /* VariableTests.swift in Sources */,
+				6E9B11A222C5488300C22D81 /* ConditionHolderTests.swift in Sources */,
 				6E75174C22C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
 				6E75174022C520D400B2B157 /* MurmurHash3.swift in Sources */,
+				6E9B119F22C5488300C22D81 /* VariationTests.swift in Sources */,
 				6E7518F222C520D500B2B157 /* ConditionHolder.swift in Sources */,
+				6E9B119E22C5488300C22D81 /* GroupTests.swift in Sources */,
 				6E75173422C520D400B2B157 /* Constants.swift in Sources */,
 				6E75195222C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E75177C22C520D400B2B157 /* SDKVersion.swift in Sources */,
@@ -2401,19 +3143,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E9B115622C5486E00C22D81 /* DecisionListenerTests.swift in Sources */,
+				6E9B114722C5486E00C22D81 /* OptimizelyErrorTests.swift in Sources */,
+				6E9B114B22C5486E00C22D81 /* BatchEventBuilderTest.swift in Sources */,
+				6E9B115A22C5486E00C22D81 /* DecisionServiceTests_Others.swift in Sources */,
+				6E9B115422C5486E00C22D81 /* LoggerTests.swift in Sources */,
 				6E7518DF22C520D400B2B157 /* ConditionLeaf.swift in Sources */,
 				6E75172D22C520D400B2B157 /* Constants.swift in Sources */,
+				6E9B115B22C5486E00C22D81 /* DecisionServiceTests.swift in Sources */,
 				6E75172122C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E75186722C520D400B2B157 /* Rollout.swift in Sources */,
 				6E7518A322C520D400B2B157 /* FeatureFlag.swift in Sources */,
+				6E9B115222C5486E00C22D81 /* BucketTests_ExpToVariation.swift in Sources */,
 				6E75189722C520D400B2B157 /* Experiment.swift in Sources */,
 				6E7516C122C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
 				6E75178122C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E7517CB22C520D400B2B157 /* DefaultBucketer.swift in Sources */,
+				6E9B115022C5486E00C22D81 /* BucketTests_Base.swift in Sources */,
+				6E9B114522C5486E00C22D81 /* MurmurTests.swift in Sources */,
+				6E9B114622C5486E00C22D81 /* DecisionServiceTests_Experiments.swift in Sources */,
+				6E9B114922C5486E00C22D81 /* BucketTests_GroupToExp.swift in Sources */,
 				6E75182B22C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6E75190322C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75192722C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E7516F122C520D400B2B157 /* OptimizelyError.swift in Sources */,
+				6E9B11A922C5489200C22D81 /* MockUrlSession.swift in Sources */,
 				6E75175D22C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E7516D922C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E7516E522C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
@@ -2429,31 +3183,47 @@
 				6E75185B22C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E7516B522C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E7516A922C520D400B2B157 /* DefaultLogger.swift in Sources */,
+				6E9B114822C5486E00C22D81 /* OptimizelySwiftSDKiOSTests.swift in Sources */,
 				6E7517D722C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
 				6E75181F22C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
+				6E9B115822C5486E00C22D81 /* EventDispatcherTests.swift in Sources */,
+				6E9B114F22C5486E00C22D81 /* DefaultUserProfileServiceTests.swift in Sources */,
 				6E7518F722C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E75174522C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
+				6E9B114A22C5486E00C22D81 /* BucketTests_Others.swift in Sources */,
 				6E7517BF22C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
+				6E9B115922C5486E00C22D81 /* BatchEventBuilderTests_Attributes.swift in Sources */,
+				6E9B11AA22C5489200C22D81 /* OTUtils.swift in Sources */,
 				6E7518D322C520D400B2B157 /* AttributeValue.swift in Sources */,
+				6E9B115E22C5486E00C22D81 /* DataStoreTests.swift in Sources */,
 				6E75177522C520D400B2B157 /* SDKVersion.swift in Sources */,
 				6E75180722C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E75183722C520D400B2B157 /* EventForDispatch.swift in Sources */,
+				6E9B115D22C5486E00C22D81 /* BatchEventBuilderTests_EventTags.swift in Sources */,
 				6E75173922C520D400B2B157 /* MurmurHash3.swift in Sources */,
+				6E9B114C22C5486E00C22D81 /* DecisionServiceTests_UserProfiles.swift in Sources */,
 				6E75191B22C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75170922C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E75178D22C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
 				6E7518EB22C520D400B2B157 /* ConditionHolder.swift in Sources */,
 				6E75176922C520D400B2B157 /* Utils.swift in Sources */,
+				6E9B114E22C5486E00C22D81 /* DefaultLoggerTests.swift in Sources */,
 				6E7518C722C520D400B2B157 /* Audience.swift in Sources */,
+				6E9B115722C5486E00C22D81 /* DecisionServiceTests_Features.swift in Sources */,
+				6E9B115522C5486E00C22D81 /* BucketTests_BucketVariation.swift in Sources */,
 				6E7516FD22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
 				6E75187322C520D400B2B157 /* Variation.swift in Sources */,
 				6E7517E322C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E75179922C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
+				6E9B115C22C5486E00C22D81 /* DatafileHandlerTests.swift in Sources */,
+				6E9B114D22C5486E00C22D81 /* BatchEventBuilderTests_Events.swift in Sources */,
 				6E75188B22C520D400B2B157 /* Project.swift in Sources */,
 				6E75187F22C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E7518BB22C520D400B2B157 /* Variable.swift in Sources */,
+				6E9B115322C5486E00C22D81 /* EventDispatcherTests_Batch.swift in Sources */,
 				6E7518AF22C520D400B2B157 /* Group.swift in Sources */,
 				6E7517A522C520D400B2B157 /* Array+Extension.swift in Sources */,
+				6E9B115122C5486E00C22D81 /* NotificationCenterTests.swift in Sources */,
 				6E75184322C520D400B2B157 /* Event.swift in Sources */,
 				6E75193F22C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E7516CD22C520D400B2B157 /* OPTLogger.swift in Sources */,
@@ -2465,15 +3235,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E9B118422C5488100C22D81 /* AttributeValueTests_Evaluate.swift in Sources */,
+				6E9B118D22C5488100C22D81 /* TrafficAllocationTests.swift in Sources */,
+				6E9B118522C5488100C22D81 /* RolloutTests.swift in Sources */,
 				6E75185D22C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E7518BD22C520D400B2B157 /* Variable.swift in Sources */,
 				6E75192922C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E75172322C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E7516FF22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
 				6E75187522C520D400B2B157 /* Variation.swift in Sources */,
+				6E9B118622C5488100C22D81 /* ProjectConfigTests.swift in Sources */,
 				6E7518F922C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E7517F122C520D400B2B157 /* DataStoreMemory.swift in Sources */,
+				6E9B117D22C5488100C22D81 /* AttributeTests.swift in Sources */,
+				6E9B118B22C5488100C22D81 /* EventTests.swift in Sources */,
 				6E75188122C520D400B2B157 /* TrafficAllocation.swift in Sources */,
+				6E9B117F22C5488100C22D81 /* FeatureFlagTests.swift in Sources */,
 				6E75190522C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75170B22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E7516C322C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
@@ -2483,18 +3260,27 @@
 				6E7517C122C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E75193522C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75182122C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
+				6E9B118322C5488100C22D81 /* UserAttributeTests_Evaluate.swift in Sources */,
+				6E9B118E22C5488100C22D81 /* ProjectTests.swift in Sources */,
+				6E9B118022C5488100C22D81 /* AudienceTests.swift in Sources */,
 				6E7518B122C520D400B2B157 /* Group.swift in Sources */,
 				6E7516CF22C520D400B2B157 /* OPTLogger.swift in Sources */,
 				6E75182D22C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6E7518D522C520D400B2B157 /* AttributeValue.swift in Sources */,
+				6E9B118222C5488100C22D81 /* AudienceTests_Evaluate.swift in Sources */,
 				6E75191D22C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75176B22C520D400B2B157 /* Utils.swift in Sources */,
 				6E7516DB22C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
+				6E9B118722C5488100C22D81 /* UserAttributeTests.swift in Sources */,
 				6E75183922C520D400B2B157 /* EventForDispatch.swift in Sources */,
+				6E9B118A22C5488100C22D81 /* ExperimentTests.swift in Sources */,
 				6E7516E722C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
 				6E75181522C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
+				6E9B118122C5488100C22D81 /* ConditionLeafTests.swift in Sources */,
 				6E75184522C520D400B2B157 /* Event.swift in Sources */,
 				6E75191122C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
+				6E9B118F22C5488100C22D81 /* ConditionHolderTests_Evaluate.swift in Sources */,
+				6E9B117B22C5488100C22D81 /* EventForDispatchTests.swift in Sources */,
 				6E7517E522C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E75171722C520D400B2B157 /* OptimizelyClient+ObjC.swift in Sources */,
 				6E7516AB22C520D400B2B157 /* DefaultLogger.swift in Sources */,
@@ -2503,16 +3289,24 @@
 				6E75186922C520D400B2B157 /* Rollout.swift in Sources */,
 				6E7518E122C520D400B2B157 /* ConditionLeaf.swift in Sources */,
 				6E75178F22C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
+				6E9B11AD22C5489300C22D81 /* MockUrlSession.swift in Sources */,
+				6E9B117C22C5488100C22D81 /* FeatureVariableTests.swift in Sources */,
 				6E75175F22C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E7516B722C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E75179B22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E7517A722C520D400B2B157 /* Array+Extension.swift in Sources */,
-				6EA425962218E6AD00B074B5 /* BuildFile in Sources */,
+				6EA425962218E6AD00B074B5 /* (null) in Sources */,
 				6E75180922C520D400B2B157 /* DataStoreFile.swift in Sources */,
+				6E9B11AE22C5489300C22D81 /* OTUtils.swift in Sources */,
+				6E9B117A22C5488100C22D81 /* AttributeValueTests.swift in Sources */,
 				6E75175322C520D400B2B157 /* LogMessage.swift in Sources */,
+				6E9B117E22C5488100C22D81 /* VariableTests.swift in Sources */,
+				6E9B118C22C5488100C22D81 /* ConditionHolderTests.swift in Sources */,
 				6E75174722C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
 				6E75173B22C520D400B2B157 /* MurmurHash3.swift in Sources */,
+				6E9B118922C5488100C22D81 /* VariationTests.swift in Sources */,
 				6E7518ED22C520D400B2B157 /* ConditionHolder.swift in Sources */,
+				6E9B118822C5488100C22D81 /* GroupTests.swift in Sources */,
 				6E75172F22C520D400B2B157 /* Constants.swift in Sources */,
 				6E75194D22C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E75177722C520D400B2B157 /* SDKVersion.swift in Sources */,
@@ -2541,6 +3335,7 @@
 				6E7516D022C520D400B2B157 /* OPTLogger.swift in Sources */,
 				6E7518B222C520D400B2B157 /* Group.swift in Sources */,
 				6E75188222C520D400B2B157 /* TrafficAllocation.swift in Sources */,
+				6E9B11E322C548AF00C22D81 /* ThrowableConditionListTest.swift in Sources */,
 				6E75176022C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E75192A22C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E7517DA22C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
@@ -2556,6 +3351,7 @@
 				6E75182222C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
 				6E75190622C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75183A22C520D400B2B157 /* EventForDispatch.swift in Sources */,
+				6E9B11B022C5489400C22D81 /* OTUtils.swift in Sources */,
 				6E75172422C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E75184622C520D400B2B157 /* Event.swift in Sources */,
 				6E7517CE22C520D400B2B157 /* DefaultBucketer.swift in Sources */,
@@ -2565,11 +3361,13 @@
 				6E75191E22C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75193622C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75170022C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
+				6E9B11E222C548AF00C22D81 /* OtherTests.swift in Sources */,
 				6E75185E22C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E7518BE22C520D400B2B157 /* Variable.swift in Sources */,
 				6E7518CA22C520D400B2B157 /* Audience.swift in Sources */,
 				6E75187622C520D400B2B157 /* Variation.swift in Sources */,
 				6E7517F222C520D400B2B157 /* DataStoreMemory.swift in Sources */,
+				6E9B11AF22C5489400C22D81 /* MockUrlSession.swift in Sources */,
 				6E7516F422C520D400B2B157 /* OptimizelyError.swift in Sources */,
 				6E75195A22C520D500B2B157 /* OPTBucketer.swift in Sources */,
 				6E75177822C520D400B2B157 /* SDKVersion.swift in Sources */,
@@ -2605,6 +3403,7 @@
 				6E7516D522C520D400B2B157 /* OPTLogger.swift in Sources */,
 				6E7518B722C520D400B2B157 /* Group.swift in Sources */,
 				6E75188722C520D400B2B157 /* TrafficAllocation.swift in Sources */,
+				6E9B11E522C548B100C22D81 /* ThrowableConditionListTest.swift in Sources */,
 				6E75176522C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E75192F22C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E7517DF22C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
@@ -2620,6 +3419,7 @@
 				6E75182722C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
 				6E75190B22C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75183F22C520D400B2B157 /* EventForDispatch.swift in Sources */,
+				6E9B11BA22C5489700C22D81 /* OTUtils.swift in Sources */,
 				6E75172922C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E75184B22C520D400B2B157 /* Event.swift in Sources */,
 				6E7517D322C520D400B2B157 /* DefaultBucketer.swift in Sources */,
@@ -2629,11 +3429,13 @@
 				6E75192322C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75193B22C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75170522C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
+				6E9B11E422C548B100C22D81 /* OtherTests.swift in Sources */,
 				6E75186322C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E7518C322C520D400B2B157 /* Variable.swift in Sources */,
 				6E7518CF22C520D400B2B157 /* Audience.swift in Sources */,
 				6E75187B22C520D400B2B157 /* Variation.swift in Sources */,
 				6E7517F722C520D400B2B157 /* DataStoreMemory.swift in Sources */,
+				6E9B11B922C5489700C22D81 /* MockUrlSession.swift in Sources */,
 				6E7516F922C520D400B2B157 /* OptimizelyError.swift in Sources */,
 				6E75195F22C520D500B2B157 /* OPTBucketer.swift in Sources */,
 				6E75177D22C520D400B2B157 /* SDKVersion.swift in Sources */,
@@ -2742,11 +3544,13 @@
 				6E7518BA22C520D400B2B157 /* Variable.swift in Sources */,
 				6E75181222C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E75184E22C520D400B2B157 /* ProjectConfig.swift in Sources */,
+				6E9B11A822C5489200C22D81 /* OTUtils.swift in Sources */,
 				6E75173822C520D400B2B157 /* MurmurHash3.swift in Sources */,
 				6E7516E422C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
 				6E7518A222C520D400B2B157 /* FeatureFlag.swift in Sources */,
 				6E75187222C520D400B2B157 /* Variation.swift in Sources */,
 				6E7517EE22C520D400B2B157 /* DataStoreMemory.swift in Sources */,
+				6E9B11A622C5488900C22D81 /* iOSOnlyTests.swift in Sources */,
 				6E7518F622C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E7518D222C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E7516A822C520D400B2B157 /* DefaultLogger.swift in Sources */,
@@ -2770,6 +3574,7 @@
 				6E75187E22C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E7517CA22C520D400B2B157 /* DefaultBucketer.swift in Sources */,
 				6E7517FA22C520D400B2B157 /* DataStoreUserDefaults.swift in Sources */,
+				6E9B11A722C5489200C22D81 /* MockUrlSession.swift in Sources */,
 				6E7517D622C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
 				6E75178022C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E75171422C520D400B2B157 /* OptimizelyClient+ObjC.swift in Sources */,
@@ -3020,7 +3825,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3041,7 +3846,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3062,7 +3867,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3082,7 +3887,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3100,7 +3905,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3118,7 +3923,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3137,7 +3942,7 @@
 			baseConfigurationReference = 9AE15C4323F534C6D3C8F55E /* Pods-OptimizelyTests-Common-tvOS.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3158,7 +3963,7 @@
 			baseConfigurationReference = C06BB1C8B317DD5B44A739D2 /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3178,7 +3983,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3198,7 +4003,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3219,7 +4024,7 @@
 			baseConfigurationReference = 4B8B7D8EF46A244E15E7CBE9 /* Pods-OptimizelyTests-Common-iOS.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3238,7 +4043,7 @@
 			baseConfigurationReference = 558029989257292E82D43938 /* Pods-OptimizelyTests-Common-iOS.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3256,7 +4061,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3274,7 +4079,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3292,7 +4097,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3310,7 +4115,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3328,7 +4133,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3348,7 +4153,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3421,7 +4226,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3440,7 +4245,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OptimizelyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

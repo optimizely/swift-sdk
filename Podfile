@@ -14,27 +14,27 @@ def linter_pods
 end
 
 target 'OptimizelySwiftSDK-iOS' do
-  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
+  project 'OptimizelySwiftSDK.xcodeproj/'
   platform :ios, '9.0'
   use_frameworks!
   linter_pods
 end
 
 target 'OptimizelySwiftSDK-tvOS' do
-  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
+  project 'OptimizelySwiftSDK.xcodeproj/'
   platform :tvos, '9.0'
   use_frameworks!
   linter_pods
 end
 
 target 'OptimizelyTests-Common-iOS' do
-  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
+  project 'OptimizelySwiftSDK.xcodeproj/'
   platform :ios, '9.0'
   use_frameworks!
 end
 
 target 'OptimizelyTests-Common-tvOS' do
-  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
+  project 'OptimizelySwiftSDK.xcodeproj/'
   platform :tvos, '9.0'
   use_frameworks!
 end

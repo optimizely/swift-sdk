@@ -53,8 +53,10 @@ Pods/
 Carthage/Build
 
 # SPM
+
 .build
 .swiftpm
+Packages
 
 # fastlane
 #

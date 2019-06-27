@@ -8,7 +8,7 @@
       location = "group:DemoObjcApp/DemoObjcApp.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:OptimizelySDK/OptimizelySwiftSDK.xcodeproj">
+      location = "group:OptimizelySwiftSDK.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

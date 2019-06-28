@@ -13,7 +13,6 @@ Pod::Spec.new do |s|
     :tag => "v"+s.version.to_s
   }
   s.source_files            = "Sources/**/*.swift"
-  s.public_header_files     = "Sources/**/*.h"
   s.swift_version           = "4.2"
   s.framework               = "Foundation"
   s.requires_arc            = true

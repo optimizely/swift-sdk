@@ -33,10 +33,13 @@ jobs:
       osx_image: xcode10.2
       install:
         - gem install cocoapods -v '1.6.1'
+        - gem install slather --no-document --quiet
       script:
         - pod spec lint --quick
       after_script:
         - curl -sSL https://download.sourceclear.com/ci.sh | bash
+      after_success:
+        - slather
 
     - &unittests
       stage: 'Unit Tests'
@@ -49,7 +52,6 @@ jobs:
       env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'
       name: PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'
       install:
-        - gem install slather --no-document --quiet
         - gem install cocoapods -v '1.6.1'
         - pod install --repo-update
         # fix simulator known issue (https://developer.apple.com/documentation/xcode_release_notes/xcode_10_2_1_release_notes)
@@ -60,9 +62,6 @@ jobs:
         - Scripts/start_simulator.sh
       script:
         - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES > buildoutput; cat buildoutput | xcpretty; fi
-      after_success:
-        - slather
-        - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
       after_failure:
         # install travis artifacts uploader
         - sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash

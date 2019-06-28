@@ -35,6 +35,7 @@ xcuserdata/
 build
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
 !*.xcworkspace/contents.xcworkspacedata
 
 # CocoaPods

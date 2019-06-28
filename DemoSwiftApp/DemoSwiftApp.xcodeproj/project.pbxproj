@@ -353,6 +353,7 @@
 				252D7DEA21C8800800134A7A /* Frameworks */,
 				252D7DEB21C8800800134A7A /* Resources */,
 				6ECDA22322C53A2A00DD2CB0 /* Embed Frameworks */,
+				6E88579122C6B77500EAE70C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -373,6 +374,7 @@
 				252D7E0E21C8804E00134A7A /* Frameworks */,
 				252D7E0F21C8804E00134A7A /* Resources */,
 				6ECDA22722C53A3F00DD2CB0 /* Embed Frameworks */,
+				6E8857A822C6B79D00EAE70C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -576,6 +578,40 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		6E88579122C6B77500EAE70C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${PODS_ROOT}/SwiftLint/swiftlint --config ${SOURCE_ROOT}/../.swiftlint.yml --path ${SOURCE_ROOT}/../Sources\n";
+		};
+		6E8857A822C6B79D00EAE70C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${PODS_ROOT}/SwiftLint/swiftlint --config ${SOURCE_ROOT}/../.swiftlint.yml --path ${SOURCE_ROOT}/../Sources\n";
 		};
 		8C29F1E0722378268CBB6EF1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

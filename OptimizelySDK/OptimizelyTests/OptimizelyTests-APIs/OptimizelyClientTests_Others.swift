@@ -227,21 +227,18 @@ class OptimizelyClientTests_Others: XCTestCase {
         let optimizely = OptimizelyClient(sdkKey: kNotRealSdkKey)
         
         let exp = expectation(description: "a")
-        
+        var failureOccured = false
         optimizely.start { result in
-            switch result {
-            case .success:
-                XCTAssert(false)
-            case .failure(OptimizelyError.dataFileVersionInvalid):
-                XCTAssert(true)
-            case .failure(let error):
-                XCTAssert(false, "wrong error type: \(error)")
+            
+            if case .failure(OptimizelyError.dataFileVersionInvalid) = result  {
+                failureOccured = true
             }
             
             exp.fulfill()
         }
 
         wait(for: [exp], timeout: 10)
+        XCTAssertTrue(failureOccured)
     }
     
     func testHandlerReinitializeOnBackgroundDatafileUpdate() {

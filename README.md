@@ -53,6 +53,17 @@ We haven't actually published to Cocoapods yet.
 
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
 
+#### Swift Package Manager
+ Add the following line to the dependencies value of your _Package.swift_:
+
+```
+dependencies: [
+    .package(url: "https://github.com/optimizely/swift-sdk.git", .exact("3.1.0-beta"))
+]
+```
+
+### Samples
+
 A sample code for SDK initialization and experiments:
 
 ```

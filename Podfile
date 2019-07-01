@@ -1,4 +1,4 @@
-workspace 'OptimizelySDK.xcworkspace'
+workspace 'OptimizelySwiftSDK.xcworkspace'
 
 def analytics_pods
 #  pod 'Amplitude-iOS'

@@ -63,7 +63,6 @@ open class OptimizelyClient: NSObject {
     ///   - logger: custom Logger
     ///   - eventDispatcher: custom EventDispatcher (optional)
     ///   - userProfileService: custom UserProfileService (optional)
-    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional. default = 10 * 60 secs)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
@@ -87,6 +86,67 @@ open class OptimizelyClient: NSObject {
                               notificationCenter: DefaultNotificationCenter())
         
         logger.d("SDK Version: \(version)")
+    }
+    
+    /// Optimizely Manager
+    ///
+    /// - Parameters:
+    ///   - sdkKey: sdk key
+    ///   - logger: custom Logger
+    ///   - eventDispatcher: custom EventDispatcher (optional)
+    ///   - userProfileService: custom UserProfileService (optional)
+    ///   - clientConfig: custom SDK configuration
+    public init(sdkKey: String,
+                logger: OPTLogger? = nil,
+                eventDispatcher: OPTEventDispatcher? = nil,
+                userProfileService: OPTUserProfileService? = nil,
+                clientConfig: OptimizelyClientConfig? = nil) {
+        
+        self.sdkKey = sdkKey
+        
+        super.init()
+        
+        // use default settings if no custom settings provided
+        
+        let clientConfig = clientConfig ?? OptimizelyClientConfig()
+        
+        // UserProfileService
+        
+        let userProfileService = userProfileService ?? DefaultUserProfileService()
+        
+        // Logger
+        
+        let logger = logger ?? DefaultLogger()
+        type(of: logger).logLevel = clientConfig.defaultLogLevel
+        logger.d("SDK Version: \(version)")
+
+        // EventDispatcher
+        
+        let eventDispatcher = eventDispatcher ?? DefaultEventDispatcher(batchSize: clientConfig.eventBatchSize,
+                                                                        timerInterval: clientConfig.eventBatchInterval)
+        if let eventEndPoint = clientConfig.customEventEndPoint {
+            EventForDispatch.eventEndpoint = eventEndPoint
+        }
+        
+        // DatafileHandler
+        
+        let datafileHandler = DefaultDatafileHandler()
+        datafileHandler.setTimer(sdkKey: sdkKey, interval: Int(clientConfig.periodicDownloadInterval))
+    
+        // DecisionService
+        
+        let decisionService = DefaultDecisionService(userProfileService: userProfileService)
+        
+        // NotificationCenter
+        
+        let notificationCenter = DefaultNotificationCenter()
+        
+        self.registerServices(sdkKey: sdkKey,
+                              logger: logger,
+                              eventDispatcher: eventDispatcher,
+                              datafileHandler: datafileHandler,
+                              decisionService: decisionService,
+                              notificationCenter: notificationCenter)
     }
     
     /// Start Optimizely SDK (Asynchronous)

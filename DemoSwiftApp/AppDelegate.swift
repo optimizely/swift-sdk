@@ -49,7 +49,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //     - initialize immediately with the given JSON datafile or its cached copy
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
         
-        initializeOptimizelySDKWithCustomization()
+        //initializeOptimizelySDKWithCustomization()
+        initializeOptimizelySDKWithClientConfiguration()
     }
 
     // MARK: - Initialization Examples
@@ -94,17 +95,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func initializeOptimizelySDKWithCustomization() {
         // customization example (optional)
-
+        
         let customLogger = CustomLogger()
         // 30 sec interval may be too frequent. This is for demo purpose.
         // This should be should be much larger (default = 10 mins).
         let customDownloadIntervalInSecs = 30
-
+        
         optimizely = OptimizelyClient(sdkKey: sdkKey,
-                                       logger: customLogger,
-                                       periodicDownloadInterval: customDownloadIntervalInSecs,
-                                       defaultLogLevel: logLevel)
-    
+                                      logger: customLogger,
+                                      periodicDownloadInterval: customDownloadIntervalInSecs,
+                                      defaultLogLevel: logLevel)
+        
+        addListeners()
+        
+        // initialize SDK
+        optimizely!.start { result in
+            switch result {
+            case .failure(let error):
+                print("Optimizely SDK initiliazation failed: \(error)")
+            case .success:
+                print("Optimizely SDK initialized successfully!")
+            }
+            self.startWithRootViewController()
+        }
+    }
+
+    func initializeOptimizelySDKWithClientConfiguration() {
+        
+        var clientConfig = OptimizelyClientConfig()
+        clientConfig.defaultLogLevel = .debug
+        clientConfig.eventBatchInterval = 0
+        //clientConfig.customEventEndPoint = "https://google.com"
+        
+        optimizely = OptimizelyClient(sdkKey: sdkKey,
+                                      clientConfig: clientConfig)
+        
         addListeners()
         
         // initialize SDK

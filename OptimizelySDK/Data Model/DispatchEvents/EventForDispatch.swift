@@ -17,7 +17,7 @@
 import Foundation
 
 @objcMembers public class EventForDispatch: NSObject, Codable {
-    static let eventEndpoint = "https://logx.optimizely.com/v1/events"
+    static var eventEndpoint = "https://logx.optimizely.com/v1/events"
     
     public let url: URL
     public let body: Data

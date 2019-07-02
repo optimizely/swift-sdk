@@ -124,9 +124,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         var clientConfig = OptimizelyClientConfig()
         clientConfig.defaultLogLevel = .debug
-        clientConfig.eventBatchInterval = 0
-        //clientConfig.customEventEndPoint = "https://google.com"
-        
+        clientConfig.periodicDownloadInterval = 10*60
+        clientConfig.fetchDatafileResourceTimeout = 5*60
+        clientConfig.fetchDatafileRequestTimeout = 60
+        clientConfig.customEventEndPoint = "https://google.com"
+        clientConfig.eventBatchInterval = 0   // disable batching
+        clientConfig.eventBatchSize = 20
+        clientConfig.eventQueueMaxSize = 1000
+        clientConfig.optInForCertficatePinning = false
+
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                       clientConfig: clientConfig)
         

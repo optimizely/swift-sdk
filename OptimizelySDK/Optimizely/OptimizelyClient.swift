@@ -100,7 +100,7 @@ open class OptimizelyClient: NSObject {
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
-                clientConfig: OptimizelyClientConfig? = nil) {
+                clientConfig: OptimizelyClientConfig) {
         
         self.sdkKey = sdkKey
         

@@ -30,9 +30,6 @@ class VariationViewController: UIViewController {
             }
         }
     }
-    
-    var dispatcherLabel: UILabel!
-    var queueSizeLabel: UILabel!
 
     @IBOutlet weak var couponView: UIView!
     @IBOutlet weak var variationLetterLabel: UILabel!
@@ -54,9 +51,15 @@ class VariationViewController: UIViewController {
             self.performSegue(withIdentifier: "ConversionFailureSegue", sender: self)
         }
     }
+    
+    // For UI Tests.
+    var dispatcherLabel: UILabel!
+    var queueSizeLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        initializeTestingUI()
 
         if let variationKey = self.variationKey {
             switch variationKey {
@@ -79,27 +82,5 @@ class VariationViewController: UIViewController {
             self.variationLetterLabel.textColor = UIColor.gray
             self.variationSubheaderLabel.textColor = UIColor.white
         }
-        
-        dispatcherLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 24))
-        dispatcherLabel.center = CGPoint.init(x: view.frame.width/2, y: 80)
-        dispatcherLabel.textAlignment = .center
-        dispatcherLabel.text = "Current # of Optimizely events:"
-        dispatcherLabel.textColor = .white
-        dispatcherLabel.alpha = 0.001
-        self.view.addSubview(dispatcherLabel)
-        
-        queueSizeLabel = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: view.frame.width, height: 32))
-        queueSizeLabel.center = CGPoint.init(x: view.frame.width/2, y: 108)
-        queueSizeLabel.textAlignment = .center
-        queueSizeLabel.text = "nil"
-        dispatcherLabel.textColor = .white
-        queueSizeLabel.alpha = 0.001
-        self.view.addSubview(queueSizeLabel)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        queueSizeLabel.text = String(appDelegate.countDispatchQueue())
     }
 }

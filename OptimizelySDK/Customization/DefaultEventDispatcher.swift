@@ -115,7 +115,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 
             }
             while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
-                print("queueSize after `while`: ", self.dataStore.count)
                 let actualEventsSize = eventsToSend.count
                 var eventToSend = eventsToSend.batch()
                 if eventToSend != nil {
@@ -167,7 +166,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                         } else {
                             self.logger.e("Removed event nil for sent item")
                         }
-                        print("queueSize after `removeFirstItems`: ", self.dataStore.count)
                         // reset failureCount
                         failureCount = 0
                         // did we have to send a batch one at a time?

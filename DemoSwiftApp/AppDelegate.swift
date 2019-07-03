@@ -41,15 +41,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
     }
     
-    var timer: Timer!   // to refresh queue size label.
+    // For UI Tests.
+    var timer: Timer!
 
     func applicationDidFinishLaunching(_ application: UIApplication) {
         
-        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateQueueSizeLabel), userInfo: nil, repeats: true)
-        
-        if (ProcessInfo.processInfo.environment["UITEST_DISABLE_ANIMATIONS"] == "YES") {
-            UIView.setAnimationsEnabled(false)
-        }
+        initializeTestingUI()
 
         // initialize SDK in one of these two ways:
         // (1) asynchronous SDK initialization (RECOMMENDED)
@@ -203,17 +200,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func openFailureView() {
         window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "FailureViewController")
     }
-    
-    func countDispatchQueue() -> Int {
-        return self.eventHandler.getDataStoreCount()
-    }
-    
-    @objc func updateQueueSizeLabel() {
-        guard let vvc = self.window?.rootViewController as? VariationViewController else {
-            return
-        }
-        vvc.queueSizeLabel.text = String(self.countDispatchQueue())
-    }
 
     // MARK: - AppDelegate
 
@@ -224,14 +210,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateQueueSizeLabel), userInfo: nil, repeats: true)
-        guard let vvc = self.window?.rootViewController as? VariationViewController else {
-            return
-        }
-        vvc.queueSizeLabel.text = String(self.countDispatchQueue())
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

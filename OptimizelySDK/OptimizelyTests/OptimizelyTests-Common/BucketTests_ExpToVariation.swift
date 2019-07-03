@@ -97,7 +97,7 @@ class BucketTests_ExpToVariation: XCTestCase {
         
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
-        self.config = self.optimizely.config!
+        self.config = self.optimizely.config.property!
         self.bucketer = ((optimizely.decisionService as! DefaultDecisionService).bucketer as! DefaultBucketer)
     }
     

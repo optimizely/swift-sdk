@@ -31,7 +31,7 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true,
                                                   eventDispatcher: eventDispatcher)!
-        project = optimizely.config!.project!
+        project = optimizely.config.property!.project
     }
     
     func testEventTags() {

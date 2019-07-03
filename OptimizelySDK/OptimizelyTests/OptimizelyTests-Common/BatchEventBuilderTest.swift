@@ -38,7 +38,7 @@ class BatchEventBuilderTests: XCTestCase {
     }
 
     func testConversionEventWithNoExperiment() {
-        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!, eventKey: eventWithNoExperimentKey, userId: userId, attributes: ["anyattribute": "value", "broswer_type": "firefox"], eventTags: nil)
+        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config.property)!, eventKey: eventWithNoExperimentKey, userId: userId, attributes: ["anyattribute": "value", "broswer_type": "firefox"], eventTags: nil)
         
         XCTAssertNotNil(conversion)
         
@@ -51,10 +51,10 @@ class BatchEventBuilderTests: XCTestCase {
     }
 
     func testImpressionEventWithNoExperiment() {
-        let experiment = optimizely?.config?.project.experiments.filter({$0.key == featureExperimentKey}).first
+        let experiment = optimizely?.config.property?.project.experiments.filter({$0.key == featureExperimentKey}).first
         let variation = experiment?.variations[0]
         
-        let impression = BatchEventBuilder.createImpressionEvent(config: (optimizely?.config)!, experiment: experiment!, varionation: variation!, userId: userId, attributes: ["customattr": "yes" ])
+        let impression = BatchEventBuilder.createImpressionEvent(config: (optimizely?.config.property)!, experiment: experiment!, varionation: variation!, userId: userId, attributes: ["customattr": "yes" ])
         
         XCTAssertNotNil(impression)
         let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: impression!)

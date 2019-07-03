@@ -24,7 +24,7 @@ open class OptimizelyClient: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
-    var config: ProjectConfig?
+    var config: AtomicProperty<ProjectConfig> = AtomicProperty<ProjectConfig>()
 
     public var version: String {
         return Utils.sdkVersion
@@ -52,8 +52,6 @@ open class OptimizelyClient: NSObject {
         return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)!
     }
 
-    private let reInitLock = Dispatch.DispatchSemaphore(value: 1)
-    
     // MARK: - Public interfaces
     
     /// Optimizely Manager
@@ -147,18 +145,17 @@ open class OptimizelyClient: NSObject {
     
     func configSDK(datafile: Data) throws {
         do {
-            self.config = try ProjectConfig(datafile: datafile)
+            self.config.property = try ProjectConfig(datafile: datafile)
                         
             datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in...
-                self.reInitLock.wait(); defer { self.reInitLock.signal() }
                 if let config = try? ProjectConfig(datafile: data) {
                     do {
-                        if let users = self.config?.whitelistUsers {
+                        if let users = self.config.property?.whitelistUsers {
                             config.whitelistUsers = users
                         }
                         
-                        self.config = config
+                        self.config.property = config
                         
                         // call reinit on the services we know we are reinitializing.
                         
@@ -229,7 +226,7 @@ open class OptimizelyClient: NSObject {
                          userId: String,
                          attributes: OptimizelyAttributes?=nil) throws -> String {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let config = self.config.property else { throw OptimizelyError.sdkNotReady }
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
             throw OptimizelyError.experimentKeyInvalid(experimentKey)
@@ -265,7 +262,7 @@ open class OptimizelyClient: NSObject {
                       userId: String,
                       attributes: OptimizelyAttributes?=nil) throws -> Variation {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let config = self.config.property else { throw OptimizelyError.sdkNotReady }
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
             throw OptimizelyError.experimentKeyInvalid(experimentKey)
@@ -314,7 +311,7 @@ open class OptimizelyClient: NSObject {
     ///   - userId: The user ID to be used for bucketing.
     /// - Returns: forced variation key if it exists, otherwise return nil.
     public func getForcedVariation(experimentKey: String, userId: String) -> String? {
-        guard let config = self.config else { return nil }
+        guard let config = self.config.property else { return nil }
         
         let variaion = config.getForcedVariation(experimentKey: experimentKey, userId: userId)
         return variaion?.key
@@ -332,7 +329,7 @@ open class OptimizelyClient: NSObject {
                                    userId: String,
                                    variationKey: String?) -> Bool {
         
-        guard let config = self.config else { return false }
+        guard let config = self.config.property else { return false }
         
         return config.setForcedVariation(experimentKey: experimentKey,
                                          userId: userId,
@@ -351,7 +348,7 @@ open class OptimizelyClient: NSObject {
                                  userId: String,
                                  attributes: OptimizelyAttributes?=nil) -> Bool {
         
-        guard let config = self.config else {
+        guard let config = self.config.property else {
             logger.e(.sdkNotReady)
             return false
         }
@@ -491,7 +488,7 @@ open class OptimizelyClient: NSObject {
                                userId: String,
                                attributes: OptimizelyAttributes?=nil) throws -> T {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let config = self.config.property else { throw OptimizelyError.sdkNotReady }
         
         // fix config to throw errors
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
@@ -587,7 +584,7 @@ open class OptimizelyClient: NSObject {
         
         var enabledFeatures = [String]()
         
-        guard let config = self.config else {
+        guard let config = self.config.property else {
             logger.e(.sdkNotReady)
             return enabledFeatures
         }
@@ -611,7 +608,7 @@ open class OptimizelyClient: NSObject {
                       attributes: OptimizelyAttributes?=nil,
                       eventTags: OptimizelyEventTags?=nil) throws {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let config = self.config.property else { throw OptimizelyError.sdkNotReady }
         
         if config.getEvent(key: eventKey) == nil {
             throw OptimizelyError.eventKeyInvalid(eventKey)
@@ -629,7 +626,7 @@ extension OptimizelyClient {
                              userId: String,
                              attributes: OptimizelyAttributes?=nil) {
      
-        guard let config = self.config else { return }
+        guard let config = self.config.property else { return }
         
         guard let body = BatchEventBuilder.createImpressionEvent(config: config,
                                                                  experiment: experiment,
@@ -655,7 +652,7 @@ extension OptimizelyClient {
                              attributes: OptimizelyAttributes?=nil,
                              eventTags: OptimizelyEventTags?=nil) {
         
-        guard let config = self.config else { return }
+        guard let config = self.config.property else { return }
         
         guard let body = BatchEventBuilder.createConversionEvent(config: config,
                                                                  eventKey: eventKey,

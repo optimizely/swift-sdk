@@ -78,13 +78,13 @@ class OptimizelyClientTests_Variables: XCTestCase {
                                               clearUserProfileService: true)!
         
         let featureFlag: FeatureFlag = try! OTUtils.model(from: sampleFeatureFlagData)
-        optimizely.config!.project.featureFlags = [featureFlag]
+        optimizely.config.property!.project.featureFlags = [featureFlag]
     }
 
     func testFeatureVariableWhenFeatureEnabled() {
         var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
         experiment.variations[0].featureEnabled = true
-        optimizely.config!.project.experiments = [experiment]
+        optimizely.config.property!.project.experiments = [experiment]
         
         let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
         
@@ -94,7 +94,7 @@ class OptimizelyClientTests_Variables: XCTestCase {
     func testFeatureVariableWhenFeatureDisabled() {
         var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
         experiment.variations[0].featureEnabled = false
-        optimizely.config!.project.experiments = [experiment]
+        optimizely.config.property!.project.experiments = [experiment]
         
         let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
         
@@ -104,7 +104,7 @@ class OptimizelyClientTests_Variables: XCTestCase {
     func testFeatureVariableWhenFeatureEnabledNil() {
         var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
         experiment.variations[0].featureEnabled = nil
-        optimizely.config!.project.experiments = [experiment]
+        optimizely.config.property!.project.experiments = [experiment]
         
         let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
         

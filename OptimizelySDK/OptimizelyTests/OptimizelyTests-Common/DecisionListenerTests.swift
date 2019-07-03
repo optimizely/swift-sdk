@@ -115,7 +115,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerGetFeatureVariableBooleanWithUserInRollout() {
         
-        var variation: Variation = (self.optimizely.config?.allExperiments.first!.variations.first)!
+        var variation: Variation = (self.optimizely.config.property?.allExperiments.first!.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2689660112", value: "false"))
         self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
@@ -146,7 +146,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerGetFeatureVariableDoubleWithUserInRollout() {
         
-        var variation: Variation = (self.optimizely.config?.allExperiments.first!.variations.first)!
+        var variation: Variation = (self.optimizely.config.property?.allExperiments.first!.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2689280165", value: "50"))
         self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
@@ -177,7 +177,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerGetFeatureVariableIntegerWithUserInRollout() {
         
-        var variation: Variation = (self.optimizely.config?.allExperiments.first!.variations.first)!
+        var variation: Variation = (self.optimizely.config.property?.allExperiments.first!.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2687470095", value: "50"))
         self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
@@ -208,7 +208,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerGetFeatureVariableStringWithUserInRollout() {
         
-        var variation: Variation = (self.optimizely.config?.allExperiments.first!.variations.first)!
+        var variation: Variation = (self.optimizely.config.property?.allExperiments.first!.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2696150066", value: "123"))
         self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
@@ -239,7 +239,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerGetFeatureVariableBooleanWithUserInExperiment() {
         
-        let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
+        let experiment: Experiment = (self.optimizely.config.property?.allExperiments.first)!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2689660112", value: "false"))
@@ -275,7 +275,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerGetFeatureVariableDoubleWithUserInExperiment() {
         
-        let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
+        let experiment: Experiment = (self.optimizely.config.property?.allExperiments.first)!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2689280165", value: "50"))
@@ -311,7 +311,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerGetFeatureVariableIntegerWithUserInExperiment() {
         
-        let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
+        let experiment: Experiment = (self.optimizely.config.property?.allExperiments.first)!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2687470095", value: "50"))
@@ -347,7 +347,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerGetFeatureVariableStringWithUserInExperiment() {
         
-        let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
+        let experiment: Experiment = (self.optimizely.config.property?.allExperiments.first)!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2696150066", value: "123"))
@@ -505,7 +505,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerWithUserInRollout() {
         
-        var variation: Variation = (self.optimizely.config?.allExperiments.first!.variations.first)!
+        var variation: Variation = (self.optimizely.config.property?.allExperiments.first!.variations.first)!
         variation.featureEnabled = true
         self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
         self.optimizely.notificationCenter.clearAllNotificationListeners()
@@ -531,7 +531,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerWithUserInExperiment() {
         
-        let experiment: Experiment = (self.optimizely.config?.allExperiments.first!)!
+        let experiment: Experiment = (self.optimizely.config.property?.allExperiments.first!)!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
         self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation)

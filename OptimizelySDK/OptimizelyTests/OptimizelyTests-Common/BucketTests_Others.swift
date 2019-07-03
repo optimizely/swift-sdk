@@ -177,7 +177,7 @@ extension BucketTests_Others {
 
     func testBucketExperimentInMutexGroup() {        
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
-        let group = optimizely.config!.getGroup(id: "1886780721")!
+        let group = optimizely.config.property!.getGroup(id: "1886780721")!
 
         let bucketer = DefaultBucketer()
 
@@ -189,7 +189,7 @@ extension BucketTests_Others {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": "null"]]
 
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(config: optimizely.config!, group: group, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: optimizely.config.property!, group: group, bucketingId: test["userId"]!)
             let expected = test["expect"]
             if expected != "null" {
                 XCTAssert(experiment!.key == expected)
@@ -201,7 +201,7 @@ extension BucketTests_Others {
 
     func testBucketReturnsNilWhenExperimentIsExcludedFromMutex() {
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
-        let config = optimizely.config!
+        let config = optimizely.config.property!
         let bucketer = DefaultBucketer()
 
         // These test inputs/outputs should be reproduced exactly in all clients to make sure that they behave
@@ -238,7 +238,7 @@ extension BucketTests_Others {
 
     func testBucketExperimentWithMutexDoesNotChangeExperimentReference() {
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
-        let config = optimizely.config!
+        let config = optimizely.config.property!
         let bucketer = DefaultBucketer()
 
         let experiment = config.getExperiment(key: "experiment2")!
@@ -249,7 +249,7 @@ extension BucketTests_Others {
 
     func testBucketWithBucketingId() {
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2", clearUserProfileService: true)!
-        let config = optimizely.config!
+        let config = optimizely.config.property!
         let bucketer = DefaultBucketer()
         
         let experiment = config.getExperiment(key: "test_experiment")!
@@ -270,7 +270,7 @@ extension BucketTests_Others {
         // make sure that bucketing works with experiments in group
         
         let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2", clearUserProfileService: true)!
-        let config = optimizely.config!
+        let config = optimizely.config.property!
         let bucketer = DefaultBucketer()
 
         var experiment = config.getExperiment(key: "group_experiment_2")!

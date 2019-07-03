@@ -35,7 +35,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
                                               eventDispatcher: eventDispatcher)!
-        project = optimizely.config!.project!
+        project = optimizely.config.property!.project!
     }
     
     // MARK: - test attribute contents
@@ -192,10 +192,10 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     
     func testEventAttributesWhenAttributesEmpty() {
         // clear all audience conditions to accept empty attributes
-        var experiment = optimizely.config!.project!.experiments.filter({$0.key == experimentKey}).first!
+        var experiment = optimizely.config.property!.project.experiments.filter({$0.key == experimentKey}).first!
         experiment.audienceConditions = nil
         experiment.audienceIds = []
-        optimizely.config!.project!.experiments = [experiment]
+        optimizely.config.property!.project!.experiments = [experiment]
         
         let attributes: [String: Any] = [:]
         
@@ -211,10 +211,10 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     
     func testEventAttributesWhenAttributesNil() {
         // clear all audience conditions to accept empty attributes
-        var experiment = optimizely.config!.project!.experiments.filter({$0.key == experimentKey}).first!
+        var experiment = optimizely.config.property!.project!.experiments.filter({$0.key == experimentKey}).first!
         experiment.audienceConditions = nil
         experiment.audienceIds = []
-        optimizely.config!.project!.experiments = [experiment]
+        optimizely.config.property!.project!.experiments = [experiment]
         
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
@@ -292,7 +292,7 @@ extension BatchEventBuilderTests_Attributes {
         optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
                                               clearUserProfileService: true,
                                               eventDispatcher: eventDispatcher)
-        optimizely!.config!.project.botFiltering = false
+        optimizely!.config.property!.project.botFiltering = false
         
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
@@ -313,7 +313,7 @@ extension BatchEventBuilderTests_Attributes {
         optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
                                               clearUserProfileService: true,
                                               eventDispatcher: eventDispatcher)
-        optimizely!.config!.project.botFiltering = nil
+        optimizely!.config.property!.project.botFiltering = nil
         
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")

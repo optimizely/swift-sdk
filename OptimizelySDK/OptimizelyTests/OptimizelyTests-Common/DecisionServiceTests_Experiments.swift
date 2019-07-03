@@ -118,7 +118,7 @@ class DecisionServiceTests_Experiments: XCTestCase {
         
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
-        self.config = self.optimizely.config.property!
+        self.config = self.optimizely.config!
         self.decisionService = (optimizely.decisionService as! DefaultDecisionService)
     }
     

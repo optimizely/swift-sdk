@@ -33,7 +33,7 @@ class ProjectConfigTests: XCTestCase {
                                            userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.start(datafile: datafile)
         
-        self.config = optimizely.config.property
+        self.config = optimizely.config
     }
 
     func testExperimentFeatureMapIsBuiltFromProject() {

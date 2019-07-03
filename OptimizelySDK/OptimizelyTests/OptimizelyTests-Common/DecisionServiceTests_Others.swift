@@ -27,11 +27,11 @@ class DecisionServiceTests_Others: XCTestCase {
 
     func testUserInExperimentWithValidAudienceIdAndEmptyAudienceConditions() {
         let optimizely = OTUtils.createOptimizely(datafileName: ktypeAudienceDatafileName, clearUserProfileService: true)!
-        let config = optimizely.config.property!
+        let config = optimizely.config!
         
         let attributes = [kAttributeKey: kAttributeValue]
 
-        var experiment = optimizely.config.property!.getExperiment(key: kExperimentWithTypedAudienceKey)!
+        var experiment = optimizely.config!.getExperiment(key: kExperimentWithTypedAudienceKey)!
         experiment.audienceConditions = ConditionHolder.array([])
         let isValid = (optimizely.decisionService as! DefaultDecisionService).isInExperiment(config: config,
                                                                                                   experiment: experiment,

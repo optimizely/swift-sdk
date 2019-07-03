@@ -149,11 +149,11 @@ class OptimizelyClientTests_Others: XCTestCase {
         
         // remove defaultValue of the target featureFlag variable
         
-        var featureFlag = optimizely.config.property!.getFeatureFlag(key: featureKey)!
+        var featureFlag = optimizely.config!.getFeatureFlag(key: featureKey)!
         var variable = featureFlag.getVariable(key: variableKey)!
         variable.defaultValue = nil
         featureFlag.variables = [variable]
-        optimizely.config.property!.featureFlagKeyMap[featureKey] = featureFlag
+        optimizely.config!.featureFlagKeyMap[featureKey] = featureFlag
         
         valueString = try? optimizely.getFeatureVariableString(featureKey: featureKey,
                                                                variableKey: variableKey,
@@ -163,7 +163,7 @@ class OptimizelyClientTests_Others: XCTestCase {
     }
     
     func testSendImpressionEvent_FailToCreateEvent() {
-        let experiment = optimizely.config.property!.getExperiment(key: kExperimentKey)!
+        let experiment = optimizely.config!.getExperiment(key: kExperimentKey)!
         let variation = experiment.getVariation(key: kVariationKey)!
         
         // set invalid (infinity) to attribute values, which will cause JSONEncoder.encode exception
@@ -189,14 +189,14 @@ class OptimizelyClientTests_Others: XCTestCase {
     }
     
     func testSendEvent_ConfigNotReady() {
-        let experiment = optimizely.config.property!.getExperiment(key: kExperimentKey)!
+        let experiment = optimizely.config!.getExperiment(key: kExperimentKey)!
         let variation = experiment.getVariation(key: kVariationKey)!
         
         let kEventKey = "event1"
         let kUserId = "user"
         
         // force condition for sdk-not-ready
-        optimizely.config.property = nil
+        optimizely.config = nil
         
         optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId)
         XCTAssert(eventDispatcher.events.isEmpty, "event should not be sent out sdk is not configured properly")

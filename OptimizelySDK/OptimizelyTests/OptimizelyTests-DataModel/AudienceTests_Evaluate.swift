@@ -109,7 +109,7 @@ class AudienceTests_Evaluate: XCTestCase {
         
         let attributes = ["house": "Gryffindor"]
         
-        let bool = try? holder.evaluate(project: config.property?.project, attributes: attributes)
+        let bool = try? holder.evaluate(project: config?.project, attributes: attributes)
         
         XCTAssertTrue(bool!)
     }

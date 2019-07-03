@@ -44,7 +44,7 @@ class OptimizelyClientTests: XCTestCase {
     
     func testTypedAudienceThroughProject() {
         //        let variation = try? optimizely?.activate(experimentKey: "typed_audience_experiment", userId: "userId", attributes: ["doubleKey":5])
-        let answer = try? optimizely?.config.property?.project.evaluateAudience(audienceId: "3468206643", attributes: ["booleanKey": true])
+        let answer = try? optimizely?.config?.project.evaluateAudience(audienceId: "3468206643", attributes: ["booleanKey": true])
         XCTAssertTrue(answer!!)
         
     }
@@ -135,19 +135,19 @@ class OptimizelyClientTests: XCTestCase {
     func testGetExperimentGetVariation() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
         
-        let experiment: Experiment? = optimizely?.config.property?.getExperiment(key: "ab_running_exp_audience_combo_empty_conditions")
+        let experiment: Experiment? = optimizely?.config?.getExperiment(key: "ab_running_exp_audience_combo_empty_conditions")
         
         XCTAssertNotNil(experiment)
 
-        let ex2 = optimizely?.config.property?.getExperiment(id: experiment!.id)
+        let ex2 = optimizely?.config?.getExperiment(id: experiment!.id)
         
         XCTAssert(experiment == ex2)
         
-        XCTAssert(ex2!.id == optimizely?.config.property?.getExperimentId(key: experiment!.key))
+        XCTAssert(ex2!.id == optimizely?.config?.getExperimentId(key: experiment!.key))
         
-        let event = optimizely?.config.property?.project.events.first
+        let event = optimizely?.config?.project.events.first
         
-        let evId = optimizely?.config.property?.getEventId(key: event!.key)
+        let evId = optimizely?.config?.getEventId(key: event!.key)
         
         XCTAssert(event!.id == evId)
         
@@ -159,9 +159,9 @@ class OptimizelyClientTests: XCTestCase {
         
         XCTAssert(variation == var2)
         
-        let audience = optimizely?.config.property?.project.audiences.first
+        let audience = optimizely?.config?.project.audiences.first
         
-        let aud2 = optimizely?.config.property?.getAudience(id: audience!.id)
+        let aud2 = optimizely?.config?.getAudience(id: audience!.id)
         
         XCTAssert(audience == aud2)
     }

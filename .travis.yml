@@ -6,7 +6,9 @@ stages:
   - name: 'Trigger Integration Tests'
     if: env(RUN_COMPAT_SUITE) = true
   - name: 'SourceClear and Lint'
+    if: env(A) = true
   - name: 'Unit Tests'
+    if: env(A) = true
   - name: 'Prepare for release'
     if: env(PREP) = true and type = api
   - name: 'Release'

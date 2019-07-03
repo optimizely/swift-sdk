@@ -41,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
     }
     
-    var timer: Timer!   // to refresh queue size label
+    var timer: Timer!   // to refresh queue size label.
 
     func applicationDidFinishLaunching(_ application: UIApplication) {
         

@@ -46,8 +46,13 @@ class HandlerRegistryService {
     
     func injectComponent(service: Any, sdkKey: String? = nil, isReintialize: Bool=false) -> Any? {
         var result: Any?
-        let sk = ServiceKey(service: "\(type(of: service))", sdkKey: sdkKey)
-        if var binder = binders.property?[sk] {
+        // first look up global.  Then look up if there is a local.
+        let skLocal = ServiceKey(service: "\(type(of: service))", sdkKey: sdkKey)
+        let skGlobal = ServiceKey(service: "\(type(of: service))", sdkKey: nil)
+        
+        let binderToUse = binders.property?[skLocal] ?? binders.property?[skGlobal]
+        
+        if var binder = binderToUse {
             if isReintialize && binder.strategy == .reCreate {
                 binder.instance = binder.factory()
                 result = binder.instance

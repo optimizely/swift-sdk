@@ -167,7 +167,7 @@ open class OptimizelyClient: NSObject {
                         
                         // call reinit on the services we know we are reinitializing.
                         
-                        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) {
+                        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
                             HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
                         }
                         

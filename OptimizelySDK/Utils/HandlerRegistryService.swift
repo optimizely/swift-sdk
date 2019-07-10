@@ -25,7 +25,7 @@ class HandlerRegistryService {
         var sdkKey: String?
     }
     
-    var binders: AtomicProperty<[ServiceKey: BinderProtocol]> =  {
+    var binders: AtomicProperty<[ServiceKey: BinderProtocol]> = {
         
         var binders = AtomicProperty<[ServiceKey: BinderProtocol]>()
         binders.property = [ServiceKey: BinderProtocol]()

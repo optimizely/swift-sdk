@@ -59,6 +59,20 @@ class OptimizelyClientTests_Valid: XCTestCase {
         try! self.optimizely.start(datafile: datafile)
     }
     
+    func testMultiStart() {
+        try! self.optimizely.start(datafile: datafile)
+        try! self.optimizely.start(datafile: datafile)
+        DispatchQueue.global().async {
+            for _ in 0...10 {
+                try! self.optimizely.start(datafile: self.datafile)
+            }
+        }
+        sleep(1)
+        let variationKey: String = try! self.optimizely.activate(experimentKey: kExperimentKey, userId: kUserId)
+        XCTAssert(variationKey == kVariationKey)
+
+    }
+    
     func testActivate() {
         let variationKey: String = try! self.optimizely.activate(experimentKey: kExperimentKey, userId: kUserId)
         XCTAssert(variationKey == kVariationKey)

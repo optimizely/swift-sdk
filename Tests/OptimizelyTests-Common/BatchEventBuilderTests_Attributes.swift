@@ -192,7 +192,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     
     func testEventAttributesWhenAttributesEmpty() {
         // clear all audience conditions to accept empty attributes
-        var experiment = optimizely.config!.project!.experiments.filter({$0.key == experimentKey}).first!
+        var experiment = optimizely.config!.project.experiments.filter({$0.key == experimentKey}).first!
         experiment.audienceConditions = nil
         experiment.audienceIds = []
         optimizely.config!.project!.experiments = [experiment]

@@ -35,7 +35,9 @@ extension OptimizelyClient {
         // the decision service is also a singleton that will reCreate on re-initalize
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance: decisionService).reInitializeStrategy(strategy: .reUse).sdkKey(key: sdkKey))
         
-        // An event dispatcher.  We rely on the factory to create and mantain. Again, recreate on re-initalize.
+        // An event dispatcher.  We use a singleton and use the same Event dispatcher for all
+        // projects.  If you change the event dispatcher, you can potentially lose data if you
+        // don't use the same backingstore.
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().reInitializeStrategy(strategy: .reUse).using(instance: eventDispatcher).sdkKey(key: sdkKey))
         
         // This is a singleton and might be a good candidate for reuse.  The handler supports mulitple

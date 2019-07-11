@@ -20,7 +20,7 @@ class DatafileHandlerTests: XCTestCase {
 
     override func setUp() {
         
-        HandlerRegistryService.shared.binders.removeAll()
+        HandlerRegistryService.shared.binders.property?.removeAll()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             if (!FileManager.default.fileExists(atPath: url.path)) {
@@ -37,7 +37,7 @@ class DatafileHandlerTests: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        HandlerRegistryService.shared.binders.removeAll()
+        HandlerRegistryService.shared.binders.property?.removeAll()
     }
 
     func testDatafileHandler() {

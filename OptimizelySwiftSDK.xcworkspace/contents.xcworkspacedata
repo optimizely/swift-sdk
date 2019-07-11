@@ -16,4 +16,7 @@
    <FileRef
       location = "group:OptimizelySwiftSDK.podspec">
    </FileRef>
+   <FileRef
+      location = "group:Package.swift">
+   </FileRef>
 </Workspace>

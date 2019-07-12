@@ -1,4 +1,4 @@
-workspace 'OptimizelySDK.xcworkspace'
+workspace 'OptimizelySwiftSDK.xcworkspace'
 
 def analytics_pods
 #  pod 'Amplitude-iOS'
@@ -13,37 +13,12 @@ def linter_pods
   pod 'SwiftLint'
 end
 
-target 'OptimizelySwiftSDK-iOS' do
-  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
-  platform :ios, '9.0'
-  use_frameworks!
-  linter_pods
-end
-
-target 'OptimizelySwiftSDK-tvOS' do
-  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
-  platform :tvos, '9.0'
-  use_frameworks!
-  linter_pods
-end
-
-target 'OptimizelyTests-Common-iOS' do
-  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
-  platform :ios, '9.0'
-  use_frameworks!
-end
-
-target 'OptimizelyTests-Common-tvOS' do
-  project 'OptimizelySDK/OptimizelySwiftSDK.xcodeproj/'
-  platform :tvos, '9.0'
-  use_frameworks!
-end
-
 target 'DemoSwiftiOS' do
   project 'DemoSwiftApp/DemoSwiftApp.xcodeproj/'
   platform :ios, '9.0'
   use_frameworks!
   analytics_pods
+  linter_pods
   #pod 'OptimizelySwiftSDK','3.0.0'
 end
 
@@ -51,6 +26,7 @@ target 'DemoSwifttvOS' do
   project 'DemoSwiftApp/DemoSwiftApp.xcodeproj/'
   platform :tvos, '9.0'
   use_frameworks!
+  linter_pods
   #pod 'OptimizelySwiftSDK','3.0.0'
 end
 

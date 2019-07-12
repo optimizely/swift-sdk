@@ -35,6 +35,7 @@ xcuserdata/
 build
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
 !*.xcworkspace/contents.xcworkspacedata
 
 # CocoaPods
@@ -51,6 +52,12 @@ Pods/
 # Carthage/Checkouts
 
 Carthage/Build
+
+# SPM
+
+.build
+.swiftpm
+Packages
 
 # fastlane
 #

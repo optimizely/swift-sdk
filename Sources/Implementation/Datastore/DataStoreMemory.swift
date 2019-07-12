@@ -15,7 +15,6 @@
 ***************************************************************************/
 
 import Foundation
-import UIKit
 
 /// Implementation of OPTDataStore as a generic for per type storeage in memory. On background and foreground
 /// the file is saved.

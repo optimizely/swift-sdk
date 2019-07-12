@@ -2,8 +2,8 @@ Pod::Spec.new do |s|
   s.name                    = "OptimizelySwiftSDK"
   s.module_name	            = "Optimizely"
   s.version                 = "3.1.0-beta"
-  s.summary                 = "Optimizely server-side testing core framework."
-  s.homepage                = "http://developers.optimizely.com/server/reference/index.html?language=objectivec"
+  s.summary                 = "Optimizely experiment framework for iOS/tvOS"
+  s.homepage                = "https://docs.developers.optimizely.com/full-stack/docs"
   s.license                 = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
   s.author                  = { "Optimizely" => "support@optimizely.com" }
   s.ios.deployment_target   = "9.0"
@@ -12,10 +12,8 @@ Pod::Spec.new do |s|
     :git => "https://github.com/optimizely/swift-sdk.git",
     :tag => "v"+s.version.to_s
   }
-  s.source_files            = "OptimizelySDK/**/*.{swift,h}"
-  s.public_header_files     = "OptimizelySDK/OptimizelySwiftSDK/*.h"
-  s.exclude_files           = "OptimizelySDK/Optimizely*Tests/**/*"
-  s.swift_version           = "4.2"
+  s.source_files            = "Sources/**/*.swift"
+  s.swift_version           = "5.0"
   s.framework               = "Foundation"
   s.requires_arc            = true
   s.xcconfig                = { 'GCC_PREPROCESSOR_DEFINITIONS' => "OPTIMIZELY_SDK_VERSION=@\\\"#{s.version}\\\"" }

@@ -10,7 +10,7 @@ excluded:
 - Carthage
 - Pods
 - SwiftLint/Common/3rdPartyLib
-- OptimizelyTests
+- Tests
 line_length:
     warning: 350
     error: 400

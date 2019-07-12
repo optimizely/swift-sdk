@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		2EDC4E2400B5EEBA576A62F5 /* Pods_DemoObjciOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E74A6F66A7FA658F00BDB921 /* Pods_DemoObjciOS.framework */; };
+		6E4D300E22C5459E00062EB3 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4D2FF722C5457F00062EB3 /* Optimizely.framework */; };
+		6E4D300F22C5459E00062EB3 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4D2FF722C5457F00062EB3 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E4D301222C545A400062EB3 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4D2FF922C5457F00062EB3 /* Optimizely.framework */; };
+		6E4D301322C545A400062EB3 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4D2FF922C5457F00062EB3 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
 		6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
-		6E4DD97C21E67AAD00B0C2C7 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */; };
-		6E4DD97D21E67AAD00B0C2C7 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E4DD98021E67ABA00B0C2C7 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */; };
-		6E4DD98121E67ABA00B0C2C7 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E96817C21EEA321009B7FEC /* tvOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817421EEA321009B7FEC /* tvOSMain.storyboard */; };
 		6E96817F21EEA321009B7FEC /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817821EEA321009B7FEC /* iOSMain.storyboard */; };
 		6E9681AB21EEA3D8009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A321EEA3D8009B7FEC /* Assets.xcassets */; };
@@ -36,125 +36,125 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6E4DD97421E67A6500B0C2C7 /* PBXContainerItemProxy */ = {
+		6E4D2FF622C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6EBAEB6C21E3FEF800D13AA9;
-			remoteInfo = OptimizelySwiftSDKiOS;
+			remoteInfo = "OptimizelySwiftSDK-iOS";
 		};
-		6E4DD97621E67A6500B0C2C7 /* PBXContainerItemProxy */ = {
+		6E4D2FF822C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6E614DCD21E3F389005982A1;
-			remoteInfo = OptimizelySwiftSDKtvOS;
+			remoteInfo = "OptimizelySwiftSDK-tvOS";
 		};
-		6E4DD97821E67A6500B0C2C7 /* PBXContainerItemProxy */ = {
+		6E4D2FFA22C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6EBAEB7421E3FEF900D13AA9;
-			remoteInfo = OptimizelySwiftSDKiOSTests;
+			remoteInfo = "OptimizelyTests-iOS";
 		};
-		6E4DD97A21E67A6500B0C2C7 /* PBXContainerItemProxy */ = {
+		6E4D2FFC22C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E614DD521E3F38A005982A1;
-			remoteInfo = OptimizelySwiftSDKtvOSTests;
-		};
-		6E4DD97E21E67AAD00B0C2C7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6EBAEB6B21E3FEF800D13AA9;
-			remoteInfo = OptimizelySwiftSDKiOS;
-		};
-		6E4DD98221E67ABA00B0C2C7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E614DCC21E3F389005982A1;
-			remoteInfo = OptimizelySwiftSDKtvOS;
-		};
-		6E8D3244226FAC4F00478458 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6EA4256A2218E60A00B074B5;
 			remoteInfo = "OptimizelyTests-Common-iOS";
 		};
-		6E8D3246226FAC4F00478458 /* PBXContainerItemProxy */ = {
+		6E4D2FFE22C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6E636B8C2236C91F00AF3CEF;
 			remoteInfo = "OptimizelyTests-APIs-iOS";
 		};
-		6E8D3248226FAC4F00478458 /* PBXContainerItemProxy */ = {
+		6E4D300022C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6EA425792218E61E00B074B5;
 			remoteInfo = "OptimizelyTests-DataModel-iOS";
 		};
-		6E8D324A226FAC4F00478458 /* PBXContainerItemProxy */ = {
+		6E4D300222C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6EA4265B2219242100B074B5;
 			remoteInfo = "OptimizelyTests-Others-iOS";
 		};
-		6E8D324C226FAC4F00478458 /* PBXContainerItemProxy */ = {
+		6E4D300422C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6E636B9B2236C96700AF3CEF;
 			remoteInfo = "OptimizelyTests-Legacy-iOS";
 		};
-		6E8D324E226FAC4F00478458 /* PBXContainerItemProxy */ = {
+		6E4D300622C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E614DD521E3F38A005982A1;
+			remoteInfo = "OptimizelyTests-tvOS";
+		};
+		6E4D300822C5457F00062EB3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6EA425082218E41500B074B5;
 			remoteInfo = "OptimizelyTests-Common-tvOS";
 		};
-		6E8D3250226FAC4F00478458 /* PBXContainerItemProxy */ = {
+		6E4D300A22C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6EA4255B2218E58400B074B5;
 			remoteInfo = "OptimizelyTests-DataModel-tvOS";
 		};
-		6E8D3252226FAC4F00478458 /* PBXContainerItemProxy */ = {
+		6E4D300C22C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6EA4266A2219243D00B074B5;
 			remoteInfo = "OptimizelyTests-Others-tvOS";
 		};
+		6E4D301022C5459E00062EB3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EBAEB6B21E3FEF800D13AA9;
+			remoteInfo = "OptimizelySwiftSDK-iOS";
+		};
+		6E4D301422C545A400062EB3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E614DCC21E3F389005982A1;
+			remoteInfo = "OptimizelySwiftSDK-tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6E4DD93B21E6708E00B0C2C7 /* Embed Frameworks */ = {
+		6ECDA22D22C53A7800DD2CB0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6E4DD97D21E67AAD00B0C2C7 /* Optimizely.framework in Embed Frameworks */,
+				6E4D300F22C5459E00062EB3 /* Optimizely.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6E4DD93F21E6709600B0C2C7 /* Embed Frameworks */ = {
+		6ECDA23122C53A8500DD2CB0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6E4DD98121E67ABA00B0C2C7 /* Optimizely.framework in Embed Frameworks */,
+				6E4D301322C545A400062EB3 /* Optimizely.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -164,7 +164,7 @@
 /* Begin PBXFileReference section */
 		3EFD1578D8AB431E6FD4B8FE /* Pods-DemoObjctvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjctvOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		48C9592909E0CF5074F9A84D /* Pods_DemoObjctvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoObjctvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySDK/OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
+		6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
 		6E96817521EEA321009B7FEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/tvOSMain.storyboard; sourceTree = "<group>"; };
 		6E96817621EEA321009B7FEC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E96817921EEA321009B7FEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iOSMain.storyboard; sourceTree = "<group>"; };
@@ -196,7 +196,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E4DD97C21E67AAD00B0C2C7 /* Optimizely.framework in Frameworks */,
+				6E4D300E22C5459E00062EB3 /* Optimizely.framework in Frameworks */,
 				2EDC4E2400B5EEBA576A62F5 /* Pods_DemoObjciOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,7 +205,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E4DD98021E67ABA00B0C2C7 /* Optimizely.framework in Frameworks */,
+				6E4D301222C545A400062EB3 /* Optimizely.framework in Frameworks */,
 				A0C60F82A88EDB74234D7D3F /* Pods_DemoObjctvOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -213,21 +213,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6E4DD96E21E67A6500B0C2C7 /* Products */ = {
+		6E4D2FE822C5457F00062EB3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */,
-				6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */,
-				6E4DD97921E67A6500B0C2C7 /* OptimizelyTests-iOS.xctest */,
-				6E8D3245226FAC4F00478458 /* OptimizelyTests-Common-iOS.xctest */,
-				6E8D3247226FAC4F00478458 /* OptimizelyTests-APIs-iOS.xctest */,
-				6E8D3249226FAC4F00478458 /* OptimizelyTests-DataModel-iOS.xctest */,
-				6E8D324B226FAC4F00478458 /* OptimizelyTests-Others-iOS.xctest */,
-				6E8D324D226FAC4F00478458 /* OptimizelyTests-Legacy-iOS.xctest */,
-				6E4DD97B21E67A6500B0C2C7 /* OptimizelyTests-tvOS.xctest */,
-				6E8D324F226FAC4F00478458 /* OptimizelyTests-Common-tvOS.xctest */,
-				6E8D3251226FAC4F00478458 /* OptimizelyTests-DataModel-tvOS.xctest */,
-				6E8D3253226FAC4F00478458 /* OptimizelyTests-Others-tvOS.xctest */,
+				6E4D2FF722C5457F00062EB3 /* Optimizely.framework */,
+				6E4D2FF922C5457F00062EB3 /* Optimizely.framework */,
+				6E4D2FFB22C5457F00062EB3 /* OptimizelyTests-iOS.xctest */,
+				6E4D2FFD22C5457F00062EB3 /* OptimizelyTests-Common-iOS.xctest */,
+				6E4D2FFF22C5457F00062EB3 /* OptimizelyTests-APIs-iOS.xctest */,
+				6E4D300122C5457F00062EB3 /* OptimizelyTests-DataModel-iOS.xctest */,
+				6E4D300322C5457F00062EB3 /* OptimizelyTests-Others-iOS.xctest */,
+				6E4D300522C5457F00062EB3 /* OptimizelyTests-Legacy-iOS.xctest */,
+				6E4D300722C5457F00062EB3 /* OptimizelyTests-tvOS.xctest */,
+				6E4D300922C5457F00062EB3 /* OptimizelyTests-Common-tvOS.xctest */,
+				6E4D300B22C5457F00062EB3 /* OptimizelyTests-DataModel-tvOS.xctest */,
+				6E4D300D22C5457F00062EB3 /* OptimizelyTests-Others-tvOS.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -336,7 +336,7 @@
 		E4F9C3F25D5A22985B6E41CD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */,
+				6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */,
 				E74A6F66A7FA658F00BDB921 /* Pods_DemoObjciOS.framework */,
 				48C9592909E0CF5074F9A84D /* Pods_DemoObjctvOS.framework */,
 			);
@@ -365,12 +365,12 @@
 				6EF7498A21E404BB008B22A0 /* Sources */,
 				6EF7498B21E404BB008B22A0 /* Frameworks */,
 				6EF7498C21E404BB008B22A0 /* Resources */,
-				6E4DD93B21E6708E00B0C2C7 /* Embed Frameworks */,
+				6ECDA22D22C53A7800DD2CB0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				6E4DD97F21E67AAD00B0C2C7 /* PBXTargetDependency */,
+				6E4D301122C5459E00062EB3 /* PBXTargetDependency */,
 			);
 			name = DemoObjciOS;
 			productName = DemoObjcAppiOS;
@@ -385,12 +385,12 @@
 				6EF749A421E404D6008B22A0 /* Sources */,
 				6EF749A521E404D6008B22A0 /* Frameworks */,
 				6EF749A621E404D6008B22A0 /* Resources */,
-				6E4DD93F21E6709600B0C2C7 /* Embed Frameworks */,
+				6ECDA23122C53A8500DD2CB0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				6E4DD98321E67ABA00B0C2C7 /* PBXTargetDependency */,
+				6E4D301522C545A400062EB3 /* PBXTargetDependency */,
 			);
 			name = DemoObjctvOS;
 			productName = DemoObjcApptvOS;
@@ -432,8 +432,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 6E4DD96E21E67A6500B0C2C7 /* Products */;
-					ProjectRef = 6E4DD96D21E67A6500B0C2C7 /* OptimizelySwiftSDK.xcodeproj */;
+					ProductGroup = 6E4D2FE822C5457F00062EB3 /* Products */;
+					ProjectRef = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -445,88 +445,88 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		6E4DD97521E67A6500B0C2C7 /* Optimizely.framework */ = {
+		6E4D2FF722C5457F00062EB3 /* Optimizely.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Optimizely.framework;
-			remoteRef = 6E4DD97421E67A6500B0C2C7 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D2FF622C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97721E67A6500B0C2C7 /* Optimizely.framework */ = {
+		6E4D2FF922C5457F00062EB3 /* Optimizely.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Optimizely.framework;
-			remoteRef = 6E4DD97621E67A6500B0C2C7 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D2FF822C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97921E67A6500B0C2C7 /* OptimizelyTests-iOS.xctest */ = {
+		6E4D2FFB22C5457F00062EB3 /* OptimizelyTests-iOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-iOS.xctest";
-			remoteRef = 6E4DD97821E67A6500B0C2C7 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D2FFA22C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E4DD97B21E67A6500B0C2C7 /* OptimizelyTests-tvOS.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "OptimizelyTests-tvOS.xctest";
-			remoteRef = 6E4DD97A21E67A6500B0C2C7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E8D3245226FAC4F00478458 /* OptimizelyTests-Common-iOS.xctest */ = {
+		6E4D2FFD22C5457F00062EB3 /* OptimizelyTests-Common-iOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-Common-iOS.xctest";
-			remoteRef = 6E8D3244226FAC4F00478458 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D2FFC22C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E8D3247226FAC4F00478458 /* OptimizelyTests-APIs-iOS.xctest */ = {
+		6E4D2FFF22C5457F00062EB3 /* OptimizelyTests-APIs-iOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-APIs-iOS.xctest";
-			remoteRef = 6E8D3246226FAC4F00478458 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D2FFE22C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E8D3249226FAC4F00478458 /* OptimizelyTests-DataModel-iOS.xctest */ = {
+		6E4D300122C5457F00062EB3 /* OptimizelyTests-DataModel-iOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-DataModel-iOS.xctest";
-			remoteRef = 6E8D3248226FAC4F00478458 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D300022C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E8D324B226FAC4F00478458 /* OptimizelyTests-Others-iOS.xctest */ = {
+		6E4D300322C5457F00062EB3 /* OptimizelyTests-Others-iOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-Others-iOS.xctest";
-			remoteRef = 6E8D324A226FAC4F00478458 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D300222C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E8D324D226FAC4F00478458 /* OptimizelyTests-Legacy-iOS.xctest */ = {
+		6E4D300522C5457F00062EB3 /* OptimizelyTests-Legacy-iOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-Legacy-iOS.xctest";
-			remoteRef = 6E8D324C226FAC4F00478458 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D300422C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E8D324F226FAC4F00478458 /* OptimizelyTests-Common-tvOS.xctest */ = {
+		6E4D300722C5457F00062EB3 /* OptimizelyTests-tvOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-tvOS.xctest";
+			remoteRef = 6E4D300622C5457F00062EB3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E4D300922C5457F00062EB3 /* OptimizelyTests-Common-tvOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-Common-tvOS.xctest";
-			remoteRef = 6E8D324E226FAC4F00478458 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D300822C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E8D3251226FAC4F00478458 /* OptimizelyTests-DataModel-tvOS.xctest */ = {
+		6E4D300B22C5457F00062EB3 /* OptimizelyTests-DataModel-tvOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-DataModel-tvOS.xctest";
-			remoteRef = 6E8D3250226FAC4F00478458 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D300A22C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E8D3253226FAC4F00478458 /* OptimizelyTests-Others-tvOS.xctest */ = {
+		6E4D300D22C5457F00062EB3 /* OptimizelyTests-Others-tvOS.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-Others-tvOS.xctest";
-			remoteRef = 6E8D3252226FAC4F00478458 /* PBXContainerItemProxy */;
+			remoteRef = 6E4D300C22C5457F00062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -633,15 +633,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6E4DD97F21E67AAD00B0C2C7 /* PBXTargetDependency */ = {
+		6E4D301122C5459E00062EB3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = OptimizelySwiftSDKiOS;
-			targetProxy = 6E4DD97E21E67AAD00B0C2C7 /* PBXContainerItemProxy */;
+			name = "OptimizelySwiftSDK-iOS";
+			targetProxy = 6E4D301022C5459E00062EB3 /* PBXContainerItemProxy */;
 		};
-		6E4DD98321E67ABA00B0C2C7 /* PBXTargetDependency */ = {
+		6E4D301522C545A400062EB3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = OptimizelySwiftSDKtvOS;
-			targetProxy = 6E4DD98221E67ABA00B0C2C7 /* PBXContainerItemProxy */;
+			name = "OptimizelySwiftSDK-tvOS";
+			targetProxy = 6E4D301422C545A400062EB3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -823,6 +823,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3EFD1578D8AB431E6FD4B8FE /* Pods-DemoObjctvOS.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_STYLE = Automatic;
@@ -842,6 +843,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D58542E1B5771327083E56E2 /* Pods-DemoObjctvOS.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_STYLE = Automatic;

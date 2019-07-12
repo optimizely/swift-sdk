@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/jae.kim/Desktop/FS/swift-sdk/OptimizelySDK/OptimizelySDK.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>

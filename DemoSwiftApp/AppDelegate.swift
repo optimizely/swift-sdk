@@ -174,16 +174,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func openVariationView(variationKey: String?) {
-        let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController") as! VariationViewController
+        if let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController")
+            as? VariationViewController {
 
-        variationViewController.showCoupon = optimizely.isFeatureEnabled(featureKey: "show_coupon",
+            variationViewController.showCoupon = optimizely.isFeatureEnabled(featureKey: "show_coupon",
                                                                          userId: userId)
-        variationViewController.optimizely = optimizely
-        variationViewController.userId = userId
-        variationViewController.variationKey = variationKey
-        variationViewController.eventKey = eventKey
+            variationViewController.optimizely = optimizely
+            variationViewController.userId = userId
+            variationViewController.variationKey = variationKey
+            variationViewController.eventKey = eventKey
 
-        window?.rootViewController = variationViewController
+            window?.rootViewController = variationViewController
+        }
     }
 
     func openFailureView() {
@@ -207,7 +209,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
     }
 
-    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+    func application(_ application: UIApplication,
+                     performFetchWithCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
 
         // add background fetch task here
 

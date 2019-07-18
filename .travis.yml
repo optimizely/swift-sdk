@@ -25,7 +25,7 @@ jobs:
         - TESTAPP_TAG=master
       cache: false
       install:
-        - mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git sohail/refactorscript && popd
+        - mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git && popd
       script:
         - "$HOME/travisci-tools/trigger-script-with-status-update.sh"
     

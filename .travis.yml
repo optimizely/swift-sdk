@@ -5,6 +5,7 @@ os: linux
 stages:
   - name: 'Trigger Integration Tests'
     if: env(RUN_COMPAT_SUITE) = true
+  - name: 'Benchmarking tests'
   - name: 'SourceClear and Lint'
   - name: 'Unit Tests'
   - name: 'Prepare for release'
@@ -14,7 +15,8 @@ stages:
 
 jobs:
   include:
-    - stage: 'Trigger Integration Tests'
+    - &integrationtest
+      stage: 'Trigger Integration Tests'
       language: minimal
       os: linux
       env:
@@ -23,9 +25,15 @@ jobs:
         - TESTAPP_TAG=master
       cache: false
       install:
-        - mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git && popd
+        - mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git sohail/refactorscript && popd
       script:
-        - "$HOME/travisci-tools/fsc-trigger/trigger_fullstack-sdk-compat.sh"
+        - "$HOME/travisci-tools/trigger-script-with-status-update.sh"
+    
+    - <<: *integrationtest
+      stage: 'Benchmarking tests'
+      env: SDK=swift FULLSTACK_TEST_REPO=Benchmarking
+      script:
+        - "$HOME/travisci-tools/trigger-script-with-status-update.sh yasir/bench-exp-support"
 
     - stage: 'SourceClear and Lint'
       language: swift

@@ -23,6 +23,7 @@ jobs:
         - SDK=swift
         - BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
         - TESTAPP_TAG=master
+        - SDK_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
       cache: false
       install:
         - mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git && popd
@@ -31,7 +32,7 @@ jobs:
     
     - <<: *integrationtest
       stage: 'Benchmarking tests'
-      env: SDK=swift FULLSTACK_TEST_REPO=Benchmarking
+      env: SDK=swift FULLSTACK_TEST_REPO=Benchmarking SDK_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
 
     - stage: 'SourceClear and Lint'
       language: swift

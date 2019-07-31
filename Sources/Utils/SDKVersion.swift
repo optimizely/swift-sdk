@@ -17,4 +17,4 @@
     
 /// Do not edit this field.
 /// It is auto updated (Scripts/updated_version.sh) to reflect the current version
-let OPTIMIZELYSDKVERSION = "3.1.0-beta"
+let OPTIMIZELYSDKVERSION = "3.1.0"

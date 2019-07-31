@@ -44,6 +44,7 @@ function do_stuff {
   trap 'error_handler' ERR
 
   # we need pod install or test_all.sh fails
+  pod repo update
   pod install
 
   myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )

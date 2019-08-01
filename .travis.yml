@@ -92,6 +92,8 @@ jobs:
         - gem install cocoapods -v '1.6.1'
       script:
         - Scripts/run_prep.sh
+      after_failure:
+        - cat /tmp/build.out
 
     - stage: 'Release'
       name: Push to cocoapods.org

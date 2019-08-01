@@ -55,7 +55,6 @@ function do_stuff {
     echo
   done
 
-  aws s3 cp $BUILD_OUTPUT "s3://$AWS_BUCKET/$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER/"
   dump_output
   kill $! && trap " " EXIT
 }

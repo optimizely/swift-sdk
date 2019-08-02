@@ -33,8 +33,8 @@ cd "$(dirname $0)/.."
 #----------------------------------------------------------------------------------
 # 1. update the SDK version in SDKVersion.swift file
 #----------------------------------------------------------------------------------
-sdkVersionFilepath="OptimizelySDK/Utils/SDKVersion.swift"
-sdkVersionKey="OPTIMIZELY_SDK_VERSION"
+sdkVersionFilepath="Sources/Utils/SDKVersion.swift"
+sdkVersionKey="OPTIMIZELYSDKVERSION"
 
 printf "\tUpdating ${sdkVersionKey} to ${releaseSDKVersion}.\n"
 sed -i '' -e "s/${sdkVersionKey}[ ]*=.*\"\(.*\)\"/${sdkVersionKey} = \"${releaseSDKVersion}\"/g" ${sdkVersionFilepath}

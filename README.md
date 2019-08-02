@@ -15,11 +15,12 @@ Optimizely Rollouts is free feature flags for development teams. Easily roll out
 
 ### Using the SDK
 
-See the [Mobile developer documentation](https://docs.developers.optimizely.com/full-stack/docs/ios-swift-sdk-310-beta) or [OTT developer documentation](https://docs.developers.optimizely.com/full-stack/docs/ios-swift-sdk-310-beta) to learn how to set
+See the [Mobile developer documentation](https://docs.developers.optimizely.com/full-stack/docs/install-the-swift-sdk) to learn how to set
 up an Optimizely X project and start using the SDK.
 
 ### Requirements
 * iOS 9.0+ / tvOS 9.0+
+* Swift 5+
 
 ### Installing the SDK
  
@@ -28,28 +29,28 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 	```use_frameworks!```
-    ```pod 'OptimizelySwiftSDK', '3.1.0-beta'```
+    ```pod 'OptimizelySwiftSDK', '~> 3.1.0'```
     </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
 
 Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
 
-We haven't actually published to Cocoapods yet.  
-
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" == 3.1.0-beta```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.1.0```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 
-3. Link the frameworks to your project. Go to your project target's **Link Binary With Libraries** and drag over the following from the _Carthage/Build/\<platform\>_ folder: <pre>```OptimizelySDK.framework```</pre>
+3. Link the frameworks to your project. Go to your project target's **Link Binary With Libraries** and drag over the following from the _Carthage/Build/\<platform\>_ folder: <pre>```Optimizely.framework```</pre>
 
 4. To ensure that proper bitcode-related files and dSYMs are copied when archiving your app, you will need to install a Carthage build script:
       - Add a new **Run Script** phase in your target's **Build Phase**.</br>
       - In the script area include:<pre>
-      ```/usr/local/bin/carthage copy-frameworks```</pre> 
+      ```/usr/local/bin/carthage copy-frameworks```</pre>
       - Add the frameworks to the **Input Files** list:<pre>
       ```$(SRCROOT)/Carthage/Build/<platform>/Optimizely.framework```</pre>
+      - Add the paths to the copied frameworks to the Output Files list:<pre>
+      ```$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Optimizely.framework```</pre>
 
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
 
@@ -58,7 +59,7 @@ Futher installation instructions for Carthage: https://github.com/Carthage/Carth
 
 ```
 dependencies: [
-    .package(url: "https://github.com/optimizely/swift-sdk.git", .exact("3.1.0-beta"))
+    .package(url: "https://github.com/optimizely/swift-sdk.git", "3.1.0"..<"3.2.0")
 ]
 ```
 

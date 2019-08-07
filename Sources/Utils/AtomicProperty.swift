@@ -27,7 +27,7 @@ class AtomicProperty<T> {
             return retVal
         }
         set {
-            lock.sync {
+            lock.async(flags: DispatchWorkItemFlags.barrier) {
                 self._property = newValue
             }
         }
@@ -36,7 +36,7 @@ class AtomicProperty<T> {
         var name = "AtomicProperty" + String(Int.random(in: 0...100000))
         let clzzName = String(describing: T.self)
         name += clzzName
-        return DispatchQueue(label: name)
+        return DispatchQueue(label: name, attributes: .concurrent)
     }()
 
     init(property: T) {
@@ -50,7 +50,7 @@ class AtomicProperty<T> {
     // perform an atomic operation on the atomic property
     // the operation will not run if the property is nil.
     public func performAtomic(atomicOperation:((_ prop:inout T) -> Void)) {
-        lock.sync {
+        lock.sync(flags: DispatchWorkItemFlags.barrier) {
             if var prop = _property {
                 atomicOperation(&prop)
                 _property = prop

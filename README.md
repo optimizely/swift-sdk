@@ -3,6 +3,8 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/carthage/carthage)
 [![Build Status](https://travis-ci.com/optimizely/swift-sdk.svg?branch=master)](https://travis-ci.com/optimizely/swift-sdk)
 [![Coverage Status](https://coveralls.io/repos/github/optimizely/swift-sdk/badge.svg?branch=master)](https://coveralls.io/github/optimizely/swift-sdk?branch=master)
+![Platforms](https://img.shields.io/cocoapods/p/OptimizelySwiftSDK.svg)
+[![Podspec](https://img.shields.io/cocoapods/v/OptimizelySwiftSDK.svg)](https://cocoapods.org/pods/OptimizelySwiftSDK)
 
 This repository houses the Swift SDK for use with Optimizely Full Stack and Optimizely Rollouts for Mobile and OTT.
 

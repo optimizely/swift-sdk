@@ -44,6 +44,7 @@ function do_stuff {
   trap 'error_handler' ERR
 
   # we need pod install or test_all.sh fails
+  pod repo update
   pod install
 
   myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
@@ -54,7 +55,6 @@ function do_stuff {
     echo
   done
 
-  aws s3 cp $BUILD_OUTPUT "s3://$AWS_BUCKET/$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER/"
   dump_output
   kill $! && trap " " EXIT
 }

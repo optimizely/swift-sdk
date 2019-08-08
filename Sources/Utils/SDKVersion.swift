@@ -16,5 +16,6 @@
 ***************************************************************************/
     
 /// Do not edit this field.
-/// It is auto updated (Scripts/updated_version.sh) to reflect the current version
-let OPTIMIZELYSDKVERSION = "3.1.0-beta"
+/// - It is auto updated (Scripts/updated_version.sh) to reflect the current version
+/// - Do not put underscores in the name (Swiftlint can modify unexpectedly)
+let OPTIMIZELYSDKVERSION = "3.1.0"

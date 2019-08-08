@@ -30,8 +30,8 @@ main() {
     action="$1"
   fi;
 
-  xcodebuild -workspace OptimizelySDK.xcworkspace -scheme OptimizelySwiftSDK-iOS -configuration Release "${action}"
-  xcodebuild -workspace OptimizelySDK.xcworkspace -scheme OptimizelySwiftSDK-tvOS -configuration Release "${action}"
+  xcodebuild -workspace OptimizelySwiftSDK.xcworkspace -scheme OptimizelySwiftSDK-iOS -configuration Release "${action}"
+  xcodebuild -workspace OptimizelySwiftSDK.xcworkspace -scheme OptimizelySwiftSDK-tvOS -configuration Release "${action}"
 }
 
 main

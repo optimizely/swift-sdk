@@ -109,7 +109,7 @@ extension EventDispatcherTests_Batch {
     }
 
     func testBatchingEventsWhenProjectIdsNotEqual() {
-        let be1 = makeTestBatchEvent(projectId: nil, visitor: visitorA)
+        let be1 = makeTestBatchEvent(visitor: visitorA)
         let be2 = makeTestBatchEvent(projectId: "99999", visitor: visitorA)
 
         let events: [EventForDispatch] = [
@@ -120,7 +120,20 @@ extension EventDispatcherTests_Batch {
         let batch = events.batch()
         XCTAssertNil(batch)
     }
-    
+
+    func testBatchingEventsWhenRevisionNotEqual() {
+        let be1 = makeTestBatchEvent(visitor: visitorA)
+        let be2 = makeTestBatchEvent(revision: "99999", visitor: visitorA)
+        
+        let events: [EventForDispatch] = [
+            makeEventForDispatch(url: kUrlA, event: be1),
+            makeEventForDispatch(url: kUrlB, event: be2)
+        ]
+        
+        let batch = events.batch()
+        XCTAssertNil(batch)
+    }
+
 }
 
 // MARK: - FlushEvents
@@ -531,11 +544,12 @@ extension EventDispatcherTests_Batch {
         return EventForDispatch(url: URL(string: url), body: data)
     }
     
-    func makeTestBatchEvent(projectId: String?=nil, visitor: Visitor?=nil) -> BatchEvent {
+    func makeTestBatchEvent(projectId: String?=nil, revision: String?=nil, visitor: Visitor?=nil) -> BatchEvent {
         let testProjectId = projectId ?? kProjectId
         let testVisitor = visitor ?? visitorA
+        let testRevision = revision ?? kRevision
         
-        return BatchEvent(revision: kRevision,
+        return BatchEvent(revision: testRevision,
                           accountID: kAccountId,
                           clientVersion: kClientVersion,
                           visitors: [testVisitor],

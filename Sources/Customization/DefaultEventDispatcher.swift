@@ -28,7 +28,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     static let MAX_FAILURE_COUNT = 3
     
     // default timerInterval
-    var timerInterval: TimeInterval // every minute
+    var timerInterval: TimeInterval
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
     var batchSize: Int
@@ -66,9 +66,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     deinit {
-        timer.performAtomic { (timer) in
-            timer.invalidate()
-        }
+        removeTimer()
+
         unsubscribe()
     }
     
@@ -210,10 +209,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func applicationDidEnterBackground() {
-        timer.performAtomic { (timer) in
-            timer.invalidate()
-        }
-        timer.property = nil
+        removeTimer()
         
         flushEvents()
     }
@@ -237,18 +233,22 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             // should check here again
             guard self.timer.property == nil else { return }
             
-            self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
+            self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { _ in
                 self.dispatcher.async {
-                    if self.dataStore.count == 0 {
-                        self.timer.performAtomic {(timer) in
-                            timer.invalidate()
-                        }
-                        self.timer.property = nil
-                    } else {
+                    if self.dataStore.count > 0 {
                         self.flushEvents()
+                    } else {
+                        self.removeTimer()
                     }
                 }
             }
         }
+    }
+    
+    func removeTimer() {
+        timer.performAtomic { (timer) in
+            timer.invalidate()
+        }
+        timer.property = nil
     }
 }

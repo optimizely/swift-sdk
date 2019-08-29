@@ -66,7 +66,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     deinit {
-        removeTimer()
+        stopTimer()
 
         unsubscribe()
     }
@@ -74,7 +74,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         dataStore.save(item: event)
         
-        setTimer()
+        startTimer()
         
         completionHandler?(.success(event.body))
     }
@@ -209,18 +209,18 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func applicationDidEnterBackground() {
-        removeTimer()
+        stopTimer()
         
         flushEvents()
     }
     
     func applicationDidBecomeActive() {
         if dataStore.count > 0 {
-            setTimer()
+            startTimer()
         }
     }
     
-    func setTimer() {
+    func startTimer() {
         // timer is activated only for iOS10+ and non-zero interval value
         guard #available(iOS 10.0, tvOS 10.0, *), timerInterval > 0 else {
             flushEvents()
@@ -238,14 +238,14 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                     if self.dataStore.count > 0 {
                         self.flushEvents()
                     } else {
-                        self.removeTimer()
+                        self.stopTimer()
                     }
                 }
             }
         }
     }
     
-    func removeTimer() {
+    func stopTimer() {
         timer.performAtomic { (timer) in
             timer.invalidate()
         }

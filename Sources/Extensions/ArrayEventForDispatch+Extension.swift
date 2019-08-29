@@ -59,8 +59,7 @@ extension Array where Element == EventForDispatch {
                     return nil
                 }
                 visitors.append(contentsOf: batchEvent.visitors)
-                if firstBatchEvent != nil {
-                } else {
+                if firstBatchEvent == nil {
                     firstBatchEvent = batchEvent
                 }
             }

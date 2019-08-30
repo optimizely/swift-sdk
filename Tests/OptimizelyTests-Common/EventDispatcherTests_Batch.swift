@@ -204,10 +204,10 @@ extension EventDispatcherTests_Batch {
 
         XCTAssert(eventDispatcher.batchSize == 10)
         
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventB), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        
+        dispatchMultipleEvents([(kUrlA, batchEventA),
+                                (kUrlA, batchEventB),
+                                (kUrlA, batchEventA)])
+
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
@@ -238,10 +238,10 @@ extension EventDispatcherTests_Batch {
 
         XCTAssert(eventDispatcher.batchSize == 10)
 
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlB, event: batchEventB), completionHandler: nil)
-        
+        dispatchMultipleEvents([(kUrlA, batchEventA),
+                                (kUrlA, batchEventA),
+                                (kUrlB, batchEventB)])
+            
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
@@ -288,9 +288,9 @@ extension EventDispatcherTests_Batch {
         
         eventDispatcher.forceError = true
         
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        
+        dispatchMultipleEvents([(kUrlA, batchEventA),
+                                (kUrlA, batchEventA)])
+
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
@@ -359,7 +359,24 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[0], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 2, "only first 2 events when timer expires")
     }
-
+    
+    func testEventShouldNotBeSentUntilTimer() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+        
+        eventDispatcher.timerInterval = 99999
+        
+        eventDispatcher.exp = expectation(description: "timer")
+        eventDispatcher.exp?.isInverted = true
+        
+        DispatchQueue.global().async {
+            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)])
+        }
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "events should not be sent until timer fires")
+    }
+    
     func testEventDispatchedOnTimer_ZeroInterval() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
@@ -367,9 +384,10 @@ extension EventDispatcherTests_Batch {
         // zero-interval means that all events are sent out immediately
         eventDispatcher.timerInterval = 0
 
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlB, event: batchEventB), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlC, event: batchEventC), completionHandler: nil)
+        dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
+                                (self.kUrlB, self.batchEventB),
+                                (self.kUrlC, self.batchEventC)])
+
         eventDispatcher.dispatcher.sync {}
         
         continueAfterFailure = false   // stop on XCTAssertEqual failure instead of array out-of-bound exception
@@ -404,8 +422,8 @@ extension EventDispatcherTests_Batch {
 
         eventDispatcher.exp = expectation(description: "timer")
 
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventB), completionHandler: nil)
+        self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
+                                     (self.kUrlA, self.batchEventB)])
 
         // wait for the 1st batched event transmitted successfully
         wait(for: [eventDispatcher.exp!], timeout: 10)
@@ -431,10 +449,9 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.exp = expectation(description: "timer")
         eventDispatcher.exp?.assertForOverFulfill = false
         
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        sleep(1)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventB), completionHandler: nil)
-        
+        self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
+                                     (self.kUrlA, self.batchEventB)])
+
         // wait for the first timer-fire
         wait(for: [eventDispatcher.exp!], timeout: 10)
         // tranmission is expected to fail
@@ -457,6 +474,17 @@ extension EventDispatcherTests_Batch {
 extension EventDispatcherTests_Batch {
     
     func testEventsFlushedOnEventQueueSizeHit() {
+        eventDispatcher.batchSize = 3
+        eventDispatcher.timerInterval = 99999
+        
+        DispatchQueue.global().async {
+            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
+                                         (self.kUrlA, self.batchEventA),
+                                         (self.kUrlA, self.batchEventA)])
+        }
+        
+        
+
         
     }
 
@@ -482,7 +510,8 @@ extension EventDispatcherTests_Batch {
         // this tests iOS9 (no-timer)
         if #available(iOS 10.0, tvOS 10.0, *) { return }
         
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        dispatchMultipleEvents([(kUrlA, batchEventA)])
+
         eventDispatcher.dispatcher.sync {}
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
@@ -506,7 +535,7 @@ extension EventDispatcherTests_Batch {
         
         eventDispatcher.timerInterval = 0
         
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        dispatchMultipleEvents([(kUrlA, batchEventA)])
         eventDispatcher.dispatcher.sync {}
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
@@ -614,6 +643,13 @@ extension EventDispatcherTests_Batch {
                           enrichDecisions: kEnrichDecision)
     }
     
+    func dispatchMultipleEvents(_ events: [(url: String, event: BatchEvent)]) {
+        events.forEach {
+            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: $0.url, event: $0.event),
+                                          completionHandler: nil)
+        }
+    }
+
     var batchEventA: BatchEvent {
         return makeTestBatchEvent(visitor: visitorA)
     }

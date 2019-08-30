@@ -475,31 +475,78 @@ extension EventDispatcherTests_Batch {
     
     func testEventsFlushedOnEventQueueSizeHit() {
         eventDispatcher.batchSize = 3
-        eventDispatcher.timerInterval = 99999
+        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        DispatchQueue.global().async {
-            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
-                                         (self.kUrlA, self.batchEventA),
-                                         (self.kUrlA, self.batchEventA)])
-        }
+        // (1) not enough events to be flushed yet
         
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventDispatcher.exp?.isInverted = true
         
+        dispatchMultipleEvents([(kUrlA, batchEventA),
+                                (kUrlA, batchEventA)])
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0)
+        
+        // (2) add one more event, so batchSize hits and flushed
+        
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
 
+        dispatchMultipleEvents([(kUrlA, batchEventA)])
         
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
     }
 
     func testEventsFlushedOnRevisionChange() {
+        eventDispatcher.batchSize = 1000        // big, won't flush
+        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+
+        // (1) not enough events to be flushed yet
         
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventDispatcher.exp?.isInverted = true
+        
+        dispatchMultipleEvents([(kUrlA, batchEventA),
+                                (kUrlA, batchEventA)])
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0)
+        
+        // (2) flush on revision-change notification
+        
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        
+        // ?? notification
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
     }
     
     func testEventsFlushedOnProjectIdChange() {
+        eventDispatcher.batchSize = 1000        // big, won't flush
+        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-    }
-
-    func testEventsFlushedOnUrlChange() {
+        // (1) not enough events to be flushed yet
         
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventDispatcher.exp?.isInverted = true
+        
+        dispatchMultipleEvents([(kUrlA, batchEventA),
+                                (kUrlA, batchEventA)])
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0)
+        
+        // (2) flush on revision-change notification
+        
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        
+        // ?? notification
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
     }
-    
 }
 
 // MARK: - iOS9 Devices
@@ -577,7 +624,7 @@ extension EventDispatcherTests_Batch {
             print("[RandomTest] dispatched all events")
             
             // extra delay to make sure all events are flushed and check if no more than expected is batched
-            let extraDelay = max(Int(eventDispatcher.timerInterval) * 2, 20)
+            let extraDelay = max(Int(eventDispatcher.timerInterval) * 2, 30)
             var delay = 0
             while delay < extraDelay {
                 if eventDispatcher.numReceivedVisitors >= numEvents {
@@ -589,7 +636,7 @@ extension EventDispatcherTests_Batch {
                 delay += 1
             }
             
-            print("RandomTest] waited \(delay) seconds after dispatched all events")
+            print("[RandomTest] waited \(delay) seconds after dispatched all events")
             exp.fulfill()
         }
         

@@ -47,8 +47,16 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    public init(batchSize: Int = 10, backingStore: DataStoreType = .file, dataStoreName: String = "OPTEventQueue", timerInterval: TimeInterval = 60*1 ) {
-        self.batchSize = batchSize > 0 ? batchSize : 1
+    public struct DefaultValues {
+        static public let batchSize = 10
+        static public let timeInterval: TimeInterval = 60  // secs
+    }
+    
+    public init(batchSize: Int = DefaultValues.batchSize,
+                backingStore: DataStoreType = .file,
+                dataStoreName: String = "OPTEventQueue",
+                timerInterval: TimeInterval = DefaultValues.timeInterval ) {
+        self.batchSize = batchSize > 0 ? batchSize : DefaultValues.batchSize
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
         self.timerInterval = timerInterval
@@ -74,7 +82,11 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         dataStore.save(item: event)
         
-        startTimer()
+        if dataStore.count == batchSize {
+            flushEvents()
+        } else {
+            startTimer()
+        }
         
         completionHandler?(.success(event.body))
     }

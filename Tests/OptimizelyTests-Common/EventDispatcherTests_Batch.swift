@@ -79,6 +79,32 @@ class EventDispatcherTests_Batch: XCTestCase {
     }
 }
 
+// MAKR: - Configuration
+
+extension EventDispatcherTests_Batch {
+
+    func testBatchEnabledByDefault() {
+        
+        // batch allowed by default
+        
+        var ep = DefaultEventDispatcher()
+
+        let defaultBatchSize = ep.batchSize
+        let defaultTimeInterval = ep.timerInterval
+
+        XCTAssert(defaultBatchSize > 1)
+        XCTAssert(defaultTimeInterval > 1)
+        
+        // invalid batchSize falls back to default value
+        
+        ep = DefaultEventDispatcher(batchSize: 0, timerInterval: 0)
+        XCTAssertEqual(ep.batchSize, defaultBatchSize)
+        
+        // invalid timeInterval tested in "testEventDispatchedOnTimer_ZeroInterval" below
+    }
+    
+}
+
 // MARK: - Batch
 
 extension EventDispatcherTests_Batch {
@@ -713,7 +739,6 @@ extension EventDispatcherTests_Batch {
         runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 10)
     }
 
-    
     // Utils
     
     func runRandomEventsTest(numEvents: Int, eventDispatcher: TestEventDispatcher, tc: XCTestCase, numInvalidEvents: Int=0) {

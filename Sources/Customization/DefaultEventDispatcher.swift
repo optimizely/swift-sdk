@@ -100,7 +100,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
             
-            let removeStoredEvents = { (num: Int) -> Void in
+            func removeStoredEvents(num: Int) -> Void {
                 if let removedItem = self.dataStore.removeFirstItems(count: num), removedItem.count > 0 {
                     // avoid event-log-message preparation overheads with closure-logging
                     self.logger.d({ "Removed stored \(num) events starting with \(removedItem.first!)" })
@@ -109,7 +109,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 }
             }
             
-            let foundInvalidEvent = { (event: EventForDispatch) -> Bool in
+            func foundInvalidEvent(_ event: EventForDispatch) -> Bool {
                 return event.body.isEmpty
             }
             
@@ -118,7 +118,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 
                 guard !foundInvalidEvent(batchEvent) else {
                     // discard events that create invalid batch and continue
-                    removeStoredEvents(numEvents)
+                    removeStoredEvents(num: numEvents)
                     continue
                 }
                 
@@ -138,7 +138,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                         failureCount += 1
                     case .success:
                         // we succeeded. remove the batch size sent.
-                        removeStoredEvents(numEvents)
+                        removeStoredEvents(num: numEvents)
 
                         // reset failureCount
                         failureCount = 0

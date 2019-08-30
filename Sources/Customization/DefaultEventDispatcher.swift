@@ -87,92 +87,49 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         dispatcher.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
-            // if we can't batch the events because they are not from the same project or
-            // are being sent to a different url.  we set the batchSizeHolder to batchSize
-            // and batchSize to 1 until we have sent the last batch that couldn't be batched.
-            var batchSizeHolder = 0
-            // the batch send count if the events failed to be batched.
-            var sendCount = 0
             
-            let failedBatch = { () -> Void in
-                // hold the batch size
-                batchSizeHolder = self.batchSize
-                // set it to 1 until the last batch that couldn't be batched is sent
-                self.batchSize = 1
-            }
-            
-            let resetBatch = { () -> Void in
-                if batchSizeHolder != 0 {
-                    self.batchSize = batchSizeHolder
-                    sendCount = 0
-                    batchSizeHolder = 0
-                }
-                
-            }
-            while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
-                let actualEventsSize = eventsToSend.count
-                var eventToSend = eventsToSend.batch()
-                if eventToSend != nil {
-                    // we merged the event and ready for batch
-                    // if the bacth size is not equal to the actual event size,
-                    // then setup the batchSizeHolder to be the size of the event.
-                    if actualEventsSize != self.batchSize {
-                        batchSizeHolder = self.batchSize
-                        self.batchSize = actualEventsSize
-                        sendCount = actualEventsSize - 1
-                    }
+            let removeStoredEvents = { (num: Int) -> Void in
+                if let removedItem = self.dataStore.removeFirstItems(count: num), removedItem.count > 0 {
+                    // avoid event-log-message preparation overheads with closure-logging
+                    self.logger.d({ "Removed stored \(num) events starting with \(removedItem.first!)" })
                 } else {
-                    failedBatch()
-                    // just send the first one and let the rest be sent until sendCount == batchSizeHolder
-                    eventToSend = eventsToSend.first
+                    self.logger.e("Failed to removed \(num) events")
+                }
+            }
+            
+            let foundInvalidEvent = { (event: EventForDispatch) -> Bool in
+                return event.body.isEmpty
+            }
+            
+            while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
+                guard let (numEvents, batchEvent) = eventsToSend.batch() else { break }
+                
+                guard !foundInvalidEvent(batchEvent) else {
+                    // discard events that create invalid batch and continue
+                    removeStoredEvents(numEvents)
+                    continue
                 }
                 
-                guard let event = eventToSend else {
-                    self.logger.e(.eventBatchFailed)
-                    resetBatch()
-                    break
-                }
-
                 // we've exhuasted our failure count.  Give up and try the next time a event
                 // is queued or someone calls flush.
                 if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
                     self.logger.e(.eventSendRetyFailed(failureCount))
-                    failureCount = 0
-                    resetBatch()
                     break
                 }
-
+                
                 // make the send event synchronous. enter our notify
                 self.notify.enter()
-                self.sendEvent(event: event) { (result) -> Void in
+                self.sendEvent(event: batchEvent) { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         self.logger.e(error.reason)
                         failureCount += 1
                     case .success:
                         // we succeeded. remove the batch size sent.
-                        if let removedItem: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
-                            if self.batchSize == 1 && removedItem.first != event {
-                                self.logger.e("Removed event different from sent event")
-                            } else {
-                                // avoid event-log-message preparation overheads with closure-logging
-                                self.logger.d({ "Successfully sent event: \(event)" })
-                            }
-                        } else {
-                            self.logger.e("Removed event nil for sent item")
-                        }
+                        removeStoredEvents(numEvents)
+
                         // reset failureCount
                         failureCount = 0
-                        // did we have to send a batch one at a time?
-                        if batchSizeHolder != 0 {
-                            sendCount += 1
-                            // have we sent all the events in this batch?
-                            if sendCount == self.batchSize {
-                                resetBatch()
-                            }
-                        } else {
-                            // batch had batchSize items
-                        }
                     }
                     // our send is done.
                     self.notify.leave()
@@ -182,7 +139,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 self.notify.wait()
             }
         }
-
     }
     
     open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {

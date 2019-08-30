@@ -1482,14 +1482,14 @@
 		6E75165D22C520D400B2B157 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				6E75165E22C520D400B2B157 /* Customization */,
 				6E75166622C520D400B2B157 /* Optimizely */,
-				6E75166C22C520D400B2B157 /* Utils */,
-				6E75167422C520D400B2B157 /* Extensions */,
-				6E75167922C520D400B2B157 /* Supporting Files */,
+				6E75165E22C520D400B2B157 /* Customization */,
 				6E75167C22C520D400B2B157 /* Implementation */,
 				6E75168822C520D400B2B157 /* Data Model */,
 				6E75169E22C520D400B2B157 /* Protocols */,
+				6E75167422C520D400B2B157 /* Extensions */,
+				6E75166C22C520D400B2B157 /* Utils */,
+				6E75167922C520D400B2B157 /* Supporting Files */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1597,6 +1597,7 @@
 			isa = PBXGroup;
 			children = (
 				6E75168922C520D400B2B157 /* DispatchEvents */,
+				6E75169722C520D400B2B157 /* Audience */,
 				6E75168C22C520D400B2B157 /* Event.swift */,
 				6E75168D22C520D400B2B157 /* ProjectConfig.swift */,
 				6E75168E22C520D400B2B157 /* FeatureVariable.swift */,
@@ -1608,7 +1609,6 @@
 				6E75169422C520D400B2B157 /* FeatureFlag.swift */,
 				6E75169522C520D400B2B157 /* Group.swift */,
 				6E75169622C520D400B2B157 /* Variable.swift */,
-				6E75169722C520D400B2B157 /* Audience */,
 				6E75169D22C520D400B2B157 /* Attribute.swift */,
 			);
 			path = "Data Model";
@@ -1653,15 +1653,15 @@
 			isa = PBXGroup;
 			children = (
 				6E75197E22C5211100B2B157 /* OptimizelyTests-Common */,
-				6E75199922C5211100B2B157 /* OptimizelyTests-tvOS */,
 				6E75199B22C5211100B2B157 /* OptimizelyTests-DataModel */,
-				6E7519B222C5211100B2B157 /* OptimizelyTests-iOS */,
-				6E7519B422C5211100B2B157 /* Info.plist */,
-				6E7519B522C5211100B2B157 /* OptimizelyTests-Legacy */,
 				6E7519B922C5211100B2B157 /* OptimizelyTests-APIs */,
 				6E7519C722C5211100B2B157 /* OptimizelyTests-Others */,
+				6E7519B522C5211100B2B157 /* OptimizelyTests-Legacy */,
+				6E7519B222C5211100B2B157 /* OptimizelyTests-iOS */,
+				6E75199922C5211100B2B157 /* OptimizelyTests-tvOS */,
 				6E75196122C5211100B2B157 /* TestData */,
 				6E7519B622C5211100B2B157 /* TestUtils */,
+				6E7519B422C5211100B2B157 /* Info.plist */,
 			);
 			path = Tests;
 			sourceTree = "<group>";

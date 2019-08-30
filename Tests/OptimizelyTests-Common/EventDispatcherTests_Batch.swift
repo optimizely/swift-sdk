@@ -83,23 +83,51 @@ class EventDispatcherTests_Batch: XCTestCase {
 
 extension EventDispatcherTests_Batch {
     
-    func testEmptyOrSingleEventBatch() {
-        var events = [EventForDispatch]()
-        var batch = events.batch()
-        XCTAssertNil(batch)
-        
-        let event = makeEventForDispatch(url: kUrlA, event: batchEventA)
-        events.append(event)
-        batch = events.batch()
-        XCTAssertEqual(event, batch)
-    }
-    
-    func testNilEventDispatchBody() {
-        var events = [EventForDispatch]()
-        let event = EventForDispatch(url: URL(string: kUrlA), body: Data())
-        events.append(contentsOf: [event, event])
+    func testEmptyEventBatch() {
+        let events = [EventForDispatch]()
         let batch = events.batch()
         XCTAssertNil(batch)
+    }
+    
+    func testSingleEventBatch() {
+        let event = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        let events = [event]
+        let (numEvents, batchEvent) = events.batch()!
+        XCTAssertEqual(numEvents, 1)
+        XCTAssertEqual(batchEvent, event)
+    }
+
+    func testInvalidEventOnly() {
+        let invalidEvent = makeInvalidEventForDispatchWithWrongData()
+        let events = [invalidEvent]
+        let (numEvents, batchEvent) = events.batch()!
+        
+        // single invalid event returns as is (SDK sends out to the server as is, where it'll be discarded anyway)
+        
+        XCTAssertEqual(numEvents, 1)
+        XCTAssertEqual(batchEvent, invalidEvent)
+    }
+    
+    func testInvalidEventAtHead() {
+        let invalidEvent = makeInvalidEventForDispatchWithWrongData()
+        let validEvent = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        let events = [invalidEvent, validEvent, validEvent]
+        let (numEvents, batchEvent) = events.batch()!
+        
+        // invalid event at the header returns an invalid event (empty boody) alone (SDK discards this locally)
+        
+        XCTAssertEqual(numEvents, 1)
+        XCTAssert(batchEvent.body.isEmpty)
+    }
+
+    func testInvalidEventInSecond() {
+        let invalidEvent = makeInvalidEventForDispatchWithWrongData()
+        let validEvent = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        let events = [validEvent, invalidEvent, validEvent]
+        let (numEvents, batchEvent) = events.batch()!
+        
+        XCTAssertEqual(numEvents, 1)
+        XCTAssertEqual(batchEvent, validEvent)
     }
 
     func testBatchingEvents() {
@@ -110,8 +138,10 @@ extension EventDispatcherTests_Batch {
             makeEventForDispatch(url: kUrlA, event: batchEventA)
         ]
 
-        let batch = events.batch()!
-        XCTAssertNotNil(batch)
+        let (numEvents, batch) = events.batch()!
+        
+        XCTAssertEqual(numEvents, events.count)
+        
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertNotNil(batchedEvents)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
@@ -137,8 +167,11 @@ extension EventDispatcherTests_Batch {
             makeEventForDispatch(url: kUrlB, event: batchEventA)
         ]
 
-        if let batch = events.batch() {
+        if let (numEvents, batch) = events.batch() {
+            XCTAssertEqual(numEvents, 3)
+            
             let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+            
             XCTAssertEqual(batchedEvents.visitors.count, 3, "all events are batched until non-batchable event is found")
             XCTAssertEqual(batchedEvents.visitors[0], visitorA)
             XCTAssertEqual(batchedEvents.visitors[1], visitorB)
@@ -159,8 +192,11 @@ extension EventDispatcherTests_Batch {
             makeEventForDispatch(url: kUrlA, event: makeTestBatchEvent(projectId: "99999", visitor: visitorA))
         ]
 
-        if let batch = events.batch() {
+        if let (numEvents, batch) = events.batch() {
+            XCTAssertEqual(numEvents, 3)
+            
             let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+            
             XCTAssertEqual(batchedEvents.visitors.count, 3, "all events are batched until non-batchable event is found")
             XCTAssertEqual(batchedEvents.visitors[0], visitorA)
             XCTAssertEqual(batchedEvents.visitors[1], visitorB)
@@ -181,8 +217,11 @@ extension EventDispatcherTests_Batch {
             makeEventForDispatch(url: kUrlA, event: makeTestBatchEvent(revision: "99999", visitor: visitorA))
         ]
         
-        if let batch = events.batch() {
+        if let (numEvents, batch) = events.batch() {
+            XCTAssertEqual(numEvents, 3)
+            
             let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+            
             XCTAssertEqual(batchedEvents.visitors.count, 3, "all events are batched until non-batchable event is found")
             XCTAssertEqual(batchedEvents.visitors[0], visitorA)
             XCTAssertEqual(batchedEvents.visitors[1], visitorB)
@@ -191,7 +230,6 @@ extension EventDispatcherTests_Batch {
             XCTAssert(false, "batch failed")
         }
     }
-
 }
 
 // MARK: - FlushEvents
@@ -273,12 +311,64 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.clientName, kClientName)
         XCTAssertEqual(batchedEvents.anonymizeIP, kAnonymizeIP)
         XCTAssertEqual(batchedEvents.enrichDecisions, kEnrichDecision)
+        XCTAssertEqual(batch.url.absoluteString, kUrlB)
+        XCTAssertEqual(batchedEvents.visitors[0], visitorB)
+        XCTAssertEqual(batchedEvents.visitors.count, 1)
+        
+        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+    }
+    
+    func testFlushEventsWhenBatchFailsWithInvalidEvent() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+        
+        XCTAssert(eventDispatcher.batchSize == 10)
+        
+        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
+        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+        
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 2, "different urls should not be batched")
+        
+        // first 2 events batched together
+        
+        var batch = eventDispatcher.sendRequestedEvents[0]
+        var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertEqual(batchedEvents.revision, kRevisionA)
+        XCTAssertEqual(batchedEvents.accountID, kAccountId)
+        XCTAssertEqual(batchedEvents.projectID, kProjectIdA)
+        XCTAssertEqual(batchedEvents.clientVersion, kClientVersion)
+        XCTAssertEqual(batchedEvents.clientName, kClientName)
+        XCTAssertEqual(batchedEvents.anonymizeIP, kAnonymizeIP)
+        XCTAssertEqual(batchedEvents.enrichDecisions, kEnrichDecision)
+        XCTAssertEqual(batch.url.absoluteString, kUrlA)
+        XCTAssertEqual(batchedEvents.visitors[0], visitorA)
+        XCTAssertEqual(batchedEvents.visitors.count, 2)
+        
+        // 3rd event discarded silently
+        
+        // 4th last event sent separately
+        
+        batch = eventDispatcher.sendRequestedEvents[1]
+        batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertEqual(batchedEvents.revision, kRevisionA)
+        XCTAssertEqual(batchedEvents.accountID, kAccountId)
+        XCTAssertEqual(batchedEvents.projectID, kProjectIdA)
+        XCTAssertEqual(batchedEvents.clientVersion, kClientVersion)
+        XCTAssertEqual(batchedEvents.clientName, kClientName)
+        XCTAssertEqual(batchedEvents.anonymizeIP, kAnonymizeIP)
+        XCTAssertEqual(batchedEvents.enrichDecisions, kEnrichDecision)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.visitors[0], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
     }
+
     
     func testFlushEventsWhenSendEventFailsAndRecovers() {
         // this tests timer-based dispatch, available for iOS 10+
@@ -611,27 +701,33 @@ extension EventDispatcherTests_Batch {
 
 extension EventDispatcherTests_Batch {
     
-    func testRandomEvents10() {
+    func testRandomEvents_10() {
         runRandomEventsTest(numEvents: 9, eventDispatcher: eventDispatcher, tc: self)
     }
     
-    func testRandomEvents100() {
-        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self)
+    func testRandomEvents_100() {
+        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 0)
     }
+    
+    func testRandomEventsWithInvalid_100() {
+        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 10)
+    }
+
     
     // Utils
     
-    func runRandomEventsTest(numEvents: Int, eventDispatcher: TestEventDispatcher, tc: XCTestCase) {
+    func runRandomEventsTest(numEvents: Int, eventDispatcher: TestEventDispatcher, tc: XCTestCase, numInvalidEvents: Int=0) {
         eventDispatcher.batchSize = Int.random(in: 1..<10)
         eventDispatcher.timerInterval = Double(Int.random(in: 1..<3))
         
         print("[RandomTest] configuration: (batchSize, timeInterval) = (\(eventDispatcher.batchSize), \(eventDispatcher.timerInterval))")
 
         let exp = XCTestExpectation(description: "random")
-        
+        let expectedVisistors = numEvents - numInvalidEvents  // all invalid events will be discarded
+
         // dispatch evetns in a separate thread for stressting enqueu and batch happen simultaneously
         DispatchQueue.global().async {
-            self.dispatchRandomEvents(numEvents: numEvents)
+            self.dispatchRandomEvents(numEvents: numEvents, numInvalidEvents: numInvalidEvents)
             
             print("[RandomTest] dispatched all events")
             
@@ -639,7 +735,7 @@ extension EventDispatcherTests_Batch {
             let extraDelay = max(Int(eventDispatcher.timerInterval) * 2, 30)
             var delay = 0
             while delay < extraDelay {
-                if eventDispatcher.numReceivedVisitors >= numEvents {
+                if eventDispatcher.numReceivedVisitors >= expectedVisistors {
                     self.waitAsyncSeconds(3)  // extra delay to check if any redundant events transmitted
                     break
                 }
@@ -653,17 +749,30 @@ extension EventDispatcherTests_Batch {
         }
         
         tc.wait(for: [exp], timeout: 10*60)
-        XCTAssertEqual(eventDispatcher.numReceivedVisitors, numEvents)
+        
+        XCTAssertEqual(eventDispatcher.numReceivedVisitors, expectedVisistors)
     }
     
-    func dispatchRandomEvents(numEvents: Int) {
+    func dispatchRandomEvents(numEvents: Int, numInvalidEvents: Int) {
         let urlPool = [kUrlA]
         
         let projectIdPool = [kProjectIdA]
         let revisionPool = [kRevisionA, kRevisionA, kRevisionA, kRevisionA, kRevisionB]
         let visitorPool = [visitorA, visitorB, visitorC]
         
+        var posForInvalid = Set<Int>()
+        while posForInvalid.count < numInvalidEvents {
+            posForInvalid.insert(Int.random(in: 0..<numEvents))
+        }
+        
         for i in 0..<numEvents {
+            // insert invalid event randomly
+            if posForInvalid.contains(i) {
+                eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
+                print("[RandomTest][\(i)] dispatch an invalid event")
+                continue
+            }
+            
             let url = urlPool.randomElement()
             
             let projectId = projectIdPool.randomElement()
@@ -687,6 +796,15 @@ extension EventDispatcherTests_Batch {
         return EventForDispatch(url: URL(string: url), body: data)
     }
     
+    func makeInvalidEventForDispatchWithNilUrl() -> EventForDispatch {
+        let data = try! JSONEncoder().encode(batchEventA)
+        return EventForDispatch(url: nil, body: data)
+    }
+    
+    func makeInvalidEventForDispatchWithWrongData() -> EventForDispatch {
+        return EventForDispatch(url: URL(string: kUrlA), body: Data())
+    }
+
     func makeTestBatchEvent(projectId: String?=nil, revision: String?=nil, visitor: Visitor?=nil) -> BatchEvent {
         let testProjectId = projectId ?? kProjectIdA
         let testVisitor = visitor ?? visitorA

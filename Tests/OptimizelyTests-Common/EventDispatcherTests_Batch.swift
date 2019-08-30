@@ -501,6 +501,11 @@ extension EventDispatcherTests_Batch {
     func testEventsFlushedOnRevisionChange() {
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+        
+        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+                                          eventDispatcher: eventDispatcher)
+        let datafile = OTUtils.loadJSONDatafile("api_datafile")!
+        try! optimizely.start(datafile: datafile)
 
         // (1) not enough events to be flushed yet
         
@@ -517,7 +522,8 @@ extension EventDispatcherTests_Batch {
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         
-        // ?? notification
+        // change revision
+        optimizely.config?.project.revision = "54321"
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
@@ -527,6 +533,11 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
+        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+                                          eventDispatcher: eventDispatcher)
+        let datafile = OTUtils.loadJSONDatafile("api_datafile")!
+        try! optimizely.start(datafile: datafile)
+
         // (1) not enough events to be flushed yet
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
@@ -542,8 +553,9 @@ extension EventDispatcherTests_Batch {
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         
-        // ?? notification
-        
+        // change projectId
+        optimizely.config?.project.projectId = "54321"
+
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
     }

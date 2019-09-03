@@ -52,8 +52,7 @@ class EventDispatcherTests_Batch: XCTestCase {
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
         
         // clear static states to test first datafile load
-        ProjectConfig.observeProjectId = nil
-        ProjectConfig.observeRevision = nil
+        ProjectConfig.observer.reset()
     }
     
     override func tearDown() {

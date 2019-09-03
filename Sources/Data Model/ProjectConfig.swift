@@ -82,33 +82,13 @@ class ProjectConfig {
         return project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
     }()
     
-    // MARK: - Change Observer
-    
-    static var observeProjectId: String? {
-        didSet {
-            if oldValue != nil, observeProjectId != oldValue {
-                NotificationCenter.default.post(name: .didReceiveProjectIdChange, object: nil)
-            }
-        }
-    }
-    
-    static var observeRevision: String? {
-        didSet {
-            if oldValue != nil, observeRevision != oldValue {
-                NotificationCenter.default.post(name: .didReceiveRevisionChange, object: nil)
-            }
-        }
-    }
-    
     // MARK: - Init
 
     init(datafile: Data) throws {
         do {
             self.project = try JSONDecoder().decode(Project.self, from: datafile)
             
-            // observe changes for event flushes
-            ProjectConfig.observeProjectId = project.projectId
-            ProjectConfig.observeRevision = project.revision
+            ProjectConfig.observer.update(project: project)
         } catch {
             throw OptimizelyError.dataFileInvalid
         }
@@ -124,6 +104,46 @@ class ProjectConfig {
     
     init() {}
 }
+
+// MARK: - Project Change Observer
+
+extension ProjectConfig {
+    
+    struct ProjectObserver {
+        var projectId: String? {
+            didSet {
+                if oldValue != nil, projectId != oldValue {
+                    NotificationCenter.default.post(name: .didReceiveProjectIdChange, object: nil)
+                }
+            }
+        }
+        
+        var revision: String? {
+            didSet {
+                if oldValue != nil, revision != oldValue {
+                    NotificationCenter.default.post(name: .didReceiveRevisionChange, object: nil)
+                }
+            }
+        }
+        
+        /// update obseverable properties
+        ///
+        /// - Parameter project: new Project values (pass nil for reset)
+        mutating func update(project: Project?) {
+            self.projectId = project?.projectId
+            self.revision = project?.revision
+        }
+        
+        mutating func reset() {
+            self.update(project: nil)
+        }
+    }
+    
+    static var observer = ProjectObserver()
+
+}
+
+// MARK: - Persistent Data
 
 extension ProjectConfig {
     private func whitelistUser(userId: String, experimentId: String, variationId: String) {
@@ -149,7 +169,6 @@ extension ProjectConfig {
         // old versions (< 4) of datafiles not supported
         return ["4"].contains(version)
     }
-
 }
 
 // MARK: - Project Access

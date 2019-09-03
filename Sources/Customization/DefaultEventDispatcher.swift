@@ -32,9 +32,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
     var batchSize: Int
-    // start trimming the front of the queue when we get to over maxQueueSize
-    // TODO: implement
-    var maxQueueSize: Int = 30000
+    var maxQueueSize: Int
     
     lazy var logger = OPTLoggerFactory.getLogger()
     var backingStore: DataStoreType
@@ -50,24 +48,30 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     public struct DefaultValues {
         static public let batchSize = 10
         static public let timeInterval: TimeInterval = 60  // secs
+        static public let maxQueueSize = 10000
     }
     
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
                 dataStoreName: String = "OPTEventQueue",
-                timerInterval: TimeInterval = DefaultValues.timeInterval ) {
+                timerInterval: TimeInterval = DefaultValues.timeInterval,
+                maxQueueSize: Int = DefaultValues.maxQueueSize) {
         self.batchSize = batchSize > 0 ? batchSize : DefaultValues.batchSize
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
         self.timerInterval = timerInterval
+        self.maxQueueSize = maxQueueSize > 100 ? maxQueueSize : DefaultValues.maxQueueSize
         
         switch backingStore {
         case .file:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<[Data]>(storeName: backingStoreName))
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                       dataStore: DataStoreFile<[Data]>(storeName: backingStoreName))
         case .memory:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<[Data]>(storeName: backingStoreName))
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                       dataStore: DataStoreMemory<[Data]>(storeName: backingStoreName))
         case .userDefaults:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreUserDefaults())
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                       dataStore: DataStoreUserDefaults())
         }
         
         NotificationCenter.default.addObserver(forName: .didReceiveProjectIdChange, object: nil, queue: nil) { (notif) in
@@ -80,6 +84,10 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             self.flushEvents()
         }
         
+        if self.maxQueueSize < self.batchSize {
+            self.logger.e(.eventDispatcherConfigError("batchSize cannot be bigger than maxQueueSize"))
+        }
+        
         subscribe()
     }
     
@@ -90,6 +98,13 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        guard dataStore.count < maxQueueSize else {
+            let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
+            self.logger.e(error)
+            completionHandler?(.failure(error))
+            return
+        }
+        
         dataStore.save(item: event)
         
         if dataStore.count == batchSize {

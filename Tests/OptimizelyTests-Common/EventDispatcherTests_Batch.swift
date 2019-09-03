@@ -85,6 +85,18 @@ class EventDispatcherTests_Batch: XCTestCase {
 // MAKR: - Configuration
 
 extension EventDispatcherTests_Batch {
+    
+    func testInitialization() {
+        let expBatchSize = 12
+        let expTimerInterval = 35.0
+        let expMaxQueueSize = 123
+        
+        let ep = DefaultEventDispatcher(batchSize: expBatchSize, timerInterval: expTimerInterval, maxQueueSize: expMaxQueueSize)
+        
+        XCTAssertEqual(ep.batchSize, expBatchSize)
+        XCTAssertEqual(ep.timerInterval, expTimerInterval)
+        XCTAssertEqual(ep.maxQueueSize, expMaxQueueSize)
+    }
 
     func testBatchEnabledByDefault() {
         
@@ -94,15 +106,18 @@ extension EventDispatcherTests_Batch {
 
         let defaultBatchSize = ep.batchSize
         let defaultTimeInterval = ep.timerInterval
+        let defaultMaxQueueSize = ep.maxQueueSize
 
         XCTAssert(defaultBatchSize > 1)
         XCTAssert(defaultTimeInterval > 1)
-        
+        XCTAssert(defaultMaxQueueSize > 100)
+
         // invalid batchSize falls back to default value
         
-        ep = DefaultEventDispatcher(batchSize: 0, timerInterval: 0)
+        ep = DefaultEventDispatcher(batchSize: 0, timerInterval: 0, maxQueueSize: 0)
         XCTAssertEqual(ep.batchSize, defaultBatchSize)
-        
+        XCTAssertEqual(ep.maxQueueSize, defaultMaxQueueSize)
+
         // invalid timeInterval tested in "testEventDispatchedOnTimer_ZeroInterval" below
     }
     
@@ -258,6 +273,37 @@ extension EventDispatcherTests_Batch {
         } else {
             XCTAssert(false, "batch failed")
         }
+    }
+    
+    func testEventDiscardedWhenQueueIfFull() {
+        eventDispatcher.maxQueueSize = 100
+        
+        // illegal config batchSize cannot be bigger than maxQueueSize. just for testing
+        eventDispatcher.timerInterval = 10000.0
+        eventDispatcher.batchSize = 1000
+        
+        for _ in 0..<eventDispatcher.maxQueueSize {
+            dispatchMultipleEvents([(kUrlA, batchEventA)])
+        }
+        
+        // now queue must be full. all following events are expected to drop
+        
+        for _ in 0..<10 {
+            dispatchMultipleEvents([(kUrlA, batchEventB)])
+        }
+
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "all events should be batched together")
+        let batch = eventDispatcher.sendRequestedEvents[0]
+        let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertEqual(batchedEvents.visitors.count, eventDispatcher.maxQueueSize, "events must be discarded when queue full")
+        batchedEvents.visitors.forEach {
+            XCTAssertEqual($0, visitorA)
+        }
+
+        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
     }
 }
 

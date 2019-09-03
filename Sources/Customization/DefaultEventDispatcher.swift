@@ -70,6 +70,16 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreUserDefaults())
         }
         
+        NotificationCenter.default.addObserver(forName: .didReceiveProjectIdChange, object: nil, queue: nil) { (notif) in
+            self.logger.d("Event flush triggered by datafile projectId change")
+            self.flushEvents()
+        }
+        
+        NotificationCenter.default.addObserver(forName: .didReceiveRevisionChange, object: nil, queue: nil) { (notif) in
+            self.logger.d("Event flush triggered by datafile revision change")
+            self.flushEvents()
+        }
+        
         subscribe()
     }
     

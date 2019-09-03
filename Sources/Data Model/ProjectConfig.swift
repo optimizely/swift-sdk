@@ -82,9 +82,33 @@ class ProjectConfig {
         return project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
     }()
     
+    // MARK: - Change Observer
+    
+    static var observeProjectId: String? {
+        didSet {
+            if oldValue != nil, observeProjectId != oldValue {
+                NotificationCenter.default.post(name: .didReceiveProjectIdChange, object: nil)
+            }
+        }
+    }
+    
+    static var observeRevision: String? {
+        didSet {
+            if oldValue != nil, observeRevision != oldValue {
+                NotificationCenter.default.post(name: .didReceiveRevisionChange, object: nil)
+            }
+        }
+    }
+    
+    // MARK: - Init
+
     init(datafile: Data) throws {
         do {
             self.project = try JSONDecoder().decode(Project.self, from: datafile)
+            
+            // observe changes for event flushes
+            ProjectConfig.observeProjectId = project.projectId
+            ProjectConfig.observeRevision = project.revision
         } catch {
             throw OptimizelyError.dataFileInvalid
         }
@@ -96,11 +120,9 @@ class ProjectConfig {
     
     convenience init(datafile: String) throws {
         try self.init(datafile: Data(datafile.utf8))
-   }
-    
-    init() {
     }
     
+    init() {}
 }
 
 extension ProjectConfig {

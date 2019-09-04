@@ -22,6 +22,7 @@ import Foundation
     case track
     case datafileChange
     case decision
+    case logEvent
 }
 
 // TODO: fix this
@@ -38,6 +39,8 @@ public typealias TrackListener = (_ eventKey: String, _ userId: String, _ attrib
 public typealias DecisionListener = (_ type: String, _ userId: String, _ attributes: OptimizelyAttributes?, _ decisionInfo: [String: Any]) -> Void
 
 public typealias DatafileChangeListener = (_ datafile: Data) -> Void
+
+public typealias LogEventListener = (_ url: String, _ httpVerb: String) -> Void
 
 public protocol OPTNotificationCenter {
     init()
@@ -79,6 +82,13 @@ func addDecisionNotificationListener(decisionListener:@escaping DecisionListener
  - Returns: the notification id used to remove the notification. It is greater than 0 on success.
  */
 func addDatafileChangeNotificationListener(datafileListener:@escaping DatafileChangeListener) -> Int?
+
+/**
+ Add a event dispatch notification listener
+ - Parameter logEventListener: Notification to add.
+ - Returns: the notification id used to remove the notification. It is greater than 0 on success.
+*/
+func addLogEventNotificationListener(logEventListener:@escaping LogEventListener) -> Int?
 
 /**
  Remove the notification listener based on the notificationId passed back from addNotification.
@@ -137,6 +147,13 @@ func sendNotifications(type: Int, args: [Any?])
      */
     func addDatafileChangeNotificationListener(datafileListener:@escaping (_ datafile: Data) -> Void) -> NSNumber?
     
+    /**
+     Add a event dispatch notification listener
+     - Parameter logEventListener: Notification to add.
+     - Returns: the notification id used to remove the notification. It is greater than 0 on success.
+     */
+    func addLogEventNotificationListener(logEventListener:@escaping (_ url: String, _ httpVerb: String) -> Void) -> NSNumber?
+
     /**
      Remove the notification listener based on the notificationId passed back from addNotification.
      - Parameter notificationId: the id passed back from add notification.

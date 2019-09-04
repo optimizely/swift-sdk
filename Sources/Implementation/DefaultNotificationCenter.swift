@@ -116,6 +116,23 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
         return incrementNotificationId()
     }
     
+    public func addLogEventNotificationListener(logEventListener: @escaping LogEventListener) -> Int? {
+        notificationListeners[notificationId] = (NotificationType.logEvent.rawValue, { (args: Any...) in
+            guard let myArgs = args[0] as? [Any?] else {
+                return
+            }
+            if myArgs.count < 2 {
+                return
+            }
+            if let url = myArgs[0] as? String,
+                let httpVerb = myArgs[1] as? String {
+                logEventListener(url, httpVerb)
+            }
+        })
+        
+        return incrementNotificationId()
+    }
+    
     public func removeNotificationListener(notificationId: Int) {
         self.notificationListeners.removeValue(forKey: notificationId)
     }
@@ -142,4 +159,16 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
         return args
     }
 
+}
+
+// MARK: Notification Mapping
+
+extension DefaultNotificationCenter {
+    func addInternalNotificationListners() {
+        NotificationCenter.default.addObserver(forName: .didSendEvents, object: nil, queue: nil) { (notif) in
+            guard let event = notif.object as? EventForDispatch else { return }
+            let args: [Any] = [event.url, event.body]
+            self.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
+        }
+    }
 }

@@ -74,6 +74,23 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                                                                        dataStore: DataStoreUserDefaults())
         }
         
+        if self.maxQueueSize < self.batchSize {
+            self.logger.e(.eventDispatcherConfigError("batchSize cannot be bigger than maxQueueSize"))
+            self.maxQueueSize = self.batchSize
+        }
+        
+        addProjectChangeNotificationObservers()
+        
+        subscribe()
+    }
+    
+    deinit {
+        stopTimer()
+
+        unsubscribe()
+    }
+    
+    func addProjectChangeNotificationObservers() {
         NotificationCenter.default.addObserver(forName: .didReceiveProjectIdChange, object: nil, queue: nil) { (notif) in
             self.logger.d("Event flush triggered by datafile projectId change")
             self.flushEvents()
@@ -83,19 +100,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             self.logger.d("Event flush triggered by datafile revision change")
             self.flushEvents()
         }
-        
-        if self.maxQueueSize < self.batchSize {
-            self.logger.e(.eventDispatcherConfigError("batchSize cannot be bigger than maxQueueSize"))
-            self.maxQueueSize = self.batchSize
-        }
-        
-        subscribe()
-    }
-    
-    deinit {
-        stopTimer()
-
-        unsubscribe()
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
@@ -192,6 +196,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
             } else {
                 self.logger.d("Event Sent")
+                
+                NotificationCenter.default.post(name: .didSendEvents, object: event)
+
                 completionHandler(.success(event.body))
             }
         }

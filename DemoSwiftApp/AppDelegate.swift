@@ -149,7 +149,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         })
-
+        
+        _ = optimizely.notificationCenter.addLogEventNotificationListener(logEventListener: { (url, httpVerb) in
+            print("Received logEvent notification: \(url) \(httpVerb)")
+        })
     }
 
     // MARK: - ViewControl

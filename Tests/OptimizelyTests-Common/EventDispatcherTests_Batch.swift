@@ -48,7 +48,7 @@ class EventDispatcherTests_Batch: XCTestCase {
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
-        let uniqueFileName = EventDispatcherTests_Batch.keyTestEventFileName + String(Date().timeIntervalSince1970)
+        let uniqueFileName = EventDispatcherTests_Batch.keyTestEventFileName + String(Int.random(in: 0...100000))
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
         
         // clear static states to test first datafile load
@@ -861,7 +861,7 @@ extension EventDispatcherTests_Batch {
     }
     
     func testRandomEventsWithInvalid_100() {
-        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 10)
+        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 30)
     }
 
     // Utils
@@ -1039,9 +1039,17 @@ class TestEventDispatcher: DefaultEventDispatcher {
     override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         sendRequestedEvents.append(event)
         
-        let decodedEvent = try! JSONDecoder().decode(BatchEvent.self, from: event.body)
-        numReceivedVisitors += decodedEvent.visitors.count
-        print("[SendEvent] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+        do {
+            let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
+            numReceivedVisitors += decodedEvent.visitors.count
+            print("[SendEvent] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+        } catch {
+            // invalid event format detected
+            // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)
+            // - an exeption is that an invalid event is alone in the queue, when validation is skipped for performance on common path
+            
+            // pass through invalid events, so server can filter them out
+        }
 
         // must call completionHandler to complete synchronization
         super.sendEvent(event: event) { _ in

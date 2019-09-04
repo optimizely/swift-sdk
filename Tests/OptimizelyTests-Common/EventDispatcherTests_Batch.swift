@@ -274,16 +274,38 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.timerInterval = 10000.0
         eventDispatcher.batchSize = 1000
         
+        var successCount = 0
+        var failureCount = 0
+        
+        let handler = { (result: OptimizelyResult<Data>) -> Void in
+            switch result {
+            case .success:
+                successCount += 1
+            case .failure(let error):
+                failureCount += 1
+                print("DispatchEvent error callback: \(error)")
+            }
+        }
+        
         for _ in 0..<eventDispatcher.maxQueueSize {
-            dispatchMultipleEvents([(kUrlA, batchEventA)])
+            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA),
+                                          completionHandler: handler)
         }
         
         // now queue must be full. all following events are expected to drop
         
         for _ in 0..<10 {
-            dispatchMultipleEvents([(kUrlA, batchEventB)])
+            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventB),
+                                          completionHandler: handler)
         }
+        
+        // check out if success/failure callbacks called properly
+        
+        XCTAssertEqual(successCount, eventDispatcher.maxQueueSize)
+        XCTAssertEqual(failureCount, 10)
 
+        // flush
+        
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
 

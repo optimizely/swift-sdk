@@ -30,13 +30,14 @@ extension Array where Element == EventForDispatch {
     ///      eventForDispatch: a batched event (can be invalid with nil url)
     ///
     ///      returns nil when no event to merge
-    func batch() -> (numEvents: Int, eventForDispatch: EventForDispatch)? {
+    func batch() -> (numEvents: Int, eventForDispatch: EventForDispatch?) {
         if count == 0 {
-            return nil
+            return (0, nil)
         }
         
+        // do not validate a single event (common path so it'll impact performance. Server will check sanity anyway)
         if count == 1 {
-            return (1, first!)
+            return (1, first)
         }
         
         var eventsBatched = [BatchEvent]()
@@ -86,13 +87,13 @@ extension Array where Element == EventForDispatch {
         
         guard eventsBatched.count > 0 else {
             // no batched event since the first event is invalid. notify so that it can be removed.
-            return (1, invalidEventForDispatch)
+            return (1, nil)
         }
 
         return (eventsBatched.count, makeBatchEvent(base: eventsBatched.first!, visitors: visitors, url: url))
     }
     
-    func makeBatchEvent(base: BatchEvent, visitors: [Visitor], url: URL?) -> EventForDispatch {
+    func makeBatchEvent(base: BatchEvent, visitors: [Visitor], url: URL?) -> EventForDispatch? {
         let batchEvent = BatchEvent(revision: base.revision,
                                     accountID: base.accountID,
                                     clientVersion: base.clientVersion,
@@ -103,15 +104,9 @@ extension Array where Element == EventForDispatch {
                                     enrichDecisions: true)
         
         guard let data = try? JSONEncoder().encode(batchEvent) else {
-            return invalidEventForDispatch
+            return nil
         }
         
         return EventForDispatch(url: url, body: data)
-    }
-    
-    var invalidEventForDispatch: EventForDispatch {
-        // empty data body makes an invalid event
-        // note that nil url is replaced with default value
-        return EventForDispatch(url: nil, body: Data())
     }
 }

@@ -86,6 +86,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         
         if self.maxQueueSize < self.batchSize {
             self.logger.e(.eventDispatcherConfigError("batchSize cannot be bigger than maxQueueSize"))
+            self.maxQueueSize = self.batchSize
         }
         
         subscribe()
@@ -134,14 +135,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 }
             }
             
-            func foundInvalidEvent(_ event: EventForDispatch) -> Bool {
-                return event.body.isEmpty
-            }
-            
             while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
-                guard let (numEvents, batchEvent) = eventsToSend.batch() else { break }
+                let (numEvents, batched) = eventsToSend.batch()
                 
-                guard !foundInvalidEvent(batchEvent) else {
+                guard numEvents > 0 else { break }
+                
+                guard let batchEvent = batched else {
                     // discard events that create invalid batch and continue
                     removeStoredEvents(num: numEvents)
                     continue

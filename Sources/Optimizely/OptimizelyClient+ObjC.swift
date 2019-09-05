@@ -449,8 +449,10 @@ extension OptimizelyClient {
     
     let innerEventDispatcher: DefaultEventDispatcher
     
-    @objc public init(timerInterval: TimeInterval) {
-        innerEventDispatcher = DefaultEventDispatcher(timerInterval: timerInterval)
+    @objc public init(batchSize: Int = DefaultEventDispatcher.DefaultValues.batchSize,
+                      timerInterval: TimeInterval = DefaultEventDispatcher.DefaultValues.timeInterval,
+                      maxQueueSize: Int = DefaultEventDispatcher.DefaultValues.maxQueueSize) {
+        innerEventDispatcher = DefaultEventDispatcher(batchSize: batchSize, timerInterval: timerInterval, maxQueueSize: maxQueueSize)
     }
     
     public func dispatchEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?) {

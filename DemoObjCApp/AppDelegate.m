@@ -55,9 +55,14 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 // MARK: - Initialization Examples
 
 -(void)initializeOptimizelySDKAsynchronous {
-    DefaultEventDispatcher *eventDispacher = [[DefaultEventDispatcher alloc] initWithTimerInterval:1];
+    DefaultEventDispatcher *eventDispacher = [[DefaultEventDispatcher alloc] initWithBatchSize:10 timerInterval:1 maxQueueSize:1000];
     
-    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey logger:nil eventDispatcher:eventDispacher userProfileService:nil periodicDownloadInterval:@(5) defaultLogLevel:OptimizelyLogLevelDebug];
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
+                                                        logger:nil
+                                               eventDispatcher:eventDispacher
+                                            userProfileService:nil
+                                      periodicDownloadInterval:@(5)
+                                               defaultLogLevel:OptimizelyLogLevelDebug];
     
     [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
         if (error == nil) {

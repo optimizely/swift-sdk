@@ -410,9 +410,9 @@ extension OptimizelyClient {
                 return returnVal(num: num)
             }
             
-            func addLogEventNotificationListener(logEventListener: @escaping (String, String) -> Void) -> NSNumber? {
-                let num = notifications.addLogEventNotificationListener { (url, httpVerb) in
-                    logEventListener(url, httpVerb)
+            func addLogEventNotificationListener(logEventListener: @escaping (String, [String: Any]) -> Void) -> NSNumber? {
+                let num = notifications.addLogEventNotificationListener { (url, event) in
+                    logEventListener(url, event)
                 }
                 
                 return returnVal(num: num)

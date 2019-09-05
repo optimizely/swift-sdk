@@ -126,6 +126,11 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
         
     }];
     
+    notifId = [self.optimizely.notificationCenter addLogEventNotificationListenerWithLogEventListener:^(NSString *url,
+                                                                                                        NSDictionary<NSString *,id> *event) {
+        NSLog(@"Received logEvent notification: %@ %@", url, event);
+    }];
+    
     [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
         if (error == nil) {
             NSLog(@"Optimizely SDK initialized successfully!");

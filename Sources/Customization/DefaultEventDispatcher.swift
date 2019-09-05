@@ -102,6 +102,11 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         }
     }
     
+    func removeProjectChangeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: .didReceiveProjectIdChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didReceiveRevisionChange, object: nil)
+    }
+    
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         guard dataStore.count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
@@ -189,6 +194,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         request.httpBody = event.body
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
+        // send notification BEFORE sending event to the server
+        NotificationCenter.default.post(name: .willSendEvents, object: event)
+
         let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
             self.logger.d(response.debugDescription)
             
@@ -196,9 +204,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
             } else {
                 self.logger.d("Event Sent")
-                
-                NotificationCenter.default.post(name: .didSendEvents, object: event)
-
                 completionHandler(.success(event.body))
             }
         }

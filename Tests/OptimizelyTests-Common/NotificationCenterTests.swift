@@ -56,27 +56,22 @@ class NotificationCenterTests: XCTestCase {
     
     func sendActivate() {
         notificationCenter.sendNotifications(type: NotificationType.activate.rawValue, args: [experiment!, "userId", nil, variation!, ["url": "https://url.com/", "body": Data()]])
-
     }
 
     func sendTrack() {
         notificationCenter.sendNotifications(type: NotificationType.track.rawValue, args: ["eventKey", "userId", nil, nil, ["url": "https://url.com/", "body": Data()]])
-        
     }
 
     func sendDecision() {
         notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: [Constants.DecisionTypeKeys.featureVariable, "userId", nil, ["url": "https://url.com/", "body": Data()]])
-        
     }
 
     func sendDatafileChange() {
         notificationCenter.sendNotifications(type: NotificationType.datafileChange.rawValue, args: [Data()])
-        
     }
     
     func sendLogEvent() {
-        notificationCenter.sendNotifications(type: NotificationType.logEvent.rawValue, args: ["https://url.com/", "POST"])
-        
+        notificationCenter.sendNotifications(type: NotificationType.logEvent.rawValue, args: ["https://url.com/", [:]])
     }
     
     func addActivateListener() -> Int? {

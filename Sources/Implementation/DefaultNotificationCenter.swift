@@ -21,7 +21,11 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     var notificationListeners = [Int: (Int, GenericListener)]()
     
     required public init() {
-        
+        addInternalNotificationListners()
+    }
+    
+    deinit {
+        removeInternalNotificationListners()
     }
     
     internal func incrementNotificationId() -> Int {
@@ -125,8 +129,8 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
                 return
             }
             if let url = myArgs[0] as? String,
-                let httpVerb = myArgs[1] as? String {
-                logEventListener(url, httpVerb)
+                let event = myArgs[1] as? [String: Any] {
+                logEventListener(url, event)
             }
         })
         
@@ -161,14 +165,28 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
 
 }
 
-// MARK: Notification Mapping
+// MARK: Notification Translation
 
 extension DefaultNotificationCenter {
+    
     func addInternalNotificationListners() {
-        NotificationCenter.default.addObserver(forName: .didSendEvents, object: nil, queue: nil) { (notif) in
-            guard let event = notif.object as? EventForDispatch else { return }
-            let args: [Any] = [event.url, event.body]
-            self.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
+        _ = NotificationCenter.default.addObserver(forName: .willSendEvents, object: nil, queue: nil) { (notif) in
+            guard let eventForDispatch = notif.object as? EventForDispatch else { return }
+            
+            let url = eventForDispatch.url.absoluteString
+            let eventData = eventForDispatch.body
+            
+            if let event = try? JSONSerialization.jsonObject(with: eventData, options: []) as? [String: Any] {
+                let args: [Any] = [url, event]
+                self.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
+            } else {
+                print("LogEvent notification discarded due to invalid event")
+            }
         }
     }
+    
+    func removeInternalNotificationListners() {
+        NotificationCenter.default.removeObserver(self, name: .willSendEvents, object: nil)
+    }
+    
 }

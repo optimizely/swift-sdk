@@ -48,7 +48,7 @@ class EventDispatcherTests_Batch: XCTestCase {
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
-        let uniqueFileName = EventDispatcherTests_Batch.keyTestEventFileName + String(Int.random(in: 0...10000000))
+        let uniqueFileName = EventDispatcherTests_Batch.keyTestEventFileName + String(Int.random(in: 0..<Int.max))
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
         
         // clear static states to test first datafile load

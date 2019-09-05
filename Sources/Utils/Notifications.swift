@@ -17,6 +17,6 @@
 import Foundation
 
 extension Notification.Name {
-    static let didReceiveProjectIdChange = Notification.Name("didReceiveProjectIdChange")
-    static let didReceiveRevisionChange = Notification.Name("didReceiveRevisionChange")
+    static let didReceiveOptimizelyProjectIdChange = Notification.Name("didReceiveOptimizelyProjectIdChange")
+    static let didReceiveOptimizelyRevisionChange = Notification.Name("didReceiveOptimizelyRevisionChange")
 }

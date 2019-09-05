@@ -92,12 +92,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func addProjectChangeNotificationObservers() {
-        NotificationCenter.default.addObserver(forName: .didReceiveProjectIdChange, object: nil, queue: nil) { (notif) in
+        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { (notif) in
             self.logger.d("Event flush triggered by datafile projectId change")
             self.flushEvents()
         }
         
-        NotificationCenter.default.addObserver(forName: .didReceiveRevisionChange, object: nil, queue: nil) { (notif) in
+        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { (notif) in
             self.logger.d("Event flush triggered by datafile revision change")
             self.flushEvents()
         }
@@ -113,7 +113,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         
         dataStore.save(item: event)
         
-        if dataStore.count == batchSize {
+        if dataStore.count >= batchSize {
             flushEvents()
         } else {
             startTimer()
@@ -131,7 +131,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
             
-            func removeStoredEvents(num: Int) -> Void {
+            func removeStoredEvents(num: Int) {
                 if let removedItem = self.dataStore.removeFirstItems(count: num), removedItem.count > 0 {
                     // avoid event-log-message preparation overheads with closure-logging
                     self.logger.d({ "Removed stored \(num) events starting with \(removedItem.first!)" })
@@ -146,7 +146,10 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 guard numEvents > 0 else { break }
                 
                 guard let batchEvent = batched else {
-                    // discard events that create invalid batch and continue
+                    // discard an invalid event that causes batching failure
+                    // - if an invalid event is found while batching, it batches all the valid ones before the invalid one and sends it out.
+                    // - when trying to batch next, it finds the invalid one at the header. It discards that specific invalid one and continue batching next ones.
+
                     removeStoredEvents(num: numEvents)
                     continue
                 }

@@ -211,7 +211,7 @@ static NSString * const kSdkKey = @"12345";
     XCTAssert(event.body.length==0);
     
     // check DefaultEventDispatcher work OK with ObjC clients
-    DefaultEventDispatcher *eventDispatcher = [[DefaultEventDispatcher alloc] initWithTimerInterval:0];
+    DefaultEventDispatcher *eventDispatcher = [[DefaultEventDispatcher alloc] initWithBatchSize:10 timerInterval:1 maxQueueSize:1000];
     
     OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:kSdkKey
                                                                      logger:nil

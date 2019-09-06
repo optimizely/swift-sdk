@@ -150,7 +150,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                     // - if an invalid event is found while batching, it batches all the valid ones before the invalid one and sends it out.
                     // - when trying to batch next, it finds the invalid one at the header. It discards that specific invalid one and continue batching next ones.
 
-                    removeStoredEvents(num: numEvents)
+                    removeStoredEvents(num: 1)
                     continue
                 }
                 

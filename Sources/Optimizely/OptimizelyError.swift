@@ -73,6 +73,7 @@ public enum OptimizelyError: Error {
     // MARK: - EventDispatcher Errors
     
     case eventDispatchFailed(_ reason: String)
+    case eventDispatcherConfigError(_ reason: String)
 }
 
 // MARK: - CustomStringConvertible
@@ -132,6 +133,7 @@ extension OptimizelyError: CustomStringConvertible {
         case .datafileLoadingFailed(let hint):              message = "Datafile load failed (\(hint))"
             
         case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))"
+        case .eventDispatcherConfigError(let hint):         message = "EventDispatcher config error (\(hint))"
         }
         
         return message

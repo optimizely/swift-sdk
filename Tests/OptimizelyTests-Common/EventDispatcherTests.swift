@@ -245,7 +245,7 @@ class EventDispatcherTests: XCTestCase {
         
         group.enter()
         
-        eventDispatcher?.setTimer()
+        eventDispatcher?.startTimer()
         
         DispatchQueue.global(qos: .background).async {
             group.leave()

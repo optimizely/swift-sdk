@@ -40,6 +40,7 @@ public class DataStoreQueueStackImpl<T>: DataStoreQueueStack where T: Codable {
     public func save(item: T) {
         lock.async {
             guard let data = try? JSONEncoder().encode(item) else { return }
+            
             if var queue = self.dataStore.getItem(forKey: self.queueStackName) as? [Data] {
                 queue.append(data)
                 self.dataStore.saveItem(forKey: self.queueStackName, value: queue)

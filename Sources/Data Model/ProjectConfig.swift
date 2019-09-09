@@ -113,7 +113,7 @@ extension ProjectConfig {
         var projectId: String? {
             didSet {
                 if oldValue != nil, projectId != oldValue {
-                    NotificationCenter.default.post(name: .didReceiveProjectIdChange, object: nil)
+                    NotificationCenter.default.post(name: .didReceiveOptimizelyProjectIdChange, object: nil)
                 }
             }
         }
@@ -121,7 +121,7 @@ extension ProjectConfig {
         var revision: String? {
             didSet {
                 if oldValue != nil, revision != oldValue {
-                    NotificationCenter.default.post(name: .didReceiveRevisionChange, object: nil)
+                    NotificationCenter.default.post(name: .didReceiveOptimizelyRevisionChange, object: nil)
                 }
             }
         }

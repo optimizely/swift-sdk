@@ -78,7 +78,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             self.logger.e(.eventDispatcherConfigError("batchSize cannot be bigger than maxQueueSize"))
             self.maxQueueSize = self.batchSize
         }
-        
         addProjectChangeNotificationObservers()
         
         subscribe()
@@ -86,25 +85,27 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     deinit {
         stopTimer()
+        
+        removeProjectChangeNotificationObservers()
 
         unsubscribe()
     }
     
     func addProjectChangeNotificationObservers() {
-        NotificationCenter.default.addObserver(forName: .didReceiveProjectIdChange, object: nil, queue: nil) { (notif) in
+        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { (notif) in
             self.logger.d("Event flush triggered by datafile projectId change")
             self.flushEvents()
         }
         
-        NotificationCenter.default.addObserver(forName: .didReceiveRevisionChange, object: nil, queue: nil) { (notif) in
+        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { (notif) in
             self.logger.d("Event flush triggered by datafile revision change")
             self.flushEvents()
         }
     }
     
     func removeProjectChangeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: .didReceiveProjectIdChange, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .didReceiveRevisionChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didReceiveOptimizelyProjectIdChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didReceiveOptimizelyRevisionChange, object: nil)
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
@@ -117,7 +118,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         
         dataStore.save(item: event)
         
-        if dataStore.count == batchSize {
+        if dataStore.count >= batchSize {
             flushEvents()
         } else {
             startTimer()
@@ -135,7 +136,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
             
-            func removeStoredEvents(num: Int) -> Void {
+            func removeStoredEvents(num: Int) {
                 if let removedItem = self.dataStore.removeFirstItems(count: num), removedItem.count > 0 {
                     // avoid event-log-message preparation overheads with closure-logging
                     self.logger.d({ "Removed stored \(num) events starting with \(removedItem.first!)" })
@@ -150,8 +151,11 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 guard numEvents > 0 else { break }
                 
                 guard let batchEvent = batched else {
-                    // discard events that create invalid batch and continue
-                    removeStoredEvents(num: numEvents)
+                    // discard an invalid event that causes batching failure
+                    // - if an invalid event is found while batching, it batches all the valid ones before the invalid one and sends it out.
+                    // - when trying to batch next, it finds the invalid one at the header. It discards that specific invalid one and continue batching next ones.
+
+                    removeStoredEvents(num: 1)
                     continue
                 }
                 
@@ -195,7 +199,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // send notification BEFORE sending event to the server
-        NotificationCenter.default.post(name: .willSendEvents, object: event)
+        NotificationCenter.default.post(name: .willSendOptimizelyEvents, object: event)
 
         let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
             self.logger.d(response.debugDescription)

@@ -170,7 +170,7 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
 extension DefaultNotificationCenter {
     
     func addInternalNotificationListners() {
-        _ = NotificationCenter.default.addObserver(forName: .willSendEvents, object: nil, queue: nil) { (notif) in
+        _ = NotificationCenter.default.addObserver(forName: .willSendOptimizelyEvents, object: nil, queue: nil) { (notif) in
             guard let eventForDispatch = notif.object as? EventForDispatch else { return }
             
             let url = eventForDispatch.url.absoluteString
@@ -186,7 +186,7 @@ extension DefaultNotificationCenter {
     }
     
     func removeInternalNotificationListners() {
-        NotificationCenter.default.removeObserver(self, name: .willSendEvents, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .willSendOptimizelyEvents, object: nil)
     }
     
 }

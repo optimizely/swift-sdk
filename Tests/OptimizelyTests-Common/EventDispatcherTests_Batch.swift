@@ -417,7 +417,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        
+
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         

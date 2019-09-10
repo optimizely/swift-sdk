@@ -18,37 +18,20 @@ import Foundation
 import SystemConfiguration
 
 struct NetworkReachability {
-    /// Check network reachability
-    ///
-    /// - Parameters:
-    ///   - timeout: re-try until timeout if not-reachable
-    ///   - handler: action to take after reachability check
-    static func waitForReachable(timeout: Int? = nil, handler: @escaping (Bool) -> Void) {
-        DispatchQueue.global().async {
-            guard let reachability = SCNetworkReachabilityCreateWithName(nil, "google.com") else {
-                handler(false)
-                return
-            }
-            
-            var reachable = false
-            let checkIntervalInMilliSecs = 10
-            let timeoutInMilliSecs = timeout ?? 100
-            var waitTime = 0
-            
-            while waitTime < timeoutInMilliSecs {
-                var flags = SCNetworkReachabilityFlags()
-                SCNetworkReachabilityGetFlags(reachability, &flags)
-
-                reachable = flags.contains(.reachable)
-                if reachable { break }
-                
-                usleep(useconds_t(checkIntervalInMilliSecs * 1000))
-                waitTime += checkIntervalInMilliSecs
-            }
-
-            //print("[OPTIMIZELY] network reachable? " + (reachable ? "YES" : "NO"))
-
-            handler(reachable)
+    
+    static var forcedDown = false
+    
+    static var isReachable: Bool {
+        if forcedDown { return false }
+        
+        guard let reachability = SCNetworkReachabilityCreateWithName(nil, "google.com") else {
+            return true   // cannot determine reachability. assume true.
         }
+        
+        var flags = SCNetworkReachabilityFlags()
+        SCNetworkReachabilityGetFlags(reachability, &flags)
+        
+        return flags.contains(.reachable)
     }
+
 }

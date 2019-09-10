@@ -313,7 +313,11 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let fileURL = dir.appendingPathComponent(sdkKey)
             if FileManager.default.fileExists(atPath: fileURL.path) {
-                try? FileManager.default.removeItem(at: fileURL)
+                do {
+                    try FileManager.default.removeItem(at: fileURL)
+                } catch {
+                    logger.e("Problem removing datafile for key " + sdkKey)
+                }
             }
         }
 

@@ -212,21 +212,16 @@ open class OptimizelyClient: NSObject {
             completion?(fetchResult)
         }
         
-        // check network reachability and falls back to the previously cached version if network is down
-        // - try for 100 msec before concluding to un-reachable
+        // check network reachability and falls back to the previously cached version if interface is down instead of waiting for network timeout
         
-        let reachableTimeoutInMillisecs = 100
+//        guard NetworkReachability.isReachable else {
+//            self.logger.e(.internetNotReachable)
+//            processDownloadResult(.success(nil))  // use cached datafile silently
+//            return
+//        }
         
-        NetworkReachability.waitForReachable(timeout: reachableTimeoutInMillisecs) { reachable in
-            guard reachable else {
-                self.logger.e(.internetNotReachable)
-                processDownloadResult(.success(nil))  // use cached datafile silently
-                return
-            }
-            
-            self.datafileHandler.downloadDatafile(sdkKey: self.sdkKey, resourceTimeoutInterval: resourceTimeout) { result in
-                processDownloadResult(result)
-            }
+        self.datafileHandler.downloadDatafile(sdkKey: self.sdkKey, resourceTimeoutInterval: resourceTimeout) { result in
+            processDownloadResult(result)
         }
     }
     

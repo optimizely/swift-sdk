@@ -186,9 +186,9 @@ open class OptimizelyClient: NSObject {
         }
     }
     
-    func fetchDatafileBackground(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+    func fetchDatafileBackground(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)? = nil) {
         
-        datafileHandler.downloadDatafile(sdkKey: self.sdkKey, resourceTimeoutInterval: resourceTimeout) { result in
+        let processDownloadResult = { (result: OptimizelyResult<Data?>) in
             var fetchResult: OptimizelyResult<Data>
             
             switch result {
@@ -199,18 +199,34 @@ open class OptimizelyClient: NSObject {
                 if let datafile = datafile {
                     fetchResult = .success(datafile)
                 }
-                // we got a success but no datafile 304. So, load the saved datafile.
+                    // we got a success but no datafile 304. So, load the saved datafile.
                 else if let data = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) {
                     fetchResult = .success(data)
                 }
-                // if that fails, we have a problem.
+                    // if that fails, we have a problem.
                 else {
                     fetchResult = .failure(.datafileLoadingFailed(self.sdkKey))
                 }
-                
             }
             
             completion?(fetchResult)
+        }
+        
+        // check network reachability and falls back to the previously cached version if network is down
+        // - try for 100 msec before concluding to un-reachable
+        
+        let reachableTimeoutInMillisecs = 100
+        
+        NetworkReachability.waitForReachable(timeout: reachableTimeoutInMillisecs) { reachable in
+            guard reachable else {
+                self.logger.e(.internetNotReachable)
+                processDownloadResult(.success(nil))  // use cached datafile silently
+                return
+            }
+            
+            self.datafileHandler.downloadDatafile(sdkKey: self.sdkKey, resourceTimeoutInterval: resourceTimeout) { result in
+                processDownloadResult(result)
+            }
         }
     }
     

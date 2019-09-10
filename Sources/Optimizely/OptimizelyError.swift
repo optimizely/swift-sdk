@@ -64,6 +64,7 @@ public enum OptimizelyError: Error {
 
     // MARK: - Datafile Errors
     
+    case internetNotReachable
     case datafileDownloadFailed(_ hint: String)
     case dataFileInvalid
     case dataFileVersionInvalid(_ version: String)
@@ -126,6 +127,7 @@ extension OptimizelyError: CustomStringConvertible {
         case .bucketingIdInvalid (let id):                  message = "Invalid bucketing ID (\(id))"
         case .userProfileInvalid:                           message = "Provided user profile object is invalid."
             
+        case .internetNotReachable:                         message = "Network is down. Use a cached datafile."
         case .datafileDownloadFailed(let hint):             message = "Datafile download failed (\(hint))"
         case .dataFileInvalid:                              message = "Provided datafile is in an invalid format."
         case .dataFileVersionInvalid (let version):         message = "Provided datafile version (\(version)) is not supported."

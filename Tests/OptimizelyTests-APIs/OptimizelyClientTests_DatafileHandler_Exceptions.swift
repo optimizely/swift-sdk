@@ -29,48 +29,49 @@ class OptimizelyClientTests_DatafileHandler_Exceptions: XCTestCase {
     }
     
     func testOptimizelyInitWith200() {
-        setDatafileManagerWithCachedDatafile(testConfig: .network200(cacheFound: true))
+        setDatafileManager(test: .network200(cacheFound: true))
         checkOptimizelyReturnsDatafile_Downloaded()
     }
 
     func testOptimizelyInitWith304_CacheFound() {
-        setDatafileManagerWithCachedDatafile(testConfig: .network304(cacheFound: true))
+        setDatafileManager(test: .network304(cacheFound: true))
         checkOptimizelyReturnsDatafile_Cached()
     }
     
     func testOptimizelyInitWith304_NoCacheFound() {
-        setDatafileManagerWithCachedDatafile(testConfig: .network304(cacheFound: false))
-        checkOptimizelyReturnsError_DatafileLoadingFailed()
+        setDatafileManager(test: .network304(cacheFound: false))
+        checkOptimizelyReturnsError_LoadingFailed()
     }
     
     func testOptimizelyInitWith400_CacheFound() {
-        setDatafileManagerWithCachedDatafile(testConfig: .network400(cacheFound: true))
-        checkOptimizelyReturnsError_DatafileDownloadFailed()
+        setDatafileManager(test: .network400(cacheFound: true))
+        checkOptimizelyReturnsError_DownloadFailed()
     }
     
     func testOptimizelyInitWith400_NoCacheFound() {
-        setDatafileManagerWithCachedDatafile(testConfig: .network400(cacheFound: false))
-        checkOptimizelyReturnsError_DatafileDownloadFailed()
+        setDatafileManager(test: .network400(cacheFound: false))
+        checkOptimizelyReturnsError_DownloadFailed()
     }
 
     func testOptimizelyInitWith500_CacheFound() {
-        setDatafileManagerWithCachedDatafile(testConfig: .network500(cacheFound: true))
-        checkOptimizelyReturnsError_DatafileDownloadFailed()
+        setDatafileManager(test: .network500(cacheFound: true))
+        checkOptimizelyReturnsError_DownloadFailed()
     }
     
     func testOptimizelyInitWith500_NoCacheFound() {
-        setDatafileManagerWithCachedDatafile(testConfig: .network500(cacheFound: false))
-        checkOptimizelyReturnsError_DatafileDownloadFailed()
+        setDatafileManager(test: .network500(cacheFound: false))
+        checkOptimizelyReturnsError_DownloadFailed()
     }
     
     func testOptimizelyInitWithDown_CacheFound() {
-        setDatafileManagerWithCachedDatafile(testConfig: .networkDown(cacheFound: true))
+        // when network interface is down, Optimizely returns immediately with cached datafile
+        setDatafileManager(test: .networkDown(cacheFound: true))
         checkOptimizelyReturnsDatafile_Cached()
     }
 
     func testOptimizelyInitWithDown_NoCacheFound() {
-        setDatafileManagerWithCachedDatafile(testConfig: .networkDown(cacheFound: false))
-        checkOptimizelyReturnsError_DatafileLoadingFailed()
+        setDatafileManager(test: .networkDown(cacheFound: false))
+        checkOptimizelyReturnsError_LoadingFailed()
     }
 }
 
@@ -92,9 +93,9 @@ extension OptimizelyClientTests_DatafileHandler_Exceptions {
         case networkDown(cacheFound: Bool)
     }
     
-    func setDatafileManagerWithCachedDatafile(testConfig: TestConfig) {
+    func setDatafileManager(test: TestConfig) {
         // create test datafile handler
-        let handler = DMTestDatafileHandler(sdkKey: invalidSdkKey, testConfig: testConfig)
+        let handler = DMTestDatafileHandler(sdkKey: invalidSdkKey, test: test)
         
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).using(instance: handler).singetlon().sdkKey(key: invalidSdkKey).reInitializeStrategy(strategy: .reUse))
         
@@ -134,7 +135,7 @@ extension OptimizelyClientTests_DatafileHandler_Exceptions {
         wait(for: [expectation], timeout: 3)
     }
     
-    func checkOptimizelyReturnsError_DatafileDownloadFailed() {
+    func checkOptimizelyReturnsError_DownloadFailed() {
         let expectation = XCTestExpectation(description: "x")
         
         optimizely.start() { (result) in
@@ -149,7 +150,7 @@ extension OptimizelyClientTests_DatafileHandler_Exceptions {
         wait(for: [expectation], timeout: 3)
     }
     
-    func checkOptimizelyReturnsError_DatafileLoadingFailed() {
+    func checkOptimizelyReturnsError_LoadingFailed() {
         let expectation = XCTestExpectation(description: "x")
         
         optimizely.start() { (result) in
@@ -180,11 +181,11 @@ extension OptimizelyClientTests_DatafileHandler_Exceptions {
         }
         var reachable: Bool = true
 
-        init(sdkKey: String, testConfig: TestConfig) {
+        init(sdkKey: String, test: TestConfig) {
             //  data holder for network download response emulation
             self.tempUrlForNetworkData = OTUtils.saveAFile(name: "cached", data: OTUtils.loadJSONDatafile(downloadedDatafileName)!)
             self.sdkKey = sdkKey
-            self.testConfig = testConfig
+            self.testConfig = test
             
             super.init()
             
@@ -205,9 +206,6 @@ extension OptimizelyClientTests_DatafileHandler_Exceptions {
                 if case .networkDown = testConfig {
                     reachable = false
                 }
-
-            default:
-                print("Testing without cached datafile")
             }
         }
         

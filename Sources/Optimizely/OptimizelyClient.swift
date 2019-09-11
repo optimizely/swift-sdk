@@ -211,15 +211,7 @@ open class OptimizelyClient: NSObject {
             
             completion?(fetchResult)
         }
-        
-        // check network reachability and falls back to the previously cached version if interface is down instead of waiting for network timeout
-        
-//        guard NetworkReachability.isReachable else {
-//            self.logger.e(.internetNotReachable)
-//            processDownloadResult(.success(nil))  // use cached datafile silently
-//            return
-//        }
-        
+                
         self.datafileHandler.downloadDatafile(sdkKey: self.sdkKey, resourceTimeoutInterval: resourceTimeout) { result in
             processDownloadResult(result)
         }

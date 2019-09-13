@@ -174,7 +174,7 @@ open class OptimizelyClient: NSObject {
                         
                     }
                     
-                    self.sendDatafileChangeNorification(data: data)
+                    self.sendDatafileChangeNotification(data: data)
                 }
             }
         } catch {
@@ -629,10 +629,7 @@ extension OptimizelyClient {
             }
             
             let event = EventForDispatch(body: body)
-            // because we are batching events, we cannot guarantee that the completion handler will be
-            // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
-            // onActivate only means the event has been queued and not necessarily sent.
-            self.eventDispatcher.dispatchEvent(event: event, completionHandler: nil)
+            self.sendEventToDispatcher(event: event, completionHandler: nil)
             
             self.sendActivateNotification(experiment: experiment,
                                           variation: variation,
@@ -662,16 +659,21 @@ extension OptimizelyClient {
             }
             
             let event = EventForDispatch(body: body)
-            // because we are batching events, we cannot guarantee that the completion handler will be
-            // called.  So, for now, we are queuing and calling onTrack.  Maybe we should mention that
-            // onTrack only means the event has been queued and not necessarily sent.
-            self.eventDispatcher.dispatchEvent(event: event, completionHandler: nil)
+            self.sendEventToDispatcher(event: event, completionHandler: nil)
             
             self.sendTrackNotification(eventKey: eventKey,
                                        userId: userId,
                                        attributes: attributes,
                                        eventTags: eventTags,
                                        event: event)
+        }
+    }
+    
+    func sendEventToDispatcher(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        // make sure that notificationCenter is still registered when async notification is called
+        if let eventDispatcher = HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey) {
+            // The event is queued in the dispatcher, batched, and sent out later.
+            eventDispatcher.dispatchEvent(event: event, completionHandler: completionHandler)
         }
     }
     
@@ -687,15 +689,11 @@ extension OptimizelyClient {
                                   attributes: OptimizelyAttributes?,
                                   event: EventForDispatch) {
         
-        // callback in background thread
-        eventLock.async {
-            self.notificationCenter.sendNotifications(type: NotificationType.activate.rawValue,
-                                                      args: [experiment,
-                                                             userId,
-                                                             attributes,
-                                                             variation,
-                                                             ["url": event.url as Any, "body": event.body as Any]])
-        }
+        self.sendNotification(type: .activate, args: [experiment,
+                                                      userId,
+                                                      attributes,
+                                                      variation,
+                                                      ["url": event.url as Any, "body": event.body as Any]])
     }
     
     func sendTrackNotification(eventKey: String,
@@ -703,16 +701,11 @@ extension OptimizelyClient {
                                attributes: OptimizelyAttributes?,
                                eventTags: OptimizelyEventTags?,
                                event: EventForDispatch) {
-        
-        // callback in background thread
-        eventLock.async {
-            self.notificationCenter.sendNotifications(type: NotificationType.track.rawValue,
-                                                      args: [eventKey,
-                                                             userId,
-                                                             attributes,
-                                                             eventTags,
-                                                             ["url": event.url as Any, "body": event.body as Any]])
-        }
+        self.sendNotification(type: .track, args: [eventKey,
+                                                   userId,
+                                                   attributes,
+                                                   eventTags,
+                                                   ["url": event.url as Any, "body": event.body as Any]])
     }
     
     func sendDecisionNotification(decisionType: Constants.DecisionType,
@@ -725,30 +718,21 @@ extension OptimizelyClient {
                                   variableKey: String? = nil,
                                   variableType: String? = nil,
                                   variableValue: Any? = nil) {
-        
-        // callback in background thread
-        eventLock.async {
-            self.notificationCenter.sendNotifications(type: NotificationType.decision.rawValue,
-                                                      args: [decisionType.rawValue,
-                                                             userId,
-                                                             attributes,
-                                                             self.makeDecisionInfo(decisionType: decisionType,
-                                                                                   experiment: experiment,
-                                                                                   variation: variation,
-                                                                                   feature: feature,
-                                                                                   featureEnabled: featureEnabled,
-                                                                                   variableKey: variableKey,
-                                                                                   variableType: variableType,
-                                                                                   variableValue: variableValue)])
-        }
+        self.sendNotification(type: .decision, args: [decisionType.rawValue,
+                                                      userId,
+                                                      attributes,
+                                                      self.makeDecisionInfo(decisionType: decisionType,
+                                                                            experiment: experiment,
+                                                                            variation: variation,
+                                                                            feature: feature,
+                                                                            featureEnabled: featureEnabled,
+                                                                            variableKey: variableKey,
+                                                                            variableType: variableType,
+                                                                            variableValue: variableValue)])
     }
     
-    func sendDatafileChangeNorification(data: Data) {
-        // callback in background thread
-        eventLock.async {
-            self.notificationCenter.sendNotifications(type: NotificationType.datafileChange.rawValue,
-                                                      args: [data])
-        }
+    func sendDatafileChangeNotification(data: Data) {
+        self.sendNotification(type: .datafileChange, args: [data])
     }
     
     func makeDecisionInfo(decisionType: Constants.DecisionType,
@@ -801,4 +785,14 @@ extension OptimizelyClient {
         return decisionInfo
     }
     
+    func sendNotification(type: NotificationType, args: [Any?]) {
+        // callback in background thread
+        eventLock.async {
+            // make sure that notificationCenter is still registered when async notification is called
+            if let notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey) {
+                notificationCenter.sendNotifications(type: type.rawValue, args: args)
+            }
+        }
+    }
+
 }

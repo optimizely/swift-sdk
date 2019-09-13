@@ -37,7 +37,6 @@ class DecisionListenerTests: XCTestCase {
     
     var datafile: Data!
     var optimizely: FakeManager!
-    var optimizely2: OptimizelyClient?
     
     // MARK: - SetUp
     
@@ -49,8 +48,6 @@ class DecisionListenerTests: XCTestCase {
         self.optimizely = FakeManager(sdkKey: "12345",
                                       userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.start(datafile: datafile)
-        
-        self.optimizely2 = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
     }
     
     func testDecisionListenerGetFeatureVariableBooleanWithUserNotInExperimentAndRollout() {
@@ -451,114 +448,6 @@ class DecisionListenerTests: XCTestCase {
         }
         _ = try? self.optimizely.getFeatureVariableString(featureKey: kFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
         wait(for: [exp], timeout: 1)
-    }
-    
-    func testDecisionListenerWithActivateWhenUserInExperiment() {
-        let attributes: [String: Any?] = ["s_foo": "foo",
-                                          "b_true": "N/A",
-                                          "i_42": 44,
-                                          "d_4_2": "N/A"]
-        var notificationVariation: String?
-        var notificationExperiment: String?
-        var notificationType: String?
-        
-        let exp = expectation(description: "x")
-
-        _ = self.optimizely2?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
-            notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
-            notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
-            notificationType = type
-            exp.fulfill()
-        })
-        
-        let variation = try? optimizely2?.activate(experimentKey:
-            "ab_running_exp_audience_combo_empty_conditions",
-                                                  userId: "test_user_1",
-                                                  attributes: attributes)
-        wait(for: [exp], timeout: 1)
-
-        XCTAssertEqual(variation, "all_traffic_variation")
-        XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_empty_conditions")
-        XCTAssertEqual(notificationVariation, "all_traffic_variation")
-        XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
-    }
-    
-    func testDecisionListenerWithActivateWhenUserNotInExperiment() {
-        var notificationVariation: String?
-        var notificationExperiment: String?
-        var notificationType: String?
-        
-        let exp = expectation(description: "x")
-
-        _ = optimizely2?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
-            notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
-            notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
-            notificationType = type
-            exp.fulfill()
-        })
-        
-        _ = try? optimizely2?.activate(experimentKey:
-            "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2",
-                                      userId: "test_user_1",
-                                      attributes: nil)
-        wait(for: [exp], timeout: 1)
-
-        XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
-        XCTAssertEqual(notificationVariation, nil)
-        XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
-        self.optimizely2?.notificationCenter.clearAllNotificationListeners()
-    }
-    
-    func testDecisionListenerWithGetVariationWhenUserInExperiment() {
-        let attributes: [String: Any?] = ["s_foo": "foo",
-                                          "b_true": "N/A",
-                                          "i_42": 44,
-                                          "d_4_2": "N/A"]
-        var notificationVariation: String?
-        var notificationExperiment: String?
-        var notificationType: String?
-        
-        let exp = expectation(description: "x")
-
-        _ = optimizely2?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
-            notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
-            notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
-            notificationType = type
-            exp.fulfill()
-       })
-        
-        _ = try? optimizely2?.getVariation(experimentKey: "ab_running_exp_audience_combo_empty_conditions",
-                                          userId: "test_user_1",
-                                          attributes: attributes)
-        wait(for: [exp], timeout: 1)
-
-        XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_empty_conditions")
-        XCTAssertEqual(notificationVariation, "all_traffic_variation")
-        XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
-        self.optimizely2?.notificationCenter.clearAllNotificationListeners()
-    }
-    
-    func testDecisionListenerWithGetVariationWhenUserNotInExperiment() {
-        var notificationVariation: String?
-        var notificationExperiment: String?
-        var notificationType: String?
-        
-        let exp = expectation(description: "x")
-
-        _ = optimizely2?.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
-            notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
-            notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
-            notificationType = type
-            exp.fulfill()
-        })
-        
-        _ = try? optimizely2?.getVariation(experimentKey: "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2", userId: "test_user_1")
-        wait(for: [exp], timeout: 1)
-
-        XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
-        XCTAssertEqual(notificationVariation, nil)
-        XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
-        self.optimizely2?.notificationCenter.clearAllNotificationListeners()
     }
     
     func testDecisionListenerForGetEnabledFeatures() {

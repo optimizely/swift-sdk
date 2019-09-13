@@ -89,13 +89,13 @@ class OTUtils {
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
                                  eventDispatcher: OPTEventDispatcher?=nil) -> OptimizelyClient? {
-        // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-        let arbitrarySdkKey = String(arc4random())
 
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
-        let optimizely = OptimizelyClient(sdkKey: arbitrarySdkKey,
+        // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
+
+        let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                            eventDispatcher: eventDispatcher,
                                            userProfileService: userProfileService)
         do {
@@ -134,6 +134,12 @@ class OTUtils {
         }
         
         return nil
+    }
+    
+    // MARK: - others
+    
+    static var randomSdkKey: String {
+        return String(arc4random())
     }
 
 }

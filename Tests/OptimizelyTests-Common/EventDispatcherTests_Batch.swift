@@ -1062,6 +1062,11 @@ class TestEventDispatcher: DefaultEventDispatcher {
         print("[TestEventDispatcher][SendEvent][\(eventFileName)] removeProjectChangeNotificationObservers")
         super.removeProjectChangeNotificationObservers()
     }
+    
+    override func flushEvents() {
+        print("[TestEventDispatcher][SendEvent][\(eventFileName)] flushEvents")
+        super.flushEvents()
+    }
 
     
     override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {

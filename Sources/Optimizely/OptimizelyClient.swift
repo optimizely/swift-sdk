@@ -44,8 +44,8 @@ open class OptimizelyClient: NSObject {
     
     lazy var logger = OPTLoggerFactory.getLogger()
     
-    var eventDispatcher: OPTEventDispatcher {
-        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!
+    var eventDispatcher: OPTEventDispatcher? {
+        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
     }
     
     // MARK: - Default Services
@@ -58,8 +58,8 @@ open class OptimizelyClient: NSObject {
         return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
     }
     
-    public var notificationCenter: OPTNotificationCenter {
-        return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)!
+    public var notificationCenter: OPTNotificationCenter? {
+        return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
     }
 
     // MARK: - Public interfaces
@@ -670,11 +670,10 @@ extension OptimizelyClient {
     }
     
     func sendEventToDispatcher(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        // make sure that notificationCenter is still registered when async notification is called
-        if let eventDispatcher = HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey) {
-            // The event is queued in the dispatcher, batched, and sent out later.
-            eventDispatcher.dispatchEvent(event: event, completionHandler: completionHandler)
-        }
+        // The event is queued in the dispatcher, batched, and sent out later.
+        
+        // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
+        self.eventDispatcher?.dispatchEvent(event: event, completionHandler: completionHandler)
     }
     
 }
@@ -788,10 +787,8 @@ extension OptimizelyClient {
     func sendNotification(type: NotificationType, args: [Any?]) {
         // callback in background thread
         eventLock.async {
-            // make sure that notificationCenter is still registered when async notification is called
-            if let notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey) {
-                notificationCenter.sendNotifications(type: type.rawValue, args: args)
-            }
+            // make sure that notificationCenter is not-nil (still registered when async notification is called)
+            self.notificationCenter?.sendNotifications(type: type.rawValue, args: args)
         }
     }
 

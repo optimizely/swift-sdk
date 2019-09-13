@@ -18,6 +18,7 @@ import XCTest
 
 class DecisionListenerTests_Datafile: XCTestCase {
     var optimizely: OptimizelyClient!
+    var notificationCenter: OPTNotificationCenter!
     
     // MARK: - SetUp
     
@@ -25,6 +26,7 @@ class DecisionListenerTests_Datafile: XCTestCase {
         super.setUp()
         
         self.optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
+        self.notificationCenter = self.optimizely.notificationCenter!
     }
     
     func testDecisionListenerWithActivateWhenUserInExperiment() {
@@ -38,7 +40,7 @@ class DecisionListenerTests_Datafile: XCTestCase {
         
         let exp = expectation(description: "x")
 
-        _ = self.optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
+        _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
             notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
             notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
             notificationType = type
@@ -64,7 +66,7 @@ class DecisionListenerTests_Datafile: XCTestCase {
         
         let exp = expectation(description: "x")
 
-        _ = optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
+        _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
             notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
             notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
             notificationType = type
@@ -80,7 +82,7 @@ class DecisionListenerTests_Datafile: XCTestCase {
         XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(notificationVariation, nil)
         XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
-        self.optimizely.notificationCenter.clearAllNotificationListeners()
+        notificationCenter.clearAllNotificationListeners()
     }
     
     func testDecisionListenerWithGetVariationWhenUserInExperiment() {
@@ -94,7 +96,7 @@ class DecisionListenerTests_Datafile: XCTestCase {
         
         let exp = expectation(description: "x")
 
-        _ = optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
+        _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
             notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
             notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
             notificationType = type
@@ -109,7 +111,7 @@ class DecisionListenerTests_Datafile: XCTestCase {
         XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_empty_conditions")
         XCTAssertEqual(notificationVariation, "all_traffic_variation")
         XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
-        self.optimizely.notificationCenter.clearAllNotificationListeners()
+        notificationCenter.clearAllNotificationListeners()
     }
     
     func testDecisionListenerWithGetVariationWhenUserNotInExperiment() {
@@ -119,7 +121,7 @@ class DecisionListenerTests_Datafile: XCTestCase {
         
         let exp = expectation(description: "x")
 
-        _ = optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
+        _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
             notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
             notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
             notificationType = type
@@ -132,7 +134,7 @@ class DecisionListenerTests_Datafile: XCTestCase {
         XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(notificationVariation, nil)
         XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
-        self.optimizely.notificationCenter.clearAllNotificationListeners()
+        notificationCenter.clearAllNotificationListeners()
     }
     
 }

@@ -41,14 +41,17 @@ class EventDispatcherTests_Batch: XCTestCase {
     let kUserIdC = "789"
     
     var eventDispatcher: TestEventDispatcher!
+    
     static let keyTestEventFileName = "OPTEventQueue-Test-"
+    var uniqueFileName: String {
+        return EventDispatcherTests_Batch.keyTestEventFileName + String(Int.random(in: 0...1000000))
+    }
     
     override func setUp() {
         // NOTE: dataStore uses the same file ("OptEventQueue") by default.
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
-        let uniqueFileName = EventDispatcherTests_Batch.keyTestEventFileName + String(Int.random(in: 0...100000))
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
         
         // clear static states to test first datafile load
@@ -678,6 +681,8 @@ extension EventDispatcherTests_Batch {
     }
 
     func testEventsFlushedOnRevisionChange() {
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -711,6 +716,8 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsFlushedOnProjectIdChange() {
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -744,6 +751,8 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsNotFlushedOnOtherDatafileChanges() {
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -764,12 +773,12 @@ extension EventDispatcherTests_Batch {
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
         
-        // (2) flush on revision-change notification
+        // (2) not flush on other datafile contents change
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
 
-        // change projectId
+        // change accountId (not projectId or revision)
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
         
@@ -778,6 +787,8 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsNotFlushedOnFirstDatafileLoad() {
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -1028,12 +1039,19 @@ class TestEventDispatcher: DefaultEventDispatcher {
     var sendRequestedEvents: [EventForDispatch] = []
     var forceError = false
     var numReceivedVisitors = 0
+    let eventFileName: String
     
     // set this if need to wait sendEvent completed
     var exp: XCTestExpectation?
     
-    init(eventFileName: String) {
+    init(eventFileName: String, removeDatafileObserver: Bool = true) {
+        self.eventFileName = eventFileName
         super.init(dataStoreName: eventFileName)
+        
+        // block interference from other tests notifications when testing batch timing
+        if removeDatafileObserver {
+            removeProjectChangeNotificationObservers()
+        }
      }
     
     override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
@@ -1042,7 +1060,7 @@ class TestEventDispatcher: DefaultEventDispatcher {
         do {
             let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
             numReceivedVisitors += decodedEvent.visitors.count
-            print("[SendEvent] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+            print("[TestEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
         } catch {
             // invalid event format detected
             // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)

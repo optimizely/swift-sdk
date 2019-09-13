@@ -88,19 +88,26 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     deinit {
         stopTimer()
 
+        removeProjectChangeNotificationObservers()
+
         unsubscribe()
     }
     
     func addProjectChangeNotificationObservers() {
-        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { (notif) in
-            self.logger.d("Event flush triggered by datafile projectId change")
-            self.flushEvents()
+        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (notif) in
+            self?.logger.d("Event flush triggered by datafile projectId change")
+            self?.flushEvents()
         }
         
-        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { (notif) in
-            self.logger.d("Event flush triggered by datafile revision change")
-            self.flushEvents()
+        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (notif) in
+            self?.logger.d("Event flush triggered by datafile revision change")
+            self?.flushEvents()
         }
+    }
+    
+    func removeProjectChangeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: .didReceiveOptimizelyProjectIdChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didReceiveOptimizelyRevisionChange, object: nil)
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {

@@ -122,15 +122,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func addListeners() {
         // notification listeners
 
-        _ = optimizely.notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
+        let notificationCenter = optimizely.notificationCenter!
+            
+        _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
             print("Received decision notification: \(type) \(userId) \(String(describing: attributes)) \(decisionInfo)")
         })
         
-        _ = optimizely.notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
+        _ = notificationCenter.addTrackNotificationListener(trackListener: { (eventKey, userId, attributes, eventTags, event) in
             print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
         })
 
-        _ = optimizely.notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (_) in
+        _ = notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (_) in
             DispatchQueue.main.async {
                 #if os(iOS)
                 if let controller = self.window?.rootViewController {

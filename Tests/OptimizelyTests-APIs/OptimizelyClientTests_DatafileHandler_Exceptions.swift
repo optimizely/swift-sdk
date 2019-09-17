@@ -176,10 +176,6 @@ extension OptimizelyClientTests_DatafileHandler_Exceptions {
         var tempUrlForNetworkData: URL?
         let sdkKey: String
         var testConfig: TestConfig
-        override var isReachable: Bool {
-            return reachable
-        }
-        var reachable: Bool = true
 
         init(sdkKey: String, test: TestConfig) {
             //  data holder for network download response emulation
@@ -204,7 +200,7 @@ extension OptimizelyClientTests_DatafileHandler_Exceptions {
                 }
                 
                 if case .networkDown = testConfig {
-                    reachable = false
+                    NetworkReachability.shared.reachable = false
                 }
             }
         }

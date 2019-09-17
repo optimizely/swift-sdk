@@ -127,6 +127,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     let notify = DispatchGroup()
     
     open func flushEvents() {
+        
+        guard NetworkReachability.isReachable else {
+            self.logger.d("Network is down. Will send events when it's up.")
+            return
+        }
+        
         dispatcher.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0

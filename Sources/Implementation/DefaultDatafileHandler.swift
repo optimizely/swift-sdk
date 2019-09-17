@@ -15,7 +15,6 @@
 ***************************************************************************/
 
 import Foundation
-import SystemConfiguration
 
 class DefaultDatafileHandler: OPTDatafileHandler {
     // endpoint used to get the datafile.  This is settable after you create a OptimizelyClient instance.
@@ -108,7 +107,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         downloadQueue.async {
             
             // check network reachability and falls back to the previously cached version if interface is down
-            guard self.isReachable else {
+            guard NetworkReachability.isReachable else {
                 self.logger.e(.internetNotReachable)
                 completionHandler(.success(nil))
                 return
@@ -142,18 +141,6 @@ class DefaultDatafileHandler: OPTDatafileHandler {
             
             task.resume()
         }
-    }
-    
-    /// Check if network interface is up and running
-    var isReachable: Bool {
-        guard let reachability = SCNetworkReachabilityCreateWithName(nil, "google.com") else {
-            return true   // cannot determine reachability. assume true.
-        }
-        
-        var flags = SCNetworkReachabilityFlags()
-        SCNetworkReachabilityGetFlags(reachability, &flags)
-        
-        return flags.contains(.reachable)
     }
     
     func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification: ((Data) -> Void)?) {

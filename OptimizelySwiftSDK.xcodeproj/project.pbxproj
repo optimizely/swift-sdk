@@ -1790,7 +1790,6 @@
 			isa = PBXGroup;
 			children = (
 				6E75197F22C5211100B2B157 /* MurmurTests.swift */,
-				6E75198022C5211100B2B157 /* DecisionServiceTests_Experiments.swift */,
 				6E75198122C5211100B2B157 /* OptimizelyErrorTests.swift */,
 				6E75198222C5211100B2B157 /* OptimizelySwiftSDKiOSTests.swift */,
 				6E75198322C5211100B2B157 /* BucketTests_GroupToExp.swift */,
@@ -1803,12 +1802,13 @@
 				6E75198A22C5211100B2B157 /* BucketTests_Base.swift */,
 				6E75198B22C5211100B2B157 /* NotificationCenterTests.swift */,
 				6E75198C22C5211100B2B157 /* BucketTests_ExpToVariation.swift */,
-				6E75198D22C5211100B2B157 /* EventDispatcherTests_Batch.swift */,
 				6E75198E22C5211100B2B157 /* LoggerTests.swift */,
 				6E75198F22C5211100B2B157 /* BucketTests_BucketVariation.swift */,
 				6E75199022C5211100B2B157 /* DecisionListenerTests.swift */,
+				6E75198022C5211100B2B157 /* DecisionServiceTests_Experiments.swift */,
 				6E75199122C5211100B2B157 /* DecisionServiceTests_Features.swift */,
 				6E75199222C5211100B2B157 /* EventDispatcherTests.swift */,
+				6E75198D22C5211100B2B157 /* EventDispatcherTests_Batch.swift */,
 				6E75199322C5211100B2B157 /* BatchEventBuilderTests_Attributes.swift */,
 				6E75199422C5211100B2B157 /* DecisionServiceTests_Others.swift */,
 				6E75199522C5211100B2B157 /* DecisionServiceTests.swift */,

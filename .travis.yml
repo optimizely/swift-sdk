@@ -59,7 +59,7 @@ jobs:
         # preload simulator
         - Scripts/start_simulator.sh
       script:
-        - if [[ "$TRAVIS_BRANCH" == "jctong/test_xcodebuild_exitcode" ]]; then xcodebuild test -workspace OptimizelySwiftSDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES | tee buildoutput | xcpretty && test ${PIPESTATUS[0] -eq 0; fi
+        - if [[ "$TRAVIS_BRANCH" == "jctong/test_xcodebuild_exitcode" ]]; then xcodebuild test -workspace OptimizelySwiftSDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES | tee buildoutput | xcpretty && test ${PIPESTATUS[0]} -eq 0; fi
       after_success:
         - slather
         - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725

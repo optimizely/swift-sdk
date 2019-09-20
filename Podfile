@@ -44,3 +44,10 @@ target 'DemoObjctvOS' do
   use_frameworks!
   #pod 'OptimizelySwiftSDK','3.0.0'
 end
+
+target 'OptimizelyTests-Fsc-iOS' do
+  platform :ios, '9.0'
+  use_frameworks!
+  pod 'Cucumberish'
+  pod 'Yams'
+end

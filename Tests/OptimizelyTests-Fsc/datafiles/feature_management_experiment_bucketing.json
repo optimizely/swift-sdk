@@ -1,0 +1,46 @@
+{
+  "version": "4",
+  "rollouts": [],
+  "anonymizeIP": true,
+  "projectId": "10431130345",
+  "variables": [],
+  "featureFlags": [
+    {
+      "experimentIds": ["10373259356"],
+      "rolloutId": "",
+      "variables": [],
+      "id": "10396278033",
+      "key": "draft_experiment_feat"
+    },
+    {
+      "experimentIds": ["10373259356"],
+      "rolloutId": "",
+      "variables": [],
+      "id": "10396278033",
+      "key": "draft_experiment_feat"
+    }
+  ],
+  "experiments": [
+    {
+      "status": "Not started",
+      "key": "draft_experiment",
+      "layerId": "10418820769",
+      "trafficAllocation": [
+        {
+          "entityId": "10373549841",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": [],
+      "variations": [],
+      "forcedVariations": {},
+      "id": "10373259356"
+    }
+  ],
+  "audiences": [],
+  "groups": [],
+  "attributes": [],
+  "accountId": "10367498574",
+  "events": [],
+  "revision": "241"
+}

@@ -1,0 +1,15 @@
+{
+  "version": "4",
+  "rollouts": [],
+  "anonymizeIP": true,
+  "projectId": "10431130345",
+  "variables": [],
+  "featureFlags": [],
+  "experiments": [],
+  "audiences": [],
+  "groups": [],
+  "attributes": [],
+  "accountId": "10367498574",
+  "events": [],
+  "revision": "241"
+}

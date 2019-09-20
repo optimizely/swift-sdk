@@ -1,0 +1,95 @@
+{
+  "version": "4",
+  "rollouts": [],
+  "anonymizeIP": true,
+  "projectId": "10431130345",
+  "variables": [],
+  "featureFlags": [],
+  "experiments": [
+    {
+      "status": "Running",
+      "key": "ab_running_exp_single_exact_match_string_audience",
+      "layerId": "10420273888",
+      "trafficAllocation": [
+        {
+          "entityId": "10416523121",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["10413101794", "10413101795"],
+      "variations": [
+        {
+          "variables": [],
+          "id": "10416523121",
+          "key": "all_traffic_variation"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977673"
+    }
+  ],
+  "audiences": [
+    {
+      "id": "10413101794",
+      "conditions": "[\"and\", [\"or\", [\"or\", {\"type\": \"custom_attribute\", \"name\": \"string_attribute\", \"value\": \"exact_match\"}]]]",
+      "name": "untyped_single_condition_exact_string_match"
+    },
+    {
+      "id": "10413101795",
+      "_comment_about_condition_format": "Note: pre-3.0 Java SDKs cannot parse and evaluate leaves at the root of this condition tree. App backend accommodates those SDKs by wrapping the leaves in parents. (OASIS-3718)",
+      "conditions": "{\"type\": \"custom_attribute\", \"name\": \"string_attribute\", \"match\": \"exact\", \"value\": \"leaf_root\"}",
+      "name": "untyped_single_condition_leaf_root"
+    }
+  ],
+  "typedAudiences": [],
+  "groups": [],
+  "attributes": [
+    {
+      "id": "10401066170",
+      "key": "string_attribute"
+    },
+    {
+      "id": "10401066171",
+      "key": "s_foo"
+    },
+    {
+      "id": "10401066172",
+      "key": "b_true"
+    },
+    {
+      "id": "10401066172",
+      "key": "i_42"
+    },
+    {
+      "id": "10401066173",
+      "key": "d_4_2"
+    },
+    {
+      "id": "10401066174",
+      "key": "s_bar"
+    },
+    {
+      "id": "10401066175",
+      "key": "b_false"
+    },
+    {
+      "id": "10401066176",
+      "key": "i_43"
+    },
+    {
+      "id": "10401066177",
+      "key": "d_4_3"
+    }
+  ],
+  "accountId": "10367498574",
+  "events": [
+    {
+      "experimentIds": [
+        "10390977673"
+      ],
+      "id": "10404198135",
+      "key": "event_single_targeted_exp"
+    }
+  ],
+  "revision": "241"
+}

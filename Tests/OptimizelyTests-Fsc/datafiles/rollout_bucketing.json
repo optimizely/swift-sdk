@@ -1,0 +1,135 @@
+{
+  "accountId": "2685870144",
+  "anonymizeIP": true,
+  "attributes": [],
+  "audiences": [],
+  "events": [],
+  "experiments": [],
+  "featureFlags": [
+    {
+      "experimentIds": [],
+      "id": "2690860091",
+      "key": "feature_rolled_out",
+      "rolloutId": "2687950118",
+      "variables": [
+        {
+          "defaultValue": "true",
+          "id": "2689470068",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "s",
+          "id": "2693340150",
+          "key": "s",
+          "type": "string"
+        },
+        {
+          "defaultValue": "3",
+          "id": "2693440061",
+          "key": "i",
+          "type": "integer"
+        },
+        {
+          "defaultValue": "10.5",
+          "id": "2697160072",
+          "key": "d",
+          "type": "double"
+        }
+      ]
+    },
+    {
+      "experimentIds": [],
+      "id": "2693810126",
+      "key": "feature_not_rolled_out",
+      "rolloutId": "2694650025",
+      "variables": [
+        {
+          "defaultValue": "10.5",
+          "id": "2689710109",
+          "key": "d",
+          "type": "double"
+        },
+        {
+          "defaultValue": "s",
+          "id": "2689940066",
+          "key": "s",
+          "type": "string"
+        },
+        {
+          "defaultValue": "true",
+          "id": "2697110129",
+          "key": "b",
+          "type": "boolean"
+        },
+        {
+          "defaultValue": "3",
+          "id": "2697300138",
+          "key": "i",
+          "type": "integer"
+        }
+      ]
+    }
+  ],
+  "groups": [],
+  "projectId": "2685870144",
+  "revision": "5",
+  "rollouts": [
+    {
+      "experiments": [
+        {
+          "audienceIds": [],
+          "forcedVariations": {},
+          "id": "2692540165",
+          "key": "2692540165",
+          "layerId": "2687950118",
+          "status": "Not started",
+          "trafficAllocation": [
+            {
+              "endOfRange": 10000,
+              "entityId": "2697320053"
+            }
+          ],
+          "variations": [
+            {
+              "featureEnabled": true,
+              "id": "2697320053",
+              "key": "2697320053",
+              "variables": []
+            }
+          ]
+        }
+      ],
+      "id": "2687950118"
+    },
+    {
+      "experiments": [
+        {
+          "audienceIds": [],
+          "forcedVariations": {},
+          "id": "2695350232",
+          "key": "2695350232",
+          "layerId": "2694650025",
+          "status": "Not started",
+          "trafficAllocation": [
+            {
+              "endOfRange": 0,
+              "entityId": "2694110179"
+            }
+          ],
+          "variations": [
+            {
+              "featureEnabled": true,
+              "id": "2694110179",
+              "key": "2694110179",
+              "variables": []
+            }
+          ]
+        }
+      ],
+      "id": "2694650025"
+    }
+  ],
+  "variables": [],
+  "version": "4"
+}

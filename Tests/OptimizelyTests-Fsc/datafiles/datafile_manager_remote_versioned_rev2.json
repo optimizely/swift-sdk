@@ -1,0 +1,73 @@
+{
+  "accountId": "5498140812",
+  "anonymizeIP": true,
+  "attributes": [],
+  "audiences": [],
+  "botFiltering": false,
+  "events": [
+    {
+      "experimentIds": [
+        "5493830384"
+      ],
+      "id": "4420640136",
+      "key": "feature_exp_running_untargeted_with_revision_variable_event"
+    }
+  ],
+  "experiments": [
+    {
+      "audienceIds": [],
+      "forcedVariations": {},
+      "id": "5493830384",
+      "key": "feature_exp_running_untargeted_with_revision_variable",
+      "layerId": "4525908865",
+      "status": "Running",
+      "trafficAllocation": [
+        {
+          "endOfRange": 10000,
+          "entityId": "5489910500"
+        }
+      ],
+      "variations": [
+        {
+          "featureEnabled": true,
+          "id": "5489910500",
+          "key": "all_traffic_variation",
+          "variables": [
+            {
+              "value": "I am from datafile revision 2!",
+              "id": "2687470000"
+            }
+          ]
+        },
+        {
+          "featureEnabled": true,
+          "id": "5489910501",
+          "key": "no_traffic_variation",
+          "variables": []
+        }
+      ]
+    }
+  ],
+  "featureFlags": [
+    {
+      "experimentIds": ["5493830384"],
+      "id": "4482920080",
+      "key": "feature_exp_running_untargeted_with_revision_variable",
+      "rolloutId": "",
+      "variables": [
+        {
+          "defaultValue": "I have a revision number",
+          "id": "2687470000",
+          "key": "s_revision",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "groups": [],
+  "projectId": "5498140899",
+  "revision": "2",
+  "rollouts": [],
+  "variables": [],
+  "version": "4"
+}

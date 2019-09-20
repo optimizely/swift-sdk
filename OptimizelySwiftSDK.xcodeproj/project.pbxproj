@@ -1165,6 +1165,7 @@
 		C741004D2334E84300F88F1D /* YAMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741004A2334E84300F88F1D /* YAMLParser.swift */; };
 		C741004E2334E84300F88F1D /* CucumberishInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741004B2334E84300F88F1D /* CucumberishInitializer.swift */; };
 		C741004F2334E84300F88F1D /* CucumberishLauncher.m in Sources */ = {isa = PBXBuildFile; fileRef = C741004C2334E84300F88F1D /* CucumberishLauncher.m */; };
+		C74100542334EF9F00F88F1D /* datafiles in Resources */ = {isa = PBXBuildFile; fileRef = C74100532334EF9E00F88F1D /* datafiles */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1425,6 +1426,7 @@
 		C741004A2334E84300F88F1D /* YAMLParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YAMLParser.swift; sourceTree = "<group>"; };
 		C741004B2334E84300F88F1D /* CucumberishInitializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CucumberishInitializer.swift; sourceTree = "<group>"; };
 		C741004C2334E84300F88F1D /* CucumberishLauncher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CucumberishLauncher.m; sourceTree = "<group>"; };
+		C74100532334EF9E00F88F1D /* datafiles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = datafiles; sourceTree = "<group>"; };
 		D94207ED451BF95F0CC118C0 /* Pods-OptimizelyTests-Fsc-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Fsc-iOS.release.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Fsc-iOS/Pods-OptimizelyTests-Fsc-iOS.release.xcconfig"; sourceTree = "<group>"; };
 		FC0352BDA636E8765E5BF41C /* Pods-OptimizelyTests-Fsc-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Fsc-iOS.debug.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Fsc-iOS/Pods-OptimizelyTests-Fsc-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1938,8 +1940,9 @@
 				C741004C2334E84300F88F1D /* CucumberishLauncher.m */,
 				C741004A2334E84300F88F1D /* YAMLParser.swift */,
 				C74100452334E7CA00F88F1D /* AudienceTargetingTests.swift */,
-				C74100432334E78500F88F1D /* Features */,
 				C74100492334E84200F88F1D /* OptimizelyTests-Fsc-iOS-Bridging-Header.h */,
+				C74100532334EF9E00F88F1D /* datafiles */,
+				C74100432334E78500F88F1D /* Features */,
 			);
 			path = "OptimizelyTests-Fsc";
 			sourceTree = "<group>";
@@ -2688,6 +2691,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C74100542334EF9F00F88F1D /* datafiles in Resources */,
 				C74100482334E7DF00F88F1D /* Features in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -893,7 +893,7 @@ extension EventDispatcherTests_Batch {
     }
     
     func testRandomEventsWithInvalid_100() {
-        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 30)
+        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 10)
     }
 
     // Utils
@@ -907,18 +907,18 @@ extension EventDispatcherTests_Batch {
         let exp = XCTestExpectation(description: "random")
         let expectedVisistors = numEvents - numInvalidEvents  // all invalid events will be discarded
 
-        // dispatch evetns in a separate thread for stressting enqueu and batch happen simultaneously
+        // dispatch evetns in a separate thread for stressting enqueue and batch happen simultaneously
         DispatchQueue.global().async {
             self.dispatchRandomEvents(numEvents: numEvents, numInvalidEvents: numInvalidEvents)
             
             print("[RandomTest] dispatched all events")
             
             // extra delay to make sure all events are flushed and check if no more than expected is batched
-            let extraDelay = max(Int(eventDispatcher.timerInterval) * 2, 30)
+            let extraDelay = max(Int(eventDispatcher.timerInterval) * 2, 60)
             var delay = 0
             while delay < extraDelay {
                 if eventDispatcher.numReceivedVisitors >= expectedVisistors {
-                    self.waitAsyncSeconds(3)  // extra delay to check if any redundant events transmitted
+                    self.waitAsyncSeconds(3)  // extra delay to make sure that no redundant events transmitted
                     break
                 }
                 

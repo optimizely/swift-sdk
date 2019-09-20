@@ -274,6 +274,9 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventDiscardedWhenQueueIfFull() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
         eventDispatcher.maxQueueSize = 100
         
         // illegal config batchSize cannot be bigger than maxQueueSize. just for testing
@@ -659,6 +662,9 @@ extension EventDispatcherTests_Batch {
 extension EventDispatcherTests_Batch {
     
     func testEventsFlushedOnEventQueueSizeHit() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
         eventDispatcher.batchSize = 3
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -684,6 +690,9 @@ extension EventDispatcherTests_Batch {
     }
 
     func testEventsFlushedOnRevisionChange() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
@@ -719,6 +728,9 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsFlushedOnProjectIdChange() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
@@ -754,6 +766,9 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsNotFlushedOnOtherDatafileChanges() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
@@ -790,6 +805,9 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsNotFlushedOnFirstDatafileLoad() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush

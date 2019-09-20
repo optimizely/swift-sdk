@@ -54,6 +54,9 @@ class EventDispatcherTests_Batch: XCTestCase {
         
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
         
+        // for debug level setting
+        _ = OptimizelyClient(sdkKey: "any", eventDispatcher: eventDispatcher, defaultLogLevel: .debug)
+        
         // clear static states to test first datafile load
         ProjectConfig.observer.reset()
     }

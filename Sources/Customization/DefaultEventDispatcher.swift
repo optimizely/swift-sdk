@@ -24,15 +24,21 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     static let sharedInstance = DefaultEventDispatcher()
     
-    // the max failure count.  there is no backoff timer.
-    static let MAX_FAILURE_COUNT = 3
-    
     // default timerInterval
     var timerInterval: TimeInterval
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
     var batchSize: Int
     var maxQueueSize: Int
+    
+    public struct DefaultValues {
+        static public let batchSize = 10
+        static public let timeInterval: TimeInterval = 60  // secs
+        static public let maxQueueSize = 10000
+        static let maxFailureCount = 3
+    }
+    
+    // the max failure count.  there is no backoff timer.
     
     lazy var logger = OPTLoggerFactory.getLogger()
     var backingStore: DataStoreType
@@ -45,12 +51,10 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    public struct DefaultValues {
-        static public let batchSize = 10
-        static public let timeInterval: TimeInterval = 60  // secs
-        static public let maxQueueSize = 10000
-    }
+    var observerProjectId: NSObjectProtocol?
+    var observerRevision: NSObjectProtocol?
     
+
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
                 dataStoreName: String = "OPTEventQueue",
@@ -91,23 +95,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         removeProjectChangeNotificationObservers()
 
         unsubscribe()
-    }
-    
-    func addProjectChangeNotificationObservers() {
-        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (notif) in
-            self?.logger.d("Event flush triggered by datafile projectId change")
-            self?.flushEvents()
-        }
-        
-        NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (notif) in
-            self?.logger.d("Event flush triggered by datafile revision change")
-            self?.flushEvents()
-        }
-    }
-    
-    func removeProjectChangeNotificationObservers() {
-        NotificationCenter.default.removeObserver(self, name: .didReceiveOptimizelyProjectIdChange, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .didReceiveOptimizelyRevisionChange, object: nil)
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
@@ -163,7 +150,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 
                 // we've exhuasted our failure count.  Give up and try the next time a event
                 // is queued or someone calls flush.
-                if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
+                if failureCount > DefaultValues.maxFailureCount {
                     self.logger.e(.eventSendRetyFailed(failureCount))
                     break
                 }
@@ -258,4 +245,31 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         }
         timer.property = nil
     }
+}
+
+// MARK: - Notification Observers
+
+extension DefaultEventDispatcher {
+    
+    func addProjectChangeNotificationObservers() {
+        observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (notif) in
+            self?.logger.d("Event flush triggered by datafile projectId change")
+            self?.flushEvents()
+        }
+        
+        observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (notif) in
+            self?.logger.d("Event flush triggered by datafile revision change")
+            self?.flushEvents()
+        }
+    }
+    
+    func removeProjectChangeNotificationObservers() {
+        if let observer = observerProjectId {
+            NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyProjectIdChange, object: nil)
+        }
+        if let observer = observerRevision {
+            NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyRevisionChange, object: nil)
+        }
+    }
+    
 }

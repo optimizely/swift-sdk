@@ -4,21 +4,24 @@ PODS:
   - Yams (2.0.0)
 
 DEPENDENCIES:
-  - Cucumberish
+  - Cucumberish (from `/Users/yasirali/Desktop/Optimizely/Cucumberish`)
   - SwiftLint
   - Yams
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
-    - Cucumberish
     - SwiftLint
     - Yams
+
+EXTERNAL SOURCES:
+  Cucumberish:
+    :path: "/Users/yasirali/Desktop/Optimizely/Cucumberish"
 
 SPEC CHECKSUMS:
   Cucumberish: 76f542be7b62b1a01ebc6f968be3e002f9403931
   SwiftLint: 79d48a17c6565dc286c37efb8322c7b450f95c67
   Yams: cb96472112d99e4b368f8dae9ab62e8a3eb8a3f9
 
-PODFILE CHECKSUM: 81373c04a9b5e1d539ed297486f70ebc04e8d20f
+PODFILE CHECKSUM: 8febb4acc6f2a89b2521098e820e8f97e696bcdf
 
 COCOAPODS: 1.7.1

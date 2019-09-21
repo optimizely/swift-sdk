@@ -719,7 +719,7 @@ extension OptimizelyClient {
                                   variableValue: Any? = nil) {
         self.sendNotification(type: .decision, args: [decisionType.rawValue,
                                                       userId,
-                                                      attributes,
+                                                      attributes ?? OptimizelyAttributes(),
                                                       self.makeDecisionInfo(decisionType: decisionType,
                                                                             experiment: experiment,
                                                                             variation: variation,

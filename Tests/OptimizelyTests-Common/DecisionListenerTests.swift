@@ -58,7 +58,7 @@ class DecisionListenerTests: XCTestCase {
         _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
             XCTAssertEqual(type, "feature")
             XCTAssertEqual(userId, self.kUserId)
-            XCTAssertNil(attributes)
+            XCTAssert(attributes!.isEmpty)   // [:]
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.feature])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.featureEnabled])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.source])

@@ -52,6 +52,27 @@ class DecisionListenerTests: XCTestCase {
         self.notificationCenter = self.optimizely.notificationCenter!
     }
     
+    func testDecisionListenerParameters() {
+        var count = 0
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(type, "feature")
+            XCTAssertEqual(userId, self.kUserId)
+            XCTAssertNil(attributes)
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.feature])
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.featureEnabled])
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.source])
+            let sourceInfo: [String: Any] = decisionInfo[Constants.DecisionInfoKeys.sourceInfo]! as! [String: Any]
+            XCTAssertNotNil(sourceInfo)
+            count += 1
+        }
+        
+        _ = optimizely.getEnabledFeatures(userId: kUserId)
+        sleep(1)
+        
+        XCTAssertEqual(count, 2)
+    }
+    
     func testDecisionListenerGetFeatureVariableBooleanWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
         

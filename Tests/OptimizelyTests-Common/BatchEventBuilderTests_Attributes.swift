@@ -53,9 +53,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let event = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: event.body, options: JSONSerialization.ReadingOptions.allowFragments) as! Dictionary<String, Any>
-        
+        let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         
         var item: [String: Any] = array.filter { ($0["key"] as! String) == "s_foo" }.first!
@@ -96,8 +94,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let event = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String, Any>
+        let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         var dict = [String: Any]()
         for item in array {
@@ -130,8 +127,8 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        let event = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String, Any>
+        
+        let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         
         var item: [String: Any] = array.filter { $0["key"] as! String == "s_foo" }.first!
@@ -168,8 +165,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let event = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String, Any>
+        let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         var dict = [String: Any]()
         for item in array {
@@ -203,8 +199,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let event = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String, Any>
+        let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssert(array.count == 0)
     }
@@ -220,8 +215,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: nil)
         
-        let event = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String, Any>
+        let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssert(array.count == 0)
     }
@@ -241,8 +235,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let event = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! Dictionary<String, Any>
+        let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         var dict = [String: Any]()
         for item in array {
@@ -276,7 +269,7 @@ extension BatchEventBuilderTests_Attributes {
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
 
-        let eventForDispatch = eventDispatcher.events.first
+        let eventForDispatch = getFirstEvent()
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
         var isIncluded = false
@@ -297,7 +290,7 @@ extension BatchEventBuilderTests_Attributes {
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
         
-        let eventForDispatch = eventDispatcher.events.first
+        let eventForDispatch = getFirstEvent()
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
         var isIncluded = false
@@ -318,7 +311,7 @@ extension BatchEventBuilderTests_Attributes {
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
         
-        let eventForDispatch = eventDispatcher.events.first
+        let eventForDispatch = getFirstEvent()
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
         let isNotIncluded: Bool = event.getEventAttribute(key: botFilteringKey)?.entityID != botFilteringKey
@@ -326,3 +319,22 @@ extension BatchEventBuilderTests_Attributes {
     }
     
 }
+
+// MARK: - Utils
+
+extension BatchEventBuilderTests_Attributes {
+    
+    func getFirstEvent() -> EventForDispatch? {
+        optimizely.eventLock.sync{}
+        return eventDispatcher.events.first
+    }
+
+    func getFirstEventJSON() -> [String: Any]? {
+        guard let event = getFirstEvent() else { return nil }
+        
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! [String: Any]
+        return json
+    }
+
+}
+

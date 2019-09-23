@@ -424,7 +424,7 @@ extension OptimizelyClient {
             
         }
         
-        return ObjcCenter(notificationCenter: self.notificationCenter)
+        return ObjcCenter(notificationCenter: self.notificationCenter!)
     }
 }
 

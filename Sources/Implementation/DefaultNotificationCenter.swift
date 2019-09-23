@@ -134,12 +134,4 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
         }
     }
     
-    public func getArgumentsForDecisionListener(notificationType: String, userId: String, attributes: OptimizelyAttributes?) -> [Any?] {
-        var args = [Any?]()
-        args.append(notificationType)
-        args.append(userId)
-        args.append(attributes ?? OptimizelyAttributes())
-        return args
-    }
-
 }

@@ -226,6 +226,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         ]
         
         let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
+        sleep(1)
         XCTAssertNotNil(variationKey)
         XCTAssertNotNil(eventDispatcher.events.first)
     }

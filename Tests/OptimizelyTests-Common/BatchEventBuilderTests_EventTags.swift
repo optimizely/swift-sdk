@@ -323,7 +323,9 @@ extension BatchEventBuilderTests_EventTags {
 extension BatchEventBuilderTests_EventTags {
 
     func getDispatchEvent(dispatcher: FakeEventDispatcher) -> [String: Any]? {
+        optimizely.eventLock.sync{}
         let eventForDispatch = dispatcher.events.first!
+        
         let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! [String: Any]
         let event = json
         

@@ -23,11 +23,16 @@ struct Constants {
         static let OptimizelyUserAgent = "$opt_user_agent"
     }
     
-    struct DecisionTypeKeys {
-        static let abTest = "ab-test"
-        static let feature  = "feature"
-        static let featureVariable  = "feature-variable"
-        static let featureTest = "feature-test"
+    enum DecisionType: String {
+        case abTest = "ab-test"
+        case feature  = "feature"
+        case featureVariable  = "feature-variable"
+        case featureTest = "feature-test"
+    }
+    
+    enum DecisionSource: String {
+        case featureTest = "feature-test"
+        case rollout = "rollout"
     }
     
     struct DecisionInfoKeys {
@@ -45,9 +50,5 @@ struct Constants {
         static let variation = "variationKey"
     }
     
-    struct DecisionSource {
-        static let featureTest = "feature-test"
-        static let rollout = "rollout"
-    }
 
 }

@@ -50,10 +50,8 @@ class BatchEventBuilderTests_Events: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
         
-        let eventForDispatch = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! Dictionary<String, Any>
-        let event = json
-        
+        let event = getFirstEventJSON()!
+
         XCTAssertEqual((event["revision"] as! String), project.revision)
         XCTAssertEqual((event["account_id"] as! String), project.accountId)
         XCTAssertEqual(event["client_version"] as! String, Utils.sdkVersion)
@@ -104,9 +102,8 @@ class BatchEventBuilderTests_Events: XCTestCase {
                               userId: userId,
                               attributes: attributes,
                               eventTags: eventTags)
-        let eventForDispatch = eventDispatcher.events.first!
-        let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! Dictionary<String, Any>
-        let event = json
+        
+        let event = getFirstEventJSON()!
         
         XCTAssertEqual(event["revision"] as! String, project.revision)
         XCTAssertEqual(event["account_id"] as! String, project.accountId)
@@ -166,3 +163,22 @@ class BatchEventBuilderTests_Events: XCTestCase {
     }
 
 }
+
+// MARK: - Utils
+
+extension BatchEventBuilderTests_Events {
+    
+    func getFirstEvent() -> EventForDispatch? {
+        optimizely.eventLock.sync{}
+        return eventDispatcher.events.first
+    }
+    
+    func getFirstEventJSON() -> [String: Any]? {
+        guard let event = getFirstEvent() else { return nil }
+        
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! [String: Any]
+        return json
+    }
+    
+}
+

@@ -63,7 +63,7 @@ class NotificationCenterTests: XCTestCase {
     }
 
     func sendDecision() {
-        notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: [Constants.DecisionTypeKeys.featureVariable, "userId", nil, ["url": "https://url.com/", "body": Data()]])
+        notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: [Constants.DecisionType.featureVariable.rawValue, "userId", nil, ["url": "https://url.com/", "body": Data()]])
     }
 
     func sendDatafileChange() {

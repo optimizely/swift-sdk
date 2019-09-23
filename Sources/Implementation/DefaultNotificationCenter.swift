@@ -20,6 +20,8 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     public var notificationId: Int = 1
     var notificationListeners = [Int: (Int, GenericListener)]()
     
+    var observerLogEvent: NSObjectProtocol?
+
     required public init() {
         addInternalNotificationListners()
     }
@@ -155,14 +157,6 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
         }
     }
     
-    public func getArgumentsForDecisionListener(notificationType: String, userId: String, attributes: OptimizelyAttributes?) -> [Any?] {
-        var args = [Any?]()
-        args.append(notificationType)
-        args.append(userId)
-        args.append(attributes ?? OptimizelyAttributes())
-        return args
-    }
-
 }
 
 // MARK: Notification Translation
@@ -170,7 +164,7 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
 extension DefaultNotificationCenter {
     
     func addInternalNotificationListners() {
-        _ = NotificationCenter.default.addObserver(forName: .willSendOptimizelyEvents, object: nil, queue: nil) { (notif) in
+        observerLogEvent = NotificationCenter.default.addObserver(forName: .willSendOptimizelyEvents, object: nil, queue: nil) { (notif) in
             guard let eventForDispatch = notif.object as? EventForDispatch else { return }
             
             let url = eventForDispatch.url.absoluteString
@@ -186,7 +180,9 @@ extension DefaultNotificationCenter {
     }
     
     func removeInternalNotificationListners() {
-        NotificationCenter.default.removeObserver(self, name: .willSendOptimizelyEvents, object: nil)
+        if let observer = observerLogEvent {
+            NotificationCenter.default.removeObserver(observer, name: .willSendOptimizelyEvents, object: nil)
+        }
     }
     
 }

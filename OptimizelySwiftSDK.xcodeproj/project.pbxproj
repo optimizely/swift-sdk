@@ -1160,12 +1160,23 @@
 		6EA4266F2219243D00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6ECB270222C526A7005D52DC /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E75167A22C520D400B2B157 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C741003A2334E37100F88F1D /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
-		C74100472334E7D800F88F1D /* AudienceTargetingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74100452334E7CA00F88F1D /* AudienceTargetingTests.swift */; };
+		C74100472334E7D800F88F1D /* TestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74100452334E7CA00F88F1D /* TestManager.swift */; };
 		C74100482334E7DF00F88F1D /* Features in Resources */ = {isa = PBXBuildFile; fileRef = C74100432334E78500F88F1D /* Features */; };
-		C741004D2334E84300F88F1D /* YAMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741004A2334E84300F88F1D /* YAMLParser.swift */; };
-		C741004E2334E84300F88F1D /* CucumberishInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741004B2334E84300F88F1D /* CucumberishInitializer.swift */; };
-		C741004F2334E84300F88F1D /* CucumberishLauncher.m in Sources */ = {isa = PBXBuildFile; fileRef = C741004C2334E84300F88F1D /* CucumberishLauncher.m */; };
-		C74100542334EF9F00F88F1D /* datafiles in Resources */ = {isa = PBXBuildFile; fileRef = C74100532334EF9E00F88F1D /* datafiles */; };
+		C74100542334EF9F00F88F1D /* Datafiles in Resources */ = {isa = PBXBuildFile; fileRef = C74100532334EF9E00F88F1D /* Datafiles */; };
+		C74100562334F56200F88F1D /* OptimizelyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74100552334F56200F88F1D /* OptimizelyService.swift */; };
+		C74100632338A7E100F88F1D /* RequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74100612338A7DB00F88F1D /* RequestModel.swift */; };
+		C74100642338A7EB00F88F1D /* TagsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741005A2338980700F88F1D /* TagsManager.swift */; };
+		C74100652338A7F100F88F1D /* CucumberishInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741004B2334E84300F88F1D /* CucumberishInitializer.swift */; };
+		C74100662338A7F500F88F1D /* CucumberishLauncher.m in Sources */ = {isa = PBXBuildFile; fileRef = C741004C2334E84300F88F1D /* CucumberishLauncher.m */; };
+		C741006A2338ABC800F88F1D /* YAMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741004A2334E84300F88F1D /* YAMLParser.swift */; };
+		C741006D2338AC8C00F88F1D /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741006C2338AC8C00F88F1D /* Enums.swift */; };
+		C741006F2338BE2B00F88F1D /* ResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741006E2338BE2B00F88F1D /* ResponseModel.swift */; };
+		C74100712338C03F00F88F1D /* FeatureVariableAPIRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74100702338C03F00F88F1D /* FeatureVariableAPIRequestModel.swift */; };
+		C74100762338F26B00F88F1D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74100752338F26B00F88F1D /* Constants.swift */; };
+		C74100792338F3B700F88F1D /* TestManager+And.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74100782338F3B700F88F1D /* TestManager+And.swift */; };
+		C741007B2338F4EE00F88F1D /* TestManager+Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741007A2338F4EE00F88F1D /* TestManager+Background.swift */; };
+		C741007D2338F52500F88F1D /* TestManager+When.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741007C2338F52500F88F1D /* TestManager+When.swift */; };
+		C741007F2338F59300F88F1D /* TestManager+Then.swift in Sources */ = {isa = PBXBuildFile; fileRef = C741007E2338F59300F88F1D /* TestManager+Then.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1421,12 +1432,23 @@
 		6EBAEB7421E3FEF900D13AA9 /* OptimizelyTests-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C74100352334E37100F88F1D /* OptimizelyTests-Fsc-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Fsc-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C74100432334E78500F88F1D /* Features */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Features; sourceTree = "<group>"; };
-		C74100452334E7CA00F88F1D /* AudienceTargetingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudienceTargetingTests.swift; sourceTree = "<group>"; };
+		C74100452334E7CA00F88F1D /* TestManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestManager.swift; sourceTree = "<group>"; };
 		C74100492334E84200F88F1D /* OptimizelyTests-Fsc-iOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OptimizelyTests-Fsc-iOS-Bridging-Header.h"; sourceTree = "<group>"; };
 		C741004A2334E84300F88F1D /* YAMLParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YAMLParser.swift; sourceTree = "<group>"; };
 		C741004B2334E84300F88F1D /* CucumberishInitializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CucumberishInitializer.swift; sourceTree = "<group>"; };
 		C741004C2334E84300F88F1D /* CucumberishLauncher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CucumberishLauncher.m; sourceTree = "<group>"; };
-		C74100532334EF9E00F88F1D /* datafiles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = datafiles; sourceTree = "<group>"; };
+		C74100532334EF9E00F88F1D /* Datafiles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Datafiles; sourceTree = "<group>"; };
+		C74100552334F56200F88F1D /* OptimizelyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyService.swift; sourceTree = "<group>"; };
+		C741005A2338980700F88F1D /* TagsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsManager.swift; sourceTree = "<group>"; };
+		C74100612338A7DB00F88F1D /* RequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestModel.swift; sourceTree = "<group>"; };
+		C741006C2338AC8C00F88F1D /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		C741006E2338BE2B00F88F1D /* ResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseModel.swift; sourceTree = "<group>"; };
+		C74100702338C03F00F88F1D /* FeatureVariableAPIRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureVariableAPIRequestModel.swift; sourceTree = "<group>"; };
+		C74100752338F26B00F88F1D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		C74100782338F3B700F88F1D /* TestManager+And.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestManager+And.swift"; sourceTree = "<group>"; };
+		C741007A2338F4EE00F88F1D /* TestManager+Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestManager+Background.swift"; sourceTree = "<group>"; };
+		C741007C2338F52500F88F1D /* TestManager+When.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestManager+When.swift"; sourceTree = "<group>"; };
+		C741007E2338F59300F88F1D /* TestManager+Then.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestManager+Then.swift"; sourceTree = "<group>"; };
 		D94207ED451BF95F0CC118C0 /* Pods-OptimizelyTests-Fsc-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Fsc-iOS.release.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Fsc-iOS/Pods-OptimizelyTests-Fsc-iOS.release.xcconfig"; sourceTree = "<group>"; };
 		FC0352BDA636E8765E5BF41C /* Pods-OptimizelyTests-Fsc-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Fsc-iOS.debug.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Fsc-iOS/Pods-OptimizelyTests-Fsc-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1936,15 +1958,66 @@
 		C74100422334E76800F88F1D /* OptimizelyTests-Fsc */ = {
 			isa = PBXGroup;
 			children = (
-				C741004B2334E84300F88F1D /* CucumberishInitializer.swift */,
-				C741004C2334E84300F88F1D /* CucumberishLauncher.m */,
-				C741004A2334E84300F88F1D /* YAMLParser.swift */,
-				C74100452334E7CA00F88F1D /* AudienceTargetingTests.swift */,
+				C74100772338F34900F88F1D /* Implementation */,
+				C741006B2338AC7500F88F1D /* Helper Classes */,
+				C74100672338A80C00F88F1D /* DataModels */,
+				C741005E2338995400F88F1D /* OptimizelyServices */,
+				C7410059233897E200F88F1D /* Cucumberish */,
 				C74100492334E84200F88F1D /* OptimizelyTests-Fsc-iOS-Bridging-Header.h */,
-				C74100532334EF9E00F88F1D /* datafiles */,
+				C74100532334EF9E00F88F1D /* Datafiles */,
 				C74100432334E78500F88F1D /* Features */,
 			);
 			path = "OptimizelyTests-Fsc";
+			sourceTree = "<group>";
+		};
+		C7410059233897E200F88F1D /* Cucumberish */ = {
+			isa = PBXGroup;
+			children = (
+				C741004A2334E84300F88F1D /* YAMLParser.swift */,
+				C741005A2338980700F88F1D /* TagsManager.swift */,
+				C741004B2334E84300F88F1D /* CucumberishInitializer.swift */,
+				C741004C2334E84300F88F1D /* CucumberishLauncher.m */,
+			);
+			path = Cucumberish;
+			sourceTree = "<group>";
+		};
+		C741005E2338995400F88F1D /* OptimizelyServices */ = {
+			isa = PBXGroup;
+			children = (
+				C74100552334F56200F88F1D /* OptimizelyService.swift */,
+			);
+			path = OptimizelyServices;
+			sourceTree = "<group>";
+		};
+		C74100672338A80C00F88F1D /* DataModels */ = {
+			isa = PBXGroup;
+			children = (
+				C74100612338A7DB00F88F1D /* RequestModel.swift */,
+				C741006E2338BE2B00F88F1D /* ResponseModel.swift */,
+				C74100702338C03F00F88F1D /* FeatureVariableAPIRequestModel.swift */,
+			);
+			path = DataModels;
+			sourceTree = "<group>";
+		};
+		C741006B2338AC7500F88F1D /* Helper Classes */ = {
+			isa = PBXGroup;
+			children = (
+				C741006C2338AC8C00F88F1D /* Enums.swift */,
+				C74100752338F26B00F88F1D /* Constants.swift */,
+			);
+			path = "Helper Classes";
+			sourceTree = "<group>";
+		};
+		C74100772338F34900F88F1D /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C74100452334E7CA00F88F1D /* TestManager.swift */,
+				C741007E2338F59300F88F1D /* TestManager+Then.swift */,
+				C741007A2338F4EE00F88F1D /* TestManager+Background.swift */,
+				C741007C2338F52500F88F1D /* TestManager+When.swift */,
+				C74100782338F3B700F88F1D /* TestManager+And.swift */,
+			);
+			path = Implementation;
 			sourceTree = "<group>";
 		};
 		C8619974371A466DAE337AB9 /* Pods */ = {
@@ -2691,7 +2764,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C74100542334EF9F00F88F1D /* datafiles in Resources */,
+				C74100542334EF9F00F88F1D /* Datafiles in Resources */,
 				C74100482334E7DF00F88F1D /* Features in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3662,10 +3735,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C74100472334E7D800F88F1D /* AudienceTargetingTests.swift in Sources */,
-				C741004F2334E84300F88F1D /* CucumberishLauncher.m in Sources */,
-				C741004E2334E84300F88F1D /* CucumberishInitializer.swift in Sources */,
-				C741004D2334E84300F88F1D /* YAMLParser.swift in Sources */,
+				C741006A2338ABC800F88F1D /* YAMLParser.swift in Sources */,
+				C74100792338F3B700F88F1D /* TestManager+And.swift in Sources */,
+				C74100762338F26B00F88F1D /* Constants.swift in Sources */,
+				C741006F2338BE2B00F88F1D /* ResponseModel.swift in Sources */,
+				C74100652338A7F100F88F1D /* CucumberishInitializer.swift in Sources */,
+				C74100712338C03F00F88F1D /* FeatureVariableAPIRequestModel.swift in Sources */,
+				C74100472334E7D800F88F1D /* TestManager.swift in Sources */,
+				C741007F2338F59300F88F1D /* TestManager+Then.swift in Sources */,
+				C741007D2338F52500F88F1D /* TestManager+When.swift in Sources */,
+				C74100562334F56200F88F1D /* OptimizelyService.swift in Sources */,
+				C74100642338A7EB00F88F1D /* TagsManager.swift in Sources */,
+				C741007B2338F4EE00F88F1D /* TestManager+Background.swift in Sources */,
+				C74100662338A7F500F88F1D /* CucumberishLauncher.m in Sources */,
+				C741006D2338AC8C00F88F1D /* Enums.swift in Sources */,
+				C74100632338A7E100F88F1D /* RequestModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,4 +1,3 @@
-@FEATURE_ROLLOUT
 Feature: GetFeatureVariable API - Audience Targeting in Feature Rollouts
 
   Background:

@@ -38,12 +38,14 @@ open class OptimizelyClient: NSObject {
         return Utils.sdkVersion
     }
     
+    let eventLock = DispatchQueue(label: "com.optimizely.client")
+
     // MARK: - Customizable Services
     
     lazy var logger = OPTLoggerFactory.getLogger()
     
-    var eventDispatcher: OPTEventDispatcher {
-        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)!
+    var eventDispatcher: OPTEventDispatcher? {
+        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
     }
     
     // MARK: - Default Services
@@ -56,8 +58,8 @@ open class OptimizelyClient: NSObject {
         return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
     }
     
-    public var notificationCenter: OPTNotificationCenter {
-        return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)!
+    public var notificationCenter: OPTNotificationCenter? {
+        return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
     }
 
     // MARK: - Public interfaces
@@ -103,7 +105,7 @@ open class OptimizelyClient: NSObject {
     /// - Parameters:
     ///   - resourceTimeout: timeout for datafile download (optional)
     ///   - completion: callback when initialization is completed
-    public func start(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)?=nil) {
+    public func start(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)? = nil) {
         fetchDatafileBackground(resourceTimeout: resourceTimeout) { result in
             switch result {
             case .failure:
@@ -142,7 +144,6 @@ open class OptimizelyClient: NSObject {
     ///             background thread to update the cache copy (optional)
     public func start(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
         let cachedDatafile = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey)
-        
         let selectedDatafile = cachedDatafile ?? datafile
         
         try configSDK(datafile: selectedDatafile)
@@ -173,9 +174,7 @@ open class OptimizelyClient: NSObject {
                         
                     }
                     
-                    self.notificationCenter.sendNotifications(type:
-                        NotificationType.datafileChange.rawValue, args: [data])
-                    
+                    self.sendDatafileChangeNotification(data: data)
                 }
             }
         } catch {
@@ -235,7 +234,7 @@ open class OptimizelyClient: NSObject {
     /// - Throws: `OptimizelyError` if error is detected
     public func activate(experimentKey: String,
                          userId: String,
-                         attributes: OptimizelyAttributes?=nil) throws -> String {
+                         attributes: OptimizelyAttributes? = nil) throws -> String {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
@@ -263,7 +262,7 @@ open class OptimizelyClient: NSObject {
     /// - Throws: `OptimizelyError` if error is detected
     public func getVariationKey(experimentKey: String,
                                 userId: String,
-                                attributes: OptimizelyAttributes?=nil) throws -> String {
+                                attributes: OptimizelyAttributes? = nil) throws -> String {
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
         return variation.key
@@ -271,7 +270,7 @@ open class OptimizelyClient: NSObject {
     
     func getVariation(experimentKey: String,
                       userId: String,
-                      attributes: OptimizelyAttributes?=nil) throws -> Variation {
+                      attributes: OptimizelyAttributes? = nil) throws -> Variation {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
@@ -279,29 +278,23 @@ open class OptimizelyClient: NSObject {
             throw OptimizelyError.experimentKeyInvalid(experimentKey)
         }
         
-        let decisionType = config.isFeatureExperiment(id: experiment.id) ? Constants.DecisionTypeKeys.featureTest : Constants.DecisionTypeKeys.abTest
-        var args: [Any?] = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: decisionType, userId: userId, attributes: attributes)
-
-        var decisionInfo = [String: Any]()
-        var sourceInfo = [String: Any]()
-        sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
-        sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = NSNull()
+        let variation = decisionService.getVariation(config: config,
+                                                     userId: userId,
+                                                     experiment: experiment,
+                                                     attributes: attributes ?? OptimizelyAttributes())
         
-        // fix DecisionService to throw error
-        guard let variation = decisionService.getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes ?? OptimizelyAttributes()) else {
-            decisionInfo = sourceInfo
-            args.append(decisionInfo)
-            self.notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: args)
+        let decisionType: Constants.DecisionType = config.isFeatureExperiment(id: experiment.id) ? .featureTest : .abTest
+        sendDecisionNotification(decisionType: decisionType,
+                                 userId: userId,
+                                 attributes: attributes,
+                                 experiment: experiment,
+                                 variation: variation)
+        
+        if let variation = variation {
+            return variation
+        } else {
             throw OptimizelyError.variationUnknown(userId, experimentKey)
         }
-        
-        sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
-        decisionInfo = sourceInfo
-        
-        args.append(decisionInfo)
-        self.notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: args)
-        
-        return variation
     }
     
     /**
@@ -357,7 +350,7 @@ open class OptimizelyClient: NSObject {
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
-                                 attributes: OptimizelyAttributes?=nil) -> Bool {
+                                 attributes: OptimizelyAttributes? = nil) -> Bool {
         
         guard let config = self.config else {
             logger.e(.sdkNotReady)
@@ -369,47 +362,40 @@ open class OptimizelyClient: NSObject {
             return false
         }
         
-        // fix DecisionService to throw error
-        let pair = decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes ?? OptimizelyAttributes())
-        
-        var args: [Any?] = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.feature, userId: userId, attributes: attributes)
-        
-        var decisionInfo = [String: Any]()
-        decisionInfo[Constants.DecisionInfoKeys.feature] = featureKey
-        decisionInfo[Constants.DecisionInfoKeys.source] = Constants.DecisionSource.rollout
-        decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = false
-        decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = [:]
+        let pair = decisionService.getVariationForFeature(config: config,
+                                                          featureFlag: featureFlag,
+                                                          userId: userId,
+                                                          attributes: attributes ?? OptimizelyAttributes())
         
         guard let variation = pair?.variation else {
-            args.append(decisionInfo)
-            self.notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: args)
             logger.i(.variationUnknown(userId, featureKey))
+            sendDecisionNotification(decisionType: .feature,
+                                     userId: userId,
+                                     attributes: attributes,
+                                     feature: featureFlag,
+                                     featureEnabled: false)
             return false
         }
-        
+
         let featureEnabled = variation.featureEnabled ?? false
-    
         if featureEnabled {
             logger.i(.featureEnabledForUser(featureKey, userId))
         } else {
             logger.i(.featureNotEnabledForUser(featureKey, userId))
         }
 
-        // we came from an experiment if experiment is not nil
-        if let experiment = pair?.experiment {
-            
-            var sourceInfo = [String: Any]()
-            sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
-            sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
-            decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
-
-            sendImpressionEvent(experiment: experiment, variation: variation, userId: userId, attributes: attributes)
+        let experiment = pair?.experiment
+        if let eventExperiment = experiment {
+            sendImpressionEvent(experiment: eventExperiment, variation: variation, userId: userId, attributes: attributes)
         }
-        
-        decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
-        decisionInfo[Constants.DecisionInfoKeys.source] = (pair?.experiment != nil ? Constants.DecisionSource.featureTest : Constants.DecisionSource.rollout)
-        args.append(decisionInfo)
-        self.notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: args)
+
+        sendDecisionNotification(decisionType: .feature,
+                                 userId: userId,
+                                 attributes: attributes,
+                                 experiment: experiment,
+                                 variation: variation,
+                                 feature: featureFlag,
+                                 featureEnabled: featureEnabled)
         
         return featureEnabled
     }
@@ -426,7 +412,7 @@ open class OptimizelyClient: NSObject {
     public func getFeatureVariableBoolean(featureKey: String,
                                           variableKey: String,
                                           userId: String,
-                                          attributes: OptimizelyAttributes?=nil) throws -> Bool {
+                                          attributes: OptimizelyAttributes? = nil) throws -> Bool {
         
         return try getFeatureVariable(featureKey: featureKey,
                                       variableKey: variableKey,
@@ -446,7 +432,7 @@ open class OptimizelyClient: NSObject {
     public func getFeatureVariableDouble(featureKey: String,
                                          variableKey: String,
                                          userId: String,
-                                         attributes: OptimizelyAttributes?=nil) throws -> Double {
+                                         attributes: OptimizelyAttributes? = nil) throws -> Double {
         
         return try getFeatureVariable(featureKey: featureKey,
                                       variableKey: variableKey,
@@ -466,7 +452,7 @@ open class OptimizelyClient: NSObject {
     public func getFeatureVariableInteger(featureKey: String,
                                           variableKey: String,
                                           userId: String,
-                                          attributes: OptimizelyAttributes?=nil) throws -> Int {
+                                          attributes: OptimizelyAttributes? = nil) throws -> Int {
         
         return try getFeatureVariable(featureKey: featureKey,
                                       variableKey: variableKey,
@@ -486,7 +472,7 @@ open class OptimizelyClient: NSObject {
     public func getFeatureVariableString(featureKey: String,
                                          variableKey: String,
                                          userId: String,
-                                         attributes: OptimizelyAttributes?=nil) throws -> String {
+                                         attributes: OptimizelyAttributes? = nil) throws -> String {
 
         return try getFeatureVariable(featureKey: featureKey,
                                       variableKey: variableKey,
@@ -497,11 +483,10 @@ open class OptimizelyClient: NSObject {
     func getFeatureVariable<T>(featureKey: String,
                                variableKey: String,
                                userId: String,
-                               attributes: OptimizelyAttributes?=nil) throws -> T {
+                               attributes: OptimizelyAttributes? = nil) throws -> T {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
-        // fix config to throw errors
         guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
             throw OptimizelyError.featureKeyInvalid(featureKey)
         }
@@ -510,24 +495,13 @@ open class OptimizelyClient: NSObject {
             throw OptimizelyError.variableKeyInvalid(variableKey, featureKey)
         }
         
-        var decisionInfo = [String: Any]()
-        decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = [:]
-        
         var featureValue = variable.defaultValue ?? ""
         
-        var finalAttributes = OptimizelyAttributes()
-        if let attributes = attributes {
-            finalAttributes = attributes
-        }
-        let decision = self.decisionService.getVariationForFeature(config: config, featureFlag: featureFlag, userId: userId, attributes: finalAttributes)
+        let decision = self.decisionService.getVariationForFeature(config: config,
+                                                                   featureFlag: featureFlag,
+                                                                   userId: userId,
+                                                                   attributes: attributes ?? OptimizelyAttributes())
         if let decision = decision {
-            if let experiment = decision.experiment {
-                var sourceInfo = [String: Any]()
-                sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
-                sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = decision.variation?.key
-                decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
-            }
-            
             if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
                 if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
                     featureValue = featureVariable.value
@@ -568,18 +542,23 @@ open class OptimizelyClient: NSObject {
             throw OptimizelyError.variableValueInvalid(variableKey)
         }
         
-        var args: [Any?] = (self.notificationCenter as! DefaultNotificationCenter).getArgumentsForDecisionListener(notificationType: Constants.DecisionTypeKeys.featureVariable, userId: userId, attributes: finalAttributes)
+        // Decision Notification
         
-        decisionInfo[Constants.DecisionInfoKeys.feature] = featureKey
-        decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = decision?.variation?.featureEnabled ?? false
-        decisionInfo[Constants.DecisionInfoKeys.variable] = variableKey
-        decisionInfo[Constants.DecisionInfoKeys.variableType] = typeName
-        decisionInfo[Constants.DecisionInfoKeys.variableValue] = value
-        decisionInfo[Constants.DecisionInfoKeys.source] = (decision?.experiment != nil ? Constants.DecisionSource.featureTest : Constants.DecisionSource.rollout)
-        args.append(decisionInfo)
-    
-        self.notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: args)
+        let experiment = decision?.experiment
+        let variation = decision?.variation
+        let featureEnabled = variation?.featureEnabled ?? false
         
+        sendDecisionNotification(decisionType: .featureVariable,
+                                 userId: userId,
+                                 attributes: attributes,
+                                 experiment: experiment,
+                                 variation: variation,
+                                 feature: featureFlag,
+                                 featureEnabled: featureEnabled,
+                                 variableKey: variableKey,
+                                 variableType: typeName,
+                                 variableValue: value)
+
         return value
     }
     
@@ -591,7 +570,7 @@ open class OptimizelyClient: NSObject {
     /// - Returns: Array of feature keys that are enabled for the user.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId: String,
-                                   attributes: OptimizelyAttributes?=nil) -> [String] {
+                                   attributes: OptimizelyAttributes? = nil) -> [String] {
         
         var enabledFeatures = [String]()
         
@@ -616,8 +595,8 @@ open class OptimizelyClient: NSObject {
     /// - Throws: `OptimizelyError` if event parameter is not valid
     public func track(eventKey: String,
                       userId: String,
-                      attributes: OptimizelyAttributes?=nil,
-                      eventTags: OptimizelyEventTags?=nil) throws {
+                      attributes: OptimizelyAttributes? = nil,
+                      eventTags: OptimizelyEventTags? = nil) throws {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
@@ -630,57 +609,190 @@ open class OptimizelyClient: NSObject {
     
 }
 
+// MARK: - Send Events
+
 extension OptimizelyClient {
     
     func sendImpressionEvent(experiment: Experiment,
                              variation: Variation,
                              userId: String,
-                             attributes: OptimizelyAttributes?=nil) {
-     
-        guard let config = self.config else { return }
+                             attributes: OptimizelyAttributes? = nil) {
         
-        guard let body = BatchEventBuilder.createImpressionEvent(config: config,
-                                                                 experiment: experiment,
-                                                                 varionation: variation,
-                                                                 userId: userId,
-                                                                 attributes: attributes) else {
-            self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
-            return
+        // non-blocking (event data serialization takes time)
+        eventLock.async {
+            guard let config = self.config else { return }
+
+            guard let body = BatchEventBuilder.createImpressionEvent(config: config,
+                                                                     experiment: experiment,
+                                                                     varionation: variation,
+                                                                     userId: userId,
+                                                                     attributes: attributes) else {
+                                                                        self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
+                                                                        return
+            }
+            
+            let event = EventForDispatch(body: body)
+            self.sendEventToDispatcher(event: event, completionHandler: nil)
+            
+            self.sendActivateNotification(experiment: experiment,
+                                          variation: variation,
+                                          userId: userId,
+                                          attributes: attributes,
+                                          event: event)
         }
-        
-        let event = EventForDispatch(body: body)
-        // because we are batching events, we cannot guarantee that the completion handler will be
-        // called.  So, for now, we are queuing and calling onActivate.  Maybe we should mention that
-        // onActivate only means the event has been queued and not necessarily sent.
-        self.eventDispatcher.dispatchEvent(event: event, completionHandler: nil)
-        
-        self.notificationCenter.sendNotifications(type: NotificationType.activate.rawValue, args: [experiment, userId, attributes, variation, ["url": event.url as Any, "body": event.body as Any]])
 
     }
     
     func sendConversionEvent(eventKey: String,
                              userId: String,
-                             attributes: OptimizelyAttributes?=nil,
-                             eventTags: OptimizelyEventTags?=nil) {
+                             attributes: OptimizelyAttributes? = nil,
+                             eventTags: OptimizelyEventTags? = nil) {
         
-        guard let config = self.config else { return }
-        
-        guard let body = BatchEventBuilder.createConversionEvent(config: config,
-                                                                 eventKey: eventKey,
-                                                                 userId: userId,
-                                                                 attributes: attributes,
-                                                                 eventTags: eventTags) else {
-            self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
-            return
-        }
-        
-        let event = EventForDispatch(body: body)
-        // because we are batching events, we cannot guarantee that the completion handler will be
-        // called.  So, for now, we are queuing and calling onTrack.  Maybe we should mention that
-        // onTrack only means the event has been queued and not necessarily sent.
-        self.eventDispatcher.dispatchEvent(event: event, completionHandler: nil)
-        
-        self.notificationCenter.sendNotifications(type: NotificationType.track.rawValue, args: [eventKey, userId, attributes, eventTags, ["url": event.url as Any, "body": event.body as Any]])
+        // non-blocking (event data serialization takes time)
+        eventLock.async {
+            guard let config = self.config else { return }
 
+            guard let body = BatchEventBuilder.createConversionEvent(config: config,
+                                                                     eventKey: eventKey,
+                                                                     userId: userId,
+                                                                     attributes: attributes,
+                                                                     eventTags: eventTags) else {
+                                                                        self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
+                                                                        return
+            }
+            
+            let event = EventForDispatch(body: body)
+            self.sendEventToDispatcher(event: event, completionHandler: nil)
+            
+            self.sendTrackNotification(eventKey: eventKey,
+                                       userId: userId,
+                                       attributes: attributes,
+                                       eventTags: eventTags,
+                                       event: event)
+        }
     }
+    
+    func sendEventToDispatcher(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        // The event is queued in the dispatcher, batched, and sent out later.
+        
+        // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
+        self.eventDispatcher?.dispatchEvent(event: event, completionHandler: completionHandler)
+    }
+    
+}
+
+// MARK: - Notifications
+
+extension OptimizelyClient {
+    
+    func sendActivateNotification(experiment: Experiment,
+                                  variation: Variation,
+                                  userId: String,
+                                  attributes: OptimizelyAttributes?,
+                                  event: EventForDispatch) {
+        
+        self.sendNotification(type: .activate, args: [experiment,
+                                                      userId,
+                                                      attributes,
+                                                      variation,
+                                                      ["url": event.url as Any, "body": event.body as Any]])
+    }
+    
+    func sendTrackNotification(eventKey: String,
+                               userId: String,
+                               attributes: OptimizelyAttributes?,
+                               eventTags: OptimizelyEventTags?,
+                               event: EventForDispatch) {
+        self.sendNotification(type: .track, args: [eventKey,
+                                                   userId,
+                                                   attributes,
+                                                   eventTags,
+                                                   ["url": event.url as Any, "body": event.body as Any]])
+    }
+    
+    func sendDecisionNotification(decisionType: Constants.DecisionType,
+                                  userId: String,
+                                  attributes: OptimizelyAttributes?,
+                                  experiment: Experiment? = nil,
+                                  variation: Variation? = nil,
+                                  feature: FeatureFlag? = nil,
+                                  featureEnabled: Bool? = nil,
+                                  variableKey: String? = nil,
+                                  variableType: String? = nil,
+                                  variableValue: Any? = nil) {
+        self.sendNotification(type: .decision, args: [decisionType.rawValue,
+                                                      userId,
+                                                      attributes ?? OptimizelyAttributes(),
+                                                      self.makeDecisionInfo(decisionType: decisionType,
+                                                                            experiment: experiment,
+                                                                            variation: variation,
+                                                                            feature: feature,
+                                                                            featureEnabled: featureEnabled,
+                                                                            variableKey: variableKey,
+                                                                            variableType: variableType,
+                                                                            variableValue: variableValue)])
+    }
+    
+    func sendDatafileChangeNotification(data: Data) {
+        self.sendNotification(type: .datafileChange, args: [data])
+    }
+    
+    func makeDecisionInfo(decisionType: Constants.DecisionType,
+                          experiment: Experiment? = nil,
+                          variation: Variation? = nil,
+                          feature: FeatureFlag? = nil,
+                          featureEnabled: Bool? = nil,
+                          variableKey: String? = nil,
+                          variableType: String? = nil,
+                          variableValue: Any? = nil) -> [String: Any] {
+        
+        var decisionInfo = [String: Any]()
+        
+        switch decisionType {
+        case .featureTest, .abTest:
+            guard let experiment = experiment else { return decisionInfo }
+            
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation?.key ?? NSNull()
+            
+        case .feature, .featureVariable:
+            guard let feature = feature, let featureEnabled = featureEnabled else { return decisionInfo }
+            
+            decisionInfo[Constants.DecisionInfoKeys.feature] = feature.key
+            decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
+            
+            let decisionSource: Constants.DecisionSource = experiment != nil ? .featureTest : .rollout
+            decisionInfo[Constants.DecisionInfoKeys.source] = decisionSource.rawValue
+            
+            var sourceInfo = [String: Any]()
+            if let experiment = experiment, let variation = variation {
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
+            }
+            decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
+            
+            // featureVariable
+            
+            if decisionType == .featureVariable {
+                guard let variableKey = variableKey, let variableType = variableType, let variableValue = variableValue else {
+                        return decisionInfo
+                }
+                
+                decisionInfo[Constants.DecisionInfoKeys.variable] = variableKey
+                decisionInfo[Constants.DecisionInfoKeys.variableType] = variableType
+                decisionInfo[Constants.DecisionInfoKeys.variableValue] = variableValue
+            }
+        }
+
+        return decisionInfo
+    }
+    
+    func sendNotification(type: NotificationType, args: [Any?]) {
+        // callback in background thread
+        eventLock.async {
+            // make sure that notificationCenter is not-nil (still registered when async notification is called)
+            self.notificationCenter?.sendNotifications(type: type.rawValue, args: args)
+        }
+    }
+
 }

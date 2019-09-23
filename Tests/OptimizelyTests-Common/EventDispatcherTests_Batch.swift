@@ -41,15 +41,21 @@ class EventDispatcherTests_Batch: XCTestCase {
     let kUserIdC = "789"
     
     var eventDispatcher: TestEventDispatcher!
+    
     static let keyTestEventFileName = "OPTEventQueue-Test-"
+    var uniqueFileName: String {
+        return EventDispatcherTests_Batch.keyTestEventFileName + String(Int.random(in: 0...1000000))
+    }
     
     override func setUp() {
         // NOTE: dataStore uses the same file ("OptEventQueue") by default.
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
-        let uniqueFileName = EventDispatcherTests_Batch.keyTestEventFileName + String(Int.random(in: 0...100000))
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
+        
+        // for debug level setting
+        _ = OptimizelyClient(sdkKey: "any", eventDispatcher: eventDispatcher, defaultLogLevel: .debug)
         
         // clear static states to test first datafile load
         ProjectConfig.observer.reset()
@@ -268,6 +274,9 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventDiscardedWhenQueueIfFull() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
         eventDispatcher.maxQueueSize = 100
         
         // illegal config batchSize cannot be bigger than maxQueueSize. just for testing
@@ -675,6 +684,9 @@ extension EventDispatcherTests_Batch {
 extension EventDispatcherTests_Batch {
     
     func testEventsFlushedOnEventQueueSizeHit() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
         eventDispatcher.batchSize = 3
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -700,6 +712,11 @@ extension EventDispatcherTests_Batch {
     }
 
     func testEventsFlushedOnRevisionChange() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -733,6 +750,11 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsFlushedOnProjectIdChange() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -766,6 +788,11 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsNotFlushedOnOtherDatafileChanges() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -786,12 +813,12 @@ extension EventDispatcherTests_Batch {
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
         
-        // (2) flush on revision-change notification
+        // (2) not flush on other datafile contents change
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
 
-        // change projectId
+        // change accountId (not projectId or revision)
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
         
@@ -800,6 +827,11 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsNotFlushedOnFirstDatafileLoad() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -883,7 +915,7 @@ extension EventDispatcherTests_Batch {
     }
     
     func testRandomEventsWithInvalid_100() {
-        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 30)
+        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 10)
     }
 
     // Utils
@@ -897,18 +929,18 @@ extension EventDispatcherTests_Batch {
         let exp = XCTestExpectation(description: "random")
         let expectedVisistors = numEvents - numInvalidEvents  // all invalid events will be discarded
 
-        // dispatch evetns in a separate thread for stressting enqueu and batch happen simultaneously
+        // dispatch evetns in a separate thread for stressting enqueue and batch happen simultaneously
         DispatchQueue.global().async {
             self.dispatchRandomEvents(numEvents: numEvents, numInvalidEvents: numInvalidEvents)
             
             print("[RandomTest] dispatched all events")
             
             // extra delay to make sure all events are flushed and check if no more than expected is batched
-            let extraDelay = max(Int(eventDispatcher.timerInterval) * 2, 30)
+            let extraDelay = max(Int(eventDispatcher.timerInterval) * 2, 60)
             var delay = 0
             while delay < extraDelay {
                 if eventDispatcher.numReceivedVisitors >= expectedVisistors {
-                    self.waitAsyncSeconds(3)  // extra delay to check if any redundant events transmitted
+                    self.waitAsyncSeconds(3)  // extra delay to make sure that no redundant events transmitted
                     break
                 }
                 
@@ -1050,13 +1082,20 @@ class TestEventDispatcher: DefaultEventDispatcher {
     var sendRequestedEvents: [EventForDispatch] = []
     var forceError = false
     var numReceivedVisitors = 0
+    let eventFileName: String
     
     // set this if need to wait sendEvent completed
     var exp: XCTestExpectation?
     
-    init(eventFileName: String) {
+    init(eventFileName: String, removeDatafileObserver: Bool = true) {
+        self.eventFileName = eventFileName
         super.init(dataStoreName: eventFileName)
-     }
+        
+        // block interference from other tests notifications when testing batch timing
+        if removeDatafileObserver {
+            removeProjectChangeNotificationObservers()
+        }
+    }
     
     override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         sendRequestedEvents.append(event)
@@ -1064,7 +1103,7 @@ class TestEventDispatcher: DefaultEventDispatcher {
         do {
             let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
             numReceivedVisitors += decodedEvent.visitors.count
-            print("[SendEvent] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+            print("[TestEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
         } catch {
             // invalid event format detected
             // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)

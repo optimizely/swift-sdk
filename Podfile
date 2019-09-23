@@ -48,8 +48,7 @@ end
 target 'OptimizelyTests-Fsc-iOS' do
   platform :ios, '9.0'
   use_frameworks!
-#  pod 'Cucumberish', :git => 'https://github.com/yasirfolio3/Cucumberish.git', :branch => 'yasir/yaml-support'
-  pod 'Cucumberish', :path => '/Users/yasirali/Desktop/Optimizely/Cucumberish'
+  pod 'Cucumberish', :git => 'https://github.com/yasirfolio3/Cucumberish.git', :branch => 'yasir/yaml-support'
   pod 'Yams'
   pod 'SwiftyJSON', '4.0'
 end

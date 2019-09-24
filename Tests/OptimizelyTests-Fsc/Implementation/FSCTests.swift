@@ -23,11 +23,12 @@ class FSCTests: NSObject {
     
     internal static var requestModel: RequestModel?
     internal static var responseModel: ResponseModel?
-    
+
     static func setup() {
         
         before { (scenario) in
             requestModel = RequestModel()
+            OptimizelyE2EService.resetInstance()
         }
         
         setupBackgroundScenarios()

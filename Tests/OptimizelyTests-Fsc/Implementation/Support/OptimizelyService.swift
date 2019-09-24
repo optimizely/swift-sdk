@@ -21,7 +21,7 @@ import Optimizely
 class OptimizelyE2EService {
     
     private let datafilesDirectory = "Datafiles"
-    private var optimizelyClient: OptimizelyClient? = nil
+    private static var optimizelyClient: OptimizelyClient? = nil
     
     private static var i = 0
     private var requestModel: RequestModel?
@@ -29,14 +29,18 @@ class OptimizelyE2EService {
     private init() {
     }
     
+    public static func resetInstance() {
+        optimizelyClient = nil
+    }
+    
     public static func LoadOptimizelyE2E(request : RequestModel) -> OptimizelyE2EService? {
         
         let optimizelyE2E = OptimizelyE2EService()
         optimizelyE2E.requestModel = request
-        
-        _ = optimizelyE2E
-            .buildOptimizelyClient()
-        
+        if optimizelyClient == nil {
+            _ = optimizelyE2E
+                .buildOptimizelyClient()
+        }
         return optimizelyE2E
     }
     
@@ -52,26 +56,26 @@ class OptimizelyE2EService {
             case API.featureVariableBoolean.rawValue:
                 let request = FeatureVariableAPIRequestModel(dictionary: arguments)
                 var result = false
-                if let value = try optimizelyClient?.getFeatureVariableBoolean(featureKey: request.featureKey, variableKey: request.variableKey, userId: request.userId, attributes: request.attributes) {
+                if let value = try OptimizelyE2EService.optimizelyClient?.getFeatureVariableBoolean(featureKey: request.featureKey, variableKey: request.variableKey, userId: request.userId, attributes: request.attributes) {
                     result = value
                 }
                 responseModel.result = (result ? "TRUE" : "FALSE")
                 break
             case API.featureVariableDouble.rawValue:
                 let request = FeatureVariableAPIRequestModel(dictionary: arguments)
-                if let value = try optimizelyClient?.getFeatureVariableDouble(featureKey: request.featureKey, variableKey: request.variableKey, userId: request.userId, attributes: request.attributes) {
+                if let value = try OptimizelyE2EService.optimizelyClient?.getFeatureVariableDouble(featureKey: request.featureKey, variableKey: request.variableKey, userId: request.userId, attributes: request.attributes) {
                     responseModel.result = value
                 }
                 break
             case API.featureVariableInteger.rawValue:
                 let request = FeatureVariableAPIRequestModel(dictionary: arguments)
-                if let value = try optimizelyClient?.getFeatureVariableInteger(featureKey: request.featureKey, variableKey: request.variableKey, userId: request.userId, attributes: request.attributes) {
+                if let value = try OptimizelyE2EService.optimizelyClient?.getFeatureVariableInteger(featureKey: request.featureKey, variableKey: request.variableKey, userId: request.userId, attributes: request.attributes) {
                     responseModel.result = value
                 }
                 break
             case API.featureVariableString.rawValue:
                 let request = FeatureVariableAPIRequestModel(dictionary: arguments)
-                if let value = try optimizelyClient?.getFeatureVariableString(featureKey: request.featureKey, variableKey: request.variableKey, userId: request.userId, attributes: request.attributes) {
+                if let value = try OptimizelyE2EService.optimizelyClient?.getFeatureVariableString(featureKey: request.featureKey, variableKey: request.variableKey, userId: request.userId, attributes: request.attributes) {
                     responseModel.result = value
                 }
                 break
@@ -105,10 +109,10 @@ class OptimizelyE2EService {
         }
         
         OptimizelyE2EService.i = OptimizelyE2EService.i + 1
-        optimizelyClient = OptimizelyClient(sdkKey: String(OptimizelyE2EService.i), periodicDownloadInterval: 0)
+        OptimizelyE2EService.optimizelyClient = OptimizelyClient(sdkKey: String(OptimizelyE2EService.i), periodicDownloadInterval: 0)
         if let _data = data {
             do {
-                try optimizelyClient?.start(datafile: _data, doFetchDatafileBackground: false)
+                try OptimizelyE2EService.optimizelyClient?.start(datafile: _data, doFetchDatafileBackground: false)
             } catch {
                 print("Exception occured initializing with datafile")
             }

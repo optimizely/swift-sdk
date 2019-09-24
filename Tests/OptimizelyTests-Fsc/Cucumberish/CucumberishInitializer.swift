@@ -23,7 +23,7 @@ class CucumberishInitializer: NSObject {
     
     @objc class func setupCucumberish(){
         
-        TestManager.setup()
+        FSCTests.setup()
         let bundle = Bundle(for: CucumberishInitializer.self)
         Cucumberish.instance()?.fixMissingLastScenario = true
         Cucumberish.instance()?.prettyNamesAllowed = true

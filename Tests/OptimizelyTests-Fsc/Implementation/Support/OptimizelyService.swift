@@ -94,7 +94,7 @@ class OptimizelyE2EService {
         
         var data: Data?
         
-        guard let url = Bundle.init(for: TestManager.self).url(forResource: dataFileName, withExtension: nil, subdirectory: datafilesDirectory) else {
+        guard let url = Bundle.init(for: FSCTests.self).url(forResource: dataFileName, withExtension: nil, subdirectory: datafilesDirectory) else {
             return self
         }
         do {

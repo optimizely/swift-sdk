@@ -16,24 +16,25 @@
 ***************************************************************************/
     
 
+import Foundation
+
 import XCTest
 import Foundation
 import Cucumberish
 
-extension TestManager {
+extension FSCTests {
     
-    internal static func setupBackgroundScenarios() {
+    internal static func setupWhenListeners() {
         
-        Given("^the datafile is \(Constants.doubleQuotedStringRegex)$") { (args, userInfo) -> Void in
-            requestModel?.datafileName = (args?[0])!
-        }
-        
-        And("^\(Constants.singleDigitRegex) \(Constants.doubleQuotedStringRegex) listener is added$") { (args, userInfo) -> Void in
-            let numberOfListeners = Int((args?[0])!)
-            let listenerType = (args?[1])!
-            if let listenerCount = numberOfListeners {
-                requestModel?.listenersAdded.append([listenerType:listenerCount])
+        When("^\(Constants.stringRegex) is called with arguments") { (args, userInfo) -> Void in
+            if let api = (args?[0]), let parameters = userInfo?["DocString"] as? String, let parameterDictionary = YAMLParser.getMapFromYAML(value: parameters) {
+                requestModel?.api = api
+                requestModel?.arguments = parameterDictionary
             }
+            else {
+                XCTFail()
+            }
+            getResult()
         }
     }
     

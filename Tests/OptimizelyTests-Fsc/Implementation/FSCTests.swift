@@ -19,7 +19,7 @@ import XCTest
 import Foundation
 import Cucumberish
 
-class TestManager: NSObject {
+class FSCTests: NSObject {
     
     internal static var requestModel: RequestModel?
     internal static var responseModel: ResponseModel?

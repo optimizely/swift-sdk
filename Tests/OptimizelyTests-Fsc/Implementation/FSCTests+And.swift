@@ -20,7 +20,7 @@ import XCTest
 import Foundation
 import Cucumberish
 
-extension TestManager {
+extension FSCTests {
     
     internal static func setupAndListeners() {
         

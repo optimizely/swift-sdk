@@ -515,27 +515,6 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(eventDispatcher.dataStore.count, 0, "all expected to get transmitted successfully")
     }
 
-    func testFlushIgnoredWhenNetworkIsDown() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-        
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
-
-        // network is down
-        NetworkReachability.shared.reachable = false
-        
-        eventDispatcher.flushEvents()
-        eventDispatcher.dispatcher.sync {}
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "when network is down, flush won't be tried")
-
-        // network is up
-        NetworkReachability.shared.reachable = true
-
-        eventDispatcher.flushEvents()
-        eventDispatcher.dispatcher.sync {}
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "when network is up, flush should work ok")
-    }
-    
 }
 
 // MARK: - FlushEvents on Timer

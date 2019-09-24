@@ -82,6 +82,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             self.logger.e(.eventDispatcherConfigError("batchSize cannot be bigger than maxQueueSize"))
             self.maxQueueSize = self.batchSize
         }
+        
         addProjectChangeNotificationObservers()
         
         subscribe()
@@ -90,8 +91,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     deinit {
         stopTimer()
         
-        removeProjectChangeNotificationObservers()
-
         removeProjectChangeNotificationObservers()
 
         unsubscribe()

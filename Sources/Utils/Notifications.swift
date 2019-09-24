@@ -16,39 +16,7 @@
 
 import Foundation
 
-struct Constants {
-    struct Attributes {
-        static let OptimizelyBucketIdAttribute = "$opt_bucketing_id"
-        static let OptimizelyBotFilteringAttribute = "$opt_bot_filtering"
-        static let OptimizelyUserAgent = "$opt_user_agent"
-    }
-    
-    enum DecisionType: String {
-        case abTest = "ab-test"
-        case feature  = "feature"
-        case featureVariable  = "feature-variable"
-        case featureTest = "feature-test"
-    }
-    
-    enum DecisionSource: String {
-        case featureTest = "feature-test"
-        case rollout = "rollout"
-    }
-    
-    struct DecisionInfoKeys {
-        static let feature = "featureKey"
-        static let featureEnabled = "featureEnabled"
-        static let sourceInfo = "sourceInfo"
-        static let source = "source"
-        static let variable = "variableKey"
-        static let variableType = "variableType"
-        static let variableValue = "variableValue"
-    }
-    
-    struct ExperimentDecisionInfoKeys {
-        static let experiment = "experimentKey"
-        static let variation = "variationKey"
-    }
-    
-
+extension Notification.Name {
+    static let didReceiveOptimizelyProjectIdChange = Notification.Name("didReceiveOptimizelyProjectIdChange")
+    static let didReceiveOptimizelyRevisionChange = Notification.Name("didReceiveOptimizelyRevisionChange")
 }

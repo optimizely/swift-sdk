@@ -24,17 +24,21 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     static let sharedInstance = DefaultEventDispatcher()
     
-    // the max failure count.  there is no backoff timer.
-    static let MAX_FAILURE_COUNT = 3
-    
     // default timerInterval
-    var timerInterval: TimeInterval // every minute
+    var timerInterval: TimeInterval
     // default batchSize.
     // attempt to send events in batches with batchSize number of events combined
     var batchSize: Int
-    // start trimming the front of the queue when we get to over maxQueueSize
-    // TODO: implement
-    var maxQueueSize: Int = 30000
+    var maxQueueSize: Int
+    
+    public struct DefaultValues {
+        static public let batchSize = 10
+        static public let timeInterval: TimeInterval = 60  // secs
+        static public let maxQueueSize = 10000
+        static let maxFailureCount = 3
+    }
+    
+    // the max failure count.  there is no backoff timer.
     
     lazy var logger = OPTLoggerFactory.getLogger()
     var backingStore: DataStoreType
@@ -47,35 +51,67 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
     
-    public init(batchSize: Int = 10, backingStore: DataStoreType = .file, dataStoreName: String = "OPTEventQueue", timerInterval: TimeInterval = 60*1 ) {
-        self.batchSize = batchSize > 0 ? batchSize : 1
+    var observerProjectId: NSObjectProtocol?
+    var observerRevision: NSObjectProtocol?
+    
+
+    public init(batchSize: Int = DefaultValues.batchSize,
+                backingStore: DataStoreType = .file,
+                dataStoreName: String = "OPTEventQueue",
+                timerInterval: TimeInterval = DefaultValues.timeInterval,
+                maxQueueSize: Int = DefaultValues.maxQueueSize) {
+        self.batchSize = batchSize > 0 ? batchSize : DefaultValues.batchSize
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
         self.timerInterval = timerInterval
+        self.maxQueueSize = maxQueueSize > 100 ? maxQueueSize : DefaultValues.maxQueueSize
         
         switch backingStore {
         case .file:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreFile<[Data]>(storeName: backingStoreName))
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                       dataStore: DataStoreFile<[Data]>(storeName: backingStoreName))
         case .memory:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<[Data]>(storeName: backingStoreName))
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                       dataStore: DataStoreMemory<[Data]>(storeName: backingStoreName))
         case .userDefaults:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreUserDefaults())
+            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                       dataStore: DataStoreUserDefaults())
         }
+        
+        
+        if self.maxQueueSize < self.batchSize {
+            self.logger.e(.eventDispatcherConfigError("batchSize cannot be bigger than maxQueueSize"))
+            self.maxQueueSize = self.batchSize
+        }
+        
+        addProjectChangeNotificationObservers()
         
         subscribe()
     }
     
     deinit {
-        timer.performAtomic { (timer) in
-            timer.invalidate()
-        }
+        stopTimer()
+
+        removeProjectChangeNotificationObservers()
+
         unsubscribe()
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        guard dataStore.count < maxQueueSize else {
+            let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
+            self.logger.e(error)
+            completionHandler?(.failure(error))
+            return
+        }
+        
         dataStore.save(item: event)
         
-        setTimer()
+        if dataStore.count >= batchSize {
+            flushEvents()
+        } else {
+            startTimer()
+        }
         
         completionHandler?(.success(event.body))
     }
@@ -88,92 +124,50 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         dispatcher.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
-            // if we can't batch the events because they are not from the same project or
-            // are being sent to a different url.  we set the batchSizeHolder to batchSize
-            // and batchSize to 1 until we have sent the last batch that couldn't be batched.
-            var batchSizeHolder = 0
-            // the batch send count if the events failed to be batched.
-            var sendCount = 0
             
-            let failedBatch = { () -> Void in
-                // hold the batch size
-                batchSizeHolder = self.batchSize
-                // set it to 1 until the last batch that couldn't be batched is sent
-                self.batchSize = 1
-            }
-            
-            let resetBatch = { () -> Void in
-                if batchSizeHolder != 0 {
-                    self.batchSize = batchSizeHolder
-                    sendCount = 0
-                    batchSizeHolder = 0
-                }
-                
-            }
-            while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
-                let actualEventsSize = eventsToSend.count
-                var eventToSend = eventsToSend.batch()
-                if eventToSend != nil {
-                    // we merged the event and ready for batch
-                    // if the bacth size is not equal to the actual event size,
-                    // then setup the batchSizeHolder to be the size of the event.
-                    if actualEventsSize != self.batchSize {
-                        batchSizeHolder = self.batchSize
-                        self.batchSize = actualEventsSize
-                        sendCount = actualEventsSize - 1
-                    }
+            func removeStoredEvents(num: Int) {
+                if let removedItem = self.dataStore.removeFirstItems(count: num), removedItem.count > 0 {
+                    // avoid event-log-message preparation overheads with closure-logging
+                    self.logger.d({ "Removed stored \(num) events starting with \(removedItem.first!)" })
                 } else {
-                    failedBatch()
-                    // just send the first one and let the rest be sent until sendCount == batchSizeHolder
-                    eventToSend = eventsToSend.first
+                    self.logger.e("Failed to removed \(num) events")
+                }
+            }
+            
+            while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
+                let (numEvents, batched) = eventsToSend.batch()
+                
+                guard numEvents > 0 else { break }
+                
+                guard let batchEvent = batched else {
+                    // discard an invalid event that causes batching failure
+                    // - if an invalid event is found while batching, it batches all the valid ones before the invalid one and sends it out.
+                    // - when trying to batch next, it finds the invalid one at the header. It discards that specific invalid one and continue batching next ones.
+
+                    removeStoredEvents(num: 1)
+                    continue
                 }
                 
-                guard let event = eventToSend else {
-                    self.logger.e(.eventBatchFailed)
-                    resetBatch()
-                    break
-                }
-
                 // we've exhuasted our failure count.  Give up and try the next time a event
                 // is queued or someone calls flush.
-                if failureCount > DefaultEventDispatcher.MAX_FAILURE_COUNT {
+                if failureCount > DefaultValues.maxFailureCount {
                     self.logger.e(.eventSendRetyFailed(failureCount))
-                    failureCount = 0
-                    resetBatch()
                     break
                 }
-
+                
                 // make the send event synchronous. enter our notify
                 self.notify.enter()
-                self.sendEvent(event: event) { (result) -> Void in
+                self.sendEvent(event: batchEvent) { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         self.logger.e(error.reason)
                         failureCount += 1
                     case .success:
                         // we succeeded. remove the batch size sent.
-                        if let removedItem: [EventForDispatch] = self.dataStore.removeFirstItems(count: self.batchSize) {
-                            if self.batchSize == 1 && removedItem.first != event {
-                                self.logger.e("Removed event different from sent event")
-                            } else {
-                                // avoid event-log-message preparation overheads with closure-logging
-                                self.logger.d({ "Successfully sent event: \(event)" })
-                            }
-                        } else {
-                            self.logger.e("Removed event nil for sent item")
-                        }
+                        removeStoredEvents(num: numEvents)
+
                         // reset failureCount
                         failureCount = 0
-                        // did we have to send a batch one at a time?
-                        if batchSizeHolder != 0 {
-                            sendCount += 1
-                            // have we sent all the events in this batch?
-                            if sendCount == self.batchSize {
-                                resetBatch()
-                            }
-                        } else {
-                            // batch had batchSize items
-                        }
                     }
                     // our send is done.
                     self.notify.leave()
@@ -183,7 +177,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 self.notify.wait()
             }
         }
-
     }
     
     open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
@@ -210,21 +203,18 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func applicationDidEnterBackground() {
-        timer.performAtomic { (timer) in
-            timer.invalidate()
-        }
-        timer.property = nil
+        stopTimer()
         
         flushEvents()
     }
     
     func applicationDidBecomeActive() {
         if dataStore.count > 0 {
-            setTimer()
+            startTimer()
         }
     }
     
-    func setTimer() {
+    func startTimer() {
         // timer is activated only for iOS10+ and non-zero interval value
         guard #available(iOS 10.0, tvOS 10.0, *), timerInterval > 0 else {
             flushEvents()
@@ -237,18 +227,49 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             // should check here again
             guard self.timer.property == nil else { return }
             
-            self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { (timer) in
+            self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { _ in
                 self.dispatcher.async {
-                    if self.dataStore.count == 0 {
-                        self.timer.performAtomic {(timer) in
-                            timer.invalidate()
-                        }
-                        self.timer.property = nil
-                    } else {
+                    if self.dataStore.count > 0 {
                         self.flushEvents()
+                    } else {
+                        self.stopTimer()
                     }
                 }
             }
         }
     }
+    
+    func stopTimer() {
+        timer.performAtomic { (timer) in
+            timer.invalidate()
+        }
+        timer.property = nil
+    }
+}
+
+// MARK: - Notification Observers
+
+extension DefaultEventDispatcher {
+    
+    func addProjectChangeNotificationObservers() {
+        observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (notif) in
+            self?.logger.d("Event flush triggered by datafile projectId change")
+            self?.flushEvents()
+        }
+        
+        observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (notif) in
+            self?.logger.d("Event flush triggered by datafile revision change")
+            self?.flushEvents()
+        }
+    }
+    
+    func removeProjectChangeNotificationObservers() {
+        if let observer = observerProjectId {
+            NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyProjectIdChange, object: nil)
+        }
+        if let observer = observerRevision {
+            NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyRevisionChange, object: nil)
+        }
+    }
+    
 }

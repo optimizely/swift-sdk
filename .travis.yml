@@ -58,7 +58,8 @@ jobs:
       install:
         - gem install slather --no-document --quiet
         - gem install cocoapods -v '1.8.0'
-        - pod install --repo-update
+        - pod repo update
+        - pod install
         # fix simulator known issue (https://developer.apple.com/documentation/xcode_release_notes/xcode_10_2_1_release_notes)
         - sudo mkdir '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 9.3.simruntime/Contents/Resources/RuntimeRoot/usr/lib/swift'
         # install jq without cleaning up

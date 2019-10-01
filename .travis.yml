@@ -68,7 +68,8 @@ jobs:
       script:
         - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySwiftSDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES | tee buildoutput | xcpretty && test ${PIPESTATUS[0]} -eq 0; fi
       after_success:
-        - slather
+        # coverage collect for iOS only (.slather.yml)
+        - if [[ "$PLATFORM" == "iOS Simulator" ]]; then slather; fi
         - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
       after_failure:
         # install travis artifacts uploader
@@ -84,9 +85,6 @@ jobs:
     - <<: *unittests
       env: SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
       name: PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
-      after_success:  
-        # do not slather for tvOS
-        - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
 
     - stage: 'Prepare for release'
       name: Prepare for release

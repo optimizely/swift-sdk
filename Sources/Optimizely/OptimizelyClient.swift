@@ -606,6 +606,17 @@ open class OptimizelyClient: NSObject {
     
 }
 
+// MARK: - IOptimizelyConfig
+
+extension OptimizelyClient {
+    
+    public func getOptimizelyConfig() throws -> OptimizelyConfig {
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+
+        return config.optimizelyConfig
+    }
+}
+
 // MARK: - Send Events
 
 extension OptimizelyClient {

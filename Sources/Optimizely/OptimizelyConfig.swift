@@ -16,27 +16,7 @@
 
 import Foundation
 
-public struct Variation: Codable, Equatable {
-    public var id: String
-    public var key: String
-    public var variablesMap: [String: Variable] {
-        var map = [String: Variable]()
-        variables?.forEach({
-            map[$0.key] = $0
-        })
-        return map
-    }
-    
-    var featureEnabled: Bool?
-    var variables: [Variable]?
-}
-
-// MARK: - Utils
-
-extension Variation {
-    
-    func getVariable(id: String) -> Variable? {
-        return variables?.filter { $0.id == id }.first
-    }
-    
+public struct OptimizelyConfig {
+    public let experimentsMap: [String: Experiment]
+    public let featuresMap: [String: Feature]
 }

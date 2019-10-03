@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Experiment: Codable, Equatable {
+public struct Experiment: Codable, Equatable {
     enum Status: String, Codable {
         case running = "Running"
         case launched = "Launched"
@@ -25,8 +25,16 @@ struct Experiment: Codable, Equatable {
         case archived = "Archived"
     }
     
-    var id: String
-    var key: String
+    public var id: String
+    public var key: String
+    public var variationsMap: [String: Variation] {
+        var map = [String: Variation]()
+        variations.forEach {
+            map[$0.key] = $0
+        }
+        return map
+    }
+    
     var status: Status
     var layerId: String
     var variations: [Variation]

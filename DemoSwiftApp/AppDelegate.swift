@@ -109,6 +109,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // initialize SDK
         optimizely!.start { result in
+            self.checkOptimizelyConfigData()
+            
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
@@ -117,6 +119,71 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             self.startWithRootViewController()
         }
+    }
+    
+    func checkOptimizelyConfigData() {
+        let optConfig = try! self.optimizely!.getOptimizelyConfig()
+        let experimentsMap = optConfig.experimentsMap
+        let featuresMap = optConfig.featuresMap
+        
+        let experimentKeys = experimentsMap.map{ $0.value.key }
+
+        experimentKeys.forEach{ expKey in
+            print("[OptimizelyConfig] experimentKey = \(expKey)")
+
+            let variationsMap = experimentsMap[expKey]!.variationsMap
+            let variationKeys = variationsMap.map{ $0.value.key }
+            
+            variationKeys.forEach{ varKey in
+                print("[OptimizelyConfig]   - variationKey = \(varKey)")
+
+                let variablesMap = variationsMap[varKey]!.variablesMap
+                let variableKeys = variablesMap.map{ $0.value.key }
+                
+                variableKeys.forEach{ variableKey in
+                    let variable = variablesMap[variableKey]!
+                    
+                    print("[OptimizelyConfig]       -- variable: \(variableKey), \(variable)")
+                }
+            }
+        }
+        
+        let featureKeys = featuresMap.map{ $0.value.key }
+
+        featureKeys.forEach{ featKey in
+            print("[OptimizelyConfig] featureKey = \(featKey)")
+            
+            let experimentsMap = featuresMap[featKey]!.experimentsMap
+            let experimentKeys = experimentsMap.map{ $0.value.key }
+            
+            experimentKeys.forEach{ expKey in
+                print("[OptimizelyConfig]   - experimentKey = \(expKey)")
+                
+                let variationsMap = experimentsMap[expKey]!.variationsMap
+                let variationKeys = variationsMap.map{ $0.value.key }
+                
+                variationKeys.forEach{ varKey in
+                    print("[OptimizelyConfig]       -- variationKey = \(varKey)")
+                    
+                    let variablesMap = variationsMap[varKey]!.variablesMap
+                    let variableKeys = variablesMap.map{ $0.value.key }
+                    
+                    variableKeys.forEach{ variableKey in
+                        let variable = variablesMap[variableKey]!
+                        
+                        print("[OptimizelyConfig]           --- variable: \(variableKey), \(variable)")
+                    }
+                }
+            }
+            
+            let variablesMap = featuresMap[featKey]!.variablesMap
+            variablesMap.forEach{ map in
+                let variable = map.value
+                print("[OptimizelyConfig]   - featureVariable: (\(variable.id) \(variable.key) \(variable.type) \(variable.value))")
+            }
+        }
+
+
     }
     
     func addListeners() {

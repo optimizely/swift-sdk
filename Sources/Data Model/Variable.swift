@@ -16,7 +16,15 @@
 
 import Foundation
 
-struct Variable: Codable, Equatable {
-    var id: String
-    var value: String
+public struct Variable: Codable, Equatable {
+    public var id: String
+    public var value: String
+    
+    public var key: String = ""
+    public var type: String = "string"
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case value
+    }
 }

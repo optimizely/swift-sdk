@@ -33,3 +33,12 @@ extension FeatureFlag {
     }
     
 }
+
+// MARK: - Feature (OptimizelyConfig)
+
+public struct Feature: Codable, Equatable {
+    public var id: String
+    public var key: String
+    public var experimentsMap: [String: Experiment]
+    public var variablesMap: [String: Variable]
+}

@@ -157,7 +157,7 @@ extension ProjectConfig {
     }
     
     private func getWhitelistedVariationId(userId: String, experimentId: String) -> String? {
-        if var dic = whitelistUsers[userId] {
+        if let dic = whitelistUsers[userId] {
             return dic[experimentId]
         }
         

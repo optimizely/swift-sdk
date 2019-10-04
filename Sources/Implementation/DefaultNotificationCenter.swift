@@ -20,8 +20,14 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     public var notificationId: Int = 1
     var notificationListeners = [Int: (Int, GenericListener)]()
     
+    var observerLogEvent: NSObjectProtocol?
+
     required public init() {
-        
+        addInternalNotificationListners()
+    }
+    
+    deinit {
+        removeInternalNotificationListners()
     }
     
     internal func incrementNotificationId() -> Int {
@@ -116,6 +122,23 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
         return incrementNotificationId()
     }
     
+    public func addLogEventNotificationListener(logEventListener: @escaping LogEventListener) -> Int? {
+        notificationListeners[notificationId] = (NotificationType.logEvent.rawValue, { (args: Any...) in
+            guard let myArgs = args[0] as? [Any?] else {
+                return
+            }
+            if myArgs.count < 2 {
+                return
+            }
+            if let url = myArgs[0] as? String,
+                let event = myArgs[1] as? [String: Any] {
+                logEventListener(url, event)
+            }
+        })
+        
+        return incrementNotificationId()
+    }
+    
     public func removeNotificationListener(notificationId: Int) {
         self.notificationListeners.removeValue(forKey: notificationId)
     }
@@ -131,6 +154,34 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     public func sendNotifications(type: Int, args: [Any?]) {
         for values in notificationListeners.values where values.0 == type {
             values.1(args)
+        }
+    }
+    
+}
+
+// MARK: Notification Translation
+
+extension DefaultNotificationCenter {
+    
+    func addInternalNotificationListners() {
+        observerLogEvent = NotificationCenter.default.addObserver(forName: .willSendOptimizelyEvents, object: nil, queue: nil) { (notif) in
+            guard let eventForDispatch = notif.object as? EventForDispatch else { return }
+            
+            let url = eventForDispatch.url.absoluteString
+            let eventData = eventForDispatch.body
+            
+            if let event = try? JSONSerialization.jsonObject(with: eventData, options: []) as? [String: Any] {
+                let args: [Any] = [url, event]
+                self.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
+            } else {
+                print("LogEvent notification discarded due to invalid event")
+            }
+        }
+    }
+    
+    func removeInternalNotificationListners() {
+        if let observer = observerLogEvent {
+            NotificationCenter.default.removeObserver(observer, name: .willSendOptimizelyEvents, object: nil)
         }
     }
     

@@ -119,12 +119,13 @@ extension EventDispatcherTests_Batch {
         XCTAssert(defaultMaxQueueSize > 100)
 
         // invalid batchSize falls back to default value
-        
-        ep = DefaultEventDispatcher(batchSize: 0, timerInterval: 0, maxQueueSize: 0)
-        XCTAssertEqual(ep.batchSize, defaultBatchSize)
-        XCTAssertEqual(ep.maxQueueSize, defaultMaxQueueSize)
-
+        // (timerInterval = 0 is a valid value, meaning no batch)
         // invalid timeInterval tested in "testEventDispatchedOnTimer_ZeroInterval" below
+
+        ep = DefaultEventDispatcher(batchSize: 0, timerInterval: -1, maxQueueSize: 0)
+        XCTAssertEqual(ep.batchSize, defaultBatchSize)
+        XCTAssertEqual(ep.timerInterval, defaultTimeInterval)
+        XCTAssertEqual(ep.maxQueueSize, defaultMaxQueueSize)
     }
     
 }
@@ -426,7 +427,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        
+
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
@@ -688,7 +689,7 @@ extension EventDispatcherTests_Batch {
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on batchSize hit")
     }
-
+    
     func testEventsFlushedOnRevisionChange() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
@@ -832,6 +833,45 @@ extension EventDispatcherTests_Batch {
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on the first datafile load")
     }
+}
+
+// MARK: - LogEvent Notification
+
+extension EventDispatcherTests_Batch {
+
+    func testLogEventNotificationCalledBeforeBatchSent() {
+        eventDispatcher.timerInterval = 0   // no batch
+
+        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+                                          eventDispatcher: eventDispatcher,
+                                          defaultLogLevel: .debug)
+        
+        var notifUrl: String?
+        var notifEvent: [String: Any]?
+        
+        _ = optimizely.notificationCenter!.addLogEventNotificationListener { (url, event) in
+            print("LogEvent Notification called")
+            notifUrl = url
+            notifEvent = event
+        }
+        
+        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
+        try! optimizely.start(datafile: datafile)
+        
+        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        eventDispatcher.dispatcher.sync {}
+        
+        XCTAssertEqual(notifUrl, kUrlA)
+        
+        // check event contents
+        
+        if let event = notifEvent, let client = event["client_name"] as? String {
+            XCTAssertEqual(client, "swift-sdk")
+        } else {
+            XCTAssert(false)
+        }
+    }
+    
 }
 
 // MARK: - iOS9 Devices

@@ -119,12 +119,13 @@ extension EventDispatcherTests_Batch {
         XCTAssert(defaultMaxQueueSize > 100)
 
         // invalid batchSize falls back to default value
-        
-        ep = DefaultEventDispatcher(batchSize: 0, timerInterval: 0, maxQueueSize: 0)
-        XCTAssertEqual(ep.batchSize, defaultBatchSize)
-        XCTAssertEqual(ep.maxQueueSize, defaultMaxQueueSize)
-
+        // (timerInterval = 0 is a valid value, meaning no batch)
         // invalid timeInterval tested in "testEventDispatchedOnTimer_ZeroInterval" below
+
+        ep = DefaultEventDispatcher(batchSize: 0, timerInterval: -1, maxQueueSize: 0)
+        XCTAssertEqual(ep.batchSize, defaultBatchSize)
+        XCTAssertEqual(ep.timerInterval, defaultTimeInterval)
+        XCTAssertEqual(ep.maxQueueSize, defaultMaxQueueSize)
     }
     
 }
@@ -688,7 +689,7 @@ extension EventDispatcherTests_Batch {
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on batchSize hit")
     }
-
+    
     func testEventsFlushedOnRevisionChange() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }

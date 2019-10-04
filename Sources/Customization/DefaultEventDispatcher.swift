@@ -24,9 +24,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     static let sharedInstance = DefaultEventDispatcher()
     
-    // default timerInterval
+    // timer-interval for batching (0 = no batching, negative = use default)
     var timerInterval: TimeInterval
-    // default batchSize.
+    // batch size (1 = no batching, 0 or negative = use default)
     // attempt to send events in batches with batchSize number of events combined
     var batchSize: Int
     var maxQueueSize: Int
@@ -61,10 +61,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 timerInterval: TimeInterval = DefaultValues.timeInterval,
                 maxQueueSize: Int = DefaultValues.maxQueueSize) {
         self.batchSize = batchSize > 0 ? batchSize : DefaultValues.batchSize
+        self.timerInterval = timerInterval >= 0 ? timerInterval : DefaultValues.timeInterval
+        self.maxQueueSize = maxQueueSize >= 100 ? maxQueueSize : DefaultValues.maxQueueSize
+        
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
-        self.timerInterval = timerInterval
-        self.maxQueueSize = maxQueueSize > 100 ? maxQueueSize : DefaultValues.maxQueueSize
+
         
         switch backingStore {
         case .file:

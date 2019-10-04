@@ -80,7 +80,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                                                                        dataStore: DataStoreUserDefaults())
         }
         
-        
         if self.maxQueueSize < self.batchSize {
             self.logger.e(.eventDispatcherConfigError("batchSize cannot be bigger than maxQueueSize"))
             self.maxQueueSize = self.batchSize
@@ -93,7 +92,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     deinit {
         stopTimer()
-
+        
         removeProjectChangeNotificationObservers()
 
         unsubscribe()
@@ -189,6 +188,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         request.httpBody = event.body
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
+        // send notification BEFORE sending event to the server
+        NotificationCenter.default.post(name: .willSendOptimizelyEvents, object: event)
+
         let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
             self.logger.d(response.debugDescription)
             

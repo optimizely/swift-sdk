@@ -56,22 +56,22 @@ class NotificationCenterTests: XCTestCase {
     
     func sendActivate() {
         notificationCenter.sendNotifications(type: NotificationType.activate.rawValue, args: [experiment!, "userId", nil, variation!, ["url": "https://url.com/", "body": Data()]])
-
     }
 
     func sendTrack() {
         notificationCenter.sendNotifications(type: NotificationType.track.rawValue, args: ["eventKey", "userId", nil, nil, ["url": "https://url.com/", "body": Data()]])
-        
     }
 
     func sendDecision() {
         notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: [Constants.DecisionType.featureVariable.rawValue, "userId", nil, ["url": "https://url.com/", "body": Data()]])
-        
     }
 
     func sendDatafileChange() {
         notificationCenter.sendNotifications(type: NotificationType.datafileChange.rawValue, args: [Data()])
-        
+    }
+    
+    func sendLogEvent() {
+        notificationCenter.sendNotifications(type: NotificationType.logEvent.rawValue, args: ["https://url.com/", [:]])
     }
     
     func addActivateListener() -> Int? {
@@ -102,11 +102,16 @@ class NotificationCenterTests: XCTestCase {
         return id
     }
     
+    func addLogEventListener() -> Int? {
+        let id = notificationCenter.addLogEventNotificationListener { (_, _) in
+            self.called = true
+        }
+        return id
+    }
+
     
 
     func testNotificationCenterAddRemoveActivate() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
         called = false
         
         _ = self.addActivateListener()
@@ -133,8 +138,6 @@ class NotificationCenterTests: XCTestCase {
     }
 
     func testNotificationCenterAddRemoveTrack() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
         called = false
         
         _ = self.addTrackListener()
@@ -161,8 +164,6 @@ class NotificationCenterTests: XCTestCase {
     }
     
     func testNotificationCenterAddRemoveDecision() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
         called = false
         
         _ = self.addDecisionListener()
@@ -189,8 +190,6 @@ class NotificationCenterTests: XCTestCase {
     }
 
     func testNotificationCenterAddRemoveDatafileChange() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
         called = false
         
         _ = self.addDatafileChangeListener()
@@ -215,6 +214,34 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertTrue(called)
     }
+    
+    func testNotificationCenterAddRemoveLogEvent() {
+        called = false
+        
+        _ = addLogEventListener()
+        
+        notificationCenter.clearNotificationListeners(type: .logEvent)
+        
+        sendLogEvent()
+        
+        XCTAssertFalse(called)
+        
+        let id = addLogEventListener()
+        
+        notificationCenter.removeNotificationListener(notificationId: id!)
+        
+        sendLogEvent()
+        
+        XCTAssertFalse(called)
+        
+        _ = addLogEventListener()
+        
+        sendLogEvent()
+        
+        XCTAssertTrue(called)
+    }
+    
+
 
     func testPerformanceExample() {
         // This is an example of a performance test case.

@@ -427,7 +427,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        
+
         eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
@@ -833,6 +833,45 @@ extension EventDispatcherTests_Batch {
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on the first datafile load")
     }
+}
+
+// MARK: - LogEvent Notification
+
+extension EventDispatcherTests_Batch {
+
+    func testLogEventNotificationCalledBeforeBatchSent() {
+        eventDispatcher.timerInterval = 0   // no batch
+
+        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+                                          eventDispatcher: eventDispatcher,
+                                          defaultLogLevel: .debug)
+        
+        var notifUrl: String?
+        var notifEvent: [String: Any]?
+        
+        _ = optimizely.notificationCenter!.addLogEventNotificationListener { (url, event) in
+            print("LogEvent Notification called")
+            notifUrl = url
+            notifEvent = event
+        }
+        
+        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
+        try! optimizely.start(datafile: datafile)
+        
+        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        eventDispatcher.dispatcher.sync {}
+        
+        XCTAssertEqual(notifUrl, kUrlA)
+        
+        // check event contents
+        
+        if let event = notifEvent, let client = event["client_name"] as? String {
+            XCTAssertEqual(client, "swift-sdk")
+        } else {
+            XCTAssert(false)
+        }
+    }
+    
 }
 
 // MARK: - iOS9 Devices

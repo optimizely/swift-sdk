@@ -27,14 +27,6 @@ public struct Experiment: Codable, Equatable {
     
     public var id: String
     public var key: String
-    public var variationsMap: [String: Variation] {
-        var map = [String: Variation]()
-        variations.forEach {
-            map[$0.key] = $0
-        }
-        return map
-    }
-    
     var status: Status
     var layerId: String
     var variations: [Variation]
@@ -43,6 +35,16 @@ public struct Experiment: Codable, Equatable {
     var audienceConditions: ConditionHolder?
     // datafile spec defines this as [String: Any]. Supposed to be [ExperimentKey: VariationKey]
     var forcedVariations: [String: String]
+    
+    // MARK: - OptimizelyConfig
+    
+    public var variationsMap: [String: Variation] {
+        var map = [String: Variation]()
+        variations.forEach {
+            map[$0.key] = $0
+        }
+        return map
+    }
 }
 
 // MARK: - Utils

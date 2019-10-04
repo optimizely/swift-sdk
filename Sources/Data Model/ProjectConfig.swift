@@ -29,20 +29,22 @@ class ProjectConfig {
     
     lazy var experimentKeyMap: [String: Experiment] = {
         var map = [String: Experiment]()
-        allExperiments.forEach{ map[$0.key] = $0 }
+        allExperiments.forEach { exp in
+            map[exp.key] = exp
+        }
         return map
     }()
 
     lazy var experimentIdMap: [String: Experiment] = {
         var map = [String: Experiment]()
-        allExperiments.forEach{ map[$0.id] = $0 }
+        allExperiments.forEach { map[$0.id] = $0 }
         return map
     }()
 
     lazy var experimentFeatureMap: [String: [String]] = {
         var experimentFeatureMap = [String: [String]]()
-        project.featureFlags.forEach{ (ff) in
-            ff.experimentIds.forEach{
+        project.featureFlags.forEach { (ff) in
+            ff.experimentIds.forEach {
                 if var arr = experimentFeatureMap[$0] {
                     arr.append(ff.id)
                     experimentFeatureMap[$0] = arr
@@ -56,63 +58,31 @@ class ProjectConfig {
     
     lazy var eventKeyMap: [String: Event] = {
         var eventKeyMap = [String: Event]()
-        project.events.forEach{ eventKeyMap[$0.key] = $0 }
+        project.events.forEach { eventKeyMap[$0.key] = $0 }
         return eventKeyMap
     }()
     
     lazy var attributeKeyMap: [String: Attribute] = {
         var map = [String: Attribute]()
-        project.attributes.forEach{ map[$0.key] = $0 }
+        project.attributes.forEach { map[$0.key] = $0 }
         return map
     }()
 
     lazy var featureFlagKeyMap: [String: FeatureFlag] = {
         var map = [String: FeatureFlag]()
-        project.featureFlags.forEach{ map[$0.key] = $0 }
+        project.featureFlags.forEach { map[$0.key] = $0 }
         return map
     }()
 
     lazy var rolloutIdMap: [String: Rollout] = {
         var map = [String: Rollout]()
-        project.rollouts.forEach{ map[$0.id] = $0 }
+        project.rollouts.forEach { map[$0.id] = $0 }
         return map
     }()
 
     lazy var allExperiments: [Experiment] = {
-        return project.experiments + project.groups.map{ $0.experiments }.flatMap({$0})
+        return project.experiments + project.groups.map { $0.experiments }.flatMap({$0})
     }()
-    
-    // MARK: - OptimizelyConfig
-    
-    var optimizelyConfig: OptimizelyConfig {
-        var featureKeyMap = [String: Feature]()
-        project.featureFlags.forEach{ featureFlag in
-            var experimientsMap = [String: Experiment]()
-            featureFlag.experimentIds.forEach{ expId in
-                if let experiment = getExperiment(id: expId) {
-                    experimientsMap[experiment.key] = experiment
-                }
-            }
-            
-            var variablesMap = [String: Variable]()
-            featureFlag.variables.forEach{ featureVariable in
-                variablesMap[featureVariable.key] = Variable(id: featureVariable.id,
-                                                             value: featureVariable.defaultValue ?? "",
-                                                             key: featureVariable.key,
-                                                             type: featureVariable.type)
-            }
-            
-            let feature = Feature(id: featureFlag.id,
-                                  key: featureFlag.key,
-                                  experimentsMap: experimientsMap,
-                                  variablesMap: variablesMap)
-            
-            featureKeyMap[feature.key] = feature
-        }
-
-        return OptimizelyConfig(experimentsMap: self.experimentKeyMap,
-                                featuresMap: featureKeyMap)
-    }
     
     // MARK: - Init
 

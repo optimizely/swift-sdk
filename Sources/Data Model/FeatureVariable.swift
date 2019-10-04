@@ -16,7 +16,7 @@
 
 import Foundation
 
-public struct FeatureVariable: Codable, Equatable {
+struct FeatureVariable: Codable, Equatable {
     var id: String
     var key: String
     var type: String

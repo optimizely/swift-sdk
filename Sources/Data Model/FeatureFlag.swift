@@ -16,12 +16,35 @@
 
 import Foundation
 
-struct FeatureFlag: Codable, Equatable {
-    var id: String
-    var key: String
+public struct FeatureFlag: Codable, Equatable {
+    public var id: String
+    public var key: String
     var experimentIds: [String]
     var rolloutId: String
     var variables: [FeatureVariable]
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case key
+        case experimentIds
+        case rolloutId
+        case variables
+    }
+    
+    // MARK: - OptimizelyConfig
+
+    public var experimentsMap = [String: Experiment]()
+    
+    public var variablesMap: [String: Variable] {
+        var map = [String: Variable]()
+        variables.forEach { featureVariable in
+            map[featureVariable.key] = Variable(id: featureVariable.id,
+                                                value: featureVariable.defaultValue ?? "",
+                                                key: featureVariable.key,
+                                                type: featureVariable.type)
+        }
+        return map
+    }
 }
 
 // MARK: - Utils
@@ -32,13 +55,4 @@ extension FeatureFlag {
         return variables.filter { $0.key == key }.first
     }
     
-}
-
-// MARK: - Feature (OptimizelyConfig)
-
-public struct Feature: Codable, Equatable {
-    public var id: String
-    public var key: String
-    public var experimentsMap: [String: Experiment]
-    public var variablesMap: [String: Variable]
 }

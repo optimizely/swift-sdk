@@ -613,7 +613,7 @@ extension OptimizelyClient {
     public func getOptimizelyConfig() throws -> OptimizelyConfig {
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
 
-        return config.optimizelyConfig
+        return OptimizelyConfig(projectConfig: config)
     }
 }
 

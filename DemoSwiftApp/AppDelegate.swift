@@ -124,7 +124,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func checkOptimizelyConfigData() {
         let optConfig = try! self.optimizely!.getOptimizelyConfig()
         let experimentsMap = optConfig.experimentsMap
-        let featuresMap = optConfig.featuresMap
+        let featuresMap = optConfig.featureFlagsMap
         
         let experimentKeys = experimentsMap.map{ $0.value.key }
 

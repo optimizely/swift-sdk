@@ -606,10 +606,17 @@ open class OptimizelyClient: NSObject {
     
 }
 
-// MARK: - IOptimizelyConfig
+// MARK: - OptimizelyConfig
 
 extension OptimizelyClient {
     
+    /// Read a copy of project configuration data model.
+    ///
+    /// This call returns a snapshot of the current project configuration.
+    /// If a datafile change is notified (NotificationType.datafileChange), this method should be called again to get the updated configuration data.
+    ///
+    /// - Returns: a snapshot of public project configuration data model
+    /// - Throws: `OptimizelyError` if SDK is not ready
     public func getOptimizelyConfig() throws -> OptimizelyConfig {
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
 

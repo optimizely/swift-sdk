@@ -33,8 +33,16 @@ public struct FeatureFlag: Codable, Equatable {
     
     // MARK: - OptimizelyConfig
 
-    public var experimentsMap = [String: Experiment]()
+    var experiments: [Experiment] = []
     
+    public var experimentsMap: [String: Experiment] {
+        var map = [String: Experiment]()
+        experiments.forEach {
+            map[$0.key] = $0
+        }
+        return map
+    }
+        
     public var variablesMap: [String: Variable] {
         var map = [String: Variable]()
         variables.forEach { featureVariable in

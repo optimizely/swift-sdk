@@ -100,6 +100,76 @@ class SamplesForAPI {
         } catch {
             print(error)
         }
+        
+        // MARK: - OptimizelyConfig
+        
+        let optConfig = try! optimizely.getOptimizelyConfig()
+        
+        //let experiments = optConfig.experimentsMap.values
+        let experimentKeys = optConfig.experimentsMap.keys
+        print("[OptimizelyConfig] all experiment keys = \(experimentKeys)")
+
+        //let features = optConfig.featureFlagsMap.values
+        let featureKeys = optConfig.featureFlagsMap.keys
+        print("[OptimizelyConfig] all feature keys = \(featureKeys)")
+
+        // enumerate all experiments, variations, and associated variables
+        
+        experimentKeys.forEach { expKey in
+            print("[OptimizelyConfig] experimentKey = \(expKey)")
+            
+            let variationsMap = optConfig.experimentsMap[expKey]!.variationsMap
+            let variationKeys = variationsMap.keys
+            
+            variationKeys.forEach { varKey in
+                print("[OptimizelyConfig]   - variationKey = \(varKey)")
+                
+                let variablesMap = variationsMap[varKey]!.variablesMap
+                let variableKeys = variablesMap.keys
+                
+                variableKeys.forEach { variableKey in
+                    let variable = variablesMap[variableKey]!
+                    
+                    print("[OptimizelyConfig]       -- variable: \(variableKey), \(variable)")
+                }
+            }
+        }
+        
+        // enumerate all features, experiments, variations, and assocated variables
+        
+        featureKeys.forEach { featKey in
+            print("[OptimizelyConfig] featureKey = \(featKey)")
+            
+            let experimentsMap = optConfig.featureFlagsMap[featKey]!.experimentsMap
+            let experimentKeys = experimentsMap.keys
+            
+            experimentKeys.forEach { expKey in
+                print("[OptimizelyConfig]   - experimentKey = \(expKey)")
+                
+                let variationsMap = experimentsMap[expKey]!.variationsMap
+                let variationKeys = variationsMap.keys
+                
+                variationKeys.forEach { varKey in
+                    print("[OptimizelyConfig]       -- variationKey = \(varKey)")
+                    
+                    let variablesMap = variationsMap[varKey]!.variablesMap
+                    let variableKeys = variablesMap.keys
+                    
+                    variableKeys.forEach { variableKey in
+                        let variable = variablesMap[variableKey]!
+                        
+                        print("[OptimizelyConfig]           --- variable: \(variableKey), \(variable)")
+                    }
+                }
+            }
+            
+            let variablesMap = optConfig.featureFlagsMap[featKey]!.variablesMap
+            variablesMap.forEach { map in
+                let variable = map.value
+                print("[OptimizelyConfig]   - featureVariable: (\(variable))")
+            }
+        }
+
     }
 
 }

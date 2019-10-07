@@ -47,7 +47,7 @@ class EventDispatcherTests: XCTestCase {
     }
 
     func testDefaultDispatcher() {
-        eventDispatcher = DefaultEventDispatcher(timerInterval: 1)
+        eventDispatcher = DefaultEventDispatcher(timerInterval: 10)
         let pEventD: OPTEventDispatcher = eventDispatcher!
 
         pEventD.flushEvents()
@@ -55,9 +55,7 @@ class EventDispatcherTests: XCTestCase {
         eventDispatcher?.dispatcher.sync {
         }
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
-            
-        }
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
         
         eventDispatcher?.dispatcher.sync {
         }

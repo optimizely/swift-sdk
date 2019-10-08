@@ -189,7 +189,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerGetFeatureVariableDoubleWithUserInRollout() {
         var exp = expectation(description: "x")
-
+        
         var variation: Variation = (self.optimizely.config?.allExperiments.first!.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2689280165", value: "50"))

@@ -156,7 +156,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         })
         
-        _ = optimizely.notificationCenter.addLogEventNotificationListener(logEventListener: { (url, event) in
+        _ = notificationCenter.addLogEventNotificationListener(logEventListener: { (url, event) in
             print("Received logEvent notification: \(url) \(event)")
         })
     }

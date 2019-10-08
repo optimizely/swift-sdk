@@ -24,9 +24,20 @@ public struct Variable: Codable, Equatable {
         case id
         case value
     }
-
+    
     // MARK: - OptimizelyConfig
     
     public var key: String = ""
     public var type: String = "string"
+    
+    init(id: String, value: String, key: String? = nil, type: String? = nil) {
+        self.id = id
+        self.value = value
+        if let key = key {
+            self.key = key
+        }
+        if let type = type {
+            self.type = type
+        }
+    }
 }

@@ -19,4 +19,5 @@ import Foundation
 extension Notification.Name {
     static let didReceiveOptimizelyProjectIdChange = Notification.Name("didReceiveOptimizelyProjectIdChange")
     static let didReceiveOptimizelyRevisionChange = Notification.Name("didReceiveOptimizelyRevisionChange")
+    static let willSendOptimizelyEvents = Notification.Name("willSendOptimizelyEvents")
 }

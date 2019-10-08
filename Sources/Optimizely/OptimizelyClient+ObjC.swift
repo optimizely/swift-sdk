@@ -410,6 +410,14 @@ extension OptimizelyClient {
                 return returnVal(num: num)
             }
             
+            func addLogEventNotificationListener(logEventListener: @escaping (String, [String: Any]) -> Void) -> NSNumber? {
+                let num = notifications.addLogEventNotificationListener { (url, event) in
+                    logEventListener(url, event)
+                }
+                
+                return returnVal(num: num)
+            }
+            
             func removeNotificationListener(notificationId: Int) {
                 notifications.removeNotificationListener(notificationId: notificationId)
             }
@@ -441,8 +449,10 @@ extension OptimizelyClient {
     
     let innerEventDispatcher: DefaultEventDispatcher
     
-    @objc public init(timerInterval: TimeInterval) {
-        innerEventDispatcher = DefaultEventDispatcher(timerInterval: timerInterval)
+    @objc public init(batchSize: Int = DefaultEventDispatcher.DefaultValues.batchSize,
+                      timerInterval: TimeInterval = DefaultEventDispatcher.DefaultValues.timeInterval,
+                      maxQueueSize: Int = DefaultEventDispatcher.DefaultValues.maxQueueSize) {
+        innerEventDispatcher = DefaultEventDispatcher(batchSize: batchSize, timerInterval: timerInterval, maxQueueSize: maxQueueSize)
     }
     
     public func dispatchEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?) {

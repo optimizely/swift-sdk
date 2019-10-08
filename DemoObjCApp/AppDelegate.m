@@ -55,9 +55,14 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 // MARK: - Initialization Examples
 
 -(void)initializeOptimizelySDKAsynchronous {
-    DefaultEventDispatcher *eventDispacher = [[DefaultEventDispatcher alloc] initWithTimerInterval:1];
+    DefaultEventDispatcher *eventDispacher = [[DefaultEventDispatcher alloc] initWithBatchSize:10 timerInterval:1 maxQueueSize:1000];
     
-    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey logger:nil eventDispatcher:eventDispacher userProfileService:nil periodicDownloadInterval:@(5) defaultLogLevel:OptimizelyLogLevelDebug];
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
+                                                        logger:nil
+                                               eventDispatcher:eventDispacher
+                                            userProfileService:nil
+                                      periodicDownloadInterval:@(5)
+                                               defaultLogLevel:OptimizelyLogLevelDebug];
     
     [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
         if (error == nil) {
@@ -124,6 +129,11 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                                                                   NSDictionary<NSString *,id> *attributes, NSDictionary<NSString *,id> *eventTags, NSDictionary<NSString *,id> *event) {
         NSLog(@"Received track notification: %@ %@ %@ %@ %@", eventKey, userId, attributes, eventTags, event);
         
+    }];
+    
+    notifId = [self.optimizely.notificationCenter addLogEventNotificationListenerWithLogEventListener:^(NSString *url,
+                                                                                                        NSDictionary<NSString *,id> *event) {
+        NSLog(@"Received logEvent notification: %@ %@", url, event);
     }];
     
     [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {

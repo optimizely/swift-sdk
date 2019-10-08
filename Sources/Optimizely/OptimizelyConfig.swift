@@ -116,12 +116,6 @@ extension OptimizelyConfig {
         return experiment
     }
     
-    /// Find a FeatureVariable for a given id
-    ///
-    /// - Parameters:
-    ///   - id: a given FeatureVariable id
-    ///   - features: all features for the current project
-    /// - Returns: a matching FeatureVariable
     func findFeatureVariable(id: String, features: [FeatureFlag]) -> FeatureVariable? {
         for feature in features {
             return feature.variables.filter { $0.id == id }.first

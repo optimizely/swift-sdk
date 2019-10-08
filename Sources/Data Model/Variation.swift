@@ -19,6 +19,11 @@ import Foundation
 public struct Variation: Codable, Equatable {
     public var id: String
     public var key: String
+    var featureEnabled: Bool?
+    var variables: [Variable]?
+    
+    // MARK: - OptimizelyConfig
+
     public var variablesMap: [String: Variable] {
         var map = [String: Variable]()
         variables?.forEach({
@@ -26,9 +31,6 @@ public struct Variation: Codable, Equatable {
         })
         return map
     }
-    
-    var featureEnabled: Bool?
-    var variables: [Variable]?
 }
 
 // MARK: - Utils

@@ -16,7 +16,7 @@
 
 import Foundation
 
-public struct Variable: Codable, Equatable {
+public struct Variable: Codable, Equatable, OPTVariable {
     public var id: String
     public var value: String
     

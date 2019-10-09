@@ -54,7 +54,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     var observerProjectId: NSObjectProtocol?
     var observerRevision: NSObjectProtocol?
     
-
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
                 dataStoreName: String = "OPTEventQueue",
@@ -67,7 +66,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
 
-        
         switch backingStore {
         case .file:
             self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
@@ -191,8 +189,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         // send notification BEFORE sending event to the server
         NotificationCenter.default.post(name: .willSendOptimizelyEvents, object: event)
 
-        let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
-            self.logger.d(response.debugDescription)
+        let task = session.uploadTask(with: request, from: event.body) { (_, _, error) in
+            //self.logger.d(response.debugDescription)
             
             if let error = error {
                 completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))

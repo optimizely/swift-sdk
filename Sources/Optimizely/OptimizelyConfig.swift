@@ -21,7 +21,7 @@ import Foundation
  ```
  public struct OptimizelyConfig {
     public let experimentsMap: [String: Experiment]
-    public let featuresMap: [String: FeatureFlag]
+    public let featureFlagsMap: [String: FeatureFlag]
  }
  
  public struct Experiment {
@@ -30,7 +30,7 @@ import Foundation
     let variationsMap: [String: Variation]
  }
  
- public struct Feature {
+ public struct FeatureFlag {
     let id: String
     let key: String
     let experimentsMap: [String: Experiment]
@@ -52,9 +52,10 @@ import Foundation
  ```
  */
 
-public struct OptimizelyConfig {
-    public var experimentsMap: [String: Experiment] = [:]
-    public var featureFlagsMap: [String: FeatureFlag] = [:]
+
+public struct OptimizelyConfig: OPTConfig {
+    public var experimentsMap: [String: OPTExperiment] = [:]
+    public var featureFlagsMap: [String: OPTFeatureFlag] = [:]
     
     init(projectConfig: ProjectConfig) {
         guard let project = projectConfig.project else {
@@ -123,4 +124,36 @@ extension OptimizelyConfig {
         return nil
     }
     
+}
+
+
+public protocol OPTConfig {
+    var experimentsMap: [String: OPTExperiment] { get }
+    var featureFlagsMap: [String: OPTFeatureFlag] { get }
+}
+
+public protocol OPTExperiment {
+    var id: String { get }
+    var key: String { get }
+    var variationsMap: [String: OPTVariation] { get }
+}
+
+public protocol OPTFeatureFlag {
+    var id: String { get }
+    var key: String { get }
+    var experimentsMap: [String: OPTExperiment] { get }
+    var variablesMap: [String: OPTVariable] { get }
+}
+
+public protocol OPTVariation {
+    var id: String { get }
+    var key: String { get }
+    var variablesMap: [String: OPTVariable] { get }
+}
+
+public protocol OPTVariable {
+    var id: String { get }
+    var key: String { get }
+    var type: String { get }
+    var value: String { get }
 }

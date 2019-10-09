@@ -105,15 +105,15 @@ class SamplesForAPI {
         
         let optConfig = try! optimizely.getOptimizelyConfig()
         
-        //let experiments = optConfig.experimentsMap.values
+        let experiments = optConfig.experimentsMap.values
         let experimentKeys = optConfig.experimentsMap.keys
         print("[OptimizelyConfig] all experiment keys = \(experimentKeys)")
 
-        //let features = optConfig.featureFlagsMap.values
+        let features = optConfig.featureFlagsMap.values
         let featureKeys = optConfig.featureFlagsMap.keys
         print("[OptimizelyConfig] all feature keys = \(featureKeys)")
 
-        // enumerate all experiments, variations, and associated variables
+        // enumerate all experiments (variations, and associated variables)
         
         experimentKeys.forEach { expKey in
             print("[OptimizelyConfig] experimentKey = \(expKey)")
@@ -135,11 +135,13 @@ class SamplesForAPI {
             }
         }
         
-        // enumerate all features, experiments, variations, and assocated variables
+        // enumerate all features (experiments, variations, and assocated variables)
         
         featureKeys.forEach { featKey in
             print("[OptimizelyConfig] featureKey = \(featKey)")
             
+            // enumerate feature experiments
+
             let experimentsMap = optConfig.featureFlagsMap[featKey]!.experimentsMap
             let experimentKeys = experimentsMap.keys
             
@@ -163,10 +165,15 @@ class SamplesForAPI {
                 }
             }
             
+            // enumerate all feature-variables
+
             let variablesMap = optConfig.featureFlagsMap[featKey]!.variablesMap
-            variablesMap.forEach { map in
-                let variable = map.value
-                print("[OptimizelyConfig]   - featureVariable: (\(variable))")
+            let variableKeys = variablesMap.keys
+            
+            variableKeys.forEach { variableKey in
+                let variable = variablesMap[variableKey]!
+                
+                print("[OptimizelyConfig]       -- variable: \(variableKey), \(variable)")
             }
         }
 

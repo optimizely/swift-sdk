@@ -16,7 +16,11 @@
 
 import Foundation
 
-public struct FeatureFlag: Codable, Equatable {
+public struct FeatureFlag: Codable, Equatable, OPTFeatureFlag {
+    public static func == (lhs: FeatureFlag, rhs: FeatureFlag) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     public var id: String
     public var key: String
     var experimentIds: [String]
@@ -33,18 +37,18 @@ public struct FeatureFlag: Codable, Equatable {
     
     // MARK: - OptimizelyConfig
 
-    var experiments: [Experiment] = []
+    var experiments: [OPTExperiment] = []
     
-    public var experimentsMap: [String: Experiment] {
-        var map = [String: Experiment]()
+    public var experimentsMap: [String: OPTExperiment] {
+        var map = [String: OPTExperiment]()
         experiments.forEach {
             map[$0.key] = $0
         }
         return map
     }
         
-    public var variablesMap: [String: Variable] {
-        var map = [String: Variable]()
+    public var variablesMap: [String: OPTVariable] {
+        var map = [String: OPTVariable]()
         variables.forEach { featureVariable in
             map[featureVariable.key] = Variable(id: featureVariable.id,
                                                 value: featureVariable.defaultValue ?? "",

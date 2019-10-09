@@ -16,7 +16,7 @@
 
 import Foundation
 
-public struct Variation: Codable, Equatable {
+public struct Variation: Codable, Equatable, OPTVariation {
     public var id: String
     public var key: String
     var featureEnabled: Bool?
@@ -24,7 +24,7 @@ public struct Variation: Codable, Equatable {
     
     // MARK: - OptimizelyConfig
 
-    public var variablesMap: [String: Variable] {
+    public var variablesMap: [String: OPTVariable] {
         var map = [String: Variable]()
         variables?.forEach({
             map[$0.key] = $0

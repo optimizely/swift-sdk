@@ -95,6 +95,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initializeOptimizelySDKWithCustomization() {
         // customization example (optional)
 
+        let eventDispatcher = DefaultEventDispatcher(batchSize: 10, timerInterval: 1, maxQueueSize: 1000)
+        
         let customLogger = CustomLogger()
         // 30 sec interval may be too frequent. This is for demo purpose.
         // This should be should be much larger (default = 10 mins).
@@ -102,6 +104,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,
+                                       eventDispatcher: eventDispatcher,
                                        periodicDownloadInterval: customDownloadIntervalInSecs,
                                        defaultLogLevel: logLevel)
     
@@ -110,9 +113,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // initialize SDK
         optimizely!.start { result in
             
-            // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
-            SamplesForAPI.run(optimizely: self.optimizely)
-            
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
@@ -120,6 +120,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Optimizely SDK initialized successfully!")
             }
             self.startWithRootViewController()
+            
+            // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
+            SamplesForAPI.run(optimizely: self.optimizely)
         }
     }
     

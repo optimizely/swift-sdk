@@ -39,14 +39,14 @@
 
 - (void)testGetOptimizelyConfig_ExperimentsMap {
     NSLog(@"------------------------------------------------------");
-    OptimizelyConfig *optimizelyConfig = [self.optimizely getOptimizelyConfigWithError:nil];
+    id<OptimizelyConfig> optimizelyConfig = [self.optimizely getOptimizelyConfigWithError:nil];
     
     NSLog(@"   Experiments: %@", optimizelyConfig.experimentsMap.allKeys);
     
     XCTAssertEqual(optimizelyConfig.experimentsMap.count, 5);
     
-    OptimizelyExperiment *experiment1 = optimizelyConfig.experimentsMap[@"exp_with_audience"];
-    OptimizelyExperiment *experiment2 = optimizelyConfig.experimentsMap[@"experiment_4000"];
+    id<OptimizelyExperiment> experiment1 = optimizelyConfig.experimentsMap[@"exp_with_audience"];
+    id<OptimizelyExperiment> experiment2 = optimizelyConfig.experimentsMap[@"experiment_4000"];
     
     XCTAssertEqual(experiment1.variationsMap.count, 2);
     XCTAssertEqual(experiment2.variationsMap.count, 2);
@@ -54,8 +54,8 @@
     NSLog(@"   Experiment1 > Variations: %@", experiment1.variationsMap.allKeys);
     NSLog(@"   Experiment2 > Variations: %@", experiment2.variationsMap.allKeys);
     
-    OptimizelyVariation *variation1 = experiment1.variationsMap[@"a"];
-    OptimizelyVariation *variation2 = experiment1.variationsMap[@"b"];
+    id<OptimizelyVariation> variation1 = experiment1.variationsMap[@"a"];
+    id<OptimizelyVariation> variation2 = experiment1.variationsMap[@"b"];
     
     XCTAssertEqual(variation1.variablesMap.count, 0);
     XCTAssertEqual(variation2.variablesMap.count, 0);
@@ -64,14 +64,14 @@
 
 - (void)testGetOptimizelyConfig_FeatureFlagsMap {
     NSLog(@"------------------------------------------------------");
-    OptimizelyConfig *optimizelyConfig = [self.optimizely getOptimizelyConfigWithError:nil];
+    id<OptimizelyConfig> optimizelyConfig = [self.optimizely getOptimizelyConfigWithError:nil];
 
     NSLog(@"   Features: %@", optimizelyConfig.featureFlagsMap.allKeys);
     
     XCTAssertEqual(optimizelyConfig.featureFlagsMap.count, 2);
     
-    OptimizelyFeatureFlag *feature1 = optimizelyConfig.featureFlagsMap[@"mutex_group_feature"];
-    OptimizelyFeatureFlag *feature2 = optimizelyConfig.featureFlagsMap[@"feature_exp_no_traffic"];
+    id<OptimizelyFeatureFlag> feature1 = optimizelyConfig.featureFlagsMap[@"mutex_group_feature"];
+    id<OptimizelyFeatureFlag> feature2 = optimizelyConfig.featureFlagsMap[@"feature_exp_no_traffic"];
     
     // FeatureFlag: experimentsMap
     
@@ -81,8 +81,8 @@
     NSLog(@"   Feature1 > Experiments: %@", feature1.experimentsMap.allKeys);
     NSLog(@"   Feature2 > Experiments: %@", feature2.experimentsMap.allKeys);
     
-    OptimizelyExperiment *experiment1 = feature1.experimentsMap[@"experiment_4000"];
-    OptimizelyExperiment *experiment2 = feature1.experimentsMap[@"experiment_8000"];
+    id<OptimizelyExperiment> experiment1 = feature1.experimentsMap[@"experiment_4000"];
+    id<OptimizelyExperiment> experiment2 = feature1.experimentsMap[@"experiment_8000"];
     
     XCTAssertEqual(experiment1.variationsMap.count, 2);
     XCTAssertEqual(experiment2.variationsMap.count, 1);
@@ -90,8 +90,8 @@
     NSLog(@"   Feature1 > Experiment1 > Variations: %@", experiment1.variationsMap.allKeys);
     NSLog(@"   Feature1 > Experiment2 > Variations: %@", experiment2.variationsMap.allKeys);
     
-    OptimizelyVariation *variation1 = experiment1.variationsMap[@"all_traffic_variation_exp_1"];
-    OptimizelyVariation *variation2 = experiment1.variationsMap[@"no_traffic_variation_exp_1"];
+    id<OptimizelyVariation> variation1 = experiment1.variationsMap[@"all_traffic_variation_exp_1"];
+    id<OptimizelyVariation> variation2 = experiment1.variationsMap[@"no_traffic_variation_exp_1"];
     
     XCTAssertEqual(variation1.variablesMap.count, 4);
     XCTAssertEqual(variation2.variablesMap.count, 0);
@@ -99,7 +99,7 @@
     NSLog(@"   Feature1 > Experiment1 > Variation1 > Variables: %@", variation1.variablesMap.allKeys);
     NSLog(@"   Feature1 > Experiment1 > Variation2 > Variables: %@", variation2.variablesMap.allKeys);
     
-    OptimizelyVariable *variable1 = variation1.variablesMap[@"s_foo"];
+    id<OptimizelyVariable> variable1 = variation1.variablesMap[@"s_foo"];
     XCTAssertEqualObjects(variable1.id, @"2687470097");
     XCTAssertEqualObjects(variable1.key, @"s_foo");
     XCTAssertEqualObjects(variable1.type, @"string");
@@ -112,7 +112,7 @@
     
     NSLog(@"   Feature1 > FeatureVariables: %@", feature1.variablesMap.allKeys);
     
-    OptimizelyVariable *featureVariable = feature1.variablesMap[@"i_42"];
+    id<OptimizelyVariable> featureVariable = feature1.variablesMap[@"i_42"];
     XCTAssertEqualObjects(featureVariable.id, @"2687470094");
     XCTAssertEqualObjects(featureVariable.key, @"i_42");
     XCTAssertEqualObjects(featureVariable.type, @"integer");

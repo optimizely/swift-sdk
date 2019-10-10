@@ -16,7 +16,7 @@
 
 import Foundation
 
-public struct Experiment: Codable, Equatable, OPTExperiment {
+struct Experiment: Codable, Equatable, OptimizelyExperiment {
     enum Status: String, Codable {
         case running = "Running"
         case launched = "Launched"
@@ -25,8 +25,8 @@ public struct Experiment: Codable, Equatable, OPTExperiment {
         case archived = "Archived"
     }
     
-    public var id: String
-    public var key: String
+    var id: String
+    var key: String
     var status: Status
     var layerId: String
     var variations: [Variation]
@@ -38,8 +38,8 @@ public struct Experiment: Codable, Equatable, OPTExperiment {
     
     // MARK: - OptimizelyConfig
     
-    public var variationsMap: [String: OPTVariation] {
-        var map = [String: OPTVariation]()
+    var variationsMap: [String: OptimizelyVariation] {
+        var map = [String: Variation]()
         variations.forEach {
             map[$0.key] = $0
         }

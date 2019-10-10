@@ -146,7 +146,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
         [self startWithRootViewController];
         
         // For sample codes for other APIs, see "Samples/SamplesForAPI.m"
-        [SamplesForAPI run:self.optimizely];
+        [SamplesForAPI checkOptimizelyConfig:self.optimizely];
     }];
 }
 

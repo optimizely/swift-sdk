@@ -122,13 +122,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.startWithRootViewController()
             
             // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
-            SamplesForAPI.run(optimizely: self.optimizely)
+            SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
         }
     }
     
     func addListeners() {
         // notification listeners
-
         let notificationCenter = optimizely.notificationCenter!
             
         _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in

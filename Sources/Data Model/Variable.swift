@@ -16,9 +16,9 @@
 
 import Foundation
 
-public struct Variable: Codable, Equatable, OPTVariable {
-    public var id: String
-    public var value: String
+struct Variable: Codable, Equatable, OptimizelyVariable {
+    var id: String
+    var value: String
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -27,8 +27,8 @@ public struct Variable: Codable, Equatable, OPTVariable {
     
     // MARK: - OptimizelyConfig
     
-    public var key: String = ""
-    public var type: String = "string"
+    var key: String = ""
+    var type: String = "string"
     
     init(id: String, value: String, key: String? = nil, type: String? = nil) {
         self.id = id

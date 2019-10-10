@@ -19,8 +19,8 @@ import Foundation
 import Optimizely
 
 class SamplesForAPI {
-
-    static func run(optimizely: OptimizelyClient) {
+    
+    static func checkAPIs(optimizely: OptimizelyClient) {
 
         let attributes: [String: Any] = [
             "device": "iPhone",
@@ -101,15 +101,18 @@ class SamplesForAPI {
             print(error)
         }
         
-        // MARK: - OptimizelyConfig
-        
+    }
+    
+    // MARK: - OptimizelyConfig
+    
+    static func checkOptimizelyConfig(optimizely: OptimizelyClient) {
         let optConfig = try! optimizely.getOptimizelyConfig()
         
-        let experiments = optConfig.experimentsMap.values
+        //let experiments = optConfig.experimentsMap.values
         let experimentKeys = optConfig.experimentsMap.keys
         print("[OptimizelyConfig] all experiment keys = \(experimentKeys)")
 
-        let features = optConfig.featureFlagsMap.values
+        //let features = optConfig.featureFlagsMap.values
         let featureKeys = optConfig.featureFlagsMap.keys
         print("[OptimizelyConfig] all feature keys = \(featureKeys)")
 
@@ -118,13 +121,17 @@ class SamplesForAPI {
         experimentKeys.forEach { expKey in
             print("[OptimizelyConfig] experimentKey = \(expKey)")
             
-            let variationsMap = optConfig.experimentsMap[expKey]!.variationsMap
+            let experiment = optConfig.experimentsMap[expKey]!
+            
+            let variationsMap = experiment.variationsMap
             let variationKeys = variationsMap.keys
             
             variationKeys.forEach { varKey in
                 print("[OptimizelyConfig]   - variationKey = \(varKey)")
                 
-                let variablesMap = variationsMap[varKey]!.variablesMap
+                let variation = variationsMap[varKey]!
+                
+                let variablesMap = variation.variablesMap
                 let variableKeys = variablesMap.keys
                 
                 variableKeys.forEach { variableKey in
@@ -142,7 +149,9 @@ class SamplesForAPI {
             
             // enumerate feature experiments
 
-            let experimentsMap = optConfig.featureFlagsMap[featKey]!.experimentsMap
+            let feature = optConfig.featureFlagsMap[featKey]!
+            
+            let experimentsMap = feature.experimentsMap
             let experimentKeys = experimentsMap.keys
             
             experimentKeys.forEach { expKey in
@@ -172,7 +181,7 @@ class SamplesForAPI {
             
             variableKeys.forEach { variableKey in
                 let variable = variablesMap[variableKey]!
-                
+
                 print("[OptimizelyConfig]       -- variable: \(variableKey), \(variable)")
             }
         }

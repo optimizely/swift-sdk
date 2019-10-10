@@ -16,74 +16,109 @@
 
 import Foundation
 
-/// Objective-C interface for OptimizelyConfig
-///
-/// * {Experiment, FeatureFlag, Variation, Variable} are changed to class types
-/// * Also all prepended by "Optimizely" to avoid name conflicts with possible usage of same-named objects in apps.
 
-//@objc(OptimizelyConfig)
-//@objcMembers public class ObjcOptimizelyConfig: NSObject {
-//    public var experimentsMap: [String: OptimizelyExperiment]
-//    public var featureFlagsMap: [String: OptimizelyFeatureFlag]
-//
-//    public init(_ optimizelyConfig: OptimizelyConfig) {
-//        self.experimentsMap = optimizelyConfig.experimentsMap.mapValues { return OptimizelyExperiment($0) }
-//        self.featureFlagsMap = optimizelyConfig.featureFlagsMap.mapValues { return OptimizelyFeatureFlag($0) }
-//    }
-//}
-//
-//@objcMembers public class OptimizelyExperiment: NSObject {
-//    public let id: String
-//    public let key: String
-//    public let variationsMap: [String: OptimizelyVariation]
-//    
-//    init(_ experiment: Experiment) {
-//        self.id = experiment.id
-//        self.key = experiment.key
-//        self.variationsMap = experiment.variationsMap.mapValues { return OptimizelyVariation($0) }
-//    }
-//}
-//
-//@objcMembers public class OptimizelyFeatureFlag: NSObject {
-//    public let id: String
-//    public let key: String
-//    public let experimentsMap: [String: OptimizelyExperiment]
-//    public let variablesMap: [String: OptimizelyVariable]
-//    
-//    init(_ featureFlag: FeatureFlag) {
-//        self.id = featureFlag.id
-//        self.key = featureFlag.key
-//        self.experimentsMap = featureFlag.experimentsMap.mapValues { return OptimizelyExperiment($0) }
-//        self.variablesMap = featureFlag.variablesMap.mapValues { return OptimizelyVariable($0) }
-//    }
-//}
-//
-//@objcMembers public class OptimizelyVariation: NSObject {
-//    public let id: String
-//    public let key: String
-//    public let variablesMap: [String: OptimizelyVariable]
-//    
-//    init(_ variation: Variation) {
-//        self.id = variation.id
-//        self.key = variation.key
-//        self.variablesMap = variation.variablesMap.mapValues { return OptimizelyVariable($0) }
-//    }
-//}
-//
-//@objcMembers public class OptimizelyVariable: NSObject {
-//    public let id: String
-//    public let key: String
-//    public let type: String
-//    public let value: String
-//    
-//    init(_ variable: Variable) {
-//        self.id = variable.id
-//        self.key = variable.key
-//        self.type = variable.type
-//        self.value = variable.value
-//    }
-//    
-//    override public var description: String {
-//        return "('id': \(id), 'key': \(key), 'type': \(type), 'value': \(value)')"
-//    }
-//}
+/// Objective-C interface for OptimizelyConfig
+
+@objc(OptimizelyConfig)
+public protocol ObjcOptimizelyConfig {
+    var experimentsMap: [String: ObjcOptimizelyExperiment] { get }
+    var featureFlagsMap: [String: ObjcOptimizelyFeatureFlag] { get }
+}
+
+@objc(OptimizelyExperiment)
+public protocol ObjcOptimizelyExperiment {
+    var id: String { get }
+    var key: String { get }
+    var variationsMap: [String: ObjcOptimizelyVariation] { get }
+}
+
+@objc(OptimizelyFeatureFlag)
+public protocol ObjcOptimizelyFeatureFlag {
+    var id: String { get }
+    var key: String { get }
+    var experimentsMap: [String: ObjcOptimizelyExperiment] { get }
+    var variablesMap: [String: ObjcOptimizelyVariable] { get }
+}
+
+@objc(OptimizelyVariation)
+public protocol ObjcOptimizelyVariation {
+    var id: String { get }
+    var key: String { get }
+    var variablesMap: [String: ObjcOptimizelyVariable] { get }
+}
+
+@objc(OptimizelyVariable)
+public protocol ObjcOptimizelyVariable {
+    var id: String { get }
+    var key: String { get }
+    var type: String { get }
+    var value: String { get }
+}
+
+// MARK: - Implementations for Objective-C support
+
+class ObjcOptimizelyConfigImp: NSObject, ObjcOptimizelyConfig {
+    public var experimentsMap: [String: ObjcOptimizelyExperiment]
+    public var featureFlagsMap: [String: ObjcOptimizelyFeatureFlag]
+
+    public init(_ optimizelyConfig: OptimizelyConfig) {
+        self.experimentsMap = optimizelyConfig.experimentsMap.mapValues { ObjcExperiment($0) }
+        self.featureFlagsMap = optimizelyConfig.featureFlagsMap.mapValues { ObjcFeatureFlag($0) }
+    }
+}
+
+class ObjcExperiment: NSObject, ObjcOptimizelyExperiment {
+    public let id: String
+    public let key: String
+    public let variationsMap: [String: ObjcOptimizelyVariation]
+    
+    init(_ experiment: OptimizelyExperiment) {
+        self.id = experiment.id
+        self.key = experiment.key
+        self.variationsMap = experiment.variationsMap.mapValues { ObjcVariation($0) }
+    }
+}
+
+class ObjcFeatureFlag: NSObject, ObjcOptimizelyFeatureFlag {
+    public let id: String
+    public let key: String
+    public let experimentsMap: [String: ObjcOptimizelyExperiment]
+    public let variablesMap: [String: ObjcOptimizelyVariable]
+    
+    init(_ featureFlag: OptimizelyFeatureFlag) {
+        self.id = featureFlag.id
+        self.key = featureFlag.key
+        self.experimentsMap = featureFlag.experimentsMap.mapValues { ObjcExperiment($0) }
+        self.variablesMap = featureFlag.variablesMap.mapValues { ObjcVariable($0) }
+    }
+}
+
+class ObjcVariation: NSObject, ObjcOptimizelyVariation {
+    public let id: String
+    public let key: String
+    public let variablesMap: [String: ObjcOptimizelyVariable]
+    
+    init(_ variation: OptimizelyVariation) {
+        self.id = variation.id
+        self.key = variation.key
+        self.variablesMap = variation.variablesMap.mapValues { ObjcVariable($0) }
+    }
+}
+
+class ObjcVariable: NSObject, ObjcOptimizelyVariable {
+    public let id: String
+    public let key: String
+    public let type: String
+    public let value: String
+    
+    init(_ variable: OptimizelyVariable) {
+        self.id = variable.id
+        self.key = variable.key
+        self.type = variable.type
+        self.value = variable.value
+    }
+    
+    override public var description: String {
+        return "('id': \(id), 'key': \(key), 'type': \(type), 'value': \(value)')"
+    }
+}

@@ -603,13 +603,7 @@ open class OptimizelyClient: NSObject {
         
         sendConversionEvent(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
     }
-    
-}
-
-// MARK: - OptimizelyConfig
-
-extension OptimizelyClient {
-    
+        
     /// Read a copy of project configuration data model.
     ///
     /// This call returns a snapshot of the current project configuration.
@@ -620,7 +614,7 @@ extension OptimizelyClient {
     public func getOptimizelyConfig() throws -> OptimizelyConfig {
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
 
-        return OptimizelyConfig(projectConfig: config)
+        return OptimizelyConfigImp(projectConfig: config)
     }
 }
 

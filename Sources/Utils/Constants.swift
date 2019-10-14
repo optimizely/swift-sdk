@@ -49,6 +49,4 @@ struct Constants {
         static let experiment = "experimentKey"
         static let variation = "variationKey"
     }
-    
-
 }

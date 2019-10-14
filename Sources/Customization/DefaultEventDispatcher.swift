@@ -54,7 +54,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     var observerProjectId: NSObjectProtocol?
     var observerRevision: NSObjectProtocol?
     
-
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
                 dataStoreName: String = "OPTEventQueue",
@@ -67,7 +66,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
 
-        
         switch backingStore {
         case .file:
             self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
@@ -256,12 +254,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
 extension DefaultEventDispatcher {
     
     func addProjectChangeNotificationObservers() {
-        observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (notif) in
+        observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (_) in
             self?.logger.d("Event flush triggered by datafile projectId change")
             self?.flushEvents()
         }
         
-        observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (notif) in
+        observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (_) in
             self?.logger.d("Event flush triggered by datafile revision change")
             self?.flushEvents()
         }

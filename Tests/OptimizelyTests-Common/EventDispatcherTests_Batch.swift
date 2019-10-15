@@ -872,6 +872,62 @@ extension EventDispatcherTests_Batch {
         }
     }
     
+    // [Event Validation]
+    // - this is mainly for dumping batched events through logEvent notification which can be used for event-validation offline
+    // - no need to be included in test suites
+    func norun_testLogEventNotification_EventValidator() {
+        eventDispatcher.batchSize = 1000        // big, won't flush
+        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+
+        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+                                          eventDispatcher: eventDispatcher,
+                                          defaultLogLevel: .debug)
+        
+        var notifUrl: String?
+        
+        _ = optimizely.notificationCenter!.addLogEventNotificationListener { (url, event) in
+            notifUrl = url
+            if let json = try? JSONSerialization.data(withJSONObject: event) {
+                let jsonStr = String(bytes: json, encoding: .utf8)!
+                print("[Batched Events] ---------------------------------------------")
+                print("\(jsonStr)")
+                print("--------------------------------------------------------------")
+            }
+        }
+        
+        let datafile = OTUtils.loadJSONDatafile("api_datafile")!
+        try! optimizely.start(datafile: datafile)
+        
+        let experimentKey = "exp_with_audience"
+        let userA = "11111"
+        let userB = "22222"
+        let userC = "33333"
+        let eventKey = "event1"
+        let attributes: [String: Any?] = [
+            "testvar": 32
+        ]
+        let eventTags: [String: Any] = ["browser": "chrome",
+                                        "revenue": 123,
+                                        "value": 32.5]
+
+        _ = try! optimizely.activate(experimentKey: experimentKey, userId: userA)
+        _ = try! optimizely.activate(experimentKey: experimentKey, userId: userB, attributes: attributes)
+        _ = try! optimizely.activate(experimentKey: experimentKey, userId: userC)
+        try! optimizely.track(eventKey: eventKey, userId: userC, eventTags: eventTags)
+        try! optimizely.track(eventKey: eventKey, userId: userA)
+        try! optimizely.track(eventKey: eventKey, userId: userA, eventTags: eventTags)
+        try! optimizely.track(eventKey: eventKey, userId: userB)
+        try! optimizely.track(eventKey: eventKey, userId: userB, eventTags: eventTags)
+        try! optimizely.track(eventKey: eventKey, userId: userA, eventTags: eventTags)
+        try! optimizely.track(eventKey: eventKey, userId: userC, eventTags: eventTags)
+
+        sleep(1)
+        eventDispatcher.flushEvents()
+        eventDispatcher.dispatcher.sync {}
+        
+        XCTAssertEqual(notifUrl, EventForDispatch.eventEndpoint)
+    }
+    
 }
 
 // MARK: - iOS9 Devices

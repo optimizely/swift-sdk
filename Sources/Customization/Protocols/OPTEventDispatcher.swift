@@ -32,3 +32,9 @@ public protocol OPTEventDispatcher {
     /// Attempts to flush the event queue if there are any events to process.
     func flushEvents()
 }
+
+// MARK: - Tests
+
+extension OPTEventDispatcher {
+    func close() {}
+}

@@ -50,5 +50,4 @@ struct Constants {
         static let variation = "variationKey"
     }
     
-
 }

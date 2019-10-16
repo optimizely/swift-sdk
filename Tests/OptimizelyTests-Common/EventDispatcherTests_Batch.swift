@@ -914,6 +914,74 @@ extension EventDispatcherTests_Batch {
     
 }
 
+// MARK: - OptimizleyClient: Close()
+
+extension EventDispatcherTests_Batch {
+    
+    func testCloseForOptimizleyClinet() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+        
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        
+        eventDispatcher.batchSize = 1000        // big, won't flush
+        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+        
+        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+                                          eventDispatcher: eventDispatcher,
+                                          defaultLogLevel: .debug)
+        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
+        
+        // (1) should have no flush
+        
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventDispatcher.exp?.isInverted = true
+        
+        try! optimizely.start(datafile: datafile)
+
+        dispatchMultipleEvents([(kUrlA, batchEventA),
+                                (kUrlA, batchEventA),
+                                (kUrlA, batchEventA)])
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        
+        // (2) should flush/batch all on close()
+        
+        optimizely.close()
+        
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
+        var batch = eventDispatcher.sendRequestedEvents[0]
+        var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertEqual(batchedEvents.visitors.count, 3)
+        eventDispatcher.sendRequestedEvents.removeAll()
+
+        // (3) should have no flush
+        
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventDispatcher.exp?.isInverted = true
+        
+        try! optimizely.start(datafile: datafile)
+        
+        dispatchMultipleEvents([(kUrlA, batchEventB),
+                                (kUrlA, batchEventA)])
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        
+        // (4) should flush/batch all on close()
+        
+        optimizely.close()
+        
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
+        batch = eventDispatcher.sendRequestedEvents[0]
+        batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertEqual(batchedEvents.visitors.count, 2)
+
+    }
+    
+}
+
 // MARK: - Random testing
 
 extension EventDispatcherTests_Batch {

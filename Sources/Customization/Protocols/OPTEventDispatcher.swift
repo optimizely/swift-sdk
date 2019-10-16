@@ -31,10 +31,12 @@ public protocol OPTEventDispatcher {
     
     /// Attempts to flush the event queue if there are any events to process.
     func flushEvents()
+    
+    /// flush events in queue synchrnonous (optional for testing support)
+    func close()
 }
 
-// MARK: - Tests
-
 extension OPTEventDispatcher {
+    // override this for testing support only
     func close() {}
 }

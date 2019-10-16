@@ -276,7 +276,7 @@ extension DefaultEventDispatcher {
     
     // MARK: - Tests
 
-    func close() {
+    open func close() {
         self.flushEvents()
         self.dispatcher.sync {}
     }

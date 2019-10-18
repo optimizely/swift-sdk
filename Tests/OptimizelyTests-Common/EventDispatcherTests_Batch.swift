@@ -872,7 +872,7 @@ extension EventDispatcherTests_Batch {
     func testLogEventNotification_EventValidator() {
         
         // change this number to create event sets with different batch size, but the same number of events to be compared
-        eventDispatcher.batchSize = 10          // {1, 2, 3, 10}
+        eventDispatcher.batchSize = 3          // {1, 2, 3, 10}
         
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
 
@@ -916,8 +916,7 @@ extension EventDispatcherTests_Batch {
         try! optimizely.track(eventKey: eventKey, userId: userA, eventTags: eventTags)
         try! optimizely.track(eventKey: eventKey, userId: userC, eventTags: eventTags)
 
-        sleep(1)
-        eventDispatcher.dispatcher.sync {}
+        optimizely.close()
         
         // merge collected log events in a single batched format to run with Event Validator
         

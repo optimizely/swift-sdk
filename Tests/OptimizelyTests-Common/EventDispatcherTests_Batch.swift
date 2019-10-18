@@ -872,11 +872,14 @@ extension EventDispatcherTests_Batch {
         }
     }
     
-    // [Event Validation]
-    // - this is mainly for dumping batched events through logEvent notification which can be used for event-validation offline
-    // - no need to be included in test suites
-    func norun_testLogEventNotification_EventValidator() {
-        eventDispatcher.batchSize = 1000        // big, won't flush
+    // MARK: - Event Validation
+    
+    // this test can be used for dumping batched events through logEvent notification which can be used for event-validation offline
+    func testLogEventNotification_EventValidator() {
+        
+        // change this number to create event sets with different batch size, but the same number of events to be compared
+        eventDispatcher.batchSize = 10          // {1, 2, 3, 10}
+        
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
 
         let optimizely = OptimizelyClient(sdkKey: "SDKKey",
@@ -884,15 +887,11 @@ extension EventDispatcherTests_Batch {
                                           defaultLogLevel: .debug)
         
         var notifUrl: String?
+        var collections = [[String: Any]]()
         
         _ = optimizely.notificationCenter!.addLogEventNotificationListener { (url, event) in
             notifUrl = url
-            if let json = try? JSONSerialization.data(withJSONObject: event) {
-                let jsonStr = String(bytes: json, encoding: .utf8)!
-                print("[Batched Events] ---------------------------------------------")
-                print("\(jsonStr)")
-                print("--------------------------------------------------------------")
-            }
+            collections.append(event)
         }
         
         let datafile = OTUtils.loadJSONDatafile("api_datafile")!
@@ -910,6 +909,8 @@ extension EventDispatcherTests_Batch {
                                         "revenue": 123,
                                         "value": 32.5]
 
+        // 10 events total
+        
         _ = try! optimizely.activate(experimentKey: experimentKey, userId: userA)
         _ = try! optimizely.activate(experimentKey: experimentKey, userId: userB, attributes: attributes)
         _ = try! optimizely.activate(experimentKey: experimentKey, userId: userC)
@@ -922,10 +923,31 @@ extension EventDispatcherTests_Batch {
         try! optimizely.track(eventKey: eventKey, userId: userC, eventTags: eventTags)
 
         sleep(1)
-        eventDispatcher.flushEvents()
         eventDispatcher.dispatcher.sync {}
         
+        // merge collected log events in a single batched format to run with Event Validator
+        
+        var merged = [String: Any]()
+        var visitors = [[String: Any]]()
+        
+        collections.enumerated().forEach { (idx, event) in
+            if idx == 0 {
+                event.forEach { merged[$0.key] = $0.value }
+            }
+
+            visitors += event["visitors"] as! [[String: Any]]
+        }
+        merged["visistors"] = visitors
+        
+        print("[Batched Events] collections ---------------------------------------------")
+        if let json = try? JSONSerialization.data(withJSONObject: merged) {
+            let jsonStr = String(bytes: json, encoding: .utf8)!
+            print("\(jsonStr)")
+        }
+        print("--------------------------------------------------------------")
+        
         XCTAssertEqual(notifUrl, EventForDispatch.eventEndpoint)
+        XCTAssertEqual(visitors.count, 10)
     }
     
 }

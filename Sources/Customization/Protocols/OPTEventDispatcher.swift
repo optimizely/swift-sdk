@@ -36,7 +36,7 @@ public protocol OPTEventDispatcher {
     func close()
 }
 
-extension OPTEventDispatcher {
+public extension OPTEventDispatcher {
     // override this for testing support only
     func close() {}
 }

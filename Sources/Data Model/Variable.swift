@@ -40,4 +40,11 @@ struct Variable: Codable, Equatable, OptimizelyVariable {
             self.type = type
         }
     }
+    
+    init(featureVariable: FeatureVariable) {
+        self.id = featureVariable.id
+        self.key = featureVariable.key
+        self.type = featureVariable.type
+        self.value = featureVariable.defaultValue ?? ""
+    }
 }

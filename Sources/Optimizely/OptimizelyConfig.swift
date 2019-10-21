@@ -97,20 +97,28 @@ extension OptimizelyConfigImp {
     }
     
     func updateVariableData(experiment: Experiment, features: [FeatureFlag]) -> Experiment {
+        guard let feature = features.filter({ $0.experimentIds.contains(experiment.id) }).first else {
+            return experiment
+        }
+
         let variations: [Variation] = experiment.variations.map {
             var variation = $0
             
             // Copy {key, type} from FeatureVariable to variation variable data
-
-            variation.variables = variation.variables?.map {
-                var variable = $0
-                if let featureVariable = findFeatureVariable(id: variable.id, features: features) {
-                    variable.key = featureVariable.key
-                    variable.type = featureVariable.type
+            
+            let variables: [Variable] = feature.variables.map { featVariable in
+                // by default, returns a copy of FeatureVariable
+                var updated = Variable(featureVariable: featVariable)
+                
+                // updated with custom value for each variation
+                if let variable = variation.variables?.filter({ $0.id == featVariable.id }).first {
+                    updated.value = variable.value
                 }
-                return variable
+                
+                return updated
             }
             
+            variation.variables = variables
             return variation
         }
         

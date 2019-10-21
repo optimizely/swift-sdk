@@ -182,7 +182,7 @@ class SamplesForAPI {
             variableKeys.forEach { variableKey in
                 let variable = variablesMap[variableKey]!
 
-                print("[OptimizelyConfig]       -- variable: \(variableKey), \(variable)")
+                print("[OptimizelyConfig]   - (feature)variable: \(variableKey), \(variable)")
             }
         }
 

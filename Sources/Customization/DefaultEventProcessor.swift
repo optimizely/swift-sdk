@@ -157,6 +157,9 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
                     break
                 }
                 
+                // send notification BEFORE sending event to the server
+                NotificationCenter.default.post(name: .willSendOptimizelyEvents, object: batchEvent)
+                
                 // make the send event synchronous. enter our notify
                 self.notify.enter()
                 self.eventHandler.dispatchEvent(event: batchEvent) { (result) -> Void in

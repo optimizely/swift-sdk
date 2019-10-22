@@ -44,8 +44,8 @@ open class OptimizelyClient: NSObject {
     
     lazy var logger = OPTLoggerFactory.getLogger()
     
-    var eventDispatcher: OPTEventDispatcher? {
-        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
+    var eventProcessor: OPTEventProcessor? {
+        return HandlerRegistryService.shared.injectEventProcessor(sdkKey: self.sdkKey)
     }
     
     // MARK: - Default Services
@@ -75,7 +75,8 @@ open class OptimizelyClient: NSObject {
     ///   - defaultLogLevel: default log level (optional. default = .info)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
-                eventDispatcher: OPTEventDispatcher? = nil,
+                eventProcessor: OPTEventProcessor? = nil,
+                eventHandler: OPTEventHandler? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil) {
         
@@ -87,9 +88,12 @@ open class OptimizelyClient: NSObject {
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
+        let eventHandler = eventHandler ?? DefaultEventHandler()
+        let eventProcessor = eventProcessor ?? DefaultEventProcessor(eventHandler: eventHandler)
+
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
-                              eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
+                              eventProcessor: eventProcessor,
                               datafileHandler: DefaultDatafileHandler(),
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
@@ -681,7 +685,7 @@ extension OptimizelyClient {
         // The event is queued in the dispatcher, batched, and sent out later.
         
         // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
-        self.eventDispatcher?.dispatchEvent(event: event, completionHandler: completionHandler)
+        self.eventProcessor?.processEvent(event: event, completionHandler: completionHandler)
     }
     
 }
@@ -825,7 +829,7 @@ extension OptimizelyClient {
     public func close() {
         datafileHandler.stopUpdates(sdkKey: sdkKey)
         eventLock.sync {}
-        eventDispatcher?.close()
+        eventProcessor?.close()
     }
     
 }

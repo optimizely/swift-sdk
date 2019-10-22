@@ -48,6 +48,10 @@ open class OptimizelyClient: NSObject {
         return HandlerRegistryService.shared.injectEventProcessor(sdkKey: self.sdkKey)
     }
     
+    var eventDispatcher: OPTEventDispatcher? {
+        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
+    }
+    
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService {
@@ -94,6 +98,31 @@ open class OptimizelyClient: NSObject {
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventProcessor: eventProcessor,
+                              datafileHandler: DefaultDatafileHandler(),
+                              decisionService: DefaultDecisionService(userProfileService: userProfileService),
+                              notificationCenter: DefaultNotificationCenter())
+        
+        logger.d("SDK Version: \(version)")
+    }
+    
+    @available(*, deprecated, message: "Use init with EventProcessor + EventHandler instead")
+    public init(sdkKey: String,
+                logger: OPTLogger? = nil,
+                eventDispatcher: OPTEventDispatcher?,   // only when custom eventDispather is provided
+                userProfileService: OPTUserProfileService? = nil,
+                defaultLogLevel: OptimizelyLogLevel? = nil) {
+        
+        self.sdkKey = sdkKey
+        
+        super.init()
+        
+        let userProfileService = userProfileService ?? DefaultUserProfileService()
+        let logger = logger ?? DefaultLogger()
+        type(of: logger).logLevel = defaultLogLevel ?? .info
+        
+        self.registerServices(sdkKey: sdkKey,
+                              logger: logger,
+                              eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               datafileHandler: DefaultDatafileHandler(),
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
@@ -682,10 +711,17 @@ extension OptimizelyClient {
     }
     
     func sendEventToDispatcher(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        // The event is queued in the dispatcher, batched, and sent out later.
         
+        // deprecated
+        if let eventDispatcher = self.eventDispatcher {
+            eventDispatcher.dispatchEvent(event: event, completionHandler: completionHandler)
+            return
+        }
+            
+        // The event is queued in the dispatcher, batched, and sent out later.
+
         // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
-        self.eventProcessor?.processEvent(event: event, completionHandler: completionHandler)
+        eventProcessor?.processEvent(event: event, completionHandler: completionHandler)
     }
     
 }

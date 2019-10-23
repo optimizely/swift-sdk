@@ -93,7 +93,7 @@ open class OptimizelyClient: NSObject {
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
         let eventHandler = eventHandler ?? DefaultEventHandler()
-        let eventProcessor = eventProcessor ?? DefaultEventProcessor(eventHandler: eventHandler)
+        let eventProcessor = eventProcessor ?? BatchEventProcessor(eventHandler: eventHandler)
 
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,

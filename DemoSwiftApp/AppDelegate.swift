@@ -100,7 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // This should be should be much larger (default = 10 mins).
         let customDownloadIntervalInSecs = 30
         
-        let eventProcessor = DefaultEventProcessor(batchSize: 1)
+        let eventProcessor = BatchEventProcessor(batchSize: 1)
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,

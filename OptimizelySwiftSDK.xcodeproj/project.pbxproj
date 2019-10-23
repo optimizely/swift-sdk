@@ -404,18 +404,18 @@
 		6E7516BB22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166022C520D400B2B157 /* DefaultUserProfileService.swift */; };
 		6E7516BC22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166022C520D400B2B157 /* DefaultUserProfileService.swift */; };
 		6E7516BD22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166022C520D400B2B157 /* DefaultUserProfileService.swift */; };
-		6E7516BE22C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516BF22C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C022C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C122C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C222C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C322C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C422C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C522C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C622C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C722C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C822C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
-		6E7516C922C520D400B2B157 /* DefaultEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */; };
+		6E7516BE22C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516BF22C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C022C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C122C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C222C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C322C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C422C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C522C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C622C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C722C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C822C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
+		6E7516C922C520D400B2B157 /* BatchEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* BatchEventProcessor.swift */; };
 		6E7516CA22C520D400B2B157 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166322C520D400B2B157 /* OPTLogger.swift */; };
 		6E7516CB22C520D400B2B157 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166322C520D400B2B157 /* OPTLogger.swift */; };
 		6E7516CC22C520D400B2B157 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166322C520D400B2B157 /* OPTLogger.swift */; };
@@ -1301,7 +1301,7 @@
 		6E636B9B2236C96700AF3CEF /* OptimizelyTests-Legacy-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Legacy-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E75165F22C520D400B2B157 /* DefaultLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
 		6E75166022C520D400B2B157 /* DefaultUserProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultUserProfileService.swift; sourceTree = "<group>"; };
-		6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultEventProcessor.swift; sourceTree = "<group>"; };
+		6E75166122C520D400B2B157 /* BatchEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatchEventProcessor.swift; sourceTree = "<group>"; };
 		6E75166322C520D400B2B157 /* OPTLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OPTLogger.swift; sourceTree = "<group>"; };
 		6E75166422C520D400B2B157 /* OPTUserProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OPTUserProfileService.swift; sourceTree = "<group>"; };
 		6E75166522C520D400B2B157 /* OPTEventDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OPTEventDispatcher.swift; sourceTree = "<group>"; };
@@ -1609,7 +1609,7 @@
 			children = (
 				6E75165F22C520D400B2B157 /* DefaultLogger.swift */,
 				6E75166022C520D400B2B157 /* DefaultUserProfileService.swift */,
-				6E75166122C520D400B2B157 /* DefaultEventProcessor.swift */,
+				6E75166122C520D400B2B157 /* BatchEventProcessor.swift */,
 				6E57605D235E711600F61DEE /* DefaultEventHandler.swift */,
 				6E57607A235FC04D00F61DEE /* DefaultEventDispatcher.swift */,
 				6E75166222C520D400B2B157 /* Protocols */,
@@ -2699,7 +2699,7 @@
 				6E7517ED22C520D400B2B157 /* DataStoreMemory.swift in Sources */,
 				6E576052235E6E3400F61DEE /* OPTEventHandler.swift in Sources */,
 				6E75172B22C520D400B2B157 /* Constants.swift in Sources */,
-				6E7516BF22C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516BF22C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E7517E122C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E75178B22C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
 				6E75177F22C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
@@ -2743,7 +2743,7 @@
 				6E75184822C520D400B2B157 /* Event.swift in Sources */,
 				6E75170E22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E75177A22C520D400B2B157 /* SDKVersion.swift in Sources */,
-				6E7516C622C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C622C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75189C22C520D400B2B157 /* Experiment.swift in Sources */,
 				6E75176222C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E75180C22C520D400B2B157 /* DataStoreFile.swift in Sources */,
@@ -2819,7 +2819,7 @@
 				6E7518C822C520D400B2B157 /* Audience.swift in Sources */,
 				6E75174622C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
 				6E75181422C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
-				6E7516C222C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C222C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75188022C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E9B11DD22C548A200C22D81 /* OptimizelyClientTests_Valid.swift in Sources */,
 				6E7518D422C520D400B2B157 /* AttributeValue.swift in Sources */,
@@ -2901,7 +2901,7 @@
 				6E75170D22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E576058235E6E3400F61DEE /* OPTEventHandler.swift in Sources */,
 				6E75177922C520D400B2B157 /* SDKVersion.swift in Sources */,
-				6E7516C522C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C522C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75189B22C520D400B2B157 /* Experiment.swift in Sources */,
 				6E75176122C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E75180B22C520D400B2B157 /* DataStoreFile.swift in Sources */,
@@ -2985,7 +2985,7 @@
 				6E7516AF22C520D400B2B157 /* DefaultLogger.swift in Sources */,
 				6E75194522C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E75185522C520D400B2B157 /* ProjectConfig.swift in Sources */,
-				6E7516C722C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C722C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E9B11B522C5489600C22D81 /* MockUrlSession.swift in Sources */,
 				6E7517C522C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E75190922C520D500B2B157 /* Attribute.swift in Sources */,
@@ -3077,7 +3077,7 @@
 				6E9B119522C5488300C22D81 /* FeatureFlagTests.swift in Sources */,
 				6E75190A22C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75171022C520D400B2B157 /* OptimizelyClient.swift in Sources */,
-				6E7516C822C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C822C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75194622C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E75185622C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E75180222C520D400B2B157 /* DataStoreUserDefaults.swift in Sources */,
@@ -3167,7 +3167,7 @@
 				6E7518A322C520D400B2B157 /* FeatureFlag.swift in Sources */,
 				6E9B115222C5486E00C22D81 /* BucketTests_ExpToVariation.swift in Sources */,
 				6E75189722C520D400B2B157 /* Experiment.swift in Sources */,
-				6E7516C122C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C122C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75178122C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E7517CB22C520D400B2B157 /* DefaultBucketer.swift in Sources */,
 				6E9B115022C5486E00C22D81 /* BucketTests_Base.swift in Sources */,
@@ -3270,7 +3270,7 @@
 				6E9B117F22C5488100C22D81 /* FeatureFlagTests.swift in Sources */,
 				6E75190522C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75170B22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
-				6E7516C322C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C322C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75194122C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E75185122C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E7517FD22C520D400B2B157 /* DataStoreUserDefaults.swift in Sources */,
@@ -3348,7 +3348,7 @@
 			files = (
 				6E7516AC22C520D400B2B157 /* DefaultLogger.swift in Sources */,
 				6E75176C22C520D400B2B157 /* Utils.swift in Sources */,
-				6E7516C422C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C422C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75173022C520D400B2B157 /* Constants.swift in Sources */,
 				6E75181622C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E75188E22C520D400B2B157 /* Project.swift in Sources */,
@@ -3421,7 +3421,7 @@
 			files = (
 				6E7516B122C520D400B2B157 /* DefaultLogger.swift in Sources */,
 				6E75177122C520D400B2B157 /* Utils.swift in Sources */,
-				6E7516C922C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C922C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75173522C520D400B2B157 /* Constants.swift in Sources */,
 				6E75181B22C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E75189322C520D400B2B157 /* Project.swift in Sources */,
@@ -3508,7 +3508,7 @@
 				6E57605E235E711600F61DEE /* DefaultEventHandler.swift in Sources */,
 				6E75176622C520D400B2B157 /* Utils.swift in Sources */,
 				6E75177E22C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
-				6E7516BE22C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516BE22C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E7518F422C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E75190C22C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
 				6E75180422C520D400B2B157 /* DataStoreFile.swift in Sources */,
@@ -3571,7 +3571,7 @@
 				6E75184222C520D400B2B157 /* Event.swift in Sources */,
 				6E75170822C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E75177422C520D400B2B157 /* SDKVersion.swift in Sources */,
-				6E7516C022C520D400B2B157 /* DefaultEventProcessor.swift in Sources */,
+				6E7516C022C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75189622C520D400B2B157 /* Experiment.swift in Sources */,
 				6E75175C22C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E75180622C520D400B2B157 /* DataStoreFile.swift in Sources */,

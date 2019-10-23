@@ -103,7 +103,7 @@ extension EventProcessorTests_Batch {
         let expTimerInterval = 35.0
         let expMaxQueueSize = 123
         
-        let ep = DefaultEventProcessor(batchSize: expBatchSize, timerInterval: expTimerInterval, maxQueueSize: expMaxQueueSize)
+        let ep = BatchEventProcessor(batchSize: expBatchSize, timerInterval: expTimerInterval, maxQueueSize: expMaxQueueSize)
         
         XCTAssertEqual(ep.batchSize, expBatchSize)
         XCTAssertEqual(ep.timerInterval, expTimerInterval)
@@ -114,7 +114,7 @@ extension EventProcessorTests_Batch {
         
         // batch allowed by default
         
-        var ep = DefaultEventProcessor()
+        var ep = BatchEventProcessor()
 
         let defaultBatchSize = ep.batchSize
         let defaultTimeInterval = ep.timerInterval
@@ -128,7 +128,7 @@ extension EventProcessorTests_Batch {
         // (timerInterval = 0 is a valid value, meaning no batch)
         // invalid timeInterval tested in "testEventDispatchedOnTimer_ZeroInterval" below
 
-        ep = DefaultEventProcessor(batchSize: 0, timerInterval: -1, maxQueueSize: 0)
+        ep = BatchEventProcessor(batchSize: 0, timerInterval: -1, maxQueueSize: 0)
         XCTAssertEqual(ep.batchSize, defaultBatchSize)
         XCTAssertEqual(ep.timerInterval, defaultTimeInterval)
         XCTAssertEqual(ep.maxQueueSize, defaultMaxQueueSize)
@@ -386,7 +386,7 @@ extension EventProcessorTests_Batch {
 
         eventProcessor.close()
 
-        let maxFailureCount = 3 + 1   // DefaultEventProcessor.maxFailureCount + 1
+        let maxFailureCount = 3 + 1   // BatchEventProcessor.maxFailureCount + 1
         
         XCTAssertEqual(eventHandler.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
         
@@ -1121,7 +1121,7 @@ class TestEventHandler: DefaultEventHandler {
     
 }
 
-class TestEventProcessor: DefaultEventProcessor {
+class TestEventProcessor: BatchEventProcessor {
     let eventFileName: String
     
     init(eventHandler: OPTEventHandler, eventFileName: String, removeDatafileObserver: Bool = true) {

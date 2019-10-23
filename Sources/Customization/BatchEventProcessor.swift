@@ -20,9 +20,9 @@ public enum DataStoreType {
     case file, memory, userDefaults
 }
 
-open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
+open class BatchEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
     
-    static let sharedInstance = DefaultEventProcessor()
+    static let sharedInstance = BatchEventProcessor()
     
     // timer-interval for batching (0 = no batching, negative = use default)
     var timerInterval: TimeInterval
@@ -238,7 +238,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
 
 // MARK: - Notification Observers
 
-extension DefaultEventProcessor {
+extension BatchEventProcessor {
     
     func addProjectChangeNotificationObservers() {
         observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (_) in

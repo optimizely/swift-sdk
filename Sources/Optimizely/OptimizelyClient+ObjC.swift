@@ -547,13 +547,13 @@ extension OptimizelyClient {
 }
 
 @available(swift, obsoleted: 1.0)
-@objc(DefaultEventProcessor) public class ObjEventProcessor: NSObject, _ObjcOPTEventProcessor {
-    let innerEventProcessor: DefaultEventProcessor
+@objc(BatchEventProcessor) public class ObjEventProcessor: NSObject, _ObjcOPTEventProcessor {
+    let innerEventProcessor: BatchEventProcessor
     
-    @objc public init(batchSize: Int = DefaultEventProcessor.DefaultValues.batchSize,
-                      timerInterval: TimeInterval = DefaultEventProcessor.DefaultValues.timeInterval,
-                      maxQueueSize: Int = DefaultEventProcessor.DefaultValues.maxQueueSize) {
-        innerEventProcessor = DefaultEventProcessor(batchSize: batchSize, timerInterval: timerInterval, maxQueueSize: maxQueueSize)
+    @objc public init(batchSize: Int = BatchEventProcessor.DefaultValues.batchSize,
+                      timerInterval: TimeInterval = BatchEventProcessor.DefaultValues.timeInterval,
+                      maxQueueSize: Int = BatchEventProcessor.DefaultValues.maxQueueSize) {
+        innerEventProcessor = BatchEventProcessor(batchSize: batchSize, timerInterval: timerInterval, maxQueueSize: maxQueueSize)
     }
     
     public func process(event: ObjcBatchEvent, completionHandler: ((Data?, NSError?) -> Void)?) {

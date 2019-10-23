@@ -865,6 +865,13 @@ extension OptimizelyClient {
     public func close() {
         datafileHandler.stopUpdates(sdkKey: sdkKey)
         eventLock.sync {}
+        
+        // deprecated
+        if let eventDispatcher = self.eventDispatcher {
+            eventDispatcher.close()
+            return
+        }
+        
         eventProcessor?.close()
     }
     

@@ -16,7 +16,7 @@
 
 import XCTest
 
-class EventDispatcherTests_Batch: XCTestCase {
+class EventProcessorTests_Batch: XCTestCase {
     
     let kAccountId = "11111"
     let kClientVersion = "3.1.2"
@@ -40,11 +40,12 @@ class EventDispatcherTests_Batch: XCTestCase {
     let kUserIdB = "456"
     let kUserIdC = "789"
     
-    var eventDispatcher: TestEventDispatcher!
-    
+    var eventProcessor: TestEventProcessor!
+    var eventHandler: TestEventHandler!
+
     static let keyTestEventFileName = "OPTEventQueue-Test-"
     var uniqueFileName: String {
-        return EventDispatcherTests_Batch.keyTestEventFileName + String(Int.random(in: 0...1000000))
+        return EventProcessorTests_Batch.keyTestEventFileName + String(Int.random(in: 0...1000000))
     }
     
     override func setUp() {
@@ -52,10 +53,11 @@ class EventDispatcherTests_Batch: XCTestCase {
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
-        
+        self.eventHandler = TestEventHandler()
+        self.eventProcessor = TestEventProcessor(eventHandler: eventHandler, eventFileName: uniqueFileName)
+
         // for debug level setting
-        _ = OptimizelyClient(sdkKey: "any", eventDispatcher: eventDispatcher, defaultLogLevel: .debug)
+        _ = OptimizelyClient(sdkKey: "any", eventProcessor: eventProcessor, defaultLogLevel: .debug)
         
         // clear static states to test first datafile load
         ProjectConfig.observer.reset()
@@ -64,7 +66,7 @@ class EventDispatcherTests_Batch: XCTestCase {
     override func tearDown() {
         // make sure timer off at the of each test to avoid interference
         
-        self.eventDispatcher.timer.performAtomic { $0.invalidate() }
+        self.eventProcessor.timer.performAtomic { $0.invalidate() }
     }
     
     override class func tearDown() {
@@ -90,14 +92,14 @@ class EventDispatcherTests_Batch: XCTestCase {
 
 // MAKR: - Configuration
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
     
     func testInitialization() {
         let expBatchSize = 12
         let expTimerInterval = 35.0
         let expMaxQueueSize = 123
         
-        let ep = DefaultEventDispatcher(batchSize: expBatchSize, timerInterval: expTimerInterval, maxQueueSize: expMaxQueueSize)
+        let ep = DefaultEventProcessor(batchSize: expBatchSize, timerInterval: expTimerInterval, maxQueueSize: expMaxQueueSize)
         
         XCTAssertEqual(ep.batchSize, expBatchSize)
         XCTAssertEqual(ep.timerInterval, expTimerInterval)
@@ -108,7 +110,7 @@ extension EventDispatcherTests_Batch {
         
         // batch allowed by default
         
-        var ep = DefaultEventDispatcher()
+        var ep = DefaultEventProcessor()
 
         let defaultBatchSize = ep.batchSize
         let defaultTimeInterval = ep.timerInterval
@@ -122,7 +124,7 @@ extension EventDispatcherTests_Batch {
         // (timerInterval = 0 is a valid value, meaning no batch)
         // invalid timeInterval tested in "testEventDispatchedOnTimer_ZeroInterval" below
 
-        ep = DefaultEventDispatcher(batchSize: 0, timerInterval: -1, maxQueueSize: 0)
+        ep = DefaultEventProcessor(batchSize: 0, timerInterval: -1, maxQueueSize: 0)
         XCTAssertEqual(ep.batchSize, defaultBatchSize)
         XCTAssertEqual(ep.timerInterval, defaultTimeInterval)
         XCTAssertEqual(ep.maxQueueSize, defaultMaxQueueSize)
@@ -132,7 +134,7 @@ extension EventDispatcherTests_Batch {
 
 // MARK: - Batch
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
     
     func testEmptyEventBatch() {
         let events = [EventForDispatch]()
@@ -278,11 +280,11 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        eventDispatcher.maxQueueSize = 100
+        eventProcessor.maxQueueSize = 100
         
         // illegal config batchSize cannot be bigger than maxQueueSize. just for testing
-        eventDispatcher.timerInterval = 10000.0
-        eventDispatcher.batchSize = 1000
+        eventProcessor.timerInterval = 10000.0
+        eventProcessor.batchSize = 1000
         
         var successCount = 0
         var failureCount = 0
@@ -293,61 +295,61 @@ extension EventDispatcherTests_Batch {
                 successCount += 1
             case .failure(let error):
                 failureCount += 1
-                print("DispatchEvent error callback: \(error)")
+                print("processEvent error callback: \(error)")
             }
         }
         
-        for _ in 0..<eventDispatcher.maxQueueSize {
-            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA),
+        for _ in 0..<eventProcessor.maxQueueSize {
+            eventProcessor.processEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA),
                                           completionHandler: handler)
         }
         
         // now queue must be full. all following events are expected to drop
         
         for _ in 0..<10 {
-            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventB),
+            eventProcessor.processEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventB),
                                           completionHandler: handler)
         }
         
         // check out if success/failure callbacks called properly
         
-        XCTAssertEqual(successCount, eventDispatcher.maxQueueSize)
+        XCTAssertEqual(successCount, eventProcessor.maxQueueSize)
         XCTAssertEqual(failureCount, 10)
 
         // flush
         
-        eventDispatcher.close()
+        eventProcessor.close()
 
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "all events should be batched together")
-        let batch = eventDispatcher.sendRequestedEvents[0]
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1, "all events should be batched together")
+        let batch = eventHandler.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
-        XCTAssertEqual(batchedEvents.visitors.count, eventDispatcher.maxQueueSize, "events must be discarded when queue full")
+        XCTAssertEqual(batchedEvents.visitors.count, eventProcessor.maxQueueSize, "events must be discarded when queue full")
         batchedEvents.visitors.forEach {
             XCTAssertEqual($0, visitorA)
         }
 
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        XCTAssertEqual(eventProcessor.dataStore.count, 0)
     }
 }
 
 // MARK: - FlushEvents
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
 
     func testFlushEvents() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        XCTAssert(eventDispatcher.batchSize == 10)
+        XCTAssert(eventProcessor.batchSize == 10)
         
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventB),
                                 (kUrlA, batchEventA)])
 
-        eventDispatcher.close()
+        eventProcessor.close()
 
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
-        let batch = eventDispatcher.sendRequestedEvents[0]
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1)
+        let batch = eventHandler.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.revision, kRevisionA)
@@ -361,9 +363,9 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[1], visitorB)
         XCTAssertEqual(batchedEvents.visitors[2], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 3)
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        XCTAssertEqual(eventProcessor.dataStore.count, 0)
         
-        XCTAssert(eventDispatcher.batchSize == 10)
+        XCTAssert(eventProcessor.batchSize == 10)
 
     }
     
@@ -371,19 +373,19 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        XCTAssert(eventDispatcher.batchSize == 10)
+        XCTAssert(eventProcessor.batchSize == 10)
 
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA),
                                 (kUrlB, batchEventB)])
             
-        eventDispatcher.close()
+        eventProcessor.close()
 
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 2, "different urls should not be batched")
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 2, "different urls should not be batched")
         
         // first 2 events batched together
         
-        var batch = eventDispatcher.sendRequestedEvents[0]
+        var batch = eventHandler.sendRequestedEvents[0]
         var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.revision, kRevisionA)
         XCTAssertEqual(batchedEvents.accountID, kAccountId)
@@ -398,7 +400,7 @@ extension EventDispatcherTests_Batch {
         
         // the last event sent separately
         
-        batch = eventDispatcher.sendRequestedEvents[1]
+        batch = eventHandler.sendRequestedEvents[1]
         batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.revision, kRevisionA)
         XCTAssertEqual(batchedEvents.accountID, kAccountId)
@@ -411,27 +413,27 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[0], visitorB)
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        XCTAssertEqual(eventProcessor.dataStore.count, 0)
     }
     
     func testFlushEventsWhenBatchFailsWithInvalidEvent() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        XCTAssert(eventDispatcher.batchSize == 10)
+        XCTAssert(eventProcessor.batchSize == 10)
         
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        eventProcessor.processEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        eventProcessor.processEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        eventProcessor.processEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
+        eventProcessor.processEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
 
-        eventDispatcher.close()
+        eventProcessor.close()
 
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 2, "different urls should not be batched")
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 2, "different urls should not be batched")
         
         // first 2 events batched together
         
-        var batch = eventDispatcher.sendRequestedEvents[0]
+        var batch = eventHandler.sendRequestedEvents[0]
         var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.revision, kRevisionA)
         XCTAssertEqual(batchedEvents.accountID, kAccountId)
@@ -448,7 +450,7 @@ extension EventDispatcherTests_Batch {
         
         // 4th last event sent separately
         
-        batch = eventDispatcher.sendRequestedEvents[1]
+        batch = eventHandler.sendRequestedEvents[1]
         batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.revision, kRevisionA)
         XCTAssertEqual(batchedEvents.accountID, kAccountId)
@@ -461,7 +463,7 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[0], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        XCTAssertEqual(eventProcessor.dataStore.count, 0)
     }
 
     
@@ -471,18 +473,18 @@ extension EventDispatcherTests_Batch {
 
         // (1) error injected - all event send fails
         
-        eventDispatcher.forceError = true
+        eventHandler.forceError = true
         
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
 
-        eventDispatcher.close()
+        eventProcessor.close()
 
-        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.maxFailureCount + 1
+        let maxFailureCount = 3 + 1   // DefaultEventProcessor.maxFailureCount + 1
         
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
         
-        let batch = eventDispatcher.sendRequestedEvents[0]
+        let batch = eventHandler.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.visitors[0], visitorA)
@@ -490,53 +492,53 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors.count, 2)
         
         // confirm that repeat-on-failure sends same packets
-        for i in 1..<eventDispatcher.sendRequestedEvents.count {
-            XCTAssertEqual(eventDispatcher.sendRequestedEvents[i], eventDispatcher.sendRequestedEvents[0])
+        for i in 1..<eventHandler.sendRequestedEvents.count {
+            XCTAssertEqual(eventHandler.sendRequestedEvents[i], eventHandler.sendRequestedEvents[0])
         }
         
-        XCTAssertEqual(eventDispatcher.dataStore.count, 2, "all failed to transmit, so should keep all original events")
+        XCTAssertEqual(eventProcessor.dataStore.count, 2, "all failed to transmit, so should keep all original events")
         
         // (2) error removed - now events sent out successfully
         
-        eventDispatcher.forceError = false
+        eventHandler.forceError = false
         
         // assume flushEvents called again on next timer fire
-        eventDispatcher.close()
+        eventProcessor.close()
 
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount + 1, "only one more since succeeded")
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents[3], eventDispatcher.sendRequestedEvents[0])
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, maxFailureCount + 1, "only one more since succeeded")
+        XCTAssertEqual(eventHandler.sendRequestedEvents[3], eventHandler.sendRequestedEvents[0])
         
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0, "all expected to get transmitted successfully")
+        XCTAssertEqual(eventProcessor.dataStore.count, 0, "all expected to get transmitted successfully")
     }
 
 }
 
 // MARK: - FlushEvents on Timer
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
 
     func testEventDispatchedOnTimer() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        eventDispatcher.timerInterval = 2
+        eventProcessor.timerInterval = 2
         
-        eventDispatcher.exp = expectation(description: "timer")
-        eventDispatcher.exp!.assertForOverFulfill = false   // allow redundant fulfull for testing
+        eventHandler.exp = expectation(description: "timer")
+        eventHandler.exp!.assertForOverFulfill = false   // allow redundant fulfull for testing
 
         DispatchQueue.global().async {
-            self.eventDispatcher.dispatchEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
+            self.eventProcessor.processEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
             sleep(1)
-            self.eventDispatcher.dispatchEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
+            self.eventProcessor.processEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
             sleep(3)
-            self.eventDispatcher.dispatchEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
+            self.eventProcessor.processEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
         }
 
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventHandler.exp!], timeout: 10)
         
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1, "expection hit on one batch with 2 events")
 
-        let batch = eventDispatcher.sendRequestedEvents[0]
+        let batch = eventHandler.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.visitors[0], visitorA)
@@ -547,17 +549,17 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        eventDispatcher.timerInterval = 99999
+        eventProcessor.timerInterval = 99999
         
-        eventDispatcher.exp = expectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
+        eventHandler.exp = expectation(description: "timer")
+        eventHandler.exp?.isInverted = true
         
         DispatchQueue.global().async {
             self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)])
         }
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "events should not be sent until timer fires")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "events should not be sent until timer fires")
     }
     
     func testEventDispatchedOnTimer_ZeroInterval() {
@@ -565,251 +567,259 @@ extension EventDispatcherTests_Batch {
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
         // zero-interval means that all events are sent out immediately
-        eventDispatcher.timerInterval = 0
+        eventProcessor.timerInterval = 0
 
         dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
                                 (self.kUrlB, self.batchEventB),
                                 (self.kUrlC, self.batchEventC)])
 
-        eventDispatcher.dispatcher.sync {}
+        eventProcessor.dispatcher.sync {}
         
         continueAfterFailure = false   // stop on XCTAssertEqual failure instead of array out-of-bound exception
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 3)
         
-        var batch = eventDispatcher.sendRequestedEvents[0]
+        var batch = eventHandler.sendRequestedEvents[0]
         var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.visitors[0], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
-        batch = eventDispatcher.sendRequestedEvents[1]
+        batch = eventHandler.sendRequestedEvents[1]
         batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batch.url.absoluteString, kUrlB)
         XCTAssertEqual(batchedEvents.visitors[0], visitorB)
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
-        batch = eventDispatcher.sendRequestedEvents[2]
+        batch = eventHandler.sendRequestedEvents[2]
         batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batch.url.absoluteString, kUrlC)
         XCTAssertEqual(batchedEvents.visitors[0], visitorC)
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        XCTAssertEqual(eventProcessor.dataStore.count, 0)
     }
     
     func testEventBatchedOnTimer_CheckNoRedundantSend() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        eventDispatcher.timerInterval = 3
+        eventProcessor.timerInterval = 3
 
-        eventDispatcher.exp = expectation(description: "timer")
+        eventHandler.exp = expectation(description: "timer")
 
         self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
                                      (self.kUrlA, self.batchEventB)])
 
         // wait for the 1st batched event transmitted successfully
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventHandler.exp!], timeout: 10)
 
         // wait more for multiple timer fires to make sure there is no redandant sent out
         waitAsyncSeconds(5)
 
         // check if we have only one batched event transmitted
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1)
 
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0, "all expected to get transmitted successfully")
+        XCTAssertEqual(eventProcessor.dataStore.count, 0, "all expected to get transmitted successfully")
     }
 
     func testEventBatchedAndErrorRecoveredOnTimer() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        eventDispatcher.timerInterval = 5
+        eventProcessor.timerInterval = 5
         
         // (1) inject error
         
-        eventDispatcher.forceError = true
-        eventDispatcher.exp = expectation(description: "timer")
-        eventDispatcher.exp?.assertForOverFulfill = false
+        eventHandler.forceError = true
+        eventHandler.exp = expectation(description: "timer")
+        eventHandler.exp?.assertForOverFulfill = false
         
         self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
                                      (self.kUrlA, self.batchEventB)])
 
         // wait for the first timer-fire
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventHandler.exp!], timeout: 10)
         // tranmission is expected to fail
-        XCTAssertEqual(eventDispatcher.dataStore.count, 2, "all failed to transmit, so should keep all original events")
+        XCTAssertEqual(eventProcessor.dataStore.count, 2, "all failed to transmit, so should keep all original events")
         
         // (2) remove error. check if events are transmitted successfully on next timer-fire
         sleep(3)   // wait all failure-retries (3 times) completed
-        eventDispatcher.forceError = false
-        eventDispatcher.exp = expectation(description: "timer")
+        eventHandler.forceError = false
+        eventHandler.exp = expectation(description: "timer")
         
         // wait for the next timer-fire
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventHandler.exp!], timeout: 10)
         
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0, "all expected to get transmitted successfully")
+        XCTAssertEqual(eventProcessor.dataStore.count, 0, "all expected to get transmitted successfully")
     }
 }
 
 // MARK: - FlushEvents other than timer
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
     
     func testEventsFlushedOnEventQueueSizeHit() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        eventDispatcher.batchSize = 3
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+        eventProcessor.batchSize = 3
+        eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
         // (1) not enough events to be flushed yet
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
+        eventHandler.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp?.isInverted = true
         
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) add one more event, so batchSize hits and flushed
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp = XCTestExpectation(description: "timer")
 
         dispatchMultipleEvents([(kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on batchSize hit")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1, "should flush on batchSize hit")
     }
     
     func testEventsFlushedOnRevisionChange() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventProcessor = TestEventProcessor(eventHandler: eventHandler,
+                                                 eventFileName: uniqueFileName,
+                                                 removeDatafileObserver: false)
 
-        eventDispatcher.batchSize = 1000        // big, won't flush
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+        eventProcessor.batchSize = 1000        // big, won't flush
+        eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
         let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
+                                          eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         try! optimizely.start(datafile: datafile)
 
         // (1) not enough events to be flushed yet
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
+        eventHandler.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp?.isInverted = true
         
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) flush on revision-change notification
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp = XCTestExpectation(description: "timer")
         
         // change revision
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1, "should flush on the revision change")
     }
     
     func testEventsFlushedOnProjectIdChange() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventProcessor = TestEventProcessor(eventHandler: eventHandler,
+                                                 eventFileName: uniqueFileName,
+                                                 removeDatafileObserver: false)
 
-        eventDispatcher.batchSize = 1000        // big, won't flush
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+        eventProcessor.batchSize = 1000        // big, won't flush
+        eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
         let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
+                                          eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         try! optimizely.start(datafile: datafile)
 
         // (1) not enough events to be flushed yet
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
+        eventHandler.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp?.isInverted = true
         
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) flush on revision-change notification
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp = XCTestExpectation(description: "timer")
         
         // change projectId
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
 
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the projectId change")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1, "should flush on the projectId change")
     }
     
     func testEventsNotFlushedOnOtherDatafileChanges() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventProcessor = TestEventProcessor(eventHandler: eventHandler,
+                                                 eventFileName: uniqueFileName,
+                                                 removeDatafileObserver: false)
 
-        eventDispatcher.batchSize = 1000        // big, won't flush
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+        eventProcessor.batchSize = 1000        // big, won't flush
+        eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
         let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
+                                          eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         try! optimizely.start(datafile: datafile)
         
         // (1) not enough events to be flushed yet
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
+        eventHandler.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp?.isInverted = true
         
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) not flush on other datafile contents change
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
+        eventHandler.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp?.isInverted = true
 
         // change accountId (not projectId or revision)
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on any other changes")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush on any other changes")
     }
     
     func testEventsNotFlushedOnFirstDatafileLoad() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventProcessor = TestEventProcessor(eventHandler: eventHandler,
+                                                 eventFileName: uniqueFileName,
+                                                 removeDatafileObserver: false)
 
-        eventDispatcher.batchSize = 1000        // big, won't flush
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+        eventProcessor.batchSize = 1000        // big, won't flush
+        eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
+        eventHandler.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp?.isInverted = true
         
         // old events queued before SDK starts
         
@@ -819,25 +829,25 @@ extension EventDispatcherTests_Batch {
         // first datafile load
 
         let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
+                                          eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         try! optimizely.start(datafile: datafile)
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on the first datafile load")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush on the first datafile load")
     }
 }
 
 // MARK: - LogEvent Notification
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
 
     func testLogEventNotificationCalledBeforeBatchSent() {
-        eventDispatcher.timerInterval = 0   // no batch
+        eventProcessor.timerInterval = 0   // no batch
 
         let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
+                                          eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         
         var notifUrl: String?
@@ -853,7 +863,7 @@ extension EventDispatcherTests_Batch {
         try! optimizely.start(datafile: datafile)
         
         dispatchMultipleEvents([(kUrlA, batchEventA)])
-        eventDispatcher.dispatcher.sync {}
+        eventProcessor.dispatcher.sync {}
         
         XCTAssertEqual(notifUrl, kUrlA)
         
@@ -870,7 +880,7 @@ extension EventDispatcherTests_Batch {
 
 // MARK: - iOS9 Devices
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
     
     func testFlushEventsForIOS9Only() {
         // this tests iOS9 (no-timer)
@@ -878,10 +888,10 @@ extension EventDispatcherTests_Batch {
         
         dispatchMultipleEvents([(kUrlA, batchEventA)])
 
-        eventDispatcher.dispatcher.sync {}
+        eventProcessor.dispatcher.sync {}
         
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
-        let batch = eventDispatcher.sendRequestedEvents[0]
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1)
+        let batch = eventHandler.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.revision, kRevisionA)
@@ -892,50 +902,52 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.anonymizeIP, kAnonymizeIP)
         XCTAssertEqual(batchedEvents.enrichDecisions, kEnrichDecision)
         XCTAssertEqual(batchedEvents.visitors[0], visitorA)
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        XCTAssertEqual(eventProcessor.dataStore.count, 0)
     }
     
     func testFlushEventsForIOS9Only_ZeroInterval() {
         // this tests iOS9 (no-timer)
         if #available(iOS 10.0, tvOS 10.0, *) { return }
         
-        eventDispatcher.timerInterval = 0
+        eventProcessor.timerInterval = 0
         
         dispatchMultipleEvents([(kUrlA, batchEventA)])
-        eventDispatcher.dispatcher.sync {}
+        eventProcessor.dispatcher.sync {}
         
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
-        let batch = eventDispatcher.sendRequestedEvents[0]
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1)
+        let batch = eventHandler.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.revision, kRevisionA)
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+        XCTAssertEqual(eventProcessor.dataStore.count, 0)
     }
     
 }
 
 // MARK: - OptimizleyClient: Close()
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
     
-    func testCloseForOptimizleyClinet() {
+    func testCloseForOptimizleyClient() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventProcessor = TestEventProcessor(eventHandler: eventHandler,
+                                                 eventFileName: uniqueFileName,
+                                                 removeDatafileObserver: false)
         
-        eventDispatcher.batchSize = 1000        // big, won't flush
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+        eventProcessor.batchSize = 1000        // big, won't flush
+        eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
         let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
+                                          eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         
         // (1) should have no flush
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
+        eventHandler.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp?.isInverted = true
         
         try! optimizely.start(datafile: datafile)
 
@@ -943,38 +955,38 @@ extension EventDispatcherTests_Batch {
                                 (kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) should flush/batch all on close()
         
         optimizely.close()
         
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
-        var batch = eventDispatcher.sendRequestedEvents[0]
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1, "should flush on the revision change")
+        var batch = eventHandler.sendRequestedEvents[0]
         var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.visitors.count, 3)
-        eventDispatcher.sendRequestedEvents.removeAll()
+        eventHandler.sendRequestedEvents.removeAll()
 
         // (3) should have no flush
         
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
+        eventHandler.exp = XCTestExpectation(description: "timer")
+        eventHandler.exp?.isInverted = true
         
         try! optimizely.start(datafile: datafile)
         
         dispatchMultipleEvents([(kUrlA, batchEventB),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        wait(for: [eventHandler.exp!], timeout: 3)
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (4) should flush/batch all on close()
         
         optimizely.close()
         
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
-        batch = eventDispatcher.sendRequestedEvents[0]
+        XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1, "should flush on the revision change")
+        batch = eventHandler.sendRequestedEvents[0]
         batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.visitors.count, 2)
 
@@ -984,27 +996,27 @@ extension EventDispatcherTests_Batch {
 
 // MARK: - Random testing
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
     
     func testRandomEvents_10() {
-        runRandomEventsTest(numEvents: 9, eventDispatcher: eventDispatcher, tc: self)
+        runRandomEventsTest(numEvents: 9, eventProcessor: eventProcessor, tc: self)
     }
     
     func testRandomEvents_100() {
-        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 0)
+        runRandomEventsTest(numEvents: 111, eventProcessor: eventProcessor, tc: self, numInvalidEvents: 0)
     }
     
     func testRandomEventsWithInvalid_100() {
-        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 10)
+        runRandomEventsTest(numEvents: 111, eventProcessor: eventProcessor, tc: self, numInvalidEvents: 10)
     }
 
     // Utils
     
-    func runRandomEventsTest(numEvents: Int, eventDispatcher: TestEventDispatcher, tc: XCTestCase, numInvalidEvents: Int=0) {
-        eventDispatcher.batchSize = Int.random(in: 1..<10)
-        eventDispatcher.timerInterval = Double(Int.random(in: 1..<3))
+    func runRandomEventsTest(numEvents: Int, eventProcessor: TestEventProcessor, tc: XCTestCase, numInvalidEvents: Int=0) {
+        eventProcessor.batchSize = Int.random(in: 1..<10)
+        eventProcessor.timerInterval = Double(Int.random(in: 1..<3))
         
-        print("[RandomTest] configuration: (batchSize, timeInterval) = (\(eventDispatcher.batchSize), \(eventDispatcher.timerInterval))")
+        print("[RandomTest] configuration: (batchSize, timeInterval) = (\(eventProcessor.batchSize), \(eventProcessor.timerInterval))")
 
         let exp = XCTestExpectation(description: "random")
         let expectedVisistors = numEvents - numInvalidEvents  // all invalid events will be discarded
@@ -1016,10 +1028,10 @@ extension EventDispatcherTests_Batch {
             print("[RandomTest] dispatched all events")
             
             // extra delay to make sure all events are flushed and check if no more than expected is batched
-            let extraDelay = max(Int(eventDispatcher.timerInterval) * 2, 60)
+            let extraDelay = max(Int(eventProcessor.timerInterval) * 2, 60)
             var delay = 0
             while delay < extraDelay {
-                if eventDispatcher.numReceivedVisitors >= expectedVisistors {
+                if self.eventHandler.numReceivedVisitors >= expectedVisistors {
                     self.waitAsyncSeconds(3)  // extra delay to make sure that no redundant events transmitted
                     break
                 }
@@ -1034,7 +1046,7 @@ extension EventDispatcherTests_Batch {
         
         tc.wait(for: [exp], timeout: 10*60)
         
-        XCTAssertEqual(eventDispatcher.numReceivedVisitors, expectedVisistors)
+        XCTAssertEqual(eventHandler.numReceivedVisitors, expectedVisistors)
     }
     
     func dispatchRandomEvents(numEvents: Int, numInvalidEvents: Int) {
@@ -1052,7 +1064,7 @@ extension EventDispatcherTests_Batch {
         for i in 0..<numEvents {
             // insert invalid event randomly
             if posForInvalid.contains(i) {
-                eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
+                eventProcessor.processEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
                 print("[RandomTest][\(i)] dispatch an invalid event")
                 continue
             }
@@ -1065,7 +1077,7 @@ extension EventDispatcherTests_Batch {
             let event = makeTestBatchEvent(projectId: projectId, revision: revision, visitor: visitor)
             print("[RandomTest][\(i)] dispatch event: revision = \(revision!)")
             
-            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: url!, event: event), completionHandler: nil)
+            eventProcessor.processEvent(event: makeEventForDispatch(url: url!, event: event), completionHandler: nil)
             waitAsyncMilliseconds(Int.random(in: 0..<100))  // random delays between event dispatches
         }
     }
@@ -1073,7 +1085,7 @@ extension EventDispatcherTests_Batch {
 
 // MARK: - Utils
 
-extension EventDispatcherTests_Batch {
+extension EventProcessorTests_Batch {
     
     func makeEventForDispatch(url: String, event: BatchEvent) -> EventForDispatch {
         let data = try! JSONEncoder().encode(event)
@@ -1106,7 +1118,7 @@ extension EventDispatcherTests_Batch {
     
     func dispatchMultipleEvents(_ events: [(url: String, event: BatchEvent)]) {
         events.forEach {
-            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: $0.url, event: $0.event),
+            eventProcessor.processEvent(event: makeEventForDispatch(url: $0.url, event: $0.event),
                                           completionHandler: nil)
         }
     }
@@ -1156,34 +1168,23 @@ extension EventDispatcherTests_Batch {
     }
 }
 
-// MARK: - Fake EventDispatcher
+// MARK: - Fake EventProcessor
 
-class TestEventDispatcher: DefaultEventDispatcher {
+class TestEventHandler: DefaultEventHandler {
     var sendRequestedEvents: [EventForDispatch] = []
     var forceError = false
     var numReceivedVisitors = 0
-    let eventFileName: String
-    
+
     // set this if need to wait sendEvent completed
     var exp: XCTestExpectation?
     
-    init(eventFileName: String, removeDatafileObserver: Bool = true) {
-        self.eventFileName = eventFileName
-        super.init(dataStoreName: eventFileName)
-        
-        // block interference from other tests notifications when testing batch timing
-        if removeDatafileObserver {
-            removeProjectChangeNotificationObservers()
-        }
-    }
-    
-    override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+    override func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         sendRequestedEvents.append(event)
         
         do {
             let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
             numReceivedVisitors += decodedEvent.visitors.count
-            print("[TestEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+            print("[TestEventProcessor][SendEvent] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
         } catch {
             // invalid event format detected
             // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)
@@ -1193,16 +1194,36 @@ class TestEventDispatcher: DefaultEventDispatcher {
         }
 
         // must call completionHandler to complete synchronization
-        super.sendEvent(event: event) { _ in
+        super.dispatchEvent(event: event) { _ in
             if self.forceError {
-                completionHandler(.failure(.eventDispatchFailed("forced")))
+                completionHandler?(.failure(.eventDispatchFailed("forced")))
             } else {
                 // return success to clear store after sending events
-                completionHandler(.success(Data()))
+                completionHandler?(.success(Data()))
             }
 
             self.exp?.fulfill()
         }
+    }
+    
+}
+
+class TestEventProcessor: DefaultEventProcessor {
+    let eventFileName: String
+    
+    init(eventHandler: OPTEventHandler, eventFileName: String, removeDatafileObserver: Bool = true) {
+        self.eventFileName = eventFileName
+        
+        super.init(eventHandler: eventHandler, dataStoreName: eventFileName)
+        
+        // block interference from other tests notifications when testing batch timing
+        if removeDatafileObserver {
+            removeProjectChangeNotificationObservers()
+        }
+    }
+    
+    override func processEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        super.processEvent(event: event, completionHandler: completionHandler)
     }
     
 }

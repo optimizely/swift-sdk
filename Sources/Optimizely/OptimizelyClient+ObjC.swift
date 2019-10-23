@@ -59,6 +59,21 @@ extension OptimizelyClient {
         
     }
     
+    // deprecated
+    @objc public convenience init(sdkKey: String,
+                                  logger: OPTLogger?,
+                                  eventDispatcher: _ObjcOPTEventDispatcher?,
+                                  userProfileService: OPTUserProfileService?,
+                                  periodicDownloadInterval: NSNumber?,
+                                  defaultLogLevel: OptimizelyLogLevel) {
+        self.init(sdkKey: sdkKey,
+                  logger: logger,
+                  eventDispatcher: SwiftEventDispatcher(eventDispatcher),
+                  userProfileService: userProfileService,
+                  periodicDownloadInterval: periodicDownloadInterval?.intValue,
+                  defaultLogLevel: defaultLogLevel)
+    }
+    
     @available(swift, obsoleted: 1.0)
     @objc(startWithCompletion:)
     /// Start Optimizely SDK (Asynchronous)
@@ -379,7 +394,41 @@ extension OptimizelyClient {
         }
     }
 
-    
+    // deprecated
+    class SwiftEventDispatcher: OPTEventDispatcher {
+        let objcEventDispatcher: _ObjcOPTEventDispatcher
+        
+        init?(_ objcEventDispatcher: _ObjcOPTEventDispatcher?) {
+            guard let objcDispatcher = objcEventDispatcher else { return nil }
+            
+            self.objcEventDispatcher = objcDispatcher
+        }
+        
+        func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+            var objcHandler: ((Data?, NSError?) -> Void)?
+            
+            if let completionHandler = completionHandler {
+                objcHandler = { (data, error) in
+                    var result: OptimizelyResult<Data>
+                    
+                    if let error = error {
+                        result = .failure(.eventDispatchFailed(error.localizedDescription))
+                    } else {
+                        result = .success(data ?? Data())
+                    }
+                    
+                    completionHandler(result)
+                }
+            }
+            
+            objcEventDispatcher.dispatchEvent(event: event, completionHandler: objcHandler)
+        }
+        
+        func flushEvents() {
+            objcEventDispatcher.flushEvents()
+        }
+    }
+
     @available(swift, obsoleted: 1.0)
     @objc(notificationCenter)
     /// NotificationCenter for Objective-C interface support
@@ -481,6 +530,14 @@ extension OptimizelyClient {
 @objc(OPTEventHandler) public protocol _ObjcOPTEventHandler {
     func dispatchEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?)
 }
+// deprecated
+@objc(OPTEventDispatcher) public protocol _ObjcOPTEventDispatcher {
+    func dispatchEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?)
+    
+    /// Attempts to flush the event queue if there are any events to process.
+    func flushEvents()
+}
+
 
 @available(swift, obsoleted: 1.0)
 @objc(DefaultEventProcessor) public class ObjEventProcessor: NSObject, _ObjcOPTEventProcessor {
@@ -532,6 +589,37 @@ extension OptimizelyClient {
                 completionHandler(nil, error as NSError)
             }
         }
+    }
+    
+}
+
+// deprecated
+@available(swift, obsoleted: 1.0)
+@objc(DefaultEventDispatcher) public class ObjEventDispatcher: NSObject, _ObjcOPTEventDispatcher {
+    
+    let innerEventDispatcher: DefaultEventDispatcher
+    
+    @objc public init(batchSize: Int = DefaultEventDispatcher.DefaultValues.batchSize,
+                      timerInterval: TimeInterval = DefaultEventDispatcher.DefaultValues.timeInterval,
+                      maxQueueSize: Int = DefaultEventDispatcher.DefaultValues.maxQueueSize) {
+        innerEventDispatcher = DefaultEventDispatcher(batchSize: batchSize, timerInterval: timerInterval, maxQueueSize: maxQueueSize)
+    }
+    
+    public func dispatchEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?) {
+        innerEventDispatcher.dispatchEvent(event: event) { (result) -> Void in
+            guard let completionHandler = completionHandler else { return }
+            
+            switch result {
+            case .success(let value):
+                completionHandler(value, nil)
+            case .failure(let error):
+                completionHandler(nil, error as NSError)
+            }
+        }
+    }
+    
+    public func flushEvents() {
+        innerEventDispatcher.flushEvents()
     }
     
 }

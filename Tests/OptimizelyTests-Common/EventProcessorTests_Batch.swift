@@ -299,19 +299,19 @@ extension EventProcessorTests_Batch {
                 successCount += 1
             case .failure(let error):
                 failureCount += 1
-                print("processEvent error callback: \(error)")
+                print("process error callback: \(error)")
             }
         }
         
         for _ in 0..<eventProcessor.maxQueueSize {
-            eventProcessor.processEvent(event: batchEventA,
+            eventProcessor.process(event: batchEventA,
                                           completionHandler: handler)
         }
         
         // now queue must be full. all following events are expected to drop
         
         for _ in 0..<10 {
-            eventProcessor.processEvent(event: batchEventB,
+            eventProcessor.process(event: batchEventB,
                                           completionHandler: handler)
         }
         
@@ -433,11 +433,11 @@ extension EventProcessorTests_Batch {
         eventHandler.exp!.assertForOverFulfill = false   // allow redundant fulfull for testing
 
         DispatchQueue.global().async {
-            self.eventProcessor.processEvent(event:self.batchEventA, completionHandler: nil)
+            self.eventProcessor.process(event:self.batchEventA, completionHandler: nil)
             sleep(1)
-            self.eventProcessor.processEvent(event: self.batchEventA, completionHandler: nil)
+            self.eventProcessor.process(event: self.batchEventA, completionHandler: nil)
             sleep(3)
-            self.eventProcessor.processEvent(event: self.batchEventA, completionHandler: nil)
+            self.eventProcessor.process(event: self.batchEventA, completionHandler: nil)
         }
 
         wait(for: [eventHandler.exp!], timeout: 10)
@@ -475,11 +475,11 @@ extension EventProcessorTests_Batch {
         // zero-interval means that all events are sent out immediately
         eventProcessor.timerInterval = 0
 
-        eventProcessor.processEvent(event: batchEventA, completionHandler: nil)
+        eventProcessor.process(event: batchEventA, completionHandler: nil)
         sleep(1)
-        eventProcessor.processEvent(event: batchEventB, completionHandler: nil)
+        eventProcessor.process(event: batchEventB, completionHandler: nil)
         sleep(1)
-        eventProcessor.processEvent(event: batchEventC, completionHandler: nil)
+        eventProcessor.process(event: batchEventC, completionHandler: nil)
 
         eventProcessor.dispatcher.sync {}
         
@@ -972,7 +972,7 @@ extension EventProcessorTests_Batch {
         for i in 0..<numEvents {
             // insert invalid event randomly
             if posForInvalid.contains(i) {
-                eventProcessor.processEvent(event: batchEventInvalid, completionHandler: nil)
+                eventProcessor.process(event: batchEventInvalid, completionHandler: nil)
                 print("[RandomTest][\(i)] dispatch an invalid event")
                 continue
             }
@@ -985,7 +985,7 @@ extension EventProcessorTests_Batch {
             let event = makeTestBatchEvent(projectId: projectId, revision: revision, visitor: visitor)
             print("[RandomTest][\(i)] dispatch event: revision = \(revision!)")
             
-            eventProcessor.processEvent(event: event, completionHandler: nil)
+            eventProcessor.process(event: event, completionHandler: nil)
             waitAsyncMilliseconds(Int.random(in: 0..<100))  // random delays between event dispatches
         }
     }
@@ -1026,7 +1026,7 @@ extension EventProcessorTests_Batch {
     
     func dispatchMultipleEvents(_ events: [(url: String, event: BatchEvent)]) {
         events.forEach {
-            eventProcessor.processEvent(event: $0.event,
+            eventProcessor.process(event: $0.event,
                                           completionHandler: nil)
         }
     }
@@ -1091,7 +1091,7 @@ class TestEventHandler: DefaultEventHandler {
     // set this if need to wait sendEvent completed
     var exp: XCTestExpectation?
     
-    override func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+    override func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         sendRequestedEvents.append(event)
         
         do {
@@ -1107,7 +1107,7 @@ class TestEventHandler: DefaultEventHandler {
         }
 
         // must call completionHandler to complete synchronization
-        super.dispatchEvent(event: event) { _ in
+        super.dispatch(event: event) { _ in
             if self.forceError {
                 completionHandler?(.failure(.eventDispatchFailed("forced")))
             } else {
@@ -1137,8 +1137,8 @@ class TestEventProcessor: DefaultEventProcessor {
         }
     }
     
-    override func processEvent(event: BatchEvent, completionHandler: DispatchCompletionHandler?) {
-        super.processEvent(event: event, completionHandler: completionHandler)
+    override func process(event: BatchEvent, completionHandler: DispatchCompletionHandler?) {
+        super.process(event: event, completionHandler: completionHandler)
     }
     
 }

@@ -99,7 +99,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
         unsubscribe()
     }
     
-    open func processEvent(event: BatchEvent, completionHandler: DispatchCompletionHandler? = nil) {
+    open func process(event: BatchEvent, completionHandler: DispatchCompletionHandler? = nil) {
         guard dataStore.count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
             self.logger.e(error)
@@ -117,7 +117,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
         dataStore.save(item: EventForDispatch(body: body))
         
         if dataStore.count >= batchSize {
-            flushEvents()
+            flush()
         } else {
             startTimer()
         }
@@ -129,7 +129,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
     // used in flushEvents
     let notify = DispatchGroup()
     
-    func flushEvents() {
+    open func flush() {
         dispatcher.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
@@ -169,7 +169,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
                 
                 // make the send event synchronous. enter our notify
                 self.notify.enter()
-                self.eventHandler.dispatchEvent(event: batchEvent) { (result) -> Void in
+                self.eventHandler.dispatch(event: batchEvent) { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         self.logger.e(error.reason)
@@ -194,7 +194,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
     func applicationDidEnterBackground() {
         stopTimer()
         
-        flushEvents()
+        flush()
     }
     
     func applicationDidBecomeActive() {
@@ -206,7 +206,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
     func startTimer() {
         // timer is activated only for iOS10+ and non-zero interval value
         guard #available(iOS 10.0, tvOS 10.0, *), timerInterval > 0 else {
-            flushEvents()
+            flush()
             return
         }
         
@@ -219,7 +219,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
             self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { _ in
                 self.dispatcher.async {
                     if self.dataStore.count > 0 {
-                        self.flushEvents()
+                        self.flush()
                     } else {
                         self.stopTimer()
                     }
@@ -243,12 +243,12 @@ extension DefaultEventProcessor {
     func addProjectChangeNotificationObservers() {
         observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (_) in
             self?.logger.d("Event flush triggered by datafile projectId change")
-            self?.flushEvents()
+            self?.flush()
         }
         
         observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (_) in
             self?.logger.d("Event flush triggered by datafile revision change")
-            self?.flushEvents()
+            self?.flush()
         }
     }
     
@@ -264,7 +264,7 @@ extension DefaultEventProcessor {
     // MARK: - Tests
 
     open func close() {
-        self.flushEvents()
+        self.flush()
         self.dispatcher.sync {}
     }
     

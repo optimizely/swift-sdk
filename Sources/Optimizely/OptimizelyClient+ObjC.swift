@@ -338,7 +338,7 @@ extension OptimizelyClient {
             self.objcEventProcessor = objcProcesser
         }
         
-        func processEvent(event: BatchEvent, completionHandler: DispatchCompletionHandler?) {
+        func process(event: BatchEvent, completionHandler: DispatchCompletionHandler?) {
             var objcHandler: ((Data?, NSError?) -> Void)?
             
             if let completionHandler = completionHandler {
@@ -355,11 +355,11 @@ extension OptimizelyClient {
                 }
             }
             
-            objcEventProcessor.processEvent(event: ObjcBatchEvent(event: event), completionHandler: objcHandler)
+            objcEventProcessor.process(event: ObjcBatchEvent(event: event), completionHandler: objcHandler)
         }
         
-        func flushEvents() {
-            objcEventProcessor.flushEvents()
+        func flush() {
+            objcEventProcessor.flush()
         }
     }
     
@@ -373,7 +373,7 @@ extension OptimizelyClient {
             self.objcEventHandler = objcProcesser
         }
         
-        func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
             var objcHandler: ((Data?, NSError?) -> Void)?
             
             if let completionHandler = completionHandler {
@@ -390,7 +390,7 @@ extension OptimizelyClient {
                 }
             }
             
-            objcEventHandler.dispatchEvent(event: event, completionHandler: objcHandler)
+            objcEventHandler.dispatch(event: event, completionHandler: objcHandler)
         }
     }
 
@@ -522,13 +522,13 @@ extension OptimizelyClient {
 
 // MARK: - ObjC protocols
 @objc(OPTEventProcessor) public protocol _ObjcOPTEventProcessor {
-    func processEvent(event: ObjcBatchEvent, completionHandler: ((Data?, NSError?) -> Void)?)
+    func process(event: ObjcBatchEvent, completionHandler: ((Data?, NSError?) -> Void)?)
     
     /// Attempts to flush the event queue if there are any events to process.
-    func flushEvents()
+    func flush()
 }
 @objc(OPTEventHandler) public protocol _ObjcOPTEventHandler {
-    func dispatchEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?)
+    func dispatch(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?)
 }
 // deprecated
 @objc(OPTEventDispatcher) public protocol _ObjcOPTEventDispatcher {
@@ -556,8 +556,8 @@ extension OptimizelyClient {
         innerEventProcessor = DefaultEventProcessor(batchSize: batchSize, timerInterval: timerInterval, maxQueueSize: maxQueueSize)
     }
     
-    public func processEvent(event: ObjcBatchEvent, completionHandler: ((Data?, NSError?) -> Void)?) {
-        innerEventProcessor.processEvent(event: event.batchEvent) { (result) -> Void in
+    public func process(event: ObjcBatchEvent, completionHandler: ((Data?, NSError?) -> Void)?) {
+        innerEventProcessor.process(event: event.batchEvent) { (result) -> Void in
             guard let completionHandler = completionHandler else { return }
             
             switch result {
@@ -569,8 +569,8 @@ extension OptimizelyClient {
         }
     }
     
-    public func flushEvents() {
-        innerEventProcessor.flushEvents()
+    public func flush() {
+        innerEventProcessor.flush()
     }
     
 }
@@ -584,8 +584,8 @@ extension OptimizelyClient {
         innerEventHandler = DefaultEventHandler()
     }
     
-    public func dispatchEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?) {
-        innerEventHandler.dispatchEvent(event: event) { (result) -> Void in
+    public func dispatch(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?) {
+        innerEventHandler.dispatch(event: event) { (result) -> Void in
             guard let completionHandler = completionHandler else { return }
             
             switch result {

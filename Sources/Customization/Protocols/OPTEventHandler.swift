@@ -24,6 +24,6 @@ public protocol OPTEventHandler {
     ///   - event: EventForDispatch object which contains the url to send to and the body.
     ///   - completionHandler: Called when the event has been sent or if an error occured.
     ///     This may not be called in the case where the dispatcher is doing batch events. It is up to the implementor of the protocol.
-    func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?)
+    func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler?)
 
 }

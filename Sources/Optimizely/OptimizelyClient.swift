@@ -725,7 +725,7 @@ extension OptimizelyClient {
         // The event is queued in the dispatcher, batched, and sent out later.
         
         // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
-        eventProcessor?.processEvent(event: event, completionHandler: completionHandler)
+        eventProcessor?.process(event: event, completionHandler: completionHandler)
     }
     
 }

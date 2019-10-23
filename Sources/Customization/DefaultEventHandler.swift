@@ -23,7 +23,7 @@ open class DefaultEventHandler: OPTEventHandler {
     public init() {
     }
     
-    open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+    open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler? = nil) {
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         var request = URLRequest(url: event.url)

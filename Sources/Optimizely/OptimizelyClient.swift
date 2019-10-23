@@ -651,30 +651,31 @@ extension OptimizelyClient {
         // non-blocking (event data serialization takes time)
         eventLock.async {
             guard let config = self.config else { return }
-
-            guard let body = BatchEventBuilder.createImpressionEvent(config: config,
-                                                                     experiment: experiment,
-                                                                     varionation: variation,
-                                                                     userId: userId,
-                                                                     attributes: attributes) else {
-                                                                        self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
-                                                                        return
+            
+            guard let batchEvent = BatchEventBuilder.createImpressionEvent(config: config,
+                                                                           experiment: experiment,
+                                                                           varionation: variation,
+                                                                           userId: userId,
+                                                                           attributes: attributes) else {
+                                                                            self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
+                                                                            return
             }
             
-            let event = EventForDispatch(body: body)
-            self.sendEventToDispatcher(event: event, completionHandler: nil)
-            
-            // send notification in sync mode (functionally same as async here since it's already in background thread),
-            // but this will make testing simpler (timing control)
-
-            self.sendActivateNotification(experiment: experiment,
-                                          variation: variation,
-                                          userId: userId,
-                                          attributes: attributes,
-                                          event: event,
-                                          async: false)
+            self.sendEventToDispatcher(event: batchEvent) { result in
+                if case .success(let body) = result {
+                    // send notification in sync mode (functionally same as async here since it's already in background thread),
+                    // but this will make testing simpler (timing control)
+                    
+                    self.sendActivateNotification(experiment: experiment,
+                                                  variation: variation,
+                                                  userId: userId,
+                                                  attributes: attributes,
+                                                  event: EventForDispatch(body: body),
+                                                  async: false)
+                }
+            }
         }
-
+        
     }
     
     func sendConversionEvent(eventKey: String,
@@ -685,41 +686,44 @@ extension OptimizelyClient {
         // non-blocking (event data serialization takes time)
         eventLock.async {
             guard let config = self.config else { return }
-
-            guard let body = BatchEventBuilder.createConversionEvent(config: config,
-                                                                     eventKey: eventKey,
-                                                                     userId: userId,
-                                                                     attributes: attributes,
-                                                                     eventTags: eventTags) else {
-                                                                        self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
-                                                                        return
+            
+            guard let batchEvent = BatchEventBuilder.createConversionEvent(config: config,
+                                                                           eventKey: eventKey,
+                                                                           userId: userId,
+                                                                           attributes: attributes,
+                                                                           eventTags: eventTags) else {
+                                                                            self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
+                                                                            return
             }
             
-            let event = EventForDispatch(body: body)
-            self.sendEventToDispatcher(event: event, completionHandler: nil)
-            
-            // send notification in sync mode (functionally same as async here since it's already in background thread),
-            // but this will make testing simpler (timing control)
-
-            self.sendTrackNotification(eventKey: eventKey,
-                                       userId: userId,
-                                       attributes: attributes,
-                                       eventTags: eventTags,
-                                       event: event,
-                                       async: false)
+            self.sendEventToDispatcher(event: batchEvent) { result in
+                if case .success(let body) = result {
+                    // send notification in sync mode (functionally same as async here since it's already in background thread),
+                    // but this will make testing simpler (timing control)
+                    
+                    self.sendTrackNotification(eventKey: eventKey,
+                                               userId: userId,
+                                               attributes: attributes,
+                                               eventTags: eventTags,
+                                               event: EventForDispatch(body: body),
+                                               async: false)
+                }
+            }
         }
     }
     
-    func sendEventToDispatcher(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        
+    func sendEventToDispatcher(event: BatchEvent, completionHandler: DispatchCompletionHandler?) {
         // deprecated
         if let eventDispatcher = self.eventDispatcher {
-            eventDispatcher.dispatchEvent(event: event, completionHandler: completionHandler)
+            if let body = try? JSONEncoder().encode(event) {
+                let dataEvent = EventForDispatch(body: body)
+                eventDispatcher.dispatchEvent(event: dataEvent, completionHandler: completionHandler)
+            }
             return
         }
-            
+        
         // The event is queued in the dispatcher, batched, and sent out later.
-
+        
         // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
         eventProcessor?.processEvent(event: event, completionHandler: completionHandler)
     }

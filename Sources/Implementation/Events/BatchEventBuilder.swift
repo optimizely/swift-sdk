@@ -27,7 +27,7 @@ class BatchEventBuilder {
                                       experiment: Experiment,
                                       varionation: Variation,
                                       userId: String,
-                                      attributes: OptimizelyAttributes?) -> Data? {
+                                      attributes: OptimizelyAttributes?) -> BatchEvent? {
         
         let decision = Decision(variationID: varionation.id,
                                 campaignID: experiment.layerId,
@@ -51,7 +51,7 @@ class BatchEventBuilder {
                                       eventKey: String,
                                       userId: String,
                                       attributes: OptimizelyAttributes?,
-                                      eventTags: [String: Any]?) -> Data? {
+                                      eventTags: [String: Any]?) -> BatchEvent? {
         
         guard let event = config.getEvent(key: eventKey) else {
             return nil
@@ -81,14 +81,14 @@ class BatchEventBuilder {
                                  userId: String,
                                  attributes: OptimizelyAttributes?,
                                  decisions: [Decision]?,
-                                 dispatchEvents: [DispatchEvent]) -> Data? {
+                                 dispatchEvents: [DispatchEvent]) -> BatchEvent {
         let snapShot = Snapshot(decisions: decisions, events: dispatchEvents)
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
         
-        let batchEvent = BatchEvent(revision: config.project.revision,
+        return BatchEvent(revision: config.project.revision,
                                     accountID: config.project.accountId,
                                     clientVersion: Utils.sdkVersion,
                                     visitors: [visitor],
@@ -96,8 +96,6 @@ class BatchEventBuilder {
                                     clientName: swiftSdkClientName,
                                     anonymizeIP: config.project.anonymizeIP,
                                     enrichDecisions: true)
-        
-        return try? JSONEncoder().encode(batchEvent)
     }
             
     // MARK: - Event Tags

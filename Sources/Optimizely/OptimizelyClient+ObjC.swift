@@ -338,7 +338,7 @@ extension OptimizelyClient {
             self.objcEventProcessor = objcProcesser
         }
         
-        func processEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        func processEvent(event: BatchEvent, completionHandler: DispatchCompletionHandler?) {
             var objcHandler: ((Data?, NSError?) -> Void)?
             
             if let completionHandler = completionHandler {
@@ -355,7 +355,7 @@ extension OptimizelyClient {
                 }
             }
             
-            objcEventProcessor.processEvent(event: event, completionHandler: objcHandler)
+            objcEventProcessor.processEvent(event: ObjcBatchEvent(event: event), completionHandler: objcHandler)
         }
         
         func flushEvents() {
@@ -522,7 +522,7 @@ extension OptimizelyClient {
 
 // MARK: - ObjC protocols
 @objc(OPTEventProcessor) public protocol _ObjcOPTEventProcessor {
-    func processEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?)
+    func processEvent(event: ObjcBatchEvent, completionHandler: ((Data?, NSError?) -> Void)?)
     
     /// Attempts to flush the event queue if there are any events to process.
     func flushEvents()
@@ -538,10 +538,16 @@ extension OptimizelyClient {
     func flushEvents()
 }
 
+@objc(BatchEvent) public class ObjcBatchEvent: NSObject {
+    let batchEvent: BatchEvent
+    
+    public init(event: BatchEvent) {
+        self.batchEvent = event
+    }
+}
 
 @available(swift, obsoleted: 1.0)
 @objc(DefaultEventProcessor) public class ObjEventProcessor: NSObject, _ObjcOPTEventProcessor {
-    
     let innerEventProcessor: DefaultEventProcessor
     
     @objc public init(batchSize: Int = DefaultEventProcessor.DefaultValues.batchSize,
@@ -550,8 +556,8 @@ extension OptimizelyClient {
         innerEventProcessor = DefaultEventProcessor(batchSize: batchSize, timerInterval: timerInterval, maxQueueSize: maxQueueSize)
     }
     
-    public func processEvent(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?) {
-        innerEventProcessor.processEvent(event: event) { (result) -> Void in
+    public func processEvent(event: ObjcBatchEvent, completionHandler: ((Data?, NSError?) -> Void)?) {
+        innerEventProcessor.processEvent(event: event.batchEvent) { (result) -> Void in
             guard let completionHandler = completionHandler else { return }
             
             switch result {

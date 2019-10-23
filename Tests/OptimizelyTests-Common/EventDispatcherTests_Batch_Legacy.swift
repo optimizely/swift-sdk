@@ -42,7 +42,7 @@ class EventDispatcherTests_Batch_Legacy: XCTestCase {
     
     var eventDispatcher: TestEventDispatcher!
     
-    static let keyTestEventFileName = "OPTEventQueue-Test-"
+    static let keyTestEventFileName = "EventDispatcherTests-Batch-Legacy---"
     var uniqueFileName: String {
         return EventDispatcherTests_Batch_Legacy.keyTestEventFileName + String(Int.random(in: 0...1000000))
     }
@@ -54,6 +54,8 @@ class EventDispatcherTests_Batch_Legacy: XCTestCase {
         
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
         
+        HandlerRegistryService.shared.binders.property?.removeAll()
+
         // for debug level setting
         _ = OptimizelyClient(sdkKey: "any", eventDispatcher: eventDispatcher, defaultLogLevel: .debug)
         
@@ -376,7 +378,7 @@ extension EventDispatcherTests_Batch_Legacy {
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA),
                                 (kUrlB, batchEventB)])
-            
+        
         eventDispatcher.close()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 2, "different urls should not be batched")

@@ -99,7 +99,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
         unsubscribe()
     }
     
-    open func processEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+    open func processEvent(event: BatchEvent, completionHandler: DispatchCompletionHandler? = nil) {
         guard dataStore.count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
             self.logger.e(error)
@@ -107,7 +107,14 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
             return
         }
         
-        dataStore.save(item: event)
+        guard let body = try? JSONEncoder().encode(event) else {
+            let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
+            self.logger.e(error)
+            completionHandler?(.failure(error))
+            return
+        }
+        
+        dataStore.save(item: EventForDispatch(body: body))
         
         if dataStore.count >= batchSize {
             flushEvents()
@@ -115,7 +122,7 @@ open class DefaultEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
             startTimer()
         }
         
-        completionHandler?(.success(event.body))
+        completionHandler?(.success(body))
     }
 
     // notify group used to ensure that the sendEvent is synchronous.

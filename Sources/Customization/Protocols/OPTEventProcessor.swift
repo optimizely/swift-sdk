@@ -19,7 +19,7 @@ import Foundation
 
 public protocol OPTEventProcessor {
     
-    func processEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?)
+    func processEvent(event: BatchEvent, completionHandler: DispatchCompletionHandler?)
     
     /// flush events in queue synchrnonous (optional for testing support)
     func close()

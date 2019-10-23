@@ -42,11 +42,7 @@ class BatchEventBuilderTests: XCTestCase {
         
         XCTAssertNotNil(conversion)
         
-        let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: conversion!)
-        
-        XCTAssertNotNil(batchEvent)
-        
-        XCTAssert((batchEvent?.enrichDecisions)! == true)
+        XCTAssert((conversion?.enrichDecisions)! == true)
         
     }
 
@@ -57,13 +53,10 @@ class BatchEventBuilderTests: XCTestCase {
         let impression = BatchEventBuilder.createImpressionEvent(config: (optimizely?.config)!, experiment: experiment!, varionation: variation!, userId: userId, attributes: ["customattr": "yes" ])
         
         XCTAssertNotNil(impression)
-        let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: impression!)
+
+        XCTAssert((impression?.enrichDecisions)! == true)
         
-        XCTAssertNotNil(batchEvent)
-        
-        XCTAssert((batchEvent?.enrichDecisions)! == true)
-        
-        XCTAssert(batchEvent?.visitors[0].attributes[0].key == "customattr")
+        XCTAssert(impression?.visitors[0].attributes[0].key == "customattr")
         //XCTAssert(batchEvent?.visitors[0].attributes[0].value == .string)
     }
 

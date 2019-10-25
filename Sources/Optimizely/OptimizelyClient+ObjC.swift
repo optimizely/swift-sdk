@@ -338,7 +338,7 @@ extension OptimizelyClient {
             self.objcEventProcessor = objcProcesser
         }
         
-        func process(event: BatchEvent, completionHandler: DispatchCompletionHandler?) {
+        func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
             var objcHandler: ((Data?, NSError?) -> Void)?
             
             if let completionHandler = completionHandler {
@@ -355,7 +355,7 @@ extension OptimizelyClient {
                 }
             }
             
-            objcEventProcessor.process(event: ObjcBatchEvent(event: event), completionHandler: objcHandler)
+            objcEventProcessor.process(event: ObjcUserEvent(event: event), completionHandler: objcHandler)
         }
         
         func flush() {
@@ -522,7 +522,7 @@ extension OptimizelyClient {
 
 // MARK: - ObjC protocols
 @objc(OPTEventProcessor) public protocol _ObjcOPTEventProcessor {
-    func process(event: ObjcBatchEvent, completionHandler: ((Data?, NSError?) -> Void)?)
+    func process(event: ObjcUserEvent, completionHandler: ((Data?, NSError?) -> Void)?)
     
     /// Attempts to flush the event queue if there are any events to process.
     func flush()
@@ -538,11 +538,11 @@ extension OptimizelyClient {
     func flushEvents()
 }
 
-@objc(BatchEvent) public class ObjcBatchEvent: NSObject {
-    let batchEvent: BatchEvent
+@objc(BatchEvent) public class ObjcUserEvent: NSObject {
+    let userEvent: UserEvent
     
-    public init(event: BatchEvent) {
-        self.batchEvent = event
+    public init(event: UserEvent) {
+        self.userEvent = event
     }
 }
 
@@ -556,8 +556,8 @@ extension OptimizelyClient {
         innerEventProcessor = BatchEventProcessor(batchSize: batchSize, timerInterval: timerInterval, maxQueueSize: maxQueueSize)
     }
     
-    public func process(event: ObjcBatchEvent, completionHandler: ((Data?, NSError?) -> Void)?) {
-        innerEventProcessor.process(event: event.batchEvent) { (result) -> Void in
+    public func process(event: ObjcUserEvent, completionHandler: ((Data?, NSError?) -> Void)?) {
+        innerEventProcessor.process(event: event.userEvent) { (result) -> Void in
             guard let completionHandler = completionHandler else { return }
             
             switch result {

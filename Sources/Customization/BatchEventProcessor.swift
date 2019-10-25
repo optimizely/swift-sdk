@@ -99,7 +99,7 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
         unsubscribe()
     }
     
-    open func process(event: BatchEvent, completionHandler: DispatchCompletionHandler? = nil) {
+    open func process(event: UserEvent, completionHandler: DispatchCompletionHandler? = nil) {
         guard dataStore.count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
             self.logger.e(error)
@@ -107,7 +107,7 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
             return
         }
         
-        guard let body = try? JSONEncoder().encode(event) else {
+        guard let body = try? JSONEncoder().encode(event.batchEvent) else {
             let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
             self.logger.e(error)
             completionHandler?(.failure(error))

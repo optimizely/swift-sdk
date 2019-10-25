@@ -652,16 +652,14 @@ extension OptimizelyClient {
         eventLock.async {
             guard let config = self.config else { return }
             
-            guard let batchEvent = BatchEventBuilder.createImpressionEvent(config: config,
-                                                                           experiment: experiment,
-                                                                           varionation: variation,
-                                                                           userId: userId,
-                                                                           attributes: attributes) else {
-                                                                            self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
-                                                                            return
-            }
+            let userEvent = ImpressionEvent(userContext: UserContext(config: config, userId: userId, attributes: attributes),
+                                                  layerId: experiment.layerId,
+                                                  experimentKey: experiment.key,
+                                                  experimentId: experiment.id,
+                                                  variationKey: variation.key,
+                                                  variationId: variation.id)
             
-            self.sendEventToDispatcher(event: batchEvent) { result in
+            self.sendEventToDispatcher(event: userEvent) { result in
                 if case .success(let body) = result {
                     // send notification in sync mode (functionally same as async here since it's already in background thread),
                     // but this will make testing simpler (timing control)
@@ -687,16 +685,14 @@ extension OptimizelyClient {
         eventLock.async {
             guard let config = self.config else { return }
             
-            guard let batchEvent = BatchEventBuilder.createConversionEvent(config: config,
-                                                                           eventKey: eventKey,
-                                                                           userId: userId,
-                                                                           attributes: attributes,
-                                                                           eventTags: eventTags) else {
-                                                                            self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
-                                                                            return
+            guard let userEvent = ConversionEvent(userContext: UserContext(config: config, userId: userId, attributes: attributes),
+                                            eventKey: eventKey,
+                                            tags: eventTags) else {
+                                                self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
+                                                return
             }
-            
-            self.sendEventToDispatcher(event: batchEvent) { result in
+                            
+            self.sendEventToDispatcher(event: userEvent) { result in
                 if case .success(let body) = result {
                     // send notification in sync mode (functionally same as async here since it's already in background thread),
                     // but this will make testing simpler (timing control)
@@ -712,10 +708,10 @@ extension OptimizelyClient {
         }
     }
     
-    func sendEventToDispatcher(event: BatchEvent, completionHandler: DispatchCompletionHandler?) {
+    func sendEventToDispatcher(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
         // deprecated
         if let eventDispatcher = self.eventDispatcher {
-            if let body = try? JSONEncoder().encode(event) {
+            if let body = try? JSONEncoder().encode(event.batchEvent) {
                 let dataEvent = EventForDispatch(body: body)
                 eventDispatcher.dispatchEvent(event: dataEvent, completionHandler: completionHandler)
             }

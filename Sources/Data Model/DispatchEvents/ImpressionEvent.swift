@@ -13,22 +13,33 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
 
 import Foundation
 
-public protocol OPTEventProcessor {
+struct ImpressionEvent: UserEvent, CustomStringConvertible {
+    var userContext: UserContext
+    var layerId: String
+    var experimentKey: String
+    var experimentId: String
+    var variationKey: String
+    var variationId: String
     
-    func process(event: UserEvent, completionHandler: DispatchCompletionHandler?)
+    var description: String {
+        return "[ImpressionEvent](\(userContext), layerId:\(layerId), experimentId:\(experimentId), experimentKey:\(experimentKey), variationId:\(variationId), variationKey:\(variationKey))"
+    }
     
-    /// Attempts to flush the event queue if there are any events to process.
-    func flush()
-
-    /// flush events in queue synchrnonous (optional for testing support)
-    func close()
-}
-
-public extension OPTEventProcessor {
-    // override this for testing support only
-    func close() {}
+    var batchEvent: BatchEvent {
+        let decision = Decision(variationID: variationId,
+                                 campaignID: layerId,
+                                 experimentID: experimentId)
+         
+        let dispatchEvent = DispatchEvent(timestamp: timestamp,
+                                          key: DispatchEvent.activateEventKey,
+                                          entityID: layerId,
+                                          uuid: uuid)
+        
+        return BatchEventBuilder.createBatchEvent(userContext: userContext,
+                                                  decisions: [decision],
+                                                  dispatchEvents: [dispatchEvent])
+    }
 }

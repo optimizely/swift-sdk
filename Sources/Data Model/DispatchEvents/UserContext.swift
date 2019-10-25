@@ -13,22 +13,16 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
 
 import Foundation
 
-public protocol OPTEventProcessor {
+public struct UserContext: CustomStringConvertible {
+    let config: ProjectConfig
+    let userId: String
+    let attributes: OptimizelyAttributes?
     
-    func process(event: UserEvent, completionHandler: DispatchCompletionHandler?)
-    
-    /// Attempts to flush the event queue if there are any events to process.
-    func flush()
-
-    /// flush events in queue synchrnonous (optional for testing support)
-    func close()
-}
-
-public extension OPTEventProcessor {
-    // override this for testing support only
-    func close() {}
+    public var description: String {
+        let attStr = attributes != nil ? "\(attributes!)" : "nil"
+        return "[UserContext](userId: \(userId), attributes: \(attStr), config: \(config))"
+    }
 }

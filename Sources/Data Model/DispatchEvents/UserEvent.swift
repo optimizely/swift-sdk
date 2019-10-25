@@ -13,22 +13,24 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
 
 import Foundation
 
-public protocol OPTEventProcessor {
-    
-    func process(event: UserEvent, completionHandler: DispatchCompletionHandler?)
-    
-    /// Attempts to flush the event queue if there are any events to process.
-    func flush()
-
-    /// flush events in queue synchrnonous (optional for testing support)
-    func close()
+public protocol UserEvent {
+    var userContext: UserContext { get }
+    var uuid: String { get }
+    var timestamp: Int64 { get }
+    var batchEvent: BatchEvent { get }
 }
 
-public extension OPTEventProcessor {
-    // override this for testing support only
-    func close() {}
+extension UserEvent {
+    var timestamp: Int64 {
+        let early = Date.timeIntervalBetween1970AndReferenceDate * 1000
+        let after = Date.timeIntervalSinceReferenceDate * 1000
+        return Int64(early + after)
+    }
+    
+    var uuid: String {
+        return UUID().uuidString
+    }
 }

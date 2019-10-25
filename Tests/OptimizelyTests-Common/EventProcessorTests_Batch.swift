@@ -304,15 +304,13 @@ extension EventProcessorTests_Batch {
         }
         
         for _ in 0..<eventProcessor.maxQueueSize {
-            eventProcessor.process(event: batchEventA,
-                                          completionHandler: handler)
+            eventProcessor.process(event: userEventA, completionHandler: handler)
         }
         
         // now queue must be full. all following events are expected to drop
         
         for _ in 0..<10 {
-            eventProcessor.process(event: batchEventB,
-                                          completionHandler: handler)
+            eventProcessor.process(event: userEventB, completionHandler: handler)
         }
         
         // check out if success/failure callbacks called properly
@@ -329,7 +327,7 @@ extension EventProcessorTests_Batch {
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.visitors.count, eventProcessor.maxQueueSize, "events must be discarded when queue full")
         batchedEvents.visitors.forEach {
-            XCTAssertEqual($0, visitorA)
+            XCTAssertEqual($0.visitorID, kUserIdA)
         }
 
         XCTAssertEqual(eventProcessor.dataStore.count, 0)
@@ -346,9 +344,7 @@ extension EventProcessorTests_Batch {
 
         XCTAssert(eventProcessor.batchSize == 10)
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventB),
-                                (kUrlA, batchEventA)])
+        processMultipleEvents([userEventA, userEventB, userEventA])
 
         eventProcessor.close()
 
@@ -381,8 +377,7 @@ extension EventProcessorTests_Batch {
         
         eventHandler.forceError = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        processMultipleEvents([userEventA, userEventA])
 
         eventProcessor.close()
 
@@ -433,11 +428,11 @@ extension EventProcessorTests_Batch {
         eventHandler.exp!.assertForOverFulfill = false   // allow redundant fulfull for testing
 
         DispatchQueue.global().async {
-            self.eventProcessor.process(event:self.batchEventA, completionHandler: nil)
+            self.eventProcessor.process(event:self.userEventA, completionHandler: nil)
             sleep(1)
-            self.eventProcessor.process(event: self.batchEventA, completionHandler: nil)
+            self.eventProcessor.process(event: self.userEventA, completionHandler: nil)
             sleep(3)
-            self.eventProcessor.process(event: self.batchEventA, completionHandler: nil)
+            self.eventProcessor.process(event: self.userEventA, completionHandler: nil)
         }
 
         wait(for: [eventHandler.exp!], timeout: 10)
@@ -461,7 +456,7 @@ extension EventProcessorTests_Batch {
         eventHandler.exp?.isInverted = true
         
         DispatchQueue.global().async {
-            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)])
+            self.processMultipleEvents([self.userEventA])
         }
         
         wait(for: [eventHandler.exp!], timeout: 3)
@@ -475,11 +470,11 @@ extension EventProcessorTests_Batch {
         // zero-interval means that all events are sent out immediately
         eventProcessor.timerInterval = 0
 
-        eventProcessor.process(event: batchEventA, completionHandler: nil)
+        eventProcessor.process(event: userEventA, completionHandler: nil)
         sleep(1)
-        eventProcessor.process(event: batchEventB, completionHandler: nil)
+        eventProcessor.process(event: userEventB, completionHandler: nil)
         sleep(1)
-        eventProcessor.process(event: batchEventC, completionHandler: nil)
+        eventProcessor.process(event: userEventC, completionHandler: nil)
 
         eventProcessor.dispatcher.sync {}
         
@@ -515,8 +510,7 @@ extension EventProcessorTests_Batch {
 
         eventHandler.exp = expectation(description: "timer")
 
-        self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
-                                     (self.kUrlA, self.batchEventB)])
+        processMultipleEvents([userEventA, userEventB])
 
         // wait for the 1st batched event transmitted successfully
         wait(for: [eventHandler.exp!], timeout: 10)
@@ -542,8 +536,7 @@ extension EventProcessorTests_Batch {
         eventHandler.exp = expectation(description: "timer")
         eventHandler.exp?.assertForOverFulfill = false
         
-        self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
-                                     (self.kUrlA, self.batchEventB)])
+        processMultipleEvents([userEventA, userEventB])
 
         // wait for the first timer-fire
         wait(for: [eventHandler.exp!], timeout: 10)
@@ -578,8 +571,7 @@ extension EventProcessorTests_Batch {
         eventHandler.exp = XCTestExpectation(description: "timer")
         eventHandler.exp?.isInverted = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        processMultipleEvents([userEventA, userEventA])
         
         wait(for: [eventHandler.exp!], timeout: 3)
         XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
@@ -588,7 +580,7 @@ extension EventProcessorTests_Batch {
         
         eventHandler.exp = XCTestExpectation(description: "timer")
 
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        processMultipleEvents([userEventA])
         
         wait(for: [eventHandler.exp!], timeout: 3)
         XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1, "should flush on batchSize hit")
@@ -616,8 +608,7 @@ extension EventProcessorTests_Batch {
         eventHandler.exp = XCTestExpectation(description: "timer")
         eventHandler.exp?.isInverted = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        processMultipleEvents([userEventA, userEventA])
         
         wait(for: [eventHandler.exp!], timeout: 3)
         XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
@@ -656,8 +647,7 @@ extension EventProcessorTests_Batch {
         eventHandler.exp = XCTestExpectation(description: "timer")
         eventHandler.exp?.isInverted = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        processMultipleEvents([userEventA, userEventA])
         
         wait(for: [eventHandler.exp!], timeout: 3)
         XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
@@ -696,8 +686,7 @@ extension EventProcessorTests_Batch {
         eventHandler.exp = XCTestExpectation(description: "timer")
         eventHandler.exp?.isInverted = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        processMultipleEvents([userEventA, userEventA])
         
         wait(for: [eventHandler.exp!], timeout: 3)
         XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
@@ -731,8 +720,7 @@ extension EventProcessorTests_Batch {
         
         // old events queued before SDK starts
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        processMultipleEvents([userEventA, userEventA])
         
         // first datafile load
 
@@ -758,23 +746,19 @@ extension EventProcessorTests_Batch {
                                           eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         
-        var notifUrl: String?
         var notifEvent: [String: Any]?
         
         _ = optimizely.notificationCenter!.addLogEventNotificationListener { (url, event) in
             print("LogEvent Notification called")
-            notifUrl = url
             notifEvent = event
         }
         
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         try! optimizely.start(datafile: datafile)
         
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        processMultipleEvents([userEventA])
         eventProcessor.dispatcher.sync {}
-        
-        //XCTAssertEqual(notifUrl, kUrlA)
-        
+                
         // check event contents
         
         if let event = notifEvent, let client = event["client_name"] as? String {
@@ -794,7 +778,7 @@ extension EventProcessorTests_Batch {
         // this tests iOS9 (no-timer)
         if #available(iOS 10.0, tvOS 10.0, *) { return }
         
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        processMultipleEvents([userEventA])
 
         eventProcessor.dispatcher.sync {}
         
@@ -819,7 +803,7 @@ extension EventProcessorTests_Batch {
         
         eventProcessor.timerInterval = 0
         
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        processMultipleEvents([userEventA])
         eventProcessor.dispatcher.sync {}
         
         XCTAssertEqual(eventHandler.sendRequestedEvents.count, 1)
@@ -859,9 +843,7 @@ extension EventProcessorTests_Batch {
         
         try! optimizely.start(datafile: datafile)
 
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        processMultipleEvents([userEventA, userEventA, userEventA])
         
         wait(for: [eventHandler.exp!], timeout: 3)
         XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
@@ -883,8 +865,7 @@ extension EventProcessorTests_Batch {
         
         try! optimizely.start(datafile: datafile)
         
-        dispatchMultipleEvents([(kUrlA, batchEventB),
-                                (kUrlA, batchEventA)])
+        processMultipleEvents([userEventB, userEventA])
         
         wait(for: [eventHandler.exp!], timeout: 3)
         XCTAssertEqual(eventHandler.sendRequestedEvents.count, 0, "should not flush yet")
@@ -957,12 +938,10 @@ extension EventProcessorTests_Batch {
         XCTAssertEqual(eventHandler.numReceivedVisitors, expectedVisistors)
     }
     
-    func dispatchRandomEvents(numEvents: Int, numInvalidEvents: Int) {
-        let urlPool = [kUrlA]
-        
+    func dispatchRandomEvents(numEvents: Int, numInvalidEvents: Int) {        
         let projectIdPool = [kProjectIdA]
         let revisionPool = [kRevisionA, kRevisionA, kRevisionA, kRevisionA, kRevisionB]
-        let visitorPool = [visitorA, visitorB, visitorC]
+        let userPool = [kUserIdA, kUserIdB, kUserIdC]
         
         var posForInvalid = Set<Int>()
         while posForInvalid.count < numInvalidEvents {
@@ -972,17 +951,18 @@ extension EventProcessorTests_Batch {
         for i in 0..<numEvents {
             // insert invalid event randomly
             if posForInvalid.contains(i) {
-                eventProcessor.process(event: batchEventInvalid, completionHandler: nil)
+                // TODO: fix testing for invalid events
+                // - cannot inject errors at this level. drop them for now.
+                //eventProcessor.process(event: batchEventInvalid, completionHandler: nil)
+                
                 print("[RandomTest][\(i)] dispatch an invalid event")
                 continue
             }
-            
-            let url = urlPool.randomElement()
-            
+                        
             let projectId = projectIdPool.randomElement()
             let revision = revisionPool.randomElement()
-            let visitor = visitorPool.randomElement()
-            let event = makeTestBatchEvent(projectId: projectId, revision: revision, visitor: visitor)
+            let userId = userPool.randomElement()
+            let event = makeTestUserEvent(userId: userId!, projectId: projectId, revision: revision)
             print("[RandomTest][\(i)] dispatch event: revision = \(revision!)")
             
             eventProcessor.process(event: event, completionHandler: nil)
@@ -1009,6 +989,79 @@ extension EventProcessorTests_Batch {
         return EventForDispatch(url: URL(string: kUrlA), body: Data())
     }
     
+    // UserEvent
+    
+    var kConfigA: ProjectConfig {
+        return makeEmptyConfig(projectId: kProjectIdA, revision: kRevisionA)
+    }
+    var kConfigB: ProjectConfig {
+        return makeEmptyConfig(projectId: kProjectIdB, revision: kRevisionB)
+    }
+    var kConfigC: ProjectConfig {
+        return makeEmptyConfig(projectId: kProjectIdC, revision: kRevisionC)
+    }
+    
+    func makeEmptyConfig(projectId: String, revision: String) -> ProjectConfig {
+        let data = OTUtils.loadJSONDatafile("empty_datafile")!
+        let config = try! ProjectConfig(datafile: data)
+        config.project.projectId = kProjectIdA
+        config.project.revision = kRevisionA
+        return config
+    }
+
+    struct DummyEvent: UserEvent {
+        var userContext: UserContext
+        var accountId: String
+        var clientName: String
+        var clientVersion: String
+        var anonymizeIP: Bool
+        
+        var batchEvent: BatchEvent {
+            let visitor = Visitor(attributes: [], snapshots: [], visitorID: userContext.userId)
+
+            return BatchEvent(revision: userContext.config.project.revision,
+                              accountID: accountId,
+                              clientVersion: clientVersion,
+                              visitors: [visitor],
+                              projectID: userContext.config.project.projectId,
+                              clientName: clientName,
+                              anonymizeIP: anonymizeIP,
+                              enrichDecisions: true)
+        }
+        
+        init(userContext: UserContext, accountId: String, clientName: String, clientVersion: String, anonymizeIP: Bool) {
+            self.userContext = userContext
+            self.accountId = accountId
+            self.clientName = clientName
+            self.clientVersion = clientVersion
+            self.anonymizeIP = anonymizeIP
+        }
+    }
+    
+    func makeTestUserEvent(userId: String, projectId: String?=nil, revision: String?=nil) -> UserEvent {
+        let testProjectId = projectId ?? kProjectIdA
+        let testRevision = revision ?? kRevisionA
+        
+        let userContext = UserContext(config: makeEmptyConfig(projectId: testProjectId, revision: testRevision),
+                                      userId: userId,
+                                      attributes: nil)
+        return DummyEvent(userContext: userContext, accountId: kAccountId, clientName: kClientName, clientVersion: kClientVersion, anonymizeIP: kAnonymizeIP)
+    }
+    
+    var userEventA: UserEvent {
+        return makeTestUserEvent(userId: kUserIdA)
+    }
+    
+    var userEventB: UserEvent {
+        return makeTestUserEvent(userId: kUserIdB)
+    }
+
+    var userEventC: UserEvent {
+        return makeTestUserEvent(userId: kUserIdC)
+    }
+    
+    // BatchEvent
+    
     func makeTestBatchEvent(projectId: String?=nil, revision: String?=nil, visitor: Visitor?=nil) -> BatchEvent {
         let testProjectId = projectId ?? kProjectIdA
         let testVisitor = visitor ?? visitorA
@@ -1024,13 +1077,6 @@ extension EventProcessorTests_Batch {
                           enrichDecisions: kEnrichDecision)
     }
     
-    func dispatchMultipleEvents(_ events: [(url: String, event: BatchEvent)]) {
-        events.forEach {
-            eventProcessor.process(event: $0.event,
-                                          completionHandler: nil)
-        }
-    }
-
     var batchEventA: BatchEvent {
         return makeTestBatchEvent(visitor: visitorA)
     }
@@ -1052,6 +1098,12 @@ extension EventProcessorTests_Batch {
         return Visitor(attributes: [],
                        snapshots: [],
                        visitorID: kUserIdA)
+    }
+    
+    func processMultipleEvents(_ events: [UserEvent]) {
+        events.forEach {
+            eventProcessor.process(event: $0, completionHandler: nil)
+        }
     }
     
     var visitorB: Visitor {
@@ -1137,7 +1189,7 @@ class TestEventProcessor: BatchEventProcessor {
         }
     }
     
-    override func process(event: BatchEvent, completionHandler: DispatchCompletionHandler?) {
+    override func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
         super.process(event: event, completionHandler: completionHandler)
     }
     

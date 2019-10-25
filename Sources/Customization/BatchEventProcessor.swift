@@ -20,7 +20,7 @@ public enum DataStoreType {
     case file, memory, userDefaults
 }
 
-open class BatchEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
+open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     
     static let sharedInstance = BatchEventProcessor()
     
@@ -40,7 +40,7 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
     
     // the max failure count.  there is no backoff timer.
     
-    let eventHandler: OPTEventHandler
+    let eventDispatcher: OPTEventsDispatcher
     lazy var logger = OPTLoggerFactory.getLogger()
     var backingStore: DataStoreType
     var backingStoreName: String
@@ -55,13 +55,13 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
     var observerProjectId: NSObjectProtocol?
     var observerRevision: NSObjectProtocol?
     
-    public init(eventHandler: OPTEventHandler = DefaultEventHandler(),
+    public init(eventDispatcher: OPTEventsDispatcher = HTTPEventDispatcher(),
                 batchSize: Int = DefaultValues.batchSize,
                 timerInterval: TimeInterval = DefaultValues.timeInterval,
                 maxQueueSize: Int = DefaultValues.maxQueueSize,
                 backingStore: DataStoreType = .file,
                 dataStoreName: String = "OPTEventQueue") {
-        self.eventHandler = eventHandler
+        self.eventDispatcher = eventDispatcher
         self.batchSize = batchSize > 0 ? batchSize : DefaultValues.batchSize
         self.timerInterval = timerInterval >= 0 ? timerInterval : DefaultValues.timeInterval
         self.maxQueueSize = maxQueueSize >= 100 ? maxQueueSize : DefaultValues.maxQueueSize
@@ -169,7 +169,7 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventProcessor {
                 
                 // make the send event synchronous. enter our notify
                 self.notify.enter()
-                self.eventHandler.dispatch(event: batchEvent) { (result) -> Void in
+                self.eventDispatcher.dispatch(event: batchEvent) { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         self.logger.e(error.reason)

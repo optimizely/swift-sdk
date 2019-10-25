@@ -17,7 +17,7 @@
 
 import Foundation
 
-public protocol OPTEventProcessor {
+public protocol OPTEventsProcessor {
     
     func process(event: UserEvent, completionHandler: DispatchCompletionHandler?)
     
@@ -28,7 +28,7 @@ public protocol OPTEventProcessor {
     func close()
 }
 
-public extension OPTEventProcessor {
+public extension OPTEventsProcessor {
     // override this for testing support only
     func close() {}
 }

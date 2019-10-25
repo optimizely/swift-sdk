@@ -19,7 +19,7 @@ import Foundation
 extension OptimizelyClient {
     func registerServices(sdkKey: String,
                           logger: OPTLogger,
-                          eventProcessor: OPTEventProcessor? = nil,
+                          eventProcessor: OPTEventsProcessor? = nil,
                           eventDispatcher: OPTEventDispatcher? = nil,
                           datafileHandler: OPTDatafileHandler,
                           decisionService: OPTDecisionService,
@@ -40,7 +40,7 @@ extension OptimizelyClient {
         // projects.  If you change the event dispatcher, you can potentially lose data if you
         // don't use the same backingstore.
         if let eventProcessor = eventProcessor {
-            HandlerRegistryService.shared.registerBinding(binder: Binder<OPTEventProcessor>(service: OPTEventProcessor.self).singetlon().reInitializeStrategy(strategy: .reUse).using(instance: eventProcessor).sdkKey(key: sdkKey))
+            HandlerRegistryService.shared.registerBinding(binder: Binder<OPTEventsProcessor>(service: OPTEventsProcessor.self).singetlon().reInitializeStrategy(strategy: .reUse).using(instance: eventProcessor).sdkKey(key: sdkKey))
         }
         
         // An event dispatcher.  We use a singleton and use the same Event dispatcher for all
@@ -66,15 +66,15 @@ extension OptimizelyClient {
     ///   - defaultLogLevel: default log level (optional. default = .info)
     public convenience init(sdkKey: String,
                             logger: OPTLogger? = nil,
-                            eventProcessor: OPTEventProcessor? = nil,
-                            eventHandler: OPTEventHandler? = nil,
+                            eventProcessor: OPTEventsProcessor? = nil,
+                            eventDispatcher: OPTEventsDispatcher? = nil,
                             userProfileService: OPTUserProfileService? = nil,
                             periodicDownloadInterval: Int? = nil,
                             defaultLogLevel: OptimizelyLogLevel? = nil) {
         let interval = periodicDownloadInterval ?? 10 * 60
         
         self.init(sdkKey: sdkKey, logger: logger, eventProcessor: eventProcessor,
-                  eventHandler: eventHandler, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)
+                  eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)
         
         if let handler = datafileHandler as? DefaultDatafileHandler, interval > 0 {
             handler.setTimer(sdkKey: sdkKey, interval: interval)
@@ -82,10 +82,10 @@ extension OptimizelyClient {
         
     }
     
-    @available(*, deprecated, message: "Use init with EventProcessor + EventHandler instead")
+    @available(*, deprecated, message: "Use init with EventProcessor + EventsDispatcher instead")
     public convenience init(sdkKey: String,
                             logger: OPTLogger? = nil,
-                            eventDispatcher: OPTEventDispatcher?,  // only when custom eventDispather is provided
+                            eventDispatcher: OPTEventDispatcher? = nil,  
                             userProfileService: OPTUserProfileService? = nil,
                             periodicDownloadInterval: Int? = nil,
                             defaultLogLevel: OptimizelyLogLevel? = nil) {

@@ -16,7 +16,7 @@
     
 import Foundation
 
-public protocol OPTEventHandler {
+public protocol OPTEventsDispatcher {
     
     /// Dispatch event to Optimizely backend for results measurement.
     ///

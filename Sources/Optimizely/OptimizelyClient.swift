@@ -44,10 +44,11 @@ open class OptimizelyClient: NSObject {
     
     lazy var logger = OPTLoggerFactory.getLogger()
     
-    var eventProcessor: OPTEventProcessor? {
+    var eventProcessor: OPTEventsProcessor? {
         return HandlerRegistryService.shared.injectEventProcessor(sdkKey: self.sdkKey)
     }
     
+    // deprecated
     var eventDispatcher: OPTEventDispatcher? {
         return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
     }
@@ -79,8 +80,8 @@ open class OptimizelyClient: NSObject {
     ///   - defaultLogLevel: default log level (optional. default = .info)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
-                eventProcessor: OPTEventProcessor? = nil,
-                eventHandler: OPTEventHandler? = nil,
+                eventProcessor: OPTEventsProcessor? = nil,
+                eventDispatcher: OPTEventsDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil) {
         
@@ -92,8 +93,8 @@ open class OptimizelyClient: NSObject {
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
-        let eventHandler = eventHandler ?? DefaultEventHandler()
-        let eventProcessor = eventProcessor ?? BatchEventProcessor(eventHandler: eventHandler)
+        let eventDispatcher = eventDispatcher ?? HTTPEventDispatcher()
+        let eventProcessor = eventProcessor ?? BatchEventProcessor(eventDispatcher: eventDispatcher)
 
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
@@ -105,10 +106,10 @@ open class OptimizelyClient: NSObject {
         logger.d("SDK Version: \(version)")
     }
     
-    @available(*, deprecated, message: "Use init with EventProcessor + EventHandler instead")
+    @available(*, deprecated, message: "Use init with EventProcessor + EventsDispatcher instead")
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
-                eventDispatcher: OPTEventDispatcher?,   // only when custom eventDispather is provided
+                eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil) {
         

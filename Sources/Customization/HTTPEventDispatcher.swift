@@ -16,7 +16,7 @@
 
 import Foundation
 
-open class DefaultEventHandler: OPTEventHandler {
+open class HTTPEventDispatcher: OPTEventsDispatcher {
 
     lazy var logger = OPTLoggerFactory.getLogger()
 

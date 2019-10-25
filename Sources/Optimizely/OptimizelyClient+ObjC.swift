@@ -27,7 +27,7 @@ extension OptimizelyClient {
         self.init(sdkKey: sdkKey,
                   logger: nil,
                   eventProcessor: nil,
-                  eventHandler: nil,
+                  eventDispatcher: nil,
                   userProfileService: nil,
                   periodicDownloadInterval: nil as NSNumber?,
                   defaultLogLevel: .info)
@@ -44,15 +44,15 @@ extension OptimizelyClient {
     ///   - defaultLogLevel: default log level (optional. default = .info)
     @objc public convenience init(sdkKey: String,
                                   logger: OPTLogger?,
-                                  eventProcessor: _ObjcOPTEventProcessor?,
-                                  eventHandler: _ObjcOPTEventHandler?,
+                                  eventProcessor: _ObjcOPTEventsProcessor?,
+                                  eventDispatcher: _ObjcOPTEventsDispatcher?,
                                   userProfileService: OPTUserProfileService?,
                                   periodicDownloadInterval: NSNumber?,
                                   defaultLogLevel: OptimizelyLogLevel) {
         self.init(sdkKey: sdkKey,
                   logger: logger,
                   eventProcessor: SwiftEventProcessor(eventProcessor),
-                  eventHandler: SwiftEventHandler(eventHandler),
+                  eventDispatcher: SwiftEventsDispatcher(eventDispatcher),
                   userProfileService: userProfileService,
                   periodicDownloadInterval: periodicDownloadInterval?.intValue,
                   defaultLogLevel: defaultLogLevel)
@@ -329,10 +329,10 @@ extension OptimizelyClient {
 extension OptimizelyClient {
     
     /// EventProcessor implementation for Objective-C interface support
-    class SwiftEventProcessor: OPTEventProcessor {
-        let objcEventProcessor: _ObjcOPTEventProcessor
+    class SwiftEventProcessor: OPTEventsProcessor {
+        let objcEventProcessor: _ObjcOPTEventsProcessor
         
-        init?(_ objcEventProcessor: _ObjcOPTEventProcessor?) {
+        init?(_ objcEventProcessor: _ObjcOPTEventsProcessor?) {
             guard let objcProcesser = objcEventProcessor else { return nil }
             
             self.objcEventProcessor = objcProcesser
@@ -363,14 +363,14 @@ extension OptimizelyClient {
         }
     }
     
-    /// EventHandler implementation for Objective-C interface support
-    class SwiftEventHandler: OPTEventHandler {
-        let objcEventHandler: _ObjcOPTEventHandler
+    /// EventsDispatcher implementation for Objective-C interface support
+    class SwiftEventsDispatcher: OPTEventsDispatcher {
+        let objcEventsDispatcher: _ObjcOPTEventsDispatcher
         
-        init?(_ objcEventHandler: _ObjcOPTEventHandler?) {
-            guard let objcProcesser = objcEventHandler else { return nil }
+        init?(_ objcEventsDispatcher: _ObjcOPTEventsDispatcher?) {
+            guard let objcDispatcher = objcEventsDispatcher else { return nil }
             
-            self.objcEventHandler = objcProcesser
+            self.objcEventsDispatcher = objcDispatcher
         }
         
         func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
@@ -390,7 +390,7 @@ extension OptimizelyClient {
                 }
             }
             
-            objcEventHandler.dispatch(event: event, completionHandler: objcHandler)
+            objcEventsDispatcher.dispatch(event: event, completionHandler: objcHandler)
         }
     }
 
@@ -521,13 +521,13 @@ extension OptimizelyClient {
 }
 
 // MARK: - ObjC protocols
-@objc(OPTEventProcessor) public protocol _ObjcOPTEventProcessor {
+@objc(OPTEventsProcessor) public protocol _ObjcOPTEventsProcessor {
     func process(event: ObjcUserEvent, completionHandler: ((Data?, NSError?) -> Void)?)
     
     /// Attempts to flush the event queue if there are any events to process.
     func flush()
 }
-@objc(OPTEventHandler) public protocol _ObjcOPTEventHandler {
+@objc(OPTEventsDispatcher) public protocol _ObjcOPTEventsDispatcher {
     func dispatch(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?)
 }
 // deprecated
@@ -547,7 +547,7 @@ extension OptimizelyClient {
 }
 
 @available(swift, obsoleted: 1.0)
-@objc(BatchEventProcessor) public class ObjEventProcessor: NSObject, _ObjcOPTEventProcessor {
+@objc(BatchEventProcessor) public class ObjEventProcessor: NSObject, _ObjcOPTEventsProcessor {
     let innerEventProcessor: BatchEventProcessor
     
     @objc public init(batchSize: Int = BatchEventProcessor.DefaultValues.batchSize,
@@ -576,16 +576,16 @@ extension OptimizelyClient {
 }
 
 @available(swift, obsoleted: 1.0)
-@objc(DefaultEventHandler) public class ObjEventHandler: NSObject, _ObjcOPTEventHandler {
+@objc(DefaultEventsDispatcher) public class ObjEventsDispatcher: NSObject, _ObjcOPTEventsDispatcher {
     
-    let innerEventHandler: DefaultEventHandler
+    let innerEventsDispatcher: HTTPEventDispatcher
     
     @objc public override init() {
-        innerEventHandler = DefaultEventHandler()
+        innerEventsDispatcher = HTTPEventDispatcher()
     }
     
     public func dispatch(event: EventForDispatch, completionHandler: ((Data?, NSError?) -> Void)?) {
-        innerEventHandler.dispatch(event: event) { (result) -> Void in
+        innerEventsDispatcher.dispatch(event: event) { (result) -> Void in
             guard let completionHandler = completionHandler else { return }
             
             switch result {

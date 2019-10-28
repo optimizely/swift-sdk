@@ -275,8 +275,12 @@ extension DefaultEventDispatcher {
     // MARK: - Tests
 
     open func close() {
-        self.flushEvents()
-        self.dispatcher.sync {}
+        flushEvents()
+        sync()
+    }
+    
+    open func sync() {
+        dispatcher.sync {}
     }
     
 }

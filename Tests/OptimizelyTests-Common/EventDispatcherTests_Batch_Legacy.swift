@@ -300,16 +300,16 @@ extension EventDispatcherTests_Batch_Legacy {
         }
         
         for _ in 0..<eventDispatcher.maxQueueSize {
-            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA),
-                                          completionHandler: handler)
+            dispatchMultipleEvents([(kUrlA, batchEventA)], completionHandler: handler)
         }
         
         // now queue must be full. all following events are expected to drop
         
         for _ in 0..<10 {
-            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventB),
-                                          completionHandler: handler)
+            dispatchMultipleEvents([(kUrlA, batchEventB)], completionHandler: handler)
         }
+        
+        eventDispatcher.sync()
         
         // check out if success/failure callbacks called properly
         
@@ -422,10 +422,10 @@ extension EventDispatcherTests_Batch_Legacy {
         
         XCTAssert(eventDispatcher.batchSize == 10)
         
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
-        eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
+        dispatchMultipleEvents([(kUrlA, batchEventA)], completionHandler: nil)
+        dispatchMultipleEvents([(kUrlA, batchEventA)], completionHandler: nil)
+        dispatchMultipleEvents([makeInvalidEventForDispatchWithWrongData()], completionHandler: nil)
+        dispatchMultipleEvents([(kUrlA, batchEventA)], completionHandler: nil)
 
         eventDispatcher.close()
 
@@ -527,11 +527,11 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.exp!.assertForOverFulfill = false   // allow redundant fulfull for testing
 
         DispatchQueue.global().async {
-            self.eventDispatcher.dispatchEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
+            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)], completionHandler: nil)
             sleep(1)
-            self.eventDispatcher.dispatchEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
+            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)], completionHandler: nil)
             sleep(3)
-            self.eventDispatcher.dispatchEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
+            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)], completionHandler: nil)
         }
 
         wait(for: [eventDispatcher.exp!], timeout: 10)
@@ -1054,7 +1054,7 @@ extension EventDispatcherTests_Batch_Legacy {
         for i in 0..<numEvents {
             // insert invalid event randomly
             if posForInvalid.contains(i) {
-                eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
+                dispatchMultipleEvents([makeInvalidEventForDispatchWithWrongData()], completionHandler: nil)
                 print("[RandomTest][\(i)] dispatch an invalid event")
                 continue
             }
@@ -1067,7 +1067,7 @@ extension EventDispatcherTests_Batch_Legacy {
             let event = makeTestBatchEvent(projectId: projectId, revision: revision, visitor: visitor)
             print("[RandomTest][\(i)] dispatch event: revision = \(revision!)")
             
-            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: url!, event: event), completionHandler: nil)
+            dispatchMultipleEvents([makeEventForDispatch(url: url!, event: event)], completionHandler: nil)
             waitAsyncMilliseconds(Int.random(in: 0..<100))  // random delays between event dispatches
         }
     }
@@ -1106,12 +1106,18 @@ extension EventDispatcherTests_Batch_Legacy {
                           enrichDecisions: kEnrichDecision)
     }
     
-    func dispatchMultipleEvents(_ events: [(url: String, event: BatchEvent)]) {
-        events.forEach {
-            eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: $0.url, event: $0.event),
-                                          completionHandler: nil)
-        }
+    func dispatchMultipleEvents(_ events: [(url: String, event: BatchEvent)], completionHandler: DispatchCompletionHandler? = nil) {
+        dispatchMultipleEvents(events.map{ makeEventForDispatch(url: $0.url, event: $0.event) },
+                               completionHandler: completionHandler)
     }
+    
+    func dispatchMultipleEvents(_ events: [EventForDispatch], completionHandler: DispatchCompletionHandler? = nil) {
+        events.forEach {
+            eventDispatcher.dispatchEvent(event: $0, completionHandler: completionHandler)
+        }
+        eventDispatcher.sync()
+    }
+
 
     var batchEventA: BatchEvent {
         return makeTestBatchEvent(visitor: visitorA)

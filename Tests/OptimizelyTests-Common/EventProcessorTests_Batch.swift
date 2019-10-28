@@ -304,14 +304,16 @@ extension EventProcessorTests_Batch {
         }
         
         for _ in 0..<eventProcessor.maxQueueSize {
-            eventProcessor.process(event: userEventA, completionHandler: handler)
+            processEvent(userEventA, completionHandler: handler)
         }
         
         // now queue must be full. all following events are expected to drop
         
         for _ in 0..<10 {
-            eventProcessor.process(event: userEventB, completionHandler: handler)
+            processEvent(userEventB, completionHandler: handler)
         }
+        
+        eventProcessor.sync()
         
         // check out if success/failure callbacks called properly
         
@@ -428,11 +430,11 @@ extension EventProcessorTests_Batch {
         eventDispatcher.exp!.assertForOverFulfill = false   // allow redundant fulfull for testing
 
         DispatchQueue.global().async {
-            self.eventProcessor.process(event:self.userEventA, completionHandler: nil)
+            self.processEvent(self.userEventA)
             sleep(1)
-            self.eventProcessor.process(event: self.userEventA, completionHandler: nil)
+            self.processEvent(self.userEventA)
             sleep(3)
-            self.eventProcessor.process(event: self.userEventA, completionHandler: nil)
+            self.processEvent(self.userEventA)
         }
 
         wait(for: [eventDispatcher.exp!], timeout: 10)
@@ -470,13 +472,13 @@ extension EventProcessorTests_Batch {
         // zero-interval means that all events are sent out immediately
         eventProcessor.timerInterval = 0
 
-        eventProcessor.process(event: userEventA, completionHandler: nil)
+        processEvent(userEventA)
         sleep(1)
-        eventProcessor.process(event: userEventB, completionHandler: nil)
+        processEvent(userEventB)
         sleep(1)
-        eventProcessor.process(event: userEventC, completionHandler: nil)
+        processEvent(userEventC)
 
-        eventProcessor.dispatcher.sync {}
+        eventProcessor.sync()
         
         continueAfterFailure = false   // stop on XCTAssertEqual failure instead of array out-of-bound exception
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 3)
@@ -757,7 +759,7 @@ extension EventProcessorTests_Batch {
         try! optimizely.start(datafile: datafile)
         
         processMultipleEvents([userEventA])
-        eventProcessor.dispatcher.sync {}
+        eventProcessor.sync()
                 
         // check event contents
         
@@ -953,7 +955,7 @@ extension EventProcessorTests_Batch {
             if posForInvalid.contains(i) {
                 // TODO: fix testing for invalid events
                 // - cannot inject errors at this level. drop them for now.
-                //eventProcessor.process(event: batchEventInvalid, completionHandler: nil)
+                //        processEvent(batchEventInvalid)
                 
                 print("[RandomTest][\(i)] dispatch an invalid event")
                 continue
@@ -965,7 +967,7 @@ extension EventProcessorTests_Batch {
             let event = makeTestUserEvent(userId: userId!, projectId: projectId, revision: revision)
             print("[RandomTest][\(i)] dispatch event: revision = \(revision!)")
             
-            eventProcessor.process(event: event, completionHandler: nil)
+            processEvent(event)
             waitAsyncMilliseconds(Int.random(in: 0..<100))  // random delays between event dispatches
         }
     }
@@ -1100,10 +1102,15 @@ extension EventProcessorTests_Batch {
                        visitorID: kUserIdA)
     }
     
-    func processMultipleEvents(_ events: [UserEvent]) {
+    func processEvent(_ event: UserEvent, completionHandler: DispatchCompletionHandler? = nil) {
+        processMultipleEvents([event], completionHandler: completionHandler)
+    }
+
+    func processMultipleEvents(_ events: [UserEvent], completionHandler: DispatchCompletionHandler? = nil) {
         events.forEach {
-            eventProcessor.process(event: $0, completionHandler: nil)
+            eventProcessor.process(event: $0, completionHandler: completionHandler)
         }
+        eventProcessor.sync()
     }
     
     var visitorB: Visitor {

@@ -93,22 +93,24 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        guard dataStore.count < maxQueueSize else {
-            let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
-            self.logger.e(error)
-            completionHandler?(.failure(error))
-            return
+        dispatcher.async {
+            guard dataStore.count < maxQueueSize else {
+                let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
+                self.logger.e(error)
+                completionHandler?(.failure(error))
+                return
+            }
+            
+            dataStore.save(item: event)
+            
+            if dataStore.count >= batchSize {
+                flushEvents()
+            } else {
+                startTimer()
+            }
+            
+            completionHandler?(.success(event.body))
         }
-        
-        dataStore.save(item: event)
-        
-        if dataStore.count >= batchSize {
-            flushEvents()
-        } else {
-            startTimer()
-        }
-        
-        completionHandler?(.success(event.body))
     }
 
     // notify group used to ensure that the sendEvent is synchronous.

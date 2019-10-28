@@ -52,6 +52,9 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
     
+    // synchronous dispatching
+    let notify = DispatchGroup()
+    
     var observerProjectId: NSObjectProtocol?
     var observerRevision: NSObjectProtocol?
     
@@ -100,35 +103,33 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     }
     
     open func process(event: UserEvent, completionHandler: DispatchCompletionHandler? = nil) {
-        guard dataStore.count < maxQueueSize else {
-            let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
-            self.logger.e(error)
-            completionHandler?(.failure(error))
-            return
+        dispatcher.async {
+            guard self.dataStore.count < self.maxQueueSize else {
+                let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
+                self.logger.e(error)
+                completionHandler?(.failure(error))
+                return
+            }
+            
+            guard let body = try? JSONEncoder().encode(event.batchEvent) else {
+                let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
+                self.logger.e(error)
+                completionHandler?(.failure(error))
+                return
+            }
+            
+            self.dataStore.save(item: EventForDispatch(body: body))
+            
+            if self.dataStore.count >= self.batchSize {
+                self.flush()
+            } else {
+                self.startTimer()
+            }
+            
+            completionHandler?(.success(body))
         }
-        
-        guard let body = try? JSONEncoder().encode(event.batchEvent) else {
-            let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
-            self.logger.e(error)
-            completionHandler?(.failure(error))
-            return
-        }
-        
-        dataStore.save(item: EventForDispatch(body: body))
-        
-        if dataStore.count >= batchSize {
-            flush()
-        } else {
-            startTimer()
-        }
-        
-        completionHandler?(.success(body))
     }
 
-    // notify group used to ensure that the sendEvent is synchronous.
-    // used in flushEvents
-    let notify = DispatchGroup()
-    
     open func flush() {
         dispatcher.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
@@ -193,13 +194,12 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     
     func applicationDidEnterBackground() {
         stopTimer()
-        
         flush()
     }
     
     func applicationDidBecomeActive() {
         if dataStore.count > 0 {
-            startTimer()
+            flush()
         }
     }
     

@@ -650,31 +650,28 @@ extension OptimizelyClient {
                              attributes: OptimizelyAttributes? = nil) {
         
         // non-blocking (event data serialization takes time)
-        eventLock.async {
-            guard let config = self.config else { return }
-            
-            let userEvent = ImpressionEvent(userContext: UserContext(config: config, userId: userId, attributes: attributes),
-                                                  layerId: experiment.layerId,
-                                                  experimentKey: experiment.key,
-                                                  experimentId: experiment.id,
-                                                  variationKey: variation.key,
-                                                  variationId: variation.id)
-            
-            self.sendEventToDispatcher(event: userEvent) { result in
-                if case .success(let body) = result {
-                    // send notification in sync mode (functionally same as async here since it's already in background thread),
-                    // but this will make testing simpler (timing control)
-                    
-                    self.sendActivateNotification(experiment: experiment,
-                                                  variation: variation,
-                                                  userId: userId,
-                                                  attributes: attributes,
-                                                  event: EventForDispatch(body: body),
-                                                  async: false)
-                }
+        guard let config = self.config else { return }
+        
+        let userEvent = ImpressionEvent(userContext: UserContext(config: config, userId: userId, attributes: attributes),
+                                        layerId: experiment.layerId,
+                                        experimentKey: experiment.key,
+                                        experimentId: experiment.id,
+                                        variationKey: variation.key,
+                                        variationId: variation.id)
+        
+        self.sendEventToDispatcher(event: userEvent) { result in
+            if case .success(let body) = result {
+                // send notification in sync mode (functionally same as async here since it's already in background thread),
+                // but this will make testing simpler (timing control)
+                
+                self.sendActivateNotification(experiment: experiment,
+                                              variation: variation,
+                                              userId: userId,
+                                              attributes: attributes,
+                                              event: EventForDispatch(body: body),
+                                              async: false)
             }
         }
-        
     }
     
     func sendConversionEvent(eventKey: String,
@@ -683,28 +680,26 @@ extension OptimizelyClient {
                              eventTags: OptimizelyEventTags? = nil) {
         
         // non-blocking (event data serialization takes time)
-        eventLock.async {
-            guard let config = self.config else { return }
-            
-            guard let userEvent = ConversionEvent(userContext: UserContext(config: config, userId: userId, attributes: attributes),
-                                            eventKey: eventKey,
-                                            tags: eventTags) else {
+        guard let config = self.config else { return }
+        
+        guard let userEvent = ConversionEvent(userContext: UserContext(config: config, userId: userId, attributes: attributes),
+                                              eventKey: eventKey,
+                                              tags: eventTags) else {
                                                 self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
                                                 return
-            }
-                            
-            self.sendEventToDispatcher(event: userEvent) { result in
-                if case .success(let body) = result {
-                    // send notification in sync mode (functionally same as async here since it's already in background thread),
-                    // but this will make testing simpler (timing control)
-                    
-                    self.sendTrackNotification(eventKey: eventKey,
-                                               userId: userId,
-                                               attributes: attributes,
-                                               eventTags: eventTags,
-                                               event: EventForDispatch(body: body),
-                                               async: false)
-                }
+        }
+        
+        self.sendEventToDispatcher(event: userEvent) { result in
+            if case .success(let body) = result {
+                // send notification in sync mode (functionally same as async here since it's already in background thread),
+                // but this will make testing simpler (timing control)
+                
+                self.sendTrackNotification(eventKey: eventKey,
+                                           userId: userId,
+                                           attributes: attributes,
+                                           eventTags: eventTags,
+                                           event: EventForDispatch(body: body),
+                                           async: false)
             }
         }
     }
@@ -720,7 +715,8 @@ extension OptimizelyClient {
         }
         
         // The event is queued in the dispatcher, batched, and sent out later.
-        
+        // non-blocking (event data serialization takes time)
+
         // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
         eventProcessor?.process(event: event, completionHandler: completionHandler)
     }

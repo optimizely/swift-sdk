@@ -85,7 +85,7 @@ extension OptimizelyClient {
     @available(*, deprecated, message: "Use init with EventProcessor + EventsDispatcher instead")
     public convenience init(sdkKey: String,
                             logger: OPTLogger? = nil,
-                            eventDispatcher: OPTEventDispatcher? = nil,  
+                            eventDispatcher: OPTEventDispatcher?,   // only when custom eventDispather is provided
                             userProfileService: OPTUserProfileService? = nil,
                             periodicDownloadInterval: Int? = nil,
                             defaultLogLevel: OptimizelyLogLevel? = nil) {

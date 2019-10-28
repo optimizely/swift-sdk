@@ -264,7 +264,11 @@ extension BatchEventProcessor {
     // MARK: - Tests
 
     open func close() {
-        self.flush()
+        flush()
+        sync()
+    }
+    
+    open func sync() {
         self.dispatcher.sync {}
     }
     

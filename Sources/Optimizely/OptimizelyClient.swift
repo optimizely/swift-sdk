@@ -109,7 +109,7 @@ open class OptimizelyClient: NSObject {
     @available(*, deprecated, message: "Use init with EventProcessor + EventsDispatcher instead")
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
-                eventDispatcher: OPTEventDispatcher? = nil,
+                eventDispatcher: OPTEventDispatcher?,  // only when custom eventDispather is provided
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil) {
         
@@ -865,7 +865,8 @@ extension OptimizelyClient {
     
     public func close() {
         datafileHandler.stopUpdates(sdkKey: sdkKey)
-        eventLock.sync {}
+        
+        sync()
         
         // deprecated
         if let eventDispatcher = self.eventDispatcher {
@@ -874,6 +875,10 @@ extension OptimizelyClient {
         }
         
         eventProcessor?.close()
+    }
+    
+    public func sync() {
+        eventLock.sync {}
     }
     
 }

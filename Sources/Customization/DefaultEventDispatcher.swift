@@ -94,19 +94,19 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         dispatcher.async {
-            guard dataStore.count < maxQueueSize else {
+            guard self.dataStore.count < self.maxQueueSize else {
                 let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
                 self.logger.e(error)
                 completionHandler?(.failure(error))
                 return
             }
             
-            dataStore.save(item: event)
+            self.dataStore.save(item: event)
             
-            if dataStore.count >= batchSize {
-                flushEvents()
+            if self.dataStore.count >= self.batchSize {
+                self.flushEvents()
             } else {
-                startTimer()
+                self.startTimer()
             }
             
             completionHandler?(.success(event.body))

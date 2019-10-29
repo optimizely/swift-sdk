@@ -50,6 +50,10 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     var observerProjectId: NSObjectProtocol?
     var observerRevision: NSObjectProtocol?
     
+    func getNotificationCenter(sdkKey: String) -> OPTNotificationCenter? {
+        return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: sdkKey)
+    }
+
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
                 dataStoreName: String = "OPTEventQueue",
@@ -93,24 +97,22 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        dispatcher.async {
-            guard self.dataStore.count < self.maxQueueSize else {
-                let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
-                self.logger.e(error)
-                completionHandler?(.failure(error))
-                return
-            }
-            
-            self.dataStore.save(item: event)
-            
-            if self.dataStore.count >= self.batchSize {
-                self.flushEvents()
-            } else {
-                self.startTimer()
-            }
-            
-            completionHandler?(.success(event.body))
+        guard self.dataStore.count < self.maxQueueSize else {
+            let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
+            self.logger.e(error)
+            completionHandler?(.failure(error))
+            return
         }
+        
+        self.dataStore.save(item: event)
+        
+        if self.dataStore.count >= self.batchSize {
+            self.flushEvents()
+        } else {
+            self.startTimer()
+        }
+        
+        completionHandler?(.success(event.body))
     }
 
     // notify group used to ensure that the sendEvent is synchronous.
@@ -185,7 +187,17 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // send notification BEFORE sending event to the server
-        NotificationCenter.default.post(name: .willSendOptimizelyEvents, object: event)
+        if let eventParsed = try? JSONSerialization.jsonObject(with: event.body, options: []) as? [String: Any] {
+            let url = event.url.absoluteString
+            let sdkKey = event.sdkKey
+
+            if let notifCenter = self.getNotificationCenter(sdkKey: sdkKey) {
+                let args: [Any] = [url, eventParsed]
+                notifCenter.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
+            }
+        } else {
+            self.logger.e("LogEvent notification discarded due to invalid event")
+        }
 
         let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
             self.logger.d(response.debugDescription)

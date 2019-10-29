@@ -58,6 +58,10 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     var observerProjectId: NSObjectProtocol?
     var observerRevision: NSObjectProtocol?
     
+    func getNotificationCenter(sdkKey: String) -> OPTNotificationCenter? {
+        return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: sdkKey)
+    }
+
     public init(eventDispatcher: OPTEventsDispatcher = HTTPEventDispatcher(),
                 batchSize: Int = DefaultValues.batchSize,
                 timerInterval: TimeInterval = DefaultValues.timeInterval,
@@ -103,34 +107,32 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     }
     
     open func process(event: UserEvent, completionHandler: DispatchCompletionHandler? = nil) {
-        dispatcher.async {
-            guard self.dataStore.count < self.maxQueueSize else {
-                let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
-                self.logger.e(error)
-                
-                self.flush()
-                completionHandler?(.failure(error))
-                return
-            }
+        guard self.dataStore.count < self.maxQueueSize else {
+            let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
+            self.logger.e(error)
             
-            guard let body = try? JSONEncoder().encode(event.batchEvent) else {
-                let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
-                self.logger.e(error)
-                
-                completionHandler?(.failure(error))
-                return
-            }
-            
-            self.dataStore.save(item: EventForDispatch(body: body))
-            
-            if self.dataStore.count >= self.batchSize {
-                self.flush()
-            } else {
-                self.startTimer()
-            }
-            
-            completionHandler?(.success(body))
+            self.flush()
+            completionHandler?(.failure(error))
+            return
         }
+        
+        guard let body = try? JSONEncoder().encode(event.batchEvent) else {
+            let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
+            self.logger.e(error)
+            
+            completionHandler?(.failure(error))
+            return
+        }
+        
+        self.dataStore.save(item: EventForDispatch(sdkKey: event.userContext.config.sdkKey, body: body))
+        
+        if self.dataStore.count >= self.batchSize {
+            self.flush()
+        } else {
+            self.startTimer()
+        }
+        
+        completionHandler?(.success(body))
     }
 
     open func flush() {
@@ -169,7 +171,17 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
                 }
                 
                 // send notification BEFORE sending event to the server
-                NotificationCenter.default.post(name: .willSendOptimizelyEvents, object: batchEvent)
+                if let event = try? JSONSerialization.jsonObject(with: batchEvent.body, options: []) as? [String: Any] {
+                    let url = batchEvent.url.absoluteString
+                    let sdkKey = batchEvent.sdkKey
+
+                    if let notifCenter = self.getNotificationCenter(sdkKey: sdkKey) {
+                        let args: [Any] = [url, event]
+                        notifCenter.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
+                    }
+                } else {
+                    self.logger.e("LogEvent notification discarded due to invalid event")
+                }
                 
                 // make the send event synchronous. enter our notify
                 self.notify.enter()
@@ -272,7 +284,7 @@ extension BatchEventProcessor {
     }
     
     open func sync() {
-        self.dispatcher.sync {}
+        dispatcher.sync {}
     }
     
 }

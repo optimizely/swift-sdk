@@ -226,7 +226,7 @@ static NSString * const kSdkKey = @"12345";
     NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
     // check event init and members avialable to ObjC
-    EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil body:[NSData new]];
+    EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil sdkKey:@"a" body:[NSData new]];
     XCTAssertNotNil(event.url);
     XCTAssert(event.body.length==0);
     

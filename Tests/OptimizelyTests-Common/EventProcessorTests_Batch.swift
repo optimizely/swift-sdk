@@ -18,6 +18,8 @@ import XCTest
 
 class EventProcessorTests_Batch: XCTestCase {
     
+    let kSdkKey = "any key"
+    
     let kAccountId = "11111"
     let kClientVersion = "3.1.2"
     let kClientName = "swift-sdk"
@@ -56,10 +58,9 @@ class EventProcessorTests_Batch: XCTestCase {
         self.eventDispatcher = TestHTTPEventDispatcher()
         self.eventProcessor = TestEventProcessor(eventDispatcher: eventDispatcher, eventFileName: uniqueFileName)
 
-        HandlerRegistryService.shared.binders.property?.removeAll()
-        
         // for debug level setting
-        _ = OptimizelyClient(sdkKey: "any",
+        HandlerRegistryService.shared.binders.property?.removeAll()
+        _ = OptimizelyClient(sdkKey: kSdkKey,
                              eventProcessor: eventProcessor,
                              defaultLogLevel: .debug)
         
@@ -148,7 +149,7 @@ extension EventProcessorTests_Batch {
     }
     
     func testSingleEventBatch() {
-        let event = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        let event = makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA)
         let events = [event]
         let (numEvents, batchEvent) = events.batch()
         XCTAssertEqual(numEvents, 1)
@@ -168,7 +169,7 @@ extension EventProcessorTests_Batch {
     
     func testInvalidEventAtHead() {
         let invalidEvent = makeInvalidEventForDispatchWithWrongData()
-        let validEvent = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        let validEvent = makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA)
         let events = [invalidEvent, validEvent, validEvent]
         let (numEvents, batchEvent) = events.batch()
         
@@ -180,7 +181,7 @@ extension EventProcessorTests_Batch {
 
     func testInvalidEventInSecond() {
         let invalidEvent = makeInvalidEventForDispatchWithWrongData()
-        let validEvent = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        let validEvent = makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA)
         let events = [validEvent, invalidEvent, validEvent]
         let (numEvents, batchEvent) = events.batch()
         
@@ -190,10 +191,10 @@ extension EventProcessorTests_Batch {
 
     func testBatchingEvents() {
         let events: [EventForDispatch] = [
-            makeEventForDispatch(url: kUrlA, event: batchEventA),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventA)
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA)
         ]
 
         let (numEvents, batch) = events.batch()
@@ -219,10 +220,10 @@ extension EventProcessorTests_Batch {
 
     func testBatchingEventsWhenUrlsNotEqual() {
         let events: [EventForDispatch] = [
-            makeEventForDispatch(url: kUrlA, event: batchEventA),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventC),
-            makeEventForDispatch(url: kUrlB, event: batchEventA)
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventC),
+            makeEventForDispatch(url: kUrlB, sdkKey: kSdkKey, event: batchEventA)
         ]
 
         let (numEvents, batch) = events.batch()
@@ -241,10 +242,10 @@ extension EventProcessorTests_Batch {
         // but still possible when previous flushes failed.
         
         let events: [EventForDispatch] = [
-            makeEventForDispatch(url: kUrlA, event: batchEventA),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventC),
-            makeEventForDispatch(url: kUrlA, event: makeTestBatchEvent(projectId: "99999", visitor: visitorA))
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventC),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: makeTestBatchEvent(projectId: "99999", visitor: visitorA))
         ]
 
         let (numEvents, batch) = events.batch()
@@ -263,10 +264,10 @@ extension EventProcessorTests_Batch {
         // but still possible when previous flushes failed.
 
         let events: [EventForDispatch] = [
-            makeEventForDispatch(url: kUrlA, event: batchEventA),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventC),
-            makeEventForDispatch(url: kUrlA, event: makeTestBatchEvent(revision: "99999", visitor: visitorA))
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventC),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: makeTestBatchEvent(revision: "99999", visitor: visitorA))
         ]
         
         let (numEvents, batch) = events.batch()
@@ -595,7 +596,7 @@ extension EventProcessorTests_Batch {
         eventProcessor.batchSize = 1000        // big, won't flush
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -617,7 +618,7 @@ extension EventProcessorTests_Batch {
         
         // change revision
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
-        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: kSdkKey)
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
@@ -634,7 +635,7 @@ extension EventProcessorTests_Batch {
         eventProcessor.batchSize = 1000        // big, won't flush
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -656,7 +657,7 @@ extension EventProcessorTests_Batch {
         
         // change projectId
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: kSdkKey)
 
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the projectId change")
@@ -673,7 +674,7 @@ extension EventProcessorTests_Batch {
         eventProcessor.batchSize = 1000        // big, won't flush
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -696,7 +697,7 @@ extension EventProcessorTests_Batch {
 
         // change accountId (not projectId or revision)
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: kSdkKey)
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on any other changes")
@@ -722,7 +723,7 @@ extension EventProcessorTests_Batch {
         
         // first datafile load
 
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -740,7 +741,7 @@ extension EventProcessorTests_Batch {
     func testLogEventNotificationCalledBeforeBatchSent() {
         eventProcessor.timerInterval = 0   // no batch
 
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         
@@ -829,16 +830,18 @@ extension EventProcessorTests_Batch {
         eventProcessor.batchSize = 1000        // big, won't flush
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        // clean
+        HandlerRegistryService.shared.binders.property?.removeAll()  // clear eventProcessor registered at top
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
-        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         
         // (1) should have no flush
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
         
+        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         try! optimizely.start(datafile: datafile)
 
         processMultipleEvents([userEventA, userEventA, userEventA])
@@ -871,7 +874,7 @@ extension EventProcessorTests_Batch {
         // (4) should flush/batch all on close()
         
         optimizely.close()
-        
+
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
         batch = eventDispatcher.sendRequestedEvents[0]
         batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
@@ -973,18 +976,18 @@ extension EventProcessorTests_Batch {
 
 extension EventProcessorTests_Batch {
     
-    func makeEventForDispatch(url: String, event: BatchEvent) -> EventForDispatch {
+    func makeEventForDispatch(url: String, sdkKey: String, event: BatchEvent) -> EventForDispatch {
         let data = try! JSONEncoder().encode(event)
-        return EventForDispatch(url: URL(string: url), body: data)
+        return EventForDispatch(url: URL(string: url), sdkKey: sdkKey, body: data)
     }
     
     func makeInvalidEventForDispatchWithNilUrl() -> EventForDispatch {
         let data = try! JSONEncoder().encode(batchEventA)
-        return EventForDispatch(url: nil, body: data)
+        return EventForDispatch(url: nil, sdkKey: kSdkKey, body: data)
     }
     
     func makeInvalidEventForDispatchWithWrongData() -> EventForDispatch {
-        return EventForDispatch(url: URL(string: kUrlA), body: Data())
+        return EventForDispatch(url: URL(string: kUrlA), sdkKey: kSdkKey, body: Data())
     }
     
     // UserEvent
@@ -1001,7 +1004,7 @@ extension EventProcessorTests_Batch {
     
     func makeEmptyConfig(projectId: String, revision: String) -> ProjectConfig {
         let data = OTUtils.loadJSONDatafile("empty_datafile")!
-        let config = try! ProjectConfig(datafile: data, sdkKey: "any-key")
+        let config = try! ProjectConfig(datafile: data, sdkKey: kSdkKey)
         config.project.projectId = kProjectIdA
         config.project.revision = kRevisionA
         return config

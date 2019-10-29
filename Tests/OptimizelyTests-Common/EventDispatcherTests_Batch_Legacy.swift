@@ -18,6 +18,8 @@ import XCTest
 
 class EventDispatcherTests_Batch_Legacy: XCTestCase {
     
+    let kSdkKey = "any key"
+    
     let kAccountId = "11111"
     let kClientVersion = "3.1.2"
     let kClientName = "swift-sdk"
@@ -57,7 +59,9 @@ class EventDispatcherTests_Batch_Legacy: XCTestCase {
         HandlerRegistryService.shared.binders.property?.removeAll()
 
         // for debug level setting
-        _ = OptimizelyClient(sdkKey: "any", eventDispatcher: eventDispatcher, defaultLogLevel: .debug)
+        _ = OptimizelyClient(sdkKey: kSdkKey,
+                             eventDispatcher: eventDispatcher,
+                             defaultLogLevel: .debug)
         
         // clear static states to test first datafile load
         ProjectConfig.observer.reset()
@@ -144,7 +148,7 @@ extension EventDispatcherTests_Batch_Legacy {
     }
     
     func testSingleEventBatch() {
-        let event = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        let event = makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA)
         let events = [event]
         let (numEvents, batchEvent) = events.batch()
         XCTAssertEqual(numEvents, 1)
@@ -164,7 +168,7 @@ extension EventDispatcherTests_Batch_Legacy {
     
     func testInvalidEventAtHead() {
         let invalidEvent = makeInvalidEventForDispatchWithWrongData()
-        let validEvent = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        let validEvent = makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA)
         let events = [invalidEvent, validEvent, validEvent]
         let (numEvents, batchEvent) = events.batch()
         
@@ -176,7 +180,7 @@ extension EventDispatcherTests_Batch_Legacy {
 
     func testInvalidEventInSecond() {
         let invalidEvent = makeInvalidEventForDispatchWithWrongData()
-        let validEvent = makeEventForDispatch(url: kUrlA, event: batchEventA)
+        let validEvent = makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA)
         let events = [validEvent, invalidEvent, validEvent]
         let (numEvents, batchEvent) = events.batch()
         
@@ -186,10 +190,10 @@ extension EventDispatcherTests_Batch_Legacy {
 
     func testBatchingEvents() {
         let events: [EventForDispatch] = [
-            makeEventForDispatch(url: kUrlA, event: batchEventA),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventA)
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA)
         ]
 
         let (numEvents, batch) = events.batch()
@@ -215,10 +219,10 @@ extension EventDispatcherTests_Batch_Legacy {
 
     func testBatchingEventsWhenUrlsNotEqual() {
         let events: [EventForDispatch] = [
-            makeEventForDispatch(url: kUrlA, event: batchEventA),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventC),
-            makeEventForDispatch(url: kUrlB, event: batchEventA)
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventC),
+            makeEventForDispatch(url: kUrlB, sdkKey: kSdkKey, event: batchEventA)
         ]
 
         let (numEvents, batch) = events.batch()
@@ -237,10 +241,10 @@ extension EventDispatcherTests_Batch_Legacy {
         // but still possible when previous flushes failed.
         
         let events: [EventForDispatch] = [
-            makeEventForDispatch(url: kUrlA, event: batchEventA),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventC),
-            makeEventForDispatch(url: kUrlA, event: makeTestBatchEvent(projectId: "99999", visitor: visitorA))
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventC),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: makeTestBatchEvent(projectId: "99999", visitor: visitorA))
         ]
 
         let (numEvents, batch) = events.batch()
@@ -259,10 +263,10 @@ extension EventDispatcherTests_Batch_Legacy {
         // but still possible when previous flushes failed.
 
         let events: [EventForDispatch] = [
-            makeEventForDispatch(url: kUrlA, event: batchEventA),
-            makeEventForDispatch(url: kUrlA, event: batchEventB),
-            makeEventForDispatch(url: kUrlA, event: batchEventC),
-            makeEventForDispatch(url: kUrlA, event: makeTestBatchEvent(revision: "99999", visitor: visitorA))
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventA),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventB),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: batchEventC),
+            makeEventForDispatch(url: kUrlA, sdkKey: kSdkKey, event: makeTestBatchEvent(revision: "99999", visitor: visitorA))
         ]
         
         let (numEvents, batch) = events.batch()
@@ -300,13 +304,13 @@ extension EventDispatcherTests_Batch_Legacy {
         }
         
         for _ in 0..<eventDispatcher.maxQueueSize {
-            dispatchMultipleEvents([(kUrlA, batchEventA)], completionHandler: handler)
+            dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)], completionHandler: handler)
         }
         
         // now queue must be full. all following events are expected to drop
         
         for _ in 0..<10 {
-            dispatchMultipleEvents([(kUrlA, batchEventB)], completionHandler: handler)
+            dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventB)], completionHandler: handler)
         }
         
         eventDispatcher.sync()
@@ -342,9 +346,9 @@ extension EventDispatcherTests_Batch_Legacy {
 
         XCTAssert(eventDispatcher.batchSize == 10)
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventB),
-                                (kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventB),
+                                (kUrlA, kSdkKey, batchEventA)])
 
         eventDispatcher.close()
 
@@ -375,9 +379,9 @@ extension EventDispatcherTests_Batch_Legacy {
 
         XCTAssert(eventDispatcher.batchSize == 10)
 
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA),
-                                (kUrlB, batchEventB)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventA),
+                                (kUrlB, kSdkKey, batchEventB)])
         
         eventDispatcher.close()
 
@@ -422,10 +426,10 @@ extension EventDispatcherTests_Batch_Legacy {
         
         XCTAssert(eventDispatcher.batchSize == 10)
         
-        dispatchMultipleEvents([(kUrlA, batchEventA)], completionHandler: nil)
-        dispatchMultipleEvents([(kUrlA, batchEventA)], completionHandler: nil)
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)], completionHandler: nil)
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)], completionHandler: nil)
         dispatchMultipleEvents([makeInvalidEventForDispatchWithWrongData()], completionHandler: nil)
-        dispatchMultipleEvents([(kUrlA, batchEventA)], completionHandler: nil)
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)], completionHandler: nil)
 
         eventDispatcher.close()
 
@@ -475,8 +479,8 @@ extension EventDispatcherTests_Batch_Legacy {
         
         eventDispatcher.forceError = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventA)])
 
         eventDispatcher.close()
 
@@ -527,11 +531,11 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.exp!.assertForOverFulfill = false   // allow redundant fulfull for testing
 
         DispatchQueue.global().async {
-            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)], completionHandler: nil)
+            self.dispatchMultipleEvents([(self.kUrlA, self.kSdkKey, self.batchEventA)], completionHandler: nil)
             sleep(1)
-            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)], completionHandler: nil)
+            self.dispatchMultipleEvents([(self.kUrlA, self.kSdkKey, self.batchEventA)], completionHandler: nil)
             sleep(3)
-            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)], completionHandler: nil)
+            self.dispatchMultipleEvents([(self.kUrlA, self.kSdkKey, self.batchEventA)], completionHandler: nil)
         }
 
         wait(for: [eventDispatcher.exp!], timeout: 10)
@@ -555,7 +559,7 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.exp?.isInverted = true
         
         DispatchQueue.global().async {
-            self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)])
+            self.dispatchMultipleEvents([(self.kUrlA, self.kSdkKey, self.batchEventA)])
         }
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
@@ -569,9 +573,9 @@ extension EventDispatcherTests_Batch_Legacy {
         // zero-interval means that all events are sent out immediately
         eventDispatcher.timerInterval = 0
 
-        dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
-                                (self.kUrlB, self.batchEventB),
-                                (self.kUrlC, self.batchEventC)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlB, kSdkKey, batchEventB),
+                                (kUrlC, kSdkKey, batchEventC)])
 
         eventDispatcher.dispatcher.sync {}
         
@@ -607,8 +611,8 @@ extension EventDispatcherTests_Batch_Legacy {
 
         eventDispatcher.exp = expectation(description: "timer")
 
-        self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
-                                     (self.kUrlA, self.batchEventB)])
+        self.dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                     (kUrlA, kSdkKey, batchEventB)])
 
         // wait for the 1st batched event transmitted successfully
         wait(for: [eventDispatcher.exp!], timeout: 10)
@@ -634,8 +638,8 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.exp = expectation(description: "timer")
         eventDispatcher.exp?.assertForOverFulfill = false
         
-        self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA),
-                                     (self.kUrlA, self.batchEventB)])
+        self.dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                     (kUrlA, kSdkKey, batchEventB)])
 
         // wait for the first timer-fire
         wait(for: [eventDispatcher.exp!], timeout: 10)
@@ -670,8 +674,8 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventA)])
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
@@ -680,7 +684,7 @@ extension EventDispatcherTests_Batch_Legacy {
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
 
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)])
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on batchSize hit")
@@ -695,7 +699,7 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           defaultLogLevel: .debug)
         var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -706,8 +710,8 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventA)])
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
@@ -718,7 +722,7 @@ extension EventDispatcherTests_Batch_Legacy {
         
         // change revision
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
-        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: kSdkKey)
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
@@ -733,7 +737,7 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           defaultLogLevel: .debug)
         var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -744,8 +748,8 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventA)])
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
@@ -756,7 +760,7 @@ extension EventDispatcherTests_Batch_Legacy {
         
         // change projectId
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: kSdkKey)
 
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the projectId change")
@@ -771,7 +775,7 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           defaultLogLevel: .debug)
         var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -782,8 +786,8 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventA)])
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
@@ -795,7 +799,7 @@ extension EventDispatcherTests_Batch_Legacy {
 
         // change accountId (not projectId or revision)
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: kSdkKey)
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on any other changes")
@@ -815,12 +819,12 @@ extension EventDispatcherTests_Batch_Legacy {
         
         // old events queued before SDK starts
         
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventA)])
         
         // first datafile load
 
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           defaultLogLevel: .debug)
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -838,7 +842,7 @@ extension EventDispatcherTests_Batch_Legacy {
     func testLogEventNotificationCalledBeforeBatchSent() {
         eventDispatcher.timerInterval = 0   // no batch
 
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           defaultLogLevel: .debug)
         
@@ -854,7 +858,7 @@ extension EventDispatcherTests_Batch_Legacy {
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         try! optimizely.start(datafile: datafile)
         
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)])
         eventDispatcher.dispatcher.sync {}
         
         XCTAssertEqual(notifUrl, kUrlA)
@@ -878,7 +882,7 @@ extension EventDispatcherTests_Batch_Legacy {
         // this tests iOS9 (no-timer)
         if #available(iOS 10.0, tvOS 10.0, *) { return }
         
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)])
 
         eventDispatcher.dispatcher.sync {}
         
@@ -903,7 +907,7 @@ extension EventDispatcherTests_Batch_Legacy {
         
         eventDispatcher.timerInterval = 0
         
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)])
         eventDispatcher.dispatcher.sync {}
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
@@ -929,7 +933,8 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+        HandlerRegistryService.shared.binders.property?.removeAll()
+        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           defaultLogLevel: .debug)
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -941,9 +946,9 @@ extension EventDispatcherTests_Batch_Legacy {
         
         try! optimizely.start(datafile: datafile)
 
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventA),
+                                (kUrlA, kSdkKey, batchEventA)])
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
@@ -952,7 +957,7 @@ extension EventDispatcherTests_Batch_Legacy {
         
         optimizely.close()
         
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on close")
         var batch = eventDispatcher.sendRequestedEvents[0]
         var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.visitors.count, 3)
@@ -965,8 +970,8 @@ extension EventDispatcherTests_Batch_Legacy {
         
         try! optimizely.start(datafile: datafile)
         
-        dispatchMultipleEvents([(kUrlA, batchEventB),
-                                (kUrlA, batchEventA)])
+        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventB),
+                                (kUrlA, kSdkKey, batchEventA)])
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
@@ -1067,7 +1072,7 @@ extension EventDispatcherTests_Batch_Legacy {
             let event = makeTestBatchEvent(projectId: projectId, revision: revision, visitor: visitor)
             print("[RandomTest][\(i)] dispatch event: revision = \(revision!)")
             
-            dispatchMultipleEvents([makeEventForDispatch(url: url!, event: event)], completionHandler: nil)
+            dispatchMultipleEvents([makeEventForDispatch(url: url!, sdkKey: kSdkKey, event: event)], completionHandler: nil)
             waitAsyncMilliseconds(Int.random(in: 0..<100))  // random delays between event dispatches
         }
     }
@@ -1077,18 +1082,18 @@ extension EventDispatcherTests_Batch_Legacy {
 
 extension EventDispatcherTests_Batch_Legacy {
     
-    func makeEventForDispatch(url: String, event: BatchEvent) -> EventForDispatch {
+    func makeEventForDispatch(url: String, sdkKey: String, event: BatchEvent) -> EventForDispatch {
         let data = try! JSONEncoder().encode(event)
-        return EventForDispatch(url: URL(string: url), body: data)
+        return EventForDispatch(url: URL(string: url), sdkKey: sdkKey, body: data)
     }
     
     func makeInvalidEventForDispatchWithNilUrl() -> EventForDispatch {
         let data = try! JSONEncoder().encode(batchEventA)
-        return EventForDispatch(url: nil, body: data)
+        return EventForDispatch(url: nil, sdkKey: kSdkKey, body: data)
     }
     
     func makeInvalidEventForDispatchWithWrongData() -> EventForDispatch {
-        return EventForDispatch(url: URL(string: kUrlA), body: Data())
+        return EventForDispatch(url: URL(string: kUrlA), sdkKey: kSdkKey, body: Data())
     }
     
     func makeTestBatchEvent(projectId: String?=nil, revision: String?=nil, visitor: Visitor?=nil) -> BatchEvent {
@@ -1106,8 +1111,9 @@ extension EventDispatcherTests_Batch_Legacy {
                           enrichDecisions: kEnrichDecision)
     }
     
-    func dispatchMultipleEvents(_ events: [(url: String, event: BatchEvent)], completionHandler: DispatchCompletionHandler? = nil) {
-        dispatchMultipleEvents(events.map{ makeEventForDispatch(url: $0.url, event: $0.event) },
+    func dispatchMultipleEvents(_ events: [(url: String, sdkKey: String, event: BatchEvent)],
+                                completionHandler: DispatchCompletionHandler? = nil) {
+        dispatchMultipleEvents(events.map{ makeEventForDispatch(url: $0.url, sdkKey: $0.sdkKey, event: $0.event) },
                                completionHandler: completionHandler)
     }
     

@@ -43,6 +43,7 @@ extension Array where Element == EventForDispatch {
         var eventsBatched = [BatchEvent]()
         var visitors = [Visitor]()
         var url: URL?
+        var sdkKey: String?
         var projectId: String?
         var revision: String?
         
@@ -54,6 +55,14 @@ extension Array where Element == EventForDispatch {
             return url == event.url
         }
         
+        let checkSdkKey = { (event: EventForDispatch) -> Bool in
+            if sdkKey == nil {
+                sdkKey = event.sdkKey
+                return sdkKey != nil
+            }
+            return sdkKey == event.sdkKey
+        }
+
         let checkProjectId = { (batchEvent: BatchEvent) -> Bool in
             if projectId == nil {
                 projectId = batchEvent.projectID
@@ -61,7 +70,7 @@ extension Array where Element == EventForDispatch {
             }
             return projectId == batchEvent.projectID
         }
-
+        
         let checkRevision = { (batchEvent: BatchEvent) -> Bool in
             if revision == nil {
                 revision = batchEvent.revision
@@ -72,7 +81,10 @@ extension Array where Element == EventForDispatch {
 
         for event in self {
             if let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: event.body) {
-                if !checkUrl(event) || !checkProjectId(batchEvent) || !checkRevision(batchEvent) {
+                if !checkUrl(event) ||
+                    !checkSdkKey(event) ||
+                    !checkProjectId(batchEvent) ||
+                    !checkRevision(batchEvent) {
                     break
                 }
                 
@@ -90,10 +102,10 @@ extension Array where Element == EventForDispatch {
             return (1, nil)
         }
 
-        return (eventsBatched.count, makeBatchEvent(base: eventsBatched.first!, visitors: visitors, url: url))
+        return (eventsBatched.count, makeBatchEvent(base: eventsBatched.first!, visitors: visitors, url: url, sdkKey: sdkKey))
     }
     
-    func makeBatchEvent(base: BatchEvent, visitors: [Visitor], url: URL?) -> EventForDispatch? {
+    func makeBatchEvent(base: BatchEvent, visitors: [Visitor], url: URL?, sdkKey: String?) -> EventForDispatch? {
         let batchEvent = BatchEvent(revision: base.revision,
                                     accountID: base.accountID,
                                     clientVersion: base.clientVersion,
@@ -107,6 +119,10 @@ extension Array where Element == EventForDispatch {
             return nil
         }
         
-        return EventForDispatch(url: url, body: data)
+        guard let sdkKey = sdkKey else {
+            return nil
+        }
+        
+        return EventForDispatch(url: url, sdkKey: sdkKey, body: data)
     }
 }

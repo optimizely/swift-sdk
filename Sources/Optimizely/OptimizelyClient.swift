@@ -668,7 +668,7 @@ extension OptimizelyClient {
                                               variation: variation,
                                               userId: userId,
                                               attributes: attributes,
-                                              event: EventForDispatch(body: body),
+                                              event: EventForDispatch(sdkKey: self.sdkKey, body: body),
                                               async: false)
             }
         }
@@ -698,29 +698,30 @@ extension OptimizelyClient {
                                            userId: userId,
                                            attributes: attributes,
                                            eventTags: eventTags,
-                                           event: EventForDispatch(body: body),
+                                           event: EventForDispatch(sdkKey: self.sdkKey, body: body),
                                            async: false)
             }
         }
     }
     
     func sendEventToDispatcher(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
-        // deprecated
-        if let eventDispatcher = self.eventDispatcher {
-            if let body = try? JSONEncoder().encode(event.batchEvent) {
-                let dataEvent = EventForDispatch(body: body)
-                eventDispatcher.dispatchEvent(event: dataEvent, completionHandler: completionHandler)
+        eventLock.async {
+            // deprecated
+            if let eventDispatcher = self.eventDispatcher {
+                if let body = try? JSONEncoder().encode(event.batchEvent) {
+                    let dataEvent = EventForDispatch(sdkKey: self.sdkKey, body: body)
+                    eventDispatcher.dispatchEvent(event: dataEvent, completionHandler: completionHandler)
+                }
+                return
             }
-            return
+            
+            // The event is queued in the dispatcher, batched, and sent out later.
+            // non-blocking (event data serialization takes time)
+            
+            // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
+            self.eventProcessor?.process(event: event, completionHandler: completionHandler)
         }
-        
-        // The event is queued in the dispatcher, batched, and sent out later.
-        // non-blocking (event data serialization takes time)
-
-        // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
-        eventProcessor?.process(event: event, completionHandler: completionHandler)
     }
-    
 }
 
 // MARK: - Notifications

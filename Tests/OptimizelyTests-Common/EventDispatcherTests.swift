@@ -19,6 +19,8 @@ import XCTest
 class EventDispatcherTests: XCTestCase {
     
     var eventDispatcher: DefaultEventDispatcher?
+    let sdkKey = "any key"
+    lazy var simpleEvent = EventForDispatch(sdkKey: sdkKey, body: Data())
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -55,7 +57,7 @@ class EventDispatcherTests: XCTestCase {
         eventDispatcher?.dispatcher.sync {
         }
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
+        pEventD.dispatchEvent(event: simpleEvent, completionHandler: nil)
         
         eventDispatcher?.dispatcher.sync {
         }
@@ -83,7 +85,7 @@ class EventDispatcherTests: XCTestCase {
             override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
                 events.append(event)
                 if !once {
-                    self.dataStore.save(item: EventForDispatch(body: Data()))
+                    self.dataStore.save(item: EventForDispatch(sdkKey: "a", body: Data()))
                     once = true
                 }
                 completionHandler(.success(Data()))
@@ -93,7 +95,7 @@ class EventDispatcherTests: XCTestCase {
         let dispatcher = InnerEventDispatcher(timerInterval: 0)
 
         // add two items.... call flush
-        dispatcher.dataStore.save(item: EventForDispatch(body: Data()))
+        dispatcher.dataStore.save(item: simpleEvent)
         dispatcher.flushEvents()
         
         dispatcher.dispatcher.sync {
@@ -114,7 +116,7 @@ class EventDispatcherTests: XCTestCase {
         pEventD.flushEvents()
         wait()
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+        pEventD.dispatchEvent(event: simpleEvent) { (_) -> Void in
             
         }
         wait()
@@ -146,7 +148,7 @@ class EventDispatcherTests: XCTestCase {
         pEventD.flushEvents()
         wait()
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+        pEventD.dispatchEvent(event: simpleEvent) { (_) -> Void in
             
         }
         wait()
@@ -178,7 +180,7 @@ class EventDispatcherTests: XCTestCase {
         pEventD.flushEvents()
         wait()
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+        pEventD.dispatchEvent(event: simpleEvent) { (_) -> Void in
         }
         wait()
         
@@ -200,7 +202,7 @@ class EventDispatcherTests: XCTestCase {
     func testDispatcherCustom() {
         let dispatcher = FakeEventDispatcher()
         
-        dispatcher.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+        dispatcher.dispatchEvent(event: simpleEvent) { (_) -> Void in
             
         }
         
@@ -218,7 +220,7 @@ class EventDispatcherTests: XCTestCase {
         eventDispatcher?.dispatcher.sync {
         }
         
-        eventDispatcher?.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+        eventDispatcher?.dispatchEvent(event: simpleEvent) { (_) -> Void in
         }
         
         eventDispatcher?.dispatcher.sync {
@@ -234,7 +236,7 @@ class EventDispatcherTests: XCTestCase {
         
         group.enter()
         
-        eventDispatcher?.sendEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+        eventDispatcher?.sendEvent(event: simpleEvent) { (_) -> Void in
             sent = true
             group.leave()
         }
@@ -265,7 +267,7 @@ class EventDispatcherTests: XCTestCase {
     func testDataStoreQueue() {
         let queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: "backingStoreName"))
         
-        queue.save(item: EventForDispatch(body: "Blah".data(using: .utf8)!))
+        queue.save(item: EventForDispatch(sdkKey: sdkKey, body: "Blah".data(using: .utf8)!))
         
         let event = queue.getFirstItem()
         let str = String(data: (event?.body)!, encoding: .utf8)

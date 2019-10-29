@@ -51,7 +51,7 @@ extension OptimizelyClient {
                                   defaultLogLevel: OptimizelyLogLevel) {
         self.init(sdkKey: sdkKey,
                   logger: logger,
-                  eventProcessor: SwiftEventProcessor(eventProcessor),
+                  eventProcessor: SwiftEventsProcessor(eventProcessor),
                   eventDispatcher: SwiftEventsDispatcher(eventDispatcher),
                   userProfileService: userProfileService,
                   periodicDownloadInterval: periodicDownloadInterval?.intValue,
@@ -329,13 +329,13 @@ extension OptimizelyClient {
 extension OptimizelyClient {
     
     /// EventProcessor implementation for Objective-C interface support
-    class SwiftEventProcessor: OPTEventsProcessor {
-        let objcEventProcessor: _ObjcOPTEventsProcessor
+    class SwiftEventsProcessor: OPTEventsProcessor {
+        let objcEventsProcessor: _ObjcOPTEventsProcessor
         
         init?(_ objcEventProcessor: _ObjcOPTEventsProcessor?) {
             guard let objcProcesser = objcEventProcessor else { return nil }
             
-            self.objcEventProcessor = objcProcesser
+            self.objcEventsProcessor = objcProcesser
         }
         
         func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
@@ -355,11 +355,11 @@ extension OptimizelyClient {
                 }
             }
             
-            objcEventProcessor.process(event: ObjcUserEvent(event: event), completionHandler: objcHandler)
+            objcEventsProcessor.process(event: ObjcUserEvent(event: event), completionHandler: objcHandler)
         }
         
         func flush() {
-            objcEventProcessor.flush()
+            objcEventsProcessor.flush()
         }
     }
     

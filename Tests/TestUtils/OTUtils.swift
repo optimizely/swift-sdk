@@ -88,13 +88,35 @@ class OTUtils {
     
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
-                                 eventDispatcher: OPTEventDispatcher?=nil) -> OptimizelyClient? {
+                                 eventProcessor: OPTEventsProcessor?=nil) -> OptimizelyClient? {
+        
+        guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
+        let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
+        
+        // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
+
+        HandlerRegistryService.shared.binders.property?.removeAll()  // clear eventProcessor registered at top
+        let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
+                                          eventProcessor: eventProcessor,
+                                          userProfileService: userProfileService)
+        do {
+            try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
+            return optimizely
+        } catch {
+            return nil
+        }
+    }
+
+    static func createOptimizely(datafileName: String,
+                                 clearUserProfileService: Bool,
+                                 eventDispatcher: OPTEventDispatcher) -> OptimizelyClient? {
 
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
 
+        HandlerRegistryService.shared.binders.property?.removeAll()  // clear eventProcessor registered at top
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                            eventDispatcher: eventDispatcher,
                                            userProfileService: userProfileService)

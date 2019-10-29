@@ -65,7 +65,7 @@ static NSString * const kSdkKey = @"12345";
     NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
     OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:self.randomSdkKey];
-    
+
     XCTestExpectation *exp = [self expectationWithDescription:@"x"];
     
     __block BOOL called = false;
@@ -95,7 +95,7 @@ static NSString * const kSdkKey = @"12345";
     NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
     OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:self.randomSdkKey];
-    
+
     XCTestExpectation *exp = [self expectationWithDescription:@"x"];
 
     __block BOOL called = false;

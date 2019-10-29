@@ -107,32 +107,35 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     }
     
     open func process(event: UserEvent, completionHandler: DispatchCompletionHandler? = nil) {
-        guard self.dataStore.count < self.maxQueueSize else {
-            let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
-            self.logger.e(error)
+        // EP can be shared by multiple clients
+        dispatcher.async {
+            guard self.dataStore.count < self.maxQueueSize else {
+                let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
+                self.logger.e(error)
+                
+                self.flush()
+                completionHandler?(.failure(error))
+                return
+            }
             
-            self.flush()
-            completionHandler?(.failure(error))
-            return
-        }
-        
-        guard let body = try? JSONEncoder().encode(event.batchEvent) else {
-            let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
-            self.logger.e(error)
+            guard let body = try? JSONEncoder().encode(event.batchEvent) else {
+                let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
+                self.logger.e(error)
+                
+                completionHandler?(.failure(error))
+                return
+            }
             
-            completionHandler?(.failure(error))
-            return
+            self.dataStore.save(item: EventForDispatch(sdkKey: event.userContext.config.sdkKey, body: body))
+            
+            if self.dataStore.count >= self.batchSize {
+                self.flush()
+            } else {
+                self.startTimer()
+            }
+            
+            completionHandler?(.success(body))
         }
-        
-        self.dataStore.save(item: EventForDispatch(sdkKey: event.userContext.config.sdkKey, body: body))
-        
-        if self.dataStore.count >= self.batchSize {
-            self.flush()
-        } else {
-            self.startTimer()
-        }
-        
-        completionHandler?(.success(body))
     }
 
     open func flush() {
@@ -279,6 +282,7 @@ extension BatchEventProcessor {
     // MARK: - Tests
 
     open func close() {
+        sync()
         flush()
         sync()
     }

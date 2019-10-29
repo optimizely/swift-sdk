@@ -45,12 +45,12 @@ open class OptimizelyClient: NSObject {
     lazy var logger = OPTLoggerFactory.getLogger()
     
     var eventProcessor: OPTEventsProcessor? {
-        return HandlerRegistryService.shared.injectEventProcessor(sdkKey: self.sdkKey)
+        return HandlerRegistryService.shared.injectEventProcessor()
     }
     
     // deprecated
     var eventDispatcher: OPTEventDispatcher? {
-        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
+        return HandlerRegistryService.shared.injectEventDispatcher()
     }
     
     // MARK: - Default Services
@@ -705,22 +705,20 @@ extension OptimizelyClient {
     }
     
     func sendEventToDispatcher(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
-        eventLock.async {
-            // deprecated
-            if let eventDispatcher = self.eventDispatcher {
-                if let body = try? JSONEncoder().encode(event.batchEvent) {
-                    let dataEvent = EventForDispatch(sdkKey: self.sdkKey, body: body)
-                    eventDispatcher.dispatchEvent(event: dataEvent, completionHandler: completionHandler)
-                }
-                return
+        // deprecated
+        if let eventDispatcher = self.eventDispatcher {
+            if let body = try? JSONEncoder().encode(event.batchEvent) {
+                let dataEvent = EventForDispatch(sdkKey: self.sdkKey, body: body)
+                eventDispatcher.dispatchEvent(event: dataEvent, completionHandler: completionHandler)
             }
-            
-            // The event is queued in the dispatcher, batched, and sent out later.
-            // non-blocking (event data serialization takes time)
-            
-            // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
-            self.eventProcessor?.process(event: event, completionHandler: completionHandler)
+            return
         }
+        
+        // The event is queued in the dispatcher, batched, and sent out later.
+        // non-blocking (event data serialization takes time)
+        
+        // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
+        self.eventProcessor?.process(event: event, completionHandler: completionHandler)
     }
 }
 

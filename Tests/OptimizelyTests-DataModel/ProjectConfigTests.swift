@@ -69,7 +69,7 @@ class ProjectConfigTests: XCTestCase {
         // check experimentFeatureMap extracted properly
         
         let model: Project = try! OTUtils.model(from: projectData)
-        let projectConfig = ProjectConfig()
+        let projectConfig = try! ProjectConfig(datafile: OTUtils.loadJSONDatafile("empty_datafile")!, sdkKey: "any-key")
         projectConfig.project = model
         
         let featureMap = projectConfig.experimentFeatureMap

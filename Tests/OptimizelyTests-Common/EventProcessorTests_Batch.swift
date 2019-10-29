@@ -307,18 +307,14 @@ extension EventProcessorTests_Batch {
             processEvent(userEventA, completionHandler: handler)
         }
         
-        // now queue must be full. all following events are expected to drop
-        
-        for _ in 0..<10 {
-            processEvent(userEventB, completionHandler: handler)
-        }
-        
+        // now queue must be full. the following event is expected to drop
+        processEvent(userEventB, completionHandler: handler)
         eventProcessor.sync()
         
         // check out if success/failure callbacks called properly
         
         XCTAssertEqual(successCount, eventProcessor.maxQueueSize)
-        XCTAssertEqual(failureCount, 10)
+        XCTAssertEqual(failureCount, 1)
 
         // flush
         
@@ -621,7 +617,7 @@ extension EventProcessorTests_Batch {
         
         // change revision
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
-        optimizely.config = try! ProjectConfig(datafile: datafile)
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
@@ -660,7 +656,7 @@ extension EventProcessorTests_Batch {
         
         // change projectId
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile)
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
 
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the projectId change")
@@ -700,7 +696,7 @@ extension EventProcessorTests_Batch {
 
         // change accountId (not projectId or revision)
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile)
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on any other changes")
@@ -1005,7 +1001,7 @@ extension EventProcessorTests_Batch {
     
     func makeEmptyConfig(projectId: String, revision: String) -> ProjectConfig {
         let data = OTUtils.loadJSONDatafile("empty_datafile")!
-        let config = try! ProjectConfig(datafile: data)
+        let config = try! ProjectConfig(datafile: data, sdkKey: "any-key")
         config.project.projectId = kProjectIdA
         config.project.revision = kRevisionA
         return config

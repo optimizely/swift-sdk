@@ -26,7 +26,7 @@ class BucketTests_Others: XCTestCase {
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         let data = OTUtils.loadJSONDatafile("grouped_experiments")
-        config = try? ProjectConfig(datafile: data!)
+        config = try? ProjectConfig(datafile: data!, sdkKey: "any-key")
     }
 
     override func tearDown() {

@@ -718,7 +718,7 @@ extension EventDispatcherTests_Batch_Legacy {
         
         // change revision
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
-        optimizely.config = try! ProjectConfig(datafile: datafile)
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
@@ -756,7 +756,7 @@ extension EventDispatcherTests_Batch_Legacy {
         
         // change projectId
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile)
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
 
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the projectId change")
@@ -795,7 +795,7 @@ extension EventDispatcherTests_Batch_Legacy {
 
         // change accountId (not projectId or revision)
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile)
+        optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: "any-key")
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on any other changes")

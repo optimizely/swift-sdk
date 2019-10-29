@@ -188,11 +188,11 @@ open class OptimizelyClient: NSObject {
     
     func configSDK(datafile: Data) throws {
         do {
-            self.config = try ProjectConfig(datafile: datafile)
+            self.config = try ProjectConfig(datafile: datafile, sdkKey: sdkKey)
                         
             datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in...
-                if let config = try? ProjectConfig(datafile: data) {
+                if let config = try? ProjectConfig(datafile: data, sdkKey: self.sdkKey) {
                     do {
                         if let users = self.config?.whitelistUsers {
                             config.whitelistUsers = users

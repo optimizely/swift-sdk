@@ -107,6 +107,8 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
             guard self.dataStore.count < self.maxQueueSize else {
                 let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
                 self.logger.e(error)
+                
+                self.flush()
                 completionHandler?(.failure(error))
                 return
             }
@@ -114,6 +116,7 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
             guard let body = try? JSONEncoder().encode(event.batchEvent) else {
                 let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
                 self.logger.e(error)
+                
                 completionHandler?(.failure(error))
                 return
             }

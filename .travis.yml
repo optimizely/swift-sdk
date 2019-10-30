@@ -28,7 +28,7 @@ jobs:
       install:
         - mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git && popd
       script:
-        - $HOME/travisci-tools/trigger-script-with-status-update.sh
+        - $HOME/travisci-tools/trigger-script-with-status-update.sh sohail/timeoutincrease
     
     - <<: *integrationtest
       stage: 'Benchmarking tests'

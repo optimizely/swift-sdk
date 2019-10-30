@@ -704,7 +704,7 @@ extension OptimizelyClient {
         }
     }
     
-    func sendEventToDispatcher(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
+    func sendEventToDispatcher(event: UserEvent, completionHandler: ProcessCompletionHandler?) {
         // deprecated
         if let eventDispatcher = self.eventDispatcher {
             if let body = try? JSONEncoder().encode(event.batchEvent) {

@@ -1101,11 +1101,11 @@ extension EventProcessorTests_Batch {
                        visitorID: kUserIdA)
     }
     
-    func processEvent(_ event: UserEvent, completionHandler: DispatchCompletionHandler? = nil) {
+    func processEvent(_ event: UserEvent, completionHandler: ProcessCompletionHandler? = nil) {
         processMultipleEvents([event], completionHandler: completionHandler)
     }
 
-    func processMultipleEvents(_ events: [UserEvent], completionHandler: DispatchCompletionHandler? = nil) {
+    func processMultipleEvents(_ events: [UserEvent], completionHandler: ProcessCompletionHandler? = nil) {
         events.forEach {
             eventProcessor.process(event: $0, completionHandler: completionHandler)
         }
@@ -1195,7 +1195,7 @@ class TestEventProcessor: BatchEventProcessor {
         }
     }
     
-    override func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
+    override func process(event: UserEvent, completionHandler: ProcessCompletionHandler?) {
         super.process(event: event, completionHandler: completionHandler)
     }
     

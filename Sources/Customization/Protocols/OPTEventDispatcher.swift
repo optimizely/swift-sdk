@@ -16,8 +16,6 @@
 
 import Foundation
 
-public typealias DispatchCompletionHandler = (OptimizelyResult<Data>) -> Void
-
 /// The OPTEventDispatcher dispatches events to the Optimizely backend used in results.
 public protocol OPTEventDispatcher {
 

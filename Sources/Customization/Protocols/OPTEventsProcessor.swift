@@ -16,9 +16,11 @@
     
 import Foundation
 
+public typealias ProcessCompletionHandler = (OptimizelyResult<Data>) -> Void
+
 public protocol OPTEventsProcessor {
     
-    func process(event: UserEvent, completionHandler: DispatchCompletionHandler?)
+    func process(event: UserEvent, completionHandler: ProcessCompletionHandler?)
     
     /// Attempts to flush the event queue if there are any events to process.
     func flush()

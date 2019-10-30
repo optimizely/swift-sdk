@@ -343,7 +343,7 @@ extension OptimizelyClient {
             self.objcEventsProcessor = objcProcesser
         }
         
-        func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
+        func process(event: UserEvent, completionHandler: ProcessCompletionHandler?) {
             var objcHandler: ((Data?, NSError?) -> Void)?
             
             if let completionHandler = completionHandler {

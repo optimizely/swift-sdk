@@ -142,7 +142,6 @@ class EventDispatcherTests: XCTestCase {
 
     func testEventDispatcherMemory() {
         eventDispatcher = DefaultEventDispatcher( backingStore: .memory)
-        let pEventD: OPTEventDispatcher = eventDispatcher!
         eventDispatcher.timerInterval = 1
 
         eventDispatcher.flushEvents()

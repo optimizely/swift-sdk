@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019, Optimizely, Inc. and contributors                        *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 #import "AppDelegate.h"
 #import "VariationViewController.h"
@@ -39,7 +39,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     
     self.userId = [NSString stringWithFormat:@"%d", arc4random_uniform(300000)];
     self.attributes = @{ @"browser_type": @"safari" };
-
+    
     // initialize SDK in one of these two ways:
     // (1) asynchronous SDK initialization (RECOMMENDED)
     //     - fetch a JSON datafile from the server
@@ -55,14 +55,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 // MARK: - Initialization Examples
 
 -(void)initializeOptimizelySDKAsynchronous {
-    DefaultEventDispatcher *eventDispacher = [[DefaultEventDispatcher alloc] initWithBatchSize:10 timerInterval:1 maxQueueSize:1000];
-    
-    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
-                                                        logger:nil
-                                               eventDispatcher:eventDispacher
-                                            userProfileService:nil
-                                      periodicDownloadInterval:@(5)
-                                               defaultLogLevel:OptimizelyLogLevelDebug];
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey];
     
     [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
         if (error == nil) {
@@ -109,18 +102,21 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     // This should be should be much larger (default = 10 mins).
     NSNumber *customDownloadIntervalInSecs = @(30);
     
+    BatchEventProcessor *customProcessor = [[BatchEventProcessor alloc] initWithBatchSize:10 timerInterval:30 maxQueueSize:1000];
+    
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
-                                                         logger:customLogger
-                                                eventDispatcher:nil
-                                             userProfileService:nil
-                                       periodicDownloadInterval:customDownloadIntervalInSecs
-                                                defaultLogLevel:OptimizelyLogLevelDebug];
+                                                        logger:customLogger
+                                                eventProcessor:customProcessor
+                                               eventDispatcher:nil
+                                            userProfileService:nil
+                                      periodicDownloadInterval:customDownloadIntervalInSecs
+                                               defaultLogLevel:OptimizelyLogLevelDebug];
     
     NSNumber *notifId;
     notifId = [self.optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString *type,
-                                                                                              NSString *userId,
-                                                                                              NSDictionary<NSString *,id> *attributes,
-                                                                                              NSDictionary<NSString *,id> *decisionInfo) {
+                                                                                                        NSString *userId,
+                                                                                                        NSDictionary<NSString *,id> *attributes,
+                                                                                                        NSDictionary<NSString *,id> *decisionInfo) {
         NSLog(@"Received decision notification: %@ %@ %@ %@", type, userId, attributes, decisionInfo);
     }];
     
@@ -152,13 +148,13 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 -(void)startWithRootViewController {
     dispatch_async(dispatch_get_main_queue(), ^{
         // For sample codes for other APIs, see "Samples/SamplesForAPI.m"
-
+        
         NSError *error;
         NSString *variationKey = [self.optimizely activateWithExperimentKey:kOptimizelyExperimentKey
                                                                      userId:self.userId
                                                                  attributes:self.attributes
                                                                       error:&error];
-
+        
         if (variationKey != nil) {
             [self openVariationViewWithVariationKey:variationKey];
         } else {

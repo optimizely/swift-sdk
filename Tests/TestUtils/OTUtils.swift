@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019, Optimizely, Inc. and contributors                        *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 import XCTest
@@ -94,7 +94,7 @@ class OTUtils {
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-
+        
         OptimizelyClient.clearRegistryService()
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                           eventProcessor: eventProcessor,
@@ -106,20 +106,20 @@ class OTUtils {
             return nil
         }
     }
-
+    
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
                                  eventDispatcher: OPTEventDispatcher) -> OptimizelyClient? {
-
+        
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-
+        
         OptimizelyClient.clearRegistryService()
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
-                                           eventDispatcher: eventDispatcher,
-                                           userProfileService: userProfileService)
+                                          eventDispatcher: eventDispatcher,
+                                          userProfileService: userProfileService)
         do {
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely
@@ -127,7 +127,7 @@ class OTUtils {
             return nil
         }
     }
-
+    
     // MARK: - big numbers
     
     static var positiveMaxValueAllowed: Double {
@@ -163,7 +163,7 @@ class OTUtils {
     static var randomSdkKey: String {
         return String(arc4random())
     }
-
+    
 }
 
 class FakeEventDispatcher: OPTEventDispatcher {

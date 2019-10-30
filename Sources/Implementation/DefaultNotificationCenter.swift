@@ -152,10 +152,3 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     }
     
 }
-
-// MARK: Notification Translation
-
-extension DefaultNotificationCenter {
-    
-    
-}

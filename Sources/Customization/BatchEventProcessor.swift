@@ -283,14 +283,14 @@ extension BatchEventProcessor {
     // MARK: - Tests
 
     open func clear() {
-        processQueue.sync{}
+        processQueue.sync {}
         flush()
-        flushQueue.sync{}
+        flushQueue.sync {}
     }
     
     open func sync() {
-        processQueue.sync{}
-        flushQueue.sync{}
+        processQueue.sync {}
+        flushQueue.sync {}
     }
     
 }

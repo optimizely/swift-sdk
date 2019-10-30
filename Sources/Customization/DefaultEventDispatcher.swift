@@ -290,9 +290,9 @@ extension DefaultEventDispatcher {
     // MARK: - Tests
 
     open func clear() {
-        dispatchQueue.sync{}
+        dispatchQueue.sync {}
         flushEvents()
-        flushQueue.sync{}
+        flushQueue.sync {}
     }
     
     open func sync() {

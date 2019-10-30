@@ -56,7 +56,7 @@ class EventDispatcherTests_Batch_Legacy: XCTestCase {
         
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
         
-        HandlerRegistryService.shared.binders.property?.removeAll()
+        OptimizelyClient.clearRegistryService()
 
         // for debug level setting
         _ = OptimizelyClient(sdkKey: kSdkKey,
@@ -933,7 +933,7 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        HandlerRegistryService.shared.binders.property?.removeAll()
+        OptimizelyClient.clearRegistryService()
         let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           defaultLogLevel: .debug)

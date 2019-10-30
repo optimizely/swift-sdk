@@ -95,7 +95,7 @@ class OTUtils {
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
 
-        HandlerRegistryService.shared.binders.property?.removeAll()  // clear eventProcessor registered at top
+        OptimizelyClient.clearRegistryService()
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                           eventProcessor: eventProcessor,
                                           userProfileService: userProfileService)
@@ -116,7 +116,7 @@ class OTUtils {
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
 
-        HandlerRegistryService.shared.binders.property?.removeAll()  // clear eventProcessor registered at top
+        OptimizelyClient.clearRegistryService()
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                            eventDispatcher: eventDispatcher,
                                            userProfileService: userProfileService)

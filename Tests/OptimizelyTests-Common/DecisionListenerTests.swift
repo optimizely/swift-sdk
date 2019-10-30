@@ -622,8 +622,3 @@ class FakeDecisionService: DefaultDecisionService {
     }
 }
 
-fileprivate extension HandlerRegistryService {
-    func removeAll() {
-        self.binders.property?.removeAll()
-    }
-}

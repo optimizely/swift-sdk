@@ -876,4 +876,8 @@ extension OptimizelyClient {
         eventLock.sync {}
     }
     
+    public static func clearRegistryService() {
+        HandlerRegistryService.shared.removeAll()
+    }
+    
 }

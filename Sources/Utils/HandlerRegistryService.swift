@@ -80,6 +80,10 @@ class HandlerRegistryService {
         
         return nil
     }
+    
+    func removeAll() {
+        binders.property?.removeAll()
+    }
 }
 
 enum ReInitializeStrategy {

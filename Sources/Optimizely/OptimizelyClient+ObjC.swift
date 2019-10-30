@@ -322,6 +322,11 @@ extension OptimizelyClient {
         try self.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
     }
     
+    @available(swift, obsoleted: 1.0)
+    @objc(clearRegistryService)
+    public static func objcClearRegistryService() {
+        HandlerRegistryService.shared.removeAll()
+    }
 }
 
 // MARK: - ObjC Type Conversions
@@ -547,7 +552,7 @@ extension OptimizelyClient {
 }
 
 @available(swift, obsoleted: 1.0)
-@objc(BatchEventProcessor) public class ObjEventProcessor: NSObject, _ObjcOPTEventsProcessor {
+@objc(BatchEventProcessor) public class ObjEventsProcessor: NSObject, _ObjcOPTEventsProcessor {
     let innerEventProcessor: BatchEventProcessor
     
     @objc public init(batchSize: Int = BatchEventProcessor.DefaultValues.batchSize,
@@ -576,7 +581,7 @@ extension OptimizelyClient {
 }
 
 @available(swift, obsoleted: 1.0)
-@objc(DefaultEventsDispatcher) public class ObjEventsDispatcher: NSObject, _ObjcOPTEventsDispatcher {
+@objc(HTTPEventDispatcher) public class ObjEventsDispatcher: NSObject, _ObjcOPTEventsDispatcher {
     
     let innerEventsDispatcher: HTTPEventDispatcher
     

@@ -18,7 +18,6 @@
 #import <XCTest/XCTest.h>
 @import Optimizely;
 
-
 static NSString * const kExperimentKey = @"exp_with_audience";
 static NSString * const kVariationKey = @"a";
 static NSString * const kVariationOtherKey = @"b";
@@ -29,6 +28,8 @@ static NSString * const kUserId = @"11111";
 static NSString * const kSdkKey = @"12345";
 
 @interface OptimizelyClientTests_ObjcOthers : XCTestCase
+@property(nonatomic) OptimizelyClient *optimizely;
+@property(nonatomic) NSString *datafile;
 @property(nonatomic) NSDictionary * attributes;
 @end
 
@@ -58,162 +59,155 @@ static NSString * const kSdkKey = @"12345";
 
 @implementation OptimizelyClientTests_ObjcOthers
 
+- (void)setUp {
+    [OptimizelyClient clearRegistryService];
+
+    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
+    self.datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+    
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:@"any-key"];
+}
+
+- (void)tearDown {
+    [OptimizelyClient clearRegistryService];
+}
+
 // MARK: - Test notification listners
 
 - (void)testNotificationCenter_Activate {
-    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
-    NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    
-    OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:self.randomSdkKey];
-
     XCTestExpectation *exp = [self expectationWithDescription:@"x"];
     
     __block BOOL called = false;
-    NSNumber *num = [optimizely.notificationCenter addActivateNotificationListenerWithActivateListener:^(NSDictionary<NSString *,id> * experiment,
-                                                                                         NSString * userId,
-                                                                                         NSDictionary<NSString *,id> * attributes,
-                                                                                         NSDictionary<NSString *,id> * variation,
-                                                                                         NSDictionary<NSString *,id> * event) {
+    NSNumber *num = [self.optimizely.notificationCenter addActivateNotificationListenerWithActivateListener:^(NSDictionary<NSString *,id> * experiment,
+                                                                                                              NSString * userId,
+                                                                                                              NSDictionary<NSString *,id> * attributes,
+                                                                                                              NSDictionary<NSString *,id> * variation,
+                                                                                                              NSDictionary<NSString *,id> * event) {
         called = true;
         [exp fulfill];
     }];
     
-    [optimizely startWithDatafile:datafile error:nil];
+    [self.optimizely startWithDatafile:self.datafile error:nil];
     
-    NSString *variationKey = [optimizely activateWithExperimentKey:kExperimentKey
-                                                            userId:kUserId
-                                                        attributes:@{@"key_1": @"value_1"}
-                                                             error:nil];
+    NSString *variationKey = [self.optimizely activateWithExperimentKey:kExperimentKey
+                                                                 userId:kUserId
+                                                             attributes:@{@"key_1": @"value_1"}
+                                                                  error:nil];
     [self waitForExpectationsWithTimeout:1 handler:nil];
-
+    
     XCTAssert(called);
     NSLog(@"notification: (%@ %@)", num, variationKey);
 }
 
 - (void)testNotificationCenter_Track {
-    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
-    NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    
-    OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:self.randomSdkKey];
-
     XCTestExpectation *exp = [self expectationWithDescription:@"x"];
-
+    
     __block BOOL called = false;
-    NSNumber *num = [optimizely.notificationCenter addTrackNotificationListenerWithTrackListener:^(NSString * eventKey,
-                                                                                         NSString * userId,
-                                                                                         NSDictionary<NSString *,id> * attributes,
-                                                                                         NSDictionary<NSString *,id> * eventTags,
-                                                                                         NSDictionary<NSString *,id> * event) {
+    NSNumber *num = [self.optimizely.notificationCenter addTrackNotificationListenerWithTrackListener:^(NSString * eventKey,
+                                                                                                        NSString * userId,
+                                                                                                        NSDictionary<NSString *,id> * attributes,
+                                                                                                        NSDictionary<NSString *,id> * eventTags,
+                                                                                                        NSDictionary<NSString *,id> * event) {
         called = true;
         [exp fulfill];
     }];
     
-    [optimizely startWithDatafile:datafile error:nil];
+    [self.optimizely startWithDatafile:self.datafile error:nil];
     
-    [optimizely trackWithEventKey:kEventKey userId:kUserId attributes:nil eventTags:nil error:nil];
+    [self.optimizely trackWithEventKey:kEventKey userId:kUserId attributes:nil eventTags:nil error:nil];
     [self waitForExpectationsWithTimeout:1 handler:nil];
-
+    
     XCTAssert(called);
     NSLog(@"notification: (%@)", num);
 }
 
 - (void)testNotificationCenter_Decision {
-    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
-    NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    
-    OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:self.randomSdkKey];
-    
     XCTestExpectation *exp = [self expectationWithDescription:@"x"];
-
+    
     __block BOOL called = false;
-    NSNumber *num = [optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString * type,
-                                                                                                         NSString * userId,
-                                                                                                         NSDictionary<NSString *,id> * attributes,
-                                                                                                         NSDictionary<NSString *,id> * decisionInfo) {
+    NSNumber *num = [self.optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString * type,
+                                                                                                              NSString * userId,
+                                                                                                              NSDictionary<NSString *,id> * attributes,
+                                                                                                              NSDictionary<NSString *,id> * decisionInfo) {
         called = true;
         [exp fulfill];
     }];
     
-    [optimizely startWithDatafile:datafile error:nil];
+    [self.optimizely startWithDatafile:self.datafile error:nil];
     
-    BOOL enabled = [optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
+    BOOL enabled = [self.optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
     [self waitForExpectationsWithTimeout:1 handler:nil];
-
+    
     XCTAssert(called);
     NSLog(@"notification: (%@ %d)", num, enabled);
 }
 
 - (void)testNotificationCenter_RemoveListener {
-    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
-    NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    
-    OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:self.randomSdkKey];
-    
     __block BOOL called = false;
-    NSNumber *num = [optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString * type,
-                                                                                                         NSString * userId,
-                                                                                                         NSDictionary<NSString *,id> * attributes,
-                                                                                                         NSDictionary<NSString *,id> * decisionInfo) {
+    NSNumber *num = [self.optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString * type,
+                                                                                                              NSString * userId,
+                                                                                                              NSDictionary<NSString *,id> * attributes,
+                                                                                                              NSDictionary<NSString *,id> * decisionInfo) {
         called = true;
     }];
     
-    [optimizely startWithDatafile:datafile error:nil];
+    [self.optimizely startWithDatafile:self.datafile error:nil];
     
-    BOOL enabled = [optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
+    BOOL enabled = [self.optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
     sleep(1);
     XCTAssert(called);
     
     called = false;
-    enabled = [optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
+    enabled = [self.optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
     sleep(1);
     XCTAssert(called);
-
+    
     // remove notification listener with type
-    [optimizely.notificationCenter clearNotificationListenersWithType:NotificationTypeDecision];
+    [self.optimizely.notificationCenter clearNotificationListenersWithType:NotificationTypeDecision];
     
     called = false;
-    enabled = [optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
+    enabled = [self.optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
     sleep(1);
     XCTAssertFalse(called);
-
     
-    num = [optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString * type,
-                                                                                               NSString * userId,
-                                                                                               NSDictionary<NSString *,id> * attributes,
-                                                                                               NSDictionary<NSString *,id> * decisionInfo) {
+    
+    num = [self.optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString * type,
+                                                                                                    NSString * userId,
+                                                                                                    NSDictionary<NSString *,id> * attributes,
+                                                                                                    NSDictionary<NSString *,id> * decisionInfo) {
         called = true;
     }];
-
+    
     called = false;
-    enabled = [optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
+    enabled = [self.optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
     sleep(1);
     XCTAssert(called);
     
     // remove notification listener with id
-    [optimizely.notificationCenter removeNotificationListenerWithNotificationId:[num intValue]];
+    [self.optimizely.notificationCenter removeNotificationListenerWithNotificationId:[num intValue]];
     
     called = false;
-    enabled = [optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
+    enabled = [self.optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
     sleep(1);
     XCTAssertFalse(called);
-
-    num = [optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString * type,
-                                                                                               NSString * userId,
-                                                                                               NSDictionary<NSString *,id> * attributes,
-                                                                                               NSDictionary<NSString *,id> * decisionInfo) {
+    
+    num = [self.optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString * type,
+                                                                                                    NSString * userId,
+                                                                                                    NSDictionary<NSString *,id> * attributes,
+                                                                                                    NSDictionary<NSString *,id> * decisionInfo) {
         called = true;
     }];
     
     called = false;
-    enabled = [optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
+    enabled = [self.optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
     sleep(1);
     XCTAssert(called);
     
     // remove all notification listeners
-    [optimizely.notificationCenter clearAllNotificationListeners];
+    [self.optimizely.notificationCenter clearAllNotificationListeners];
     
     called = false;
-    enabled = [optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
+    enabled = [self.optimizely isFeatureEnabledWithFeatureKey:kFeatureKey userId:kUserId attributes:nil];
     sleep(1);
     XCTAssertFalse(called);
     
@@ -222,9 +216,6 @@ static NSString * const kSdkKey = @"12345";
 // MARK: - Test custom EventDispatcher
 
 - (void)testCustomEventDispatcher_DefaultEventDispatcher {
-    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
-    NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    
     // check event init and members avialable to ObjC
     EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil sdkKey:@"a" body:[NSData new]];
     XCTAssertNotNil(event.url);
@@ -233,14 +224,14 @@ static NSString * const kSdkKey = @"12345";
     // check DefaultEventDispatcher work OK with ObjC clients
     DefaultEventDispatcher *eventDispatcher = [[DefaultEventDispatcher alloc] initWithBatchSize:10 timerInterval:1 maxQueueSize:1000];
     
-    OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:self.randomSdkKey
-                                                                     logger:nil
-                                                            eventDispatcher:eventDispatcher
-                                                         userProfileService:nil
-                                                   periodicDownloadInterval:@(0)
-                                                            defaultLogLevel:OptimizelyLogLevelInfo];
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:@"any-key"
+                                                        logger:nil
+                                               eventDispatcher:eventDispatcher
+                                            userProfileService:nil
+                                      periodicDownloadInterval:@(0)
+                                               defaultLogLevel:OptimizelyLogLevelInfo];
     
-    [optimizely startWithDatafile:datafile error:nil];
+    [self.optimizely startWithDatafile:self.datafile error:nil];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"event"];
     
@@ -262,30 +253,23 @@ static NSString * const kSdkKey = @"12345";
 }
 
 - (void)testCustomEventDispatcher {
-    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
-    NSString *datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    
     // check DefaultEventDispatcher work OK with ObjC clients
     MockOPTEventDispatcher *customEventDispatcher = [[MockOPTEventDispatcher alloc] init];
     [customEventDispatcher flushEvents];
     
-    OptimizelyClient *optimizely = [[OptimizelyClient alloc] initWithSdkKey:self.randomSdkKey
-                                                                     logger:nil
-                                                            eventDispatcher:customEventDispatcher
-                                                         userProfileService:nil
-                                                   periodicDownloadInterval:@(0)
-                                                            defaultLogLevel:OptimizelyLogLevelInfo];
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:@"any-key"
+                                                        logger:nil
+                                               eventDispatcher:customEventDispatcher
+                                            userProfileService:nil
+                                      periodicDownloadInterval:@(0)
+                                               defaultLogLevel:OptimizelyLogLevelInfo];
     
-    [optimizely startWithDatafile:datafile error:nil];
+    [self.optimizely startWithDatafile:self.datafile error:nil];
     
     XCTAssertEqual(customEventDispatcher.eventCount, 0);
-    [optimizely trackWithEventKey:kEventKey userId:kUserId attributes:nil eventTags:nil error:nil];
+    [self.optimizely trackWithEventKey:kEventKey userId:kUserId attributes:nil eventTags:nil error:nil];
     sleep(1);
     XCTAssertEqual(customEventDispatcher.eventCount, 1);
-}
-
--(NSString*)randomSdkKey {
-    return [NSString stringWithFormat:@"%u", arc4random()];
 }
 
 @end

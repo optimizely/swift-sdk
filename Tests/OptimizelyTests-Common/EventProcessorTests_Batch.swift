@@ -319,7 +319,7 @@ extension EventProcessorTests_Batch {
 
         // flush
         
-        eventProcessor.close()
+        eventProcessor.clear()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "all events should be batched together")
         let batch = eventDispatcher.sendRequestedEvents[0]
@@ -345,7 +345,7 @@ extension EventProcessorTests_Batch {
         
         processMultipleEvents([userEventA, userEventB, userEventA])
 
-        eventProcessor.close()
+        eventProcessor.clear()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
         let batch = eventDispatcher.sendRequestedEvents[0]
@@ -378,7 +378,7 @@ extension EventProcessorTests_Batch {
         
         processMultipleEvents([userEventA, userEventA])
 
-        eventProcessor.close()
+        eventProcessor.clear()
 
         let maxFailureCount = 3 + 1   // BatchEventProcessor.maxFailureCount + 1
         
@@ -403,7 +403,7 @@ extension EventProcessorTests_Batch {
         eventDispatcher.forceError = false
         
         // assume flushEvents called again on next timer fire
-        eventProcessor.close()
+        eventProcessor.clear()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount + 1, "only one more since succeeded")
         XCTAssertEqual(eventDispatcher.sendRequestedEvents[3], eventDispatcher.sendRequestedEvents[0])
@@ -779,7 +779,7 @@ extension EventProcessorTests_Batch {
         
         processMultipleEvents([userEventA])
 
-        eventProcessor.dispatcher.sync {}
+        eventProcessor.sync()
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
         let batch = eventDispatcher.sendRequestedEvents[0]
@@ -803,7 +803,7 @@ extension EventProcessorTests_Batch {
         eventProcessor.timerInterval = 0
         
         processMultipleEvents([userEventA])
-        eventProcessor.dispatcher.sync {}
+        eventProcessor.sync()
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
         let batch = eventDispatcher.sendRequestedEvents[0]

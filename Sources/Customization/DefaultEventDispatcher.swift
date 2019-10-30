@@ -41,8 +41,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     var backingStoreName: String
     
     // for dispatching events
-    let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
-    // using a datastore queue with a backing file
+    let dispatchQueue = DispatchQueue(label: "DefaultEventDispatchQueue")
+    let flushQueue = DispatchQueue(label: "DefaultEventFlushQueue")    // using a datastore queue with a backing file
     let dataStore: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
@@ -98,7 +98,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         // ED can be shared by multiple clients
-        dispatcher.async {
+        dispatchQueue.async {
             guard self.dataStore.count < self.maxQueueSize else {
                 let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
                 self.logger.e(error)
@@ -123,7 +123,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     let notify = DispatchGroup()
     
     open func flushEvents() {
-        dispatcher.async {
+        flushQueue.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
             
@@ -243,7 +243,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             guard self.timer.property == nil else { return }
             
             self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { _ in
-                self.dispatcher.async {
+                self.flushQueue.async {
                     if self.dataStore.count > 0 {
                         self.flushEvents()
                     } else {
@@ -289,14 +289,15 @@ extension DefaultEventDispatcher {
     
     // MARK: - Tests
 
-    open func close() {
-        sync()
+    open func clear() {
+        dispatchQueue.sync{}
         flushEvents()
-        sync()
+        flushQueue.sync{}
     }
     
     open func sync() {
-        dispatcher.sync {}
+        dispatchQueue.sync {}
+        flushQueue.sync {}
     }
     
 }

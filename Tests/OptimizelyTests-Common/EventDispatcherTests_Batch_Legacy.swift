@@ -322,7 +322,7 @@ extension EventDispatcherTests_Batch_Legacy {
 
         // flush
         
-        eventDispatcher.close()
+        eventDispatcher.clear()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "all events should be batched together")
         let batch = eventDispatcher.sendRequestedEvents[0]
@@ -350,7 +350,7 @@ extension EventDispatcherTests_Batch_Legacy {
                                 (kUrlA, kSdkKey, batchEventB),
                                 (kUrlA, kSdkKey, batchEventA)])
 
-        eventDispatcher.close()
+        eventDispatcher.clear()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
         let batch = eventDispatcher.sendRequestedEvents[0]
@@ -383,7 +383,7 @@ extension EventDispatcherTests_Batch_Legacy {
                                 (kUrlA, kSdkKey, batchEventA),
                                 (kUrlB, kSdkKey, batchEventB)])
         
-        eventDispatcher.close()
+        eventDispatcher.clear()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 2, "different urls should not be batched")
         
@@ -431,7 +431,7 @@ extension EventDispatcherTests_Batch_Legacy {
         dispatchMultipleEvents([makeInvalidEventForDispatchWithWrongData()], completionHandler: nil)
         dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)], completionHandler: nil)
 
-        eventDispatcher.close()
+        eventDispatcher.clear()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 2, "different urls should not be batched")
         
@@ -482,7 +482,7 @@ extension EventDispatcherTests_Batch_Legacy {
         dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
                                 (kUrlA, kSdkKey, batchEventA)])
 
-        eventDispatcher.close()
+        eventDispatcher.clear()
 
         let maxFailureCount = 3 + 1   // DefaultEventDispatcher.maxFailureCount + 1
         
@@ -507,7 +507,7 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.forceError = false
         
         // assume flushEvents called again on next timer fire
-        eventDispatcher.close()
+        eventDispatcher.clear()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount + 1, "only one more since succeeded")
         XCTAssertEqual(eventDispatcher.sendRequestedEvents[3], eventDispatcher.sendRequestedEvents[0])
@@ -577,7 +577,7 @@ extension EventDispatcherTests_Batch_Legacy {
                                 (kUrlB, kSdkKey, batchEventB),
                                 (kUrlC, kSdkKey, batchEventC)])
 
-        eventDispatcher.dispatcher.sync {}
+        eventDispatcher.sync()
         
         continueAfterFailure = false   // stop on XCTAssertEqual failure instead of array out-of-bound exception
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 3)
@@ -859,7 +859,7 @@ extension EventDispatcherTests_Batch_Legacy {
         try! optimizely.start(datafile: datafile)
         
         dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)])
-        eventDispatcher.dispatcher.sync {}
+        eventDispatcher.sync()
         
         XCTAssertEqual(notifUrl, kUrlA)
         
@@ -884,7 +884,7 @@ extension EventDispatcherTests_Batch_Legacy {
         
         dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)])
 
-        eventDispatcher.dispatcher.sync {}
+        eventDispatcher.sync()
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
         let batch = eventDispatcher.sendRequestedEvents[0]
@@ -908,7 +908,7 @@ extension EventDispatcherTests_Batch_Legacy {
         eventDispatcher.timerInterval = 0
         
         dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)])
-        eventDispatcher.dispatcher.sync {}
+        eventDispatcher.sync()
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
         let batch = eventDispatcher.sendRequestedEvents[0]

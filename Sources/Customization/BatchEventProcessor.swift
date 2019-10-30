@@ -46,7 +46,8 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     var backingStoreName: String
     
     // for dispatching events
-    let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
+    let processQueue = DispatchQueue(label: "BatchEventProcessQueue")
+    let flushQueue = DispatchQueue(label: "BatchEventFlushQueue")
     // using a datastore queue with a backing file
     let dataStore: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
@@ -108,7 +109,7 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     
     open func process(event: UserEvent, completionHandler: DispatchCompletionHandler? = nil) {
         // EP can be shared by multiple clients
-        dispatcher.async {
+        processQueue.async {
             guard self.dataStore.count < self.maxQueueSize else {
                 let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
                 self.logger.e(error)
@@ -139,7 +140,7 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     }
 
     open func flush() {
-        dispatcher.async {
+        flushQueue.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
             
@@ -235,7 +236,7 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
             guard self.timer.property == nil else { return }
             
             self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { _ in
-                self.dispatcher.async {
+                self.flushQueue.async {
                     if self.dataStore.count > 0 {
                         self.flush()
                     } else {
@@ -281,14 +282,15 @@ extension BatchEventProcessor {
     
     // MARK: - Tests
 
-    open func close() {
-        sync()
+    open func clear() {
+        processQueue.sync{}
         flush()
-        sync()
+        flushQueue.sync{}
     }
     
     open func sync() {
-        dispatcher.sync {}
+        processQueue.sync{}
+        flushQueue.sync{}
     }
     
 }

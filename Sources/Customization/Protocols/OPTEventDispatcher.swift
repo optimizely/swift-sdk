@@ -33,10 +33,10 @@ public protocol OPTEventDispatcher {
     func flushEvents()
     
     /// flush events in queue synchrnonous (optional for testing support)
-    func close()
+    func clear()
 }
 
 public extension OPTEventDispatcher {
     // override this for testing support only
-    func close() {}
+    func clear() {}
 }

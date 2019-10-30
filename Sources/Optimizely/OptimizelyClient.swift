@@ -865,11 +865,11 @@ extension OptimizelyClient {
         
         // deprecated
         if let eventDispatcher = self.eventDispatcher {
-            eventDispatcher.close()
+            eventDispatcher.clear()
             return
         }
         
-        eventProcessor?.close()
+        eventProcessor?.clear()
     }
     
     public func sync() {

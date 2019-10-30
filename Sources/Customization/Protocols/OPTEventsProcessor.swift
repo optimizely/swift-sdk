@@ -24,10 +24,10 @@ public protocol OPTEventsProcessor {
     func flush()
 
     /// flush events in queue synchrnonous (optional for testing support)
-    func close()
+    func clear()
 }
 
 public extension OPTEventsProcessor {
     // override this for testing support only
-    func close() {}
+    func clear() {}
 }

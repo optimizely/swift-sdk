@@ -95,7 +95,7 @@ class EventProcessorTests_Batch: XCTestCase {
     }
 }
 
-// MAKR: - Configuration
+// MARK: - Configuration
 
 extension EventProcessorTests_Batch {
     
@@ -112,10 +112,9 @@ extension EventProcessorTests_Batch {
     }
 
     func testBatchEnabledByDefault() {
-        
         // batch allowed by default
         
-        var ep = BatchEventProcessor()
+        let ep = BatchEventProcessor()
 
         let defaultBatchSize = ep.batchSize
         let defaultTimeInterval = ep.timerInterval
@@ -124,6 +123,14 @@ extension EventProcessorTests_Batch {
         XCTAssert(defaultBatchSize > 1)
         XCTAssert(defaultTimeInterval > 1)
         XCTAssert(defaultMaxQueueSize > 100)
+    }
+    
+    func testBatchWithInvalidParameters() {
+        var ep = BatchEventProcessor()
+
+        let defaultBatchSize = ep.batchSize
+        let defaultTimeInterval = ep.timerInterval
+        let defaultMaxQueueSize = ep.maxQueueSize
 
         // invalid batchSize falls back to default value
         // (timerInterval = 0 is a valid value, meaning no batch)
@@ -134,6 +141,7 @@ extension EventProcessorTests_Batch {
         XCTAssertEqual(ep.timerInterval, defaultTimeInterval)
         XCTAssertEqual(ep.maxQueueSize, defaultMaxQueueSize)
     }
+
     
 }
 

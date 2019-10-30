@@ -166,9 +166,26 @@ class OTUtils {
     
 }
 
+class FakeEventProcessor: OPTEventsProcessor {
+    public var events = [UserEvent]()
+    required init() {
+        
+    }
+    
+    func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
+        events.append(event)
+    }
+    
+    /// Attempts to flush the event queue if there are any events to process.
+    func flush() {
+        events.removeAll()
+    }
+}
+
+// deprecated
 class FakeEventDispatcher: OPTEventDispatcher {
     
-    public var events: [EventForDispatch] = [EventForDispatch]()
+    public var events = [EventForDispatch]()
     required init() {
         
     }

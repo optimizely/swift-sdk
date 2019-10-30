@@ -65,6 +65,7 @@ static NSString * const kSdkKey = @"12345";
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
     self.datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
+    [OptimizelyClient clearRegistryService];
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:@"any-key"];
 }
 

@@ -97,11 +97,14 @@ class OTUtils {
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
         
         OptimizelyClient.clearRegistryService()
+        
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                           eventProcessor: eventProcessor,
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)
         do {
+            optimizely.eventProcessor?.clear()
+            
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely
         } catch {
@@ -189,6 +192,10 @@ class FakeEventDispatcher: OPTEventsDispatcher {
     func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         events.append(event)
         completionHandler?(.success(Data()))
+    }
+    
+    func clear() {
+        events = []
     }
 }
 

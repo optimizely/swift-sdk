@@ -31,11 +31,12 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     
     override func setUp() {
         eventDispatcher = FakeEventDispatcher()
-        
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)!
+        eventDispatcher.clear()
+
         project = optimizely.config!.project!
     }
     
@@ -268,6 +269,7 @@ extension BatchEventBuilderTests_Attributes {
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)!
+        eventDispatcher.clear()
 
         _ = try! optimizely.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
@@ -289,6 +291,8 @@ extension BatchEventBuilderTests_Attributes {
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)
+        eventDispatcher.clear()
+        
         optimizely.config!.project.botFiltering = false
         
         _ = try! optimizely.activate(experimentKey: "ab_running_exp_untargeted",
@@ -311,6 +315,8 @@ extension BatchEventBuilderTests_Attributes {
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)
+        eventDispatcher.clear()
+
         optimizely.config!.project.botFiltering = nil
         
         _ = try! optimizely.activate(experimentKey: "ab_running_exp_untargeted",

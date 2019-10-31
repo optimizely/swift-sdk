@@ -28,9 +28,7 @@ class OptimizelyClientTests_Group: XCTestCase {
     
     func testFeatureEnabledMutextGroup() {
         let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
         
         let featureEnabled = optimizely.isFeatureEnabled(featureKey: "mutex_group_feature", userId: kUserId)
         XCTAssertTrue(featureEnabled)

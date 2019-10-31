@@ -26,9 +26,7 @@ class DecisionListenerTests_Datafile: XCTestCase {
         super.setUp()
         
         self.optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                   clearUserProfileService: true,
-                                                   eventProcessor: nil,
-                                                   eventDispatcher: nil)
+                                                   clearUserProfileService: true)
         self.notificationCenter = self.optimizely.notificationCenter!
     }
     

@@ -27,9 +27,7 @@ class DecisionServiceTests_Others: XCTestCase {
 
     func testUserInExperimentWithValidAudienceIdAndEmptyAudienceConditions() {
         let optimizely = OTUtils.createOptimizely(datafileName: ktypeAudienceDatafileName,
-                                                   clearUserProfileService: true,
-                                                   eventProcessor: nil,
-                                                   eventDispatcher: nil)!
+                                                   clearUserProfileService: true)!
         let config = optimizely.config!
         
         let attributes = [kAttributeKey: kAttributeValue]

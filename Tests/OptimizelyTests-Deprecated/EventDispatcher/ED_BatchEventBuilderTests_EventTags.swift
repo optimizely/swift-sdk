@@ -28,9 +28,9 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
     override func setUp() {
         eventDispatcher = FakeLagacyEventDispatcher()
         
-        optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventDispatcher: eventDispatcher)!
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "audience_targeting",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)!
         project = optimizely.config!.project
     }
     

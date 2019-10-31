@@ -59,7 +59,7 @@ class EventProcessorTests_Batch: XCTestCase {
         self.eventProcessor = TestEventProcessor(eventDispatcher: eventDispatcher, eventFileName: uniqueFileName)
 
         // for debug level setting
-        OptimizelyClient.clearRegistryService()
+        OTUtils.clearRegistryService()
         _ = OptimizelyClient(sdkKey: kSdkKey,
                              eventProcessor: eventProcessor,
                              defaultLogLevel: .debug)
@@ -839,7 +839,7 @@ extension EventProcessorTests_Batch {
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
         
         // clean
-        OptimizelyClient.clearRegistryService()
+        OTUtils.clearRegistryService()
         let optimizely = OptimizelyClient(sdkKey: kSdkKey,
                                           eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)

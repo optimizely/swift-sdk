@@ -17,8 +17,12 @@
 import Foundation
 import XCTest
 
-class OTUtils {
+@objc public class OTUtils: NSObject {
     
+    @objc public static func clearRegistryService() {
+        HandlerRegistryService.shared.removeAll()
+    }
+   
     static func isEqualWithEncodeThenDecode<T: Codable & Equatable>(_ model: T) -> Bool {
         let jsonData = try! JSONEncoder().encode(model)
         let modelExp = try! JSONDecoder().decode(T.self, from: jsonData)
@@ -88,15 +92,15 @@ class OTUtils {
     
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
-                                 eventProcessor: OPTEventsProcessor?,
-                                 eventDispatcher: OPTEventsDispatcher?) -> OptimizelyClient? {
+                                 eventProcessor: OPTEventsProcessor? = nil,
+                                 eventDispatcher: OPTEventsDispatcher? = nil) -> OptimizelyClient? {
         
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
         
-        OptimizelyClient.clearRegistryService()
+        OTUtils.clearRegistryService()
         
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                           eventProcessor: eventProcessor,
@@ -112,16 +116,16 @@ class OTUtils {
         }
     }
     
-    static func createOptimizely(datafileName: String,
-                                 clearUserProfileService: Bool,
-                                 eventDispatcher: OPTEventDispatcher) -> OptimizelyClient? {
+    static func createOptimizelyLegacy(datafileName: String,
+                                       clearUserProfileService: Bool,
+                                       eventDispatcher: OPTEventDispatcher) -> OptimizelyClient? {
         
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
         
-        OptimizelyClient.clearRegistryService()
+        OTUtils.clearRegistryService()
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)

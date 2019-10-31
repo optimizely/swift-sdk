@@ -28,9 +28,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testActivateConditions_ConditionRangeIntNegativeInvalid() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "ab_running_exp_typed_audiences_lt_43_match"
         let userId = "test_user_1"
@@ -45,9 +43,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testActivateConditions_ConditionRangeIntPositiveInvalid() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         
         let experimentKey = "ab_running_exp_typed_audiences_gt_41_match"
@@ -63,9 +59,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
 
     func testActivateConditions_ConditionRangeDoubleNegativeInvalid() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "ab_running_exp_typed_audiences_lt_4_3_match"
         let userId = "test_user_1"
@@ -80,9 +74,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
 
     func testActivateConditions_ConditionRangeDoublePositiveInvalid() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "ab_running_exp_typed_audiences_gt_4_1_match"
         let userId = "test_user_1"
@@ -99,9 +91,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testActivateCondtions_MissingOperator() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
 
         let experimentKey = "ab_running_exp_audience_combo_missing_operand_exact_foo_or_42"
@@ -121,9 +111,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testActivateCondtions_AudienceIdsIgnoredWhenConditionExists() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "ab_running_exp_audience_combo_with_exact_foo_match_audience_id_and_empty_audience_conditions"
         let userId = "test_user_1"
@@ -141,9 +129,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testActivateCondtions_ExistStringNil() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "negated_ab_running_exp_typed_audiences_s_foo_exists_match"
         let userId = "test_user_1"
@@ -159,9 +145,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testActivateCondtions_ExistBoolNil() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
         
         let experimentKey = "negated_ab_running_exp_typed_audiences_b_true_exists_match"
         let userId = "test_user_1"
@@ -177,9 +161,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
 
     func testActivateCondtions_ExistIntNil() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "negated_ab_running_exp_typed_audiences_i_42_exists_match"
         let userId = "test_user_1"
@@ -195,9 +177,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
 
     func testActivateCondtions_ExistDoubleNil() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "negated_ab_running_exp_typed_audiences_d_4_2_exists_match"
         let userId = "test_user_1"
@@ -215,9 +195,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testActivateWithNilAttributeValues() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_42"
         let userId = "test_user_1"
@@ -259,9 +237,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
 
     func testActivateWithExactCombo() {
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_and_true__or__42_and_4_2"
         let expectedVariationKey = "all_traffic_variation"
@@ -286,9 +262,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testBucketWithOptBucketId() {
         let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
         
         let experimentKey = "ab_running_exp_untargeted"
         let expectedVariationKey = "variation_10000"
@@ -303,9 +277,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testBucketWithOptBucketId2() {
         let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "ab_running_exp_untargeted"
         let expectedVariationKey = "variation_7500"
@@ -318,9 +290,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
 
     func testBucketWithOptBucketIdEmpty() {
         let optimizely = OTUtils.createOptimizely(datafileName: "bucketing_id",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "ab_running_exp_untargeted"
         let userIdForThisTestOnly = "11111"
@@ -334,9 +304,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
 
     func testBucketWithGroup() {
         let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let experimentKey = "experiment_4000"
         let userIdForThisTestOnly = "ppid31886780721"
@@ -348,9 +316,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     func testForcedVariation() {
         let optimizely = OTUtils.createOptimizely(datafileName: "ab_experiments",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
         
         let experimentKey = "ab_running_exp_untargeted"
         let expectedVariationKey = "no_traffic_variation"

@@ -52,7 +52,7 @@ class EventProcessorTests: XCTestCase {
     func createClientAndActivate(eventProcessor: OPTEventsProcessor?,
                                  eventDispatcher: OPTEventsDispatcher?) -> OptimizelyClient {
         
-        OptimizelyClient.clearRegistryService()
+        OTUtils.clearRegistryService()
         eventProcessor?.clear()
         
         let optimizely = OptimizelyClient(sdkKey: sdkKey,

@@ -16,7 +16,7 @@
 
 
 #import <XCTest/XCTest.h>
-@import Optimizely;
+#import "OptimizelyTests_Legacy_iOS-Swift.h"
 
 static NSString * const kExperimentKey = @"exp_with_audience";
 static NSString * const kVariationKey = @"a";
@@ -60,17 +60,17 @@ static NSString * const kSdkKey = @"12345";
 @implementation OptimizelyClientTests_ObjcOthers
 
 - (void)setUp {
-    [OptimizelyClient clearRegistryService];
+    [OTUtils clearRegistryService];
 
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
     self.datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
-    [OptimizelyClient clearRegistryService];
+    [OTUtils clearRegistryService];
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:@"any-key"];
 }
 
 - (void)tearDown {
-    [OptimizelyClient clearRegistryService];
+    [OTUtils clearRegistryService];
 }
 
 // MARK: - Test API with legacy EventDispatcher

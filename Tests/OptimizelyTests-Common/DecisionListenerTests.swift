@@ -601,7 +601,7 @@ class FakeManager: OptimizelyClient {
                    eventDispatcher: eventDispatcher,
                    userProfileService: userProfileService,
                    defaultLogLevel: defaultLogLevel)
-        OptimizelyClient.clearRegistryService()
+        OTUtils.clearRegistryService()
 
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         self.registerServices(sdkKey: sdkKey,

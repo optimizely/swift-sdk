@@ -32,9 +32,9 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     override func setUp() {
         eventDispatcher = FakeLagacyEventDispatcher()
         
-        optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                              clearUserProfileService: true,
-                                              eventDispatcher: eventDispatcher)!
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "audience_targeting",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)!
         project = optimizely.config!.project!
     }
     
@@ -263,9 +263,9 @@ extension BatchEventBuilderTests_Attributes {
     
     func testBotFilteringWhenTrue() {
         eventDispatcher = FakeLagacyEventDispatcher()
-        optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
-                                              clearUserProfileService: true,
-                                              eventDispatcher: eventDispatcher)
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "bot_filtering_enabled",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
 
@@ -282,9 +282,9 @@ extension BatchEventBuilderTests_Attributes {
     
     func testBotFilteringWhenFalse() {
         eventDispatcher = FakeLagacyEventDispatcher()
-        optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
-                                              clearUserProfileService: true,
-                                              eventDispatcher: eventDispatcher)
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "bot_filtering_enabled",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)
         optimizely!.config!.project.botFiltering = false
         
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
@@ -303,9 +303,9 @@ extension BatchEventBuilderTests_Attributes {
     
     func testBotFilteringWhenNil() {
         eventDispatcher = FakeLagacyEventDispatcher()
-        optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
-                                              clearUserProfileService: true,
-                                              eventDispatcher: eventDispatcher)
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "bot_filtering_enabled",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)
         optimizely!.config!.project.botFiltering = nil
         
         _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",

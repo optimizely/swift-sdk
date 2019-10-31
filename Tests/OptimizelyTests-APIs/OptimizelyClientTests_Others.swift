@@ -123,9 +123,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         // reset user-profile-service to test variation-not-found case (default variable value)
         
         optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         value = try? optimizely.getFeatureVariableString(featureKey: featureKey,
                                                              variableKey: variableKey,
@@ -136,9 +134,7 @@ class OptimizelyClientTests_Others: XCTestCase {
     
     func testGetFeatureVariable_MissingDefaultValue() {
         var optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
 
         let featureKey = "feature_running_exp_enabled_targeted_with_variable_overrides"
         let attributeKey = "string_attribute"

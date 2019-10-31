@@ -16,7 +16,7 @@
     
 
 #import <XCTest/XCTest.h>
-@import Optimizely;
+#import "OptimizelyTests_APIs_iOS-Swift.h"
 
 
 static NSString * const kExperimentKey = @"exp_with_audience";

@@ -857,7 +857,6 @@ extension OptimizelyClient {
 // MARK: - For test support
 
 extension OptimizelyClient {
-    
     public func close() {
         datafileHandler.stopUpdates(sdkKey: sdkKey)
         
@@ -875,9 +874,12 @@ extension OptimizelyClient {
     public func sync() {
         eventLock.sync {}
     }
-    
+}
+
+#if FSC_TEST
+extension OptimizelyClient {
     public static func clearRegistryService() {
         HandlerRegistryService.shared.removeAll()
     }
-    
 }
+#endif

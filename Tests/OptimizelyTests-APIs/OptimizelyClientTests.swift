@@ -79,19 +79,28 @@ class OptimizelyClientTests: XCTestCase {
         ]
 
         for file in filesSupported {
-            let optimizely = OTUtils.createOptimizely(datafileName: file, clearUserProfileService: true)
+            let optimizely = OTUtils.createOptimizely(datafileName: file,
+                                                      clearUserProfileService: true,
+                                                      eventProcessor: nil,
+                                                      eventDispatcher: nil)
             XCTAssertNotNil(optimizely)
         }
         
         for file in filesNotSupported {
-            let optimizely = OTUtils.createOptimizely(datafileName: file, clearUserProfileService: true)
+            let optimizely = OTUtils.createOptimizely(datafileName: file,
+                                                      clearUserProfileService: true,
+                                                      eventProcessor: nil,
+                                                      eventDispatcher: nil)
             XCTAssertNil(optimizely)
         }
     }
     
     func testActivateWithInvalidAttribute() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
-        
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true,
+                                                  eventProcessor: nil,
+                                                  eventDispatcher: nil)
+
         /*
          experiment_key: ab_running_exp_typed_audiences_gt_41_and_lt_43
          user_id: test_user_1
@@ -108,8 +117,11 @@ class OptimizelyClientTests: XCTestCase {
     }
 
     func testActivateWithEmptyConditions() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
-        
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true,
+                                                  eventProcessor: nil,
+                                                  eventDispatcher: nil)
+
         /*
          "experiment_key": "ab_running_exp_audience_combo_empty_conditions",
          "user_id": "test_user_1",
@@ -133,8 +145,11 @@ class OptimizelyClientTests: XCTestCase {
     }
 
     func testGetExperimentGetVariation() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
-        
+        let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                  clearUserProfileService: true,
+                                                  eventProcessor: nil,
+                                                  eventDispatcher: nil)
+
         let experiment: Experiment? = optimizely?.config?.getExperiment(key: "ab_running_exp_audience_combo_empty_conditions")
         
         XCTAssertNotNil(experiment)

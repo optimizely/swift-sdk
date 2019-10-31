@@ -590,12 +590,14 @@ class FakeManager: OptimizelyClient {
     
     override init(sdkKey: String,
                   logger: OPTLogger? = nil,
-                  eventDispatcher: OPTEventDispatcher? = nil,
+                  eventProcessor: OPTEventsProcessor? = nil,
+                  eventDispatcher: OPTEventsDispatcher? = nil,
                   userProfileService: OPTUserProfileService? = nil,
                   defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         super.init(sdkKey: sdkKey,
                    logger: logger,
+                   eventProcessor: eventProcessor,
                    eventDispatcher: eventDispatcher,
                    userProfileService: userProfileService,
                    defaultLogLevel: defaultLogLevel)
@@ -604,7 +606,7 @@ class FakeManager: OptimizelyClient {
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         self.registerServices(sdkKey: sdkKey,
                               logger: logger ?? DefaultLogger(),
-                              eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
+                              eventProcessor: eventProcessor ?? BatchEventProcessor(),
                               datafileHandler: DefaultDatafileHandler(),
                               decisionService: FakeDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())

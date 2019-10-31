@@ -30,6 +30,7 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
         
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true,
+                                                  eventProcessor: nil,
                                                   eventDispatcher: eventDispatcher)!
         project = optimizely.config!.project
     }
@@ -323,7 +324,7 @@ extension BatchEventBuilderTests_EventTags {
 extension BatchEventBuilderTests_EventTags {
 
     func getDispatchEvent(dispatcher: FakeEventDispatcher) -> [String: Any]? {
-        optimizely.eventLock.sync{}
+        optimizely.close()
         let eventForDispatch = dispatcher.events.first!
         
         let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! [String: Any]

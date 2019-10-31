@@ -25,7 +25,10 @@ class DecisionListenerTests_Datafile: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        self.optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting", clearUserProfileService: true)
+        self.optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
+                                                   clearUserProfileService: true,
+                                                   eventProcessor: nil,
+                                                   eventDispatcher: nil)
         self.notificationCenter = self.optimizely.notificationCenter!
     }
     

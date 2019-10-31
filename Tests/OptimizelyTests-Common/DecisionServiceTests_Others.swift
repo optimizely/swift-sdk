@@ -26,7 +26,10 @@ class DecisionServiceTests_Others: XCTestCase {
     let kAttributeValue = "firefox"
 
     func testUserInExperimentWithValidAudienceIdAndEmptyAudienceConditions() {
-        let optimizely = OTUtils.createOptimizely(datafileName: ktypeAudienceDatafileName, clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: ktypeAudienceDatafileName,
+                                                   clearUserProfileService: true,
+                                                   eventProcessor: nil,
+                                                   eventDispatcher: nil)!
         let config = optimizely.config!
         
         let attributes = [kAttributeKey: kAttributeValue]

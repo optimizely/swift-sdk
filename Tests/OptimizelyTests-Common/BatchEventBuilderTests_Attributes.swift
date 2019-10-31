@@ -34,6 +34,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
+                                              eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)!
         project = optimizely.config!.project!
     }
@@ -93,7 +94,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-
+        
         let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         var dict = [String: Any]()
@@ -127,7 +128,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
-        
+
         let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         
@@ -214,7 +215,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: nil)
-        
+
         let json = getFirstEventJSON()!
         let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssert(array.count == 0)
@@ -265,10 +266,12 @@ extension BatchEventBuilderTests_Attributes {
         eventDispatcher = FakeEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
                                               clearUserProfileService: true,
-                                              eventDispatcher: eventDispatcher)
-        _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
-                                      userId: "test_user_1")
+                                              eventProcessor: nil,
+                                              eventDispatcher: eventDispatcher)!
 
+        _ = try! optimizely.activate(experimentKey: "ab_running_exp_untargeted",
+                                      userId: "test_user_1")
+        
         let eventForDispatch = getFirstEvent()
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
@@ -284,10 +287,11 @@ extension BatchEventBuilderTests_Attributes {
         eventDispatcher = FakeEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
                                               clearUserProfileService: true,
+                                              eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)
-        optimizely!.config!.project.botFiltering = false
+        optimizely.config!.project.botFiltering = false
         
-        _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
+        _ = try! optimizely.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
         
         let eventForDispatch = getFirstEvent()
@@ -305,10 +309,11 @@ extension BatchEventBuilderTests_Attributes {
         eventDispatcher = FakeEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
                                               clearUserProfileService: true,
+                                              eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)
-        optimizely!.config!.project.botFiltering = nil
+        optimizely.config!.project.botFiltering = nil
         
-        _ = try! optimizely?.activate(experimentKey: "ab_running_exp_untargeted",
+        _ = try! optimizely.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
         
         let eventForDispatch = getFirstEvent()
@@ -325,7 +330,7 @@ extension BatchEventBuilderTests_Attributes {
 extension BatchEventBuilderTests_Attributes {
     
     func getFirstEvent() -> EventForDispatch? {
-        optimizely.eventLock.sync{}
+        optimizely.close()
         return eventDispatcher.events.first
     }
 

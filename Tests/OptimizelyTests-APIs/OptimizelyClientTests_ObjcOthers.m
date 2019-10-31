@@ -36,7 +36,7 @@ static NSString * const kSdkKey = @"12345";
 
 // MARK: - Custom EventDispatcher
 
-@interface MockOPTEventDispatcher: NSObject <OPTEventDispatcher>
+@interface MockOPTEventDispatcher: NSObject <OPTEventsDispatcher>
 @property(atomic, assign) int eventCount;
 @end
 
@@ -47,12 +47,10 @@ static NSString * const kSdkKey = @"12345";
     return self;
 }
 
-- (void)dispatchEventWithEvent:(EventForDispatch * _Nonnull)event completionHandler:(void (^ _Nullable)(NSData * _Nullable, NSError * _Nullable))completionHandler {
+- (void)dispatchWithEvent:(EventForDispatch * _Nonnull)event completionHandler:(void (^ _Nullable)(NSData * _Nullable, NSError * _Nullable))completionHandler {
     self.eventCount++;
-    return;
-}
-
-- (void)flushEvents {
+    NSLog(@">>>>> eventCount: %d", self.eventCount);
+    completionHandler([NSData new], nil);
     return;
 }
 @end
@@ -217,59 +215,57 @@ static NSString * const kSdkKey = @"12345";
 // MARK: - Test custom EventDispatcher
 
 - (void)testCustomEventDispatcher_DefaultEventDispatcher {
-    // check event init and members avialable to ObjC
-    EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil sdkKey:@"a" body:[NSData new]];
-    XCTAssertNotNil(event.url);
-    XCTAssert(event.body.length==0);
-    
-    // check DefaultEventDispatcher work OK with ObjC clients
-    DefaultEventDispatcher *eventDispatcher = [[DefaultEventDispatcher alloc] initWithBatchSize:10 timerInterval:1 maxQueueSize:1000];
+    MockOPTEventDispatcher *customEventDispatcher = [[MockOPTEventDispatcher alloc] init];
+    BatchEventProcessor *customEventProcessor = [[BatchEventProcessor alloc] initWithEventDispatcher:customEventDispatcher
+                                                                                           batchSize:1
+                                                                                       timerInterval:10
+                                                                                        maxQueueSize:100];
+    [customEventProcessor clear];
+    customEventDispatcher.eventCount = 0;
+    [OptimizelyClient clearRegistryService];
     
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:@"any-key"
                                                         logger:nil
-                                               eventDispatcher:eventDispatcher
+                                                eventProcessor:customEventProcessor
+                                               eventDispatcher:nil
                                             userProfileService:nil
                                       periodicDownloadInterval:@(0)
                                                defaultLogLevel:OptimizelyLogLevelInfo];
     
     [self.optimizely startWithDatafile:self.datafile error:nil];
-    
-    XCTestExpectation *expectation = [self expectationWithDescription:@"event"];
-    
-    __block BOOL status = false;
-    [eventDispatcher dispatchEventWithEvent:event completionHandler:^(NSData * data, NSError * error) {
-        status = (data != nil);
-        
-        [expectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:30 handler:nil];
-    XCTAssert(true);
-    
-    [eventDispatcher flushEvents];
-    
-    // empty completion handler
-    [eventDispatcher dispatchEventWithEvent:event completionHandler:nil];
-    XCTAssert(true);
+
+    NSString *variationKey = [self.optimizely activateWithExperimentKey:kExperimentKey
+                                                                    userId:kUserId
+                                                                attributes:@{@"key_1": @"value_1"}
+                                                                    error:nil];
+    [customEventProcessor clear];
+    XCTAssertEqual(customEventDispatcher.eventCount, 1);
 }
 
 - (void)testCustomEventDispatcher {
-    // check DefaultEventDispatcher work OK with ObjC clients
     MockOPTEventDispatcher *customEventDispatcher = [[MockOPTEventDispatcher alloc] init];
-    [customEventDispatcher flushEvents];
-    
+    BatchEventProcessor *customEventProcessor = [[BatchEventProcessor alloc] initWithEventDispatcher:customEventDispatcher
+                                                                                           batchSize:1
+                                                                                       timerInterval:10
+                                                                                        maxQueueSize:100];
+
+    [customEventProcessor clear];
+    customEventDispatcher.eventCount = 0;
+    [OptimizelyClient clearRegistryService];
+
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:@"any-key"
                                                         logger:nil
-                                               eventDispatcher:customEventDispatcher
+                                                eventProcessor:customEventProcessor
+                                               eventDispatcher:nil
                                             userProfileService:nil
                                       periodicDownloadInterval:@(0)
                                                defaultLogLevel:OptimizelyLogLevelInfo];
-    
     [self.optimizely startWithDatafile:self.datafile error:nil];
-    
+
     XCTAssertEqual(customEventDispatcher.eventCount, 0);
     [self.optimizely trackWithEventKey:kEventKey userId:kUserId attributes:nil eventTags:nil error:nil];
-    sleep(1);
+
+    [customEventProcessor clear];
     XCTAssertEqual(customEventDispatcher.eventCount, 1);
 }
 

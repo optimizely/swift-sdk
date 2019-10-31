@@ -30,6 +30,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true,
+                                                  eventProcessor: nil,
                                                   eventDispatcher: eventDispatcher)!
         project = optimizely.config!.project!
     }
@@ -169,7 +170,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
 extension BatchEventBuilderTests_Events {
     
     func getFirstEvent() -> EventForDispatch? {
-        optimizely.eventLock.sync{}
+        optimizely.close()
         return eventDispatcher.events.first
     }
     

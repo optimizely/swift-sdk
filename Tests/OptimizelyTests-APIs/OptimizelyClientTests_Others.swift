@@ -33,14 +33,16 @@ class OptimizelyClientTests_Others: XCTestCase {
     let kNotRealSdkKey = "notrealkey123"
     
     var optimizely: OptimizelyClient!
-    let eventDispatcher = FakeEventDispatcher()
+    var eventDispatcher = FakeEventDispatcher()
 
     override func setUp() {
         super.setUp()
         
+        let eventProcessor = BatchEventProcessor(eventDispatcher: eventDispatcher, batchSize: 1)
         self.optimizely = OTUtils.createOptimizely(datafileName: "api_datafile",
                                                    clearUserProfileService: true,
-                                                   eventDispatcher: eventDispatcher)!
+                                                   eventProcessor: eventProcessor,
+                                                   eventDispatcher: nil)!
     }
 
     func testActivate_InvalidExperimentKey() {
@@ -96,7 +98,9 @@ class OptimizelyClientTests_Others: XCTestCase {
 
     func testGetFeatureVariableString_DecisionFailed() {
         var optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
-                                                  clearUserProfileService: true)!
+                                                  clearUserProfileService: true,
+                                                  eventProcessor: nil,
+                                                  eventDispatcher: nil)!
         
         let featureKey = "feature_running_exp_enabled_targeted_with_variable_overrides"
         let attributeKey = "string_attribute"
@@ -119,7 +123,9 @@ class OptimizelyClientTests_Others: XCTestCase {
         // reset user-profile-service to test variation-not-found case (default variable value)
         
         optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
-                                                  clearUserProfileService: true)!
+                                                  clearUserProfileService: true,
+                                                  eventProcessor: nil,
+                                                  eventDispatcher: nil)!
 
         value = try? optimizely.getFeatureVariableString(featureKey: featureKey,
                                                              variableKey: variableKey,
@@ -129,9 +135,11 @@ class OptimizelyClientTests_Others: XCTestCase {
     }
     
     func testGetFeatureVariable_MissingDefaultValue() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
-                                                  clearUserProfileService: true)!
-        
+        var optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
+                                                  clearUserProfileService: true,
+                                                  eventProcessor: nil,
+                                                  eventDispatcher: nil)!
+
         let featureKey = "feature_running_exp_enabled_targeted_with_variable_overrides"
         let attributeKey = "string_attribute"
         
@@ -170,6 +178,8 @@ class OptimizelyClientTests_Others: XCTestCase {
         let attributes = ["testvar": Double.infinity]
         
         optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId, attributes: attributes)
+        optimizely.close()
+        
         XCTAssert(eventDispatcher.events.count == 0)
     }
     

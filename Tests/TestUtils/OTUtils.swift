@@ -88,7 +88,8 @@ class OTUtils {
     
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
-                                 eventProcessor: OPTEventsProcessor?=nil) -> OptimizelyClient? {
+                                 eventProcessor: OPTEventsProcessor?,
+                                 eventDispatcher: OPTEventsDispatcher?) -> OptimizelyClient? {
         
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
@@ -98,6 +99,7 @@ class OTUtils {
         OptimizelyClient.clearRegistryService()
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                           eventProcessor: eventProcessor,
+                                          eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)
         do {
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
@@ -168,30 +170,35 @@ class OTUtils {
 
 class FakeEventProcessor: OPTEventsProcessor {
     public var events = [UserEvent]()
-    required init() {
-        
-    }
+    required init() {}
     
     func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
         events.append(event)
+        completionHandler?(.success(Data()))
     }
     
-    /// Attempts to flush the event queue if there are any events to process.
     func flush() {
         events.removeAll()
     }
 }
 
-// deprecated
-class FakeEventDispatcher: OPTEventDispatcher {
-    
+class FakeEventDispatcher: OPTEventsDispatcher {
     public var events = [EventForDispatch]()
-    required init() {
-        
+    required init() {}
+
+    func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        events.append(event)
+        completionHandler?(.success(Data()))
     }
+}
+
+class FakeLagacyEventDispatcher: OPTEventDispatcher {
+    public var events = [EventForDispatch]()
+    required init() {}
     
     func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         events.append(event)
+        completionHandler?(.success(Data()))
     }
     
     /// Attempts to flush the event queue if there are any events to process.

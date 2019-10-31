@@ -1132,7 +1132,7 @@
 		6E9B115522C5486E00C22D81 /* BucketTests_BucketVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198F22C5211100B2B157 /* BucketTests_BucketVariation.swift */; };
 		6E9B115622C5486E00C22D81 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199022C5211100B2B157 /* DecisionListenerTests.swift */; };
 		6E9B115722C5486E00C22D81 /* DecisionServiceTests_Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199122C5211100B2B157 /* DecisionServiceTests_Features.swift */; };
-		6E9B115822C5486E00C22D81 /* EventDispatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199222C5211100B2B157 /* EventDispatcherTests.swift */; };
+		6E9B115822C5486E00C22D81 /* EventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199222C5211100B2B157 /* EventProcessorTests.swift */; };
 		6E9B115922C5486E00C22D81 /* BatchEventBuilderTests_Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199322C5211100B2B157 /* BatchEventBuilderTests_Attributes.swift */; };
 		6E9B115A22C5486E00C22D81 /* DecisionServiceTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199422C5211100B2B157 /* DecisionServiceTests_Others.swift */; };
 		6E9B115B22C5486E00C22D81 /* DecisionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199522C5211100B2B157 /* DecisionServiceTests.swift */; };
@@ -1158,7 +1158,7 @@
 		6E9B116F22C5487100C22D81 /* BucketTests_BucketVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75198F22C5211100B2B157 /* BucketTests_BucketVariation.swift */; };
 		6E9B117022C5487100C22D81 /* DecisionListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199022C5211100B2B157 /* DecisionListenerTests.swift */; };
 		6E9B117122C5487100C22D81 /* DecisionServiceTests_Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199122C5211100B2B157 /* DecisionServiceTests_Features.swift */; };
-		6E9B117222C5487100C22D81 /* EventDispatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199222C5211100B2B157 /* EventDispatcherTests.swift */; };
+		6E9B117222C5487100C22D81 /* EventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199222C5211100B2B157 /* EventProcessorTests.swift */; };
 		6E9B117322C5487100C22D81 /* BatchEventBuilderTests_Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199322C5211100B2B157 /* BatchEventBuilderTests_Attributes.swift */; };
 		6E9B117422C5487100C22D81 /* DecisionServiceTests_Others.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199422C5211100B2B157 /* DecisionServiceTests_Others.swift */; };
 		6E9B117522C5487100C22D81 /* DecisionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75199522C5211100B2B157 /* DecisionServiceTests.swift */; };
@@ -1256,12 +1256,12 @@
 		6EA426602219242100B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EA4266F2219243D00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6ECB270222C526A7005D52DC /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E75167A22C520D400B2B157 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6EF517B72369FA6C00CA9F15 /* BatchEventBuilderTests_Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517A32369F99400CA9F15 /* BatchEventBuilderTests_Events.swift */; };
-		6EF517BA2369FA6C00CA9F15 /* EventDispatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517A62369F99400CA9F15 /* EventDispatcherTests.swift */; };
-		6EF517BB2369FA6C00CA9F15 /* BatchEventBuilderTests_Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517A72369F99400CA9F15 /* BatchEventBuilderTests_Attributes.swift */; };
-		6EF517BC2369FA6C00CA9F15 /* EventDispatcherTests_Batch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517A82369F99400CA9F15 /* EventDispatcherTests_Batch.swift */; };
-		6EF517BE2369FA6C00CA9F15 /* BatchEventBuilderTests_EventTags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517AA2369F99400CA9F15 /* BatchEventBuilderTests_EventTags.swift */; };
-		6EF517BF2369FA6C00CA9F15 /* OptimizelyClientTests_ObjcOthers.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517AB2369F99400CA9F15 /* OptimizelyClientTests_ObjcOthers.m */; };
+		6EF517B72369FA6C00CA9F15 /* ED_BatchEventBuilderTests_Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517A32369F99400CA9F15 /* ED_BatchEventBuilderTests_Events.swift */; };
+		6EF517BA2369FA6C00CA9F15 /* ED_EventDispatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517A62369F99400CA9F15 /* ED_EventDispatcherTests.swift */; };
+		6EF517BB2369FA6C00CA9F15 /* ED_BatchEventBuilderTests_Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517A72369F99400CA9F15 /* ED_BatchEventBuilderTests_Attributes.swift */; };
+		6EF517BC2369FA6C00CA9F15 /* ED_EventDispatcherTests_Batch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517A82369F99400CA9F15 /* ED_EventDispatcherTests_Batch.swift */; };
+		6EF517BE2369FA6C00CA9F15 /* ED_BatchEventBuilderTests_EventTags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517AA2369F99400CA9F15 /* ED_BatchEventBuilderTests_EventTags.swift */; };
+		6EF517BF2369FA6C00CA9F15 /* ED_OptimizelyClientTests_Objc.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF517AB2369F99400CA9F15 /* ED_OptimizelyClientTests_Objc.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1459,7 +1459,7 @@
 		6E75198F22C5211100B2B157 /* BucketTests_BucketVariation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketTests_BucketVariation.swift; sourceTree = "<group>"; };
 		6E75199022C5211100B2B157 /* DecisionListenerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionListenerTests.swift; sourceTree = "<group>"; };
 		6E75199122C5211100B2B157 /* DecisionServiceTests_Features.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_Features.swift; sourceTree = "<group>"; };
-		6E75199222C5211100B2B157 /* EventDispatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDispatcherTests.swift; sourceTree = "<group>"; };
+		6E75199222C5211100B2B157 /* EventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventProcessorTests.swift; sourceTree = "<group>"; };
 		6E75199322C5211100B2B157 /* BatchEventBuilderTests_Attributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchEventBuilderTests_Attributes.swift; sourceTree = "<group>"; };
 		6E75199422C5211100B2B157 /* DecisionServiceTests_Others.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_Others.swift; sourceTree = "<group>"; };
 		6E75199522C5211100B2B157 /* DecisionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests.swift; sourceTree = "<group>"; };
@@ -1516,12 +1516,12 @@
 		6EA4266A2219243D00B074B5 /* OptimizelyTests-Others-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Others-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EBAEB7421E3FEF900D13AA9 /* OptimizelyTests-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EF517A32369F99400CA9F15 /* BatchEventBuilderTests_Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatchEventBuilderTests_Events.swift; sourceTree = "<group>"; };
-		6EF517A62369F99400CA9F15 /* EventDispatcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventDispatcherTests.swift; sourceTree = "<group>"; };
-		6EF517A72369F99400CA9F15 /* BatchEventBuilderTests_Attributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatchEventBuilderTests_Attributes.swift; sourceTree = "<group>"; };
-		6EF517A82369F99400CA9F15 /* EventDispatcherTests_Batch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventDispatcherTests_Batch.swift; sourceTree = "<group>"; };
-		6EF517AA2369F99400CA9F15 /* BatchEventBuilderTests_EventTags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BatchEventBuilderTests_EventTags.swift; sourceTree = "<group>"; };
-		6EF517AB2369F99400CA9F15 /* OptimizelyClientTests_ObjcOthers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptimizelyClientTests_ObjcOthers.m; sourceTree = "<group>"; };
+		6EF517A32369F99400CA9F15 /* ED_BatchEventBuilderTests_Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ED_BatchEventBuilderTests_Events.swift; sourceTree = "<group>"; };
+		6EF517A62369F99400CA9F15 /* ED_EventDispatcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ED_EventDispatcherTests.swift; sourceTree = "<group>"; };
+		6EF517A72369F99400CA9F15 /* ED_BatchEventBuilderTests_Attributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ED_BatchEventBuilderTests_Attributes.swift; sourceTree = "<group>"; };
+		6EF517A82369F99400CA9F15 /* ED_EventDispatcherTests_Batch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ED_EventDispatcherTests_Batch.swift; sourceTree = "<group>"; };
+		6EF517AA2369F99400CA9F15 /* ED_BatchEventBuilderTests_EventTags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ED_BatchEventBuilderTests_EventTags.swift; sourceTree = "<group>"; };
+		6EF517AB2369F99400CA9F15 /* ED_OptimizelyClientTests_Objc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ED_OptimizelyClientTests_Objc.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1908,13 +1908,13 @@
 				6E75198A22C5211100B2B157 /* BucketTests_Base.swift */,
 				6E75198B22C5211100B2B157 /* NotificationCenterTests.swift */,
 				6E75198C22C5211100B2B157 /* BucketTests_ExpToVariation.swift */,
+				6E75199222C5211100B2B157 /* EventProcessorTests.swift */,
 				6E75198D22C5211100B2B157 /* EventProcessorTests_Batch.swift */,
 				6E75198E22C5211100B2B157 /* LoggerTests.swift */,
 				6E75198F22C5211100B2B157 /* BucketTests_BucketVariation.swift */,
 				6E75199022C5211100B2B157 /* DecisionListenerTests.swift */,
 				6E981FC1232C363300FADDD6 /* DecisionListenerTests_Datafile.swift */,
 				6E75199122C5211100B2B157 /* DecisionServiceTests_Features.swift */,
-				6E75199222C5211100B2B157 /* EventDispatcherTests.swift */,
 				6E75199322C5211100B2B157 /* BatchEventBuilderTests_Attributes.swift */,
 				6E75199422C5211100B2B157 /* DecisionServiceTests_Others.swift */,
 				6E75199522C5211100B2B157 /* DecisionServiceTests.swift */,
@@ -2018,12 +2018,12 @@
 		6EF517A12369F99400CA9F15 /* EventDispatcher */ = {
 			isa = PBXGroup;
 			children = (
-				6EF517A82369F99400CA9F15 /* EventDispatcherTests_Batch.swift */,
-				6EF517A32369F99400CA9F15 /* BatchEventBuilderTests_Events.swift */,
-				6EF517A62369F99400CA9F15 /* EventDispatcherTests.swift */,
-				6EF517A72369F99400CA9F15 /* BatchEventBuilderTests_Attributes.swift */,
-				6EF517AA2369F99400CA9F15 /* BatchEventBuilderTests_EventTags.swift */,
-				6EF517AB2369F99400CA9F15 /* OptimizelyClientTests_ObjcOthers.m */,
+				6EF517AB2369F99400CA9F15 /* ED_OptimizelyClientTests_Objc.m */,
+				6EF517A82369F99400CA9F15 /* ED_EventDispatcherTests_Batch.swift */,
+				6EF517A32369F99400CA9F15 /* ED_BatchEventBuilderTests_Events.swift */,
+				6EF517A62369F99400CA9F15 /* ED_EventDispatcherTests.swift */,
+				6EF517A72369F99400CA9F15 /* ED_BatchEventBuilderTests_Attributes.swift */,
+				6EF517AA2369F99400CA9F15 /* ED_BatchEventBuilderTests_EventTags.swift */,
 			);
 			path = EventDispatcher;
 			sourceTree = "<group>";
@@ -2995,15 +2995,15 @@
 				6E7516C522C520D400B2B157 /* BatchEventProcessor.swift in Sources */,
 				6E75189B22C520D400B2B157 /* Experiment.swift in Sources */,
 				6E75176122C520D400B2B157 /* AtomicProperty.swift in Sources */,
-				6EF517B72369FA6C00CA9F15 /* BatchEventBuilderTests_Events.swift in Sources */,
+				6EF517B72369FA6C00CA9F15 /* ED_BatchEventBuilderTests_Events.swift in Sources */,
 				6E75180B22C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E7517C322C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E75190722C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75179D22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
-				6EF517BF2369FA6C00CA9F15 /* OptimizelyClientTests_ObjcOthers.m in Sources */,
-				6EF517BB2369FA6C00CA9F15 /* BatchEventBuilderTests_Attributes.swift in Sources */,
+				6EF517BF2369FA6C00CA9F15 /* ED_OptimizelyClientTests_Objc.m in Sources */,
+				6EF517BB2369FA6C00CA9F15 /* ED_BatchEventBuilderTests_Attributes.swift in Sources */,
 				6E7518BF22C520D400B2B157 /* Variable.swift in Sources */,
-				6EF517BC2369FA6C00CA9F15 /* EventDispatcherTests_Batch.swift in Sources */,
+				6EF517BC2369FA6C00CA9F15 /* ED_EventDispatcherTests_Batch.swift in Sources */,
 				6E75181722C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E75185322C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E75173D22C520D400B2B157 /* MurmurHash3.swift in Sources */,
@@ -3018,14 +3018,14 @@
 				6E5AFE4C2362095000665E8C /* UserContext.swift in Sources */,
 				6E7518D722C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E7516AD22C520D400B2B157 /* DefaultLogger.swift in Sources */,
-				6EF517BE2369FA6C00CA9F15 /* BatchEventBuilderTests_EventTags.swift in Sources */,
+				6EF517BE2369FA6C00CA9F15 /* ED_BatchEventBuilderTests_EventTags.swift in Sources */,
 				6E75194F22C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E7516D122C520D400B2B157 /* OPTLogger.swift in Sources */,
 				6E75185F22C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E7517E722C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E7516DD22C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E75188F22C520D400B2B157 /* Project.swift in Sources */,
-				6EF517BA2369FA6C00CA9F15 /* EventDispatcherTests.swift in Sources */,
+				6EF517BA2369FA6C00CA9F15 /* ED_EventDispatcherTests.swift in Sources */,
 				6E75195B22C520D500B2B157 /* OPTBucketer.swift in Sources */,
 				6E7518E322C520D400B2B157 /* ConditionLeaf.swift in Sources */,
 				6E5AFE3F236205E400665E8C /* UserEvent.swift in Sources */,
@@ -3106,7 +3106,7 @@
 				6E9B116222C5487100C22D81 /* OptimizelySwiftSDKiOSTests.swift in Sources */,
 				6E7518FD22C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E7518E522C520D400B2B157 /* ConditionLeaf.swift in Sources */,
-				6E9B117222C5487100C22D81 /* EventDispatcherTests.swift in Sources */,
+				6E9B117222C5487100C22D81 /* EventProcessorTests.swift in Sources */,
 				6E9B116922C5487100C22D81 /* DefaultUserProfileServiceTests.swift in Sources */,
 				6E75192122C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75170322C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
@@ -3306,7 +3306,7 @@
 				6E9B114822C5486E00C22D81 /* OptimizelySwiftSDKiOSTests.swift in Sources */,
 				6E7517D722C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
 				6E75181F22C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
-				6E9B115822C5486E00C22D81 /* EventDispatcherTests.swift in Sources */,
+				6E9B115822C5486E00C22D81 /* EventProcessorTests.swift in Sources */,
 				6E9B114F22C5486E00C22D81 /* DefaultUserProfileServiceTests.swift in Sources */,
 				6E7518F722C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E75174522C520D400B2B157 /* HandlerRegistryService.swift in Sources */,

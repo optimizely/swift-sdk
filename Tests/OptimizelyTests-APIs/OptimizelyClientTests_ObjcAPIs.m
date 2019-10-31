@@ -69,15 +69,24 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
 
 // MARK: - Custom EventDispatcher
 
-@interface TestOPTEventDispatcher: NSObject <OPTEventDispatcher>
+@interface TestOPTEventProcessor: NSObject <OPTEventsProcessor>
 @end
 
-@implementation TestOPTEventDispatcher
-- (void)dispatchEventWithEvent:(EventForDispatch * _Nonnull)event completionHandler:(void (^ _Nullable)(NSData * _Nullable, NSError * _Nullable))completionHandler {
+@implementation TestOPTEventProcessor
+- (void)processWithEvent:(BatchEvent * _Nonnull)event completionHandler:(void (^ _Nullable)(NSData * _Nullable, NSError * _Nullable))completionHandler {
     return;
 }
 
-- (void)flushEvents {
+- (void)flush {
+    return;
+}
+@end
+
+@interface TestOPTEventDispatcher: NSObject <OPTEventsDispatcher>
+@end
+
+@implementation TestOPTEventDispatcher
+- (void)dispatchWithEvent:(EventForDispatch * _Nonnull)event completionHandler:(void (^ _Nullable)(NSData * _Nullable, NSError * _Nullable))completionHandler {
     return;
 }
 @end
@@ -217,11 +226,9 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     TestOPTLogger *logger = [[TestOPTLogger alloc] init];
     XCTAssertEqual(TestOPTLogger.logLevel, OptimizelyLogLevelInfo);
     
+    TestOPTEventProcessor *eventProcessor = [[TestOPTEventProcessor alloc] init];
     TestOPTEventDispatcher *eventDispatcher = [[TestOPTEventDispatcher alloc] init];
-    EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil sdkKey: @"a" body:[[NSData alloc] init]];
-    [eventDispatcher dispatchEventWithEvent:event completionHandler:nil];
-    [eventDispatcher flushEvents];
-    
+        
     TestOPTUserProfileService *userProfileService = [[TestOPTUserProfileService alloc] init];
     (void)[userProfileService lookupWithUserId:@"dummy"];
     [userProfileService saveWithUserProfile:@{}];
@@ -231,6 +238,7 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kSdkKey
                                                          logger:logger
+                                                 eventProcessor:eventProcessor
                                                 eventDispatcher:eventDispatcher
                                              userProfileService:userProfileService
                                        periodicDownloadInterval:@(50)

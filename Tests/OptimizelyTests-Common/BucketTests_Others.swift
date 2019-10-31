@@ -104,8 +104,10 @@ extension BucketTests_Others {
 
     func testBucketToExperimentInGroup() {
         let optimizely = OTUtils.createOptimizely(datafileName: "grouped_experiments",
-                                                  clearUserProfileService: true)!
-        
+                                                   clearUserProfileService: true,
+                                                   eventProcessor: nil,
+                                                   eventDispatcher: nil)!
+
         let experimentKey = "experiment_4000"
         let userIdForThisTestOnly = "ppid31886780721"
         
@@ -176,7 +178,10 @@ extension BucketTests_Others {
 extension BucketTests_Others {
 
     func testBucketExperimentInMutexGroup() {        
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile",
+                                                   clearUserProfileService: true,
+                                                   eventProcessor: nil,
+                                                   eventDispatcher: nil)!
         let group = optimizely.config!.getGroup(id: "1886780721")!
 
         let bucketer = DefaultBucketer()
@@ -200,7 +205,10 @@ extension BucketTests_Others {
      }
 
     func testBucketReturnsNilWhenExperimentIsExcludedFromMutex() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile",
+                                                   clearUserProfileService: true,
+                                                   eventProcessor: nil,
+                                                   eventDispatcher: nil)!
         let config = optimizely.config!
         let bucketer = DefaultBucketer()
 
@@ -237,7 +245,10 @@ extension BucketTests_Others {
     }
 
     func testBucketExperimentWithMutexDoesNotChangeExperimentReference() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile",
+                                                   clearUserProfileService: true,
+                                                   eventProcessor: nil,
+                                                   eventDispatcher: nil)!
         let config = optimizely.config!
         let bucketer = DefaultBucketer()
 
@@ -248,7 +259,10 @@ extension BucketTests_Others {
     }
 
     func testBucketWithBucketingId() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2",
+                                                   clearUserProfileService: true,
+                                                   eventProcessor: nil,
+                                                   eventDispatcher: nil)!
         let config = optimizely.config!
         let bucketer = DefaultBucketer()
         
@@ -269,7 +283,10 @@ extension BucketTests_Others {
     func testBucketVariationGroupedExperimentsWithBucketingId() {
         // make sure that bucketing works with experiments in group
         
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2",
+                                                   clearUserProfileService: true,
+                                                   eventProcessor: nil,
+                                                   eventDispatcher: nil)!
         let config = optimizely.config!
         let bucketer = DefaultBucketer()
 

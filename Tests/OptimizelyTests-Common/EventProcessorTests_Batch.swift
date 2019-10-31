@@ -1047,7 +1047,7 @@ extension EventProcessorTests_Batch {
         }
     }
     
-    func makeTestUserEvent(userId: String, projectId: String?=nil, revision: String?=nil) -> UserEvent {
+    func makeTestUserEvent(userId: String, projectId: String? = nil, revision: String? = nil) -> UserEvent {
         let testProjectId = projectId ?? kProjectIdA
         let testRevision = revision ?? kRevisionA
         

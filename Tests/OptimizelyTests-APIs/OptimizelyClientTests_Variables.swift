@@ -75,7 +75,9 @@ class OptimizelyClientTests_Variables: XCTestCase {
         super.setUp()
         
         optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
-                                              clearUserProfileService: true)!
+                                              clearUserProfileService: true,
+                                              eventProcessor: nil,
+                                              eventDispatcher: nil)!
         
         let featureFlag: FeatureFlag = try! OTUtils.model(from: sampleFeatureFlagData)
         optimizely.config!.project.featureFlags = [featureFlag]

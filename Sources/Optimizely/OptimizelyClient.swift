@@ -876,8 +876,10 @@ extension OptimizelyClient {
         eventLock.sync {}
     }
     
+#if FSC_TEST
     public static func clearRegistryService() {
         HandlerRegistryService.shared.removeAll()
     }
+#endif
     
 }

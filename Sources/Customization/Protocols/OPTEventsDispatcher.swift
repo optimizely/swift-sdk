@@ -26,4 +26,10 @@ public protocol OPTEventsDispatcher {
     ///     This may not be called in the case where the dispatcher is doing batch events. It is up to the implementor of the protocol.
     func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler?)
 
+    func clear()
+}
+
+public extension OPTEventsDispatcher {
+    // override this for testing support only
+    func clear() {}
 }

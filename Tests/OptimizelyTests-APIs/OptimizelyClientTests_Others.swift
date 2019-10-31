@@ -43,6 +43,7 @@ class OptimizelyClientTests_Others: XCTestCase {
                                                    clearUserProfileService: true,
                                                    eventProcessor: eventProcessor,
                                                    eventDispatcher: nil)!
+        eventDispatcher.clear()
     }
 
     func testActivate_InvalidExperimentKey() {
@@ -186,15 +187,15 @@ class OptimizelyClientTests_Others: XCTestCase {
         
         optimizely.sendConversionEvent(eventKey: kEventKey, userId: kUserId)
         optimizely.eventProcessor?.clear()
-        XCTAssert(eventDispatcher.events.count == 1)
+        XCTAssertEqual(eventDispatcher.events.count, 1)
 
         optimizely.sendConversionEvent(eventKey: kInvalidEventKey, userId: kUserId)
         optimizely.eventProcessor?.clear()
-        XCTAssert(eventDispatcher.events.count == 1, "event should not be sent for invalid event key")
+        XCTAssertEqual(eventDispatcher.events.count, 1, "event should not be sent for invalid event key")
         
         optimizely.sendConversionEvent(eventKey: kEventKey, userId: kUserId)
         optimizely.eventProcessor?.clear()
-        XCTAssert(eventDispatcher.events.count == 2)
+        XCTAssertEqual(eventDispatcher.events.count, 2)
     }
     
     func testSendEvent_ConfigNotReady() {

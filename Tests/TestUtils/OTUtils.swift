@@ -130,6 +130,8 @@ import XCTest
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)
         do {
+            optimizely.eventDispatcher?.clear()
+            
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely
         } catch {

@@ -16,25 +16,33 @@
 
 import Foundation
 
-/// The OPTEventDispatcher dispatches events to the Optimizely backend used in results.
-public protocol OPTEventDispatcher {
+open class HTTPEventDispatcher: OPTEventsDispatcher {
 
-    /// Dispatch event to Optimizely backend for results measurement.
-    ///
-    /// - Parameters:
-    ///   - event: EventForDispatch object which contains the url to send to and the body.
-    ///   - completionHandler: Called when the event has been sent or if an error occured.
-    ///     This may not be called in the case where the dispatcher is doing batch events. It is up to the implementor of the protocol.
-    func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?)
-    
-    /// Attempts to flush the event queue if there are any events to process.
-    func flushEvents()
-    
-    /// flush events in queue synchrnonous (optional for testing support)
-    func clear()
-}
+    lazy var logger = OPTLoggerFactory.getLogger()
 
-public extension OPTEventDispatcher {
-    // override this for testing support only
-    func clear() {}
+    public init() {
+    }
+    
+    open func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler? = nil) {
+        let config = URLSessionConfiguration.ephemeral
+        let session = URLSession(configuration: config)
+        var request = URLRequest(url: event.url)
+        request.httpMethod = "POST"
+        request.httpBody = event.body
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
+            self.logger.d(response.debugDescription)
+            
+            if let error = error {
+                completionHandler?(.failure(.eventDispatchFailed(error.localizedDescription)))
+            } else {
+                self.logger.d("Event Sent")
+                completionHandler?(.success(event.body))
+            }
+        }
+        
+        task.resume()
+    }
+    
 }

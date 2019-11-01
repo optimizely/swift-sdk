@@ -16,9 +16,13 @@
 
 import Foundation
 
-open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
+public enum DataStoreType {
+    case file, memory, userDefaults
+}
+
+open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     
-    static let sharedInstance = DefaultEventDispatcher()
+    static let sharedInstance = BatchEventProcessor()
     
     // timer-interval for batching (0 = no batching, negative = use default)
     var timerInterval: TimeInterval
@@ -36,16 +40,21 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     // the max failure count.  there is no backoff timer.
     
+    let eventDispatcher: OPTEventsDispatcher
     lazy var logger = OPTLoggerFactory.getLogger()
     var backingStore: DataStoreType
     var backingStoreName: String
     
     // for dispatching events
-    let dispatchQueue = DispatchQueue(label: "DefaultEventDispatchQueue")
-    let flushQueue = DispatchQueue(label: "DefaultEventFlushQueue")    // using a datastore queue with a backing file
+    let processQueue = DispatchQueue(label: "BatchEventProcessQueue")
+    let flushQueue = DispatchQueue(label: "BatchEventFlushQueue")
+    // using a datastore queue with a backing file
     let dataStore: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
     var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
+    
+    // synchronous dispatching
+    let notify = DispatchGroup()
     
     var observerProjectId: NSObjectProtocol?
     var observerRevision: NSObjectProtocol?
@@ -54,14 +63,22 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: sdkKey)
     }
 
-    public init(batchSize: Int = DefaultValues.batchSize,
-                backingStore: DataStoreType = .file,
-                dataStoreName: String = "OPTEventQueue",
+    public init(eventDispatcher: OPTEventsDispatcher = HTTPEventDispatcher(),
+                batchSize: Int = DefaultValues.batchSize,
                 timerInterval: TimeInterval = DefaultValues.timeInterval,
-                maxQueueSize: Int = DefaultValues.maxQueueSize) {
+                maxQueueSize: Int = DefaultValues.maxQueueSize,
+                backingStore: DataStoreType = .file,
+                dataStoreName: String = "OPTEventQueue") {
+        self.eventDispatcher = eventDispatcher
         self.batchSize = batchSize > 0 ? batchSize : DefaultValues.batchSize
         self.timerInterval = timerInterval >= 0 ? timerInterval : DefaultValues.timeInterval
-        self.maxQueueSize = maxQueueSize >= 100 ? maxQueueSize : DefaultValues.maxQueueSize
+        
+        var queueSize = maxQueueSize >= 100 ? maxQueueSize : DefaultValues.maxQueueSize
+        if queueSize < batchSize {
+            print("MaxQueueSize should be bigger than batchSize. Adjusting automatically.")
+            queueSize = batchSize
+        }
+        self.maxQueueSize = queueSize
         
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
@@ -96,33 +113,39 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         unsubscribe()
     }
     
-    open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        // ED can be shared by multiple clients
-        dispatchQueue.async {
+    open func process(event: UserEvent, completionHandler: ProcessCompletionHandler? = nil) {
+        // EP can be shared by multiple clients
+        processQueue.async {
             guard self.dataStore.count < self.maxQueueSize else {
                 let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
                 self.logger.e(error)
+                
+                self.flush()
                 completionHandler?(.failure(error))
                 return
             }
             
-            self.dataStore.save(item: event)
+            guard let body = try? JSONEncoder().encode(event.batchEvent) else {
+                let error = OptimizelyError.eventDispatchFailed("Event serialization failed")
+                self.logger.e(error)
+                
+                completionHandler?(.failure(error))
+                return
+            }
+            
+            self.dataStore.save(item: EventForDispatch(sdkKey: event.userContext.config.sdkKey, body: body))
             
             if self.dataStore.count >= self.batchSize {
-                self.flushEvents()
+                self.flush()
             } else {
                 self.startTimer()
             }
             
-            completionHandler?(.success(event.body))
+            completionHandler?(.success(body))
         }
     }
 
-    // notify group used to ensure that the sendEvent is synchronous.
-    // used in flushEvents
-    let notify = DispatchGroup()
-    
-    open func flushEvents() {
+    open func flush() {
         flushQueue.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
@@ -157,9 +180,22 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                     break
                 }
                 
+                // send notification BEFORE sending event to the server
+                if let event = try? JSONSerialization.jsonObject(with: batchEvent.body, options: []) as? [String: Any] {
+                    let url = batchEvent.url.absoluteString
+                    let sdkKey = batchEvent.sdkKey
+
+                    if let notifCenter = self.getNotificationCenter(sdkKey: sdkKey) {
+                        let args: [Any] = [url, event]
+                        notifCenter.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
+                    }
+                } else {
+                    self.logger.e("LogEvent notification discarded due to invalid event")
+                }
+                
                 // make the send event synchronous. enter our notify
                 self.notify.enter()
-                self.sendEvent(event: batchEvent) { (result) -> Void in
+                self.eventDispatcher.dispatch(event: batchEvent) { (result) -> Void in
                     switch result {
                     case .failure(let error):
                         self.logger.e(error.reason)
@@ -181,58 +217,21 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         }
     }
     
-    open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
-        let config = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: config)
-        var request = URLRequest(url: event.url)
-        request.httpMethod = "POST"
-        request.httpBody = event.body
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // send notification BEFORE sending event to the server
-        if let eventParsed = try? JSONSerialization.jsonObject(with: event.body, options: []) as? [String: Any] {
-            let url = event.url.absoluteString
-            let sdkKey = event.sdkKey
-
-            if let notifCenter = self.getNotificationCenter(sdkKey: sdkKey) {
-                let args: [Any] = [url, eventParsed]
-                notifCenter.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
-            }
-        } else {
-            self.logger.e("LogEvent notification discarded due to invalid event")
-        }
-
-        let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
-            self.logger.d(response.debugDescription)
-            
-            if let error = error {
-                completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
-            } else {
-                self.logger.d("Event Sent")
-                completionHandler(.success(event.body))
-            }
-        }
-        
-        task.resume()
-        
-    }
-    
     func applicationDidEnterBackground() {
         stopTimer()
-        
-        flushEvents()
+        flush()
     }
     
     func applicationDidBecomeActive() {
         if dataStore.count > 0 {
-            startTimer()
+            flush()
         }
     }
     
     func startTimer() {
         // timer is activated only for iOS10+ and non-zero interval value
         guard #available(iOS 10.0, tvOS 10.0, *), timerInterval > 0 else {
-            flushEvents()
+            flush()
             return
         }
         
@@ -245,7 +244,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { _ in
                 self.flushQueue.async {
                     if self.dataStore.count > 0 {
-                        self.flushEvents()
+                        self.flush()
                     } else {
                         self.stopTimer()
                     }
@@ -264,17 +263,17 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
 
 // MARK: - Notification Observers
 
-extension DefaultEventDispatcher {
+extension BatchEventProcessor {
     
     func addProjectChangeNotificationObservers() {
         observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (_) in
             self?.logger.d("Event flush triggered by datafile projectId change")
-            self?.flushEvents()
+            self?.flush()
         }
         
         observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (_) in
             self?.logger.d("Event flush triggered by datafile revision change")
-            self?.flushEvents()
+            self?.flush()
         }
     }
     
@@ -290,14 +289,14 @@ extension DefaultEventDispatcher {
     // MARK: - Tests
 
     open func clear() {
-        dispatchQueue.sync{}
-        flushEvents()
+        processQueue.sync{}
+        flush()
         flushQueue.sync{}
     }
     
     open func sync() {
-        dispatchQueue.sync {}
-        flushQueue.sync {}
+        processQueue.sync{}
+        flushQueue.sync{}
     }
     
 }

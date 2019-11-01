@@ -16,25 +16,13 @@
 
 import Foundation
 
-/// The OPTEventDispatcher dispatches events to the Optimizely backend used in results.
-public protocol OPTEventDispatcher {
-
-    /// Dispatch event to Optimizely backend for results measurement.
-    ///
-    /// - Parameters:
-    ///   - event: EventForDispatch object which contains the url to send to and the body.
-    ///   - completionHandler: Called when the event has been sent or if an error occured.
-    ///     This may not be called in the case where the dispatcher is doing batch events. It is up to the implementor of the protocol.
-    func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?)
+public struct UserContext: CustomStringConvertible {
+    let config: ProjectConfig
+    let userId: String
+    let attributes: OptimizelyAttributes?
     
-    /// Attempts to flush the event queue if there are any events to process.
-    func flushEvents()
-    
-    /// flush events in queue synchrnonous (optional for testing support)
-    func clear()
-}
-
-public extension OPTEventDispatcher {
-    // override this for testing support only
-    func clear() {}
+    public var description: String {
+        let attStr = attributes != nil ? "\(attributes!)" : "nil"
+        return "[UserContext](userId: \(userId), attributes: \(attStr), config: \(config))"
+    }
 }

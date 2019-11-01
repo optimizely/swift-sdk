@@ -38,15 +38,16 @@ class BatchEventBuilderTests: XCTestCase {
     }
 
     func testConversionEventWithNoExperiment() {
-        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!, eventKey: eventWithNoExperimentKey, userId: userId, attributes: ["anyattribute": "value", "broswer_type": "firefox"], eventTags: nil)
+        let userContext = UserContext(config: optimizely!.config!,
+                                      userId: userId,
+                                      attributes: ["anyattribute": "value", "broswer_type": "firefox"])
+        let conversion = ConversionEvent(userContext: userContext,
+                                         eventKey: eventWithNoExperimentKey,
+                                         tags: nil)
         
-        XCTAssertNotNil(conversion)
+        XCTAssertNotNil(conversion?.batchEvent)
         
-        let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: conversion!)
-        
-        XCTAssertNotNil(batchEvent)
-        
-        XCTAssert((batchEvent?.enrichDecisions)! == true)
+        XCTAssert(conversion?.batchEvent.enrichDecisions == true)
         
     }
 
@@ -54,16 +55,22 @@ class BatchEventBuilderTests: XCTestCase {
         let experiment = optimizely?.config?.project.experiments.filter({$0.key == featureExperimentKey}).first
         let variation = experiment?.variations[0]
         
-        let impression = BatchEventBuilder.createImpressionEvent(config: (optimizely?.config)!, experiment: experiment!, varionation: variation!, userId: userId, attributes: ["customattr": "yes" ])
+        let userContext = UserContext(config: optimizely!.config!,
+                                      userId: userId,
+                                      attributes: ["customattr": "yes"])
         
-        XCTAssertNotNil(impression)
-        let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: impression!)
+        let impression = ImpressionEvent(userContext: userContext,
+                                         layerId: experiment!.layerId,
+                                         experimentKey: experiment!.key,
+                                         experimentId: experiment!.id,
+                                         variationKey: variation!.key,
+                                         variationId: variation!.id)
         
-        XCTAssertNotNil(batchEvent)
+        XCTAssertNotNil(impression.batchEvent)
+
+        XCTAssert(impression.batchEvent.enrichDecisions == true)
         
-        XCTAssert((batchEvent?.enrichDecisions)! == true)
-        
-        XCTAssert(batchEvent?.visitors[0].attributes[0].key == "customattr")
+        XCTAssert(impression.batchEvent.visitors[0].attributes[0].key == "customattr")
         //XCTAssert(batchEvent?.visitors[0].attributes[0].value == .string)
     }
 

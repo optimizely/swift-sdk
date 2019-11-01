@@ -218,7 +218,7 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     XCTAssertEqual(TestOPTLogger.logLevel, OptimizelyLogLevelInfo);
     
     TestOPTEventDispatcher *eventDispatcher = [[TestOPTEventDispatcher alloc] init];
-    EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil body:[[NSData alloc] init]];
+    EventForDispatch *event = [[EventForDispatch alloc] initWithUrl:nil sdkKey: @"a" body:[[NSData alloc] init]];
     [eventDispatcher dispatchEventWithEvent:event completionHandler:nil];
     [eventDispatcher flushEvents];
     

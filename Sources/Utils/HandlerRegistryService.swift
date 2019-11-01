@@ -80,6 +80,10 @@ class HandlerRegistryService {
         
         return nil
     }
+    
+    func removeAll() {
+        binders.property?.removeAll()
+    }
 }
 
 enum ReInitializeStrategy {
@@ -160,8 +164,12 @@ extension HandlerRegistryService {
         return injectComponent(service: OPTDecisionService.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDecisionService?
     }
 
-    func injectEventDispatcher(sdkKey: String? = nil, isReintialize: Bool=false) -> OPTEventDispatcher? {
-        return injectComponent(service: OPTEventDispatcher.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTEventDispatcher?
+    func injectEventProcessor(isReintialize: Bool=false) -> OPTEventsProcessor? {
+        return injectComponent(service: OPTEventsProcessor.self, sdkKey: nil, isReintialize: isReintialize) as! OPTEventsProcessor?
+    }
+    
+    func injectEventDispatcher(isReintialize: Bool=false) -> OPTEventDispatcher? {
+        return injectComponent(service: OPTEventDispatcher.self, sdkKey: nil, isReintialize: isReintialize) as! OPTEventDispatcher?
     }
     
     func injectDatafileHandler(sdkKey: String? = nil, isReintialize: Bool=false) -> OPTDatafileHandler? {

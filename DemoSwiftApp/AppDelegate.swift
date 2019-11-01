@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let logLevel = OptimizelyLogLevel.debug
 
     let sdkKey = "FCnSegiEkRry9rhVMroit4"
-    let datafileName = "demoTestDatafile"
+    lazy var datafileName = "demoTestDatafile_" + sdkKey
     let experimentKey = "background_experiment"
     let eventKey = "sample_conversion"
 

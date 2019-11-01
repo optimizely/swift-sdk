@@ -69,7 +69,8 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 }
 
 -(void)initializeOptimizelySDKSynchronous {
-    NSString *localDatafilePath = [[NSBundle mainBundle] pathForResource:kOptimizelyDatafileName ofType:@"json"];
+    NSString *datafileName = [NSString stringWithFormat:@"%@_%@", kOptimizelyDatafileName, kOptimizelySdkKey];
+    NSString *localDatafilePath = [[NSBundle mainBundle] pathForResource:datafileName ofType:@"json"];
     if (localDatafilePath == nil) {
         NSAssert(false, @"Local datafile cannot be found");
         return;

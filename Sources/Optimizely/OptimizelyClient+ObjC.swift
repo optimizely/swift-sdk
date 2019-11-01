@@ -19,21 +19,16 @@ import Foundation
 extension OptimizelyClient {
     
     @available(swift, obsoleted: 1.0)
-    /// Optimizely Manager
+    /// Optimizely Client
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
     @objc public convenience init(sdkKey: String) {
-        self.init(sdkKey: sdkKey,
-                  logger: nil,
-                  eventProcessor: nil,
-                  eventDispatcher: nil,
-                  userProfileService: nil,
-                  periodicDownloadInterval: nil as NSNumber?,
-                  defaultLogLevel: .info)
+        self.init(sdkKey: sdkKey)
     }
     
-    /// Optimizely Manager
+    @available(swift, obsoleted: 1.0)
+    /// Optimizely Client
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
@@ -60,6 +55,8 @@ extension OptimizelyClient {
     }
     
     // deprecated
+    @available(swift, obsoleted: 1.0)
+    @available(*, deprecated, message: "Use init with EventProcessor + EventsDispatcher instead")
     @objc public convenience init(sdkKey: String,
                                   logger: OPTLogger?,
                                   eventDispatcher: _ObjcOPTEventDispatcher?,

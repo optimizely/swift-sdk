@@ -14,14 +14,18 @@
 		6E4D301322C545A400062EB3 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4D2FF922C5457F00062EB3 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E4DD7F721E51E5500B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
 		6E4DD7F821E51E5600B0C2C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EF7499F21E404BC008B22A0 /* main.m */; };
+		6E719DF6236CE34B00884E64 /* CustomUserProfileService.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E719DF5236CE34B00884E64 /* CustomUserProfileService.m */; };
+		6E719DF7236CE34B00884E64 /* CustomUserProfileService.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E719DF5236CE34B00884E64 /* CustomUserProfileService.m */; };
+		6E719E0B236CF70200884E64 /* demoTestDatafile_FCnSegiEkRry9rhVMroit4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E719E09236CF70200884E64 /* demoTestDatafile_FCnSegiEkRry9rhVMroit4.json */; };
+		6E719E0C236CF70200884E64 /* demoTestDatafile_FCnSegiEkRry9rhVMroit4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E719E09236CF70200884E64 /* demoTestDatafile_FCnSegiEkRry9rhVMroit4.json */; };
+		6E719E0D236CF70200884E64 /* demoTestDatafile_AqLkkcss3wRGUbftnKNgh2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E719E0A236CF70200884E64 /* demoTestDatafile_AqLkkcss3wRGUbftnKNgh2.json */; };
+		6E719E0E236CF70200884E64 /* demoTestDatafile_AqLkkcss3wRGUbftnKNgh2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E719E0A236CF70200884E64 /* demoTestDatafile_AqLkkcss3wRGUbftnKNgh2.json */; };
 		6E96817C21EEA321009B7FEC /* tvOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817421EEA321009B7FEC /* tvOSMain.storyboard */; };
 		6E96817F21EEA321009B7FEC /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E96817821EEA321009B7FEC /* iOSMain.storyboard */; };
 		6E9681AB21EEA3D8009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A321EEA3D8009B7FEC /* Assets.xcassets */; };
 		6E9681AC21EEA3D8009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A521EEA3D8009B7FEC /* Assets.xcassets */; };
 		6E9681AE21EEA3D8009B7FEC /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A721EEA3D8009B7FEC /* Roboto-Medium.ttf */; };
 		6E9681AF21EEA3D8009B7FEC /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A721EEA3D8009B7FEC /* Roboto-Medium.ttf */; };
-		6E9681B021EEA3D8009B7FEC /* demoTestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A821EEA3D8009B7FEC /* demoTestDatafile.json */; };
-		6E9681B121EEA3D8009B7FEC /* demoTestDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A821EEA3D8009B7FEC /* demoTestDatafile.json */; };
 		6E9681B221EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */; };
 		6E9681B321EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */; };
 		6E9681BA21EEB361009B7FEC /* VariationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8456521EE5DE3005346CC /* VariationViewController.m */; };
@@ -165,6 +169,10 @@
 		3EFD1578D8AB431E6FD4B8FE /* Pods-DemoObjctvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DemoObjctvOS.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-DemoObjctvOS/Pods-DemoObjctvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		48C9592909E0CF5074F9A84D /* Pods_DemoObjctvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoObjctvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
+		6E719DF4236CE34B00884E64 /* CustomUserProfileService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CustomUserProfileService.h; path = ../../DemoObjCApp/Customization/CustomUserProfileService.h; sourceTree = "<group>"; };
+		6E719DF5236CE34B00884E64 /* CustomUserProfileService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = CustomUserProfileService.m; path = ../../DemoObjCApp/Customization/CustomUserProfileService.m; sourceTree = "<group>"; };
+		6E719E09236CF70200884E64 /* demoTestDatafile_FCnSegiEkRry9rhVMroit4.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafile_FCnSegiEkRry9rhVMroit4.json; sourceTree = "<group>"; };
+		6E719E0A236CF70200884E64 /* demoTestDatafile_AqLkkcss3wRGUbftnKNgh2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafile_AqLkkcss3wRGUbftnKNgh2.json; sourceTree = "<group>"; };
 		6E96817521EEA321009B7FEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/tvOSMain.storyboard; sourceTree = "<group>"; };
 		6E96817621EEA321009B7FEC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E96817921EEA321009B7FEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iOSMain.storyboard; sourceTree = "<group>"; };
@@ -172,7 +180,6 @@
 		6E9681A321EEA3D8009B7FEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6E9681A521EEA3D8009B7FEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6E9681A721EEA3D8009B7FEC /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
-		6E9681A821EEA3D8009B7FEC /* demoTestDatafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demoTestDatafile.json; sourceTree = "<group>"; };
 		6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
 		6E9681D421EFA5B2009B7FEC /* CustomLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLogger.h; sourceTree = "<group>"; };
 		6E9681D721EFA5B2009B7FEC /* CustomLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLogger.m; sourceTree = "<group>"; };
@@ -237,6 +244,8 @@
 			children = (
 				6E9681D421EFA5B2009B7FEC /* CustomLogger.h */,
 				6E9681D721EFA5B2009B7FEC /* CustomLogger.m */,
+				6E719DF4236CE34B00884E64 /* CustomUserProfileService.h */,
+				6E719DF5236CE34B00884E64 /* CustomUserProfileService.m */,
 			);
 			path = Customization;
 			sourceTree = "<group>";
@@ -289,7 +298,8 @@
 		6E9681A621EEA3D8009B7FEC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				6E9681A821EEA3D8009B7FEC /* demoTestDatafile.json */,
+				6E719E0A236CF70200884E64 /* demoTestDatafile_AqLkkcss3wRGUbftnKNgh2.json */,
+				6E719E09236CF70200884E64 /* demoTestDatafile_FCnSegiEkRry9rhVMroit4.json */,
 				6E9681A721EEA3D8009B7FEC /* Roboto-Medium.ttf */,
 				6E9681A921EEA3D8009B7FEC /* ProximaNova-Regular.otf */,
 			);
@@ -536,10 +546,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E719E0D236CF70200884E64 /* demoTestDatafile_AqLkkcss3wRGUbftnKNgh2.json in Resources */,
+				6E719E0B236CF70200884E64 /* demoTestDatafile_FCnSegiEkRry9rhVMroit4.json in Resources */,
 				6E96817F21EEA321009B7FEC /* iOSMain.storyboard in Resources */,
 				6E9681B221EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */,
 				6E9681AE21EEA3D8009B7FEC /* Roboto-Medium.ttf in Resources */,
-				6E9681B021EEA3D8009B7FEC /* demoTestDatafile.json in Resources */,
 				6E9681AC21EEA3D8009B7FEC /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -548,9 +559,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E719E0E236CF70200884E64 /* demoTestDatafile_AqLkkcss3wRGUbftnKNgh2.json in Resources */,
+				6E719E0C236CF70200884E64 /* demoTestDatafile_FCnSegiEkRry9rhVMroit4.json in Resources */,
 				6E9681B321EEA3D8009B7FEC /* ProximaNova-Regular.otf in Resources */,
 				6E9681AF21EEA3D8009B7FEC /* Roboto-Medium.ttf in Resources */,
-				6E9681B121EEA3D8009B7FEC /* demoTestDatafile.json in Resources */,
 				6E96817C21EEA321009B7FEC /* tvOSMain.storyboard in Resources */,
 				6E9681AB21EEA3D8009B7FEC /* Assets.xcassets in Resources */,
 			);
@@ -611,6 +623,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E9681BA21EEB361009B7FEC /* VariationViewController.m in Sources */,
+				6E719DF6236CE34B00884E64 /* CustomUserProfileService.m in Sources */,
 				6EB8456B21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E9681D821EFA5B2009B7FEC /* CustomLogger.m in Sources */,
 				6EFA3206227CD55E006FA572 /* SamplesForAPI.m in Sources */,
@@ -623,6 +636,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E9681BD21EEB364009B7FEC /* VariationViewController.m in Sources */,
+				6E719DF7236CE34B00884E64 /* CustomUserProfileService.m in Sources */,
 				6EB8456C21EE5DE3005346CC /* AppDelegate.m in Sources */,
 				6E9681D921EFA5B2009B7FEC /* CustomLogger.m in Sources */,
 				6EFA3207227CD55E006FA572 /* SamplesForAPI.m in Sources */,

@@ -1,3 +1,4 @@
+//
 /****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -13,19 +14,10 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
+    
 
-import Foundation
-import Optimizely
+#import "CustomUserProfileService.h"
 
-class CustomLogger: OPTLogger {
-    public static var logLevel: OptimizelyLogLevel = .info
+@implementation CustomUserProfileService
 
-    required init() {
-    }
-
-    public func log(level: OptimizelyLogLevel, message: String) {
-        if level.rawValue <= CustomLogger.logLevel.rawValue {
-            print("🐱 - [\(level.name)] Kitty - \(message)")
-        }
-    }
-}
+@end

@@ -1,4 +1,3 @@
-//
 /****************************************************************************
  * Copyright 2019, Optimizely, Inc. and contributors                        *
  *                                                                          *
@@ -20,10 +19,89 @@ import Optimizely
 
 class SamplesForAPI {
 
-    static func run(optimizely: OptimizelyClient) {
+    static func run() {
+
+        let sdkKey = "AqLkkcss3wRGUbftnKNgh2" // SDK Key for your project
+        let datafileName = "demoTestDatafile_" + sdkKey
+
+        // MARK: - initialization
+        
+        var optimizely: OptimizelyClient
+        
+        // (1) create SDK client with default SDK settings
+        optimizely = OptimizelyClient(sdkKey: sdkKey)
+        
+        // (2) or create SDK client with a custom logger
+        optimizely = OptimizelyClient(sdkKey: sdkKey,
+                                      logger: CustomLogger(),
+                                      defaultLogLevel: .debug)
+
+        // (3) or create SDK client with a custom UserProfileService
+        optimizely = OptimizelyClient(sdkKey: sdkKey,
+                                      userProfileService: CustomUserProfileService(),
+                                      defaultLogLevel: .debug)
+
+        // (4) or create SDK client with a custom EventProcessor + EventDispatcher or
+        let customEventDispatcher = HTTPEventDispatcher()  // or other custom OPTEventsDispatcher class
+        let customEventProcessor = BatchEventProcessor(eventDispatcher: customEventDispatcher,  // or other custom OPTEventsProcessor class
+                                                       batchSize: 10,
+                                                       timerInterval: 60,
+                                                       maxQueueSize: 1000)
+        optimizely = OptimizelyClient(sdkKey: sdkKey,
+                                      logger: nil,
+                                      eventProcessor: customEventProcessor,
+                                      eventDispatcher: nil,
+                                      userProfileService: nil,
+                                      periodicDownloadInterval: nil,
+                                      defaultLogLevel: .debug)
+     
+        // (5) or create SDK client with a custom EventDispatcher
+        optimizely = OptimizelyClient(sdkKey: sdkKey,
+                                      logger: nil,
+                                      eventProcessor: nil,
+                                      eventDispatcher: customEventDispatcher,
+                                      userProfileService: nil,
+                                      periodicDownloadInterval: nil,
+                                      defaultLogLevel: .debug)
+
+        // MARK: - start
+        
+        // (1) start SDK synchronously
+        do {
+            let localDatafilePath = Bundle.main.path(forResource: datafileName, ofType: "json")!
+            let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
+            try optimizely.start(datafile: datafileJSON)
+
+            print("[SamplesForAPI] Optimizely SDK initiliazation synchronously------")
+            runAPISamples(optimizely)
+        } catch {
+            print("[SamplesForAPI] Optimizely SDK initiliazation failed: \(error)")
+        }
+                
+        // (2) or start SDK asynchronously
+        optimizely.start { result in
+                        switch result {
+            case .failure(let error):
+                print("[SamplesForAPI] Optimizely SDK initiliazation failed: \(error)")
+            case .success:
+                print("[SamplesForAPI] Optimizely SDK initiliazation asynchronously------")
+                runAPISamples(optimizely)
+            }
+        }
+        
+    }
+    
+    static func runAPISamples(_ optimizely: OptimizelyClient) {
+        
+        let featureKey = "demo_feature"
+        let experimentKey = "demo_experiment"
+        let variationKey = "variation_a"
+        let variableKey = "discount"
+        let eventKey = "sample_conversion"
+        let userId = "user_123"
 
         let attributes: [String: Any] = [
-            "device": "iPhone",
+            "browser": "iPhone",
             "lifetime": 24738388,
             "is_logged_in": true
             ]
@@ -31,74 +109,74 @@ class SamplesForAPI {
             "category": "shoes",
             "count": 2
             ]
-
+        
         // MARK: - activate
 
         do {
-            let variationKey = try optimizely.activate(experimentKey: "my_experiment_key",
-                                                       userId: "user_123",
+            let variationKey = try optimizely.activate(experimentKey: experimentKey,
+                                                       userId: userId,
                                                        attributes: attributes)
-            print("[activate] \(variationKey)")
+            print("[SamplesForAPI][activate] \(variationKey)")
         } catch {
-            print(error)
+            print("[SamplesForAPI][activate] \(error)")
         }
 
         // MARK: - getVariationKey
 
         do {
-            let variationKey = try optimizely.getVariationKey(experimentKey: "my_experiment_key",
-                                                              userId: "user_123",
+            let variationKey = try optimizely.getVariationKey(experimentKey: experimentKey,
+                                                              userId: userId,
                                                               attributes: attributes)
-            print("[getVariationKey] \(variationKey)")
+            print("[SamplesForAPI][getVariationKey] \(variationKey)")
         } catch {
-            print(error)
+            print("[SamplesForAPI][getVariationKey] \(error)")
         }
 
         // MARK: - getForcedVariation
 
-        if let variationKey = optimizely.getForcedVariation(experimentKey: "my_experiment_key", userId: "user_123") {
-            print("[getForcedVariation] \(variationKey)")
+        if let variationKey = optimizely.getForcedVariation(experimentKey: experimentKey, userId: userId) {
+            print("[SamplesForAPI][getForcedVariation] \(variationKey)")
         }
 
         // MARK: - setForcedVariation
 
-        if optimizely.setForcedVariation(experimentKey: "my_experiment_key",
-                                         userId: "user_123",
-                                         variationKey: "some_variation_key") {
-            print("[setForcedVariation]")
+        if optimizely.setForcedVariation(experimentKey: experimentKey,
+                                         userId: userId,
+                                         variationKey: variationKey) {
+            print("[SamplesForAPI][setForcedVariation]")
         }
 
         // MARK: - isFeatureEnabled
 
-        let enabled = optimizely.isFeatureEnabled(featureKey: "my_feature_key",
-                                                          userId: "user_123",
+        let enabled = optimizely.isFeatureEnabled(featureKey: featureKey,
+                                                          userId: userId,
                                                           attributes: attributes)
-        print("[isFeatureEnabled] \(enabled)")
+        print("[SamplesForAPI][isFeatureEnabled] \(enabled)")
 
         // MARK: - getFeatureVariable
 
         do {
-            let featureVariableValue = try optimizely.getFeatureVariableDouble(featureKey: "my_feature_key",
-                                                                               variableKey: "double_variable_key",
-                                                                               userId: "user_123",
-                                                                               attributes: attributes)
-            print("[getFeatureVariableDouble] \(featureVariableValue)")
+            let featureVariableValue = try optimizely.getFeatureVariableInteger(featureKey: featureKey,
+                                                                                variableKey: variableKey,
+                                                                                userId: userId,
+                                                                                attributes: attributes)
+            print("[SamplesForAPI][getFeatureVariableDouble] \(featureVariableValue)")
         } catch {
-            print(error)
+            print("[SamplesForAPI][getFeatureVariableDouble] \(error)")
         }
 
         // MARK: - getEnabledFeatures
 
-        let enabledFeatures = optimizely.getEnabledFeatures(userId: "user_123", attributes: attributes)
-        print("[getEnabledFeatures] \(enabledFeatures)")
+        let enabledFeatures = optimizely.getEnabledFeatures(userId: userId, attributes: attributes)
+        print("[SamplesForAPI][getEnabledFeatures] \(enabledFeatures)")
 
         // MARK: - track
 
         do {
-            try optimizely.track(eventKey: "my_purchase_event_key", userId: "user_123", attributes: attributes, eventTags: tags)
-            print("[track]")
+            try optimizely.track(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: tags)
+            print("[SamplesForAPI][track]")
         } catch {
-            print(error)
+            print("[SamplesForAPI][track] \(error)")
         }
     }
 

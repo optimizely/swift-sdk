@@ -1,4 +1,3 @@
-//
 /****************************************************************************
 * Copyright 2019, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -23,7 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class OptimizelyClient;
 
 @interface SamplesForAPI: NSObject
-+(void)run:(OptimizelyClient*)optimizely;
++(void)run;
++(void)runAPISamples:(OptimizelyClient*)optimizely;
 @end
 
 NS_ASSUME_NONNULL_END

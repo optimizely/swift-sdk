@@ -95,21 +95,23 @@ import XCTest
                                  eventProcessor: OPTEventsProcessor? = nil,
                                  eventDispatcher: OPTEventsDispatcher? = nil) -> OptimizelyClient? {
         
+        // reset previous services so that new EP (No SDKKey) can be registered OK
+        OTUtils.clearRegistryService()
+
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-        
-        OTUtils.clearRegistryService()
-        
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                           eventProcessor: eventProcessor,
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)
         do {
-            optimizely.eventProcessor?.clear()
-            
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
+        
+            // clear old stored events
+            optimizely.eventProcessor?.clear()
+
             return optimizely
         } catch {
             return nil
@@ -120,19 +122,22 @@ import XCTest
                                        clearUserProfileService: Bool,
                                        eventDispatcher: OPTEventDispatcher) -> OptimizelyClient? {
         
+        // reset previous services so that new EP (No SDKKey) can be registered OK
+        OTUtils.clearRegistryService()
+        
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-        
-        OTUtils.clearRegistryService()
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)
         do {
-            optimizely.eventDispatcher?.clear()
-            
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
+        
+            // clear old stored events
+            optimizely.eventDispatcher?.clear()
+        
             return optimizely
         } catch {
             return nil

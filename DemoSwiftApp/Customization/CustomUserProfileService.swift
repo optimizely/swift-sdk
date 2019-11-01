@@ -13,19 +13,17 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-
+    
 import Foundation
 import Optimizely
 
-class CustomLogger: OPTLogger {
-    public static var logLevel: OptimizelyLogLevel = .info
+class CustomUserProfileService: OPTUserProfileService {
+    required init() {}
 
-    required init() {
+    func lookup(userId: String) -> [String: Any]? {
+        return nil
     }
 
-    public func log(level: OptimizelyLogLevel, message: String) {
-        if level.rawValue <= CustomLogger.logLevel.rawValue {
-            print("🐱 - [\(level.name)] Kitty - \(message)")
-        }
+    func save(userProfile: [String: Any]) {
     }
 }

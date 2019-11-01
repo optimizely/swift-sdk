@@ -775,6 +775,84 @@ extension EventProcessorTests_Batch {
         }
     }
     
+    // Event Validation
+    
+    // this test can be used for dumping batched events through logEvent notification which can be used for event-validation offline
+    func testLogEventNotification_EventValidator() {
+        
+        // use default (BatchEventProcessor + HTTPEventDispatcher) for validating events
+        
+        // change this number to create event sets with different batch size, but the same number of events to be compared
+        let eventProcessor = BatchEventProcessor(batchSize: 10,          // {1, 2, 3, 10}
+                                                 timerInterval: 99999)  // a big timer, won't fire
+        
+        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+                                          eventProcessor: eventProcessor,
+                                          defaultLogLevel: .debug)
+        
+        var notifUrl: String?
+        var collections = [[String: Any]]()
+        
+        _ = optimizely.notificationCenter!.addLogEventNotificationListener { (url, event) in
+            notifUrl = url
+            collections.append(event)
+        }
+        
+        let datafile = OTUtils.loadJSONDatafile("api_datafile")!
+        try! optimizely.start(datafile: datafile)
+        
+        let experimentKey = "exp_with_audience"
+        let userA = "11111"
+        let userB = "22222"
+        let userC = "33333"
+        let eventKey = "event1"
+        let attributes: [String: Any?] = [
+            "testvar": 32
+        ]
+        let eventTags: [String: Any] = ["browser": "chrome",
+                                        "revenue": 123,
+                                        "value": 32.5]
+
+        // 10 events total
+        
+        _ = try! optimizely.activate(experimentKey: experimentKey, userId: userA)
+        _ = try! optimizely.activate(experimentKey: experimentKey, userId: userB, attributes: attributes)
+        _ = try! optimizely.activate(experimentKey: experimentKey, userId: userC)
+        try! optimizely.track(eventKey: eventKey, userId: userC, eventTags: eventTags)
+        try! optimizely.track(eventKey: eventKey, userId: userA)
+        try! optimizely.track(eventKey: eventKey, userId: userA, eventTags: eventTags)
+        try! optimizely.track(eventKey: eventKey, userId: userB)
+        try! optimizely.track(eventKey: eventKey, userId: userB, eventTags: eventTags)
+        try! optimizely.track(eventKey: eventKey, userId: userA, eventTags: eventTags)
+        try! optimizely.track(eventKey: eventKey, userId: userC, eventTags: eventTags)
+
+        optimizely.close()
+        
+        // merge collected log events in a single batched format to run with Event Validator
+        
+        var merged = [String: Any]()
+        var visitors = [[String: Any]]()
+        
+        collections.enumerated().forEach { (idx, event) in
+            if idx == 0 {
+                event.forEach { merged[$0.key] = $0.value }
+            }
+
+            visitors += event["visitors"] as! [[String: Any]]
+        }
+        merged["visitors"] = visitors
+        
+        print("[Batched Events] collections ---------------------------------------------")
+        if let json = try? JSONSerialization.data(withJSONObject: merged) {
+            let jsonStr = String(bytes: json, encoding: .utf8)!
+            print("\(jsonStr)")
+        }
+        print("--------------------------------------------------------------")
+        
+        XCTAssertEqual(notifUrl, EventForDispatch.eventEndpoint)
+        XCTAssertEqual(visitors.count, 10)
+    }
+
 }
 
 // MARK: - iOS9 Devices

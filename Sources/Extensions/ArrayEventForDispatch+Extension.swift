@@ -90,7 +90,7 @@ extension Array where Element == EventForDispatch {
                 
                 eventsBatched.append(batchEvent)
                 
-                // NOTE: an event can have multiple visistors
+                // NOTE: an event can have multiple visitors
                 visitors.append(contentsOf: batchEvent.visitors)
             } else {
                 break

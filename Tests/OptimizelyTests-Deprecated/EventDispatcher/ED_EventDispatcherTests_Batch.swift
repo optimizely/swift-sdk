@@ -1204,7 +1204,7 @@ class TestEventDispatcher: DefaultEventDispatcher {
         do {
             let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
             numReceivedVisitors += decodedEvent.visitors.count
-            print("[TestEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+            print("[TestEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
         } catch {
             // invalid event format detected
             // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)

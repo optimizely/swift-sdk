@@ -838,7 +838,7 @@ extension EventProcessorTests_Batch {
 
             visitors += event["visitors"] as! [[String: Any]]
         }
-        merged["visistors"] = visitors
+        merged["visitors"] = visitors
         
         print("[Batched Events] collections ---------------------------------------------")
         if let json = try? JSONSerialization.data(withJSONObject: merged) {
@@ -1239,7 +1239,7 @@ class TestHTTPEventDispatcher: HTTPEventDispatcher {
         do {
             let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
             numReceivedVisitors += decodedEvent.visitors.count
-            print("[TestEventProcessor][SendEvent] Received a batched event with visistors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+            print("[TestEventProcessor][SendEvent] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
         } catch {
             // invalid event format detected
             // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)

@@ -780,12 +780,14 @@ extension EventProcessorTests_Batch {
     // this test can be used for dumping batched events through logEvent notification which can be used for event-validation offline
     func testLogEventNotification_EventValidator() {
         
-        // change this number to create event sets with different batch size, but the same number of events to be compared
-        eventProcessor.batchSize = 3          // {1, 2, 3, 10}
+        // use default (BatchEventProcessor + HTTPEventDispatcher) for validating events
         
-        eventProcessor.timerInterval = 99999   // timer is big, won't fire
+        // change this number to create event sets with different batch size, but the same number of events to be compared
+        let eventProcessor = BatchEventProcessor(batchSize: 10,          // {1, 2, 3, 10}
+                                                 timerInterval: 99999)  // a big timer, won't fire
+        
         let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
+                                          eventProcessor: eventProcessor,
                                           defaultLogLevel: .debug)
         
         var notifUrl: String?

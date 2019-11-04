@@ -99,15 +99,17 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     // customization example (optional)
     
     CustomLogger *customLogger = [[CustomLogger alloc] init];
-    // 30 sec interval may be too frequent. This is for demo purpose.
-    // This should be should be much larger (default = 10 mins).
-    NSNumber *customDownloadIntervalInSecs = @(30);
     
     HTTPEventDispatcher *customDispatcher = [[HTTPEventDispatcher alloc] init];
     BatchEventProcessor *customProcessor = [[BatchEventProcessor alloc] initWithEventDispatcher:customDispatcher
                                                                                       batchSize:10
                                                                                   timerInterval:30
-                                                                                   maxQueueSize:1000];    
+                                                                                   maxQueueSize:1000];
+    
+    // 30 sec interval may be too frequent. This is for demo purpose.
+    // This should be should be much larger (default = 10 mins).
+    NSNumber *customDownloadIntervalInSecs = @(30);
+
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
                                                         logger:customLogger
                                                 eventProcessor:customProcessor

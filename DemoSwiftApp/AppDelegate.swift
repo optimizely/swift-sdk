@@ -76,7 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Local datafile cannot be found")
         }
 
-        optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
+        optimizely = OptimizelyClient(sdkKey: sdkKey)
         
         addListeners()
 
@@ -96,12 +96,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // customization example (optional)
 
         let customLogger = CustomLogger()
+        
+        let eventProcessor = BatchEventProcessor(batchSize: 10, timerInterval: 30, maxQueueSize: 1000)
+
         // 30 sec interval may be too frequent. This is for demo purpose.
         // This should be should be much larger (default = 10 mins).
         let customDownloadIntervalInSecs = 30
         
-        let eventProcessor = BatchEventProcessor(batchSize: 10, timerInterval: 30, maxQueueSize: 1000)
-
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,
                                        eventProcessor: eventProcessor,

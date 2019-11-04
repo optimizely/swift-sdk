@@ -843,12 +843,10 @@ extension EventDispatcherTests_Batch {
                                                     clearUserProfileService: true,
                                                     eventDispatcher: eventDispatcher)!
 
-        var notifUrl: String?
         var notifEvent: [String: Any]?
         
         _ = optimizely.notificationCenter!.addLogEventNotificationListener { (url, event) in
             print("LogEvent Notification called")
-            notifUrl = url
             notifEvent = event
         }
         

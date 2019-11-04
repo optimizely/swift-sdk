@@ -81,8 +81,8 @@ import XCTest
         
         //-------------------------------------------------------------------
         // reset previous services so that new EP (No SDKKey) can be registered OK
-        OTUtils.clearRegistryService()
         //-------------------------------------------------------------------
+        OTUtils.clearRegistryService()
 
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
@@ -109,8 +109,8 @@ import XCTest
         
         //-------------------------------------------------------------------
         // reset previous services so that new EP (No SDKKey) can be registered OK
-        OTUtils.clearRegistryService()
         //-------------------------------------------------------------------
+        OTUtils.clearRegistryService()
 
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
@@ -184,11 +184,11 @@ class TestBatchEventProcessor: BatchEventProcessor {
         
         //-------------------------------------------------------------------
         // it's important to clean up any events left over from previous testing
+        //-------------------------------------------------------------------
         // - throw all remaing events in queue
         clear()
         // - clear anything left from flush from clear() above
         eventDispatcher.clear()
-        //-------------------------------------------------------------------
     }
     
     override func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
@@ -261,9 +261,9 @@ class TestDefaultEventDispatcher: DefaultEventDispatcher {
         
         //-------------------------------------------------------------------
         // it's important to clean up any events left over from previous testing
+        //-------------------------------------------------------------------
         // - throw all remaing events in queue
         clear()
-        //-------------------------------------------------------------------
     }
     
     override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {

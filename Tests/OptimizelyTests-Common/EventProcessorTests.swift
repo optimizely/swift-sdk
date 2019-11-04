@@ -49,28 +49,15 @@ class EventProcessorTests: XCTestCase {
         eventProcessor = nil
     }
     
-    func createClientAndActivate(eventProcessor: OPTEventsProcessor?,
-                                 eventDispatcher: OPTEventsDispatcher?) -> OptimizelyClient {
-        
-        OTUtils.clearRegistryService()
-        eventProcessor?.clear()
-        
-        let optimizely = OptimizelyClient(sdkKey: sdkKey,
-                                          eventProcessor: eventProcessor,
-                                          eventDispatcher: eventDispatcher)
-        let datafile = OTUtils.loadJSONDatafile("api_datafile")!
-        try! optimizely.start(datafile: datafile)
-
-        _ = try! optimizely.activate(experimentKey: experimentKey, userId: userId)
-        
-        return optimizely
-    }
-    
     func testOptimizelyInit_DefaultEventProcessor() {
         let eventDispatcher = MockEventDispatcher()
         
-        let optimizely = createClientAndActivate(eventProcessor: nil,
-                                                 eventDispatcher: eventDispatcher)
+        let optimizely = OTUtils.createOptimizely(sdkKey: sdkKey,
+                                                  datafileName: "api_datafile",
+                                                  clearUserProfileService: true,
+                                                  eventProcessor: nil,
+                                                  eventDispatcher: eventDispatcher)!
+        _ = try! optimizely.activate(experimentKey: experimentKey, userId: userId)
 
         optimizely.eventProcessor!.clear()
         XCTAssertEqual(eventDispatcher.events.count, 1)
@@ -80,8 +67,11 @@ class EventProcessorTests: XCTestCase {
         let eventDispatcher = MockEventDispatcher()
         let eventProcessor = BatchEventProcessor(eventDispatcher: eventDispatcher, batchSize: 1)
         
-        _ = createClientAndActivate(eventProcessor: eventProcessor,
-                                    eventDispatcher: nil)
+        let optimizely = OTUtils.createOptimizely(sdkKey: sdkKey,
+                                                  datafileName: "api_datafile",
+                                                  clearUserProfileService: true,
+                                                  eventProcessor: eventProcessor)!
+        _ = try! optimizely.activate(experimentKey: experimentKey, userId: userId)
 
         eventProcessor.clear()
         XCTAssertEqual(eventDispatcher.events.count, 1)

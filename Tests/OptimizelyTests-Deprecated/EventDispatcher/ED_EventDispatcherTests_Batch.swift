@@ -42,7 +42,8 @@ class EventDispatcherTests_Batch: XCTestCase {
     let kUserIdB = "456"
     let kUserIdC = "789"
     
-    var eventDispatcher: TestEventDispatcher!
+    var optimizely: OptimizelyClient!
+    var eventDispatcher: TestDefaultEventDispatcher!
     
     static let keyTestEventFileName = "EventDispatcherTests-Batch-Legacy---"
     var uniqueFileName: String {
@@ -54,15 +55,12 @@ class EventDispatcherTests_Batch: XCTestCase {
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
+        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName)
         
-        OTUtils.clearRegistryService()
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "empty_datafile",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)
 
-        // for debug level setting
-        _ = OptimizelyClient(sdkKey: kSdkKey,
-                             eventDispatcher: eventDispatcher,
-                             defaultLogLevel: .debug)
-        
         // clear static states to test first datafile load
         ProjectConfig.observer.reset()
     }
@@ -701,16 +699,14 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
-        var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "empty_datafile",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)
 
         // (1) not enough events to be flushed yet
         
@@ -728,7 +724,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         
         // change revision
-        datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
+        let datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
         optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: kSdkKey)
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
@@ -739,16 +735,14 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
-        var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "empty_datafile",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)
 
         // (1) not enough events to be flushed yet
         
@@ -766,7 +760,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         
         // change projectId
-        datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
+        let datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
         optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: kSdkKey)
 
         wait(for: [eventDispatcher.exp!], timeout: 3)
@@ -777,17 +771,15 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
-        var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
-        
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "empty_datafile",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)
+
         // (1) not enough events to be flushed yet
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
@@ -805,7 +797,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.exp?.isInverted = true
 
         // change accountId (not projectId or revision)
-        datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
+        let datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
         optimizely.config = try! ProjectConfig(datafile: datafile, sdkKey: kSdkKey)
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
@@ -816,7 +808,7 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -831,12 +823,10 @@ extension EventDispatcherTests_Batch {
         
         // first datafile load
 
-        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
-        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
-        
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "empty_datafile",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)
+
         wait(for: [eventDispatcher.exp!], timeout: 3)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on the first datafile load")
     }
@@ -848,11 +838,11 @@ extension EventDispatcherTests_Batch {
 
     func testLogEventNotificationCalledBeforeBatchSent() {
         eventDispatcher.timerInterval = 0   // no batch
-
-        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
         
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "api_datafile",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)!
+
         var notifUrl: String?
         var notifEvent: [String: Any]?
         
@@ -862,13 +852,8 @@ extension EventDispatcherTests_Batch {
             notifEvent = event
         }
         
-        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
-        
-        dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA)])
+        _ = try! optimizely.activate(experimentKey: "exp_with_audience", userId: "11111")
         eventDispatcher.sync()
-        
-        XCTAssertEqual(notifUrl, kUrlA)
         
         // check event contents
         
@@ -935,24 +920,20 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
         
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        OTUtils.clearRegistryService()
-        let optimizely = OptimizelyClient(sdkKey: kSdkKey,
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
-        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        
+        optimizely = OTUtils.createOptimizelyLegacy(datafileName: "empty_datafile",
+                                                    clearUserProfileService: true,
+                                                    eventDispatcher: eventDispatcher)
+
         // (1) should have no flush
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
         
-        try! optimizely.start(datafile: datafile)
-
         dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventA),
                                 (kUrlA, kSdkKey, batchEventA),
                                 (kUrlA, kSdkKey, batchEventA)])
@@ -974,9 +955,7 @@ extension EventDispatcherTests_Batch {
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
-        
-        try! optimizely.start(datafile: datafile)
-        
+                
         dispatchMultipleEvents([(kUrlA, kSdkKey, batchEventB),
                                 (kUrlA, kSdkKey, batchEventA)])
         
@@ -1014,7 +993,7 @@ extension EventDispatcherTests_Batch {
 
     // Utils
     
-    func runRandomEventsTest(numEvents: Int, eventDispatcher: TestEventDispatcher, tc: XCTestCase, numInvalidEvents: Int=0) {
+    func runRandomEventsTest(numEvents: Int, eventDispatcher: TestDefaultEventDispatcher, tc: XCTestCase, numInvalidEvents: Int=0) {
         eventDispatcher.batchSize = Int.random(in: 1..<10)
         eventDispatcher.timerInterval = Double(Int.random(in: 1..<3))
         
@@ -1177,53 +1156,3 @@ extension EventDispatcherTests_Batch {
     }
 }
 
-// MARK: - Fake EventDispatcher
-
-class TestEventDispatcher: DefaultEventDispatcher {
-    var sendRequestedEvents: [EventForDispatch] = []
-    var forceError = false
-    var numReceivedVisitors = 0
-    let eventFileName: String
-    
-    // set this if need to wait sendEvent completed
-    var exp: XCTestExpectation?
-    
-    init(eventFileName: String, removeDatafileObserver: Bool = true) {
-        self.eventFileName = eventFileName
-        super.init(dataStoreName: eventFileName)
-        
-        // block interference from other tests notifications when testing batch timing
-        if removeDatafileObserver {
-            removeProjectChangeNotificationObservers()
-        }
-    }
-    
-    override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
-        sendRequestedEvents.append(event)
-        
-        do {
-            let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
-            numReceivedVisitors += decodedEvent.visitors.count
-            print("[TestEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
-        } catch {
-            // invalid event format detected
-            // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)
-            // - an exeption is that an invalid event is alone in the queue, when validation is skipped for performance on common path
-            
-            // pass through invalid events, so server can filter them out
-        }
-
-        // must call completionHandler to complete synchronization
-        super.sendEvent(event: event) { _ in
-            if self.forceError {
-                completionHandler(.failure(.eventDispatchFailed("forced")))
-            } else {
-                // return success to clear store after sending events
-                completionHandler(.success(Data()))
-            }
-
-            self.exp?.fulfill()
-        }
-    }
-    
-}

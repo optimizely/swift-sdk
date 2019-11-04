@@ -20,6 +20,10 @@ public enum DataStoreType {
     case file, memory, userDefaults
 }
 
+/// The BatchEventProcessor processes events to be dispatched to the Optimizely backend.
+///
+/// It creates formatted events from user requests, stores them in a persistent queue, and batches multiple events before
+/// forwarding them to OPTEventDispatcher.
 open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
     
     static let sharedInstance = BatchEventProcessor()

@@ -22,11 +22,11 @@ class BatchEventBuilderTests_Events: XCTestCase {
     let userId = "test_user_1"
 
     var optimizely: OptimizelyClient!
-    var eventDispatcher: FakeLagacyEventDispatcher!
+    var eventDispatcher: MockLagacyEventDispatcher!
     var project: Project!
     
     override func setUp() {
-        eventDispatcher = FakeLagacyEventDispatcher()
+        eventDispatcher = MockLagacyEventDispatcher()
         
         optimizely = OTUtils.createOptimizelyLegacy(datafileName: "audience_targeting",
                                                     clearUserProfileService: true,

@@ -16,6 +16,7 @@
     
 import Foundation
 
+/// The OPTEventDispatcher dispatches events to the Optimizely backend used in results.
 public protocol OPTEventsDispatcher {
     
     /// Dispatch event to Optimizely backend for results measurement.

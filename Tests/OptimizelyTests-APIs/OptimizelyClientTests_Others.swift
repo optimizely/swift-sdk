@@ -33,7 +33,7 @@ class OptimizelyClientTests_Others: XCTestCase {
     let kNotRealSdkKey = "notrealkey123"
     
     var optimizely: OptimizelyClient!
-    var eventDispatcher = FakeEventDispatcher()
+    var eventDispatcher = MockEventDispatcher()
 
     override func setUp() {
         super.setUp()

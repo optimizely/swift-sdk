@@ -24,13 +24,13 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     let userId = "test_user_1"
     
     var optimizely: OptimizelyClient!
-    var eventDispatcher: FakeEventDispatcher!
+    var eventDispatcher: MockEventDispatcher!
     var project: Project!
     
     // MARK: - setup
     
     override func setUp() {
-        eventDispatcher = FakeEventDispatcher()
+        eventDispatcher = MockEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
@@ -264,7 +264,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
 extension BatchEventBuilderTests_Attributes {
     
     func testBotFilteringWhenTrue() {
-        eventDispatcher = FakeEventDispatcher()
+        eventDispatcher = MockEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
@@ -286,7 +286,7 @@ extension BatchEventBuilderTests_Attributes {
     }
     
     func testBotFilteringWhenFalse() {
-        eventDispatcher = FakeEventDispatcher()
+        eventDispatcher = MockEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
@@ -310,7 +310,7 @@ extension BatchEventBuilderTests_Attributes {
     }
     
     func testBotFilteringWhenNil() {
-        eventDispatcher = FakeEventDispatcher()
+        eventDispatcher = MockEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
                                               clearUserProfileService: true,
                                               eventProcessor: nil,

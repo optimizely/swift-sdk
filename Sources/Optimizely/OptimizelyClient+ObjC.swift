@@ -33,6 +33,7 @@ extension OptimizelyClient {
     /// - Parameters:
     ///   - sdkKey: sdk key
     ///   - logger: custom Logger
+    ///   - eventProcessor: custom EventProcessor (optional)
     ///   - eventDispatcher: custom EventDispatcher (optional)
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional. default = 10 * 60 secs)

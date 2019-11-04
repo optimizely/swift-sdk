@@ -22,11 +22,11 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
     let eventKey = "event_single_targeted_exp"
 
     var optimizely: OptimizelyClient!
-    var eventDispatcher: FakeLagacyEventDispatcher!
+    var eventDispatcher: MockLagacyEventDispatcher!
     var project: Project!
     
     override func setUp() {
-        eventDispatcher = FakeLagacyEventDispatcher()
+        eventDispatcher = MockLagacyEventDispatcher()
         
         optimizely = OTUtils.createOptimizelyLegacy(datafileName: "audience_targeting",
                                                     clearUserProfileService: true,
@@ -322,7 +322,7 @@ extension BatchEventBuilderTests_EventTags {
 
 extension BatchEventBuilderTests_EventTags {
 
-    func getDispatchEvent(dispatcher: FakeLagacyEventDispatcher) -> [String: Any]? {
+    func getDispatchEvent(dispatcher: MockLagacyEventDispatcher) -> [String: Any]? {
         optimizely.eventLock.sync{}
         let eventForDispatch = dispatcher.events.first!
         

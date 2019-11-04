@@ -45,24 +45,6 @@ import XCTest
         return String(data: jsonDataFromNative(raw), encoding: .utf8)!
     }
     
-    static var emptyDatafile = """
-            {
-                "version": "4",
-                "rollouts": [],
-                "anonymizeIP": true,
-                "projectId": "10431130345",
-                "variables": [],
-                "featureFlags": [],
-                "experiments": [],
-                "audiences": [],
-                "groups": [],
-                "attributes": [],
-                "accountId": "10367498574",
-                "events": [],
-                "revision": "241"
-            }
-        """
-    
     static func model<T: Codable>(from raw: Any) throws -> T {
         return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
     }
@@ -90,27 +72,28 @@ import XCTest
         return ups
     }
     
-    static func createOptimizely(datafileName: String,
+    // use EventProcessor + EventDispatcher
+    static func createOptimizely(sdkKey: String? = nil,
+                                 datafileName: String,
                                  clearUserProfileService: Bool,
                                  eventProcessor: OPTEventsProcessor? = nil,
                                  eventDispatcher: OPTEventsDispatcher? = nil) -> OptimizelyClient? {
         
+        //-------------------------------------------------------------------
         // reset previous services so that new EP (No SDKKey) can be registered OK
         OTUtils.clearRegistryService()
+        //-------------------------------------------------------------------
 
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-        let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
+        let optimizely = OptimizelyClient(sdkKey: sdkKey ?? randomSdkKey,
                                           eventProcessor: eventProcessor,
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)
         do {
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
-        
-            // clear old stored events
-            optimizely.eventProcessor?.clear()
 
             return optimizely
         } catch {
@@ -118,25 +101,26 @@ import XCTest
         }
     }
     
-    static func createOptimizelyLegacy(datafileName: String,
+    // use legacy EventDispatcher
+    static func createOptimizelyLegacy(sdkKey: String? = nil,
+                                       datafileName: String,
                                        clearUserProfileService: Bool,
                                        eventDispatcher: OPTEventDispatcher) -> OptimizelyClient? {
         
+        //-------------------------------------------------------------------
         // reset previous services so that new EP (No SDKKey) can be registered OK
         OTUtils.clearRegistryService()
-        
+        //-------------------------------------------------------------------
+
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-        let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
+        let optimizely = OptimizelyClient(sdkKey: sdkKey ?? randomSdkKey,
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)
         do {
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
-        
-            // clear old stored events
-            optimizely.eventDispatcher?.clear()
         
             return optimizely
         } catch {
@@ -182,7 +166,139 @@ import XCTest
     
 }
 
-class FakeEventProcessor: OPTEventsProcessor {
+// MARK: - Test EventProcessor + EventDispatcher
+
+class TestBatchEventProcessor: BatchEventProcessor {
+    let eventFileName: String
+    
+    init(eventDispatcher: OPTEventsDispatcher, eventFileName: String, removeDatafileObserver: Bool = true) {
+        self.eventFileName = eventFileName
+        
+        super.init(eventDispatcher: eventDispatcher, dataStoreName: eventFileName)
+        print("[TestEventProcessor] init with [\(eventFileName)] ")
+
+        // block interference from other tests notifications when testing batch timing
+        if removeDatafileObserver {
+            removeProjectChangeNotificationObservers()
+        }
+        
+        //-------------------------------------------------------------------
+        // it's important to clean up any events left over from previous testing
+        // - throw all remaing events in queue
+        clear()
+        // - clear anything left from flush from clear() above
+        eventDispatcher.clear()
+        //-------------------------------------------------------------------
+    }
+    
+    override func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
+        super.process(event: event, completionHandler: completionHandler)
+    }
+    
+}
+
+class TestHTTPEventDispatcher: HTTPEventDispatcher {
+    var sendRequestedEvents: [EventForDispatch] = []
+    var forceError = false
+    var numReceivedVisitors = 0
+
+    // set this if need to wait sendEvent completed
+    var exp: XCTestExpectation?
+    
+    override func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        sendRequestedEvents.append(event)
+        
+        do {
+            let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
+            numReceivedVisitors += decodedEvent.visitors.count
+            print("[TestEventProcessor][SendEvent] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+        } catch {
+            // invalid event format detected
+            // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)
+            // - an exeption is that an invalid event is alone in the queue, when validation is skipped for performance on common path
+            
+            // pass through invalid events, so server can filter them out
+        }
+
+        // must call completionHandler to complete synchronization
+        super.dispatch(event: event) { _ in
+            if self.forceError {
+                completionHandler?(.failure(.eventDispatchFailed("forced")))
+            } else {
+                // return success to clear store after sending events
+                completionHandler?(.success(Data()))
+            }
+
+            self.exp?.fulfill()
+        }
+    }
+    
+    func clear() {
+        sendRequestedEvents = []
+        numReceivedVisitors = 0
+    }
+}
+
+// MARK: - Test DefaultEventDispatcher
+
+class TestDefaultEventDispatcher: DefaultEventDispatcher {
+    var sendRequestedEvents: [EventForDispatch] = []
+    var forceError = false
+    var numReceivedVisitors = 0
+    let eventFileName: String
+    
+    // set this if need to wait sendEvent completed
+    var exp: XCTestExpectation?
+    
+    init(eventFileName: String, removeDatafileObserver: Bool = true) {
+        self.eventFileName = eventFileName
+        super.init(dataStoreName: eventFileName)
+        
+        // block interference from other tests notifications when testing batch timing
+        if removeDatafileObserver {
+            removeProjectChangeNotificationObservers()
+        }
+        
+        //-------------------------------------------------------------------
+        // it's important to clean up any events left over from previous testing
+        // - throw all remaing events in queue
+        clear()
+        //-------------------------------------------------------------------
+    }
+    
+    override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+        sendRequestedEvents.append(event)
+        
+        do {
+            let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
+            numReceivedVisitors += decodedEvent.visitors.count
+            print("[TestEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+        } catch {
+            // invalid event format detected
+            // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)
+            // - an exeption is that an invalid event is alone in the queue, when validation is skipped for performance on common path
+            
+            // pass through invalid events, so server can filter them out
+        }
+
+        // must call completionHandler to complete synchronization
+        super.sendEvent(event: event) { _ in
+            if self.forceError {
+                completionHandler(.failure(.eventDispatchFailed("forced")))
+            } else {
+                // return success to clear store after sending events
+                completionHandler(.success(Data()))
+            }
+
+            self.exp?.fulfill()
+        }
+    }
+    
+}
+
+// MARK: - Mock EventProcessor + EventDispatcher
+
+class MockEventProcessor: OPTEventsProcessor {
     public var events = [UserEvent]()
     required init() {}
     
@@ -196,7 +312,7 @@ class FakeEventProcessor: OPTEventsProcessor {
     }
 }
 
-class FakeEventDispatcher: OPTEventsDispatcher {
+class MockEventDispatcher: OPTEventsDispatcher {
     public var events = [EventForDispatch]()
     required init() {}
 
@@ -210,7 +326,9 @@ class FakeEventDispatcher: OPTEventsDispatcher {
     }
 }
 
-class FakeLagacyEventDispatcher: OPTEventDispatcher {
+// MARK: - Mock Legacy EventDispatcher
+
+class MockLagacyEventDispatcher: OPTEventDispatcher {
     public var events = [EventForDispatch]()
     required init() {}
     

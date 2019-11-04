@@ -67,7 +67,7 @@ class EventProcessorTests: XCTestCase {
     }
     
     func testOptimizelyInit_DefaultEventProcessor() {
-        let eventDispatcher = FakeEventDispatcher()
+        let eventDispatcher = MockEventDispatcher()
         
         let optimizely = createClientAndActivate(eventProcessor: nil,
                                                  eventDispatcher: eventDispatcher)
@@ -77,7 +77,7 @@ class EventProcessorTests: XCTestCase {
     }
 
     func testOptimizelyInit_CustomEventProcessor() {
-        let eventDispatcher = FakeEventDispatcher()
+        let eventDispatcher = MockEventDispatcher()
         let eventProcessor = BatchEventProcessor(eventDispatcher: eventDispatcher, batchSize: 1)
         
         _ = createClientAndActivate(eventProcessor: eventProcessor,

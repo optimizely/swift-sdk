@@ -16,8 +16,14 @@
     
 import Foundation
 
+/// The OPTEventProcessor processes events to be dispatched to the Optimizely backend.
 public protocol OPTEventsProcessor {
     
+    /// Process events to be dispatched to the Optimizely backend
+    /// 
+    /// - Parameters:
+    ///   - event: UserEvent object which contains event contents to send.
+    ///   - completionHandler: Called when the event has been processed.
     func process(event: UserEvent, completionHandler: DispatchCompletionHandler?)
     
     /// Attempts to flush the event queue if there are any events to process.

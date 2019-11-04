@@ -24,13 +24,13 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     let userId = "test_user_1"
     
     var optimizely: OptimizelyClient!
-    var eventDispatcher: FakeLagacyEventDispatcher!
+    var eventDispatcher: MockLagacyEventDispatcher!
     var project: Project!
     
     // MARK: - setup
     
     override func setUp() {
-        eventDispatcher = FakeLagacyEventDispatcher()
+        eventDispatcher = MockLagacyEventDispatcher()
         
         optimizely = OTUtils.createOptimizelyLegacy(datafileName: "audience_targeting",
                                                     clearUserProfileService: true,
@@ -262,7 +262,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
 extension BatchEventBuilderTests_Attributes {
     
     func testBotFilteringWhenTrue() {
-        eventDispatcher = FakeLagacyEventDispatcher()
+        eventDispatcher = MockLagacyEventDispatcher()
         optimizely = OTUtils.createOptimizelyLegacy(datafileName: "bot_filtering_enabled",
                                                     clearUserProfileService: true,
                                                     eventDispatcher: eventDispatcher)
@@ -281,7 +281,7 @@ extension BatchEventBuilderTests_Attributes {
     }
     
     func testBotFilteringWhenFalse() {
-        eventDispatcher = FakeLagacyEventDispatcher()
+        eventDispatcher = MockLagacyEventDispatcher()
         optimizely = OTUtils.createOptimizelyLegacy(datafileName: "bot_filtering_enabled",
                                                     clearUserProfileService: true,
                                                     eventDispatcher: eventDispatcher)
@@ -302,7 +302,7 @@ extension BatchEventBuilderTests_Attributes {
     }
     
     func testBotFilteringWhenNil() {
-        eventDispatcher = FakeLagacyEventDispatcher()
+        eventDispatcher = MockLagacyEventDispatcher()
         optimizely = OTUtils.createOptimizelyLegacy(datafileName: "bot_filtering_enabled",
                                                     clearUserProfileService: true,
                                                     eventDispatcher: eventDispatcher)

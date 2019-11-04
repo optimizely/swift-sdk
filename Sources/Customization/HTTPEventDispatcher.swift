@@ -16,6 +16,7 @@
 
 import Foundation
 
+/// The HTTPEventDispatcher dispatches events to the Optimizely backend used in results.
 open class HTTPEventDispatcher: OPTEventsDispatcher {
 
     lazy var logger = OPTLoggerFactory.getLogger()

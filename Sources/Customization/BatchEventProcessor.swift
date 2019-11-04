@@ -76,7 +76,13 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
         self.eventDispatcher = eventDispatcher
         self.batchSize = batchSize > 0 ? batchSize : DefaultValues.batchSize
         self.timerInterval = timerInterval >= 0 ? timerInterval : DefaultValues.timeInterval
-        self.maxQueueSize = maxQueueSize >= 100 ? maxQueueSize : DefaultValues.maxQueueSize
+        
+        var queueSize = maxQueueSize >= 100 ? maxQueueSize : DefaultValues.maxQueueSize
+        if queueSize < batchSize {
+            print("MaxQueueSize should be bigger than batchSize. Adjusting automatically.")
+            queueSize = batchSize
+        }
+        self.maxQueueSize = queueSize
         
         self.backingStore = backingStore
         self.backingStoreName = dataStoreName
@@ -111,7 +117,7 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
         unsubscribe()
     }
     
-    open func process(event: UserEvent, completionHandler: DispatchCompletionHandler? = nil) {
+    open func process(event: UserEvent, completionHandler: ProcessCompletionHandler? = nil) {
         // EP can be shared by multiple clients
         processQueue.async {
             guard self.dataStore.count < self.maxQueueSize else {

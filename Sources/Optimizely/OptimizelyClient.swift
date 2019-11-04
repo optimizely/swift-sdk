@@ -705,7 +705,7 @@ extension OptimizelyClient {
         }
     }
     
-    func sendEventToDispatcher(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
+    func sendEventToDispatcher(event: UserEvent, completionHandler: ProcessCompletionHandler?) {
         // deprecated
         if let eventDispatcher = self.eventDispatcher {
             if let body = try? JSONEncoder().encode(event.batchEvent) {
@@ -858,7 +858,6 @@ extension OptimizelyClient {
 // MARK: - For test support
 
 extension OptimizelyClient {
-    
     public func close() {
         datafileHandler.stopUpdates(sdkKey: sdkKey)
         
@@ -876,11 +875,12 @@ extension OptimizelyClient {
     public func sync() {
         eventLock.sync {}
     }
-    
+}
+
 #if FSC_TEST
+extension OptimizelyClient {
     public static func clearRegistryService() {
         HandlerRegistryService.shared.removeAll()
     }
-#endif
-    
 }
+#endif

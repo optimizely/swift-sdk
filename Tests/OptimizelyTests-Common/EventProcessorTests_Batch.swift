@@ -141,8 +141,6 @@ extension EventProcessorTests_Batch {
         XCTAssertEqual(ep.timerInterval, defaultTimeInterval)
         XCTAssertEqual(ep.maxQueueSize, defaultMaxQueueSize)
     }
-    
-    
 }
 
 // MARK: - Batch

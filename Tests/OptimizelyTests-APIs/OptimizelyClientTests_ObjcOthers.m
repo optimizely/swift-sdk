@@ -58,7 +58,6 @@ static NSString * const kSdkKey = @"12345";
 @implementation OptimizelyClientTests_ObjcOthers
 
 - (void)setUp {
-    
     [OTUtils clearRegistryService];
 
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];

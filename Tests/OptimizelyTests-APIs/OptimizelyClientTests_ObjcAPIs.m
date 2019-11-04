@@ -228,7 +228,7 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     
     TestOPTEventProcessor *eventProcessor = [[TestOPTEventProcessor alloc] init];
     TestOPTEventDispatcher *eventDispatcher = [[TestOPTEventDispatcher alloc] init];
-        
+
     TestOPTUserProfileService *userProfileService = [[TestOPTUserProfileService alloc] init];
     (void)[userProfileService lookupWithUserId:@"dummy"];
     [userProfileService saveWithUserProfile:@{}];

@@ -337,6 +337,107 @@ extension OptimizelyClient {
 
 extension OptimizelyClient {
     
+    /// EventProcessor implementation for Objective-C interface support
+    class SwiftEventsProcessor: OPTEventsProcessor {
+        let objcEventsProcessor: _ObjcOPTEventsProcessor
+        
+        init?(_ objcEventProcessor: _ObjcOPTEventsProcessor?) {
+            guard let objcProcesser = objcEventProcessor else { return nil }
+            
+            self.objcEventsProcessor = objcProcesser
+        }
+        
+        func process(event: UserEvent, completionHandler: ProcessCompletionHandler?) {
+            var objcHandler: ((Data?, NSError?) -> Void)?
+            
+            if let completionHandler = completionHandler {
+                objcHandler = { (data, error) in
+                    var result: OptimizelyResult<Data>
+                    
+                    if let error = error {
+                        result = .failure(.eventDispatchFailed(error.localizedDescription))
+                    } else {
+                        result = .success(data ?? Data())
+                    }
+                    
+                    completionHandler(result)
+                }
+            }
+            
+            objcEventsProcessor.process(event: ObjcUserEvent(event: event), completionHandler: objcHandler)
+        }
+        
+        func flush() {
+            objcEventsProcessor.flush()
+        }
+    }
+    
+    /// EventsDispatcher implementation for Objective-C interface support
+    class SwiftEventsDispatcher: OPTEventsDispatcher {
+        let objcEventsDispatcher: _ObjcOPTEventsDispatcher
+        
+        init?(_ objcEventsDispatcher: _ObjcOPTEventsDispatcher?) {
+            guard let objcDispatcher = objcEventsDispatcher else { return nil }
+            
+            self.objcEventsDispatcher = objcDispatcher
+        }
+        
+        func dispatch(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+            var objcHandler: ((Data?, NSError?) -> Void)?
+            
+            if let completionHandler = completionHandler {
+                objcHandler = { (data, error) in
+                    var result: OptimizelyResult<Data>
+                    
+                    if let error = error {
+                        result = .failure(.eventDispatchFailed(error.localizedDescription))
+                    } else {
+                        result = .success(data ?? Data())
+                    }
+                    
+                    completionHandler(result)
+                }
+            }
+            
+            objcEventsDispatcher.dispatch(event: event, completionHandler: objcHandler)
+        }
+    }
+
+    // deprecated
+    class SwiftEventDispatcher: OPTEventDispatcher {
+        let objcEventDispatcher: _ObjcOPTEventDispatcher
+        
+        init?(_ objcEventDispatcher: _ObjcOPTEventDispatcher?) {
+            guard let objcDispatcher = objcEventDispatcher else { return nil }
+            
+            self.objcEventDispatcher = objcDispatcher
+        }
+        
+        func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+            var objcHandler: ((Data?, NSError?) -> Void)?
+            
+            if let completionHandler = completionHandler {
+                objcHandler = { (data, error) in
+                    var result: OptimizelyResult<Data>
+                    
+                    if let error = error {
+                        result = .failure(.eventDispatchFailed(error.localizedDescription))
+                    } else {
+                        result = .success(data ?? Data())
+                    }
+                    
+                    completionHandler(result)
+                }
+            }
+            
+            objcEventDispatcher.dispatchEvent(event: event, completionHandler: objcHandler)
+        }
+        
+        func flushEvents() {
+            objcEventDispatcher.flushEvents()
+        }
+    }
+
     @available(swift, obsoleted: 1.0)
     @objc(notificationCenter)
     /// NotificationCenter for Objective-C interface support
@@ -534,7 +635,6 @@ fileprivate class SwiftEventDispatcher: OPTEventDispatcher {
 }
 
 // MARK: - ObjC protocols
-
 @objc(OPTEventsProcessor) public protocol _ObjcOPTEventsProcessor {
     func process(event: ObjcUserEvent, completionHandler: ((Data?, NSError?) -> Void)?)
     

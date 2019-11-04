@@ -257,6 +257,20 @@ open class BatchEventProcessor: BackgroundingCallbacks, OPTEventsProcessor {
         }
         timer.property = nil
     }
+    
+    // MARK: - Test support
+
+    open func clear() {
+        processQueue.sync {}
+        flush()
+        flushQueue.sync {}
+    }
+    
+    open func sync() {
+        processQueue.sync {}
+        flushQueue.sync {}
+    }
+
 }
 
 // MARK: - Notification Observers
@@ -282,19 +296,6 @@ extension BatchEventProcessor {
         if let observer = observerRevision {
             NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyRevisionChange, object: nil)
         }
-    }
-    
-    // MARK: - Tests
-
-    open func clear() {
-        processQueue.sync {}
-        flush()
-        flushQueue.sync {}
-    }
-    
-    open func sync() {
-        processQueue.sync {}
-        flushQueue.sync {}
     }
     
 }

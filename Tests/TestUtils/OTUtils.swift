@@ -194,7 +194,6 @@ class TestBatchEventProcessor: BatchEventProcessor {
     override func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
         super.process(event: event, completionHandler: completionHandler)
     }
-    
 }
 
 class TestHTTPEventDispatcher: HTTPEventDispatcher {
@@ -234,6 +233,7 @@ class TestHTTPEventDispatcher: HTTPEventDispatcher {
     }
     
     func clear() {
+        super.clear()
         sendRequestedEvents = []
         numReceivedVisitors = 0
     }
@@ -262,7 +262,7 @@ class TestDefaultEventDispatcher: DefaultEventDispatcher {
         //-------------------------------------------------------------------
         // it's important to clean up any events left over from previous testing
         //-------------------------------------------------------------------
-        // - throw all remaing events in queue
+        // - throw all remaining events in queue
         clear()
     }
     
@@ -294,6 +294,12 @@ class TestDefaultEventDispatcher: DefaultEventDispatcher {
         }
     }
     
+    override func clear() {
+        super.clear()
+        sendRequestedEvents = []
+        numReceivedVisitors = 0
+    }
+
 }
 
 // MARK: - Mock EventProcessor + EventDispatcher

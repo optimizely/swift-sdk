@@ -918,7 +918,8 @@ extension EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName,
+                                                          removeDatafileObserver: false)
         
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -947,7 +948,7 @@ extension EventDispatcherTests_Batch {
         var batch = eventDispatcher.sendRequestedEvents[0]
         var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.visitors.count, 3)
-        eventDispatcher.sendRequestedEvents.removeAll()
+        eventDispatcher.clear()
 
         // (3) should have no flush
         
@@ -968,7 +969,6 @@ extension EventDispatcherTests_Batch {
         batch = eventDispatcher.sendRequestedEvents[0]
         batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.visitors.count, 2)
-
     }
     
 }

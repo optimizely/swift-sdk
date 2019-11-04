@@ -260,6 +260,20 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         }
         timer.property = nil
     }
+    
+    // MARK: - Test support
+
+    open func clear() {
+        dispatchQueue.sync {}
+        flushEvents()
+        flushQueue.sync {}
+    }
+    
+    open func sync() {
+        dispatchQueue.sync {}
+        flushQueue.sync {}
+    }
+
 }
 
 // MARK: - Notification Observers
@@ -285,19 +299,6 @@ extension DefaultEventDispatcher {
         if let observer = observerRevision {
             NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyRevisionChange, object: nil)
         }
-    }
-    
-    // MARK: - Tests
-
-    open func clear() {
-        dispatchQueue.sync {}
-        flushEvents()
-        flushQueue.sync {}
-    }
-    
-    open func sync() {
-        dispatchQueue.sync {}
-        flushQueue.sync {}
     }
     
 }

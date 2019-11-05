@@ -948,7 +948,7 @@ extension EventDispatcherTests_Batch_Legacy {
         var batch = eventDispatcher.sendRequestedEvents[0]
         var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.visitors.count, 3)
-        eventDispatcher.clear()
+        eventDispatcher.sendRequestedEvents.removeAll()
 
         // (3) should have no flush
         

@@ -295,12 +295,6 @@ class TestDefaultEventDispatcher: DefaultEventDispatcher {
         }
     }
     
-    override func clear() {
-        super.clear()
-        sendRequestedEvents = []
-        numReceivedVisitors = 0
-    }
-
 }
 
 // MARK: - Mock EventProcessor + EventDispatcher

@@ -166,7 +166,6 @@ import XCTest
     }
     
     static let keyTestEventFileName = "EventProcessorTests-Batch---"
-    
     static var uniqueEventFileName: String {
         return keyTestEventFileName + String(Int.random(in: 0...1000000))
     }
@@ -177,10 +176,22 @@ import XCTest
 class TestableBatchEventProcessor: BatchEventProcessor {
     let eventFileName: String
     
-    init(eventDispatcher: OPTEventsDispatcher, eventFileName: String? = nil, removeDatafileObserver: Bool = true) {
+    init(eventDispatcher: OPTEventsDispatcher,
+         eventFileName: String? = nil,
+         removeDatafileObserver: Bool = true,
+         disableBatch: Bool = false)
+    {
         self.eventFileName = eventFileName ?? OTUtils.uniqueEventFileName
         
-        super.init(eventDispatcher: eventDispatcher, dataStoreName: self.eventFileName)
+        if disableBatch {
+            super.init(eventDispatcher: eventDispatcher,
+                       batchSize: 1,
+                       dataStoreName: self.eventFileName)
+        } else {
+            super.init(eventDispatcher: eventDispatcher,
+                       dataStoreName: self.eventFileName)
+        }
+        
         print("[TestableEventProcessor] init with [\(self.eventFileName)] ")
 
         // block interference from other tests notifications when testing batch timing
@@ -248,9 +259,16 @@ class TestableDefaultEventDispatcher: DefaultEventDispatcher {
     // set this if need to wait sendEvent completed
     var exp: XCTestExpectation?
     
-    init(eventFileName: String? = nil, removeDatafileObserver: Bool = true) {
+    init(eventFileName: String? = nil,
+         removeDatafileObserver: Bool = true,
+         disableBatch: Bool = false) {
+        
         self.eventFileName = eventFileName ?? OTUtils.uniqueEventFileName
-        super.init(dataStoreName: self.eventFileName)
+        if disableBatch {
+            super.init(batchSize: 1, dataStoreName: self.eventFileName)
+        } else {
+            super.init(dataStoreName: self.eventFileName)
+        }
         
         // block interference from other tests notifications when testing batch timing
         if removeDatafileObserver {
@@ -264,7 +282,7 @@ class TestableDefaultEventDispatcher: DefaultEventDispatcher {
         do {
             let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
             numReceivedVisitors += decodedEvent.visitors.count
-            print("[TestableEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+            print("[TestableEventDispatcher][SendEvent][\(self.eventFileName)] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
         } catch {
             // invalid event format detected
             // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)

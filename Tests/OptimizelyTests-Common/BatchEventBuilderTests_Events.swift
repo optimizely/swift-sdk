@@ -27,11 +27,11 @@ class BatchEventBuilderTests_Events: XCTestCase {
     
     override func setUp() {
         eventDispatcher = MockEventDispatcher()
-        
+        let eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher)
+
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: eventDispatcher)!
+                                                  eventProcessor: eventProcessor)!
         project = optimizely.config!.project!
     }
     

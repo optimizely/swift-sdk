@@ -213,10 +213,10 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
 
     func testActivateDispatchWithAttributeValues() {
         let eventDispatcher = MockEventDispatcher()
+        let eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher)
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: eventDispatcher)!
+                                                  eventProcessor: eventProcessor)!
 
         let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_42"
         let userId = "test_user_1"

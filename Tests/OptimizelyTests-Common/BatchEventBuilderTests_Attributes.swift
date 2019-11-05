@@ -31,27 +31,22 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     
     func setUpForAudienceTargeting() {
         eventDispatcher = MockEventDispatcher()
+        let eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher)
+
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
-                                              eventProcessor: nil,
-                                              eventDispatcher: eventDispatcher)!
-        // explicitly clear here (auto clear is for TestableBatchEventProcessor() only)
-        optimizely.eventProcessor!.clear()
-        eventDispatcher.clear()
+                                              eventProcessor: eventProcessor)!
 
         project = optimizely.config!.project!
     }
     
     func setUpForBotFiltering() {
         eventDispatcher = MockEventDispatcher()
+        let eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher)
+
         optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
                                               clearUserProfileService: true,
-                                              eventProcessor: nil,
-                                              eventDispatcher: eventDispatcher)!
-
-        // explicitly clear (auto clear is for TestableBatchEventProcessor() only)
-        optimizely.eventProcessor!.clear()
-        eventDispatcher.clear()
+                                              eventProcessor: eventProcessor)!
     }
 
     // MARK: - test attribute contents

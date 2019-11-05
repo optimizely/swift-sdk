@@ -45,8 +45,6 @@ class EventProcessorTests: XCTestCase {
     }
 
     override func tearDown() {
-        eventProcessor?.clear()
-        eventProcessor = nil
     }
     
     func testOptimizelyInit_DefaultEventProcessor() {

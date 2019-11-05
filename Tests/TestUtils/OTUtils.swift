@@ -166,6 +166,7 @@ import XCTest
     }
     
     static let keyTestEventFileName = "EventProcessorTests-Batch---"
+    
     static var uniqueEventFileName: String {
         return keyTestEventFileName + String(Int.random(in: 0...1000000))
     }

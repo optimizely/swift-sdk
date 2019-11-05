@@ -47,9 +47,6 @@ class OptimizelyClientTests_Others: XCTestCase {
                                                    clearUserProfileService: true,
                                                    eventProcessor: eventProcessor,
                                                    eventDispatcher: nil)!
-        // explicitly clear here (auto clear is for TestableBatchEventProcessor() only)
-        optimizely.close()
-        eventDispatcher.clear()
     }
     
     func testActivate_InvalidExperimentKey() {

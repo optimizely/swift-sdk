@@ -945,10 +945,8 @@ extension EventDispatcherTests_Batch_Legacy {
         optimizely.close()
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on close")
-        var batch = eventDispatcher.sendRequestedEvents[0]
+        var batch = eventDispatcher.sendRequestedEvents.removeFirst()
         var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
-        XCTAssertEqual(batchedEvents.visitors.count, 3)
-        eventDispatcher.sendRequestedEvents.removeAll()
 
         // (3) should have no flush
         
@@ -966,7 +964,7 @@ extension EventDispatcherTests_Batch_Legacy {
         optimizely.close()
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
-        batch = eventDispatcher.sendRequestedEvents[0]
+        batch = eventDispatcher.sendRequestedEvents.removeFirst()
         batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.visitors.count, 2)
     }

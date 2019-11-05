@@ -35,7 +35,6 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)!
-        eventDispatcher.clear()
 
         project = optimizely.config!.project!
     }
@@ -269,7 +268,6 @@ extension BatchEventBuilderTests_Attributes {
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)!
-        eventDispatcher.clear()
 
         _ = try! optimizely.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
@@ -291,7 +289,6 @@ extension BatchEventBuilderTests_Attributes {
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)
-        eventDispatcher.clear()
         
         optimizely.config!.project.botFiltering = false
         
@@ -315,7 +312,6 @@ extension BatchEventBuilderTests_Attributes {
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)
-        eventDispatcher.clear()
 
         optimizely.config!.project.botFiltering = nil
         

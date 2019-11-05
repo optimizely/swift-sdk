@@ -294,7 +294,6 @@ class TestDefaultEventDispatcher: DefaultEventDispatcher {
             self.exp?.fulfill()
         }
     }
-    
 }
 
 // MARK: - Mock EventProcessor + EventDispatcher

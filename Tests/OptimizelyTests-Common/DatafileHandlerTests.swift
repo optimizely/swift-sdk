@@ -19,25 +19,9 @@ import XCTest
 class DatafileHandlerTests: XCTestCase {
 
     override func setUp() {
-        
-        OTUtils.clearRegistryService()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            if (!FileManager.default.fileExists(atPath: url.path)) {
-                do {
-                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-                } catch {
-                    print(error)
-                }
-                
-            }
-        }
-
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        OTUtils.clearRegistryService()
     }
 
     func testDatafileHandler() {
@@ -203,9 +187,12 @@ class DatafileHandlerTests: XCTestCase {
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
         let handler = FakeDatafileHandler()
 
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        // use random-generated key to avoid register-service conflict
+        let randomSdkKey = OTUtils.randomSdkKey
         
-        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval: 1)
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: randomSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        
+        let optimizely = OptimizelyClient(sdkKey: randomSdkKey, periodicDownloadInterval: 1)
 
         var count = 0
         

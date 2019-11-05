@@ -601,6 +601,8 @@ class FakeManager: OptimizelyClient {
                    eventDispatcher: eventDispatcher,
                    userProfileService: userProfileService,
                    defaultLogLevel: defaultLogLevel)
+        
+        // clear to re-register FakeDecisionService again
         OTUtils.clearRegistryService()
 
         let userProfileService = userProfileService ?? DefaultUserProfileService()

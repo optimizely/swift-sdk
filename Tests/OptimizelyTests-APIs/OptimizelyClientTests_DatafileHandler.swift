@@ -75,11 +75,6 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         try? FileManager.default.removeItem(at: fileUrl!)
         
         client.datafileHandler.stopAllUpdates()
-        
-        OTUtils.clearRegistryService()
-
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
 }

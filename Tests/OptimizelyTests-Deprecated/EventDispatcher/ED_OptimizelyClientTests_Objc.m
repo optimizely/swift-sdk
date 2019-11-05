@@ -27,7 +27,7 @@ static NSString * const kFeatureKey = @"feature_1";
 static NSString * const kUserId = @"11111";
 static NSString * const kSdkKey = @"12345";
 
-@interface OptimizelyClientTests_ObjcOthers : XCTestCase
+@interface ED_OptimizelyClientTests_ObjcOthers : XCTestCase
 @property(nonatomic) OptimizelyClient *optimizely;
 @property(nonatomic) NSString *datafile;
 @property(nonatomic) NSDictionary * attributes;
@@ -57,7 +57,7 @@ static NSString * const kSdkKey = @"12345";
 }
 @end
 
-@implementation OptimizelyClientTests_ObjcOthers
+@implementation ED_OptimizelyClientTests_ObjcOthers
 
 - (void)setUp {
     [OTUtils clearRegistryService];

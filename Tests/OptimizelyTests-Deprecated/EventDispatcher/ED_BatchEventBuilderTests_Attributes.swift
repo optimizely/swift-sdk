@@ -16,7 +16,7 @@
 
 import XCTest
 
-class BatchEventBuilderTests_Attributes: XCTestCase {
+class ED_BatchEventBuilderTests_Attributes: XCTestCase {
     
     let botFilteringKey = Constants.Attributes.OptimizelyBotFilteringAttribute
     
@@ -259,7 +259,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
 
 // MARK: - bot filtering
 
-extension BatchEventBuilderTests_Attributes {
+extension ED_BatchEventBuilderTests_Attributes {
     
     func testBotFilteringWhenTrue() {
         eventDispatcher = MockLagacyEventDispatcher()
@@ -322,7 +322,7 @@ extension BatchEventBuilderTests_Attributes {
 
 // MARK: - Utils
 
-extension BatchEventBuilderTests_Attributes {
+extension ED_BatchEventBuilderTests_Attributes {
     
     func getFirstEvent() -> EventForDispatch? {
         optimizely.eventLock.sync{}

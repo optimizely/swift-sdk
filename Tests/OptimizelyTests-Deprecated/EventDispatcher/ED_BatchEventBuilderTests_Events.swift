@@ -16,7 +16,7 @@
 
 import XCTest
 
-class BatchEventBuilderTests_Events: XCTestCase {
+class ED_BatchEventBuilderTests_Events: XCTestCase {
 
     let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2"
     let userId = "test_user_1"
@@ -166,7 +166,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
 
 // MARK: - Utils
 
-extension BatchEventBuilderTests_Events {
+extension ED_BatchEventBuilderTests_Events {
     
     func getFirstEvent() -> EventForDispatch? {
         optimizely.eventLock.sync{}

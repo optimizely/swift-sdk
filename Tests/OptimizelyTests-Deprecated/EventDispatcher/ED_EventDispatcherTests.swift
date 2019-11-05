@@ -16,7 +16,7 @@
 
 import XCTest
 
-class EventDispatcherTests: XCTestCase {
+class ED_EventDispatcherTests: XCTestCase {
     
     var eventDispatcher: DefaultEventDispatcher!
     let sdkKey = "any key"

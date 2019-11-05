@@ -37,6 +37,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                               eventDispatcher: eventDispatcher)!
         // explicitly clear here (auto clear is for TestableBatchEventProcessor() only)
         optimizely.eventProcessor!.clear()
+        eventDispatcher.clear()
 
         project = optimizely.config!.project!
     }
@@ -50,6 +51,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
 
         // explicitly clear (auto clear is for TestableBatchEventProcessor() only)
         optimizely.eventProcessor!.clear()
+        eventDispatcher.clear()
     }
 
     // MARK: - test attribute contents
@@ -317,12 +319,10 @@ extension BatchEventBuilderTests_Attributes {
         let eventForDispatch = getFirstEvent()
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
-        var isIncluded = false
-        if let botAttribute = event.getEventAttribute(key: botFilteringKey),
-            botAttribute.entityID == botFilteringKey {
-            isIncluded = botAttribute.value == .bool(false)
-        }
-        XCTAssert(isIncluded)
+        let botAttribute = event.getEventAttribute(key: botFilteringKey)
+        XCTAssertNotNil(botAttribute)
+        XCTAssertEqual(botAttribute!.entityID, botFilteringKey)
+        XCTAssertEqual(botAttribute!.value, .bool(false))
     }
     
     func testBotFilteringWhenNil() {

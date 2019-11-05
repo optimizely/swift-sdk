@@ -16,7 +16,7 @@
 
 import XCTest
 
-class BatchEventBuilderTests_EventTags: XCTestCase {
+class ED_BatchEventBuilderTests_EventTags: XCTestCase {
 
     let userId = "test_user_1"
     let eventKey = "event_single_targeted_exp"
@@ -74,7 +74,7 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
 
 // MARK: - invalid types in tags
 
-extension BatchEventBuilderTests_EventTags {
+extension ED_BatchEventBuilderTests_EventTags {
 
     func testEventTagsWhenInvalidType() {
         let eventKey = "event_single_targeted_exp"
@@ -110,7 +110,7 @@ extension BatchEventBuilderTests_EventTags {
 
 // MARK: - {revenue, value} invalid values
     
-extension BatchEventBuilderTests_EventTags {
+extension ED_BatchEventBuilderTests_EventTags {
 
     func testEventTagsWhenRevenueAndValueWhenWrongType1() {
         let eventKey = "event_single_targeted_exp"
@@ -170,7 +170,7 @@ extension BatchEventBuilderTests_EventTags {
 
 // MARK: - {revenue, value} large numbers
 
-extension BatchEventBuilderTests_EventTags {
+extension ED_BatchEventBuilderTests_EventTags {
 
     func testEventTagsWhenRevenueAndValueWhenInvalidBigNumbers() {
         let eventKey = "event_single_targeted_exp"
@@ -211,7 +211,7 @@ extension BatchEventBuilderTests_EventTags {
 
 // MARK: - {revenue, value} test with {0, 1} values
 
-extension BatchEventBuilderTests_EventTags {
+extension ED_BatchEventBuilderTests_EventTags {
 
     func testEventTagsWhenRevenueAndValueWithValue0() {
         let eventKey = "event_single_targeted_exp"
@@ -270,7 +270,7 @@ extension BatchEventBuilderTests_EventTags {
 
 // MARK: - ObjC or special types
 
-extension BatchEventBuilderTests_EventTags {
+extension ED_BatchEventBuilderTests_EventTags {
     
     func testEventTagsWhenRevenueAndValueWithObjcTypes() {
         let eventKey = "event_single_targeted_exp"
@@ -320,7 +320,7 @@ extension BatchEventBuilderTests_EventTags {
 
 // MARK: - Utils
 
-extension BatchEventBuilderTests_EventTags {
+extension ED_BatchEventBuilderTests_EventTags {
 
     func getDispatchEvent(dispatcher: MockLagacyEventDispatcher) -> [String: Any]? {
         optimizely.eventLock.sync{}

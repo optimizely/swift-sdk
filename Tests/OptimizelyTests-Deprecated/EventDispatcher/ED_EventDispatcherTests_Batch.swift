@@ -65,26 +65,6 @@ class ED_EventDispatcherTests_Batch: XCTestCase {
         
         self.eventDispatcher.timer.performAtomic { $0.invalidate() }
     }
-    
-    override class func tearDown() {
-        // remove all event files used for testing
-        
-        let fm = FileManager.default
-        let docFolder = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        let allFiles = try! fm.contentsOfDirectory(atPath: docFolder)
-        
-        let predicate = NSPredicate(format: "self CONTAINS '\(OTUtils.keyTestEventFileName)'")
-        let filtered = allFiles.filter { predicate.evaluate(with: $0) }
-    
-        filtered.forEach {
-            do {
-                try fm.removeItem(atPath: (docFolder as NSString).appendingPathComponent($0))
-                print("[EventBatchTest] Removed temporary event file: \($0)")
-            } catch {
-                print("[EventBatchTest] ERROR: cannot remove temporary event file: \($0)")
-            }
-        }
-    }
 }
 
 // MARK: - Configuration

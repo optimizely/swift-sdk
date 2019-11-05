@@ -169,6 +169,26 @@ import XCTest
     static var uniqueEventFileName: String {
         return keyTestEventFileName + String(Int.random(in: 0...1000000))
     }
+    
+    static func cleanupTestEventFiles() {
+        // remove all event files used for testing
+        
+        let fm = FileManager.default
+        let docFolder = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        let allFiles = try! fm.contentsOfDirectory(atPath: docFolder)
+        
+        let predicate = NSPredicate(format: "self CONTAINS '\(OTUtils.keyTestEventFileName)'")
+        let filtered = allFiles.filter { predicate.evaluate(with: $0) }
+        
+        filtered.forEach {
+            do {
+                try fm.removeItem(atPath: (docFolder as NSString).appendingPathComponent($0))
+                print("[EventBatchTest] Removed temporary event file: \($0)")
+            } catch {
+                print("[EventBatchTest] ERROR: cannot remove temporary event file: \($0)")
+            }
+        }
+    }
 }
 
 // MARK: - Test EventProcessor + EventDispatcher

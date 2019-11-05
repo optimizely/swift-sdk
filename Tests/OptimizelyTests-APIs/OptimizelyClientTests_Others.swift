@@ -1,19 +1,19 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
-    
+ * Copyright 2019, Optimizely, Inc. and contributors                        *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
+
 
 import XCTest
 
@@ -25,37 +25,41 @@ class OptimizelyClientTests_Others: XCTestCase {
     
     let kFeatureKey = "feature_1"
     let kInvalidFeatureKey = "invalid_key"
-
+    
     let kVariableKeyString = "s_foo"
     let kInvalidVariableKeyString = "invalid_key"
-
+    
     let kUserId = "user"
     let kNotRealSdkKey = "notrealkey123"
     
     var optimizely: OptimizelyClient!
-    var eventDispatcher = MockEventDispatcher()
-
+    var eventDispatcher: MockEventDispatcher!
+    
     override func setUp() {
         super.setUp()
         
-        let eventProcessor = BatchEventProcessor(eventDispatcher: eventDispatcher, batchSize: 1)
+        eventDispatcher = MockEventDispatcher()
+        let eventProcessor = BatchEventProcessor(eventDispatcher: eventDispatcher,
+                                                 batchSize: 1,
+                                                 dataStoreName: OTUtils.uniqueEventFileName)
+
         self.optimizely = OTUtils.createOptimizely(datafileName: "api_datafile",
                                                    clearUserProfileService: true,
                                                    eventProcessor: eventProcessor,
                                                    eventDispatcher: nil)!
         // explicitly clear here (auto clear is for TestableBatchEventProcessor() only)
-        eventProcessor.clear()
+        optimizely.close()
         eventDispatcher.clear()
     }
-
+    
     func testActivate_InvalidExperimentKey() {
         var variationKey = try? optimizely.activate(experimentKey: kExperimentKey, userId: kUserId)
         XCTAssertNotNil(variationKey)
-
+        
         variationKey = try? optimizely.activate(experimentKey: kInvalidExperimentKey, userId: kUserId)
         XCTAssertNil(variationKey)
     }
-
+    
     func testGetVariation_InvalidExperimentKey() {
         var variation = try? optimizely.getVariation(experimentKey: kExperimentKey, userId: kUserId)
         XCTAssertNotNil(variation)
@@ -63,7 +67,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         variation = try? optimizely.getVariation(experimentKey: kInvalidExperimentKey, userId: kUserId)
         XCTAssertNil(variation)
     }
-
+    
     func testIsFeatureEnabled_InvalidFeatureKey() {
         var result = optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         XCTAssert(result)
@@ -79,7 +83,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         value = try? optimizely.getFeatureVariableString(featureKey: kInvalidFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
         XCTAssertNil(value)
     }
-
+    
     func testGetFeatureVariableString_InvalidVariableKey() {
         var value = try? optimizely.getFeatureVariableString(featureKey: kFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
         XCTAssertNotNil(value)
@@ -98,12 +102,10 @@ class OptimizelyClientTests_Others: XCTestCase {
         let value: [String: Int]? = try? optimizely.getFeatureVariable(featureKey: kFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
         XCTAssertNil(value)
     }
-
+    
     func testGetFeatureVariableString_DecisionFailed() {
         var optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
-                                                  clearUserProfileService: true,
-                                                  eventProcessor: nil,
-                                                  eventDispatcher: nil)!
+                                                  clearUserProfileService: true)!
         
         let featureKey = "feature_running_exp_enabled_targeted_with_variable_overrides"
         let attributeKey = "string_attribute"
@@ -116,29 +118,29 @@ class OptimizelyClientTests_Others: XCTestCase {
         let userId = "user"
         let attributes: [String: Any] = [attributeKey: attributeValue]
         let attributesNotMatch: [String: Any] = [attributeKey: "wrong_value"]
-
+        
         var value = try? optimizely.getFeatureVariableString(featureKey: featureKey,
-                                                        variableKey: variableKey,
-                                                        userId: userId,
-                                                        attributes: attributes)
+                                                             variableKey: variableKey,
+                                                             userId: userId,
+                                                             attributes: attributes)
         XCTAssert(value == variableValue)
-
+        
         // reset user-profile-service to test variation-not-found case (default variable value)
         
         optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
-                                                  clearUserProfileService: true)!
-
+                                              clearUserProfileService: true)!
+        
         value = try? optimizely.getFeatureVariableString(featureKey: featureKey,
-                                                             variableKey: variableKey,
-                                                             userId: userId,
-                                                             attributes: attributesNotMatch)
+                                                         variableKey: variableKey,
+                                                         userId: userId,
+                                                         attributes: attributesNotMatch)
         XCTAssert(value == variableDefaultValue)
     }
     
     func testGetFeatureVariable_MissingDefaultValue() {
-        var optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
+        let optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
                                                   clearUserProfileService: true)!
-
+        
         let featureKey = "feature_running_exp_enabled_targeted_with_variable_overrides"
         let attributeKey = "string_attribute"
         
@@ -212,7 +214,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         
         optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId)
         XCTAssert(eventDispatcher.events.isEmpty, "event should not be sent out sdk is not configured properly")
-
+        
         optimizely.sendConversionEvent(eventKey: kEventKey, userId: kUserId)
         XCTAssert(eventDispatcher.events.isEmpty, "event should not be sent out sdk is not configured properly")
     }
@@ -248,7 +250,7 @@ class OptimizelyClientTests_Others: XCTestCase {
             
             exp.fulfill()
         }
-
+        
         wait(for: [exp], timeout: 10)
         XCTAssertTrue(failureOccured)
     }
@@ -263,7 +265,7 @@ class OptimizelyClientTests_Others: XCTestCase {
                 datafileChangeNotification?(newDatafile)
             }
         }
-
+        
         let handler = FakeDatafileHandler()
         HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
             .sdkKey(key: kNotRealSdkKey)
@@ -271,24 +273,24 @@ class OptimizelyClientTests_Others: XCTestCase {
             .to(factory: FakeDatafileHandler.init)
             .reInitializeStrategy(strategy: .reUse)
             .singetlon())
-
+        
         
         let optimizely = OptimizelyClient(sdkKey: kNotRealSdkKey)
-
+        
         // all handlers before transfer
         
         var handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.property?.keys.filter { $0.sdkKey == kNotRealSdkKey }
         let oldHandlersCount = handlersForCurrentSdkKey?.count
-
+        
         // remove one of the handler to test nil-handlers
-
+        
         let testKey = handlersForCurrentSdkKey!.filter { $0.service.contains("DecisionService") }.first!
         HandlerRegistryService.shared.binders.property?[testKey] = nil
-    
+        
         // this will replace config, which will transfer all handlers
         
         try? optimizely.configSDK(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
-
+        
         // nil handlers must be cleaned up when re-init
         
         handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.property?.keys.filter { $0.sdkKey == kNotRealSdkKey }
@@ -297,5 +299,5 @@ class OptimizelyClientTests_Others: XCTestCase {
         XCTAssertEqual(newHandlersCount, oldHandlersCount! - 1, "nil handlers should be filtered out")
     }
     
-
+    
 }

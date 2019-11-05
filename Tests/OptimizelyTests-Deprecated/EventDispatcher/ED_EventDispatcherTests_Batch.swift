@@ -44,18 +44,13 @@ class ED_EventDispatcherTests_Batch: XCTestCase {
     
     var optimizely: OptimizelyClient!
     var eventDispatcher: TestableDefaultEventDispatcher!
-    
-    static let keyTestEventFileName = "EventDispatcherTests-Batch-Legacy---"
-    var uniqueFileName: String {
-        return ED_EventDispatcherTests_Batch.keyTestEventFileName + String(Int.random(in: 0...1000000))
-    }
-    
+        
     override func setUp() {
         // NOTE: dataStore uses the same file ("OptEventQueue") by default.
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
-        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName)
+        self.eventDispatcher = TestableDefaultEventDispatcher()
         
         optimizely = OTUtils.createOptimizelyLegacy(datafileName: "empty_datafile",
                                                     clearUserProfileService: true,
@@ -78,7 +73,7 @@ class ED_EventDispatcherTests_Batch: XCTestCase {
         let docFolder = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         let allFiles = try! fm.contentsOfDirectory(atPath: docFolder)
         
-        let predicate = NSPredicate(format: "self CONTAINS '\(keyTestEventFileName)'")
+        let predicate = NSPredicate(format: "self CONTAINS '\(OTUtils.keyTestEventFileName)'")
         let filtered = allFiles.filter { predicate.evaluate(with: $0) }
     
         filtered.forEach {
@@ -699,7 +694,7 @@ extension ED_EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestableDefaultEventDispatcher(removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -735,7 +730,7 @@ extension ED_EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestableDefaultEventDispatcher(removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -771,7 +766,7 @@ extension ED_EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestableDefaultEventDispatcher(removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -808,7 +803,7 @@ extension ED_EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestableDefaultEventDispatcher(removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -918,8 +913,7 @@ extension ED_EventDispatcherTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName,
-                                                          removeDatafileObserver: false)
+        self.eventDispatcher = TestableDefaultEventDispatcher(removeDatafileObserver: false)
         
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire

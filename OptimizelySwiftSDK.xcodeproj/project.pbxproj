@@ -279,7 +279,6 @@
 		6E12B2D522C55A380005E9E6 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
 		6E12B2D622C55A380005E9E6 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
 		6E12B2D722C55A380005E9E6 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
-		6E172D20235FD510001ADBB0 /* EventDispatcherTests_Batch_Legacy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E172D1E235FD505001ADBB0 /* EventDispatcherTests_Batch_Legacy.swift */; };
 		6E34A6172319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
 		6E34A6182319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
 		6E34A6192319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
@@ -3074,7 +3073,6 @@
 				6E9B117022C5487100C22D81 /* DecisionListenerTests.swift in Sources */,
 				6E9B116122C5487100C22D81 /* OptimizelyErrorTests.swift in Sources */,
 				6E9B116522C5487100C22D81 /* BatchEventBuilderTest.swift in Sources */,
-				6E172D20235FD510001ADBB0 /* EventDispatcherTests_Batch_Legacy.swift in Sources */,
 				6E9B117422C5487100C22D81 /* DecisionServiceTests_Others.swift in Sources */,
 				6E9B116E22C5487100C22D81 /* LoggerTests.swift in Sources */,
 				6E75180D22C520D400B2B157 /* DataStoreFile.swift in Sources */,

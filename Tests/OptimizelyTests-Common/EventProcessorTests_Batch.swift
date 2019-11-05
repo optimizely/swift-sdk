@@ -45,19 +45,14 @@ class EventProcessorTests_Batch: XCTestCase {
     var optimizely: OptimizelyClient!
     var eventProcessor: TestableBatchEventProcessor!
     var eventDispatcher: TestableHTTPEventDispatcher!
-    
-    static let keyTestEventFileName = "EventProcessorTests-Batch---"
-    var uniqueFileName: String {
-        return EventProcessorTests_Batch.keyTestEventFileName + String(Int.random(in: 0...1000000))
-    }
-    
+        
     override func setUp() {
         // NOTE: dataStore uses the same file ("OptEventQueue") by default.
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
         self.eventDispatcher = TestableHTTPEventDispatcher()
-        self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher, eventFileName: uniqueFileName)
+        self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher)
         
         // for debug level setting
         optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
@@ -81,7 +76,7 @@ class EventProcessorTests_Batch: XCTestCase {
         let docFolder = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         let allFiles = try! fm.contentsOfDirectory(atPath: docFolder)
         
-        let predicate = NSPredicate(format: "self CONTAINS '\(keyTestEventFileName)'")
+        let predicate = NSPredicate(format: "self CONTAINS '\(OTUtils.keyTestEventFileName)'")
         let filtered = allFiles.filter { predicate.evaluate(with: $0) }
         
         filtered.forEach {
@@ -596,7 +591,6 @@ extension EventProcessorTests_Batch {
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
         self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                          eventFileName: uniqueFileName,
                                                           removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush
@@ -633,7 +627,6 @@ extension EventProcessorTests_Batch {
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
         self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                          eventFileName: uniqueFileName,
                                                           removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush
@@ -670,7 +663,6 @@ extension EventProcessorTests_Batch {
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
         self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                          eventFileName: uniqueFileName,
                                                           removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush
@@ -708,7 +700,6 @@ extension EventProcessorTests_Batch {
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
         self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                          eventFileName: uniqueFileName,
                                                           removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush
@@ -894,7 +885,6 @@ extension EventProcessorTests_Batch {
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
         self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                          eventFileName: uniqueFileName,
                                                           removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush

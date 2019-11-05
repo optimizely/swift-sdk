@@ -165,6 +165,10 @@ import XCTest
         return String(arc4random())
     }
     
+    static let keyTestEventFileName = "EventProcessorTests-Batch---"
+    static var uniqueEventFileName: String {
+        return keyTestEventFileName + String(Int.random(in: 0...1000000))
+    }
 }
 
 // MARK: - Test EventProcessor + EventDispatcher
@@ -172,24 +176,16 @@ import XCTest
 class TestableBatchEventProcessor: BatchEventProcessor {
     let eventFileName: String
     
-    init(eventDispatcher: OPTEventsDispatcher, eventFileName: String, removeDatafileObserver: Bool = true) {
-        self.eventFileName = eventFileName
+    init(eventDispatcher: OPTEventsDispatcher, eventFileName: String? = nil, removeDatafileObserver: Bool = true) {
+        self.eventFileName = eventFileName ?? OTUtils.uniqueEventFileName
         
-        super.init(eventDispatcher: eventDispatcher, dataStoreName: eventFileName)
-        print("[TestableEventProcessor] init with [\(eventFileName)] ")
+        super.init(eventDispatcher: eventDispatcher, dataStoreName: self.eventFileName)
+        print("[TestableEventProcessor] init with [\(self.eventFileName)] ")
 
         // block interference from other tests notifications when testing batch timing
         if removeDatafileObserver {
             removeProjectChangeNotificationObservers()
         }
-        
-        //-------------------------------------------------------------------
-        // it's important to clean up any events left over from previous testing
-        //-------------------------------------------------------------------
-        // - throw all remaing events in queue
-        clear()
-        // - clear anything left from flush from clear() above
-        eventDispatcher.clear()
     }
     
     override func process(event: UserEvent, completionHandler: DispatchCompletionHandler?) {
@@ -251,20 +247,14 @@ class TestableDefaultEventDispatcher: DefaultEventDispatcher {
     // set this if need to wait sendEvent completed
     var exp: XCTestExpectation?
     
-    init(eventFileName: String, removeDatafileObserver: Bool = true) {
-        self.eventFileName = eventFileName
-        super.init(dataStoreName: eventFileName)
+    init(eventFileName: String? = nil, removeDatafileObserver: Bool = true) {
+        self.eventFileName = eventFileName ?? OTUtils.uniqueEventFileName
+        super.init(dataStoreName: self.eventFileName)
         
         // block interference from other tests notifications when testing batch timing
         if removeDatafileObserver {
             removeProjectChangeNotificationObservers()
         }
-        
-        //-------------------------------------------------------------------
-        // it's important to clean up any events left over from previous testing
-        //-------------------------------------------------------------------
-        // - throw all remaining events in queue
-        clear()
     }
     
     override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {

@@ -29,19 +29,34 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     
     // MARK: - setup
     
-    override func setUp() {
+    func setUpForAudienceTargeting() {
         eventDispatcher = MockEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
                                               eventProcessor: nil,
                                               eventDispatcher: eventDispatcher)!
+        // explicitly clear here (auto clear is for TestableBatchEventProcessor() only)
+        optimizely.eventProcessor!.clear()
 
         project = optimizely.config!.project!
     }
     
+    func setUpForBotFiltering() {
+        eventDispatcher = MockEventDispatcher()
+        optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
+                                              clearUserProfileService: true,
+                                              eventProcessor: nil,
+                                              eventDispatcher: eventDispatcher)!
+
+        // explicitly clear (auto clear is for TestableBatchEventProcessor() only)
+        optimizely.eventProcessor!.clear()
+    }
+
     // MARK: - test attribute contents
     
     func testEventAttributesContents() {
+        setUpForAudienceTargeting()
+        
         let attributes: [String: Any] = [
             "s_foo": "foo",
             "b_true": true,
@@ -84,6 +99,8 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     }
     
     func testEventAttributesContainsProperTypes() {
+        setUpForAudienceTargeting()
+
         let attributes: [String: Any] = [
             "s_foo": "foo",
             "b_true": true,
@@ -116,6 +133,8 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     }
     
     func testEventAttributesWithNotMatchingAttributes() {
+        setUpForAudienceTargeting()
+
         let attributes: [String: Any] = [
             "s_foo": "foo",
             "b_true": true,
@@ -151,6 +170,8 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     // MARK: - $opt attributes
     
     func testEventAttributesWithOptKeys() {
+        setUpForAudienceTargeting()
+
         let attributes: [String: Any] = [
             "$opt_key_1": "bar",
             "$opt_key_2": false,
@@ -161,7 +182,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
             "i_42": 42,
             "d_4_2": 4.2
         ]
-        
+    
         _ = try! optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
@@ -188,6 +209,8 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     }
     
     func testEventAttributesWhenAttributesEmpty() {
+        setUpForAudienceTargeting()
+
         // clear all audience conditions to accept empty attributes
         var experiment = optimizely.config!.project.experiments.filter({$0.key == experimentKey}).first!
         experiment.audienceConditions = nil
@@ -206,6 +229,8 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     }
     
     func testEventAttributesWhenAttributesNil() {
+        setUpForAudienceTargeting()
+
         // clear all audience conditions to accept empty attributes
         var experiment = optimizely.config!.project!.experiments.filter({$0.key == experimentKey}).first!
         experiment.audienceConditions = nil
@@ -224,6 +249,8 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
     // MARK: - compatible with ObjC types
     
     func testEventAttributesContainsProperTypesWithNSNumber() {
+        setUpForAudienceTargeting()
+
         // ObjC data types (NSNumber, NSString,...)
         let attributes: [String: Any] = [
             "s_foo": NSString(string: "foo"),
@@ -263,11 +290,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
 extension BatchEventBuilderTests_Attributes {
     
     func testBotFilteringWhenTrue() {
-        eventDispatcher = MockEventDispatcher()
-        optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
-                                              clearUserProfileService: true,
-                                              eventProcessor: nil,
-                                              eventDispatcher: eventDispatcher)!
+        setUpForBotFiltering()
 
         _ = try! optimizely.activate(experimentKey: "ab_running_exp_untargeted",
                                       userId: "test_user_1")
@@ -284,12 +307,8 @@ extension BatchEventBuilderTests_Attributes {
     }
     
     func testBotFilteringWhenFalse() {
-        eventDispatcher = MockEventDispatcher()
-        optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
-                                              clearUserProfileService: true,
-                                              eventProcessor: nil,
-                                              eventDispatcher: eventDispatcher)
-        
+        setUpForBotFiltering()
+
         optimizely.config!.project.botFiltering = false
         
         _ = try! optimizely.activate(experimentKey: "ab_running_exp_untargeted",
@@ -307,11 +326,7 @@ extension BatchEventBuilderTests_Attributes {
     }
     
     func testBotFilteringWhenNil() {
-        eventDispatcher = MockEventDispatcher()
-        optimizely = OTUtils.createOptimizely(datafileName: "bot_filtering_enabled",
-                                              clearUserProfileService: true,
-                                              eventProcessor: nil,
-                                              eventDispatcher: eventDispatcher)
+        setUpForBotFiltering()
 
         optimizely.config!.project.botFiltering = nil
         

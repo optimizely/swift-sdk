@@ -169,7 +169,7 @@ import XCTest
 
 // MARK: - Test EventProcessor + EventDispatcher
 
-class TestBatchEventProcessor: BatchEventProcessor {
+class TestableBatchEventProcessor: BatchEventProcessor {
     let eventFileName: String
     
     init(eventDispatcher: OPTEventsDispatcher, eventFileName: String, removeDatafileObserver: Bool = true) {
@@ -197,7 +197,7 @@ class TestBatchEventProcessor: BatchEventProcessor {
     }
 }
 
-class TestHTTPEventDispatcher: HTTPEventDispatcher {
+class TestableHTTPEventDispatcher: HTTPEventDispatcher {
     var sendRequestedEvents: [EventForDispatch] = []
     var forceError = false
     var numReceivedVisitors = 0
@@ -242,7 +242,7 @@ class TestHTTPEventDispatcher: HTTPEventDispatcher {
 
 // MARK: - Test DefaultEventDispatcher
 
-class TestDefaultEventDispatcher: DefaultEventDispatcher {
+class TestableDefaultEventDispatcher: DefaultEventDispatcher {
     var sendRequestedEvents: [EventForDispatch] = []
     var forceError = false
     var numReceivedVisitors = 0

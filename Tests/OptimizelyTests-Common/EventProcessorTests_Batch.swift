@@ -43,8 +43,8 @@ class EventProcessorTests_Batch: XCTestCase {
     let kUserIdC = "789"
     
     var optimizely: OptimizelyClient!
-    var eventProcessor: TestBatchEventProcessor!
-    var eventDispatcher: TestHTTPEventDispatcher!
+    var eventProcessor: TestableBatchEventProcessor!
+    var eventDispatcher: TestableHTTPEventDispatcher!
     
     static let keyTestEventFileName = "EventProcessorTests-Batch---"
     var uniqueFileName: String {
@@ -56,8 +56,8 @@ class EventProcessorTests_Batch: XCTestCase {
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
-        self.eventDispatcher = TestHTTPEventDispatcher()
-        self.eventProcessor = TestBatchEventProcessor(eventDispatcher: eventDispatcher, eventFileName: uniqueFileName)
+        self.eventDispatcher = TestableHTTPEventDispatcher()
+        self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher, eventFileName: uniqueFileName)
         
         // for debug level setting
         optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
@@ -595,9 +595,9 @@ extension EventProcessorTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventProcessor = TestBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                      eventFileName: uniqueFileName,
-                                                      removeDatafileObserver: false)
+        self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
+                                                          eventFileName: uniqueFileName,
+                                                          removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
@@ -632,9 +632,9 @@ extension EventProcessorTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventProcessor = TestBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                      eventFileName: uniqueFileName,
-                                                      removeDatafileObserver: false)
+        self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
+                                                          eventFileName: uniqueFileName,
+                                                          removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
@@ -669,9 +669,9 @@ extension EventProcessorTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventProcessor = TestBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                      eventFileName: uniqueFileName,
-                                                      removeDatafileObserver: false)
+        self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
+                                                          eventFileName: uniqueFileName,
+                                                          removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
@@ -707,9 +707,9 @@ extension EventProcessorTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventProcessor = TestBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                      eventFileName: uniqueFileName,
-                                                      removeDatafileObserver: false)
+        self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
+                                                          eventFileName: uniqueFileName,
+                                                          removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
@@ -893,9 +893,9 @@ extension EventProcessorTests_Batch {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventProcessor = TestBatchEventProcessor(eventDispatcher: eventDispatcher,
-                                                      eventFileName: uniqueFileName,
-                                                      removeDatafileObserver: false)
+        self.eventProcessor = TestableBatchEventProcessor(eventDispatcher: eventDispatcher,
+                                                          eventFileName: uniqueFileName,
+                                                          removeDatafileObserver: false)
         
         eventProcessor.batchSize = 1000        // big, won't flush
         eventProcessor.timerInterval = 99999   // timer is big, won't fire
@@ -922,14 +922,12 @@ extension EventProcessorTests_Batch {
         var batch = eventDispatcher.sendRequestedEvents.removeFirst()
         var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
         XCTAssertEqual(batchedEvents.visitors.count, 3)
-        eventProcessor.clear()
-        eventDispatcher.clear()
         
         // (3) should have no flush
         
         eventDispatcher.exp = XCTestExpectation(description: "timer")
         eventDispatcher.exp?.isInverted = true
-                
+        
         processMultipleEvents([userEventB, userEventA])
         
         wait(for: [eventDispatcher.exp!], timeout: 3)
@@ -965,7 +963,7 @@ extension EventProcessorTests_Batch {
     
     // Utils
     
-    func runRandomEventsTest(numEvents: Int, eventProcessor: TestBatchEventProcessor, tc: XCTestCase, numInvalidEvents: Int=0) {
+    func runRandomEventsTest(numEvents: Int, eventProcessor: TestableBatchEventProcessor, tc: XCTestCase, numInvalidEvents: Int=0) {
         eventProcessor.batchSize = Int.random(in: 1..<10)
         eventProcessor.timerInterval = Double(Int.random(in: 1..<3))
         

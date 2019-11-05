@@ -43,7 +43,7 @@ class EventDispatcherTests_Batch_Legacy: XCTestCase {
     let kUserIdC = "789"
     
     var optimizely: OptimizelyClient!
-    var eventDispatcher: TestDefaultEventDispatcher!
+    var eventDispatcher: TestableDefaultEventDispatcher!
     
     static let keyTestEventFileName = "EventDispatcherTests-Batch-Legacy---"
     var uniqueFileName: String {
@@ -55,7 +55,7 @@ class EventDispatcherTests_Batch_Legacy: XCTestCase {
         // Concurrent tests will cause data corruption.
         // Use a unique event file for each test and clean up all at the end
         
-        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName)
+        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName)
         
         optimizely = OTUtils.createOptimizelyLegacy(datafileName: "empty_datafile",
                                                     clearUserProfileService: true,
@@ -699,7 +699,7 @@ extension EventDispatcherTests_Batch_Legacy {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -735,7 +735,7 @@ extension EventDispatcherTests_Batch_Legacy {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -771,7 +771,7 @@ extension EventDispatcherTests_Batch_Legacy {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -808,7 +808,7 @@ extension EventDispatcherTests_Batch_Legacy {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
 
-        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -918,7 +918,7 @@ extension EventDispatcherTests_Batch_Legacy {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
-        self.eventDispatcher = TestDefaultEventDispatcher(eventFileName: uniqueFileName,
+        self.eventDispatcher = TestableDefaultEventDispatcher(eventFileName: uniqueFileName,
                                                           removeDatafileObserver: false)
         
         eventDispatcher.batchSize = 1000        // big, won't flush
@@ -989,7 +989,7 @@ extension EventDispatcherTests_Batch_Legacy {
 
     // Utils
     
-    func runRandomEventsTest(numEvents: Int, eventDispatcher: TestDefaultEventDispatcher, tc: XCTestCase, numInvalidEvents: Int=0) {
+    func runRandomEventsTest(numEvents: Int, eventDispatcher: TestableDefaultEventDispatcher, tc: XCTestCase, numInvalidEvents: Int=0) {
         eventDispatcher.batchSize = Int.random(in: 1..<10)
         eventDispatcher.timerInterval = Double(Int.random(in: 1..<3))
         

@@ -43,7 +43,6 @@ class OptimizelyClientTests_Others: XCTestCase {
                                                    clearUserProfileService: true,
                                                    eventProcessor: eventProcessor,
                                                    eventDispatcher: nil)!
-        eventDispatcher.clear()
     }
 
     func testActivate_InvalidExperimentKey() {

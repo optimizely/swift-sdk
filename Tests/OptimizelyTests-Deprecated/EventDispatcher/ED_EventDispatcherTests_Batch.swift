@@ -19,9 +19,7 @@ import XCTest
 class EventDispatcherTests_Batch_Legacy: XCTestCase {
     
     let kSdkKey = "any key"
-    
-    let kSdkKey = "any key"
-    
+        
     let kAccountId = "11111"
     let kClientVersion = "3.1.2"
     let kClientName = "swift-sdk"

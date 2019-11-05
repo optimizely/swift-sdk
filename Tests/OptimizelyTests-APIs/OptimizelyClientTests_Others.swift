@@ -188,15 +188,15 @@ class OptimizelyClientTests_Others: XCTestCase {
         let kUserId = "user"
         
         optimizely.sendConversionEvent(eventKey: kEventKey, userId: kUserId)
-        optimizely.eventProcessor?.clear()
+        optimizely.close()
         XCTAssertEqual(eventDispatcher.events.count, 1)
 
         optimizely.sendConversionEvent(eventKey: kInvalidEventKey, userId: kUserId)
-        optimizely.eventProcessor?.clear()
+        optimizely.close()
         XCTAssertEqual(eventDispatcher.events.count, 1, "event should not be sent for invalid event key")
         
         optimizely.sendConversionEvent(eventKey: kEventKey, userId: kUserId)
-        optimizely.eventProcessor?.clear()
+        optimizely.close()
         XCTAssertEqual(eventDispatcher.events.count, 2)
     }
     

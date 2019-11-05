@@ -176,7 +176,7 @@ class TestableBatchEventProcessor: BatchEventProcessor {
         self.eventFileName = eventFileName
         
         super.init(eventDispatcher: eventDispatcher, dataStoreName: eventFileName)
-        print("[TestEventProcessor] init with [\(eventFileName)] ")
+        print("[TestableEventProcessor] init with [\(eventFileName)] ")
 
         // block interference from other tests notifications when testing batch timing
         if removeDatafileObserver {
@@ -211,7 +211,7 @@ class TestableHTTPEventDispatcher: HTTPEventDispatcher {
         do {
             let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
             numReceivedVisitors += decodedEvent.visitors.count
-            print("[TestEventProcessor][SendEvent] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+            print("[TestableEventProcessor][SendEvent] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
         } catch {
             // invalid event format detected
             // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)
@@ -273,7 +273,7 @@ class TestableDefaultEventDispatcher: DefaultEventDispatcher {
         do {
             let decodedEvent = try JSONDecoder().decode(BatchEvent.self, from: event.body)
             numReceivedVisitors += decodedEvent.visitors.count
-            print("[TestEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
+            print("[TestableEventDispatcher][SendEvent][\(eventFileName)] Received a batched event with visitors: \(decodedEvent.visitors.count) \(numReceivedVisitors)")
         } catch {
             // invalid event format detected
             // - invalid events are supposed to be filtered out when batching (converting to nil, so silently dropped)

@@ -63,7 +63,6 @@ static NSString * const kSdkKey = @"12345";
     NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"api_datafile" ofType:@"json"];
     self.datafile = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
-    [OTUtils clearRegistryService];
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:@"any-key"];
 }
 
@@ -235,10 +234,11 @@ static NSString * const kSdkKey = @"12345";
     [self.optimizely startWithDatafile:self.datafile error:nil];
 
     NSString *variationKey = [self.optimizely activateWithExperimentKey:kExperimentKey
-                                                                    userId:kUserId
-                                                                attributes:@{@"key_1": @"value_1"}
-                                                                    error:nil];
+                                                                 userId:kUserId
+                                                             attributes:@{@"key_1": @"value_1"}
+                                                                  error:nil];
     [customEventProcessor clear];
+    XCTAssertNotNil(variationKey);
     XCTAssertEqual(customEventDispatcher.eventCount, 1);
 }
 

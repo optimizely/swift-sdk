@@ -79,21 +79,23 @@ import XCTest
                                  eventProcessor: OPTEventsProcessor? = nil,
                                  eventDispatcher: OPTEventsDispatcher? = nil) -> OptimizelyClient? {
         
+        // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
+        let sdkKey = sdkKey ?? randomSdkKey
+        
         //-------------------------------------------------------------------
         // reset previous services so that new EP (No SDKKey) can be registered OK
         //-------------------------------------------------------------------
         OTUtils.clearRegistryService()
-        
-        guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
+
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
-        // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-        let optimizely = OptimizelyClient(sdkKey: sdkKey ?? randomSdkKey,
+        let optimizely = OptimizelyClient(sdkKey: sdkKey,
                                           eventProcessor: eventProcessor,
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)
 
         do {
+            guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
 
             return optimizely
@@ -108,19 +110,21 @@ import XCTest
                                        clearUserProfileService: Bool,
                                        eventDispatcher: OPTEventDispatcher) -> OptimizelyClient? {
         
+        // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
+        let sdkKey = sdkKey ?? randomSdkKey
+
         //-------------------------------------------------------------------
         // reset previous services so that new EP (No SDKKey) can be registered OK
         //-------------------------------------------------------------------
         OTUtils.clearRegistryService()
 
-        guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
-        // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-        let optimizely = OptimizelyClient(sdkKey: sdkKey ?? randomSdkKey,
+        let optimizely = OptimizelyClient(sdkKey: sdkKey,
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService)
         do {
+            guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
         
             return optimizely

@@ -25,7 +25,6 @@ class BatchEventBuilderTests: XCTestCase {
     var optimizely: OptimizelyClient?
     
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         optimizely = OptimizelyClient(sdkKey: "", periodicDownloadInterval: 0)
         
         let datafile = OTUtils.loadJSONDatafile(datafileName)
@@ -34,7 +33,6 @@ class BatchEventBuilderTests: XCTestCase {
 
     override func tearDown() {
         optimizely = nil
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
     func testConversionEventWithNoExperiment() {

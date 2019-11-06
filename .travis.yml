@@ -37,7 +37,7 @@ jobs:
     - stage: 'SourceClear and Lint'
       language: swift
       os: osx
-      osx_image: xcode11.1
+      osx_image: xcode10.2
       install:
         - gem install cocoapods -v '1.8.0'
       script:
@@ -49,7 +49,7 @@ jobs:
       stage: 'Unit Tests'
       language: swift
       os: osx
-      osx_image: xcode11.1
+      osx_image: xcode10.2
       branches:
         only:
           - master
@@ -90,7 +90,7 @@ jobs:
       name: Prepare for release
       language: swift
       os: osx
-      osx_image: xcode11.1
+      osx_image: xcode10.2
       env:
         - VERSION=3.1.0
       install:
@@ -107,7 +107,7 @@ jobs:
       name: Push to cocoapods.org
       language: minimal
       os: osx
-      osx_image: xcode11.1
+      osx_image: xcode10.2
       env:
         - VERSION=3.1.0
       install:

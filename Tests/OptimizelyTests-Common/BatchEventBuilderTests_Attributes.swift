@@ -66,8 +66,9 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let json = getFirstEventJSON()!
-        let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
+        let json = getFirstEventJSON()
+        XCTAssertNotNil(json)
+        let array = (json!["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         
         var item: [String: Any] = array.filter { ($0["key"] as! String) == "s_foo" }.first!
         XCTAssertEqual(item["value"] as! String, "foo")
@@ -109,8 +110,9 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
         
-        let json = getFirstEventJSON()!
-        let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
+        let json = getFirstEventJSON()
+        XCTAssertNotNil(json)
+        let array = (json!["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         var dict = [String: Any]()
         for item in array {
             dict[item["key"] as! String] = item["value"]
@@ -145,8 +147,9 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let json = getFirstEventJSON()!
-        let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
+        let json = getFirstEventJSON()
+        XCTAssertNotNil(json)
+        let array = (json!["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         
         var item: [String: Any] = array.filter { $0["key"] as! String == "s_foo" }.first!
         XCTAssertEqual(item["value"] as! String, "foo")
@@ -184,8 +187,9 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let json = getFirstEventJSON()!
-        let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
+        let json = getFirstEventJSON()
+        XCTAssertNotNil(json)
+        let array = (json!["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         var dict = [String: Any]()
         for item in array {
             dict[item["key"] as! String] = item["value"]
@@ -220,8 +224,9 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let json = getFirstEventJSON()!
-        let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
+        let json = getFirstEventJSON()
+        XCTAssertNotNil(json)
+        let array = (json!["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssert(array.count == 0)
     }
     
@@ -238,8 +243,9 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: nil)
 
-        let json = getFirstEventJSON()!
-        let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
+        let json = getFirstEventJSON()
+        XCTAssertNotNil(json)
+        let array = (json!["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssert(array.count == 0)
     }
     
@@ -260,8 +266,9 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
 
-        let json = getFirstEventJSON()!
-        let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
+        let json = getFirstEventJSON()
+        XCTAssertNotNil(json)
+        let array = (json!["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
         var dict = [String: Any]()
         for item in array {
             dict[item["key"] as! String] = item["value"]
@@ -293,6 +300,7 @@ extension BatchEventBuilderTests_Attributes {
                                       userId: "test_user_1")
         
         let eventForDispatch = getFirstEvent()
+        XCTAssertNotNil(eventForDispatch)
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
         var isIncluded = false
@@ -312,6 +320,7 @@ extension BatchEventBuilderTests_Attributes {
                                       userId: "test_user_1")
         
         let eventForDispatch = getFirstEvent()
+        XCTAssertNotNil(eventForDispatch)
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
         let botAttribute = event.getEventAttribute(key: botFilteringKey)
@@ -329,6 +338,7 @@ extension BatchEventBuilderTests_Attributes {
                                       userId: "test_user_1")
         
         let eventForDispatch = getFirstEvent()
+        XCTAssertNotNil(eventForDispatch)
         let event: BatchEvent = try! OTUtils.model(fromData: eventForDispatch!.body)
         
         let isNotIncluded: Bool = event.getEventAttribute(key: botFilteringKey)?.entityID != botFilteringKey

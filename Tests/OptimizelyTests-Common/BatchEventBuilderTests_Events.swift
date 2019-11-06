@@ -51,7 +51,8 @@ class BatchEventBuilderTests_Events: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
         
-        let event = getFirstEventJSON()!
+        let event: [String: Any]! = getFirstEventJSON()
+        XCTAssertNotNil(event)
 
         XCTAssertEqual((event["revision"] as! String), project.revision)
         XCTAssertEqual((event["account_id"] as! String), project.accountId)
@@ -104,7 +105,8 @@ class BatchEventBuilderTests_Events: XCTestCase {
                               attributes: attributes,
                               eventTags: eventTags)
         
-        let event = getFirstEventJSON()!
+        let event: [String: Any]! = getFirstEventJSON()
+        XCTAssertNotNil(event)
         
         XCTAssertEqual(event["revision"] as! String, project.revision)
         XCTAssertEqual(event["account_id"] as! String, project.accountId)

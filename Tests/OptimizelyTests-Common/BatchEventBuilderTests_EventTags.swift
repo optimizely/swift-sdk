@@ -42,15 +42,16 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
                                         "check": false]
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
 
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["price"] as! Double, 14.5)
         XCTAssertEqual(tags["count"] as! Int, 20)
         XCTAssertEqual(tags["check"] as! Bool, false)
-        XCTAssertNil(de["revenue"])
-        XCTAssertNil(de["value"])
+        XCTAssertNil(de!["revenue"])
+        XCTAssertNil(de!["value"])
     }
     
     func testEventTagsWhenRevenueAndValue() {
@@ -61,14 +62,15 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
 
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["revenue"] as! Int, 123)
         XCTAssertEqual(tags["value"] as! Double, 32.5)
-        XCTAssertEqual(de["revenue"] as! Int, 123, "revenue field must be copied")
-        XCTAssertEqual(de["value"] as! Double, 32.5, "value field must be copied")
+        XCTAssertEqual(de!["revenue"] as! Int, 123, "revenue field must be copied")
+        XCTAssertEqual(de!["value"] as! Double, 32.5, "value field must be copied")
     }
 
 }
@@ -84,8 +86,9 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertNil(tags["future"])
@@ -99,8 +102,9 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["big"] as! Double, OTUtils.positiveMaxValueAllowed)
@@ -121,14 +125,15 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
 
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["revenue"] as! String, "foo")
         XCTAssertEqual(tags["value"] as! String, "bar")
-        XCTAssertNil(de["revenue"], "invalid-type revenue field should not be copied")
-        XCTAssertNil(de["value"], "invalid-type value field should not be copied")
+        XCTAssertNil(de!["revenue"], "invalid-type revenue field should not be copied")
+        XCTAssertNil(de!["value"], "invalid-type value field should not be copied")
     }
     
     func testEventTagsWhenRevenueAndValueWhenWrongType2() {
@@ -139,14 +144,15 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
 
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["revenue"] as! Bool, true)
         XCTAssertEqual(tags["value"] as! Bool, false)
-        XCTAssertNil(de["revenue"], "invalid-type revenue field should not be copied")
-        XCTAssertNil(de["value"], "invalid-type value field should not be copied")
+        XCTAssertNil(de!["revenue"], "invalid-type revenue field should not be copied")
+        XCTAssertNil(de!["value"], "invalid-type value field should not be copied")
     }
 
     func testEventTagsWhenRevenueAndValueWhenWrongType3() {
@@ -157,14 +163,15 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["revenue"] as! Double, 12.5)
         XCTAssertEqual(tags["value"] as! Int, 30)
-        XCTAssertEqual(de["revenue"] as! Int, 12, "double converted to integer")
-        XCTAssertEqual(de["value"] as! Double, 30.0, "integer converted to double")
+        XCTAssertEqual(de!["revenue"] as! Int, 12, "double converted to integer")
+        XCTAssertEqual(de!["value"] as! Double, 30.0, "integer converted to double")
     }
     
 }
@@ -180,15 +187,16 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
         
         // range should not be checked for event tags including revenue/value (JIRA #4449)
         
         XCTAssertEqual(tags["revenue"] as! Int64, Int64(OTUtils.positiveTooBigValue))
-        XCTAssertEqual(de["revenue"] as! Int64, Int64(OTUtils.positiveTooBigValue))
+        XCTAssertEqual(de!["revenue"] as! Int64, Int64(OTUtils.positiveTooBigValue))
         XCTAssert(isEqualTooBigDoubles(tags["value"] as! Double, OTUtils.positiveTooBigValue))
-        XCTAssert(isEqualTooBigDoubles(de["value"] as! Double, OTUtils.positiveTooBigValue))
+        XCTAssert(isEqualTooBigDoubles(de!["value"] as! Double, OTUtils.positiveTooBigValue))
     }
 
     func testEventTagsWhenRevenueAndValueWhenInvalidBigNumbersNegative() {
@@ -198,15 +206,16 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
         
         // range should not be checked for event tags including revenue/value (JIRA #4449)
         
         XCTAssertEqual(tags["revenue"] as! Int64, Int64(OTUtils.negativeTooBigValue))
-        XCTAssertEqual(de["revenue"] as! Int64, Int64(OTUtils.negativeTooBigValue))
+        XCTAssertEqual(de!["revenue"] as! Int64, Int64(OTUtils.negativeTooBigValue))
         XCTAssert(isEqualTooBigDoubles(tags["value"] as! Double, OTUtils.negativeTooBigValue))
-        XCTAssert(isEqualTooBigDoubles(de["value"] as! Double, OTUtils.negativeTooBigValue))
+        XCTAssert(isEqualTooBigDoubles(de!["value"] as! Double, OTUtils.negativeTooBigValue))
     }
 }
 
@@ -222,14 +231,15 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
 
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["revenue"] as! Int, 0)
         XCTAssertEqual(tags["value"] as! Double, 0)
-        XCTAssertEqual(de["revenue"] as! Int, 0, "value 0 must be valid for revenue")
-        XCTAssertEqual(de["value"] as! Double, 0, "value 0 must be valid for value")
+        XCTAssertEqual(de!["revenue"] as! Int, 0, "value 0 must be valid for revenue")
+        XCTAssertEqual(de!["value"] as! Double, 0, "value 0 must be valid for value")
     }
     
     func testEventTagsWhenRevenueAndValueWithValue1() {
@@ -240,14 +250,15 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["revenue"] as! Int, 1)
         XCTAssertEqual(tags["value"] as! Double, 1)
-        XCTAssertEqual(de["revenue"] as! Int, 1, "value 1 must be valid for revenue")
-        XCTAssertEqual(de["value"] as! Double, 1, "value 1 must be valid for value")
+        XCTAssertEqual(de!["revenue"] as! Int, 1, "value 1 must be valid for revenue")
+        XCTAssertEqual(de!["value"] as! Double, 1, "value 1 must be valid for value")
     }
 
     func testEventTagsWhenRevenueAndValueWithValueM1() {
@@ -258,14 +269,15 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["revenue"] as! Int, -1)
         XCTAssertEqual(tags["value"] as! Double, -1)
-        XCTAssertEqual(de["revenue"] as! Int, -1, "value -1 must be valid for revenue")
-        XCTAssertEqual(de["value"] as! Double, -1, "value -1 must be valid for value")
+        XCTAssertEqual(de!["revenue"] as! Int, -1, "value -1 must be valid for revenue")
+        XCTAssertEqual(de!["value"] as! Double, -1, "value -1 must be valid for value")
     }
 }
 
@@ -282,15 +294,16 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["check"] as! Bool, true)
         XCTAssertEqual(tags["revenue"] as! Int, 10)
         XCTAssertEqual(tags["value"] as! Double, 3.15)
-        XCTAssertEqual(de["revenue"] as! Int, 10, "value must be valid for revenue")
-        XCTAssertEqual(de["value"] as! Double, 3.15, "value must be valid for value")
+        XCTAssertEqual(de!["revenue"] as! Int, 10, "value must be valid for revenue")
+        XCTAssertEqual(de!["value"] as! Double, 3.15, "value must be valid for value")
     }
     
     func testEventTagsWhenRevenueAndValueWithSpecialTypes() {
@@ -304,8 +317,9 @@ extension BatchEventBuilderTests_EventTags {
         
         try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
         
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
+        let de = getDispatchEvent(dispatcher: eventDispatcher)
+        XCTAssertNotNil(de)
+        let tags = de!["tags"] as! [String: Any]
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
         XCTAssertEqual(tags["v1"] as! Int, 10)
@@ -313,8 +327,8 @@ extension BatchEventBuilderTests_EventTags {
         XCTAssertEqual(tags["v3"] as! Int, 30)
         XCTAssertEqual(tags["revenue"] as! Int, 40)
         XCTAssertEqual(tags["value"] as! Double, 32)
-        XCTAssertEqual(de["revenue"] as! Int, 40, "value must be valid for revenue")
-        XCTAssertEqual(de["value"] as! Double, 32, "value must be valid for value")
+        XCTAssertEqual(de!["revenue"] as! Int, 40, "value must be valid for revenue")
+        XCTAssertEqual(de!["value"] as! Double, 32, "value must be valid for value")
     }
 
 }
@@ -325,7 +339,7 @@ extension BatchEventBuilderTests_EventTags {
 
     func getDispatchEvent(dispatcher: MockEventDispatcher) -> [String: Any]? {
         optimizely.close()
-        let eventForDispatch = dispatcher.events.first!
+        guard let eventForDispatch = dispatcher.events.first else { return nil }
         
         let json = try! JSONSerialization.jsonObject(with: eventForDispatch.body, options: .allowFragments) as! [String: Any]
         let event = json

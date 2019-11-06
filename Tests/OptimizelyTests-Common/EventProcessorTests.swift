@@ -98,7 +98,7 @@ class EventProcessorTests: XCTestCase {
     func testEventDispatcherFile() {
         eventDispatcher = HTTPEventDispatcher()
         eventProcessor = BatchEventProcessor(eventDispatcher: eventDispatcher,
-                                             timerInterval: 1,
+                                             timerInterval: 10,
                                              backingStore: .file)
         eventProcessor.clear()
         
@@ -119,7 +119,7 @@ class EventProcessorTests: XCTestCase {
     func testEventDispatcherUserDefaults() {
         eventDispatcher = HTTPEventDispatcher()
         eventProcessor = BatchEventProcessor(eventDispatcher: eventDispatcher,
-                                             timerInterval: 1,
+                                             timerInterval: 10,
                                              backingStore: .userDefaults)
         eventProcessor.clear()
         
@@ -140,7 +140,7 @@ class EventProcessorTests: XCTestCase {
     func testEventDispatcherMemory() {
         eventDispatcher = HTTPEventDispatcher()
         eventProcessor = BatchEventProcessor(eventDispatcher: eventDispatcher,
-                                             timerInterval: 1,
+                                             timerInterval: 10,
                                              backingStore: .memory)
         eventProcessor.clear()
         

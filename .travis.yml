@@ -53,8 +53,8 @@ jobs:
       branches:
         only:
           - master
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=12.1 NAME='iPhone 7'
-      name: PLATFORM='iOS Simulator' OS=12.1 NAME='iPhone 7'
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7'
+      name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7'
       install:
         - gem install slather --no-document --quiet
         - gem install cocoapods -v '1.6.1'
@@ -77,8 +77,8 @@ jobs:
         - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
         - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
-      name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=12.1 NAME='iPhone 7 Plus'
+      name: PLATFORM='iOS Simulator' OS=12.1 NAME='iPhone 7 Plus'
     - <<: *unittests
       env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'
       name: PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'

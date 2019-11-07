@@ -9,8 +9,8 @@ set -eou pipefail
 # prep jq arg because it doesnt allow parameter expansion within its single quotes
 echo ".devices.\"com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS/./-}\"" > /tmp/jq_file
 
-# print out all available simulator versions
-xcrun simctl list
+# print out all available simulator versions in travis xcode
+#xcrun simctl list
 
 xcrun simctl boot $( xcrun simctl list --json devices | jq -f /tmp/jq_file | jq -r '.[] | select(.name==env.NAME) | .udid' ) && sleep 30
 xcrun simctl list | grep Booted

@@ -37,7 +37,7 @@ jobs:
     - stage: 'SourceClear and Lint'
       language: swift
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode10.3
       install:
         - gem install cocoapods -v '1.8.0'
       script:
@@ -49,7 +49,7 @@ jobs:
       stage: 'Unit Tests'
       language: swift
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode10.3
       branches:
         only:
           - master
@@ -80,8 +80,8 @@ jobs:
       env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=12.2 NAME='iPhone 7 Plus'
       name: PLATFORM='iOS Simulator' OS=12.2 NAME='iPhone 7 Plus'
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'
-      name: PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=10.3 NAME='iPad Air'
+      name: PLATFORM='iOS Simulator' OS=10.3 NAME='iPad Air'
     - <<: *unittests
       env: SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=11.4 NAME='Apple TV 4K'
       name: PLATFORM='tvOS Simulator' OS=11.4 NAME='Apple TV 4K'
@@ -90,7 +90,7 @@ jobs:
       name: Prepare for release
       language: swift
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode10.3
       env:
         - VERSION=3.1.0
       install:
@@ -107,7 +107,7 @@ jobs:
       name: Push to cocoapods.org
       language: minimal
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode10.3
       env:
         - VERSION=3.1.0
       install:

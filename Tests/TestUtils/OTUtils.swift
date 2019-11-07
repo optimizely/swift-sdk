@@ -79,6 +79,8 @@ import XCTest
                                  eventProcessor: OPTEventsProcessor? = nil,
                                  eventDispatcher: OPTEventsDispatcher? = nil) -> OptimizelyClient? {
         
+        prepareDocumentFolderInSimulator()
+        
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
         let sdkKey = sdkKey ?? randomSdkKey
         
@@ -110,6 +112,8 @@ import XCTest
                                        clearUserProfileService: Bool,
                                        eventDispatcher: OPTEventDispatcher) -> OptimizelyClient? {
         
+        prepareDocumentFolderInSimulator()
+
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
         let sdkKey = sdkKey ?? randomSdkKey
 
@@ -161,6 +165,20 @@ import XCTest
         }
         
         return nil
+    }
+    
+    // iOS11+ simulators do not have Document folder by default when launched.
+    // Should be created manually.
+    static func prepareDocumentFolderInSimulator() {
+        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            if (!FileManager.default.fileExists(atPath: url.path)) {
+                do {
+                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
+                } catch {
+                    print(error)
+                }
+            }
+        }
     }
     
     // MARK: - others

@@ -20,18 +20,6 @@ import XCTest
 class DataStoreTests: XCTestCase {
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            if (!FileManager.default.fileExists(atPath: url.path)) {
-                do {
-                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-                } catch {
-                    print(error)
-                }
-                
-            }
-        }
-
     }
 
     override func tearDown() {

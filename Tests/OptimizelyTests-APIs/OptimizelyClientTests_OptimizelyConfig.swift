@@ -63,12 +63,12 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         print("------------------------------------------------------")
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         
-        print("   Features: \(optimizelyConfig.featureFlagsMap.keys)")
+        print("   Features: \(optimizelyConfig.featuresMap.keys)")
         
-        XCTAssertEqual(optimizelyConfig.featureFlagsMap.count, 2)
+        XCTAssertEqual(optimizelyConfig.featuresMap.count, 2)
         
-        let feature1 = optimizelyConfig.featureFlagsMap["mutex_group_feature"]!
-        let feature2 = optimizelyConfig.featureFlagsMap["feature_exp_no_traffic"]!
+        let feature1 = optimizelyConfig.featuresMap["mutex_group_feature"]!
+        let feature2 = optimizelyConfig.featuresMap["feature_exp_no_traffic"]!
 
         // FeatureFlag: experimentsMap
         
@@ -91,7 +91,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let variation2 = experiment1.variationsMap["no_traffic_variation_exp_1"]!
 
         XCTAssertEqual(variation1.variablesMap.count, 4)
-        XCTAssertEqual(variation2.variablesMap.count, 0)
+        XCTAssertEqual(variation2.variablesMap.count, 4, "must include all default variables when empty");
 
         print("   Feature1 > Experiment1 > Variation1 > Variables: \(variation1.variablesMap.keys)")
         print("   Feature1 > Experiment1 > Variation2 > Variables: \(variation2.variablesMap.keys)")

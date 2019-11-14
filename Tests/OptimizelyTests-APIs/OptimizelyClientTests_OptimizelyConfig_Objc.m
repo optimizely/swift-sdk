@@ -66,12 +66,12 @@
     NSLog(@"------------------------------------------------------");
     id<OptimizelyConfig> optimizelyConfig = [self.optimizely getOptimizelyConfigWithError:nil];
 
-    NSLog(@"   Features: %@", optimizelyConfig.featureFlagsMap.allKeys);
+    NSLog(@"   Features: %@", optimizelyConfig.featuresMap.allKeys);
     
-    XCTAssertEqual(optimizelyConfig.featureFlagsMap.count, 2);
+    XCTAssertEqual(optimizelyConfig.featuresMap.count, 2);
     
-    id<OptimizelyFeatureFlag> feature1 = optimizelyConfig.featureFlagsMap[@"mutex_group_feature"];
-    id<OptimizelyFeatureFlag> feature2 = optimizelyConfig.featureFlagsMap[@"feature_exp_no_traffic"];
+    id<OptimizelyFeature> feature1 = optimizelyConfig.featuresMap[@"mutex_group_feature"];
+    id<OptimizelyFeature> feature2 = optimizelyConfig.featuresMap[@"feature_exp_no_traffic"];
     
     // FeatureFlag: experimentsMap
     
@@ -94,7 +94,7 @@
     id<OptimizelyVariation> variation2 = experiment1.variationsMap[@"no_traffic_variation_exp_1"];
     
     XCTAssertEqual(variation1.variablesMap.count, 4);
-    XCTAssertEqual(variation2.variablesMap.count, 0);
+    XCTAssertEqual(variation2.variablesMap.count, 4, "must include all default variables when empty");
     
     NSLog(@"   Feature1 > Experiment1 > Variation1 > Variables: %@", variation1.variablesMap.allKeys);
     NSLog(@"   Feature1 > Experiment1 > Variation2 > Variables: %@", variation2.variablesMap.allKeys);

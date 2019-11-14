@@ -21,8 +21,9 @@ import Foundation
 
 @objc(OptimizelyConfig)
 public protocol ObjcOptimizelyConfig {
+    var revision: String { get }
     var experimentsMap: [String: ObjcOptimizelyExperiment] { get }
-    var featureFlagsMap: [String: ObjcOptimizelyFeatureFlag] { get }
+    var featuresMap: [String: ObjcOptimizelyFeature] { get }
 }
 
 @objc(OptimizelyExperiment)
@@ -32,8 +33,8 @@ public protocol ObjcOptimizelyExperiment {
     var variationsMap: [String: ObjcOptimizelyVariation] { get }
 }
 
-@objc(OptimizelyFeatureFlag)
-public protocol ObjcOptimizelyFeatureFlag {
+@objc(OptimizelyFeature)
+public protocol ObjcOptimizelyFeature {
     var id: String { get }
     var key: String { get }
     var experimentsMap: [String: ObjcOptimizelyExperiment] { get }
@@ -58,12 +59,14 @@ public protocol ObjcOptimizelyVariable {
 // MARK: - Implementations for Objective-C support
 
 class ObjcOptimizelyConfigImp: NSObject, ObjcOptimizelyConfig {
+    public var revision: String
     public var experimentsMap: [String: ObjcOptimizelyExperiment]
-    public var featureFlagsMap: [String: ObjcOptimizelyFeatureFlag]
+    public var featuresMap: [String: ObjcOptimizelyFeature]
 
     public init(_ optimizelyConfig: OptimizelyConfig) {
+        self.revision = optimizelyConfig.revision
         self.experimentsMap = optimizelyConfig.experimentsMap.mapValues { ObjcExperiment($0) }
-        self.featureFlagsMap = optimizelyConfig.featureFlagsMap.mapValues { ObjcFeatureFlag($0) }
+        self.featuresMap = optimizelyConfig.featuresMap.mapValues { ObjcFeature($0) }
     }
 }
 
@@ -79,17 +82,17 @@ class ObjcExperiment: NSObject, ObjcOptimizelyExperiment {
     }
 }
 
-class ObjcFeatureFlag: NSObject, ObjcOptimizelyFeatureFlag {
+class ObjcFeature: NSObject, ObjcOptimizelyFeature {
     public let id: String
     public let key: String
     public let experimentsMap: [String: ObjcOptimizelyExperiment]
     public let variablesMap: [String: ObjcOptimizelyVariable]
     
-    init(_ featureFlag: OptimizelyFeatureFlag) {
-        self.id = featureFlag.id
-        self.key = featureFlag.key
-        self.experimentsMap = featureFlag.experimentsMap.mapValues { ObjcExperiment($0) }
-        self.variablesMap = featureFlag.variablesMap.mapValues { ObjcVariable($0) }
+    init(_ feature: OptimizelyFeature) {
+        self.id = feature.id
+        self.key = feature.key
+        self.experimentsMap = feature.experimentsMap.mapValues { ObjcExperiment($0) }
+        self.variablesMap = feature.variablesMap.mapValues { ObjcVariable($0) }
     }
 }
 

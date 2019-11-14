@@ -108,12 +108,14 @@ class SamplesForAPI {
     static func checkOptimizelyConfig(optimizely: OptimizelyClient) {
         let optConfig = try! optimizely.getOptimizelyConfig()
         
+        print("[OptimizelyConfig] revision = \(optConfig.revision)")
+
         //let experiments = optConfig.experimentsMap.values
         let experimentKeys = optConfig.experimentsMap.keys
         print("[OptimizelyConfig] all experiment keys = \(experimentKeys)")
 
         //let features = optConfig.featureFlagsMap.values
-        let featureKeys = optConfig.featureFlagsMap.keys
+        let featureKeys = optConfig.featuresMap.keys
         print("[OptimizelyConfig] all feature keys = \(featureKeys)")
 
         // enumerate all experiments (variations, and associated variables)
@@ -149,7 +151,7 @@ class SamplesForAPI {
             
             // enumerate feature experiments
 
-            let feature = optConfig.featureFlagsMap[featKey]!
+            let feature = optConfig.featuresMap[featKey]!
             
             let experimentsMap = feature.experimentsMap
             let experimentKeys = experimentsMap.keys
@@ -161,7 +163,8 @@ class SamplesForAPI {
                 let variationKeys = variationsMap.keys
                 
                 variationKeys.forEach { varKey in
-                    print("[OptimizelyConfig]       -- variationKey = \(varKey)")
+                    let variation = variationsMap[varKey]!
+                    print("[OptimizelyConfig]       -- variation = { key: \(varKey), id: \(variation.id), featureEnabled: \(variation.featureEnabled)")
                     
                     let variablesMap = variationsMap[varKey]!.variablesMap
                     let variableKeys = variablesMap.keys
@@ -176,7 +179,7 @@ class SamplesForAPI {
             
             // enumerate all feature-variables
 
-            let variablesMap = optConfig.featureFlagsMap[featKey]!.variablesMap
+            let variablesMap = optConfig.featuresMap[featKey]!.variablesMap
             let variableKeys = variablesMap.keys
             
             variableKeys.forEach { variableKey in

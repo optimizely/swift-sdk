@@ -19,8 +19,9 @@ import Foundation
 /// A data model of public project configuration
 
 public protocol OptimizelyConfig {
+    var revision: String { get }
     var experimentsMap: [String: OptimizelyExperiment] { get }
-    var featureFlagsMap: [String: OptimizelyFeatureFlag] { get }
+    var featuresMap: [String: OptimizelyFeature] { get }
 }
 
 public protocol OptimizelyExperiment {
@@ -29,7 +30,7 @@ public protocol OptimizelyExperiment {
     var variationsMap: [String: OptimizelyVariation] { get }
 }
 
-public protocol OptimizelyFeatureFlag {
+public protocol OptimizelyFeature {
     var id: String { get }
     var key: String { get }
     var experimentsMap: [String: OptimizelyExperiment] { get }
@@ -39,6 +40,7 @@ public protocol OptimizelyFeatureFlag {
 public protocol OptimizelyVariation {
     var id: String { get }
     var key: String { get }
+    var featureEnabled: Bool { get }
     var variablesMap: [String: OptimizelyVariable] { get }
 }
 
@@ -52,11 +54,14 @@ public protocol OptimizelyVariable {
 // MARK: - OptimizelyConfig Implementation
 
 struct OptimizelyConfigImp: OptimizelyConfig {
+    var revision: String = ""
     var experimentsMap: [String: OptimizelyExperiment] = [:]
-    var featureFlagsMap: [String: OptimizelyFeatureFlag] = [:]
+    var featuresMap: [String: OptimizelyFeature] = [:]
     
     init(projectConfig: ProjectConfig) {
         guard let project = projectConfig.project else { return }
+        
+        self.revision = project.revision
 
         // copy feature's variable data to variables in all variations
         let updatedExperiments = projectConfig.allExperiments.map {
@@ -64,7 +69,7 @@ struct OptimizelyConfigImp: OptimizelyConfig {
         }
         
         self.experimentsMap = makeExperimentsMap(project: project, experiments: updatedExperiments)
-        self.featureFlagsMap = makeFeatureFlagsMap(project: project, experiments: updatedExperiments)
+        self.featuresMap = makeFeaturesMap(project: project, experiments: updatedExperiments)
     }
 }
 
@@ -80,7 +85,7 @@ extension OptimizelyConfigImp {
         return map
     }
     
-    func makeFeatureFlagsMap(project: Project, experiments: [Experiment]) -> [String: FeatureFlag] {
+    func makeFeaturesMap(project: Project, experiments: [Experiment]) -> [String: FeatureFlag] {
         var map = [String: FeatureFlag]()
         project.featureFlags.forEach {
             var feature = $0

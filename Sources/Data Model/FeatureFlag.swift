@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct FeatureFlag: Codable, Equatable, OptimizelyFeatureFlag {
+struct FeatureFlag: Codable, Equatable, OptimizelyFeature {
     static func == (lhs: FeatureFlag, rhs: FeatureFlag) -> Bool {
         return lhs.id == rhs.id
     }

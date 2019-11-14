@@ -54,6 +54,7 @@ extension VariationTests {
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
+        XCTAssert(model.mFeatureEnabled == false)
         XCTAssert(model.featureEnabled == false)
         XCTAssert(model.variables!.count == 0)
     }
@@ -66,6 +67,7 @@ extension VariationTests {
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
+        XCTAssert(model.mFeatureEnabled == true)
         XCTAssert(model.featureEnabled == true)
         XCTAssert(model.variables == nil)
     }
@@ -78,7 +80,8 @@ extension VariationTests {
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
-        XCTAssert(model.featureEnabled == nil)
+        XCTAssert(model.mFeatureEnabled == nil)
+        XCTAssert(model.featureEnabled == false)
         XCTAssert(model.variables!.count == 0)
     }
     
@@ -89,7 +92,8 @@ extension VariationTests {
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
-        XCTAssert(model.featureEnabled == nil)
+        XCTAssert(model.mFeatureEnabled == nil)
+        XCTAssert(model.featureEnabled == false)
         XCTAssert(model.variables == nil)
     }
 
@@ -118,11 +122,11 @@ extension VariationTests {
     
     func testEncodeJSON() {
         let model = Variation(id: "553339214",
-                                   key: "house",
-                                   featureEnabled: true,
-                                   variables: [
-                                    Variable(id: "123450", value: "100"),
-                                    Variable(id: "123451", value: "200")])
+                              key: "house",
+                              mFeatureEnabled: true,
+                              variables: [
+                                Variable(id: "123450", value: "100"),
+                                Variable(id: "123451", value: "200")])
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(model))
     }
     

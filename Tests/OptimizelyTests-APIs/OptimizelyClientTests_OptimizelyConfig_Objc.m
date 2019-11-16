@@ -26,7 +26,7 @@
 @implementation OptimizelyClientTests_OptimizelyConfig_Objc
 
 - (void)setUp {
-    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"optimizely_config" ofType:@"json"];
+    NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"optimizely_config_datafile" ofType:@"json"];
     NSString *fileContents = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey: @"12345"];
@@ -34,7 +34,28 @@
     [self.optimizely startWithDatafile:fileContents error:nil];
 }
 
-- (void)tearDown {
+// this test can be also covered by FSC, but it'll be useful to confirm Swift and ObjC both generate correct outputs
+- (void)testGetOptimizelyConfig_Equal {
+    if (@available(iOS 11.0, *)) {
+        
+        id<OptimizelyConfig> optimizelyConfig = [self.optimizely getOptimizelyConfigWithError:nil];
+        
+        // compare dictionaries as strings (after key-sorted and remove all spaces)
+        NSDictionary *observedDict = [self dictForOptimizelyConfig:optimizelyConfig];
+        NSError *error;
+        NSData *observedData = [NSJSONSerialization dataWithJSONObject:observedDict
+                                                           options:NSJSONWritingSortedKeys
+                                                             error:&error];
+        NSString *observedJSON = [[NSString alloc] initWithData:observedData encoding:NSUTF8StringEncoding];
+        NSString *observed = [self removeSpacesFromString:observedJSON];
+        
+        // pre-geneerated expected JSON string (sorted by keys)
+        NSString *filePath = [[NSBundle bundleForClass:self.class] pathForResource:@"optimizely_config_expected" ofType:@"json"];
+        NSString *expectedJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+        NSString *expected = [self removeSpacesFromString:expectedJSON];
+       
+        XCTAssert([observed isEqualToString:expected]);
+    }
 }
 
 - (void)testGetOptimizelyConfig_ExperimentsMap {
@@ -120,4 +141,91 @@
     NSLog(@"------------------------------------------------------");
 }
 
+
+// MARK: - Utils
+
+-(NSDictionary*)dictForOptimizelyConfig: (id <OptimizelyConfig>)optConfig {
+    NSMutableDictionary *expMap = [NSMutableDictionary new];
+    for(NSString *key in optConfig.experimentsMap.allKeys){
+        id<OptimizelyExperiment> value = optConfig.experimentsMap[key];
+        expMap[key] = [self dictForOptimizelyExperiment:value];
+    }
+    
+    NSMutableDictionary *featMap = [NSMutableDictionary new];
+    for(NSString *key in optConfig.featuresMap.allKeys){
+        id<OptimizelyFeature> value = optConfig.featuresMap[key];
+        featMap[key] = [self dictForOptimizelyFeature:value];
+    }
+
+    return @{
+        @"revision": optConfig.revision,
+        @"experimentsMap": expMap,
+        @"featuresMap": featMap
+    };
+}
+
+-(NSDictionary*)dictForOptimizelyExperiment: (id <OptimizelyExperiment>)experiment {
+    NSMutableDictionary *map = [NSMutableDictionary new];
+    for(NSString *key in experiment.variationsMap.allKeys){
+        id<OptimizelyVariation> value = experiment.variationsMap[key];
+        map[key] = [self dictForOptimizelyVariation:value];
+    }
+
+    return @{
+        @"key": experiment.key,
+        @"id": experiment.id,
+        @"variationsMap": map
+    };
+}
+
+-(NSDictionary*)dictForOptimizelyFeature: (id <OptimizelyFeature>)feature {
+    NSMutableDictionary *expMap = [NSMutableDictionary new];
+    for(NSString *key in feature.experimentsMap.allKeys){
+        id<OptimizelyExperiment> value = feature.experimentsMap[key];
+        expMap[key] = [self dictForOptimizelyExperiment:value];
+    }
+    
+    NSMutableDictionary *varMap = [NSMutableDictionary new];
+    for(NSString *key in feature.variablesMap.allKeys){
+        id<OptimizelyVariable> value = feature.variablesMap[key];
+        varMap[key] = [self dictForOptimizelyVariable:value];
+    }
+    
+    return @{
+        @"key": feature.key,
+        @"id": feature.id,
+        @"experimentsMap": expMap,
+        @"variablesMap": varMap
+    };
+}
+
+-(NSDictionary*)dictForOptimizelyVariation: (id <OptimizelyVariation>)variation {
+    NSMutableDictionary *map = [NSMutableDictionary new];
+    for(NSString *key in variation.variablesMap.allKeys){
+        id<OptimizelyVariable> value = variation.variablesMap[key];
+        map[key] = [self dictForOptimizelyVariable:value];
+    }
+
+    return @{
+        @"key": variation.key,
+        @"id": variation.id,
+        @"featureEnabled": [NSNumber numberWithBool:variation.featureEnabled],
+        @"variablesMap": map
+    };
+}
+
+-(NSDictionary*)dictForOptimizelyVariable: (id <OptimizelyVariable>)variable {
+    return @{
+        @"key": variable.key,
+        @"id": variable.id,
+        @"type": variable.type,
+        @"value": variable.value
+    };
+}
+
+-(NSString*)removeSpacesFromString:(NSString*)str {
+    return [[str componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""];
+}
+
 @end
+

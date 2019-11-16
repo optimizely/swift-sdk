@@ -24,16 +24,33 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let datafile = OTUtils.loadJSONDatafile("optimizely_config")!
+        let datafile = OTUtils.loadJSONDatafile("optimizely_config_datafile")!
         
         self.optimizely = OptimizelyClient(sdkKey: "12345",
                                            userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.start(datafile: datafile)
     }
     
-    override func tearDown() {
+    // this test can be also covered by FSC, but it'll be useful to confirm Swift and ObjC both generate correct outputs
+    func testGetOptimizelyConfig_Equal() {
+        if #available(iOS 11.0, tvOS 11.0, *) {
+            let optimizelyConfig = try! optimizely.getOptimizelyConfig()
+            
+            // compare dictionaries as strings (after key-sorted and remove all spaces)
+            let observedDict = optimizelyConfig.dict
+            let observedData = try! JSONSerialization.data(withJSONObject: observedDict, options: .sortedKeys)
+            let observedJSON = String(bytes: observedData, encoding: .utf8)!
+            let observed = observedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
+            
+            // pre-geneerated expected JSON string (sorted by keys)
+            let expectedData = OTUtils.loadJSONFile("optimizely_config_expected")!
+            let expectedJSON = String(bytes: expectedData, encoding: .utf8)!
+            let expected = expectedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
+            
+            XCTAssertEqual(observed, expected)
+        }
     }
-    
+
     func testGetOptimizelyConfig_ExperimentsMap() {
         print("------------------------------------------------------")
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
@@ -117,4 +134,59 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         print("------------------------------------------------------")
     }
 
+}
+
+// MARK: - Convert to JSON
+
+extension OptimizelyConfig {
+    var dict: [String: Any] {
+        return [
+            "revision": self.revision,
+            "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
+            "featuresMap": self.featuresMap.mapValues{ $0.dict }
+        ]
+    }
+}
+
+extension OptimizelyExperiment {
+    var dict: [String: Any] {
+        return [
+            "key": self.key,
+            "id": self.id,
+            "variationsMap": self.variationsMap.mapValues{ $0.dict }
+        ]
+    }
+}
+
+extension OptimizelyFeature {
+    var dict: [String: Any] {
+        return [
+            "key": self.key,
+            "id": self.id,
+            "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
+            "variablesMap": self.variablesMap.mapValues{ $0.dict }
+        ]
+    }
+}
+
+extension OptimizelyVariation {
+    var dict: [String: Any] {
+        return [
+            "key": self.key,
+            "id": self.id,
+            "featureEnabled": self.featureEnabled,
+            "variablesMap": self.variablesMap.mapValues{ $0.dict }
+        ]
+    }
+}
+
+extension OptimizelyVariable {
+    var dict: [String: Any] {
+        return [
+            "key": self.key,
+            "id": self.id,
+            "type": self.type,
+            "value": self.value
+        ]
+    }
 }

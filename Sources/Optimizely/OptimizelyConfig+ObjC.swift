@@ -45,6 +45,7 @@ public protocol ObjcOptimizelyFeature {
 public protocol ObjcOptimizelyVariation {
     var id: String { get }
     var key: String { get }
+    var featureEnabled: Bool { get }
     var variablesMap: [String: ObjcOptimizelyVariable] { get }
 }
 
@@ -99,11 +100,13 @@ class ObjcFeature: NSObject, ObjcOptimizelyFeature {
 class ObjcVariation: NSObject, ObjcOptimizelyVariation {
     public let id: String
     public let key: String
+    public let featureEnabled: Bool
     public let variablesMap: [String: ObjcOptimizelyVariable]
     
     init(_ variation: OptimizelyVariation) {
         self.id = variation.id
         self.key = variation.key
+        self.featureEnabled = variation.featureEnabled
         self.variablesMap = variation.variablesMap.mapValues { ObjcVariable($0) }
     }
 }

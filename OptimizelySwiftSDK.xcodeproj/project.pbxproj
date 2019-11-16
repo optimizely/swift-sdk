@@ -330,6 +330,8 @@
 		6E614DD621E3F38A005982A1 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6E636B912236C91F00AF3CEF /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6E636BA02236C96700AF3CEF /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
+		6E6BE00B237F547200FE8274 /* optimizely_config_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BE009237F547200FE8274 /* optimizely_config_datafile.json */; };
+		6E6BE00C237F547200FE8274 /* optimizely_config_expected.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BE00A237F547200FE8274 /* optimizely_config_expected.json */; };
 		6E7516A622C520D400B2B157 /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75165F22C520D400B2B157 /* DefaultLogger.swift */; };
 		6E7516A722C520D400B2B157 /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75165F22C520D400B2B157 /* DefaultLogger.swift */; };
 		6E7516A822C520D400B2B157 /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75165F22C520D400B2B157 /* DefaultLogger.swift */; };
@@ -1173,7 +1175,6 @@
 		6EA4266F2219243D00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6ECB270222C526A7005D52DC /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E75167A22C520D400B2B157 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ECB60C6234D329500016D41 /* OptimizelyClientTests_OptimizelyConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C5234D329500016D41 /* OptimizelyClientTests_OptimizelyConfig.swift */; };
-		6ECB60C8234D367000016D41 /* optimizely_config.json in Resources */ = {isa = PBXBuildFile; fileRef = 6ECB60C7234D367000016D41 /* optimizely_config.json */; };
 		6ECB60CA234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */; };
 		6ECB60CB234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */; };
 		6ECB60CC234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */; };
@@ -1271,6 +1272,8 @@
 		6E614DD521E3F38A005982A1 /* OptimizelyTests-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E636B8C2236C91F00AF3CEF /* OptimizelyTests-APIs-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-APIs-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E636B9B2236C96700AF3CEF /* OptimizelyTests-Legacy-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Legacy-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E6BE009237F547200FE8274 /* optimizely_config_datafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_config_datafile.json; sourceTree = "<group>"; };
+		6E6BE00A237F547200FE8274 /* optimizely_config_expected.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_config_expected.json; sourceTree = "<group>"; };
 		6E75165F22C520D400B2B157 /* DefaultLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
 		6E75166022C520D400B2B157 /* DefaultUserProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultUserProfileService.swift; sourceTree = "<group>"; };
 		6E75166122C520D400B2B157 /* DefaultEventDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultEventDispatcher.swift; sourceTree = "<group>"; };
@@ -1435,7 +1438,6 @@
 		6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EBAEB7421E3FEF900D13AA9 /* OptimizelyTests-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6ECB60C5234D329500016D41 /* OptimizelyClientTests_OptimizelyConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_OptimizelyConfig.swift; sourceTree = "<group>"; };
-		6ECB60C7234D367000016D41 /* optimizely_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_config.json; sourceTree = "<group>"; };
 		6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "OptimizelyConfig+ObjC.swift"; sourceTree = "<group>"; };
 		6ECB60D6234E601A00016D41 /* OptimizelyClientTests_OptimizelyConfig_Objc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OptimizelyClientTests_OptimizelyConfig_Objc.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1564,6 +1566,15 @@
 				6E636B9B2236C96700AF3CEF /* OptimizelyTests-Legacy-iOS.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6E6BE008237F547200FE8274 /* optmizelyConfig */ = {
+			isa = PBXGroup;
+			children = (
+				6E6BE009237F547200FE8274 /* optimizely_config_datafile.json */,
+				6E6BE00A237F547200FE8274 /* optimizely_config_expected.json */,
+			);
+			path = optmizelyConfig;
 			sourceTree = "<group>";
 		};
 		6E75165D22C520D400B2B157 /* Sources */ = {
@@ -1760,6 +1771,7 @@
 			isa = PBXGroup;
 			children = (
 				6E75196322C5211100B2B157 /* benchmark */,
+				6E6BE008237F547200FE8274 /* optmizelyConfig */,
 				6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */,
 				6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */,
 				6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */,
@@ -1773,7 +1785,6 @@
 				6E75197022C5211100B2B157 /* api_datafile.json */,
 				6E75197122C5211100B2B157 /* feature_flag.json */,
 				6E75197222C5211100B2B157 /* grouped_experiments.json */,
-				6ECB60C7234D367000016D41 /* optimizely_config.json */,
 				6E75197322C5211100B2B157 /* feature_rollouts.json */,
 				6E75197422C5211100B2B157 /* audience_targeting.json */,
 				6E75197522C5211100B2B157 /* typed_audience_datafile.json */,
@@ -2305,8 +2316,9 @@
 				6E12B20422C55A270005E9E6 /* api_datafile.json in Resources */,
 				6E12B21022C55A270005E9E6 /* simple_datafile.json in Resources */,
 				6E12B2C222C55A340005E9E6 /* 100_entities.json in Resources */,
+				6E6BE00B237F547200FE8274 /* optimizely_config_datafile.json in Resources */,
 				6E12B1FA22C55A270005E9E6 /* optimizely_6372300739_v4.json in Resources */,
-				6ECB60C8234D367000016D41 /* optimizely_config.json in Resources */,
+				6E6BE00C237F547200FE8274 /* optimizely_config_expected.json in Resources */,
 				6E12B20E22C55A270005E9E6 /* ab_experiments.json in Resources */,
 				6E12B20622C55A270005E9E6 /* grouped_experiments.json in Resources */,
 				6E34A629231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */,

@@ -37,7 +37,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
             let optimizelyConfig = try! optimizely.getOptimizelyConfig()
             
             // compare dictionaries as strings (after key-sorted and remove all spaces)
-            let observedDict = optimizelyConfig.dict
+            let observedDict = optimizelyConfig.dict!
             let observedData = try! JSONSerialization.data(withJSONObject: observedDict, options: .sortedKeys)
             let observedJSON = String(bytes: observedData, encoding: .utf8)!
             let observed = observedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
@@ -139,12 +139,19 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
 // MARK: - Convert to JSON
 
 extension OptimizelyConfig {
-    var dict: [String: Any] {
-        return [
+    var dict: [String: Any]? {
+        let expected: [String: Any] = [
             "revision": self.revision,
             "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
             "featuresMap": self.featuresMap.mapValues{ $0.dict }
         ]
+                
+        if expected.count != Mirror(reflecting: self).children.count {
+            print("ERROR: invalid properites included in OptimizelyConfig: \(Mirror(reflecting: self).children.compactMap { $0.label })")
+            return nil
+        }
+        
+        return expected
     }
 }
 

@@ -47,7 +47,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
             let expectedJSON = String(bytes: expectedData, encoding: .utf8)!
             let expected = expectedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
             
-            XCTAssertEqual(observed, expected)
+            XCTAssertEqual(observed, expected, "\n\n[Observed]\n\(observed)\n\n[Expected]\n\(expected)\n\n")
         }
     }
 

@@ -149,7 +149,16 @@
           "audienceIds": [],
           "variations": [
             {
-              "variables": [],
+              "variables": [
+                {
+                  "value": "50",
+                  "id": "2687470094"
+                },
+                {
+                  "value": "50.5",
+                  "id": "2687470095"
+                }
+              ],
               "id": "12252360417",
               "featureEnabled": false,
               "key": "no_traffic_variation_exp_2"

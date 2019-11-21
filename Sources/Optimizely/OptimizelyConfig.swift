@@ -116,8 +116,10 @@ extension OptimizelyConfigImp {
                 var updated = Variable(featureVariable: featVariable)
                 
                 // updated with custom value for each variation
-                if let variable = variation.variables?.filter({ $0.id == featVariable.id }).first {
-                    updated.value = variable.value
+                if variation.featureEnabled {
+                    if let variable = variation.variables?.filter({ $0.id == featVariable.id }).first {
+                        updated.value = variable.value
+                    }
                 }
                 
                 return updated
@@ -140,5 +142,4 @@ extension OptimizelyConfigImp {
     }
     
 }
-
 

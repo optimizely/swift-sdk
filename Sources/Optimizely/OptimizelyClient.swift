@@ -378,7 +378,6 @@ open class OptimizelyClient: NSObject {
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: The user's attributes.
     /// - Returns: true if feature is enabled, false otherwise.
-    /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
                                  attributes: OptimizelyAttributes? = nil) -> Bool {
@@ -599,7 +598,6 @@ open class OptimizelyClient: NSObject {
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: The user's attributes.
     /// - Returns: Array of feature keys that are enabled for the user.
-    /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func getEnabledFeatures(userId: String,
                                    attributes: OptimizelyAttributes? = nil) -> [String] {
         

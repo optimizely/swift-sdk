@@ -40,7 +40,7 @@ public protocol OptimizelyFeature {
 public protocol OptimizelyVariation {
     var id: String { get }
     var key: String { get }
-    var featureEnabled: Bool { get }
+    var featureEnabled: Bool? { get }
     var variablesMap: [String: OptimizelyVariable] { get }
 }
 
@@ -116,7 +116,7 @@ extension OptimizelyConfigImp {
                 var updated = Variable(featureVariable: featVariable)
                 
                 // updated with custom value for each variation
-                if variation.featureEnabled {
+                if let featureEnabled = variation.featureEnabled, featureEnabled {
                     if let variable = variation.variables?.filter({ $0.id == featVariable.id }).first {
                         updated.value = variable.value
                     }

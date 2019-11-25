@@ -106,7 +106,7 @@ class ObjcVariation: NSObject, ObjcOptimizelyVariation {
     init(_ variation: OptimizelyVariation) {
         self.id = variation.id
         self.key = variation.key
-        self.featureEnabled = variation.featureEnabled
+        self.featureEnabled = variation.featureEnabled ?? false
         self.variablesMap = variation.variablesMap.mapValues { ObjcVariable($0) }
     }
 }

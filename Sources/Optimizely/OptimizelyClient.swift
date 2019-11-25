@@ -374,7 +374,7 @@ open class OptimizelyClient: NSObject {
             return false
         }
 
-        let featureEnabled = variation.mFeatureEnabled ?? false
+        let featureEnabled = variation.featureEnabled ?? false
         if featureEnabled {
             logger.i(.featureEnabledForUser(featureKey, userId))
         } else {
@@ -500,7 +500,7 @@ open class OptimizelyClient: NSObject {
                                                                    attributes: attributes ?? OptimizelyAttributes())
         if let decision = decision {
             if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
-                if let featureEnabled = decision.variation?.mFeatureEnabled, featureEnabled {
+                if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
                     featureValue = featureVariable.value
                     
                     logger.i(.userReceivedVariableValue(userId, featureKey, variableKey, featureValue))
@@ -543,7 +543,7 @@ open class OptimizelyClient: NSObject {
         
         let experiment = decision?.experiment
         let variation = decision?.variation
-        let featureEnabled = variation?.mFeatureEnabled ?? false
+        let featureEnabled = variation?.featureEnabled ?? false
         
         sendDecisionNotification(decisionType: .featureVariable,
                                  userId: userId,

@@ -19,22 +19,11 @@ import Foundation
 struct Variation: Codable, Equatable, OptimizelyVariation {
     var id: String
     var key: String
-    var mFeatureEnabled: Bool?
+    var featureEnabled: Bool?
     var variables: [Variable]?
     
-    enum CodingKeys: String, CodingKey {
-        case id
-        case key
-        case mFeatureEnabled = "featureEnabled"
-        case variables
-    }
-
     // MARK: - OptimizelyConfig
 
-    var featureEnabled: Bool {
-        return mFeatureEnabled ?? false
-    }
-    
     var variablesMap: [String: OptimizelyVariable] {
         var map = [String: Variable]()
         variables?.forEach({
@@ -42,7 +31,6 @@ struct Variation: Codable, Equatable, OptimizelyVariation {
         })
         return map
     }
-    
 }
 
 // MARK: - Utils

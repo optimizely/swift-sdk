@@ -178,12 +178,18 @@ extension OptimizelyFeature {
 
 extension OptimizelyVariation {
     var dict: [String: Any] {
-        return [
+        var expected: [String: Any] = [
             "key": self.key,
             "id": self.id,
-            "featureEnabled": self.featureEnabled,
             "variablesMap": self.variablesMap.mapValues{ $0.dict }
         ]
+        
+        // An expected JSON file ("optimizely_config_expected.json") shared for Swift and Objective-C tests
+        // - it has "false" value for "featureEnabled" of AB test variations since Objective-C app has no optional value
+        // - nil value is convereted to false before converting to JSON
+        expected["featureEnabled"] = self.featureEnabled ?? false
+        
+        return expected
     }
 }
 

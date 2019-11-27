@@ -68,19 +68,23 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
             }
         }
         
-        let norealSdkKey = "badUniqueKey"
+        let badUniqueSdkKey = "badUniqueSdkKey"
 
-        let handler = FakeDatafileHandler()
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: norealSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
+            .sdkKey(key: badUniqueSdkKey)
+            .using(instance: FakeDatafileHandler())
+            .to(factory: FakeDatafileHandler.init)
+            .reInitializeStrategy(strategy: .reUse)
+            .singetlon())
         
         var optimizelyConfig: OptimizelyConfig?
-        let optimizely = OptimizelyClient(sdkKey: norealSdkKey, periodicDownloadInterval: 1)
+        let optimizely = OptimizelyClient(sdkKey: badUniqueSdkKey, periodicDownloadInterval: 1)
         
-        let exp = expectation(description: "datafile update event")
+        var exp: XCTestExpectation? = expectation(description: "datafile update event")
         _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { (_) in
             optimizelyConfig = try! optimizely.getOptimizelyConfig()
-            exp.fulfill()
+            exp?.fulfill()
+            exp = nil // disregard following update notification
         }
         
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
@@ -91,7 +95,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         optimizelyConfig = try! optimizely.getOptimizelyConfig()
         XCTAssert(optimizelyConfig!.revision == "100")
         
-        wait(for: [exp], timeout: 10)
+        wait(for: [exp!], timeout: 10)
         
         // after datafile remote updated ("optimizely_config_datafile")
         XCTAssert(optimizelyConfig!.revision == "9")

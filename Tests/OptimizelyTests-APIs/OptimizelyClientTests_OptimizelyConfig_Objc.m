@@ -58,6 +58,15 @@
     }
 }
 
+- (void)testGetOptimizelyConfig_InvalidDatafile {
+    NSString *invalidDatafile = @"{\"version\": \"4\"}";
+    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey: @"12345"];
+    [self.optimizely startWithDatafile:invalidDatafile error:nil];
+
+    id<OptimizelyConfig> result = [self.optimizely getOptimizelyConfigWithError:nil];
+    XCTAssertNil(result);
+}
+
 - (void)testGetOptimizelyConfig_ExperimentsMap {
     NSLog(@"------------------------------------------------------");
     id<OptimizelyConfig> optimizelyConfig = [self.optimizely getOptimizelyConfigWithError:nil];

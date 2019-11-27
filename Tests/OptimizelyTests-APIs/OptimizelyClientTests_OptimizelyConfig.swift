@@ -25,7 +25,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         super.setUp()
         
         let datafile = OTUtils.loadJSONDatafile("optimizely_config_datafile")!
-        
+
         self.optimizely = OptimizelyClient(sdkKey: "12345",
                                            userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.start(datafile: datafile)
@@ -49,6 +49,52 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
             
             XCTAssertEqual(observed, expected, "\n\n[Observed]\n\(observed)\n\n[Expected]\n\(expected)\n\n")
         }
+    }
+    
+    func testGetOptimizelyConfig_InvalidDatafile() {
+        self.optimizely = OptimizelyClient(sdkKey: "12345")
+        let invalidDatafile = "{\"version\": \"4\"}"
+        try? self.optimizely.start(datafile: invalidDatafile)
+        
+        let result = try? self.optimizely.getOptimizelyConfig()
+        XCTAssertNil(result)
+    }
+    
+    func testGetOptimizelyConfig_AfterDatafileUpdate() {
+        class FakeDatafileHandler: DefaultDatafileHandler {
+            let datafile = OTUtils.loadJSONDatafile("optimizely_config_datafile")
+            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                completionHandler(.success(datafile))
+            }
+        }
+        
+        let norealSdkKey = "badUniqueKey"
+
+        let handler = FakeDatafileHandler()
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: norealSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        
+        
+        var optimizelyConfig: OptimizelyConfig?
+        let optimizely = OptimizelyClient(sdkKey: norealSdkKey, periodicDownloadInterval: 1)
+        
+        let exp = expectation(description: "datafile update event")
+        _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { (_) in
+            optimizelyConfig = try! optimizely.getOptimizelyConfig()
+            exp.fulfill()
+        }
+        
+        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
+        try! optimizely.start(datafile: datafile)
+        
+        // before datafile remote updated ("empty_datafile")
+        
+        optimizelyConfig = try! optimizely.getOptimizelyConfig()
+        XCTAssert(optimizelyConfig!.revision == "100")
+        
+        wait(for: [exp], timeout: 10)
+        
+        // after datafile remote updated ("optimizely_config_datafile")
+        XCTAssert(optimizelyConfig!.revision == "9")
     }
 
     func testGetOptimizelyConfig_ExperimentsMap() {

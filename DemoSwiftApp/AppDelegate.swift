@@ -156,6 +156,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                                              userId: self.userId)
                 }
             }
+            
+            if let optConfig = try? self.optimizely.getOptimizelyConfig() {
+                print("[OptimizelyConfig] revision = \(optConfig.revision)")
+            }
         })
         
         _ = notificationCenter.addLogEventNotificationListener(logEventListener: { (url, event) in

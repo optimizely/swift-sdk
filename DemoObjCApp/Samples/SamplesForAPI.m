@@ -170,7 +170,7 @@
     
     // enumerate all features (experiments, variations, and assocated variables)
     
-    NSDictionary<NSString*, id<OptimizelyFeatureFlag>> *featuresMap = optConfig.featureFlagsMap;
+    NSDictionary<NSString*, id<OptimizelyFeature>> *featuresMap = optConfig.featuresMap;
     //NSArray* features = featuresMap.allValues;
     NSArray* featureKeys = featuresMap.allKeys;
     NSLog(@"[OptimizelyConfig] all experiment keys = %@)", featureKeys);

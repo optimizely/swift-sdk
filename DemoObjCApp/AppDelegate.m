@@ -48,16 +48,18 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     //     - initialize immediately with the given JSON datafile or its cached copy
     //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
     
-    [self initializeOptimizelySDKWithCustomization];
+    [self initializeOptimizelySDKAsynchronous];
     return YES;
 }
 
 // MARK: - Initialization Examples
 
 -(void)initializeOptimizelySDKAsynchronous {
+    DefaultEventDispatcher *eventDispacher = [[DefaultEventDispatcher alloc] initWithBatchSize:10 timerInterval:1 maxQueueSize:1000];
+    
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
                                                         logger:nil
-                                               eventDispatcher:nil
+                                               eventDispatcher:eventDispacher
                                             userProfileService:nil
                                       periodicDownloadInterval:@(5)
                                                defaultLogLevel:OptimizelyLogLevelDebug];
@@ -102,8 +104,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 -(void)initializeOptimizelySDKWithCustomization {
     // customization example (optional)
     
-    DefaultEventDispatcher *eventDispacher = [[DefaultEventDispatcher alloc] initWithBatchSize:10 timerInterval:1 maxQueueSize:1000];
-    
     CustomLogger *customLogger = [[CustomLogger alloc] init];
     // 30 sec interval may be too frequent. This is for demo purpose.
     // This should be should be much larger (default = 10 mins).
@@ -111,7 +111,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
                                                          logger:customLogger
-                                                eventDispatcher:eventDispacher
+                                                eventDispatcher:nil
                                              userProfileService:nil
                                        periodicDownloadInterval:customDownloadIntervalInSecs
                                                 defaultLogLevel:OptimizelyLogLevelDebug];
@@ -144,9 +144,6 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
         }
         
         [self startWithRootViewController];
-        
-        // For sample codes for other APIs, see "Samples/SamplesForAPI.m"
-        [SamplesForAPI checkOptimizelyConfig:self.optimizely];
     }];
 }
 
@@ -154,6 +151,8 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 
 -(void)startWithRootViewController {
     dispatch_async(dispatch_get_main_queue(), ^{
+        // For sample codes for other APIs, see "Samples/SamplesForAPI.m"
+
         NSError *error;
         NSString *variationKey = [self.optimizely activateWithExperimentKey:kOptimizelyExperimentKey
                                                                      userId:self.userId

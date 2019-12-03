@@ -55,7 +55,6 @@ extension VariationTests {
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
         XCTAssert(model.featureEnabled == false)
-        XCTAssert(model.featureEnabled == false)
         XCTAssert(model.variables!.count == 0)
     }
     
@@ -67,7 +66,6 @@ extension VariationTests {
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "house")
-        XCTAssert(model.featureEnabled == true)
         XCTAssert(model.featureEnabled == true)
         XCTAssert(model.variables == nil)
     }

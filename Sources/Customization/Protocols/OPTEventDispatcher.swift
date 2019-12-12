@@ -16,6 +16,8 @@
 
 import Foundation
 
+public typealias DispatchCompletionHandler = (OptimizelyResult<Data>) -> Void
+
 /// The OPTEventDispatcher dispatches events to the Optimizely backend used in results.
 public protocol OPTEventDispatcher {
 
@@ -31,10 +33,10 @@ public protocol OPTEventDispatcher {
     func flushEvents()
     
     /// flush events in queue synchrnonous (optional for testing support)
-    func clear()
+    func close()
 }
 
 public extension OPTEventDispatcher {
     // override this for testing support only
-    func clear() {}
+    func close() {}
 }

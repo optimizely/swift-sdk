@@ -273,7 +273,7 @@ class OptimizelyClientTests_Others: XCTestCase {
 
         // remove one of the handler to test nil-handlers
 
-        let testKey = handlersForCurrentSdkKey!.filter { $0.service.contains("DecisionService") }.first!
+        let testKey = handlersForCurrentSdkKey!.filter { $0.service.contains("EventDispatcher")}.first!
         HandlerRegistryService.shared.binders.property?[testKey] = nil
     
         // this will replace config, which will transfer all handlers

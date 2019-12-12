@@ -16,7 +16,7 @@
 
 import Foundation
 
-public struct BatchEvent: Codable, Equatable {
+struct BatchEvent: Codable, Equatable {
     let revision: String
     let accountID: String
     let clientVersion: String

@@ -22,7 +22,13 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     
     var observerLogEvent: NSObjectProtocol?
 
-    required public init() {}
+    required public init() {
+        addInternalNotificationListners()
+    }
+    
+    deinit {
+        removeInternalNotificationListners()
+    }
     
     internal func incrementNotificationId() -> Int {
         let returnValue = notificationId
@@ -157,5 +163,26 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
 
 extension DefaultNotificationCenter {
     
+    func addInternalNotificationListners() {
+        observerLogEvent = NotificationCenter.default.addObserver(forName: .willSendOptimizelyEvents, object: nil, queue: nil) { (notif) in
+            guard let eventForDispatch = notif.object as? EventForDispatch else { return }
+            
+            let url = eventForDispatch.url.absoluteString
+            let eventData = eventForDispatch.body
+            
+            if let event = try? JSONSerialization.jsonObject(with: eventData, options: []) as? [String: Any] {
+                let args: [Any] = [url, event]
+                self.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
+            } else {
+                print("LogEvent notification discarded due to invalid event")
+            }
+        }
+    }
+    
+    func removeInternalNotificationListners() {
+        if let observer = observerLogEvent {
+            NotificationCenter.default.removeObserver(observer, name: .willSendOptimizelyEvents, object: nil)
+        }
+    }
     
 }

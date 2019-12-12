@@ -8,22 +8,13 @@
                "featureEnabled":true,
                "id":"12098126627",
                "key":"all_traffic_variation",
-               "variablesMap":{
-                  "":{
-                     "id":"2687470097",
-                     "key":"",
-                     "type":"string",
-                     "value":"s1 foo"
-                  }
-               }
+               "variablesMap":{}
             },
             "no_traffic_variation":{
                "featureEnabled":true,
                "id":"12098126628",
                "key":"no_traffic_variation",
-               "variablesMap":{
-
-               }
+               "variablesMap":{}
             }
          }
       },

@@ -192,24 +192,7 @@
           "audienceIds": [],
           "variations": [
             {
-              "variables": [
-                {
-                  "value": "4",
-                  "id": "2687470094"
-                },
-                {
-                  "value": "10.6",
-                  "id": "2687470095"
-                },
-                {
-                  "value": "true",
-                  "id": "2687470096"
-                },
-                {
-                  "value": "s1 foo",
-                  "id": "2687470097"
-                }
-              ],
+              "variables": [],
               "id": "12098126627",
               "featureEnabled": true,
               "key": "all_traffic_variation"

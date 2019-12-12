@@ -27,7 +27,10 @@ struct Variation: Codable, Equatable, OptimizelyVariation {
     var variablesMap: [String: OptimizelyVariable] {
         var map = [String: Variable]()
         variables?.forEach({
-            map[$0.key] = $0
+            // filter out invalid variables (from invalid datafiles)
+            if !($0.key.isEmpty) {
+                map[$0.key] = $0
+            }
         })
         return map
     }

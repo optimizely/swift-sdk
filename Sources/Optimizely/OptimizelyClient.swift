@@ -183,40 +183,55 @@ open class OptimizelyClient: NSObject {
         try configSDK(datafile: selectedDatafile)
         
         // continue to fetch updated datafile from the server in background and cache it for next sessions
-        if doFetchDatafileBackground { fetchDatafileBackground() }
+        if doFetchDatafileBackground {
+            fetchDatafileBackground(resourceTimeout: nil) { result in
+                switch result {
+                case .success(let data):
+                    try? self.updateConfig(data: data)
+                case .failure(let error):
+                    self.logger.e(error)
+                }
+                
+            }
+        }
     }
     
     func configSDK(datafile: Data) throws {
         do {
-            self.config = try ProjectConfig(datafile: datafile, sdkKey: sdkKey)
+            try self.updateConfig(data: datafile)
                         
-            datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
+            datafileHandler.startUpdates(sdkKey: self.sdkKey) {[weak self] data in
                 // new datafile came in...
-                if let config = try? ProjectConfig(datafile: data, sdkKey: self.sdkKey) {
-                    do {
-                        if let users = self.config?.whitelistUsers {
-                            config.whitelistUsers = users
-                        }
-                        
-                        self.config = config
-                        
-                        // call reinit on the services we know we are reinitializing.
-                        
-                        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
-                            HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
-                        }
-                        
-                    }
-                    
-                    self.sendDatafileChangeNotification(data: data)
-                }
+                try? self?.updateConfig(data: data)
             }
         } catch {
             // .datafileInvalid
             // .datafaileVersionInvalid
             // .datafaileLoadingFailed
+            self.logger.e(error.localizedDescription)
+            
             throw error
         }
+    }
+    
+    func updateConfig(data: Data) throws {
+        let config = try ProjectConfig(datafile: data, sdkKey: self.sdkKey)
+        do {
+            if let users = self.config?.whitelistUsers {
+                config.whitelistUsers = users
+            }
+            
+            self.config = config
+            
+            // call reinit on the services we know we are reinitializing.
+            
+            for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
+                HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
+            }
+            
+        }
+        
+        self.sendDatafileChangeNotification(data: data)
     }
     
     func fetchDatafileBackground(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)? = nil) {

@@ -44,13 +44,8 @@ open class OptimizelyClient: NSObject {
     
     lazy var logger = OPTLoggerFactory.getLogger()
     
-    var eventProcessor: OPTEventsProcessor? {
-        return HandlerRegistryService.shared.injectEventProcessor()
-    }
-    
-    // deprecated
     var eventDispatcher: OPTEventDispatcher? {
-        return HandlerRegistryService.shared.injectEventDispatcher()
+        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
     }
     
     // MARK: - Default Services
@@ -80,36 +75,7 @@ open class OptimizelyClient: NSObject {
     ///   - defaultLogLevel: default log level (optional. default = .info)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
-                eventProcessor: OPTEventsProcessor? = nil,
-                eventDispatcher: OPTEventsDispatcher? = nil,
-                userProfileService: OPTUserProfileService? = nil,
-                defaultLogLevel: OptimizelyLogLevel? = nil) {
-        
-        self.sdkKey = sdkKey
-        
-        super.init()
-        
-        let userProfileService = userProfileService ?? DefaultUserProfileService()
-        let logger = logger ?? DefaultLogger()
-        type(of: logger).logLevel = defaultLogLevel ?? .info
-        
-        let eventDispatcher = eventDispatcher ?? HTTPEventDispatcher()
-        let eventProcessor = eventProcessor ?? BatchEventProcessor(eventDispatcher: eventDispatcher)
-
-        self.registerServices(sdkKey: sdkKey,
-                              logger: logger,
-                              eventProcessor: eventProcessor,
-                              datafileHandler: DefaultDatafileHandler(),
-                              decisionService: DefaultDecisionService(userProfileService: userProfileService),
-                              notificationCenter: DefaultNotificationCenter())
-        
-        logger.d("SDK Version: \(version)")
-    }
-    
-    @available(*, deprecated, message: "Use init with EventProcessor + EventsDispatcher instead")
-    public init(sdkKey: String,
-                logger: OPTLogger? = nil,
-                eventDispatcher: OPTEventDispatcher?,  // only when custom eventDispather is provided
+                eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil) {
         
@@ -188,11 +154,11 @@ open class OptimizelyClient: NSObject {
     
     func configSDK(datafile: Data) throws {
         do {
-            self.config = try ProjectConfig(datafile: datafile, sdkKey: sdkKey)
+            self.config = try ProjectConfig(datafile: datafile)
                         
             datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in...
-                if let config = try? ProjectConfig(datafile: data, sdkKey: self.sdkKey) {
+                if let config = try? ProjectConfig(datafile: data) {
                     do {
                         if let users = self.config?.whitelistUsers {
                             config.whitelistUsers = users
@@ -650,28 +616,32 @@ extension OptimizelyClient {
                              attributes: OptimizelyAttributes? = nil) {
         
         // non-blocking (event data serialization takes time)
-        guard let config = self.config else { return }
-        
-        let userEvent = ImpressionEvent(userContext: UserContext(config: config, userId: userId, attributes: attributes),
-                                        layerId: experiment.layerId,
-                                        experimentKey: experiment.key,
-                                        experimentId: experiment.id,
-                                        variationKey: variation.key,
-                                        variationId: variation.id)
-        
-        self.sendEventToDispatcher(event: userEvent) { result in
-            if case .success(let body) = result {
-                // send notification in sync mode (functionally same as async here since it's already in background thread),
-                // but this will make testing simpler (timing control)
-                
-                self.sendActivateNotification(experiment: experiment,
-                                              variation: variation,
-                                              userId: userId,
-                                              attributes: attributes,
-                                              event: EventForDispatch(sdkKey: self.sdkKey, body: body),
-                                              async: false)
+        eventLock.async {
+            guard let config = self.config else { return }
+
+            guard let body = BatchEventBuilder.createImpressionEvent(config: config,
+                                                                     experiment: experiment,
+                                                                     varionation: variation,
+                                                                     userId: userId,
+                                                                     attributes: attributes) else {
+                                                                        self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
+                                                                        return
             }
+            
+            let event = EventForDispatch(body: body)
+            self.sendEventToDispatcher(event: event, completionHandler: nil)
+            
+            // send notification in sync mode (functionally same as async here since it's already in background thread),
+            // but this will make testing simpler (timing control)
+
+            self.sendActivateNotification(experiment: experiment,
+                                          variation: variation,
+                                          userId: userId,
+                                          attributes: attributes,
+                                          event: event,
+                                          async: false)
         }
+
     }
     
     func sendConversionEvent(eventKey: String,
@@ -680,46 +650,40 @@ extension OptimizelyClient {
                              eventTags: OptimizelyEventTags? = nil) {
         
         // non-blocking (event data serialization takes time)
-        guard let config = self.config else { return }
-        
-        guard let userEvent = ConversionEvent(userContext: UserContext(config: config, userId: userId, attributes: attributes),
-                                              eventKey: eventKey,
-                                              tags: eventTags) else {
-                                                self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
-                                                return
-        }
-        
-        self.sendEventToDispatcher(event: userEvent) { result in
-            if case .success(let body) = result {
-                // send notification in sync mode (functionally same as async here since it's already in background thread),
-                // but this will make testing simpler (timing control)
-                
-                self.sendTrackNotification(eventKey: eventKey,
-                                           userId: userId,
-                                           attributes: attributes,
-                                           eventTags: eventTags,
-                                           event: EventForDispatch(sdkKey: self.sdkKey, body: body),
-                                           async: false)
+        eventLock.async {
+            guard let config = self.config else { return }
+
+            guard let body = BatchEventBuilder.createConversionEvent(config: config,
+                                                                     eventKey: eventKey,
+                                                                     userId: userId,
+                                                                     attributes: attributes,
+                                                                     eventTags: eventTags) else {
+                                                                        self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
+                                                                        return
             }
+            
+            let event = EventForDispatch(body: body)
+            self.sendEventToDispatcher(event: event, completionHandler: nil)
+            
+            // send notification in sync mode (functionally same as async here since it's already in background thread),
+            // but this will make testing simpler (timing control)
+
+            self.sendTrackNotification(eventKey: eventKey,
+                                       userId: userId,
+                                       attributes: attributes,
+                                       eventTags: eventTags,
+                                       event: event,
+                                       async: false)
         }
     }
     
-    func sendEventToDispatcher(event: UserEvent, completionHandler: ProcessCompletionHandler?) {
-        // deprecated
-        if let eventDispatcher = self.eventDispatcher {
-            if let body = try? JSONEncoder().encode(event.batchEvent) {
-                let dataEvent = EventForDispatch(sdkKey: self.sdkKey, body: body)
-                eventDispatcher.dispatchEvent(event: dataEvent, completionHandler: completionHandler)
-            }
-            return
-        }
-        
+    func sendEventToDispatcher(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         // The event is queued in the dispatcher, batched, and sent out later.
-        // non-blocking (event data serialization takes time)
         
         // make sure that eventDispatcher is not-nil (still registered when async dispatchEvent is called)
-        self.eventProcessor?.process(event: event, completionHandler: completionHandler)
+        self.eventDispatcher?.dispatchEvent(event: event, completionHandler: completionHandler)
     }
+    
 }
 
 // MARK: - Notifications
@@ -857,29 +821,11 @@ extension OptimizelyClient {
 // MARK: - For test support
 
 extension OptimizelyClient {
+    
     public func close() {
         datafileHandler.stopUpdates(sdkKey: sdkKey)
-        
-        sync()
-        
-        // deprecated
-        if let eventDispatcher = self.eventDispatcher {
-            eventDispatcher.clear()
-            return
-        }
-        
-        eventProcessor?.clear()
+        eventLock.sync {}
+        eventDispatcher?.close()
     }
     
-    public func sync() {
-        eventLock.sync {}
-    }
 }
-
-#if FSC_TEST
-extension OptimizelyClient {
-    public static func clearRegistryService() {
-        HandlerRegistryService.shared.removeAll()
-    }
-}
-#endif

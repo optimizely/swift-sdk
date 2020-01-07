@@ -19,33 +19,33 @@
 import XCTest
 
 class EventForDispatchTests: XCTestCase {
-    var urlStr = "https://optimizely.com"
-    let sdkKey = "Any key"
-
+    
     func testEqualOperator() {
+        var urlStr = "https://optimizely.com"
         var message = "One body"
-        let event1 = EventForDispatch(url: URL(string: urlStr), sdkKey: sdkKey, body: message.data(using: .utf8)!)
-        var event2 = EventForDispatch(url: URL(string: urlStr), sdkKey: sdkKey, body: message.data(using: .utf8)!)
+        let event1 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
+        var event2 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
         XCTAssert(event1 == event2)
         
         message = "Other body"
-        event2 = EventForDispatch(url: URL(string: urlStr), sdkKey: sdkKey, body: message.data(using: .utf8)!)
+        event2 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
         XCTAssert(event1 != event2)
 
         urlStr = "Other url"
         message = "One body"
-        event2 = EventForDispatch(url: URL(string: urlStr), sdkKey: sdkKey, body: message.data(using: .utf8)!)
+        event2 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
         XCTAssert(event1 != event2)
         
         urlStr = "https://optimizely.com"
         message = "One body"
-        event2 = EventForDispatch(url: URL(string: urlStr), sdkKey: sdkKey, body: message.data(using: .utf8)!)
+        event2 = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
         XCTAssert(event1 == event2)
     }
 
     func testDescriptionWithGoodString() {
+        let urlStr = "https://optimizely.com"
         let message = "This is event body"
-        let event = EventForDispatch(url: URL(string: urlStr), sdkKey: sdkKey, body: message.data(using: .utf8)!)
+        let event = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf8)!)
         
         let desc = event.description
         XCTAssert(desc.contains(urlStr))
@@ -53,10 +53,11 @@ class EventForDispatchTests: XCTestCase {
     }
     
     func testDescriptionWithBadString() {
+        let urlStr = "https://optimizely.com"
         let message = "This is event body"
         
         // use a wrong encoding (UTF16), which will cause invalid string
-        let event = EventForDispatch(url: URL(string: urlStr), sdkKey: sdkKey, body: message.data(using: .utf16)!)
+        let event = EventForDispatch(url: URL(string: urlStr), body: message.data(using: .utf16)!)
         
         let desc = event.description
         XCTAssert(desc.contains(urlStr))

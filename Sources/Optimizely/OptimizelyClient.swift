@@ -643,11 +643,15 @@ extension OptimizelyClient {
             let event = EventForDispatch(body: body)
             self.sendEventToDispatcher(event: event, completionHandler: nil)
             
+            // send notification in sync mode (functionally same as async here since it's already in background thread),
+            // but this will make testing simpler (timing control)
+
             self.sendActivateNotification(experiment: experiment,
                                           variation: variation,
                                           userId: userId,
                                           attributes: attributes,
-                                          event: event)
+                                          event: event,
+                                          async: false)
         }
 
     }
@@ -673,11 +677,15 @@ extension OptimizelyClient {
             let event = EventForDispatch(body: body)
             self.sendEventToDispatcher(event: event, completionHandler: nil)
             
+            // send notification in sync mode (functionally same as async here since it's already in background thread),
+            // but this will make testing simpler (timing control)
+
             self.sendTrackNotification(eventKey: eventKey,
                                        userId: userId,
                                        attributes: attributes,
                                        eventTags: eventTags,
-                                       event: event)
+                                       event: event,
+                                       async: false)
         }
     }
     
@@ -698,25 +706,31 @@ extension OptimizelyClient {
                                   variation: Variation,
                                   userId: String,
                                   attributes: OptimizelyAttributes?,
-                                  event: EventForDispatch) {
+                                  event: EventForDispatch,
+                                  async: Bool = true) {
         
-        self.sendNotification(type: .activate, args: [experiment,
-                                                      userId,
-                                                      attributes,
-                                                      variation,
-                                                      ["url": event.url as Any, "body": event.body as Any]])
+        self.sendNotification(type: .activate,
+                              args: [experiment,
+                                     userId,
+                                     attributes,
+                                     variation,
+                                     ["url": event.url as Any, "body": event.body as Any]],
+                              async: async)
     }
     
     func sendTrackNotification(eventKey: String,
                                userId: String,
                                attributes: OptimizelyAttributes?,
                                eventTags: OptimizelyEventTags?,
-                               event: EventForDispatch) {
-        self.sendNotification(type: .track, args: [eventKey,
-                                                   userId,
-                                                   attributes,
-                                                   eventTags,
-                                                   ["url": event.url as Any, "body": event.body as Any]])
+                               event: EventForDispatch,
+                               async: Bool = true) {
+        self.sendNotification(type: .track,
+                              args: [eventKey,
+                                     userId,
+                                     attributes,
+                                     eventTags,
+                                     ["url": event.url as Any, "body": event.body as Any]],
+                              async: async)
     }
     
     func sendDecisionNotification(decisionType: Constants.DecisionType,
@@ -728,22 +742,25 @@ extension OptimizelyClient {
                                   featureEnabled: Bool? = nil,
                                   variableKey: String? = nil,
                                   variableType: String? = nil,
-                                  variableValue: Any? = nil) {
-        self.sendNotification(type: .decision, args: [decisionType.rawValue,
-                                                      userId,
-                                                      attributes ?? OptimizelyAttributes(),
-                                                      self.makeDecisionInfo(decisionType: decisionType,
-                                                                            experiment: experiment,
-                                                                            variation: variation,
-                                                                            feature: feature,
-                                                                            featureEnabled: featureEnabled,
-                                                                            variableKey: variableKey,
-                                                                            variableType: variableType,
-                                                                            variableValue: variableValue)])
+                                  variableValue: Any? = nil,
+                                  async: Bool = true) {
+        self.sendNotification(type: .decision,
+                              args: [decisionType.rawValue,
+                                     userId,
+                                     attributes ?? OptimizelyAttributes(),
+                                     self.makeDecisionInfo(decisionType: decisionType,
+                                                           experiment: experiment,
+                                                           variation: variation,
+                                                           feature: feature,
+                                                           featureEnabled: featureEnabled,
+                                                           variableKey: variableKey,
+                                                           variableType: variableType,
+                                                           variableValue: variableValue)],
+                              async: async)
     }
     
-    func sendDatafileChangeNotification(data: Data) {
-        self.sendNotification(type: .datafileChange, args: [data])
+    func sendDatafileChangeNotification(data: Data, async: Bool = true) {
+        self.sendNotification(type: .datafileChange, args: [data], async: async)
     }
     
     func makeDecisionInfo(decisionType: Constants.DecisionType,
@@ -796,12 +813,31 @@ extension OptimizelyClient {
         return decisionInfo
     }
     
-    func sendNotification(type: NotificationType, args: [Any?]) {
-        // callback in background thread
-        eventLock.async {
+    func sendNotification(type: NotificationType, args: [Any?], async: Bool = true) {
+        let notify = {
             // make sure that notificationCenter is not-nil (still registered when async notification is called)
             self.notificationCenter?.sendNotifications(type: type.rawValue, args: args)
         }
+        
+        if async {
+            eventLock.async {
+                notify()
+            }
+        } else {
+            notify()
+        }
     }
 
+}
+
+// MARK: - For test support
+
+extension OptimizelyClient {
+    
+    public func close() {
+        datafileHandler.stopUpdates(sdkKey: sdkKey)
+        eventLock.sync {}
+        eventDispatcher?.close()
+    }
+    
 }

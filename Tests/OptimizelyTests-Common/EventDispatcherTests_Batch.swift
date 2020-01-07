@@ -316,8 +316,7 @@ extension EventDispatcherTests_Batch {
 
         // flush
         
-        eventDispatcher.flushEvents()
-        eventDispatcher.dispatcher.sync {}
+        eventDispatcher.close()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "all events should be batched together")
         let batch = eventDispatcher.sendRequestedEvents[0]
@@ -345,9 +344,8 @@ extension EventDispatcherTests_Batch {
                                 (kUrlA, batchEventB),
                                 (kUrlA, batchEventA)])
 
-        eventDispatcher.flushEvents()
-        eventDispatcher.dispatcher.sync {}
-        
+        eventDispatcher.close()
+
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
         let batch = eventDispatcher.sendRequestedEvents[0]
         let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
@@ -379,9 +377,8 @@ extension EventDispatcherTests_Batch {
                                 (kUrlA, batchEventA),
                                 (kUrlB, batchEventB)])
             
-        eventDispatcher.flushEvents()
-        eventDispatcher.dispatcher.sync {}
-        
+        eventDispatcher.close()
+
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 2, "different urls should not be batched")
         
         // first 2 events batched together
@@ -428,9 +425,8 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.dispatchEvent(event: makeInvalidEventForDispatchWithWrongData(), completionHandler: nil)
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
 
-        eventDispatcher.flushEvents()
-        eventDispatcher.dispatcher.sync {}
-        
+        eventDispatcher.close()
+
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 2, "different urls should not be batched")
         
         // first 2 events batched together
@@ -480,9 +476,8 @@ extension EventDispatcherTests_Batch {
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
 
-        eventDispatcher.flushEvents()
-        eventDispatcher.dispatcher.sync {}
-        
+        eventDispatcher.close()
+
         let maxFailureCount = 3 + 1   // DefaultEventDispatcher.maxFailureCount + 1
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
@@ -506,8 +501,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.forceError = false
         
         // assume flushEvents called again on next timer fire
-        eventDispatcher.flushEvents()
-        eventDispatcher.dispatcher.sync {}
+        eventDispatcher.close()
 
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount + 1, "only one more since succeeded")
         XCTAssertEqual(eventDispatcher.sendRequestedEvents[3], eventDispatcher.sendRequestedEvents[0])
@@ -916,6 +910,74 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batch.url.absoluteString, kUrlA)
         XCTAssertEqual(batchedEvents.revision, kRevisionA)
         XCTAssertEqual(eventDispatcher.dataStore.count, 0)
+    }
+    
+}
+
+// MARK: - OptimizleyClient: Close()
+
+extension EventDispatcherTests_Batch {
+    
+    func testCloseForOptimizleyClinet() {
+        // this tests timer-based dispatch, available for iOS 10+
+        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
+        
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        
+        eventDispatcher.batchSize = 1000        // big, won't flush
+        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
+        
+        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
+                                          eventDispatcher: eventDispatcher,
+                                          defaultLogLevel: .debug)
+        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
+        
+        // (1) should have no flush
+        
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventDispatcher.exp?.isInverted = true
+        
+        try! optimizely.start(datafile: datafile)
+
+        dispatchMultipleEvents([(kUrlA, batchEventA),
+                                (kUrlA, batchEventA),
+                                (kUrlA, batchEventA)])
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        
+        // (2) should flush/batch all on close()
+        
+        optimizely.close()
+        
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
+        var batch = eventDispatcher.sendRequestedEvents[0]
+        var batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertEqual(batchedEvents.visitors.count, 3)
+        eventDispatcher.sendRequestedEvents.removeAll()
+
+        // (3) should have no flush
+        
+        eventDispatcher.exp = XCTestExpectation(description: "timer")
+        eventDispatcher.exp?.isInverted = true
+        
+        try! optimizely.start(datafile: datafile)
+        
+        dispatchMultipleEvents([(kUrlA, batchEventB),
+                                (kUrlA, batchEventA)])
+        
+        wait(for: [eventDispatcher.exp!], timeout: 3)
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
+        
+        // (4) should flush/batch all on close()
+        
+        optimizely.close()
+        
+        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
+        batch = eventDispatcher.sendRequestedEvents[0]
+        batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
+        XCTAssertEqual(batchedEvents.visitors.count, 2)
+
     }
     
 }

@@ -254,12 +254,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
 extension DefaultEventDispatcher {
     
     func addProjectChangeNotificationObservers() {
-        observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (notif) in
+        observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (_) in
             self?.logger.d("Event flush triggered by datafile projectId change")
             self?.flushEvents()
         }
         
-        observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (notif) in
+        observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (_) in
             self?.logger.d("Event flush triggered by datafile revision change")
             self?.flushEvents()
         }
@@ -272,6 +272,13 @@ extension DefaultEventDispatcher {
         if let observer = observerRevision {
             NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyRevisionChange, object: nil)
         }
+    }
+    
+    // MARK: - Tests
+
+    open func close() {
+        self.flushEvents()
+        self.dispatcher.sync {}
     }
     
 }

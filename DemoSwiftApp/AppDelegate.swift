@@ -96,9 +96,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // customization example (optional)
 
         let customLogger = CustomLogger()
-        // 30 sec interval may be too frequent. This is for demo purpose.
+        // 60 sec interval may be too frequent. This is for demo purpose.
         // This should be should be much larger (default = 10 mins).
-        let customDownloadIntervalInSecs = 30
+        let customDownloadIntervalInSecs = 60
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,

@@ -55,6 +55,7 @@ class EventDispatcherTests_Batch: XCTestCase {
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
         
         // for debug level setting
+        HandlerRegistryService.shared.binders.property?.removeAll()
         _ = OptimizelyClient(sdkKey: "any", eventDispatcher: eventDispatcher, defaultLogLevel: .debug)
         
         // clear static states to test first datafile load
@@ -918,7 +919,7 @@ extension EventDispatcherTests_Batch {
 
 extension EventDispatcherTests_Batch {
     
-    func testCloseForOptimizleyClinet() {
+    func testCloseForOptimizleyClient() {
         // this tests timer-based dispatch, available for iOS 10+
         guard #available(iOS 10.0, tvOS 10.0, *) else { return }
         
@@ -927,6 +928,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
+        HandlerRegistryService.shared.binders.property?.removeAll()  // clear eventDispatcher registered at top
         let optimizely = OptimizelyClient(sdkKey: "SDKKey",
                                           eventDispatcher: eventDispatcher,
                                           defaultLogLevel: .debug)

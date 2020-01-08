@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct FeatureFlag: Codable, Equatable, OptimizelyFeature {
+struct FeatureFlag: Codable, Equatable {
     static func == (lhs: FeatureFlag, rhs: FeatureFlag) -> Bool {
         return lhs.id == rhs.id
     }
@@ -35,10 +35,14 @@ struct FeatureFlag: Codable, Equatable, OptimizelyFeature {
         case variables
     }
     
-    // MARK: - OptimizelyConfig
+    // for OptimizelyConfig only
 
     var experiments: [Experiment] = []
+}
     
+// MARK: - OptimizelyConfig
+
+extension FeatureFlag: OptimizelyFeature {
     var experimentsMap: [String: OptimizelyExperiment] {
         var map = [String: Experiment]()
         experiments.forEach {
@@ -62,9 +66,7 @@ struct FeatureFlag: Codable, Equatable, OptimizelyFeature {
 // MARK: - Utils
 
 extension FeatureFlag {
-    
     func getVariable(key: String) -> FeatureVariable? {
         return variables.filter { $0.key == key }.first
     }
-    
 }

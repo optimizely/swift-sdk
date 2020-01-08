@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Variable: Codable, Equatable, OptimizelyVariable {
+struct Variable: Codable, Equatable {
     var id: String
     var value: String
     
@@ -25,11 +25,15 @@ struct Variable: Codable, Equatable, OptimizelyVariable {
         case value
     }
     
-    // MARK: - OptimizelyConfig
+    // for OptimizelyConfig only
     
     var key: String = ""
     var type: String = "string"
+}
     
+// MARK: - OptimizelyConfig
+  
+extension Variable: OptimizelyVariable {
     init(id: String, value: String, key: String? = nil, type: String? = nil) {
         self.id = id
         self.value = value

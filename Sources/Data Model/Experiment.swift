@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Experiment: Codable, Equatable, OptimizelyExperiment {
+struct Experiment: Codable, Equatable {
     enum Status: String, Codable {
         case running = "Running"
         case launched = "Launched"
@@ -35,9 +35,11 @@ struct Experiment: Codable, Equatable, OptimizelyExperiment {
     var audienceConditions: ConditionHolder?
     // datafile spec defines this as [String: Any]. Supposed to be [ExperimentKey: VariationKey]
     var forcedVariations: [String: String]
+}
+
+// MARK: - OptimizelyConfig
     
-    // MARK: - OptimizelyConfig
-    
+extension Experiment: OptimizelyExperiment {
     var variationsMap: [String: OptimizelyVariation] {
         var map = [String: Variation]()
         variations.forEach {
@@ -50,7 +52,6 @@ struct Experiment: Codable, Equatable, OptimizelyExperiment {
 // MARK: - Utils
 
 extension Experiment {
-    
     func getVariation(id: String) -> Variation? {
         return variations.filter { $0.id == id }.first
     }
@@ -62,5 +63,4 @@ extension Experiment {
     var isActivated: Bool {
         return status == .running
     }
-
 }

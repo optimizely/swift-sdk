@@ -16,14 +16,16 @@
 
 import Foundation
 
-struct Variation: Codable, Equatable, OptimizelyVariation {
+struct Variation: Codable, Equatable {
     var id: String
     var key: String
     var featureEnabled: Bool?
     var variables: [Variable]?
-    
-    // MARK: - OptimizelyConfig
+}
 
+// MARK: - OptimizelyConfig
+
+extension Variation: OptimizelyVariation {
     var variablesMap: [String: OptimizelyVariable] {
         var map = [String: Variable]()
         variables?.forEach({
@@ -39,9 +41,7 @@ struct Variation: Codable, Equatable, OptimizelyVariation {
 // MARK: - Utils
 
 extension Variation {
-    
     func getVariable(id: String) -> Variable? {
         return variables?.filter { $0.id == id }.first
     }
-    
 }

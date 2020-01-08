@@ -18,9 +18,7 @@ import XCTest
 
 class EventDispatcherTests: XCTestCase {
     
-    var eventDispatcher: DefaultEventDispatcher!
-    let sdkKey = "any key"
-    lazy var simpleEvent = EventForDispatch(sdkKey: sdkKey, body: Data())
+    var eventDispatcher: DefaultEventDispatcher?
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -39,26 +37,38 @@ class EventDispatcherTests: XCTestCase {
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         if let dispatcher = eventDispatcher {
-            dispatcher.clear()
+            dispatcher.flushEvents()
+            dispatcher.dispatcher.sync {
+            }
         }
         
         eventDispatcher = nil
+        
     }
 
     func testDefaultDispatcher() {
         eventDispatcher = DefaultEventDispatcher(timerInterval: 10)
-        eventDispatcher.clear()
+        let pEventD: OPTEventDispatcher = eventDispatcher!
+
+        pEventD.flushEvents()
         
-        eventDispatcher.dispatchEvent(event: simpleEvent, completionHandler: nil)
-        eventDispatcher.sync()
+        eventDispatcher?.dispatcher.sync {
+        }
         
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
+        
+        eventDispatcher?.dispatcher.sync {
+        }
+ 
         if #available(iOS 10.0, tvOS 10.0, *) {
             XCTAssert(eventDispatcher?.dataStore.count == 1)
         } else {
             XCTAssert(eventDispatcher?.dataStore.count == 0)
         }
-        eventDispatcher.flushEvents()
-        eventDispatcher.sync()
+        eventDispatcher?.flushEvents()
+        
+        eventDispatcher?.dispatcher.sync {
+        }
         
         XCTAssert(eventDispatcher?.dataStore.count == 0)
         
@@ -73,7 +83,7 @@ class EventDispatcherTests: XCTestCase {
             override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
                 events.append(event)
                 if !once {
-                    self.dataStore.save(item: EventForDispatch(sdkKey: "a", body: Data()))
+                    self.dataStore.save(item: EventForDispatch(body: Data()))
                     once = true
                 }
                 completionHandler(.success(Data()))
@@ -83,32 +93,41 @@ class EventDispatcherTests: XCTestCase {
         let dispatcher = InnerEventDispatcher(timerInterval: 0)
 
         // add two items.... call flush
-        dispatcher.dataStore.save(item: simpleEvent)
+        dispatcher.dataStore.save(item: EventForDispatch(body: Data()))
         dispatcher.flushEvents()
-        dispatcher.sync()
+        
+        dispatcher.dispatcher.sync {
+        }
         
         XCTAssert(dispatcher.events.count == 2)
     }
 
     func testEventDispatcherFile() {
         eventDispatcher = DefaultEventDispatcher( backingStore: .file)
-        eventDispatcher.timerInterval = 1
+        let pEventD: OPTEventDispatcher = eventDispatcher!
+        eventDispatcher?.timerInterval = 1
+        let wait = {() in
+            self.eventDispatcher?.dispatcher.sync {
+            }
+        }
 
-        eventDispatcher.flushEvents()
-        eventDispatcher.sync()
+        pEventD.flushEvents()
+        wait()
         
-        eventDispatcher.dispatchEvent(event: simpleEvent, completionHandler: nil)
-        eventDispatcher.sync()
-
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+            
+        }
+        wait()
+        
         if #available(iOS 10.0, tvOS 10.0, *) {
             XCTAssert(eventDispatcher?.dataStore.count == 1)
         } else {
             XCTAssert(eventDispatcher?.dataStore.count == 0)
         }
 
-        eventDispatcher.flushEvents()
-        eventDispatcher.sync()
-
+        eventDispatcher?.flushEvents()
+        wait()
+        
         XCTAssert(eventDispatcher?.dataStore.count == 0)
         
         // This is an example of a functional test case.
@@ -117,23 +136,30 @@ class EventDispatcherTests: XCTestCase {
 
     func testEventDispatcherUserDefaults() {
         eventDispatcher = DefaultEventDispatcher( backingStore: .userDefaults)
-        eventDispatcher.timerInterval = 1
+        let pEventD: OPTEventDispatcher = eventDispatcher!
+        eventDispatcher?.timerInterval = 1
+        let wait = {() in
+            self.eventDispatcher?.dispatcher.sync {
+            }
+        }
 
-        eventDispatcher.flushEvents()
-        eventDispatcher.sync()
-
-        eventDispatcher.dispatchEvent(event: simpleEvent, completionHandler: nil)
-        eventDispatcher.sync()
-
+        pEventD.flushEvents()
+        wait()
+        
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+            
+        }
+        wait()
+        
         if #available(iOS 10.0, tvOS 10.0, *) {
             XCTAssert(eventDispatcher?.dataStore.count == 1)
         } else {
             XCTAssert(eventDispatcher?.dataStore.count == 0)
         }
 
-        eventDispatcher.flushEvents()
-        eventDispatcher.sync()
-
+        eventDispatcher?.flushEvents()
+        wait()
+        
         XCTAssert(eventDispatcher?.dataStore.count == 0)
         
         // This is an example of a functional test case.
@@ -143,23 +169,28 @@ class EventDispatcherTests: XCTestCase {
     func testEventDispatcherMemory() {
         eventDispatcher = DefaultEventDispatcher( backingStore: .memory)
         let pEventD: OPTEventDispatcher = eventDispatcher!
-        eventDispatcher.timerInterval = 1
+        eventDispatcher?.timerInterval = 1
+        let wait = {() in
+            self.eventDispatcher?.dispatcher.sync {
+            }
+        }
 
-        eventDispatcher.flushEvents()
-        eventDispatcher.sync()
-
-        eventDispatcher.dispatchEvent(event: simpleEvent, completionHandler: nil)
-        eventDispatcher.sync()
-
+        pEventD.flushEvents()
+        wait()
+        
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+        }
+        wait()
+        
         if #available(iOS 10.0, tvOS 10.0, *) {
             XCTAssert(eventDispatcher?.dataStore.count == 1)
         } else {
             XCTAssert(eventDispatcher?.dataStore.count == 0)
         }
 
-        eventDispatcher.flushEvents()
-        eventDispatcher.sync()
-
+        eventDispatcher?.flushEvents()
+        wait()
+        
         XCTAssert(eventDispatcher?.dataStore.count == 0)
         
         // This is an example of a functional test case.
@@ -169,8 +200,10 @@ class EventDispatcherTests: XCTestCase {
     func testDispatcherCustom() {
         let dispatcher = FakeEventDispatcher()
         
-        dispatcher.dispatchEvent(event: simpleEvent, completionHandler: nil)
-
+        dispatcher.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+            
+        }
+        
         XCTAssert(dispatcher.events.count == 1)
         
         dispatcher.flushEvents()
@@ -181,14 +214,18 @@ class EventDispatcherTests: XCTestCase {
     func testDispatcherMethods() {
         eventDispatcher = DefaultEventDispatcher(timerInterval: 1)
         
-        eventDispatcher.flushEvents()
-        eventDispatcher.sync()
+        eventDispatcher?.flushEvents()
+        eventDispatcher?.dispatcher.sync {
+        }
         
-        eventDispatcher.dispatchEvent(event: simpleEvent, completionHandler: nil)
-        eventDispatcher.sync()
+        eventDispatcher?.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+        }
         
-        eventDispatcher.applicationDidBecomeActive()
-        eventDispatcher.applicationDidEnterBackground()
+        eventDispatcher?.dispatcher.sync {
+        }
+        
+        eventDispatcher?.applicationDidBecomeActive()
+        eventDispatcher?.applicationDidEnterBackground()
         
         XCTAssert(eventDispatcher?.timer.property == nil)
         var sent = false
@@ -197,7 +234,7 @@ class EventDispatcherTests: XCTestCase {
         
         group.enter()
         
-        eventDispatcher.sendEvent(event: simpleEvent) { (_) -> Void in
+        eventDispatcher?.sendEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
             sent = true
             group.leave()
         }
@@ -228,7 +265,7 @@ class EventDispatcherTests: XCTestCase {
     func testDataStoreQueue() {
         let queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue", dataStore: DataStoreMemory<Array<Data>>(storeName: "backingStoreName"))
         
-        queue.save(item: EventForDispatch(sdkKey: sdkKey, body: "Blah".data(using: .utf8)!))
+        queue.save(item: EventForDispatch(body: "Blah".data(using: .utf8)!))
         
         let event = queue.getFirstItem()
         let str = String(data: (event?.body)!, encoding: .utf8)

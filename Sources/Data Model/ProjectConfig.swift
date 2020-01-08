@@ -19,7 +19,6 @@ import Foundation
 class ProjectConfig {
     
     var project: Project!
-    var sdkKey: String
     
     lazy var logger = OPTLoggerFactory.getLogger()
     
@@ -85,9 +84,8 @@ class ProjectConfig {
     
     // MARK: - Init
 
-    init(datafile: Data, sdkKey: String) throws {
+    init(datafile: Data) throws {
         do {
-            self.sdkKey = sdkKey
             self.project = try JSONDecoder().decode(Project.self, from: datafile)
             
             ProjectConfig.observer.update(project: project)
@@ -100,10 +98,11 @@ class ProjectConfig {
         }
     }
     
-    convenience init(datafile: String, sdkKey: String) throws {
-        try self.init(datafile: Data(datafile.utf8), sdkKey: sdkKey)
+    convenience init(datafile: String) throws {
+        try self.init(datafile: Data(datafile.utf8))
     }
     
+    init() {}
 }
 
 // MARK: - Project Change Observer

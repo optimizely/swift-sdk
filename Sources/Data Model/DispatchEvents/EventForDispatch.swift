@@ -20,24 +20,22 @@ import Foundation
     static let eventEndpoint = "https://logx.optimizely.com/v1/events"
     
     public let url: URL
-    public let sdkKey: String
     public let body: Data
 
-    public init(url: URL? = nil, sdkKey: String, body: Data) {
+    public init(url: URL? = nil, body: Data) {
         self.url = url ?? URL(string: EventForDispatch.eventEndpoint)!
-        self.sdkKey = sdkKey
         self.body = body
     }
     
     // override NSObject Equatable ('==' overriding not working for NSObject)
     override public func isEqual(_ object: Any?) -> Bool {
         guard let object = object as? EventForDispatch else { return false }
-        return url == object.url && sdkKey == object.sdkKey && body == object.body
+        return url == object.url && body == object.body
     }
 }
 
 extension EventForDispatch {
     override public var description: String {
-        return "[url]\(url) [sdkKey]\(sdkKey) (" + (String(data: body, encoding: .utf8) ?? "UNKNOWN") + ")"
+        return "[url] \(url) (" + (String(data: body, encoding: .utf8) ?? "UNKNOWN") + ")"
     }
 }

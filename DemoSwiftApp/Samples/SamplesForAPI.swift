@@ -188,6 +188,14 @@ class SamplesForAPI {
                 print("[OptimizelyConfig]   - (feature)variable: \(variableKey), \(variable)")
             }
         }
+        
+        // listen to NotificationType.datafileChange to get updated data
+
+        _ = optimizely.notificationCenter?.addDatafileChangeNotificationListener { (_) in
+            if let newOptConfig = try? optimizely.getOptimizelyConfig() {
+                print("[OptimizelyConfig] revision = \(newOptConfig.revision)")
+            }
+        }
 
     }
 

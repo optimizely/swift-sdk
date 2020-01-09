@@ -20,8 +20,16 @@ import Foundation
 
 public protocol OptimizelyConfig {
     var revision: String { get }
-    var experimentsMap: [String: OptimizelyExperiment] { get }
-    var featuresMap: [String: OptimizelyFeature] { get }
+    var experiments: OptimizelyExperiments { get }
+    var features: OptimizelyFeatures { get }
+}
+public protocol OptimizelyExperiments {
+    subscript(key: String) -> OptimizelyExperiment? { get }
+    subscript(index: Int) -> OptimizelyExperiment? { get }
+}
+public protocol OptimizelyFeatures {
+    subscript(key: String) -> OptimizelyFeature? { get }
+    subscript(index: Int) -> OptimizelyFeature? { get }
 }
 
 public protocol OptimizelyExperiment {

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0B11272E2242D817002A9C20 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
-		0BAB9B0122567E34000DC388 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		0BAB9B0122567E34000DC388 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		6E12B1CA22C55A250005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
 		6E12B1CB22C55A250005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
 		6E12B1CC22C55A250005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
@@ -1155,8 +1155,8 @@
 		6EA425602218E58400B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6EA4256F2218E60A00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EA4257E2218E61F00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		6EA425962218E6AD00B074B5 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		6EA425A52218E6AE00B074B5 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		6EA425962218E6AD00B074B5 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		6EA425A52218E6AE00B074B5 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		6EA426602219242100B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EA4266F2219243D00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6ECB270222C526A7005D52DC /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E75167A22C520D400B2B157 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2737,7 +2737,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0BAB9B0122567E34000DC388 /* (null) in Sources */,
+				0BAB9B0122567E34000DC388 /* BuildFile in Sources */,
 				6E7517D822C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
 				6E75177622C520D400B2B157 /* SDKVersion.swift in Sources */,
 				6E7516FE22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
@@ -3039,7 +3039,7 @@
 				6E7516BC22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E7517A022C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E7517AC22C520D400B2B157 /* Array+Extension.swift in Sources */,
-				6EA425A52218E6AE00B074B5 /* (null) in Sources */,
+				6EA425A52218E6AE00B074B5 /* BuildFile in Sources */,
 				6E75180E22C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E9B11B822C5489600C22D81 /* OTUtils.swift in Sources */,
 				6E9B119022C5488300C22D81 /* AttributeValueTests.swift in Sources */,
@@ -3223,7 +3223,7 @@
 				6E7516B722C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E75179B22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E7517A722C520D400B2B157 /* Array+Extension.swift in Sources */,
-				6EA425962218E6AD00B074B5 /* (null) in Sources */,
+				6EA425962218E6AD00B074B5 /* BuildFile in Sources */,
 				6E75180922C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E9B11AE22C5489300C22D81 /* OTUtils.swift in Sources */,
 				6E9B117A22C5488100C22D81 /* AttributeValueTests.swift in Sources */,
@@ -3583,6 +3583,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -3648,6 +3649,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;

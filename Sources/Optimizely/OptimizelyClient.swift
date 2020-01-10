@@ -605,6 +605,9 @@ open class OptimizelyClient: NSObject {
     /// Read a copy of project configuration data model.
     ///
     /// This call returns a snapshot of the current project configuration.
+    ///
+    /// When the caller keeps a copy of the return value, note that this data can be stale when a new datafile is downloaded (it's possible only when background datafile polling is enabled).
+    ///
     /// If a datafile change is notified (NotificationType.datafileChange), this method should be called again to get the updated configuration data.
     ///
     /// - Returns: a snapshot of public project configuration data model

@@ -50,7 +50,7 @@ jobs:
       os: osx
       osx_image: xcode10.2
       install:
-        - gem install cocoapods -v '1.6.1'
+        - gem install cocoapods -v '1.8.0'
       script:
         - pod spec lint --quick
       after_script:
@@ -68,8 +68,9 @@ jobs:
       name: PLATFORM='iOS Simulator' OS=12.1 NAME='iPhone 7'
       install:
         - gem install slather --no-document --quiet
-        - gem install cocoapods -v '1.6.1'
-        - pod install --repo-update
+        - gem install cocoapods -v '1.8.0'
+        - pod repo update
+        - pod install
         # fix simulator known issue (https://developer.apple.com/documentation/xcode_release_notes/xcode_10_2_1_release_notes)
         - sudo mkdir '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 9.3.simruntime/Contents/Resources/RuntimeRoot/usr/lib/swift'
         # install jq without cleaning up
@@ -108,7 +109,7 @@ jobs:
         # install hub
         - wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
         # upgrade cocoapods
-        - gem install cocoapods -v '1.6.1'
+        - gem install cocoapods -v '1.8.0'
       script:
         - Scripts/run_prep.sh
       after_failure:
@@ -125,6 +126,6 @@ jobs:
         # install hub
         - wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
         # upgrade cocoapods
-        - gem install cocoapods -v '1.6.1'
+        - gem install cocoapods -v '1.8.0'
       script:
         - Scripts/run_release.sh

@@ -19,8 +19,8 @@ import Foundation
 import Optimizely
 
 class SamplesForAPI {
-
-    static func run(optimizely: OptimizelyClient) {
+    
+    static func checkAPIs(optimizely: OptimizelyClient) {
 
         let attributes: [String: Any] = [
             "device": "iPhone",
@@ -100,6 +100,103 @@ class SamplesForAPI {
         } catch {
             print(error)
         }
+        
+    }
+    
+    // MARK: - OptimizelyConfig
+    
+    static func checkOptimizelyConfig(optimizely: OptimizelyClient) {
+        let optConfig = try! optimizely.getOptimizelyConfig()
+        
+        print("[OptimizelyConfig] revision = \(optConfig.revision)")
+
+        //let experiments = optConfig.experimentsMap.values
+        let experimentKeys = optConfig.experimentsMap.keys
+        print("[OptimizelyConfig] all experiment keys = \(experimentKeys)")
+
+        //let features = optConfig.featureFlagsMap.values
+        let featureKeys = optConfig.featuresMap.keys
+        print("[OptimizelyConfig] all feature keys = \(featureKeys)")
+
+        // enumerate all experiments (variations, and associated variables)
+        
+        experimentKeys.forEach { expKey in
+            print("[OptimizelyConfig] experimentKey = \(expKey)")
+            
+            let experiment = optConfig.experimentsMap[expKey]!
+            
+            let variationsMap = experiment.variationsMap
+            let variationKeys = variationsMap.keys
+            
+            variationKeys.forEach { varKey in
+                print("[OptimizelyConfig]   - variationKey = \(varKey)")
+                
+                let variation = variationsMap[varKey]!
+                
+                let variablesMap = variation.variablesMap
+                let variableKeys = variablesMap.keys
+                
+                variableKeys.forEach { variableKey in
+                    let variable = variablesMap[variableKey]!
+                    
+                    print("[OptimizelyConfig]       -- variable: \(variableKey), \(variable)")
+                }
+            }
+        }
+        
+        // enumerate all features (experiments, variations, and assocated variables)
+        
+        featureKeys.forEach { featKey in
+            print("[OptimizelyConfig] featureKey = \(featKey)")
+            
+            // enumerate feature experiments
+
+            let feature = optConfig.featuresMap[featKey]!
+            
+            let experimentsMap = feature.experimentsMap
+            let experimentKeys = experimentsMap.keys
+            
+            experimentKeys.forEach { expKey in
+                print("[OptimizelyConfig]   - experimentKey = \(expKey)")
+                
+                let variationsMap = experimentsMap[expKey]!.variationsMap
+                let variationKeys = variationsMap.keys
+                
+                variationKeys.forEach { varKey in
+                    let variation = variationsMap[varKey]!
+                    print("[OptimizelyConfig]       -- variation = { key: \(varKey), id: \(variation.id), featureEnabled: \(variation.featureEnabled)")
+                    
+                    let variablesMap = variationsMap[varKey]!.variablesMap
+                    let variableKeys = variablesMap.keys
+                    
+                    variableKeys.forEach { variableKey in
+                        let variable = variablesMap[variableKey]!
+                        
+                        print("[OptimizelyConfig]           --- variable: \(variableKey), \(variable)")
+                    }
+                }
+            }
+            
+            // enumerate all feature-variables
+
+            let variablesMap = optConfig.featuresMap[featKey]!.variablesMap
+            let variableKeys = variablesMap.keys
+            
+            variableKeys.forEach { variableKey in
+                let variable = variablesMap[variableKey]!
+
+                print("[OptimizelyConfig]   - (feature)variable: \(variableKey), \(variable)")
+            }
+        }
+        
+        // listen to NotificationType.datafileChange to get updated data
+
+        _ = optimizely.notificationCenter?.addDatafileChangeNotificationListener { (_) in
+            if let newOptConfig = try? optimizely.getOptimizelyConfig() {
+                print("[OptimizelyConfig] revision = \(newOptConfig.revision)")
+            }
+        }
+
     }
 
 }

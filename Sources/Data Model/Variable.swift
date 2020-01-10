@@ -19,4 +19,36 @@ import Foundation
 struct Variable: Codable, Equatable {
     var id: String
     var value: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case value
+    }
+    
+    // for OptimizelyConfig only
+    
+    var key: String = ""
+    var type: String = "string"
+}
+    
+// MARK: - OptimizelyConfig
+  
+extension Variable: OptimizelyVariable {
+    init(id: String, value: String, key: String? = nil, type: String? = nil) {
+        self.id = id
+        self.value = value
+        if let key = key {
+            self.key = key
+        }
+        if let type = type {
+            self.type = type
+        }
+    }
+    
+    init(featureVariable: FeatureVariable) {
+        self.id = featureVariable.id
+        self.key = featureVariable.key
+        self.type = featureVariable.type
+        self.value = featureVariable.defaultValue ?? ""
+    }
 }

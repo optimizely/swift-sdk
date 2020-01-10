@@ -17,19 +17,56 @@
 import Foundation
 
 struct FeatureFlag: Codable, Equatable {
+    static func == (lhs: FeatureFlag, rhs: FeatureFlag) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     var id: String
     var key: String
     var experimentIds: [String]
     var rolloutId: String
     var variables: [FeatureVariable]
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case key
+        case experimentIds
+        case rolloutId
+        case variables
+    }
+    
+    // for OptimizelyConfig only
+
+    var experiments: [Experiment] = []
+}
+    
+// MARK: - OptimizelyConfig
+
+extension FeatureFlag: OptimizelyFeature {
+    var experimentsMap: [String: OptimizelyExperiment] {
+        var map = [String: Experiment]()
+        experiments.forEach {
+            map[$0.key] = $0
+        }
+        return map
+    }
+        
+    var variablesMap: [String: OptimizelyVariable] {
+        var map = [String: Variable]()
+        variables.forEach { featureVariable in
+            map[featureVariable.key] = Variable(id: featureVariable.id,
+                                                value: featureVariable.defaultValue ?? "",
+                                                key: featureVariable.key,
+                                                type: featureVariable.type)
+        }
+        return map
+    }
 }
 
 // MARK: - Utils
 
 extension FeatureFlag {
-    
     func getVariable(key: String) -> FeatureVariable? {
         return variables.filter { $0.key == key }.first
     }
-    
 }

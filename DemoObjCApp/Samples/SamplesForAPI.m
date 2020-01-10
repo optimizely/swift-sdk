@@ -21,7 +21,7 @@
 
 @implementation SamplesForAPI
 
-+(void)run:(OptimizelyClient*)optimizely {    
++(void)checkAPIs:(OptimizelyClient*)optimizely {
     NSDictionary *attributes = @{
                                  @"device": @"iPhone",
                                  @"lifetime": @24738388,
@@ -127,6 +127,91 @@
             NSLog(@"Error: %@", error);
         } else {
             NSLog(@"[track]");
+        }
+    }
+}
+
+// MARK: - OptimizelyConfig
+
++(void)checkOptimizelyConfig:(OptimizelyClient*)optimizely {
+    NSError *error = nil;
+    id<OptimizelyConfig> optConfig = [optimizely getOptimizelyConfigWithError:&error];
+    if (optConfig == nil) {
+        NSLog(@"Error: %@", error);
+        return;
+    }
+    
+    // enumerate all experiments (variations, and associated variables)
+    
+    NSDictionary<NSString*, id<OptimizelyExperiment>> *experimentsMap = optConfig.experimentsMap;
+    //NSArray* experiments = experimentsMap.allValues;
+    NSArray* experimentKeys = experimentsMap.allKeys;
+    NSLog(@"[OptimizelyConfig] all experiment keys = %@)", experimentKeys);
+    
+    for(NSString *expKey in experimentKeys) {
+        NSLog(@"[OptimizelyConfig] experimentKey = %@", expKey);
+        
+        NSDictionary<NSString*, id<OptimizelyVariation>> *variationsMap = experimentsMap[expKey].variationsMap;
+        NSArray *variationKeys = variationsMap.allKeys;
+        
+        for(NSString *varKey in variationKeys) {
+            NSLog(@"[OptimizelyConfig]   - variationKey = %@", varKey);
+            
+            NSDictionary<NSString*, id<OptimizelyVariable>> *variablesMap = variationsMap[varKey].variablesMap;
+            NSArray *variableKeys = variablesMap.allKeys;
+            
+            for(NSString *variableKey in variableKeys) {
+                id<OptimizelyVariable> variable = variablesMap[variableKey];
+                
+                NSLog(@"[OptimizelyConfig]       -- variable: \%@, %@", variableKey, variable);
+            }
+        }
+    }
+    
+    // enumerate all features (experiments, variations, and assocated variables)
+    
+    NSDictionary<NSString*, id<OptimizelyFeature>> *featuresMap = optConfig.featuresMap;
+    //NSArray* features = featuresMap.allValues;
+    NSArray* featureKeys = featuresMap.allKeys;
+    NSLog(@"[OptimizelyConfig] all experiment keys = %@)", featureKeys);
+    
+    for(NSString *featKey in featureKeys) {
+        NSLog(@"[OptimizelyConfig] featureKey = %@", featKey);
+        
+        // enumerate feature experiments
+        
+        NSDictionary<NSString*, id<OptimizelyExperiment>> *experimentsMap = featuresMap[featKey].experimentsMap;
+        NSArray *experimentKeys = experimentsMap.allKeys;
+        
+        for(NSString *expKey in experimentKeys) {
+            NSLog(@"[OptimizelyConfig]   - experimentKey = %@", expKey);
+            
+            NSDictionary<NSString*, id<OptimizelyVariation>> *variationsMap = experimentsMap[expKey].variationsMap;
+            NSArray *variationKeys = variationsMap.allKeys;
+            
+            for(NSString *varKey in variationKeys) {
+                NSLog(@"[OptimizelyConfig]       -- variationKey = %@", varKey);
+                
+                NSDictionary<NSString*, id<OptimizelyVariable>> *variablesMap = variationsMap[varKey].variablesMap;
+                NSArray *variableKeys = variablesMap.allKeys;
+                
+                for(NSString *variableKey in variableKeys) {
+                    id<OptimizelyVariable> variable = variablesMap[variableKey];
+                    
+                    NSLog(@"[OptimizelyConfig]           --- variable: %@, %@", variableKey, variable);
+                }
+            }
+        }
+        
+        // enumerate all feature-variables
+        
+        NSDictionary<NSString*, id<OptimizelyVariable>> *variablesMap = featuresMap[featKey].variablesMap;
+        NSArray *variableKeys = variablesMap.allKeys;
+        
+        for(NSString *variableKey in variableKeys) {
+            id<OptimizelyVariable> variable = variablesMap[variableKey];
+            
+            NSLog(@"[OptimizelyConfig]       -- variable: \%@, %@", variableKey, variable);
         }
     }
     

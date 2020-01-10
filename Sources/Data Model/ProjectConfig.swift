@@ -29,57 +29,59 @@ class ProjectConfig {
     
     lazy var experimentKeyMap: [String: Experiment] = {
         var map = [String: Experiment]()
-        allExperiments.forEach({map[$0.key] = $0})
+        allExperiments.forEach { exp in
+            map[exp.key] = exp
+        }
         return map
     }()
 
     lazy var experimentIdMap: [String: Experiment] = {
         var map = [String: Experiment]()
-        allExperiments.forEach({map[$0.id] = $0})
+        allExperiments.forEach { map[$0.id] = $0 }
         return map
     }()
 
     lazy var experimentFeatureMap: [String: [String]] = {
         var experimentFeatureMap = [String: [String]]()
-        project.featureFlags.forEach({ (ff) in
-            ff.experimentIds.forEach({
+        project.featureFlags.forEach { (ff) in
+            ff.experimentIds.forEach {
                 if var arr = experimentFeatureMap[$0] {
                     arr.append(ff.id)
                     experimentFeatureMap[$0] = arr
                 } else {
                     experimentFeatureMap[$0] = [ff.id]
                 }
-            })
-        })
+            }
+        }
         return experimentFeatureMap
     }()
     
     lazy var eventKeyMap: [String: Event] = {
         var eventKeyMap = [String: Event]()
-        project.events.forEach({eventKeyMap[$0.key] = $0 })
+        project.events.forEach { eventKeyMap[$0.key] = $0 }
         return eventKeyMap
     }()
     
     lazy var attributeKeyMap: [String: Attribute] = {
         var map = [String: Attribute]()
-        project.attributes.forEach({map[$0.key] = $0 })
+        project.attributes.forEach { map[$0.key] = $0 }
         return map
     }()
 
     lazy var featureFlagKeyMap: [String: FeatureFlag] = {
         var map = [String: FeatureFlag]()
-        project.featureFlags.forEach({map[$0.key] = $0 })
+        project.featureFlags.forEach { map[$0.key] = $0 }
         return map
     }()
 
     lazy var rolloutIdMap: [String: Rollout] = {
         var map = [String: Rollout]()
-        project.rollouts.forEach({map[$0.id] = $0 })
+        project.rollouts.forEach { map[$0.id] = $0 }
         return map
     }()
 
     lazy var allExperiments: [Experiment] = {
-        return project.experiments + project.groups.map({$0.experiments}).flatMap({$0})
+        return project.experiments + project.groups.map { $0.experiments }.flatMap({$0})
     }()
     
     // MARK: - Init

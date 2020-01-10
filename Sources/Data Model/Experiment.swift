@@ -37,10 +37,21 @@ struct Experiment: Codable, Equatable {
     var forcedVariations: [String: String]
 }
 
+// MARK: - OptimizelyConfig
+    
+extension Experiment: OptimizelyExperiment {
+    var variationsMap: [String: OptimizelyVariation] {
+        var map = [String: Variation]()
+        variations.forEach {
+            map[$0.key] = $0
+        }
+        return map
+    }
+}
+
 // MARK: - Utils
 
 extension Experiment {
-    
     func getVariation(id: String) -> Variation? {
         return variations.filter { $0.id == id }.first
     }
@@ -52,5 +63,4 @@ extension Experiment {
     var isActivated: Bool {
         return status == .running
     }
-
 }

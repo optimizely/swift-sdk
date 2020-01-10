@@ -80,6 +80,10 @@ class OTUtils {
         }
     }
     
+    static func loadJSONFile(_ filename: String) -> Data? {
+        return loadJSONDatafile(filename)
+    }
+
     static func createClearUserProfileService() -> DefaultUserProfileService {
         let ups = DefaultUserProfileService()
         ups.reset()

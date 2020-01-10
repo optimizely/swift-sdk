@@ -23,12 +23,25 @@ struct Variation: Codable, Equatable {
     var variables: [Variable]?
 }
 
+// MARK: - OptimizelyConfig
+
+extension Variation: OptimizelyVariation {
+    var variablesMap: [String: OptimizelyVariable] {
+        var map = [String: Variable]()
+        variables?.forEach({
+            // filter out invalid variables (from invalid datafiles)
+            if !($0.key.isEmpty) {
+                map[$0.key] = $0
+            }
+        })
+        return map
+    }
+}
+
 // MARK: - Utils
 
 extension Variation {
-    
     func getVariable(id: String) -> Variable? {
         return variables?.filter { $0.id == id }.first
     }
-    
 }

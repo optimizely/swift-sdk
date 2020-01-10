@@ -118,11 +118,11 @@ extension VariationTests {
     
     func testEncodeJSON() {
         let model = Variation(id: "553339214",
-                                   key: "house",
-                                   featureEnabled: true,
-                                   variables: [
-                                    Variable(id: "123450", value: "100"),
-                                    Variable(id: "123451", value: "200")])
+                              key: "house",
+                              featureEnabled: true,
+                              variables: [
+                                Variable(id: "123450", value: "100"),
+                                Variable(id: "123451", value: "200")])
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(model))
     }
     

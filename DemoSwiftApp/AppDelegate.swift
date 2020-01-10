@@ -96,9 +96,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // customization example (optional)
 
         let customLogger = CustomLogger()
-        // 30 sec interval may be too frequent. This is for demo purpose.
+        // 60 sec interval may be too frequent. This is for demo purpose.
         // This should be should be much larger (default = 10 mins).
-        let customDownloadIntervalInSecs = 30
+        let customDownloadIntervalInSecs = 60
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,
@@ -108,7 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         addListeners()
         
         // initialize SDK
-        optimizely.start { result in
+        optimizely!.start { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
@@ -116,12 +116,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Optimizely SDK initialized successfully!")
             }
             self.startWithRootViewController()
+            
+            // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
+            //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
         }
     }
     
     func addListeners() {
         // notification listeners
-
         let notificationCenter = optimizely.notificationCenter!
             
         _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, userId, attributes, decisionInfo) in
@@ -150,6 +152,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                                              userId: self.userId)
                 }
             }
+            
+            if let optConfig = try? self.optimizely.getOptimizelyConfig() {
+                print("[OptimizelyConfig] revision = \(optConfig.revision)")
+            }
         })
         
         _ = notificationCenter.addLogEventNotificationListener(logEventListener: { (url, event) in
@@ -162,8 +168,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func startWithRootViewController() {
         DispatchQueue.main.async {
             do {
-                // For sample codes for other APIs, see "Samples/SamplesForAPI.swift"
-
                 let variationKey = try self.optimizely.activate(experimentKey: self.experimentKey,
                                                            userId: self.userId,
                                                            attributes: self.attributes)

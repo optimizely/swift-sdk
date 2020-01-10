@@ -189,9 +189,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         // send notification BEFORE sending event to the server
         NotificationCenter.default.post(name: .willSendOptimizelyEvents, object: event)
 
-        let task = session.uploadTask(with: request, from: event.body) { (_, response, error) in
-            self.logger.d(response.debugDescription)
-            
+        let task = session.uploadTask(with: request, from: event.body) { (_, _, error) in            
             if let error = error {
                 completionHandler(.failure(.eventDispatchFailed(error.localizedDescription)))
             } else {

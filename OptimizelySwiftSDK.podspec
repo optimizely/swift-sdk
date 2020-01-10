@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
     :tag => "v"+s.version.to_s
   }
   s.source_files            = "Sources/**/*.swift"
-  s.swift_version           = "5.0"
+  s.swift_version           = ["5.0", "5.1"]
   s.framework               = "Foundation"
   s.requires_arc            = true
   s.xcconfig                = { 'GCC_PREPROCESSOR_DEFINITIONS' => "OPTIMIZELY_SDK_VERSION=@\\\"#{s.version}\\\"" }

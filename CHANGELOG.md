@@ -1,5 +1,26 @@
 # Optimizely Swift SDK Changelog
 
+## 3.2.0
+January 14, 2020
+
+This release includes a new API to access project configuration data and other feature enhancements. it also fixes a few small bugs.
+
+### New Features
+* OptimizelyConfig ([#274](https://github.com/optimizely/swift-sdk/pull/274)):
+    * Call `getOptimizelyConfig()` to get a snapshot copy of project configuration static data.
+    * It returns an `OptimizelyConfig` instance which includes a datafile revision number, all experiments, and feature flags mapped by their key values.
+    * For details, refer to a documention page: https://docs.developers.optimizely.com/full-stack/docs/optimizelyconfig-swift
+* Add LogEvent Notification ([#263](https://github.com/optimizely/swift-sdk/pull/263)):
+    * Register an event listner with `addLogEventNotificationListener()`
+    * The lister will be called when events are dispatched to the server.
+* Turn on "Allow app extensions only" flag in build settings to support App Extension ([#277](https://github.com/optimizely/swift-sdk/pull/277))
+
+### Bug Fixes
+- When timerInterval is set to a negative value, EventDispatcher is changed to use the default interval value for batching (instead of disabling batch). Batching is  disabled when the timerInterval is set to zero.  ([#268](https://github.com/optimizely/swift-sdk/pull/268))
+
+### Breaking Changes
+
+
 ## 3.1.0
 July 31, 2019
 

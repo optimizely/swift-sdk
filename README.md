@@ -31,7 +31,7 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 	```use_frameworks!```
-    ```pod 'OptimizelySwiftSDK', '~> 3.1.0'```
+    ```pod 'OptimizelySwiftSDK', '~> 3.2.0'```
     </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -39,7 +39,7 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.1.0```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.2.0```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 
@@ -61,7 +61,7 @@ Futher installation instructions for Carthage: https://github.com/Carthage/Carth
 
 ```
 dependencies: [
-    .package(url: "https://github.com/optimizely/swift-sdk.git", "3.1.0"..<"3.2.0")
+    .package(url: "https://github.com/optimizely/swift-sdk.git", .upToNextMinor(from: “3.2.0”))
 ]
 ```
 

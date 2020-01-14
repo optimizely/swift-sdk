@@ -92,8 +92,8 @@ jobs:
       env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
       name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'
-      name: PLATFORM='iOS Simulator' OS=9.3 NAME='iPad Air'
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.1 NAME='iPad Air'
+      name: PLATFORM='iOS Simulator' OS=11.1 NAME='iPad Air'
     - <<: *unittests
       env: SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
       name: PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'

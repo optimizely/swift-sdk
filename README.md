@@ -21,7 +21,7 @@ See the [Mobile developer documentation](https://docs.developers.optimizely.com/
 up an Optimizely X project and start using the SDK.
 
 ### Requirements
-* iOS 9.0+ / tvOS 9.0+
+* iOS 10.0+ / tvOS 10.0+
 * Swift 5+
 
 ### Installing the SDK

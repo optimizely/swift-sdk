@@ -135,47 +135,27 @@ class DefaultDatafileHandler: OPTDatafileHandler {
     func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification: ((Data) -> Void)?) {
         
         let now = Date()
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            DispatchQueue.main.async {
-                if let timer = self.timers.property?[sdkKey]?.timer, timer.isValid {
-                    return
-                }
-                
-                let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: false) { (timer) in
-                    
-                    self.performPerodicDownload(sdkKey: sdkKey,
-                                                startTime: now,
-                                                updateInterval: updateInterval,
-                                                datafileChangeNotification: datafileChangeNotification)
-                    
-                    timer.invalidate()
-                }
-                self.timers.performAtomic(atomicOperation: { (timers) in
-                    if let interval = timers[sdkKey]?.interval {
-                        timers[sdkKey] = (timer, interval)
-                    } else {
-                        timers[sdkKey] = (timer, updateInterval)
-                    }
-                })
+        DispatchQueue.main.async {
+            if let timer = self.timers.property?[sdkKey]?.timer, timer.isValid {
+                return
             }
-        } else {
-            // Fallback on earlier versions
-            DispatchQueue.main.async {
-                if let timer = self.timers.property?[sdkKey]?.timer, timer.isValid {
-                    return
-                }
-
-                let timer = Timer.scheduledTimer(timeInterval: TimeInterval(updateInterval), target: self, selector: #selector(self.timerFired(timer:)), userInfo: ["sdkKey": sdkKey, "startTime": Date(), "updateInterval": updateInterval, "datafileChangeNotification": datafileChangeNotification ?? { (data) in }], repeats: false)
+            
+            let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: false) { (timer) in
                 
-                self.timers.performAtomic(atomicOperation: { (timers) in
-                    if let interval = timers[sdkKey]?.interval {
-                        timers[sdkKey] = (timer, interval)
-                    } else {
-                        timers[sdkKey] = (timer, updateInterval)
-                    }
-                })
+                self.performPerodicDownload(sdkKey: sdkKey,
+                                            startTime: now,
+                                            updateInterval: updateInterval,
+                                            datafileChangeNotification: datafileChangeNotification)
+                
+                timer.invalidate()
             }
-
+            self.timers.performAtomic(atomicOperation: { (timers) in
+                if let interval = timers[sdkKey]?.interval {
+                    timers[sdkKey] = (timer, interval)
+                } else {
+                    timers[sdkKey] = (timer, updateInterval)
+                }
+            })
         }
     }
     

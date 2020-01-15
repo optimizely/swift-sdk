@@ -276,9 +276,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventDiscardedWhenQueueIfFull() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         eventDispatcher.maxQueueSize = 100
         
         // illegal config batchSize cannot be bigger than maxQueueSize. just for testing
@@ -336,9 +333,6 @@ extension EventDispatcherTests_Batch {
 extension EventDispatcherTests_Batch {
 
     func testFlushEvents() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         XCTAssert(eventDispatcher.batchSize == 10)
         
         dispatchMultipleEvents([(kUrlA, batchEventA),
@@ -369,9 +363,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testFlushEventsWhenBatchFails() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         XCTAssert(eventDispatcher.batchSize == 10)
 
         dispatchMultipleEvents([(kUrlA, batchEventA),
@@ -416,9 +407,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testFlushEventsWhenBatchFailsWithInvalidEvent() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-        
         XCTAssert(eventDispatcher.batchSize == 10)
         
         eventDispatcher.dispatchEvent(event: makeEventForDispatch(url: kUrlA, event: batchEventA), completionHandler: nil)
@@ -467,9 +455,6 @@ extension EventDispatcherTests_Batch {
 
     
     func testFlushEventsWhenSendEventFailsAndRecovers() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         // (1) error injected - all event send fails
         
         eventDispatcher.forceError = true
@@ -517,9 +502,6 @@ extension EventDispatcherTests_Batch {
 extension EventDispatcherTests_Batch {
 
     func testEventDispatchedOnTimer() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         eventDispatcher.timerInterval = 2
         
         eventDispatcher.exp = expectation(description: "timer")
@@ -545,9 +527,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventShouldNotBeSentUntilTimer() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-        
         eventDispatcher.timerInterval = 99999
         
         eventDispatcher.exp = expectation(description: "timer")
@@ -562,9 +541,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventDispatchedOnTimer_ZeroInterval() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         // zero-interval means that all events are sent out immediately
         eventDispatcher.timerInterval = 0
 
@@ -599,9 +575,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventBatchedOnTimer_CheckNoRedundantSend() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-        
         eventDispatcher.timerInterval = 3
 
         eventDispatcher.exp = expectation(description: "timer")
@@ -622,9 +595,6 @@ extension EventDispatcherTests_Batch {
     }
 
     func testEventBatchedAndErrorRecoveredOnTimer() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-        
         eventDispatcher.timerInterval = 5
         
         // (1) inject error
@@ -658,9 +628,6 @@ extension EventDispatcherTests_Batch {
 extension EventDispatcherTests_Batch {
     
     func testEventsFlushedOnEventQueueSizeHit() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         eventDispatcher.batchSize = 3
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
@@ -686,9 +653,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsFlushedOnRevisionChange() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
@@ -724,9 +688,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsFlushedOnProjectIdChange() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
@@ -762,9 +723,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsNotFlushedOnOtherDatafileChanges() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
@@ -801,9 +759,6 @@ extension EventDispatcherTests_Batch {
     }
     
     func testEventsNotFlushedOnFirstDatafileLoad() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
 
         eventDispatcher.batchSize = 1000        // big, won't flush
@@ -946,60 +901,11 @@ extension EventDispatcherTests_Batch {
     
 }
 
-// MARK: - iOS9 Devices
-
-extension EventDispatcherTests_Batch {
-    
-    func testFlushEventsForIOS9Only() {
-        // this tests iOS9 (no-timer)
-        if #available(iOS 10.0, tvOS 10.0, *) { return }
-        
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
-
-        eventDispatcher.dispatcher.sync {}
-        
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
-        let batch = eventDispatcher.sendRequestedEvents[0]
-        let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
-        XCTAssertEqual(batch.url.absoluteString, kUrlA)
-        XCTAssertEqual(batchedEvents.revision, kRevisionA)
-        XCTAssertEqual(batchedEvents.accountID, kAccountId)
-        XCTAssertEqual(batchedEvents.projectID, kProjectIdA)
-        XCTAssertEqual(batchedEvents.clientVersion, kClientVersion)
-        XCTAssertEqual(batchedEvents.clientName, kClientName)
-        XCTAssertEqual(batchedEvents.anonymizeIP, kAnonymizeIP)
-        XCTAssertEqual(batchedEvents.enrichDecisions, kEnrichDecision)
-        XCTAssertEqual(batchedEvents.visitors[0], visitorA)
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
-    }
-    
-    func testFlushEventsForIOS9Only_ZeroInterval() {
-        // this tests iOS9 (no-timer)
-        if #available(iOS 10.0, tvOS 10.0, *) { return }
-        
-        eventDispatcher.timerInterval = 0
-        
-        dispatchMultipleEvents([(kUrlA, batchEventA)])
-        eventDispatcher.dispatcher.sync {}
-        
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
-        let batch = eventDispatcher.sendRequestedEvents[0]
-        let batchedEvents = try! JSONDecoder().decode(BatchEvent.self, from: batch.body)
-        XCTAssertEqual(batch.url.absoluteString, kUrlA)
-        XCTAssertEqual(batchedEvents.revision, kRevisionA)
-        XCTAssertEqual(eventDispatcher.dataStore.count, 0)
-    }
-    
-}
-
 // MARK: - OptimizleyClient: Close()
 
 extension EventDispatcherTests_Batch {
     
     func testCloseForOptimizleyClient() {
-        // this tests timer-based dispatch, available for iOS 10+
-        guard #available(iOS 10.0, tvOS 10.0, *) else { return }
-        
         self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
         
         eventDispatcher.batchSize = 1000        // big, won't flush

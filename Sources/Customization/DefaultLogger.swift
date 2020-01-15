@@ -41,26 +41,20 @@ open class DefaultLogger: OPTLogger {
             return
         }
         
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            var osLogType: OSLogType
-            
-            switch level {
-            case .error: osLogType = .error
-            case .info: osLogType = .info
-            case .debug: osLogType = .debug
-            default: osLogType = .default
-            }
-            
-            os_log("[%{public}@] %{public}@", log: .optimizely, type: osLogType, level.name, message)
-            osLogUsed = true
-        } else {
-            let message = "[OPTIMIZELY][" + level.name + "] " + message
-            NSLog(message)
+        var osLogType: OSLogType
+        
+        switch level {
+        case .error: osLogType = .error
+        case .info: osLogType = .info
+        case .debug: osLogType = .debug
+        default: osLogType = .default
         }
+        
+        os_log("[%{public}@] %{public}@", log: .optimizely, type: osLogType, level.name, message)
+        osLogUsed = true
     }
 }
 
-@available(iOS 10.0, tvOS 10.0, *)
 extension OSLog {
     static let optimizely = OSLog(subsystem: "com.optimizely.swift-sdk", category: "OPTIMIZELY")
 }

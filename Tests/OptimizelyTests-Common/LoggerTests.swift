@@ -43,11 +43,7 @@ class LoggerTests: XCTestCase {
         let logger = DefaultLogger()
         logger.i("Log Message")
         
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            XCTAssertTrue(logger.osLogUsed)
-        } else {
-            XCTAssertFalse(logger.osLogUsed)
-        }
+        XCTAssertTrue(logger.osLogUsed)
     }
     
 }

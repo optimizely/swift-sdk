@@ -215,7 +215,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func startTimer() {
-        // timer is activated only for iOS10+ and non-zero interval value
+        // timer is activated only for non-zero interval value
         guard timerInterval > 0 else {
             flushEvents()
             return

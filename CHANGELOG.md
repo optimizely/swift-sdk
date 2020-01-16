@@ -1,5 +1,12 @@
 # Optimizely Swift SDK Changelog
 
+## 3.2.1
+January 16, 2020
+
+### Bug Fixes
+- Swift Package Manager (SPM) spec changed to iOS10+/tvOS10+
+
+
 ## 3.2.0
 January 15, 2020
 

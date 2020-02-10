@@ -25,7 +25,20 @@ jobs:
         - find . -type f -name '*.md' -exec awesome_bot {} \;
       notifications:
         email: false
-    
+
+    - stage: 'Lint markdown files'
+      language: node_js
+      node_js: 12
+      os: linux
+      before_install: skip
+      install:
+        - npm i -g markdown-spellcheck
+      before_script:
+        - wget --quiet https://raw.githubusercontent.com/optimizely/mdspell-config/master/.spelling
+      script:
+        - mdspell -a -n -r --en-us '**/*.md'
+      after_success: skip
+
     - &integrationtest
       stage: 'Trigger Integration Tests'
       language: minimal

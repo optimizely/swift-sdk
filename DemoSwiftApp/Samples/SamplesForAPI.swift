@@ -164,7 +164,7 @@ class SamplesForAPI {
                 
                 variationKeys.forEach { varKey in
                     let variation = variationsMap[varKey]!
-                    print("[OptimizelyConfig]       -- variation = { key: \(varKey), id: \(variation.id), featureEnabled: \(variation.featureEnabled)")
+                    print("[OptimizelyConfig]       -- variation = { key: \(varKey), id: \(variation.id), featureEnabled: \(String(describing: variation.featureEnabled))")
                     
                     let variablesMap = variationsMap[varKey]!.variablesMap
                     let variableKeys = variablesMap.keys

@@ -16,7 +16,6 @@
 
 import Foundation
 
-
 /// Objective-C interface for OptimizelyConfig
 
 @objc(OptimizelyConfig)

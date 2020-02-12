@@ -44,30 +44,5 @@ extension OptimizelyClient {
         // sdk keys without having to be created for every key.
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStrategy(strategy: .reUse).to(factory: type(of: datafileHandler).init).using(instance: datafileHandler).sdkKey(key: sdkKey))
     }
-    
-    /// Optimizely Manager
-    ///
-    /// - Parameters:
-    ///   - sdkKey: sdk key
-    ///   - logger: custom Logger
-    ///   - eventDispatcher: custom EventDispatcher (optional)
-    ///   - userProfileService: custom UserProfileService (optional)
-    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional. default = 10 * 60 secs)
-    ///   - defaultLogLevel: default log level (optional. default = .info)
-    public convenience init(sdkKey: String,
-                            logger: OPTLogger? = nil,
-                            eventDispatcher: OPTEventDispatcher? = nil,
-                            userProfileService: OPTUserProfileService? = nil,
-                            periodicDownloadInterval: Int? = nil,
-                            defaultLogLevel: OptimizelyLogLevel? = nil) {
-        let interval = periodicDownloadInterval ?? 10 * 60
-        
-        self.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)
-        
-        if let handler = datafileHandler as? DefaultDatafileHandler, interval > 0 {
-            handler.setTimer(sdkKey: sdkKey, interval: interval)
-        }
-        
-    }
 
 }

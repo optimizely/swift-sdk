@@ -57,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initializeOptimizelySDKAsynchronous() {
         optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
 
-        addListeners()
+        addNotificationListeners()
 
         optimizely.start { result in
             switch result {
@@ -78,7 +78,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
         
-        addListeners()
+        addNotificationListeners()
 
         do {
             let datafileJSON = try String(contentsOfFile: localDatafilePath, encoding: .utf8)
@@ -95,17 +95,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initializeOptimizelySDKWithCustomization() {
         // customization example (optional)
 
-        let customLogger = CustomLogger()
-        // 60 sec interval may be too frequent. This is for demo purpose.
-        // This should be should be much larger (default = 10 mins).
-        let customDownloadIntervalInSecs = 60
+        // You can enable background datafile polling by setting periodicDownloadInterval (polling is disabled by default)
+        // 60 sec interval may be too frequent. This is for demo purpose. (You can set this to nil to use the recommended value of 600 secs).
+        let downloadIntervalInSecs: Int? = 60
 
+        // You can turn off event batching with 0 timerInterval (this means that events are sent out immediately to the server instead of saving in the local queue for batching)
+        let eventDispatcher = DefaultEventDispatcher(timerInterval: 0)
+
+        // customize logger
+        let customLogger = CustomLogger()
+        
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                        logger: customLogger,
-                                       periodicDownloadInterval: customDownloadIntervalInSecs,
+                                       eventDispatcher: eventDispatcher,
+                                       periodicDownloadInterval: downloadIntervalInSecs,
                                        defaultLogLevel: logLevel)
     
-        addListeners()
+        addNotificationListeners()
         
         // initialize SDK
         optimizely!.start { result in
@@ -122,7 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func addListeners() {
+    func addNotificationListeners() {
         // notification listeners
         let notificationCenter = optimizely.notificationCenter!
             

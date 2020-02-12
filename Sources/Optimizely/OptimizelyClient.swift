@@ -71,12 +71,13 @@ open class OptimizelyClient: NSObject {
     ///   - logger: custom Logger
     ///   - eventDispatcher: custom EventDispatcher (optional)
     ///   - userProfileService: custom UserProfileService (optional)
-    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional. default = 10 * 60 secs)
+    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional). Default = 0 (polling disabled). The recommended value is 10 * 60 secs (you can also set this to nil to use the recommended value)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
+                periodicDownloadInterval: Int? = 0,
                 defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         self.sdkKey = sdkKey
@@ -95,6 +96,13 @@ open class OptimizelyClient: NSObject {
                               notificationCenter: DefaultNotificationCenter())
         
         logger.d("SDK Version: \(version)")
+
+        // set up datafile polling interval (disable when interval is 0)
+        
+        let interval = periodicDownloadInterval ?? 10 * 60
+        if interval > 0, let handler = datafileHandler as? DefaultDatafileHandler {
+            handler.setTimer(sdkKey: sdkKey, interval: interval)
+        }
     }
     
     /// Start Optimizely SDK (Asynchronous)

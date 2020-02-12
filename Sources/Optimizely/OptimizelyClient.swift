@@ -94,15 +94,16 @@ open class OptimizelyClient: NSObject {
                               datafileHandler: DefaultDatafileHandler(),
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
-        
-        logger.d("SDK Version: \(version)")
 
-        // set up datafile polling interval (disable when interval is 0)
+        // set up datafile polling interval (polling disabled when interval is 0)
+        // this setup should be done after registerServices() to support injecting test DatafileHandlers
         
         let interval = periodicDownloadInterval ?? 10 * 60
         if interval > 0, let handler = datafileHandler as? DefaultDatafileHandler {
             handler.setTimer(sdkKey: sdkKey, interval: interval)
         }
+        
+        logger.d("SDK Version: \(version)")
     }
     
     /// Start Optimizely SDK (Asynchronous)

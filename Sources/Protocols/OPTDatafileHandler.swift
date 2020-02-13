@@ -65,11 +65,6 @@ public protocol OPTDatafileHandler {
     func stopAllUpdates()
 
     /**
-     Check if periodic datafile update has been set for the given sdkKey
-     */
-    func hasPeriodUpdates(sdkKey: String) -> Bool
-
-    /**
      Save the datafile to cache.
      - Parameter sdkKey: sdkKey
      - Parameter datafile: JSON string of datafile.

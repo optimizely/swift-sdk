@@ -24,6 +24,8 @@ open class OptimizelyClient: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
+    var periodicDownloadInterval = 0
+    
     private var atomicConfig: AtomicProperty<ProjectConfig> = AtomicProperty<ProjectConfig>()
     var config: ProjectConfig? {
         get {
@@ -80,6 +82,7 @@ open class OptimizelyClient: NSObject {
                 defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         self.sdkKey = sdkKey
+        self.periodicDownloadInterval = 0  // this will be updated with the new API change
         
         super.init()
         
@@ -162,8 +165,7 @@ open class OptimizelyClient: NSObject {
         datafileHandler.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false) { result in
             // override to update always if periodic datafile polling is enabled
             // this is necessary for the case that the first cache download gets the updated datafile
-            guard doUpdateConfigOnNewDatafile ||
-                self.datafileHandler.hasPeriodUpdates(sdkKey: self.sdkKey) else { return }
+            guard doUpdateConfigOnNewDatafile || (self.periodicDownloadInterval > 0) else { return }
             
             if case .success(let data) = result, let datafile = data {
                 // new datafile came in

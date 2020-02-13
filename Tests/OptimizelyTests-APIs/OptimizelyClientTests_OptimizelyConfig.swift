@@ -63,7 +63,10 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
     func testGetOptimizelyConfig_AfterDatafileUpdate() {
         class FakeDatafileHandler: DefaultDatafileHandler {
             let datafile = OTUtils.loadJSONDatafile("optimizely_config_datafile")
-            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+            override func downloadDatafile(sdkKey: String,
+                                           returnCacheIfNoChange: Bool,
+                                           resourceTimeoutInterval: Double?,
+                                           completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 completionHandler(.success(datafile))
             }
         }

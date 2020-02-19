@@ -19,7 +19,7 @@ import Foundation
 extension OptimizelyClient {
     
     @available(swift, obsoleted: 1.0)
-    /// Optimizely Manager
+    /// OptimizelyClient init
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
@@ -32,7 +32,8 @@ extension OptimizelyClient {
                   defaultLogLevel: .info)
     }
     
-    /// Optimizely Manager
+    @available(swift, obsoleted: 1.0)
+    /// OptimizelyClient init
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key

@@ -64,7 +64,7 @@ open class OptimizelyClient: NSObject {
 
     // MARK: - Public interfaces
     
-    /// Optimizely Manager
+    /// OptimizelyClient init
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key

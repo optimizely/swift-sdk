@@ -218,7 +218,7 @@ class DatafileHandlerTests: XCTestCase {
         _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { (_) in
             count += 1
             if count == 9 {
-                optimizely.datafileHandler.stopAllUpdates()
+                optimizely.datafileHandler?.stopAllUpdates()
                 expection.fulfill()
             }
         }

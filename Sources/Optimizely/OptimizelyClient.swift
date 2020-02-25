@@ -41,9 +41,12 @@ open class OptimizelyClient: NSObject {
     
     let eventLock = DispatchQueue(label: "com.optimizely.client")
     
-    private var periodicDownloadInterval = 0
     private var isPeriodicPollingEnabled: Bool {
-        return periodicDownloadInterval > 0
+        if let handler = datafileHandler as? DefaultDatafileHandler {
+            return handler.hasPeriodUpdates(sdkKey: sdkKey)
+        } else {
+            return false
+        }
     }
 
     // MARK: - Customizable Services
@@ -60,8 +63,8 @@ open class OptimizelyClient: NSObject {
         return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
     }
     
-    public var datafileHandler: OPTDatafileHandler {
-        return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
+    public var datafileHandler: OPTDatafileHandler? {
+        return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
     }
     
     public var notificationCenter: OPTNotificationCenter? {
@@ -112,7 +115,7 @@ open class OptimizelyClient: NSObject {
     ///   - resourceTimeout: timeout for datafile download (optional)
     ///   - completion: callback when initialization is completed
     public func start(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)? = nil) {
-        datafileHandler.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: true) { result in
+        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: true) { result in
             switch result {
             case .success(let datafile):
                 guard let datafile = datafile else {
@@ -149,14 +152,16 @@ open class OptimizelyClient: NSObject {
     ///   - datafile: This datafile will be used when cached copy is not available (fresh start)
     ///             A cached copy from previous download is used if it's available.
     ///             The datafile will be updated from the server in the background thread.
-    ///   - doUpdateConfigOnNewDatafile: When a new datafile is fetched from the server in the background thread, the SDK will be updated with the new datafile immediately if this value is set to true. When it's set to false (default), the new datafile is cached and will be used when the SDK is started again.
+    ///   - doUpdateConfigOnNewDatafile: When a new datafile is fetched from the server in the background thread,
+    ///             the SDK will be updated with the new datafile immediately if this value is set to true.
+    ///             When it's set to false (default), the new datafile is cached and will be used when the SDK is started again.
     ///   - doFetchDatafileBackground: This is for debugging purposes when
     ///             you don't want to download the datafile.  In practice, you should allow the
     ///             background thread to update the cache copy (optional)
     public func start(datafile: Data,
                       doUpdateConfigOnNewDatafile: Bool = false,
                       doFetchDatafileBackground: Bool = true) throws {
-        let cachedDatafile = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey)
+        let cachedDatafile = datafileHandler?.loadSavedDatafile(sdkKey: self.sdkKey)
         let selectedDatafile = cachedDatafile ?? datafile
         
         try configSDK(datafile: selectedDatafile)
@@ -165,7 +170,7 @@ open class OptimizelyClient: NSObject {
         
         if !doFetchDatafileBackground { return }
         
-        datafileHandler.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false) { result in
+        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false) { result in
             // override to update always if periodic datafile polling is enabled
             // this is necessary for the case that the first cache download gets the updated datafile
             guard doUpdateConfigOnNewDatafile || self.isPeriodicPollingEnabled else { return }
@@ -181,7 +186,7 @@ open class OptimizelyClient: NSObject {
         do {
             self.config = try ProjectConfig(datafile: datafile)
 
-            datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
+            datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
                 self.updateConfigFromBackgroundFetch(data: data)
             }
@@ -840,7 +845,7 @@ extension OptimizelyClient {
 extension OptimizelyClient {
     
     public func close() {
-        datafileHandler.stopUpdates(sdkKey: sdkKey)
+        datafileHandler?.stopUpdates(sdkKey: sdkKey)
         eventLock.sync {}
         eventDispatcher?.close()
     }

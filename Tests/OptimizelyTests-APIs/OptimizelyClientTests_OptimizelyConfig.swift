@@ -84,14 +84,13 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let optimizely = OptimizelyClient(sdkKey: badUniqueSdkKey, periodicDownloadInterval: 1)
         
         var exp: XCTestExpectation? = expectation(description: "datafile update event")
-        _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { (_) in
+        _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { _ in
             optimizelyConfig = try! optimizely.getOptimizelyConfig()
             exp?.fulfill()
-            exp = nil // disregard following update notification
         }
         
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
+        try! optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
         
         // before datafile remote updated ("empty_datafile")
         
@@ -99,7 +98,8 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         XCTAssert(optimizelyConfig!.revision == "100")
         
         wait(for: [exp!], timeout: 10)
-        
+        exp = nil // disregard following update notification
+
         // after datafile remote updated ("optimizely_config_datafile")
         XCTAssert(optimizelyConfig!.revision == "9")
     }

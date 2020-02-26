@@ -592,7 +592,6 @@ class FakeManager: OptimizelyClient {
                   logger: OPTLogger? = nil,
                   eventDispatcher: OPTEventDispatcher? = nil,
                   userProfileService: OPTUserProfileService? = nil,
-                  periodicDownloadInterval: Int? = 0,
                   defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)

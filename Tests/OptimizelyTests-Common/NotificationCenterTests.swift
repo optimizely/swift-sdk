@@ -241,13 +241,27 @@ class NotificationCenterTests: XCTestCase {
         XCTAssertTrue(called)
     }
     
+    func testNotificationCenterThreadSafe() {
+        let exp = expectation(description: "x")
+        exp.expectedFulfillmentCount = 3
 
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(0)) {
+            _ = self.addActivateListener()
+            for _ in 0..<100000 { self.sendActivate() }
+            exp.fulfill()
         }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(100)) {
+            _ = self.addTrackListener()
+            for _ in 0..<100000 { self.sendTrack() }
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(200)) {
+            _ = self.addDecisionListener()
+            for _ in 0..<100000 { self.sendDecision() }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 3.0)
+        XCTAssert(true)
     }
-
 }

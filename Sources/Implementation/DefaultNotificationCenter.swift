@@ -18,8 +18,18 @@ import Foundation
 
 public class DefaultNotificationCenter: OPTNotificationCenter {
     public var notificationId: Int = 1
-    var notificationListeners = [Int: (Int, GenericListener)]()
     
+    typealias NotificationListeners = [Int: (Int, GenericListener)]
+    private var atomicNotificationListeners = AtomicProperty(property: NotificationListeners())
+    var notificationListeners: NotificationListeners {
+        get {
+            return atomicNotificationListeners.property!
+        }
+        set {
+            atomicNotificationListeners.property = newValue
+        }
+    }    
+        
     var observerLogEvent: NSObjectProtocol?
 
     required public init() {

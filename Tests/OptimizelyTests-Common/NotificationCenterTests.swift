@@ -269,8 +269,59 @@ class NotificationCenterTests: XCTestCase {
             exp.fulfill()
         }
 
-        
-        wait(for: [exp], timeout: 3.0)
-        XCTAssertEqual(notificationCenter.notificationListeners.count, numConcurrency)
+        wait(for: [exp], timeout: 10.0)
+        XCTAssertEqual(notificationCenter.notificationListeners.notificationId - 1, numConcurrency)
     }
+    
+    func testNotificationCenterThreadSafe_Remove() {
+        let numConcurrency = 5
+        
+        let exp = expectation(description: "x")
+        exp.expectedFulfillmentCount = numConcurrency
+
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(0)) {
+            _ = self.addActivateListener()
+            for _ in 0..<1000 { self.sendActivate() }
+            self.notificationCenter.clearNotificationListeners(type: .activate)
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
+            _ = self.addTrackListener()
+            for _ in 0..<1000 { self.sendTrack() }
+            self.notificationCenter.clearNotificationListeners(type: .track)
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(20)) {
+            _ = self.addDecisionListener()!
+            for _ in 0..<1000 { self.sendDecision() }
+            self.notificationCenter.clearNotificationListeners(type: .decision)
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(100)) {
+            let id = self.addDatafileChangeListener()!
+            for _ in 0..<1000 { self.sendDatafileChange() }
+            self.notificationCenter.removeNotificationListener(notificationId: id)
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(200)) {
+            let id = self.addLogEventListener()!
+            for _ in 0..<1000 { self.sendLogEvent() }
+            self.notificationCenter.removeNotificationListener(notificationId: id)
+            exp.fulfill()
+        }
+
+        
+        wait(for: [exp], timeout: 10.0)
+        
+        self.called = false
+        
+        sendActivate()
+        sendTrack()
+        sendDecision()
+        sendDatafileChange()
+        sendLogEvent()
+
+        XCTAssertFalse(called)
+    }
+
 }

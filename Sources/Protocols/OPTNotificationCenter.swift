@@ -18,7 +18,8 @@ import Foundation
 
 /// Enum representing notification types.
 @objc public enum NotificationType: Int {
-    case activate = 1
+    case generic = 0
+    case activate
     case track
     case datafileChange
     case decision

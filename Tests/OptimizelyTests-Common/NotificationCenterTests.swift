@@ -252,25 +252,27 @@ class NotificationCenterTests: XCTestCase {
             for _ in 0..<100000 { self.sendActivate() }
             exp.fulfill()
         }
-        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
-            _ = self.addTrackListener()
-            exp.fulfill()
-        }
-        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(20)) {
-            _ = self.addDecisionListener()
-            exp.fulfill()
-        }
         DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(100)) {
-            _ = self.addDatafileChangeListener()
+            _ = self.addTrackListener()
+            for _ in 0..<10000 { self.sendTrack() }
             exp.fulfill()
         }
         DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(200)) {
+            _ = self.addDecisionListener()
+            for _ in 0..<1000 { self.sendDecision() }
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
+            _ = self.addDatafileChangeListener()
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(20)) {
             _ = self.addLogEventListener()
             exp.fulfill()
         }
 
         wait(for: [exp], timeout: 10.0)
-        XCTAssertEqual(notificationCenter.notificationListeners.notificationId - 1, numConcurrency)
+        XCTAssertEqual(notificationCenter.notificationId - 1, numConcurrency)
     }
     
     func testNotificationCenterThreadSafe_Remove() {
@@ -281,36 +283,35 @@ class NotificationCenterTests: XCTestCase {
 
         DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(0)) {
             _ = self.addActivateListener()
-            for _ in 0..<1000 { self.sendActivate() }
+            for _ in 0..<100 { self.sendActivate() }
             self.notificationCenter.clearNotificationListeners(type: .activate)
             exp.fulfill()
         }
         DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
             _ = self.addTrackListener()
-            for _ in 0..<1000 { self.sendTrack() }
+            for _ in 0..<100 { self.sendTrack() }
             self.notificationCenter.clearNotificationListeners(type: .track)
             exp.fulfill()
         }
-        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(20)) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
             _ = self.addDecisionListener()!
-            for _ in 0..<1000 { self.sendDecision() }
+            for _ in 0..<100 { self.sendDecision() }
             self.notificationCenter.clearNotificationListeners(type: .decision)
             exp.fulfill()
         }
-        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(100)) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
             let id = self.addDatafileChangeListener()!
-            for _ in 0..<1000 { self.sendDatafileChange() }
+            for _ in 0..<100 { self.sendDatafileChange() }
             self.notificationCenter.removeNotificationListener(notificationId: id)
             exp.fulfill()
         }
-        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(200)) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
             let id = self.addLogEventListener()!
-            for _ in 0..<1000 { self.sendLogEvent() }
+            for _ in 0..<100 { self.sendLogEvent() }
             self.notificationCenter.removeNotificationListener(notificationId: id)
             exp.fulfill()
         }
 
-        
         wait(for: [exp], timeout: 10.0)
         
         self.called = false
@@ -323,5 +324,43 @@ class NotificationCenterTests: XCTestCase {
 
         XCTAssertFalse(called)
     }
+    
+    func testNotificationCenterThreadSafe_AddRemove() {
+        let numConcurrency = 3
+        
+        let exp = expectation(description: "x")
+        exp.expectedFulfillmentCount = numConcurrency
 
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(0)) {
+            for _ in 0..<1000 {
+                let id = self.addActivateListener()!
+                self.notificationCenter.removeNotificationListener(notificationId: id)
+            }
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
+            for _ in 0..<1000 {
+                let id = self.addTrackListener()!
+                self.notificationCenter.removeNotificationListener(notificationId: id)
+            }
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
+            for _ in 0..<1000 {
+                let id = self.addDecisionListener()!
+                self.notificationCenter.removeNotificationListener(notificationId: id)
+            }
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 10.0)
+
+        self.called = false
+        
+        sendActivate()
+        sendTrack()
+
+        XCTAssertFalse(called)
+    }
+    
 }

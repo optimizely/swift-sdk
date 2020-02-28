@@ -242,26 +242,35 @@ class NotificationCenterTests: XCTestCase {
     }
     
     func testNotificationCenterThreadSafe() {
+        let numConcurrency = 5
+        
         let exp = expectation(description: "x")
-        exp.expectedFulfillmentCount = 3
+        exp.expectedFulfillmentCount = numConcurrency
 
         DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(0)) {
             _ = self.addActivateListener()
             for _ in 0..<100000 { self.sendActivate() }
             exp.fulfill()
         }
-        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(100)) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(10)) {
             _ = self.addTrackListener()
-            for _ in 0..<100000 { self.sendTrack() }
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(20)) {
+            _ = self.addDecisionListener()
+            exp.fulfill()
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(100)) {
+            _ = self.addDatafileChangeListener()
             exp.fulfill()
         }
         DispatchQueue.global().asyncAfter(deadline: .now() + .microseconds(200)) {
-            _ = self.addDecisionListener()
-            for _ in 0..<100000 { self.sendDecision() }
+            _ = self.addLogEventListener()
             exp.fulfill()
         }
+
         
         wait(for: [exp], timeout: 3.0)
-        XCTAssert(true)
+        XCTAssertEqual(notificationCenter.notificationListeners.count, numConcurrency)
     }
 }

@@ -159,19 +159,6 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         }
     }
     
-    @objc
-    func timerFired(timer: Timer) {
-        if let info = timer.userInfo as? [String: Any],
-            let sdkKey = info["sdkKey"] as? String,
-            let updateInterval = info["updateInterval"] as? Int,
-            let startDate = info["startTime"] as? Date,
-            let datafileChangeNotification = info["datafileChangeNotification"] as? ((Data) -> Void) {
-            self.performPerodicDownload(sdkKey: sdkKey, startTime: startDate, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
-        }
-        timer.invalidate()
-
-    }
-    
     func hasPeriodUpdates(sdkKey: String) -> Bool {
         var restart = true
         self.timers.performAtomic(atomicOperation: { (timers) in

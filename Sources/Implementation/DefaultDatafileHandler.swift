@@ -200,14 +200,9 @@ class DefaultDatafileHandler: OPTDatafileHandler {
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
                 let interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
-                let actualDiff = (Int(abs(startTime.timeIntervalSinceNow)) - updateInterval)
-                var nextInterval = interval
-                if actualDiff > 0 {
-                    nextInterval -= actualDiff
-                }
                 
-                self.logger.d("next datafile download is \(nextInterval) seconds \(Date())")
-                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: nextInterval, datafileChangeNotification: datafileChangeNotification)
+                self.logger.d("next datafile download is \(interval) seconds \(Date())")
+                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: interval, datafileChangeNotification: datafileChangeNotification)
             }
         }
     }

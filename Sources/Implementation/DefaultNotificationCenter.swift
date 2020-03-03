@@ -20,7 +20,7 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     private var _notificationId = AtomicProperty<Int>()
     public var notificationId: Int {
         get {
-            _notificationId.property!
+            return _notificationId.property!
         }
         set {
             _notificationId.property = newValue

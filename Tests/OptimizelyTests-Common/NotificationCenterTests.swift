@@ -214,7 +214,55 @@ class NotificationCenterTests: XCTestCase {
         
         XCTAssertTrue(called)
     }
-    
+
+    func testNotificationCenterThreadedAddRemoveDatafileChange() {
+        called = false
+        let listeners = AtomicProperty<[Int]>()
+        listeners.property = [Int]()
+        
+        let queue = DispatchQueue(label: "queue")
+        
+        DispatchQueue.global().async {
+            for _ in 0...99 {
+                let id = self.addDatafileChangeListener()
+                listeners.property?.append(id!)
+                Thread.sleep(forTimeInterval: 0.1)
+            }
+        }
+        
+        queue.async {
+            for _ in 0...99 {
+                self.sendDatafileChange()
+                Thread.sleep(forTimeInterval: 0.1)
+            }
+        }
+        
+        let otherQueue = DispatchQueue(label: "other")
+        
+        otherQueue.async {
+            while listeners.property!.count > 0 {
+                self.notificationCenter.removeNotificationListener(notificationId: (listeners.property?.remove(at: 0))!)
+                Thread.sleep(forTimeInterval: 0.1)
+            }
+        }
+        
+        let id = self.addDatafileChangeListener()
+
+        notificationCenter.removeNotificationListener(notificationId: id!)
+        
+        sendDatafileChange()
+        
+        Thread.sleep(forTimeInterval: 2)
+        
+        _ = self.addDatafileChangeListener()
+
+        sendDatafileChange()
+        
+        XCTAssertTrue(called)
+
+        notificationCenter.clearNotificationListeners(type: .datafileChange)
+    }
+
     func testNotificationCenterAddRemoveLogEvent() {
         called = false
         

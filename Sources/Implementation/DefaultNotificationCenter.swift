@@ -17,12 +17,31 @@
 import Foundation
 
 public class DefaultNotificationCenter: OPTNotificationCenter {
-    public var notificationId: Int = 1
-    var notificationListeners = [Int: (Int, GenericListener)]()
+    private var _notificationId = AtomicProperty<Int>()
+    public var notificationId: Int {
+        get {
+            _notificationId.property!
+        }
+        set {
+            _notificationId.property = newValue
+        }
+    }
+    typealias NotificationListeners = [Int: (Int, GenericListener)]
+    private var _notificationListeners = AtomicProperty<NotificationListeners>()
+    var notificationListeners:[Int: (Int, GenericListener)] {
+        get {
+            return _notificationListeners.property!
+        }
+        set {
+            _notificationListeners.property = newValue
+        }
+    }
     
     var observerLogEvent: NSObjectProtocol?
 
     required public init() {
+        notificationId = 1
+        notificationListeners = NotificationListeners()
         addInternalNotificationListners()
     }
     
@@ -152,8 +171,9 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     }
     
     public func sendNotifications(type: Int, args: [Any?]) {
-        for values in notificationListeners.values where values.0 == type {
-            values.1(args)
+        let values = notificationListeners.values
+        for value in values where value.0 == type {
+            value.1(args)
         }
     }
     

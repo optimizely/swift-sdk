@@ -198,9 +198,9 @@ class NotificationListeners {
     func add(type: NotificationType, listener: @escaping GenericListener) -> Int? {
         var returnId = 0
         lock.sync {
-            listeners[notificationId] = (type.rawValue, listener)
-            returnId = notificationId
-            notificationId = returnId + 1
+            returnId = self.notificationId
+            listeners[returnId] = (type.rawValue, listener)
+            self.notificationId = returnId + 1
         }
         return returnId
     }

@@ -271,7 +271,7 @@ class NotificationCenterTests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 10.0)
+        wait(for: [exp], timeout: 30.0)
         XCTAssertEqual(notificationCenter.notificationId - 1, numConcurrency)
     }
     
@@ -312,7 +312,7 @@ class NotificationCenterTests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 10.0)
+        wait(for: [exp], timeout: 30.0)
         
         self.called = false
         
@@ -353,7 +353,7 @@ class NotificationCenterTests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 10.0)
+        wait(for: [exp], timeout: 30.0)
 
         self.called = false
         

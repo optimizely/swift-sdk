@@ -21,10 +21,10 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     
     public var notificationId: Int {
         get {
-            return notificationListeners.notificationId
+            return notificationListeners.getNotificationId()
         }
         set {
-            notificationListeners.notificationId = newValue
+            notificationListeners.setNotificationId(newValue)
         }
     }
         
@@ -184,14 +184,19 @@ class NotificationListeners {
     var listeners = [Int: (Int, GenericListener)]()
     let lock = DispatchQueue(label: "notification")
     
+    private var notificationId = 0
     
-    private var id = AtomicProperty(property: 1)
-    var notificationId: Int {
-        get {
-            return id.property!
+    func getNotificationId() -> Int {
+        var returnId = 0
+        lock.sync {
+            returnId = self.notificationId
         }
-        set {
-            id.property = newValue
+        return returnId
+    }
+    
+    func setNotificationId(_ value: Int) {
+        lock.async {
+            self.notificationId = value
         }
     }
     

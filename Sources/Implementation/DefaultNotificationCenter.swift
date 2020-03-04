@@ -184,7 +184,7 @@ class NotificationListeners {
     var listeners = [Int: (Int, GenericListener)]()
     let lock = DispatchQueue(label: "notification")
     
-    private var notificationId = 0
+    private var notificationId = 1
     
     func getNotificationId() -> Int {
         var returnId = 0

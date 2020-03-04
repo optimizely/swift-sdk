@@ -18,7 +18,7 @@ import XCTest
 
 class NotificationCenterTests: XCTestCase {
     
-    let notificationCenter: DefaultNotificationCenter = DefaultNotificationCenter()
+    var notificationCenter: DefaultNotificationCenter!
     var experiment: Experiment?
     var variation: Variation?
     var called = false
@@ -38,7 +38,7 @@ class NotificationCenterTests: XCTestCase {
                                             "forcedVariations": ["12345": "1234567890"]]
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+         super.setUp()
         
         let data: [String: Any] = NotificationCenterTests.sampleExperiment
         
@@ -46,12 +46,14 @@ class NotificationCenterTests: XCTestCase {
         
         variation = experiment!.variations[0]
 
+        notificationCenter = DefaultNotificationCenter()
         notificationCenter.clearAllNotificationListeners()
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         notificationCenter.clearAllNotificationListeners()
+        notificationCenter = nil  // deinit immediately after each test
+        super.tearDown()
     }
     
     func sendActivate() {
@@ -271,7 +273,7 @@ class NotificationCenterTests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 30.0)
+        wait(for: [exp], timeout: 10.0)
         XCTAssertEqual(notificationCenter.notificationId - 1, numConcurrency)
     }
     
@@ -312,7 +314,7 @@ class NotificationCenterTests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 30.0)
+        wait(for: [exp], timeout: 10.0)
         
         self.called = false
         
@@ -353,7 +355,7 @@ class NotificationCenterTests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 30.0)
+        wait(for: [exp], timeout: 10.0)
 
         self.called = false
         

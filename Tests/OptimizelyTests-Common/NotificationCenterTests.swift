@@ -325,7 +325,7 @@ class NotificationCenterTests: XCTestCase {
         XCTAssertFalse(called)
     }
     
-    func testNotificationCenterThreadSafe_AddRemove() {
+    func testNotificationCenterThreadSafe_XXXAddRemove() {
         let numConcurrency = 3
         
         let exp = expectation(description: "x")

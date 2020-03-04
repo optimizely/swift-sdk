@@ -185,18 +185,15 @@ class NotificationListeners {
     let lock = DispatchQueue(label: "notification")
     
     
-   // private var id = AtomicProperty(property: 1)
-//    var notificationId: Int {
-//        get {
-//            return id.property!
-//        }
-//        set {
-//            id.property = newValue
-//        }
-//    }
-    var notificationId = 1
-    
-    
+    private var id = AtomicProperty(property: 1)
+    var notificationId: Int {
+        get {
+            return id.property!
+        }
+        set {
+            id.property = newValue
+        }
+    }
     
     func add(type: NotificationType, listener: @escaping GenericListener) -> Int? {
         var returnId = 0

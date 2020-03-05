@@ -174,6 +174,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                                 startTime: Date,
                                 updateInterval: Int,
                                 datafileChangeNotification: ((Data) -> Void)?) {
+        let beginDownloading = Date()
         self.downloadDatafile(sdkKey: sdkKey) { (result) in
             switch result {
             case .success(let data):
@@ -186,7 +187,15 @@ class DefaultDatafileHandler: OPTDatafileHandler {
             }
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
-                let interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
+                // adjust the next fire time so that events will be fired at fixed interval regardless of the download latency
+                // if latency is too big (or returning from background mode), fire the next event immediately once
+                
+                var interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
+                let delay = Int(Date().timeIntervalSince(beginDownloading))
+                interval -= delay
+                if interval < 0 {
+                    interval = 0
+                }
                 
                 self.logger.d("next datafile download is \(interval) seconds \(Date())")
                 self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: interval, datafileChangeNotification: datafileChangeNotification)

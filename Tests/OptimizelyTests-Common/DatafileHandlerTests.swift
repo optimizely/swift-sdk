@@ -217,7 +217,7 @@ class DatafileHandlerTests: XCTestCase {
             count += 1
             
             // check if delayed polling not accumulated and completed back-to-back
-            if count == idleTime {
+            if count == 5 {
                 handler.stopPeriodicUpdates()
                 expectation.fulfill()
                 seconds = Int(abs(now.timeIntervalSinceNow))
@@ -226,8 +226,40 @@ class DatafileHandlerTests: XCTestCase {
         
         wait(for: [expectation], timeout: 30)
 
-        XCTAssert(seconds >= 2*idleTime)
+        XCTAssert(seconds >= idleTime + 3)   // 3 instead of 5 for tolerating timer inaccuracy
     }
+    
+    func testPeriodicDownload_PollingPeriodAdjustedByDelay() {
+        class FakeDatafileHandler: DefaultDatafileHandler {
+            let data = Data()
+            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                sleep(1)
+                completionHandler(.success(data))
+            }
+        }
+        
+        let expectation = XCTestExpectation(description: "polling")
+        let handler = FakeDatafileHandler()
+        let now = Date()
+        
+        let updateInterval = 2
+        let maxCount = 5
+        var count = 0
+        var seconds = 0
+        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: updateInterval) { _ in
+            count += 1
+            
+            if count == maxCount {
+                handler.stopPeriodicUpdates()
+                expectation.fulfill()
+                seconds = Int(abs(now.timeIntervalSinceNow))
+            }
+        }
+        
+        wait(for: [expectation], timeout: 30)
+        XCTAssert(seconds <= updateInterval * (maxCount + 1))
+    }
+
 
     func testPeriodicDownloadWithOptimizlyClient() {
         class FakeDatafileHandler: DefaultDatafileHandler {
@@ -258,7 +290,6 @@ class DatafileHandlerTests: XCTestCase {
         wait(for: [expection], timeout: 10)
         
         XCTAssert(count == 9)
-        
     }
 
     func testDownloadTimeout() {

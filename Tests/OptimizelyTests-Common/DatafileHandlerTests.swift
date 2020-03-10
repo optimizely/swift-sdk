@@ -198,7 +198,10 @@ class DatafileHandlerTests: XCTestCase {
     func testPeriodicDownload_PollingShouldNotBeAccumulatedWhileInBackground() {
         class FakeDatafileHandler: DefaultDatafileHandler {
             let data = Data()
-            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+            override func downloadDatafile(sdkKey: String,
+                                           returnCacheIfNoChange: Bool,
+                                           resourceTimeoutInterval: Double?,
+                                           completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 completionHandler(.success(data))
             }
         }
@@ -235,7 +238,10 @@ class DatafileHandlerTests: XCTestCase {
     func testPeriodicDownload_PollingPeriodAdjustedByDelay() {
         class FakeDatafileHandler: DefaultDatafileHandler {
             let data = Data()
-            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+            override func downloadDatafile(sdkKey: String,
+                                           returnCacheIfNoChange: Bool,
+                                           resourceTimeoutInterval: Double?,
+                                           completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 sleep(1)
                 completionHandler(.success(data))
             }

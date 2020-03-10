@@ -17,33 +17,60 @@
 import Foundation
 
 public class DefaultNotificationCenter: OPTNotificationCenter {
-    public var notificationId: Int = 1
-    var notificationListeners = [Int: (Int, GenericListener)]()
+    public var notificationId: Int {
+        get {
+            return notifications.notificationId
+        }
+        set {
+            // don't do it.
+        }
+    }
+    
+    class Notifications {
+        var notificationId: Int = 1
+        var notificationListeners = [Int: (Int, GenericListener)]()
+        func incrementNotificationId() -> Int {
+            let returnValue = notificationId
+            notificationId += 1
+            return returnValue
+        }
+    }
+    
+    private var _listeners : AtomicProperty<Notifications> = AtomicProperty<Notifications>()
+    
+    var notifications : Notifications {
+        get {
+            return _listeners.property!
+        }
+        set {
+            _listeners.property = newValue;
+        }
+    }
     
     var observerLogEvent: NSObjectProtocol?
 
     required public init() {
         addInternalNotificationListners()
+        notifications = Notifications()
     }
     
     deinit {
         removeInternalNotificationListners()
     }
     
-    internal func incrementNotificationId() -> Int {
-        let returnValue = notificationId
-        notificationId += 1
-        return returnValue
-    }
-
     public func addGenericNotificationListener(notificationType: Int, listener: @escaping GenericListener) -> Int? {
-        notificationListeners[notificationId] = (notificationType, listener)
         
-        return incrementNotificationId()
+        var id = 0
+        _listeners.performAtomic { (notifications) in
+            notifications.notificationListeners[notifications.notificationId] = (notificationType, listener)
+            
+            id = notifications.incrementNotificationId()
+        }
+        return id
     }
     
     public func addActivateNotificationListener(activateListener: @escaping (OptimizelyExperimentData, String, OptimizelyAttributes?, OptimizelyVariationData, [String: Any]) -> Void) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.activate.rawValue, { (args: Any...) in
+        let listener = { (args: Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
             }
@@ -62,13 +89,13 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
                 
                 activateListener(experimentData, userId, attributes, variationData, event)
             }
-        })
+        }
         
-        return incrementNotificationId()
+        return addGenericNotificationListener(notificationType: NotificationType.activate.rawValue, listener: listener)
     }
     
     public func addTrackNotificationListener(trackListener: @escaping (String, String, OptimizelyAttributes?, [String: Any]?, [String: Any]) -> Void) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.track.rawValue, { (args: Any...) in
+        let listener = { (args: Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
             }
@@ -82,13 +109,13 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
                 let event = myArgs[4] as? [String: Any] {
                 trackListener(eventKey, userId, attributes, eventTags, event)
             }
-        })
+        }
         
-        return incrementNotificationId()
+        return addGenericNotificationListener(notificationType: NotificationType.track.rawValue, listener: listener)
     }
     
     public func addDecisionNotificationListener(decisionListener: @escaping (String, String, OptimizelyAttributes?, [String: Any]) -> Void) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.decision.rawValue, { (args: Any...) in
+        let listener = { (args: Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
             }
@@ -101,13 +128,13 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
                 let decisionInfo = myArgs[3] as? [String: Any] {
                 decisionListener(type, userId, attributes, decisionInfo)
             }
-        })
+        }
         
-        return incrementNotificationId()
+        return addGenericNotificationListener(notificationType: NotificationType.decision.rawValue, listener: listener)
     }
 
     public func addDatafileChangeNotificationListener(datafileListener: @escaping DatafileChangeListener) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.datafileChange.rawValue, { (args: Any...) in
+        let listener = { (args: Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
             }
@@ -117,13 +144,13 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
             if let data = myArgs[0] as? Data {
                 datafileListener(data)
             }
-        })
+        }
         
-        return incrementNotificationId()
+        return addGenericNotificationListener(notificationType: NotificationType.datafileChange.rawValue, listener: listener)
     }
     
     public func addLogEventNotificationListener(logEventListener: @escaping LogEventListener) -> Int? {
-        notificationListeners[notificationId] = (NotificationType.logEvent.rawValue, { (args: Any...) in
+        let listener = { (args: Any...) in
             guard let myArgs = args[0] as? [Any?] else {
                 return
             }
@@ -134,26 +161,37 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
                 let event = myArgs[1] as? [String: Any] {
                 logEventListener(url, event)
             }
-        })
+        }
         
-        return incrementNotificationId()
+        return addGenericNotificationListener(notificationType: NotificationType.logEvent.rawValue, listener: listener)
     }
     
     public func removeNotificationListener(notificationId: Int) {
-        self.notificationListeners.removeValue(forKey: notificationId)
+        _listeners.performAtomic { (listeners) in
+            listeners.notificationListeners.removeValue(forKey: notificationId)
+        }
     }
     
     public func clearNotificationListeners(type: NotificationType) {
-        self.notificationListeners = self.notificationListeners.filter({$1.0 != type.rawValue})
+        _listeners.performAtomic { (listeners) in
+            listeners.notificationListeners = listeners.notificationListeners.filter({$1.0 != type.rawValue})
+        }
     }
     
     public func clearAllNotificationListeners() {
-        self.notificationListeners.removeAll()
+        _listeners.performAtomic { (listeners) in
+            listeners.notificationListeners.removeAll()
+        }
     }
     
     public func sendNotifications(type: Int, args: [Any?]) {
-        for values in notificationListeners.values where values.0 == type {
-            values.1(args)
+        var selected = [GenericListener]()
+        _listeners.performAtomic { (listeners) in
+            selected = listeners.notificationListeners.values.filter{ $0.0 == type }.map{ $0.1 }
+        }
+
+        for listener in selected {
+            listener(args)
         }
     }
     

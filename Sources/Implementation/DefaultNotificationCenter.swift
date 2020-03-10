@@ -185,10 +185,13 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     }
     
     public func sendNotifications(type: Int, args: [Any?]) {
+        var selected = [GenericListener]()
         _listeners.performAtomic { (listeners) in
-            for values in listeners.notificationListeners.values where values.0 == type {
-                values.1(args)
-            }
+            selected = listeners.notificationListeners.values.filter{ $0.0 == type }.map{ $0.1 }
+        }
+
+        for listener in selected {
+            listener(args)
         }
     }
     

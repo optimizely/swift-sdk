@@ -971,16 +971,13 @@ extension EventDispatcherTests_Batch {
 
 extension EventDispatcherTests_Batch {
     
-    func testRandomEvents_10() {
+    func testRandomEvents() {
         runRandomEventsTest(numEvents: 9, eventDispatcher: eventDispatcher, tc: self)
     }
     
-    func testRandomEvents_100() {
-        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 0)
-    }
-    
-    func testRandomEventsWithInvalid_100() {
-        runRandomEventsTest(numEvents: 111, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: 10)
+    func testRandomEventsWithInvalid() {
+        let numEvents = 21
+        runRandomEventsTest(numEvents: numEvents, eventDispatcher: eventDispatcher, tc: self, numInvalidEvents: Int(Float(numEvents) * 0.1))
     }
 
     // Utils

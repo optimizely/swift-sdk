@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2019, Optimizely, Inc. and contributors                        *
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -19,7 +19,7 @@ import Foundation
 extension OptimizelyClient {
     
     @available(swift, obsoleted: 1.0)
-    /// Optimizely Manager
+    /// OptimizelyClient init
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
@@ -28,18 +28,19 @@ extension OptimizelyClient {
                   logger: nil,
                   eventDispatcher: nil,
                   userProfileService: nil,
-                  periodicDownloadInterval: nil as NSNumber?,
+                  periodicDownloadInterval: 0,   // polling disabled
                   defaultLogLevel: .info)
     }
     
-    /// Optimizely Manager
+    @available(swift, obsoleted: 1.0)
+    /// OptimizelyClient init
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
     ///   - logger: custom Logger
     ///   - eventDispatcher: custom EventDispatcher (optional)
     ///   - userProfileService: custom UserProfileService (optional)
-    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional. default = 10 * 60 secs)
+    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional). Set this to 0 to disable polling. When polling is needed, the recommended value is 10 * 60 secs (you can also set this to nil to use the recommended value)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     @objc public convenience init(sdkKey: String,
                                   logger: OPTLogger?,
@@ -99,8 +100,28 @@ extension OptimizelyClient {
     ///   - doFetchDatafileBackground: This is for debugging purposes when
     ///             you don't want to download the datafile.  In practice, you should allow the
     ///             background thread to update the cache copy (optional)
-    public func objcStart(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
+    public func objcStart(datafile: Data, doFetchDatafileBackground: Bool) throws {
         try self.start(datafile: datafile, doFetchDatafileBackground: doFetchDatafileBackground)
+    }
+    
+    @available(swift, obsoleted: 1.0)
+    @objc(startWithDatafile:doUpdateConfigOnNewDatafile:doFetchDatafileBackground:error:)
+    /// Start Optimizely SDK (Synchronous)
+    ///
+    /// - Parameters:
+    ///   - datafile: This datafile will be used when cached copy is not available (fresh start)
+    ///             A cached copy from previous download is used if it's available.
+    ///             The datafile will be updated from the server in the background thread.
+    ///   - doUpdateConfigOnNewDatafile: When a new datafile is fetched from the server in the background thread,
+    ///             the SDK will be updated with the new datafile immediately if this value is set to true.
+    ///             When it's set to false (default), the new datafile is cached and will be used when the SDK is started again.
+    ///   - doFetchDatafileBackground: This is for debugging purposes when
+    ///             you don't want to download the datafile.  In practice, you should allow the
+    ///             background thread to update the cache copy (optional)
+    public func objcStart(datafile: Data, doUpdateConfigOnNewDatafile: Bool, doFetchDatafileBackground: Bool) throws {
+        try self.start(datafile: datafile,
+                       doUpdateConfigOnNewDatafile: doUpdateConfigOnNewDatafile,
+                       doFetchDatafileBackground: doFetchDatafileBackground)
     }
     
     @available(swift, obsoleted: 1.0)

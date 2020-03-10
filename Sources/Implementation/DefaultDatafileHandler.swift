@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -84,7 +84,6 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         }
         
         return request
-
     }
     
     open func getResponseData(sdkKey: String, response: HTTPURLResponse, url: URL?) -> Data? {
@@ -101,7 +100,8 @@ class DefaultDatafileHandler: OPTDatafileHandler {
     }
     
     open func downloadDatafile(sdkKey: String,
-                               resourceTimeoutInterval: Double? = nil,
+                               returnCacheIfNoChange: Bool,
+                               resourceTimeoutInterval: Double?,
                                completionHandler: @escaping DatafileDownloadCompletionHandler) {
         
         downloadQueue.async {
@@ -121,7 +121,16 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                         result = .success(data)
                     } else if response.statusCode == 304 {
                         self.logger.d("The datafile was not modified and won't be downloaded again")
-                        result = .success(nil)
+                        
+                        if returnCacheIfNoChange {
+                            if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
+                                result = .success(data)
+                            } else {
+                                result = .failure(.datafileLoadingFailed(sdkKey))
+                            }
+                        } else {
+                            result = .success(nil)
+                        }
                     }
                 }
                 
@@ -211,7 +220,6 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                 timer.timer?.invalidate()
                 timers.removeValue(forKey: sdkKey)
             }
-
         }
     }
     
@@ -284,7 +292,6 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                 try? FileManager.default.removeItem(at: fileURL)
             }
         }
-
     }
 }
 
@@ -304,11 +311,10 @@ extension URLRequest {
             addValue(lastModified, forHTTPHeaderField: "If-Modified-Since")
         }
     }
-
+    
     func getLastModified() -> String? {
         return value(forHTTPHeaderField: "If-Modified-Since")
     }
-
 }
 
 extension HTTPURLResponse {

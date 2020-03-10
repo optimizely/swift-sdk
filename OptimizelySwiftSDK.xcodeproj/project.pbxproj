@@ -327,6 +327,8 @@
 		6E34A647231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
 		6E34A648231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
 		6E34A649231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
+		6E5AB69323F6130D007A82B1 /* OptimizelyClientTests_Init_Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */; };
+		6E5AB69423F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */; };
 		6E614DD621E3F38A005982A1 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6E636B912236C91F00AF3CEF /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6E636BA02236C96700AF3CEF /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
@@ -1268,6 +1270,8 @@
 		6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_datafile_new_project_id.json; sourceTree = "<group>"; };
 		6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_datafile_new_revision.json; sourceTree = "<group>"; };
 		6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_datafile_new_account_id.json; sourceTree = "<group>"; };
+		6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Init_Sync.swift; sourceTree = "<group>"; };
+		6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Init_Async.swift; sourceTree = "<group>"; };
 		6E614DCD21E3F389005982A1 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E614DD521E3F38A005982A1 /* OptimizelyTests-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E636B8C2236C91F00AF3CEF /* OptimizelyTests-APIs-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-APIs-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1911,6 +1915,8 @@
 		6E7519B922C5211100B2B157 /* OptimizelyTests-APIs */ = {
 			isa = PBXGroup;
 			children = (
+				6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */,
+				6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */,
 				6E7519BA22C5211100B2B157 /* OptimizelyClientTests_Evaluation.swift */,
 				6E7519BB22C5211100B2B157 /* OptimizelyClientTests_DatafileHandler.swift */,
 				6E7519BC22C5211100B2B157 /* OptimizelyErrorTests.swift */,
@@ -2848,9 +2854,11 @@
 				6E7517F022C520D400B2B157 /* DataStoreMemory.swift in Sources */,
 				6E9B11D922C548A200C22D81 /* OptimizelyClientTests_Invalid.swift in Sources */,
 				6E9B11D522C548A200C22D81 /* OptimizelyClientTests_Evaluation.swift in Sources */,
+				6E5AB69423F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift in Sources */,
 				6E9B11DA22C548A200C22D81 /* OptimizelyClientTests_ObjcAPIs.m in Sources */,
 				6E75179A22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E75182022C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
+				6E5AB69323F6130D007A82B1 /* OptimizelyClientTests_Init_Sync.swift in Sources */,
 				6E75184422C520D400B2B157 /* Event.swift in Sources */,
 				6E75194022C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E7518E022C520D400B2B157 /* ConditionLeaf.swift in Sources */,

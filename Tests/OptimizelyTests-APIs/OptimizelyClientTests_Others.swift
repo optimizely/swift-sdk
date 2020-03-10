@@ -212,6 +212,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         
         class FakeDatafileHandler: DefaultDatafileHandler {
             override func downloadDatafile(sdkKey: String,
+                                           returnCacheIfNoChange: Bool,
                                            resourceTimeoutInterval: Double? = nil,
                                            completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 let invalidDatafile = OTUtils.loadJSONDatafile("unsupported_datafile")!

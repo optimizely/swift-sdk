@@ -24,6 +24,7 @@ open class OptimizelyClient: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
+    
     private var atomicConfig: AtomicProperty<ProjectConfig> = AtomicProperty<ProjectConfig>()
     var config: ProjectConfig? {
         get {
@@ -39,6 +40,14 @@ open class OptimizelyClient: NSObject {
     }
     
     let eventLock = DispatchQueue(label: "com.optimizely.client")
+    
+    private var isPeriodicPollingEnabled: Bool {
+        if let handler = datafileHandler as? DefaultDatafileHandler {
+            return handler.hasPeriodUpdates(sdkKey: sdkKey)
+        } else {
+            return false
+        }
+    }
 
     // MARK: - Customizable Services
     
@@ -54,8 +63,8 @@ open class OptimizelyClient: NSObject {
         return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
     }
     
-    public var datafileHandler: OPTDatafileHandler {
-        return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)!
+    public var datafileHandler: OPTDatafileHandler? {
+        return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
     }
     
     public var notificationCenter: OPTNotificationCenter? {
@@ -105,18 +114,22 @@ open class OptimizelyClient: NSObject {
     ///   - resourceTimeout: timeout for datafile download (optional)
     ///   - completion: callback when initialization is completed
     public func start(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)? = nil) {
-        fetchDatafileBackground(resourceTimeout: resourceTimeout) { result in
+        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: true) { result in
             switch result {
-            case .failure:
-                completion?(result)
             case .success(let datafile):
+                guard let datafile = datafile else {
+                    completion?(.failure(.datafileLoadingFailed(self.sdkKey)))
+                    return
+                }
+                
                 do {
                     try self.configSDK(datafile: datafile)
-                    
-                    completion?(result)
+                    completion?(.success(datafile))
                 } catch {
                     completion?(.failure(error as! OptimizelyError))
                 }
+            case .failure(let error):
+                completion?(.failure(error))
             }
         }
     }
@@ -138,80 +151,76 @@ open class OptimizelyClient: NSObject {
     ///   - datafile: This datafile will be used when cached copy is not available (fresh start)
     ///             A cached copy from previous download is used if it's available.
     ///             The datafile will be updated from the server in the background thread.
+    ///   - doUpdateConfigOnNewDatafile: When a new datafile is fetched from the server in the background thread,
+    ///             the SDK will be updated with the new datafile immediately if this value is set to true.
+    ///             When it's set to false (default), the new datafile is cached and will be used when the SDK is started again.
     ///   - doFetchDatafileBackground: This is for debugging purposes when
     ///             you don't want to download the datafile.  In practice, you should allow the
     ///             background thread to update the cache copy (optional)
-    public func start(datafile: Data, doFetchDatafileBackground: Bool = true) throws {
-        let cachedDatafile = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey)
+    public func start(datafile: Data,
+                      doUpdateConfigOnNewDatafile: Bool = false,
+                      doFetchDatafileBackground: Bool = true) throws {
+        let cachedDatafile = datafileHandler?.loadSavedDatafile(sdkKey: self.sdkKey)
         let selectedDatafile = cachedDatafile ?? datafile
         
         try configSDK(datafile: selectedDatafile)
         
         // continue to fetch updated datafile from the server in background and cache it for next sessions
-        if doFetchDatafileBackground { fetchDatafileBackground() }
+        
+        if !doFetchDatafileBackground { return }
+        
+        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false) { result in
+            // override to update always if periodic datafile polling is enabled
+            // this is necessary for the case that the first cache download gets the updated datafile
+            guard doUpdateConfigOnNewDatafile || self.isPeriodicPollingEnabled else { return }
+            
+            if case .success(let data) = result, let datafile = data {
+                // new datafile came in
+                self.updateConfigFromBackgroundFetch(data: datafile)
+            }
+        }
     }
     
     func configSDK(datafile: Data) throws {
         do {
             self.config = try ProjectConfig(datafile: datafile)
-                        
-            datafileHandler.startUpdates(sdkKey: self.sdkKey) { data in
-                // new datafile came in...
-                if let config = try? ProjectConfig(datafile: data) {
-                    do {
-                        if let users = self.config?.whitelistUsers {
-                            config.whitelistUsers = users
-                        }
-                        
-                        self.config = config
-                        
-                        // call reinit on the services we know we are reinitializing.
-                        
-                        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
-                            HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
-                        }
-                        
-                    }
-                    
-                    self.sendDatafileChangeNotification(data: data)
-                }
+
+            datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
+                // new datafile came in
+                self.updateConfigFromBackgroundFetch(data: data)
             }
-        } catch {
+        } catch let error as OptimizelyError {
             // .datafileInvalid
             // .datafaileVersionInvalid
             // .datafaileLoadingFailed
+            self.logger.e(error)
+            throw error
+        } catch {
+            self.logger.e(error.localizedDescription)
             throw error
         }
     }
     
-    func fetchDatafileBackground(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)? = nil) {
-        
-        datafileHandler.downloadDatafile(sdkKey: self.sdkKey, resourceTimeoutInterval: resourceTimeout) { result in
-            var fetchResult: OptimizelyResult<Data>
-            
-            switch result {
-            case .failure(let error):
-                fetchResult = .failure(error)
-            case .success(let datafile):
-                // we got a new datafile.
-                if let datafile = datafile {
-                    fetchResult = .success(datafile)
-                }
-                // we got a success but no datafile 304. So, load the saved datafile.
-                else if let data = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) {
-                    fetchResult = .success(data)
-                }
-                // if that fails, we have a problem.
-                else {
-                    fetchResult = .failure(.datafileLoadingFailed(self.sdkKey))
-                }
-                
-            }
-            
-            completion?(fetchResult)
+    func updateConfigFromBackgroundFetch(data: Data) {
+        guard let config = try? ProjectConfig(datafile: data) else {
+            return
         }
+        
+        if let users = self.config?.whitelistUsers {
+            config.whitelistUsers = users
+        }
+        
+        self.config = config
+        
+        // call reinit on the services we know we are reinitializing.
+        
+        for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
+            HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
+        }
+
+        self.sendDatafileChangeNotification(data: data)
     }
-    
+        
     /**
      * Use the activate method to start an experiment.
      *
@@ -835,7 +844,7 @@ extension OptimizelyClient {
 extension OptimizelyClient {
     
     public func close() {
-        datafileHandler.stopUpdates(sdkKey: sdkKey)
+        datafileHandler?.stopUpdates(sdkKey: sdkKey)
         eventLock.sync {}
         eventDispatcher?.close()
     }

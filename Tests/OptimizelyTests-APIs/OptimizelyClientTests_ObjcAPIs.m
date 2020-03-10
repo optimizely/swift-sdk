@@ -241,6 +241,8 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
     [self.optimizely startWithDatafile:datafile error:nil];
     
     [self.optimizely startWithDatafile:datafileData doFetchDatafileBackground:false error:nil];
+    [self.optimizely startWithDatafile:datafileData doUpdateConfigOnNewDatafile:true doFetchDatafileBackground:true error:nil];
+    [self.optimizely startWithDatafile:datafileData doUpdateConfigOnNewDatafile:false doFetchDatafileBackground:true error:nil];
 }
 
 @end

@@ -168,7 +168,10 @@ class DatafileHandlerTests: XCTestCase {
     func testPeriodicDownload() {
         class FakeDatafileHandler: DefaultDatafileHandler {
             let data = Data()
-            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+            override func downloadDatafile(sdkKey: String,
+                                           returnCacheIfNoChange: Bool,
+                                           resourceTimeoutInterval: Double?,
+                                           completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 completionHandler(.success(data))
             }
         }
@@ -264,7 +267,10 @@ class DatafileHandlerTests: XCTestCase {
     func testPeriodicDownloadWithOptimizlyClient() {
         class FakeDatafileHandler: DefaultDatafileHandler {
             let data = OTUtils.loadJSONDatafile("typed_audience_datafile")
-            override func downloadDatafile(sdkKey: String, resourceTimeoutInterval: Double?, completionHandler: @escaping DatafileDownloadCompletionHandler) {
+            override func downloadDatafile(sdkKey: String,
+                                           returnCacheIfNoChange: Bool,
+                                           resourceTimeoutInterval: Double?,
+                                           completionHandler: @escaping DatafileDownloadCompletionHandler) {
                 completionHandler(.success(data))
             }
         }
@@ -280,7 +286,7 @@ class DatafileHandlerTests: XCTestCase {
         _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { (_) in
             count += 1
             if count == 9 {
-                optimizely.datafileHandler.stopAllUpdates()
+                optimizely.datafileHandler?.stopAllUpdates()
                 expection.fulfill()
             }
         }

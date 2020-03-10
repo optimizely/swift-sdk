@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -588,7 +588,11 @@ class FakeManager: OptimizelyClient {
         }
     }
     
-    override init(sdkKey: String, logger: OPTLogger? = nil, eventDispatcher: OPTEventDispatcher? = nil, userProfileService: OPTUserProfileService? = nil, defaultLogLevel: OptimizelyLogLevel? = nil) {
+    override init(sdkKey: String,
+                  logger: OPTLogger? = nil,
+                  eventDispatcher: OPTEventDispatcher? = nil,
+                  userProfileService: OPTUserProfileService? = nil,
+                  defaultLogLevel: OptimizelyLogLevel? = nil) {
         
         super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)
         HandlerRegistryService.shared.removeAll()

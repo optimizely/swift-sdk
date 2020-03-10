@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -45,20 +45,22 @@ extension OptimizelyClient {
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStrategy(strategy: .reUse).to(factory: type(of: datafileHandler).init).using(instance: datafileHandler).sdkKey(key: sdkKey))
     }
     
-    /// Optimizely Manager
+    /// OptimizelyClient init
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
     ///   - logger: custom Logger
     ///   - eventDispatcher: custom EventDispatcher (optional)
     ///   - userProfileService: custom UserProfileService (optional)
-    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional. default = 10 * 60 secs)
+    ///   - periodicDownloadInterval: custom interval for periodic background datafile download.
+    ///         The recommended value is 10 * 60 secs (you can also set this to nil to use the recommended value).
+    ///         Set this to 0 to disable periodic downloading.
     ///   - defaultLogLevel: default log level (optional. default = .info)
     public convenience init(sdkKey: String,
                             logger: OPTLogger? = nil,
                             eventDispatcher: OPTEventDispatcher? = nil,
                             userProfileService: OPTUserProfileService? = nil,
-                            periodicDownloadInterval: Int? = nil,
+                            periodicDownloadInterval: Int?,
                             defaultLogLevel: OptimizelyLogLevel? = nil) {
         let interval = periodicDownloadInterval ?? 10 * 60
         

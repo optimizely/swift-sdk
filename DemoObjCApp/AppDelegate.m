@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -55,11 +55,9 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 // MARK: - Initialization Examples
 
 -(void)initializeOptimizelySDKAsynchronous {
-    DefaultEventDispatcher *eventDispacher = [[DefaultEventDispatcher alloc] initWithBatchSize:10 timerInterval:1 maxQueueSize:1000];
-    
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
                                                         logger:nil
-                                               eventDispatcher:eventDispacher
+                                               eventDispatcher:nil
                                             userProfileService:nil
                                       periodicDownloadInterval:@(5)
                                                defaultLogLevel:OptimizelyLogLevelDebug];
@@ -104,18 +102,42 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 -(void)initializeOptimizelySDKWithCustomization {
     // customization example (optional)
     
-    CustomLogger *customLogger = [[CustomLogger alloc] init];
-    // 30 sec interval may be too frequent. This is for demo purpose.
-    // This should be should be much larger (default = 10 mins).
-    NSNumber *customDownloadIntervalInSecs = @(30);
+    // You can enable background datafile polling by setting periodicDownloadInterval (polling is disabled by default)
+    // 60 sec interval may be too frequent. This is for demo purpose. (You can set this to nil to use the recommended value of 600 secs).
+    NSNumber *downloadIntervalInSecs = @(60);
     
+    // You can turn off event batching with 0 timerInterval (this means that events are sent out immediately to the server instead of saving in the local queue for batching)
+    DefaultEventDispatcher *eventDispatcher = [[DefaultEventDispatcher alloc] initWithBatchSize:10
+                                                                                  timerInterval:0
+                                                                                   maxQueueSize:1000];
+    
+    // customize logger
+    CustomLogger *customLogger = [[CustomLogger alloc] init];
+
     self.optimizely = [[OptimizelyClient alloc] initWithSdkKey:kOptimizelySdkKey
                                                          logger:customLogger
-                                                eventDispatcher:nil
+                                                eventDispatcher:eventDispatcher
                                              userProfileService:nil
-                                       periodicDownloadInterval:customDownloadIntervalInSecs
+                                       periodicDownloadInterval:downloadIntervalInSecs
                                                 defaultLogLevel:OptimizelyLogLevelDebug];
     
+    [self addNotificationListeners];
+    
+    [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
+        if (error == nil) {
+            NSLog(@"Optimizely SDK initialized successfully!");
+        } else {
+            NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
+        }
+        
+        [self startWithRootViewController];
+        
+        // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
+        //[SamplesForAPI checkOptimizelyConfig:self.optimizely];
+    }];
+}
+
+-(void)addNotificationListeners {
     NSNumber *notifId;
     notifId = [self.optimizely.notificationCenter addDecisionNotificationListenerWithDecisionListener:^(NSString *type,
                                                                                               NSString *userId,
@@ -135,20 +157,8 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
                                                                                                         NSDictionary<NSString *,id> *event) {
         NSLog(@"Received logEvent notification: %@ %@", url, event);
     }];
-    
-    [self.optimizely startWithCompletion:^(NSData *data, NSError *error) {
-        if (error == nil) {
-            NSLog(@"Optimizely SDK initialized successfully!");
-        } else {
-            NSLog(@"Optimizely SDK initiliazation failed: %@", error.localizedDescription);
-        }
-        
-        [self startWithRootViewController];
-        
-        // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
-        //[SamplesForAPI checkOptimizelyConfig:self.optimizely];
-    }];
 }
+
 
 // MARK: - ViewControl
 

@@ -74,7 +74,7 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         
         try? FileManager.default.removeItem(at: fileUrl!)
         
-        client.datafileHandler.stopAllUpdates()
+        client.datafileHandler?.stopAllUpdates()
         
         HandlerRegistryService.shared.binders.property?.removeAll()
 

@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -41,6 +41,7 @@ public protocol OPTDatafileHandler {
      - Parameter completionHhandler:  listener to call when datafile download complete
      */
     func downloadDatafile(sdkKey: String,
+                          returnCacheIfNoChange: Bool,
                           resourceTimeoutInterval: Double?,
                           completionHandler:@escaping DatafileDownloadCompletionHandler)
     
@@ -88,5 +89,20 @@ public protocol OPTDatafileHandler {
      - Parameter sdkKey: sdkKey
      */
     func removeSavedDatafile(sdkKey: String)
+
+}
+
+extension OPTDatafileHandler {
+    
+    // default values support
+    func downloadDatafile(sdkKey: String,
+                          returnCacheIfNoChange: Bool = false,
+                          resourceTimeoutInterval: Double? = nil,
+                          completionHandler:@escaping DatafileDownloadCompletionHandler) {
+        downloadDatafile(sdkKey: sdkKey,
+                         returnCacheIfNoChange: returnCacheIfNoChange,
+                         resourceTimeoutInterval: resourceTimeoutInterval,
+                         completionHandler: completionHandler)
+    }
 
 }

@@ -291,8 +291,6 @@
 		6E34A6202319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
 		6E34A6212319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
 		6E34A6222319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
-		6E34A625231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */; };
-		6E34A626231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */; };
 		6E34A627231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */; };
 		6E34A628231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */; };
 		6E34A629231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */; };
@@ -303,8 +301,6 @@
 		6E34A62E231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */; };
 		6E34A62F231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */; };
 		6E34A630231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */; };
-		6E34A631231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */; };
-		6E34A632231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */; };
 		6E34A633231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */; };
 		6E34A634231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */; };
 		6E34A635231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */; };
@@ -315,8 +311,6 @@
 		6E34A63A231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */; };
 		6E34A63B231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */; };
 		6E34A63C231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */; };
-		6E34A63E231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
-		6E34A63F231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
 		6E34A640231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
 		6E34A641231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
 		6E34A642231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
@@ -2265,9 +2259,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E34A632231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */,
-				6E34A626231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */,
-				6E34A63F231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2610,9 +2601,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E34A631231ED04900BAE302 /* empty_datafile_new_revision.json in Resources */,
-				6E34A625231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */,
-				6E34A63E231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

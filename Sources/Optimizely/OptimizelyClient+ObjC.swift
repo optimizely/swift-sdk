@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2019, Optimizely, Inc. and contributors                        *
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -19,7 +19,7 @@ import Foundation
 extension OptimizelyClient {
     
     @available(swift, obsoleted: 1.0)
-    /// Optimizely Manager
+    /// OptimizelyClient init
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
@@ -28,18 +28,19 @@ extension OptimizelyClient {
                   logger: nil,
                   eventDispatcher: nil,
                   userProfileService: nil,
-                  periodicDownloadInterval: nil as NSNumber?,
+                  periodicDownloadInterval: 0,   // polling disabled
                   defaultLogLevel: .info)
     }
     
-    /// Optimizely Manager
+    @available(swift, obsoleted: 1.0)
+    /// OptimizelyClient init
     ///
     /// - Parameters:
     ///   - sdkKey: sdk key
     ///   - logger: custom Logger
     ///   - eventDispatcher: custom EventDispatcher (optional)
     ///   - userProfileService: custom UserProfileService (optional)
-    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional. default = 10 * 60 secs)
+    ///   - periodicDownloadInterval: custom interval for periodic background datafile download (optional). Set this to 0 to disable polling. When polling is needed, the recommended value is 10 * 60 secs (you can also set this to nil to use the recommended value)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     @objc public convenience init(sdkKey: String,
                                   logger: OPTLogger?,

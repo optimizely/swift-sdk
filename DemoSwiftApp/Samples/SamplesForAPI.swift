@@ -1,6 +1,6 @@
 //
 /****************************************************************************
- * Copyright 2019, Optimizely, Inc. and contributors                        *
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -164,7 +164,7 @@ class SamplesForAPI {
                 
                 variationKeys.forEach { varKey in
                     let variation = variationsMap[varKey]!
-                    print("[OptimizelyConfig]       -- variation = { key: \(varKey), id: \(variation.id), featureEnabled: \(variation.featureEnabled)")
+                    print("[OptimizelyConfig]       -- variation = { key: \(varKey), id: \(variation.id), featureEnabled: \(String(describing: variation.featureEnabled))")
                     
                     let variablesMap = variationsMap[varKey]!.variablesMap
                     let variableKeys = variablesMap.keys

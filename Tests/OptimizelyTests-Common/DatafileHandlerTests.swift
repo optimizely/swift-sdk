@@ -288,7 +288,7 @@ class DatafileHandlerTests: XCTestCase {
         handler.downloadDatafile(sdkKey: "localcdnTestSDKKey", returnCacheIfNoChange: true) {
             (result) in
             if case let .success(data) = result  {
-                // should come back as nil since got 304 and datafile in cache.
+                // should come back with data since got 304 and datafile in cache.
                 XCTAssert(data != nil)
                 expectation2.fulfill()
             }

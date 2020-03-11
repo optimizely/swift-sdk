@@ -110,27 +110,34 @@ class DefaultDatafileHandler: OPTDatafileHandler {
             guard let request = self.getRequest(sdkKey: sdkKey) else { return }
             
             let task = session.downloadTask(with: request) { (url, response, error) in
-                var result = OptimizelyResult<Data?>.failure(.datafileDownloadFailed("Failed to parse"))
+                var result = OptimizelyResult<Data?>.failure(.datafileLoadingFailed(sdkKey))
+
+                let returnCached = { () in
+                    if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
+                        result = .success(data)
+                    }
+                }
                 
                 if error != nil {
                     self.logger.e(error.debugDescription)
                     result = .failure(.datafileDownloadFailed(error.debugDescription))
+                    returnCached()
                 } else if let response = response as? HTTPURLResponse {
-                    if response.statusCode == 200 {
-                        let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url)
-                        result = .success(data)
-                    } else if response.statusCode == 304 {
+                    switch (response.statusCode) {
+                    case 200:
+                        if let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url) {
+                            result = .success(data)
+                        }
+                    case 304:
                         self.logger.d("The datafile was not modified and won't be downloaded again")
                         
                         if returnCacheIfNoChange {
-                            if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
-                                result = .success(data)
-                            } else {
-                                result = .failure(.datafileLoadingFailed(sdkKey))
-                            }
+                            returnCached()
                         } else {
                             result = .success(nil)
                         }
+                    default:
+                        break
                     }
                 }
                 

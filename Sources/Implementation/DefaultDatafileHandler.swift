@@ -168,18 +168,6 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         }
     }
     
-    @objc
-    func timerFired(timer: Timer) {
-        if let info = timer.userInfo as? [String: Any],
-            let sdkKey = info["sdkKey"] as? String,
-            let updateInterval = info["updateInterval"] as? Int,
-            let startDate = info["startTime"] as? Date,
-            let datafileChangeNotification = info["datafileChangeNotification"] as? ((Data) -> Void) {
-            self.performPerodicDownload(sdkKey: sdkKey, startTime: startDate, updateInterval: updateInterval, datafileChangeNotification: datafileChangeNotification)
-        }
-        timer.invalidate()
-    }
-    
     func hasPeriodUpdates(sdkKey: String) -> Bool {
         var restart = true
         self.timers.performAtomic(atomicOperation: { (timers) in
@@ -195,6 +183,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                                 startTime: Date,
                                 updateInterval: Int,
                                 datafileChangeNotification: ((Data) -> Void)?) {
+        let beginDownloading = Date()
         self.downloadDatafile(sdkKey: sdkKey) { (result) in
             switch result {
             case .success(let data):
@@ -207,15 +196,18 @@ class DefaultDatafileHandler: OPTDatafileHandler {
             }
             
             if self.hasPeriodUpdates(sdkKey: sdkKey) {
-                let interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
-                let actualDiff = (Int(abs(startTime.timeIntervalSinceNow)) - updateInterval)
-                var nextInterval = interval
-                if actualDiff > 0 {
-                    nextInterval -= actualDiff
+                // adjust the next fire time so that events will be fired at fixed interval regardless of the download latency
+                // if latency is too big (or returning from background mode), fire the next event immediately once
+                
+                var interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
+                let delay = Int(Date().timeIntervalSince(beginDownloading))
+                interval -= delay
+                if interval < 0 {
+                    interval = 0
                 }
                 
-                self.logger.d("next datafile download is \(nextInterval) seconds \(Date())")
-                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: nextInterval, datafileChangeNotification: datafileChangeNotification)
+                self.logger.d("next datafile download is \(interval) seconds \(Date())")
+                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: interval, datafileChangeNotification: datafileChangeNotification)
             }
         }
     }

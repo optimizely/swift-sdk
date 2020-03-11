@@ -193,9 +193,83 @@ class DatafileHandlerTests: XCTestCase {
         
         XCTAssert(count == 10)
         XCTAssert(seconds == 10)
-        
     }
     
+    func testPeriodicDownload_PollingShouldNotBeAccumulatedWhileInBackground() {
+        class FakeDatafileHandler: DefaultDatafileHandler {
+            let data = Data()
+            override func downloadDatafile(sdkKey: String,
+                                           returnCacheIfNoChange: Bool,
+                                           resourceTimeoutInterval: Double?,
+                                           completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                completionHandler(.success(data))
+            }
+        }
+        
+        let expectation = XCTestExpectation(description: "polling")
+        let handler = FakeDatafileHandler()
+        let now = Date()
+        
+        let updateInterval = 1
+        let idleTime = 5
+        var count = 0
+        var seconds = 0
+        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: updateInterval) { _ in
+            // simulate going to background and coming back to foreground after 5secs
+            if count == 0 {
+                sleep(UInt32(idleTime))
+            }
+            
+            count += 1
+            
+            // check if delayed polling not accumulated and completed back-to-back
+            if count == 5 {
+                handler.stopPeriodicUpdates()
+                expectation.fulfill()
+                seconds = Int(abs(now.timeIntervalSinceNow))
+            }
+        }
+        
+        wait(for: [expectation], timeout: 30)
+
+        XCTAssert(seconds >= idleTime + 3)   // 3 instead of 5 for tolerating timer inaccuracy
+    }
+    
+    func testPeriodicDownload_PollingPeriodAdjustedByDelay() {
+        class FakeDatafileHandler: DefaultDatafileHandler {
+            let data = Data()
+            override func downloadDatafile(sdkKey: String,
+                                           returnCacheIfNoChange: Bool,
+                                           resourceTimeoutInterval: Double?,
+                                           completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                sleep(1)
+                completionHandler(.success(data))
+            }
+        }
+        
+        let expectation = XCTestExpectation(description: "polling")
+        let handler = FakeDatafileHandler()
+        let now = Date()
+        
+        let updateInterval = 2
+        let maxCount = 5
+        var count = 0
+        var seconds = 0
+        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: updateInterval) { _ in
+            count += 1
+            
+            if count == maxCount {
+                handler.stopPeriodicUpdates()
+                expectation.fulfill()
+                seconds = Int(abs(now.timeIntervalSinceNow))
+            }
+        }
+        
+        wait(for: [expectation], timeout: 30)
+        XCTAssert(seconds <= updateInterval * (maxCount + 1))
+    }
+
+
     func testPeriodicDownloadWithOptimizlyClient() {
         class FakeDatafileHandler: DefaultDatafileHandler {
             let data = OTUtils.loadJSONDatafile("typed_audience_datafile")
@@ -228,7 +302,6 @@ class DatafileHandlerTests: XCTestCase {
         wait(for: [expection], timeout: 10)
         
         XCTAssert(count == 9)
-        
     }
 
     func testDownloadTimeout() {

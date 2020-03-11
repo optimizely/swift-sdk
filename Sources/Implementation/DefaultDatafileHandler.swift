@@ -121,7 +121,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                 if error != nil {
                     self.logger.e(error.debugDescription)
                     result = .failure(.datafileDownloadFailed(error.debugDescription))
-                    returnCached()
+                    returnCached() // error recovery
                 } else if let response = response as? HTTPURLResponse {
                     switch (response.statusCode) {
                     case 200:
@@ -137,7 +137,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                             result = .success(nil)
                         }
                     default:
-                        break
+                        returnCached() // error recovery
                     }
                 }
                 

@@ -128,6 +128,9 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                         if let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url) {
                             result = .success(data)
                         }
+                        else {
+                            returnCached() // error recovery
+                        }
                     case 304:
                         self.logger.d("The datafile was not modified and won't be downloaded again")
                         
@@ -137,6 +140,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                             result = .success(nil)
                         }
                     default:
+                        self.logger.i("got response code \(response.statusCode)")
                         returnCached() // error recovery
                     }
                 }

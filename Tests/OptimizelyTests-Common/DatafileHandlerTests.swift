@@ -75,7 +75,131 @@ class DatafileHandlerTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
-    
+
+    func testDatafileDownload500() {
+        
+        var localUrl:URL?
+        
+        // create a dummy file at a url to use as or datafile cdn location
+        localUrl = OTUtils.saveAFile(name: "localcdn", data: Data())
+
+        // default datafile handler
+        class InnerDatafileHandler : DefaultDatafileHandler {
+            var localFileUrl:URL?
+            // override getSession to return our own session.
+            override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
+            
+                // will return 500
+                let session = MockUrlSession(failureCode: 500, withError: false)
+                session.downloadCacheUrl = localFileUrl
+                
+                return session
+            }
+        }
+        
+        // create test datafile handler
+        let handler = InnerDatafileHandler()
+        // set the url to use as our datafile download url
+        handler.localFileUrl = localUrl
+        
+        let expectation = XCTestExpectation(description: "wait to get no-nil data")
+        
+        // initiate download task which should pass back a 304 but still return non nil
+        // since the datafile was not in cache.
+        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+            
+            if case let .success(data) = result  {
+                XCTAssert(data != nil)
+                expectation.fulfill()
+            }
+        }
+        
+        wait(for: [expectation], timeout: 3)
+        // finally remove the datafile when complete.
+        try? FileManager.default.removeItem(at: localUrl!)
+    }
+
+    func testDatafileDownloadFailureWithCache() {
+        
+        var localUrl:URL?
+        
+        // create a dummy file at a url to use as or datafile cdn location
+        localUrl = OTUtils.saveAFile(name: "localcdn", data: Data())
+
+        // default datafile handler
+        class InnerDatafileHandler : DefaultDatafileHandler {
+            var localFileUrl:URL?
+            // override getSession to return our own session.
+            override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
+            
+                // will return error
+                let session = MockUrlSession(failureCode: 0, withError: true)
+                session.downloadCacheUrl = localFileUrl
+                
+                return session
+            }
+        }
+        
+        // create test datafile handler
+        let handler = InnerDatafileHandler()
+        // set the url to use as our datafile download url
+        handler.localFileUrl = localUrl
+        
+        let expectation = XCTestExpectation(description: "wait to get no-nil data")
+        
+        // initiate download task which should pass back a 304 but still return non nil
+        // since the datafile was not in cache.
+        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+            
+            if case let .success(data) = result  {
+                XCTAssert(data != nil)
+                expectation.fulfill()
+            }
+        }
+        
+        wait(for: [expectation], timeout: 3)
+        // finally remove the datafile when complete.
+        try? FileManager.default.removeItem(at: localUrl!)
+    }
+
+    func testDatafileDownloadFailureWithNoCache() {
+        
+        
+        // default datafile handler
+        class InnerDatafileHandler : DefaultDatafileHandler {
+            var localFileUrl:URL?
+            // override getSession to return our own session.
+            override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
+            
+                // will return error
+                let session = MockUrlSession(failureCode: 0, withError: true)
+                
+                return session
+            }
+        }
+        
+        // create test datafile handler
+        let handler = InnerDatafileHandler()
+        // remove the cached file just in case.
+        handler.removeSavedDatafile(sdkKey: "localcdnTestSDKKey")
+        
+        let expectation = XCTestExpectation(description: "wait to get nil data")
+        
+        // initiate download task which should pass back a 304 but still return non nil
+        // since the datafile was not in cache.
+        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+            
+            if case .success(_) = result  {
+                XCTAssert(false)
+            }
+            if case .failure(_) = result  {
+                expectation.fulfill()
+            }
+        }
+        
+        wait(for: [expectation], timeout: 3)
+    }
+
     func testDatafileDownload304NoCache() {
         
         var localUrl:URL?
@@ -89,7 +213,7 @@ class DatafileHandlerTests: XCTestCase {
             // override getSession to return our own session.
             override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
             
-                let session = MockUrlSession()
+                let session = MockUrlSession(failureCode: 0, withError: false)
                 session.downloadCacheUrl = localFileUrl
                 
                 return session
@@ -133,7 +257,7 @@ class DatafileHandlerTests: XCTestCase {
             // override getSession to return our own session.
             override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
 
-                let session = MockUrlSession()
+                let session = MockUrlSession(failureCode: 0, withError: false)
                 session.downloadCacheUrl = localFileUrl
                 
                 return session
@@ -159,8 +283,20 @@ class DatafileHandlerTests: XCTestCase {
                 expectation.fulfill()
             }
         }
+        let expectation2 = XCTestExpectation(description: "wait to get data")
         
-        wait(for: [expectation], timeout: 3)
+        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey", returnCacheIfNoChange: true) {
+            (result) in
+            if case let .success(data) = result  {
+                // should come back as nil since got 304 and datafile in cache.
+                XCTAssert(data != nil)
+                expectation2.fulfill()
+            }
+            
+        }
+            
+
+        wait(for: [expectation, expectation2], timeout: 3)
         // finally remove the datafile when complete.
         try? FileManager.default.removeItem(at: fileUrl!)
     }

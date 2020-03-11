@@ -188,23 +188,26 @@ open class OptimizelyClient: NSObject {
     func fetchDatafileBackground(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)? = nil) {
         
         datafileHandler.downloadDatafile(sdkKey: self.sdkKey, resourceTimeoutInterval: resourceTimeout) { result in
-            var fetchResult: OptimizelyResult<Data>
+            var fetchResult: OptimizelyResult<Data> = .failure(.datafileLoadingFailed(self.sdkKey))
+            
+            let returnCached = { () in
+                if let data = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) {
+                    fetchResult = .success(data)
+                }
+            }
             
             switch result {
             case .failure(let error):
                 fetchResult = .failure(error)
+                returnCached()
             case .success(let datafile):
                 // we got a new datafile.
                 if let datafile = datafile {
                     fetchResult = .success(datafile)
                 }
                 // we got a success but no datafile 304. So, load the saved datafile.
-                else if let data = self.datafileHandler.loadSavedDatafile(sdkKey: self.sdkKey) {
-                    fetchResult = .success(data)
-                }
-                // if that fails, we have a problem.
                 else {
-                    fetchResult = .failure(.datafileLoadingFailed(self.sdkKey))
+                    returnCached()
                 }
                 
             }

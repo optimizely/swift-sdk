@@ -1,5 +1,27 @@
 # Optimizely Swift SDK Changelog
 
+## 3.3.0
+March 11, 2020
+
+This release includes an enhancement of SDK initialization API to enable SDK updated on cached datafile change. It also fixes known bugs.
+
+### New Features
+* Add an option for **synchronous** initialization to enable SDK immediately updated when a new datafile is cached. Unless this feature is enabled, by default, the cached datafile will be used only when the SDK re-starts in the next session. Note that this option is for **synchronous** initialization only. ([#297](https://github.com/optimizely/swift-sdk/pull/297))
+
+	```
+    // enable SDK update when a new datafile is cached
+    optimizelyClient.start(datafile: data, doUpdateConfigOnNewDatafile: true)
+    
+    // by default, this feature is disabled
+    optimizelyClient.start(datafile: data)
+	```
+
+### Bug Fixes
+* When a **synchronously**-initialized SDK enables background datafile polling and its datafile was changed in the server, the new datafile is cached but SDK is not dynamically updated. ([#297](https://github.com/optimizely/swift-sdk/pull/297))
+* When background datafile polling is enabled and app goes to background and comes back to foreground after some delays, datafile fetching is called multiple times back-to-back. ([#301](https://github.com/optimizely/swift-sdk/pull/301))
+* NotificationCenter can cause crashes when multiple threads add/call listeners simultaneously. ([#304](https://github.com/optimizely/swift-sdk/pull/304))
+
+
 ## 3.2.1
 January 16, 2020
 

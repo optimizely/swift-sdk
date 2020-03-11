@@ -28,18 +28,28 @@ up an Optimizely X project and start using the SDK.
  
 Please note below that _\<platform\>_ is used to represent the platform on which you are building your app. Currently, we support ```iOS``` and ```tvOS``` platforms.
 
+#### Swift Package Manager
+ Add the following line to the dependencies value of your _Package.swift_:
+
+```
+dependencies: [
+	.package(url: "https://github.com/optimizely/swift-sdk.git", 
+					.upToNextMinor(from: “3.3.0”))
+]
+```
+
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
-	```use_frameworks!```
-    ```pod 'OptimizelySwiftSDK', '~> 3.2.1'```
-    </pre>
+```use_frameworks!```
+```pod 'OptimizelySwiftSDK', '~> 3.3.0'```
+</pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
 
 Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.2.1```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.3.0```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 
@@ -55,15 +65,6 @@ Further installation instructions for Cocoapods: https://guides.cocoapods.org/us
       ```$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Optimizely.framework```</pre>
 
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
-
-#### Swift Package Manager
- Add the following line to the dependencies value of your _Package.swift_:
-
-```
-dependencies: [
-    .package(url: "https://github.com/optimizely/swift-sdk.git", .upToNextMinor(from: “3.2.1”))
-]
-```
 
 ### Samples
 

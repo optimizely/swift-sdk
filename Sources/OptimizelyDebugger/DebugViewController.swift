@@ -28,25 +28,27 @@ class DebugViewController: UITableViewController {
         guard let config = try? client.getOptimizelyConfig() else { return }
         
         items.append(DebuggerItem(title: "SDK Key", text: client.sdkKey, action: nil))
-        items.append(DebuggerItem(title: "Revision", text: config.revision, action: nil))
-        items.append(DebuggerItem(title: "Features") {
-            self.openPropsView(title: "Features", props: config.featuresMap)
-        })
-        items.append(DebuggerItem(title: "Experiments") {
-            self.openPropsView(title: "Experiments", props: config.experimentsMap)
+        items.append(DebuggerItem(title: "ProjectConfig") {
+            self.openPropsView(title: "ProjectConfig", props: config)
         })
         items.append(DebuggerItem(title: "Logs") {
-            
+            self.openLogView()
         })
 
         tableView.rowHeight = 60.0
     }
     
-    func openPropsView(title: String, props: [String: Any]) {
+    func openPropsView(title: String, props: Any) {
         let propsView = PropsTableViewController()
         propsView.title = title
         propsView.props = props
         self.show(propsView, sender: self)
+    }
+    
+    func openLogView() {
+        let logView = LogViewController()
+        logView.title = "Logs"
+        self.show(logView, sender: self)
     }
 
     // MARK: - Table view data source

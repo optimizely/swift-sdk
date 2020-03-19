@@ -405,8 +405,7 @@ class DatafileHandlerTests: XCTestCase {
         XCTAssert(seconds <= updateInterval * (maxCount + 1))
     }
 
-
-    func testPeriodicDownloadWithOptimizlyClient() {
+    func testPeriodicDownloadWithOptimizlyClient_SameRevision() {
         class FakeDatafileHandler: DefaultDatafileHandler {
             let data = OTUtils.loadJSONDatafile("typed_audience_datafile")
             override func downloadDatafile(sdkKey: String,
@@ -416,16 +415,52 @@ class DatafileHandlerTests: XCTestCase {
                 completionHandler(.success(data))
             }
         }
+        let expection = XCTestExpectation(description: "Expect no notification")
+        expection.isInverted = true
+        
+        let handler = FakeDatafileHandler()
+
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        
+        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval: 1)
+        
+        _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { _ in
+            optimizely.datafileHandler?.stopAllUpdates()
+            expection.fulfill()
+        }
+        optimizely.start { (_) in
+            XCTAssert(true)
+        }
+        
+        // notification should not be called. timeout expected here.
+        wait(for: [expection], timeout: 3)
+    }
+    
+    func testPeriodicDownloadWithOptimizlyClient_DifferentRevision() {
+        class FakeDatafileHandler: DefaultDatafileHandler {
+            let data1 = OTUtils.loadJSONDatafile("typed_audience_datafile")
+            let data2 = OTUtils.loadJSONDatafile("api_datafile")
+            var flag = false
+
+            override func downloadDatafile(sdkKey: String,
+                                           returnCacheIfNoChange: Bool,
+                                           resourceTimeoutInterval: Double?,
+                                           completionHandler: @escaping DatafileDownloadCompletionHandler) {
+                // alternate return datafile to change revisionId everytime
+                completionHandler(.success(flag ? data1 : data2))
+                flag.toggle()
+            }
+        }
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
         let handler = FakeDatafileHandler()
 
         HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
         
         let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval: 1)
-
-        var count = 0
         
-        _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { (_) in
+        var count = 0
+
+        _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { _ in
             count += 1
             if count == 9 {
                 optimizely.datafileHandler?.stopAllUpdates()
@@ -439,6 +474,7 @@ class DatafileHandlerTests: XCTestCase {
         
         XCTAssert(count == 9)
     }
+
 
     func testDownloadTimeout() {
         let handler = DefaultDatafileHandler()

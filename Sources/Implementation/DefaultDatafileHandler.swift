@@ -112,7 +112,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
             let task = session.downloadTask(with: request) { (url, response, error) in
                 var result = OptimizelyResult<Data?>.failure(.datafileLoadingFailed(sdkKey))
 
-                let returnCached = { () in
+                let returnCached = {
                     if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
                         result = .success(data)
                     }
@@ -127,8 +127,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                     case 200:
                         if let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url) {
                             result = .success(data)
-                        }
-                        else {
+                        } else {
                             returnCached() // error recovery
                         }
                     case 304:

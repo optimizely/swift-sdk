@@ -22,6 +22,7 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
     let url: URL
+    lazy var logger:OPTLogger? = OPTLoggerFactory.getLogger()
     
     init(storeName: String) {
         dataStoreName = storeName
@@ -32,8 +33,8 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
                 do {
                     let data = try JSONEncoder().encode([Data]())
                     try data.write(to: self.url, options: .atomicWrite)
-                } catch let error {
-                    print(error.localizedDescription)
+                } catch let e {
+                    self.logger?.e(e.localizedDescription)
                 }
             }
         } else {
@@ -49,8 +50,8 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
                 let contents = try Data(contentsOf: self.url)
                 let item = try JSONDecoder().decode(T.self, from: contents)
                 returnItem = item
-            } catch let errorr {
-                    print(errorr.localizedDescription)
+            } catch let e {
+                self.logger?.e(e.localizedDescription)
             }
         }
         
@@ -64,8 +65,8 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
                     let data = try JSONEncoder().encode(value)
                     try data.write(to: self.url, options: .atomic)
                 }
-            } catch let error {
-                print(error.localizedDescription)
+            } catch let e {
+                self.logger?.e(e.localizedDescription)
             }
         }
     }

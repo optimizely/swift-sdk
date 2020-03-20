@@ -212,7 +212,7 @@ extension DefaultNotificationCenter {
                 let args: [Any] = [url, event]
                 self.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
             } else {
-                print("LogEvent notification discarded due to invalid event")
+                OPTLoggerFactory.getLogger().d("LogEvent notification discarded due to invalid event")
             }
         }
     }

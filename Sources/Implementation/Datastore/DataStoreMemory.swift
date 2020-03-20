@@ -22,26 +22,15 @@ import Foundation
 public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
-    let url: URL
     var data: T?
+    var backupDataStore:OPTDataStore
+    lazy var logger:OPTLogger? = OPTLoggerFactory.getLogger()
     
-    init(storeName: String) {
+    init(storeName: String, backupStore: OPTDataStore = DataStoreUserDefaults()) {
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            self.url = url.appendingPathComponent(storeName, isDirectory: false)
-            if !FileManager.default.fileExists(atPath: self.url.path) {
-                do {
-                    let data = try JSONEncoder().encode([Data]())
-                    try data.write(to: self.url, options: .atomicWrite)
-                } catch let error {
-                    print(error.localizedDescription)
-                }
-            }
-        } else {
-            self.url = URL(fileURLWithPath: storeName)
-        }
-        
+        backupDataStore = backupStore
+        load(forKey: dataStoreName)
         subscribe()
     }
     
@@ -50,22 +39,22 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     }
     
     public func getItem(forKey: String) -> Any? {
-        var returnData: T?
-        
+        var retVal:T?
         lock.sync {
-            returnData = data
+            retVal = self.data
         }
-        return returnData
+        return retVal
     }
     
     public func load(forKey: String) {
         lock.sync {
             do {
-                let contents = try Data(contentsOf: self.url)
-                let item = try JSONDecoder().decode(T.self, from: contents)
-                self.data = item
-            } catch let errorr {
-                print(errorr.localizedDescription)
+                if let contents = backupDataStore.getItem(forKey: dataStoreName) as? Data {
+                    let item = try JSONDecoder().decode(T.self, from: contents)
+                    self.data = item
+                }
+            } catch let error {
+                self.logger?.e(error.localizedDescription)
             }
         }
     }
@@ -80,14 +69,7 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
 
     func save(forKey: String, value: Any) {
         lock.async {
-            do {
-                if let value = value as? T {
-                    let data = try JSONEncoder().encode(value)
-                    try data.write(to: self.url, options: .atomic)
-                }
-            } catch let error {
-                print(error.localizedDescription)
-            }
+            self.backupDataStore.saveItem(forKey: forKey, value: value)
         }
     }
     

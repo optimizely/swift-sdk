@@ -206,6 +206,12 @@ open class OptimizelyClient: NSObject {
             return
         }
         
+        // if a download fails for any reason, the cached datafile is returned
+        // check and see if the revisions are the same and don't update if they are
+        guard config.project.revision != self.config?.project.revision else {
+            return
+        }
+        
         if let users = self.config?.whitelistUsers {
             config.whitelistUsers = users
         }

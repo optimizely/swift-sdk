@@ -1,7 +1,7 @@
 # Optimizely Swift SDK Changelog
 
 ## 3.3.1
-March 20, 2020
+March 23, 2020
 
 ### Bug Fixes
 * When a datafile download for initialization returns connection errors, the SDK fails to initialize. This is fixed to continue initialization with a cached local datafile copy. ([#308](https://github.com/optimizely/swift-sdk/pull/308))

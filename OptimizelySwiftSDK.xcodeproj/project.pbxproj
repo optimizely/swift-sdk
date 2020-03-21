@@ -289,10 +289,10 @@
 		6E14CD562422E5B900010234 /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD542422E5B900010234 /* LogViewController.swift */; };
 		6E14CD572422E5BF00010234 /* PropsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD522422813E00010234 /* PropsTableViewController.swift */; };
 		6E14CD582422E5C300010234 /* OptimizelyDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1306FC241FE3E500B4389D /* OptimizelyDebugger.swift */; };
-		6E14CD5A2422E62100010234 /* LogItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD592422E62000010234 /* LogItem.swift */; };
-		6E14CD5B2422E62100010234 /* LogItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD592422E62000010234 /* LogItem.swift */; };
 		6E14CD5D2422ED6700010234 /* DebugLogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD5C2422ED6700010234 /* DebugLogManager.swift */; };
 		6E14CD5E2422ED6700010234 /* DebugLogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD5C2422ED6700010234 /* DebugLogManager.swift */; };
+		6E14CDD42425312C00010234 /* LogDBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CDD32425312C00010234 /* LogDBManager.swift */; };
+		6E14CDD52425312C00010234 /* LogDBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CDD32425312C00010234 /* LogDBManager.swift */; };
 		6E34A6172319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
 		6E34A6182319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
 		6E34A6192319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
@@ -1183,6 +1183,8 @@
 		6EA425A52218E6AE00B074B5 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		6EA426602219242100B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6EA4266F2219243D00B074B5 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
+		6EB4F92F2425BF40006FBC1F /* LogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4F92D2425BF40006FBC1F /* LogModel.xcdatamodeld */; };
+		6EB4F9302425BF40006FBC1F /* LogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4F92D2425BF40006FBC1F /* LogModel.xcdatamodeld */; };
 		6ECB270222C526A7005D52DC /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E75167A22C520D400B2B157 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ECB60C6234D329500016D41 /* OptimizelyClientTests_OptimizelyConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C5234D329500016D41 /* OptimizelyClientTests_OptimizelyConfig.swift */; };
 		6ECB60CA234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */; };
@@ -1279,8 +1281,8 @@
 		6E130705241FE78700B4389D /* DebuggerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerItem.swift; sourceTree = "<group>"; };
 		6E14CD522422813E00010234 /* PropsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropsTableViewController.swift; sourceTree = "<group>"; };
 		6E14CD542422E5B900010234 /* LogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewController.swift; sourceTree = "<group>"; };
-		6E14CD592422E62000010234 /* LogItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogItem.swift; sourceTree = "<group>"; };
 		6E14CD5C2422ED6700010234 /* DebugLogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogManager.swift; sourceTree = "<group>"; };
+		6E14CDD32425312C00010234 /* LogDBManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogDBManager.swift; sourceTree = "<group>"; };
 		6E34A6162319EBB700BAE302 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_datafile_new_project_id.json; sourceTree = "<group>"; };
 		6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_datafile_new_revision.json; sourceTree = "<group>"; };
@@ -1454,6 +1456,7 @@
 		6EA425792218E61E00B074B5 /* OptimizelyTests-DataModel-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-DataModel-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EA4265B2219242100B074B5 /* OptimizelyTests-Others-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Others-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EA4266A2219243D00B074B5 /* OptimizelyTests-Others-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Others-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EB4F92E2425BF40006FBC1F /* LogModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = LogModel.xcdatamodel; sourceTree = "<group>"; };
 		6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EBAEB7421E3FEF900D13AA9 /* OptimizelyTests-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6ECB60C5234D329500016D41 /* OptimizelyClientTests_OptimizelyConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_OptimizelyConfig.swift; sourceTree = "<group>"; };
@@ -1596,7 +1599,8 @@
 				6E14CD522422813E00010234 /* PropsTableViewController.swift */,
 				6E14CD542422E5B900010234 /* LogViewController.swift */,
 				6E130705241FE78700B4389D /* DebuggerItem.swift */,
-				6E14CD592422E62000010234 /* LogItem.swift */,
+				6E14CDD32425312C00010234 /* LogDBManager.swift */,
+				6EB4F92D2425BF40006FBC1F /* LogModel.xcdatamodeld */,
 			);
 			path = OptimizelyDebugger;
 			sourceTree = "<group>";
@@ -1614,13 +1618,13 @@
 			isa = PBXGroup;
 			children = (
 				6E75166622C520D400B2B157 /* Optimizely */,
+				6E1306FE241FE3EC00B4389D /* OptimizelyDebugger */,
 				6E75165E22C520D400B2B157 /* Customization */,
 				6E75167C22C520D400B2B157 /* Implementation */,
 				6E75168822C520D400B2B157 /* Data Model */,
 				6E75169E22C520D400B2B157 /* Protocols */,
 				6E75167422C520D400B2B157 /* Extensions */,
 				6E75166C22C520D400B2B157 /* Utils */,
-				6E1306FE241FE3EC00B4389D /* OptimizelyDebugger */,
 				6E75167922C520D400B2B157 /* Supporting Files */,
 			);
 			path = Sources;
@@ -2689,6 +2693,7 @@
 				6E7518C522C520D400B2B157 /* Audience.swift in Sources */,
 				6E7517BD22C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E7518F522C520D500B2B157 /* UserAttribute.swift in Sources */,
+				6EB4F9302425BF40006FBC1F /* LogModel.xcdatamodeld in Sources */,
 				6E75192522C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E7516FB22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
 				6E75184D22C520D400B2B157 /* ProjectConfig.swift in Sources */,
@@ -2709,7 +2714,6 @@
 				6E7516B322C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E75183522C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E7517D522C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
-				6E14CD5B2422E62100010234 /* LogItem.swift in Sources */,
 				6E75187122C520D400B2B157 /* Variation.swift in Sources */,
 				6ECB60CB234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
 				6E7516A722C520D400B2B157 /* DefaultLogger.swift in Sources */,
@@ -2744,6 +2748,7 @@
 				6EA2CC252345618E001E7531 /* OptimizelyConfig.swift in Sources */,
 				6E7518D122C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E75182922C520D400B2B157 /* BatchEvent.swift in Sources */,
+				6E14CDD52425312C00010234 /* LogDBManager.swift in Sources */,
 				6E75171F22C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E75170722C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E75174322C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
@@ -3506,6 +3511,7 @@
 				6E75178A22C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
 				6E75190022C520D500B2B157 /* Attribute.swift in Sources */,
 				6E7518AC22C520D400B2B157 /* Group.swift in Sources */,
+				6EB4F92F2425BF40006FBC1F /* LogModel.xcdatamodeld in Sources */,
 				6E7517C822C520D400B2B157 /* DefaultBucketer.swift in Sources */,
 				6E7517BC22C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E7516CA22C520D400B2B157 /* OPTLogger.swift in Sources */,
@@ -3526,7 +3532,6 @@
 				6E75171E22C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E75172A22C520D400B2B157 /* Constants.swift in Sources */,
 				6E7516A622C520D400B2B157 /* DefaultLogger.swift in Sources */,
-				6E14CD5A2422E62100010234 /* LogItem.swift in Sources */,
 				6E75189422C520D400B2B157 /* Experiment.swift in Sources */,
 				6ECB60CA234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
 				6E75177222C520D400B2B157 /* SDKVersion.swift in Sources */,
@@ -3561,6 +3566,7 @@
 				6E75193022C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E7517E022C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E7516FA22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
+				6E14CDD42425312C00010234 /* LogDBManager.swift in Sources */,
 				6E75187C22C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E7517EC22C520D400B2B157 /* DataStoreMemory.swift in Sources */,
 				6E75174E22C520D400B2B157 /* LogMessage.swift in Sources */,
@@ -4438,6 +4444,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		6EB4F92D2425BF40006FBC1F /* LogModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				6EB4F92E2425BF40006FBC1F /* LogModel.xcdatamodel */,
+			);
+			currentVersion = 6EB4F92E2425BF40006FBC1F /* LogModel.xcdatamodel */;
+			path = LogModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 0B7CB0B921AC5FE2007B77E5 /* Project object */;
 }

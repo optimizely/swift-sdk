@@ -20,6 +20,8 @@ class LogViewController: UITableViewController {
     weak var client: OptimizelyClient?
     var items = [LogItem]()
     var sessionId: Int = 0
+    var keyword: String?
+    var level: OptimizelyLogLevel = .info
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +29,7 @@ class LogViewController: UITableViewController {
         addHeaderViews()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(clearLogs))
         
-        (sessionId, items) = LogDBManager.shared.read(level: .debug, keyword: "keyword")
+        refreshTableView()
         
         tableView.rowHeight = 60.0
     }
@@ -59,12 +61,18 @@ class LogViewController: UITableViewController {
     }
     
     @objc func changeLogLevel(sender: UISegmentedControl) {
-        let levelValue = sender.selectedSegmentIndex + 1
-        print(OptimizelyLogLevel(rawValue: levelValue)!.name)
+        level = OptimizelyLogLevel(rawValue: sender.selectedSegmentIndex + 1)!
+        refreshTableView()
     }
     
     @objc func clearLogs(sender: UIBarButtonItem) {
-        print("All logs cleared")
+        LogDBManager.shared.clear()
+        refreshTableView()
+    }
+    
+    func refreshTableView() {
+        (sessionId, items) = LogDBManager.shared.read(level: level, keyword: keyword)
+        tableView.reloadData()
     }
     
     // MARK: - Table view data source
@@ -86,22 +94,31 @@ class LogViewController: UITableViewController {
 
         let item = items[indexPath.row]
         
-        cell.textLabel!.text = "[\(OptimizelyLogLevel(rawValue: Int(item.level))!.name)]"
+        cell.textLabel!.text = "[\(OptimizelyLogLevel(rawValue: Int(item.level))!.name)] \(item.date!)"
         cell.detailTextLabel!.text = item.text
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let item = items[indexPath.row]
-//        item.action?()
     }
 
 }
 
+// MARK: - SearchBar delegate
 
 extension LogViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let keyword = searchBar.text, !keyword.isEmpty else { return }
-        print(keyword)
+        keyword = searchBar.text
+        if keyword != nil, keyword!.isEmpty { keyword = nil }
+        refreshTableView()
     }
+    
+    // clear table when "x" pressed
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            keyword = nil
+            refreshTableView()
+        }
+    }
+    
 }

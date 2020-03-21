@@ -1594,8 +1594,8 @@
 				6E1306FF241FE4CF00B4389D /* DebugViewController.swift */,
 				6E14CD522422813E00010234 /* PropsTableViewController.swift */,
 				6E130705241FE78700B4389D /* DebuggerItem.swift */,
-				6E14CD542422E5B900010234 /* LogViewController.swift */,
 				6E14CDD32425312C00010234 /* LogDBManager.swift */,
+				6E14CD542422E5B900010234 /* LogViewController.swift */,
 				6EB4F92D2425BF40006FBC1F /* LogModel.xcdatamodeld */,
 			);
 			path = OptimizelyDebugger;

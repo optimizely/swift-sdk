@@ -106,7 +106,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let customLogger = CustomLogger()
         
         optimizely = OptimizelyClient(sdkKey: sdkKey,
-                                       logger: customLogger,
+                                       //logger: customLogger,
                                        eventDispatcher: eventDispatcher,
                                        periodicDownloadInterval: downloadIntervalInSecs,
                                        defaultLogLevel: logLevel)

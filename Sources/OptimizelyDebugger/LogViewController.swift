@@ -16,18 +16,57 @@
 
 import UIKit
 
-class LogViewController: UITableViewController {    
+class LogViewController: UITableViewController {
     weak var client: OptimizelyClient?
     var items = [LogItem]()
+    var sessionId: Int = 0
         
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let client = client else { return }
-
+        addHeaderViews()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(clearLogs))
+        
+        (sessionId, items) = LogDBManager.shared.read(level: .debug, keyword: "keyword")
+        
         tableView.rowHeight = 60.0
     }
-
+    
+    func addHeaderViews() {
+        let hv = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 100))
+        
+        // LogLevel selector
+        
+        let logLevels: [OptimizelyLogLevel] = [.error, .warning, .info, .debug]
+        let sv = UISegmentedControl(items: logLevels.map { $0.name })
+        sv.selectedSegmentIndex = 2
+        sv.layer.cornerRadius = 5.0
+        sv.backgroundColor = .gray
+        sv.tintColor = .white
+        sv.frame = CGRect(x: 10, y: 10, width: hv.frame.width - 20, height: 30)
+        sv.addTarget(self, action: #selector(changeLogLevel), for: .valueChanged)
+        hv.addSubview(sv)
+        
+        // Keyword Search Bar
+        
+        let tv = UISearchBar(frame: CGRect(x: 5, y: 40, width: hv.frame.width - 10, height: 50))
+        tv.placeholder = "Enter search keywords"
+        tv.autocapitalizationType = .none
+        tv.delegate = self
+        hv.addSubview(tv)
+        
+        tableView.tableHeaderView = hv
+    }
+    
+    @objc func changeLogLevel(sender: UISegmentedControl) {
+        let levelValue = sender.selectedSegmentIndex + 1
+        print(OptimizelyLogLevel(rawValue: levelValue)!.name)
+    }
+    
+    @objc func clearLogs(sender: UIBarButtonItem) {
+        print("All logs cleared")
+    }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -46,7 +85,9 @@ class LogViewController: UITableViewController {
         let cell = reuse!
 
         let item = items[indexPath.row]
-        cell.textLabel!.text = "[\(item.level)][\(item.module)]"
+        
+        cell.textLabel!.text = "[\(OptimizelyLogLevel(rawValue: Int(item.level))!.name)]"
+        cell.detailTextLabel!.text = item.text
         return cell
     }
     
@@ -55,4 +96,12 @@ class LogViewController: UITableViewController {
 //        item.action?()
     }
 
+}
+
+
+extension LogViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let keyword = searchBar.text, !keyword.isEmpty else { return }
+        print(keyword)
+    }
 }

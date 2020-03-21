@@ -289,8 +289,6 @@
 		6E14CD562422E5B900010234 /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD542422E5B900010234 /* LogViewController.swift */; };
 		6E14CD572422E5BF00010234 /* PropsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD522422813E00010234 /* PropsTableViewController.swift */; };
 		6E14CD582422E5C300010234 /* OptimizelyDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1306FC241FE3E500B4389D /* OptimizelyDebugger.swift */; };
-		6E14CD5D2422ED6700010234 /* DebugLogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD5C2422ED6700010234 /* DebugLogManager.swift */; };
-		6E14CD5E2422ED6700010234 /* DebugLogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CD5C2422ED6700010234 /* DebugLogManager.swift */; };
 		6E14CDD42425312C00010234 /* LogDBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CDD32425312C00010234 /* LogDBManager.swift */; };
 		6E14CDD52425312C00010234 /* LogDBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14CDD32425312C00010234 /* LogDBManager.swift */; };
 		6E34A6172319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
@@ -1281,7 +1279,6 @@
 		6E130705241FE78700B4389D /* DebuggerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerItem.swift; sourceTree = "<group>"; };
 		6E14CD522422813E00010234 /* PropsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropsTableViewController.swift; sourceTree = "<group>"; };
 		6E14CD542422E5B900010234 /* LogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewController.swift; sourceTree = "<group>"; };
-		6E14CD5C2422ED6700010234 /* DebugLogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogManager.swift; sourceTree = "<group>"; };
 		6E14CDD32425312C00010234 /* LogDBManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogDBManager.swift; sourceTree = "<group>"; };
 		6E34A6162319EBB700BAE302 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_datafile_new_project_id.json; sourceTree = "<group>"; };
@@ -1594,11 +1591,10 @@
 			isa = PBXGroup;
 			children = (
 				6E1306FC241FE3E500B4389D /* OptimizelyDebugger.swift */,
-				6E14CD5C2422ED6700010234 /* DebugLogManager.swift */,
 				6E1306FF241FE4CF00B4389D /* DebugViewController.swift */,
 				6E14CD522422813E00010234 /* PropsTableViewController.swift */,
-				6E14CD542422E5B900010234 /* LogViewController.swift */,
 				6E130705241FE78700B4389D /* DebuggerItem.swift */,
+				6E14CD542422E5B900010234 /* LogViewController.swift */,
 				6E14CDD32425312C00010234 /* LogDBManager.swift */,
 				6EB4F92D2425BF40006FBC1F /* LogModel.xcdatamodeld */,
 			);
@@ -2755,7 +2751,6 @@
 				6E75188922C520D400B2B157 /* Project.swift in Sources */,
 				6E7518B922C520D400B2B157 /* Variable.swift in Sources */,
 				6E34A6182319EBB800BAE302 /* Notifications.swift in Sources */,
-				6E14CD5E2422ED6700010234 /* DebugLogManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3573,7 +3568,6 @@
 				6E75175A22C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E34A6172319EBB800BAE302 /* Notifications.swift in Sources */,
 				6E1306FD241FE3E500B4389D /* OptimizelyDebugger.swift in Sources */,
-				6E14CD5D2422ED6700010234 /* DebugLogManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

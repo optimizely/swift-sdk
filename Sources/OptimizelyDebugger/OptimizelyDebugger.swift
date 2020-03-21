@@ -22,14 +22,10 @@ public class OptimizelyDebugger {
     
     private init() {
         self.debugVC = UINavigationController()
-        
-        LogDBManager()
     }
     
     public static func startLogging(client: OptimizelyClient?) {
         guard let client = client else { return }
-
-        
     }
     
     public static func open(client: OptimizelyClient?, parent: UIViewController?) {

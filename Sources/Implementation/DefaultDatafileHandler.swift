@@ -26,6 +26,8 @@ class DefaultDatafileHandler: OPTDatafileHandler {
     var timers: AtomicProperty<[String:(timer: Timer?, interval: Int)]> = AtomicProperty(property: [String: (Timer?, Int)]())
     // we will use a simple user defaults datastore
     let dataStore = DataStoreUserDefaults()
+    // datastore for Datafile downloads
+    var datafileCache = [String:OPTDataStore]()
     // and our download queue to speed things up.
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
     
@@ -255,55 +257,56 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         stopPeriodicUpdates()
     }
     
-    func saveDatafile(sdkKey: String, dataFile: Data) {
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent(sdkKey, isDirectory: false)
-            
-            //writing
-            do {
-                try dataFile.write(to: fileURL, options: .atomic)
-            } catch {/* error handling here */
-                logger.e("Problem saving datafile for key " + sdkKey)
-            }
+    func getDatafileCache(sdkKey:String) -> OPTDataStore {
+        if let cache = datafileCache[sdkKey] {
+            return cache
         }
+        else {
+            #if os(tvOS)
+            let store = DataStoreUserDefaults()
+            datafileCache[sdkKey] = store
+            return store
+            #else
+            let store = DataStoreFile<Data>(storeName: sdkKey)
+            datafileCache[sdkKey] = store
+            return store
+            #endif
+        }
+    }
+    
+    func saveDatafile(sdkKey: String, dataFile: Data) {
+        getDatafileCache(sdkKey: sdkKey).saveItem(forKey: sdkKey, value: dataFile)
     }
     
     func loadSavedDatafile(sdkKey: String) -> Data? {
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent(sdkKey)
-            
-            //reading
-            do {
-                let data = try Data(contentsOf: fileURL)
-                return data
-            } catch {/* error handling here */
-                logger.e("Problem loading datafile for key " + sdkKey)
-            }
-        }
-        
-        return nil
+        return getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey) as? Data
     }
     
     func isDatafileSaved(sdkKey: String) -> Bool {
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let fileURL = dir.appendingPathComponent(sdkKey)
-            return FileManager.default.fileExists(atPath: fileURL.path)
-        }
-        
-        return false
+        let item = getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey)
+        return item != nil && (item as? Data) != nil
     }
     
     func removeSavedDatafile(sdkKey: String) {
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let fileURL = dir.appendingPathComponent(sdkKey)
-            if FileManager.default.fileExists(atPath: fileURL.path) {
-                try? FileManager.default.removeItem(at: fileURL)
-            }
+        getDatafileCache(sdkKey: sdkKey).removeItem(sdkKey: sdkKey)
+    }
+}
+
+extension OPTDataStore {
+    public func removeItem(sdkKey:String) {
+        if let store = self as? DataStoreUserDefaults {
+            store.removeItem(sdkKey: sdkKey)
+        }
+        else if let store = self as? DataStoreFile<Data> {
+            store.removeItem(sdkKey: sdkKey)
+        }
+        else if let store = self as? DataStoreMemory<Data> {
+            store.removeItem(sdkKey: sdkKey)
         }
     }
 }
+
+
 
 extension DataStoreUserDefaults {
     func getLastModified(sdkKey: String) -> String? {

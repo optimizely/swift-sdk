@@ -70,4 +70,15 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
             }
         }
     }
+    
+    public func removeItem(sdkKey: String) {
+        lock.async {
+            do {
+                try FileManager.default.removeItem(at: self.url)
+            } catch let e {
+                self.logger?.e(e.localizedDescription)
+            }
+        }
+
+    }
 }

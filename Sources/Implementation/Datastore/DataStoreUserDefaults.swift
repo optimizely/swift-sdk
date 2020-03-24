@@ -75,4 +75,8 @@ public class DataStoreUserDefaults: OPTDataStore {
         }
     }
     
+    public func removeItem(sdkKey: String) {
+        UserDefaults.standard.removeObject(forKey: sdkKey)
+    }
+    
 }

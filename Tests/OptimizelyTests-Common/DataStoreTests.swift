@@ -110,21 +110,21 @@ class DataStoreTests: XCTestCase {
     func testUserDefaultsTooBig() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        
+        HandlerRegistryService.shared.binders.property?.removeAll()
+
         let datastore = DataStoreUserDefaults()
         
         class Logger : OPTLogger {
-            public var messages: [String]
-                = []
+            public var messages: [String] = [String]()
             required init() {
-                
+    
             }
             static var logLevel: OptimizelyLogLevel {
-                set {
-                    
-                }
                 get {
                     return OptimizelyLogLevel.info
+                }
+                set {
+                    // necessary for OPTLogger protocol
                 }
             }
             
@@ -149,17 +149,11 @@ class DataStoreTests: XCTestCase {
         
         datastore.saveItem(forKey: "testUserDefaultsTooBig", value: array)
         
-        let value = datastore.getItem(forKey: "testUserDefaultsTooBig") as? String
+        let value = datastore.getItem(forKey: "testUserDefaultsTooBig") as? [Data]
         XCTAssert(value == nil)
         XCTAssert(logger.messages.last!.contains("Save to User Defaults error: testUserDefaultsTooBig is too big to save size"))
         HandlerRegistryService.shared.binders.property?.removeAll()
+        
 
     }
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
-}
+ }

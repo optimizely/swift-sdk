@@ -289,6 +289,9 @@ class DefaultDatafileHandler: OPTDatafileHandler {
     
     func removeSavedDatafile(sdkKey: String) {
         getDatafileCache(sdkKey: sdkKey).removeItem(sdkKey: sdkKey)
+        if let index = datafileCache.index(forKey: sdkKey) {
+            datafileCache.remove(at: index)
+        }
     }
 }
 

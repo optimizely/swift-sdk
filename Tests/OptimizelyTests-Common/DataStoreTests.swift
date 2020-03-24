@@ -39,9 +39,6 @@ class DataStoreTests: XCTestCase {
     }
 
     func testMemoryStore() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        
         let datastore = DataStoreMemory<String>(storeName: "testingDataStoreMemory")
         
         datastore.saveItem(forKey: "testString", value: "value")
@@ -80,8 +77,7 @@ class DataStoreTests: XCTestCase {
     }
 
     func testFileStore() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // simple file store test
         
         let datastore = DataStoreFile<[String]>(storeName: "testingDataStoreFile")
         
@@ -94,8 +90,7 @@ class DataStoreTests: XCTestCase {
     }
     
     func testUserDefaults() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // simple user defaults test
         
         let datastore = DataStoreUserDefaults()
         
@@ -108,8 +103,8 @@ class DataStoreTests: XCTestCase {
     }
 
     func testUserDefaultsTooBig() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // Since UserDefaults has a hard limit in tvOS, we chose a relatively small size
+        // 128k as a max for user defaults saving.
         HandlerRegistryService.shared.binders.property?.removeAll()
 
         let datastore = DataStoreUserDefaults()
@@ -131,8 +126,6 @@ class DataStoreTests: XCTestCase {
             func log(level: OptimizelyLogLevel, message: String) {
                 messages.append(message)
             }
-            
-            
         }
         let logger = Logger()
         
@@ -153,7 +146,5 @@ class DataStoreTests: XCTestCase {
         XCTAssert(value == nil)
         XCTAssert(logger.messages.last!.contains("Save to User Defaults error: testUserDefaultsTooBig is too big to save size"))
         HandlerRegistryService.shared.binders.property?.removeAll()
-        
-
     }
  }

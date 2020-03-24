@@ -97,7 +97,7 @@ class DataStoreTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         
-        let datastore = DataStoreMemory<String>(storeName: "testingDataStoreUserDefaults")
+        let datastore = DataStoreUserDefaults()
         
         datastore.saveItem(forKey: "testString", value: "value")
         
@@ -105,18 +105,56 @@ class DataStoreTests: XCTestCase {
         
         XCTAssert(value == "value")
         
-        datastore.unsubscribe()
-        
-        datastore.subscribe()
-        
-        datastore.load(forKey: "testingDataStoreUserDefaults")
-        
-        let v2 = datastore.getItem(forKey: "testString") as! String
-        
-        XCTAssert(v2 == value)
-
     }
 
+    func testUserDefaultsTooBig() {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
+        let datastore = DataStoreUserDefaults()
+        
+        class Logger : OPTLogger {
+            public var messages: [String]
+                = []
+            required init() {
+                
+            }
+            static var logLevel: OptimizelyLogLevel {
+                set {
+                    
+                }
+                get {
+                    return OptimizelyLogLevel.info
+                }
+            }
+            
+            func log(level: OptimizelyLogLevel, message: String) {
+                messages.append(message)
+            }
+            
+            
+        }
+        let logger = Logger()
+        
+        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self).to { () -> OPTLogger? in
+            return logger
+        }
+
+        HandlerRegistryService.shared.registerBinding(binder: binder)
+        
+        var array = [Data]()
+        for _ in 0 ... DataStoreUserDefaults.MAX_DS_SIZE + 1 {
+            array.append("01234567890abcdef".data(using: .ascii)!)
+        }
+        
+        datastore.saveItem(forKey: "testUserDefaultsTooBig", value: array)
+        
+        let value = datastore.getItem(forKey: "testUserDefaultsTooBig") as? String
+        XCTAssert(value == nil)
+        XCTAssert(logger.messages.last!.contains("Save to User Defaults error: testUserDefaultsTooBig is too big to save size"))
+        HandlerRegistryService.shared.binders.property?.removeAll()
+
+    }
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {

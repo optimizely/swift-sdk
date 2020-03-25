@@ -31,6 +31,8 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         let ds = DataStoreFile<Data>(storeName: sdkKey)
         ds.removeItem(sdkKey: sdkKey)
+        ds.lock.sync {
+        }
         
         HandlerRegistryService.shared.binders.property?.removeAll()
 

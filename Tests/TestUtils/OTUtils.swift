@@ -131,6 +131,9 @@ class OTUtils {
     static func saveAFile(name:String, data:Data) -> URL? {
         let ds = DataStoreFile<Data>(storeName: name)
         ds.saveItem(forKey: name, value: data)
+        ds.lock.sync {
+            // sync to make sure the file is stored.
+        }
         
         return ds.url
     }

@@ -41,6 +41,8 @@ class DatafileHandlerTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         let ds = DataStoreFile<Data>(storeName: sdkKey)
         ds.removeItem(sdkKey: sdkKey)
+        ds.lock.sync {
+        }
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
 
@@ -87,6 +89,9 @@ class DatafileHandlerTests: XCTestCase {
         // create a dummy file at a url to use as or datafile cdn location
         let ds = DataStoreFile<Data>(storeName: sdkKey)
         ds.saveItem(forKey: sdkKey, value: "{}".data(using: .utf8) as Any)
+        ds.lock.sync {
+            // make sure it is saved since we are not using the same ds.lock.
+        }
         localUrl = ds.url
 
         // default datafile handler

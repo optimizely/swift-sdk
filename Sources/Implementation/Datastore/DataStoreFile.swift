@@ -21,10 +21,12 @@ import Foundation
 public class DataStoreFile<T>: OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
+    let async: Bool
     public let url: URL
     lazy var logger:OPTLogger? = OPTLoggerFactory.getLogger()
     
-    init(storeName: String) {
+    init(storeName: String, async: Bool = true) {
+        self.async = async
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -50,8 +52,23 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
         return returnItem
     }
     
+    func doCall(async:Bool, block:@escaping ()->()) {
+        if async {
+            lock.async {
+                block()
+            }
+        }
+        else {
+            lock.sync {
+                block()
+            }
+        }
+    }
+    
+    
+    
     public func saveItem(forKey: String, value: Any) {
-        lock.async {
+        doCall(async: self.async) {
             do {
                 if let value = value as? T {
                     let data = try JSONEncoder().encode(value)
@@ -63,8 +80,8 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
         }
     }
     
-    public func removeItem(sdkKey: String) {
-        lock.async {
+    public func removeItem(forKey: String) {
+        doCall(async: self.async) {
             do {
                 try FileManager.default.removeItem(at: self.url)
             } catch let e {

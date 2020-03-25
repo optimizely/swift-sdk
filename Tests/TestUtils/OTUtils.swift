@@ -129,15 +129,19 @@ class OTUtils {
     }
     
     static func saveAFile(name:String, data:Data) -> URL? {
-        let ds = DataStoreFile<Data>(storeName: name)
+        let ds = DataStoreFile<Data>(storeName: name, async: false)
         ds.saveItem(forKey: name, value: data)
-        ds.lock.sync {
-            // sync to make sure the file is stored.
-        }
         
         return ds.url
     }
-    
+
+    static func removeAFile(name:String) -> URL? {
+        let ds = DataStoreFile<Data>(storeName: name, async: false)
+        ds.removeItem(sdkKey: name)
+        
+        return ds.url
+    }
+
     // MARK: - others
     
     static var randomSdkKey: String {

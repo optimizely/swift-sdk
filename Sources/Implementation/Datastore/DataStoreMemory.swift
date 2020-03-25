@@ -67,10 +67,10 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
         }
     }
     
-    public func removeItem(sdkKey: String) {
+    public func removeItem(forKey: String) {
         lock.async {
             self.data = nil
-            self.backupDataStore.removeItem(sdkKey: sdkKey)
+            self.backupDataStore.removeItem(forKey: forKey)
         }
         // this is a no op here. data could be niled out.
     }

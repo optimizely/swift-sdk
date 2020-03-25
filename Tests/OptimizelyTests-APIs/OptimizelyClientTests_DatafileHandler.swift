@@ -29,10 +29,7 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        let ds = DataStoreFile<Data>(storeName: sdkKey)
-        ds.removeItem(sdkKey: sdkKey)
-        ds.lock.sync {
-        }
+        OTUtils.removeAFile(name: sdkKey)
         
         HandlerRegistryService.shared.binders.property?.removeAll()
 

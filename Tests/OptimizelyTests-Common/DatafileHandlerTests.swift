@@ -39,10 +39,7 @@ class DatafileHandlerTests: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        let ds = DataStoreFile<Data>(storeName: sdkKey)
-        ds.removeItem(sdkKey: sdkKey)
-        ds.lock.sync {
-        }
+        OTUtils.removeAFile(name: sdkKey)
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
 
@@ -87,12 +84,7 @@ class DatafileHandlerTests: XCTestCase {
         var localUrl:URL?
         
         // create a dummy file at a url to use as or datafile cdn location
-        let ds = DataStoreFile<Data>(storeName: sdkKey)
-        ds.saveItem(forKey: sdkKey, value: "{}".data(using: .utf8) as Any)
-        ds.lock.sync {
-            // make sure it is saved since we are not using the same ds.lock.
-        }
-        localUrl = ds.url
+        localUrl = OTUtils.saveAFile(name: sdkKey, data: "{}".data(using: .utf8)!)
 
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {

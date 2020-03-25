@@ -27,4 +27,7 @@ public protocol OPTDataStore {
     /// - Parameter forKey: key to save value
     /// - Parameter value: value to save.
     func saveItem(forKey: String, value: Any)
+    /// removeItem - remove the item to the datastore.
+    /// - Parameter forKey: key to save value
+    func removeItem(sdkKey:String)
 }

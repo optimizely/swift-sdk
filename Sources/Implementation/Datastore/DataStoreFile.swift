@@ -21,7 +21,7 @@ import Foundation
 public class DataStoreFile<T>: OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
-    let url: URL
+    public let url: URL
     lazy var logger:OPTLogger? = OPTLoggerFactory.getLogger()
     
     init(storeName: String) {
@@ -29,14 +29,6 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
         lock = DispatchQueue(label: storeName)
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             self.url = url.appendingPathComponent(storeName, isDirectory: false)
-            if !FileManager.default.fileExists(atPath: self.url.path) {
-                do {
-                    let data = try JSONEncoder().encode([Data]())
-                    try data.write(to: self.url, options: .atomicWrite)
-                } catch let e {
-                    self.logger?.e(e.localizedDescription)
-                }
-            }
         } else {
             self.url = URL(fileURLWithPath: storeName)
         }

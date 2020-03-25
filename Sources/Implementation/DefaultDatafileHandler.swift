@@ -283,33 +283,13 @@ class DefaultDatafileHandler: OPTDatafileHandler {
     }
     
     func isDatafileSaved(sdkKey: String) -> Bool {
-        let item = getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey)
-        return item != nil && (item as? Data) != nil
+        return getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey) as? Data != nil
     }
     
     func removeSavedDatafile(sdkKey: String) {
         getDatafileCache(sdkKey: sdkKey).removeItem(sdkKey: sdkKey)
-        if let index = datafileCache.index(forKey: sdkKey) {
-            datafileCache.remove(at: index)
-        }
     }
 }
-
-extension OPTDataStore {
-    public func removeItem(sdkKey:String) {
-        if let store = self as? DataStoreUserDefaults {
-            store.removeItem(sdkKey: sdkKey)
-        }
-        else if let store = self as? DataStoreFile<Data> {
-            store.removeItem(sdkKey: sdkKey)
-        }
-        else if let store = self as? DataStoreMemory<Data> {
-            store.removeItem(sdkKey: sdkKey)
-        }
-    }
-}
-
-
 
 extension DataStoreUserDefaults {
     func getLastModified(sdkKey: String) -> String? {

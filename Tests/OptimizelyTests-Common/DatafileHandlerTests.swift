@@ -81,7 +81,9 @@ class DatafileHandlerTests: XCTestCase {
         var localUrl:URL?
         
         // create a dummy file at a url to use as or datafile cdn location
-        localUrl = OTUtils.saveAFile(name: "localcdn", data: Data())
+        let ds = DataStoreFile<Data>(storeName: "localcdnTestSDKKey")
+        ds.saveItem(forKey: "localcdnTestSDKKey", value: "{}".data(using: .utf8))
+        localUrl = ds.url
 
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {
@@ -124,7 +126,7 @@ class DatafileHandlerTests: XCTestCase {
         var localUrl:URL?
         
         // create a dummy file at a url to use as or datafile cdn location
-        localUrl = OTUtils.saveAFile(name: "localcdn", data: Data())
+        localUrl = OTUtils.saveAFile(name: "localcdnTestSDKKey", data: Data())
 
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {

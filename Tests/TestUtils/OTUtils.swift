@@ -129,15 +129,10 @@ class OTUtils {
     }
     
     static func saveAFile(name:String, data:Data) -> URL? {
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent(name, isDirectory: false)
-            
-            try? data.write(to: fileURL, options: .atomic)
-            return fileURL
-        }
+        let ds = DataStoreFile<Data>(storeName: name)
+        ds.saveItem(forKey: name, value: data)
         
-        return nil
+        return ds.url
     }
     
     // MARK: - others

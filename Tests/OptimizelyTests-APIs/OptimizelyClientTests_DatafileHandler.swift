@@ -20,6 +20,8 @@ import XCTest
 
 class OptimizelyClientTests_DatafileHandler: XCTestCase {
 
+    let sdkKey = "localcdnTestSDKKey"
+    
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         HandlerRegistryService.shared.binders.property?.removeAll()
@@ -27,6 +29,9 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        let ds = DataStoreFile<Data>(storeName: sdkKey)
+        ds.removeItem(sdkKey: sdkKey)
+        
         HandlerRegistryService.shared.binders.property?.removeAll()
 
     }
@@ -55,14 +60,14 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         //save the cached datafile..
         let data = OTUtils.loadJSONDatafile("api_datafile")
 
-        handler.saveDatafile(sdkKey: "localcdnTestSDKKey", dataFile: data!)
-        handler.dataStore.setLastModified(sdkKey: "localcdnTestSDKKey", lastModified: "1234")
+        handler.saveDatafile(sdkKey: sdkKey, dataFile: data!)
+        handler.dataStore.setLastModified(sdkKey: sdkKey, lastModified: "1234")
         // set the url to use as our datafile download url
         handler.localFileUrl = fileUrl
         
-        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).using(instance: handler).singetlon().sdkKey(key: "localcdnTestSDKKey").reInitializeStrategy(strategy: .reUse))
+        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).using(instance: handler).singetlon().sdkKey(key: sdkKey).reInitializeStrategy(strategy: .reUse))
         
-        let client = OptimizelyClient(sdkKey: "localcdnTestSDKKey")
+        let client = OptimizelyClient(sdkKey: sdkKey)
         
         let expectation = XCTestExpectation(description: "get datafile from cache")
         

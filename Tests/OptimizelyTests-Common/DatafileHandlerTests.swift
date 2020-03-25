@@ -17,6 +17,8 @@
 import XCTest
 
 class DatafileHandlerTests: XCTestCase {
+    
+    let sdkKey = "localcdnTestSDKKey"
 
     override func setUp() {
         
@@ -37,6 +39,8 @@ class DatafileHandlerTests: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        let ds = DataStoreFile<Data>(storeName: sdkKey)
+        ds.removeItem(sdkKey: sdkKey)
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
 
@@ -81,8 +85,8 @@ class DatafileHandlerTests: XCTestCase {
         var localUrl:URL?
         
         // create a dummy file at a url to use as or datafile cdn location
-        let ds = DataStoreFile<Data>(storeName: "localcdnTestSDKKey")
-        ds.saveItem(forKey: "localcdnTestSDKKey", value: "{}".data(using: .utf8))
+        let ds = DataStoreFile<Data>(storeName: sdkKey)
+        ds.saveItem(forKey: sdkKey, value: "{}".data(using: .utf8) as Any)
         localUrl = ds.url
 
         // default datafile handler
@@ -108,7 +112,7 @@ class DatafileHandlerTests: XCTestCase {
         
         // initiate download task which should pass back a 304 but still return non nil
         // since the datafile was not in cache.
-        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+        handler.downloadDatafile(sdkKey: sdkKey) { (result) in
             
             if case let .success(data) = result  {
                 XCTAssert(data != nil)
@@ -126,7 +130,7 @@ class DatafileHandlerTests: XCTestCase {
         var localUrl:URL?
         
         // create a dummy file at a url to use as or datafile cdn location
-        localUrl = OTUtils.saveAFile(name: "localcdnTestSDKKey", data: Data())
+        localUrl = OTUtils.saveAFile(name: sdkKey, data: Data())
 
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {
@@ -151,7 +155,7 @@ class DatafileHandlerTests: XCTestCase {
         
         // initiate download task which should pass back a 304 but still return non nil
         // since the datafile was not in cache.
-        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+        handler.downloadDatafile(sdkKey: sdkKey) { (result) in
             
             if case let .success(data) = result  {
                 XCTAssert(data != nil)
@@ -183,13 +187,13 @@ class DatafileHandlerTests: XCTestCase {
         // create test datafile handler
         let handler = InnerDatafileHandler()
         // remove the cached file just in case.
-        handler.removeSavedDatafile(sdkKey: "localcdnTestSDKKey")
+        handler.removeSavedDatafile(sdkKey: sdkKey)
         
         let expectation = XCTestExpectation(description: "wait to get nil data")
         
         // initiate download task which should pass back a 304 but still return non nil
         // since the datafile was not in cache.
-        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+        handler.downloadDatafile(sdkKey: sdkKey) { (result) in
             
             if case .success(_) = result  {
                 XCTAssert(false)
@@ -225,7 +229,7 @@ class DatafileHandlerTests: XCTestCase {
         // create test datafile handler
         let handler = InnerDatafileHandler()
         //remove any cached datafile..
-        handler.removeSavedDatafile(sdkKey: "localcdnTestSDKKey")
+        handler.removeSavedDatafile(sdkKey: sdkKey)
         // set the url to use as our datafile download url
         handler.localFileUrl = localUrl
         
@@ -233,7 +237,7 @@ class DatafileHandlerTests: XCTestCase {
         
         // initiate download task which should pass back a 304 but still return non nil
         // since the datafile was not in cache.
-        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+        handler.downloadDatafile(sdkKey: sdkKey) { (result) in
             
             if case let .success(data) = result  {
                 XCTAssert(data != nil)
@@ -269,8 +273,8 @@ class DatafileHandlerTests: XCTestCase {
         // create test datafile handler
         let handler = InnerDatafileHandler()
         //save the cached datafile..
-        handler.saveDatafile(sdkKey: "localcdnTestSDKKey", dataFile: "{}".data(using: .utf8)!)
-        handler.dataStore.setLastModified(sdkKey: "localcdnTestSDKKey", lastModified: "1234")
+        handler.saveDatafile(sdkKey: sdkKey, dataFile: "{}".data(using: .utf8)!)
+        handler.dataStore.setLastModified(sdkKey: sdkKey, lastModified: "1234")
         // set the url to use as our datafile download url
         handler.localFileUrl = fileUrl
         
@@ -278,7 +282,7 @@ class DatafileHandlerTests: XCTestCase {
         
         // initiate download task which should pass back a 304 but still return non nil
         // since the datafile was not in cache.
-        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey") { (result) in
+        handler.downloadDatafile(sdkKey: sdkKey) { (result) in
             if case let .success(data) = result  {
                 // should come back as nil since got 304 and datafile in cache.
                 XCTAssert(data == nil)
@@ -287,7 +291,7 @@ class DatafileHandlerTests: XCTestCase {
         }
         let expectation2 = XCTestExpectation(description: "wait to get data")
         
-        handler.downloadDatafile(sdkKey: "localcdnTestSDKKey", returnCacheIfNoChange: true) {
+        handler.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: true) {
             (result) in
             if case let .success(data) = result  {
                 // should come back with data since got 304 and datafile in cache.

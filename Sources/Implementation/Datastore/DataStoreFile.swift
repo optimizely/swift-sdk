@@ -42,8 +42,13 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
         lock.sync {
             do {
                 let contents = try Data(contentsOf: self.url)
-                let item = try JSONDecoder().decode(T.self, from: contents)
-                returnItem = item
+                if type(of: T.self) == type(of: Data.self) {
+                    returnItem = contents as? T
+                }
+                else {
+                    let item = try JSONDecoder().decode(T.self, from: contents)
+                    returnItem = item
+                }
             } catch let e as NSError {
                 if e.code != 260 {
                     self.logger?.e(e.localizedDescription)
@@ -73,8 +78,17 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
         doCall(async: self.async) {
             do {
                 if let value = value as? T {
-                    let data = try JSONEncoder().encode(value)
-                    try data.write(to: self.url, options: .atomic)
+                    var data:Data?
+                    // don't bother to convert... otherwise, do
+                    if let value = value as? Data {
+                        data = value
+                    }
+                    else {
+                        data = try JSONEncoder().encode(value)
+                    }
+                    if let data = data {
+                        try data.write(to: self.url, options: .atomic)
+                    }
                 }
             } catch let e {
                 self.logger?.e(e.localizedDescription)

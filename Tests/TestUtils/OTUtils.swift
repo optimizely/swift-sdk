@@ -137,7 +137,7 @@ class OTUtils {
 
     static func removeAFile(name:String) -> URL? {
         let ds = DataStoreFile<Data>(storeName: name, async: false)
-        ds.removeItem(sdkKey: name)
+        ds.removeItem(forKey: name)
         
         return ds.url
     }

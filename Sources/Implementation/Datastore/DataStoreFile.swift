@@ -44,8 +44,10 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
                 let contents = try Data(contentsOf: self.url)
                 let item = try JSONDecoder().decode(T.self, from: contents)
                 returnItem = item
-            } catch let e {
-                self.logger?.e(e.localizedDescription)
+            } catch let e as NSError {
+                if e.code != 260 {
+                    self.logger?.e(e.localizedDescription)
+                }
             }
         }
         

@@ -160,7 +160,7 @@ open class OptimizelyClient: NSObject {
     public func start(datafile: Data,
                       doUpdateConfigOnNewDatafile: Bool = false,
                       doFetchDatafileBackground: Bool = true) throws {
-        let cachedDatafile = datafileHandler?.loadSavedDatafile(sdkKey: self.sdkKey)
+        let cachedDatafile = self.sdkKey.isEmpty ? nil :datafileHandler?.loadSavedDatafile(sdkKey: self.sdkKey)
         let selectedDatafile = cachedDatafile ?? datafile
         
         try configSDK(datafile: selectedDatafile)

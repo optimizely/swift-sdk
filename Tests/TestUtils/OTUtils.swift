@@ -59,6 +59,21 @@ class OTUtils {
             }
         """
     
+    static var sampleEvent = """
+            {
+                "revision":"1001",
+                "account_id":"11111",
+                "client_version":"3.1.2",
+                "visitors":[
+                    {"attributes":[],"snapshots":[],"visitor_id":"123"}
+                ],
+                "enrich_decisions":true,
+                "project_id":"33331",
+                "client_name":"swift-sdk",
+                "anonymize_ip":true
+            }
+        """
+    
     static func model<T: Codable>(from raw: Any) throws -> T {
         return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
     }
@@ -129,17 +144,19 @@ class OTUtils {
     }
     
     static func saveAFile(name:String, data:Data) -> URL? {
-        if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent(name, isDirectory: false)
-            
-            try? data.write(to: fileURL, options: .atomic)
-            return fileURL
-        }
+        let ds = DataStoreFile<Data>(storeName: name, async: false)
+        ds.saveItem(forKey: name, value: data)
         
-        return nil
+        return ds.url
     }
-    
+
+    static func removeAFile(name:String) -> URL? {
+        let ds = DataStoreFile<Data>(storeName: name, async: false)
+        ds.removeItem(forKey: name)
+        
+        return ds.url
+    }
+
     // MARK: - others
     
     static var randomSdkKey: String {

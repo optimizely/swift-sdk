@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -21,21 +21,16 @@ import Foundation
 public class DataStoreFile<T>: OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
-    let url: URL
+    let async: Bool
+    public let url: URL
+    lazy var logger: OPTLogger? = OPTLoggerFactory.getLogger()
     
-    init(storeName: String) {
+    init(storeName: String, async: Bool = true) {
+        self.async = async
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
         if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             self.url = url.appendingPathComponent(storeName, isDirectory: false)
-            if !FileManager.default.fileExists(atPath: self.url.path) {
-                do {
-                    let data = try JSONEncoder().encode([Data]())
-                    try data.write(to: self.url, options: .atomicWrite)
-                } catch let error {
-                    print(error.localizedDescription)
-                }
-            }
         } else {
             self.url = URL(fileURLWithPath: storeName)
         }
@@ -47,26 +42,63 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
         lock.sync {
             do {
                 let contents = try Data(contentsOf: self.url)
-                let item = try JSONDecoder().decode(T.self, from: contents)
-                returnItem = item
-            } catch let errorr {
-                    print(errorr.localizedDescription)
+                if type(of: T.self) == type(of: Data.self) {
+                    returnItem = contents as? T
+                } else {
+                    let item = try JSONDecoder().decode(T.self, from: contents)
+                    returnItem = item
+                }
+            } catch let e as NSError {
+                if e.code != 260 {
+                    self.logger?.e(e.localizedDescription)
+                }
             }
         }
         
         return returnItem
     }
     
-    public func saveItem(forKey: String, value: Any) {
-        lock.async {
-            do {
-                if let value = value as? T {
-                    let data = try JSONEncoder().encode(value)
-                    try data.write(to: self.url, options: .atomic)
-                }
-            } catch let error {
-                print(error.localizedDescription)
+    func doCall(async: Bool, block:@escaping () -> Void) {
+        if async {
+            lock.async {
+                block()
+            }
+        } else {
+            lock.sync {
+                block()
             }
         }
+    }
+    
+    public func saveItem(forKey: String, value: Any) {
+        doCall(async: self.async) {
+            do {
+                if let value = value as? T {
+                    var data: Data?
+                    // don't bother to convert... otherwise, do
+                    if let value = value as? Data {
+                        data = value
+                    } else {
+                        data = try JSONEncoder().encode(value)
+                    }
+                    if let data = data {
+                        try data.write(to: self.url, options: .atomic)
+                    }
+                }
+            } catch let e {
+                self.logger?.e(e.localizedDescription)
+            }
+        }
+    }
+    
+    public func removeItem(forKey: String) {
+        doCall(async: self.async) {
+            do {
+                try FileManager.default.removeItem(at: self.url)
+            } catch let e {
+                self.logger?.e(e.localizedDescription)
+            }
+        }
+
     }
 }

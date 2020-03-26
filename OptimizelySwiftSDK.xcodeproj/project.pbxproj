@@ -1678,6 +1678,7 @@
 		6E14CD642423F80B00010234 /* OptimizelyTests-Batch-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				6E75198D22C5211100B2B157 /* EventDispatcherTests_Batch.swift */,
 			);
 			path = "OptimizelyTests-Batch-iOS";
 			sourceTree = "<group>";
@@ -1945,7 +1946,6 @@
 				6E75198A22C5211100B2B157 /* BucketTests_Base.swift */,
 				6E75198B22C5211100B2B157 /* NotificationCenterTests.swift */,
 				6E75198C22C5211100B2B157 /* BucketTests_ExpToVariation.swift */,
-				6E75198D22C5211100B2B157 /* EventDispatcherTests_Batch.swift */,
 				6E75198E22C5211100B2B157 /* LoggerTests.swift */,
 				6E75198F22C5211100B2B157 /* BucketTests_BucketVariation.swift */,
 				6E75199022C5211100B2B157 /* DecisionListenerTests.swift */,

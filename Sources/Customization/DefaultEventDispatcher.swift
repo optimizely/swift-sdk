@@ -22,7 +22,13 @@ public enum DataStoreType {
 
 open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
-    static let sharedInstance = DefaultEventDispatcher()
+        #if os(tvOS)
+            static let sharedInstance =
+                DefaultEventDispatcher(backingStore: .memory)
+        #else
+            static let sharedInstance =
+                DefaultEventDispatcher()
+        #endif
     
     // timer-interval for batching (0 = no batching, negative = use default)
     var timerInterval: TimeInterval

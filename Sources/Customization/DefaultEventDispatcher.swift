@@ -24,7 +24,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
         #if os(tvOS)
             static let sharedInstance =
-                DefaultEventDispatcher(backingStore:.memory)
+                DefaultEventDispatcher(backingStore: .memory)
         #else
             static let sharedInstance =
                 DefaultEventDispatcher()

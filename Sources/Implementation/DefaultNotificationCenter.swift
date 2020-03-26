@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -22,7 +22,7 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
             return notifications.notificationId
         }
         set {
-            // don't do it.
+            _ = newValue // no setter (for suppressing SwiftLint warning)
         }
     }
     
@@ -36,14 +36,14 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
         }
     }
     
-    private var _listeners : AtomicProperty<Notifications> = AtomicProperty<Notifications>()
+    private var _listeners: AtomicProperty<Notifications> = AtomicProperty<Notifications>()
     
-    var notifications : Notifications {
+    var notifications: Notifications {
         get {
             return _listeners.property!
         }
         set {
-            _listeners.property = newValue;
+            _listeners.property = newValue
         }
     }
     
@@ -187,7 +187,7 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     public func sendNotifications(type: Int, args: [Any?]) {
         var selected = [GenericListener]()
         _listeners.performAtomic { (listeners) in
-            selected = listeners.notificationListeners.values.filter{ $0.0 == type }.map{ $0.1 }
+            selected = listeners.notificationListeners.values.filter { $0.0 == type }.map { $0.1 }
         }
 
         for listener in selected {

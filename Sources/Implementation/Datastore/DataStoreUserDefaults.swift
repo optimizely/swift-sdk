@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -43,14 +43,12 @@ public class DataStoreUserDefaults: OPTDataStore {
                     self.logger.e("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
                     return
                 }
-            }
-            else if let value = value as? String {
+            } else if let value = value as? String {
                 if value.count > DataStoreUserDefaults.MAX_DS_SIZE {
                     self.logger.e("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
                     return
                 }
-            }
-            else if let value = value as? [Data] {
+            } else if let value = value as? [Data] {
                 var l: Int = 0
                 l = value.reduce(into: l, { (res, data) in
                     res += data.count
@@ -59,8 +57,7 @@ public class DataStoreUserDefaults: OPTDataStore {
                     self.logger.e("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
                     return
                 }
-            }
-            else if let value = value as? [String] {
+            } else if let value = value as? [String] {
                 var l: Int = 0
                 l = value.reduce(into: l, { (res, data) in
                     res += data.count

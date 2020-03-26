@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -23,8 +23,8 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     let dataStoreName: String
     let lock: DispatchQueue
     var data: T?
-    var backupDataStore:OPTDataStore
-    lazy var logger:OPTLogger? = OPTLoggerFactory.getLogger()
+    var backupDataStore: OPTDataStore
+    lazy var logger: OPTLogger? = OPTLoggerFactory.getLogger()
     
     init(storeName: String, backupStore: OPTDataStore = DataStoreUserDefaults()) {
         dataStoreName = storeName
@@ -39,7 +39,7 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     }
     
     public func getItem(forKey: String) -> Any? {
-        var retVal:T?
+        var retVal: T?
         lock.sync {
             retVal = self.data
         }

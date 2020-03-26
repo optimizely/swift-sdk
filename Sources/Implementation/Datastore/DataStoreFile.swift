@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -23,7 +23,7 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
     let lock: DispatchQueue
     let async: Bool
     public let url: URL
-    lazy var logger:OPTLogger? = OPTLoggerFactory.getLogger()
+    lazy var logger: OPTLogger? = OPTLoggerFactory.getLogger()
     
     init(storeName: String, async: Bool = true) {
         self.async = async
@@ -44,8 +44,7 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
                 let contents = try Data(contentsOf: self.url)
                 if type(of: T.self) == type(of: Data.self) {
                     returnItem = contents as? T
-                }
-                else {
+                } else {
                     let item = try JSONDecoder().decode(T.self, from: contents)
                     returnItem = item
                 }
@@ -59,31 +58,27 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
         return returnItem
     }
     
-    func doCall(async:Bool, block:@escaping ()->()) {
+    func doCall(async: Bool, block:@escaping () -> Void) {
         if async {
             lock.async {
                 block()
             }
-        }
-        else {
+        } else {
             lock.sync {
                 block()
             }
         }
     }
     
-    
-    
     public func saveItem(forKey: String, value: Any) {
         doCall(async: self.async) {
             do {
                 if let value = value as? T {
-                    var data:Data?
+                    var data: Data?
                     // don't bother to convert... otherwise, do
                     if let value = value as? Data {
                         data = value
-                    }
-                    else {
+                    } else {
                         data = try JSONEncoder().encode(value)
                     }
                     if let data = data {

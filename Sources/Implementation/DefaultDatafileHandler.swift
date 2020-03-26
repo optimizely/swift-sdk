@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and      *
  * limitations under the License.                                           *
  ***************************************************************************/
-
 import Foundation
 
 class DefaultDatafileHandler: OPTDatafileHandler {
@@ -27,7 +26,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
     // we will use a simple user defaults datastore
     let dataStore = DataStoreUserDefaults()
     // datastore for Datafile downloads
-    var datafileCache = [String:OPTDataStore]()
+    var datafileCache = [String: OPTDataStore]()
     // and our download queue to speed things up.
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
     
@@ -125,7 +124,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                     result = .failure(.datafileDownloadFailed(error.debugDescription))
                     returnCached() // error recovery
                 } else if let response = response as? HTTPURLResponse {
-                    switch (response.statusCode) {
+                    switch response.statusCode {
                     case 200:
                         if let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url) {
                             result = .success(data)
@@ -257,11 +256,10 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         stopPeriodicUpdates()
     }
     
-    func getDatafileCache(sdkKey:String) -> OPTDataStore {
+    func getDatafileCache(sdkKey: String) -> OPTDataStore {
         if let cache = datafileCache[sdkKey] {
             return cache
-        }
-        else {
+        } else {
             #if os(tvOS)
             let store = DataStoreUserDefaults()
             datafileCache[sdkKey] = store

@@ -273,5 +273,44 @@ class EventDispatcherTests: XCTestCase {
         _ = queue.removeLastItem()
         
         XCTAssert(queue.count == 0)
-    }    
+    }
+    
+    func testEventQueueFormatCompatibilty() {
+        class MockEventDispatcher: DefaultEventDispatcher {
+            override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+                completionHandler(.success(Data()))
+            }
+        }
+        let queueName = "OPTEventQueue"
+        
+        // pre-store multiple events in a queue (expected format)
+        
+        let bodyString = OTUtils.sampleEvent
+        let bodyData = bodyString.data(using: .utf8)!
+        let event = EventForDispatch(url: URL(string: "x"), body: bodyData)
+        let eventData = try! JSONEncoder().encode(event)
+        let events = [eventData, eventData]
+        let saveFormat = try! JSONEncoder().encode(events)
+
+        #if os(tvOS)
+        let dispatcher = MockEventDispatcher(backingStore: .memory)
+        let memoryStore: DataStoreMemory<[Data]> = dispatcher.dataStore.dataStore as! DataStoreMemory
+        UserDefaults.standard.set(saveFormat, forKey: queueName)
+        UserDefaults.standard.synchronize()
+        memoryStore.load(forKey: queueName)
+        #else
+        let dispatcher = MockEventDispatcher()
+        var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        url = url.appendingPathComponent(queueName, isDirectory: false)
+        try! saveFormat.write(to: url, options: .atomic)
+        #endif
+        
+        // verify that a new dataStore can read an existing queue items
+        
+        XCTAssert(dispatcher.dataStore.count == 2)
+        dispatcher.flushEvents()
+        dispatcher.dispatcher.sync {}
+        XCTAssert(dispatcher.dataStore.count == 0)
+    }
+
 }

@@ -514,4 +514,28 @@ class DatafileHandlerTests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
         
     }
+    
+    func testDatafileCacheFormatCompatibilty() {
+        
+        // pre-store a datafile in a cache
+
+        let testSDKKey = "testSDKKey"
+        let datafileString = OTUtils.emptyDatafile
+        let datafileData = datafileString.data(using: .utf8)!
+
+        #if os(tvOS)
+        UserDefaults.standard.set(datafileData, forKey: testSDKKey)
+        UserDefaults.standard.synchronize()
+        #else
+        var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        url = url.appendingPathComponent(testSDKKey, isDirectory: false)
+        try! datafileData.write(to: url, options: .atomic)
+        #endif
+        
+        // verify that a new datafileHandler can read an existing datafile cache
+
+        let datafileFromCache = DefaultDatafileHandler().loadSavedDatafile(sdkKey: testSDKKey)
+        XCTAssert(datafileFromCache == datafileData, "failed to support old datafile cached data format")
+    }
+
 }

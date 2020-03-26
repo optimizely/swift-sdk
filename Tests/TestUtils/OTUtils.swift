@@ -59,6 +59,21 @@ class OTUtils {
             }
         """
     
+    static var sampleEvent = """
+            {
+                "revision":"1001",
+                "account_id":"11111",
+                "client_version":"3.1.2",
+                "visitors":[
+                    {"attributes":[],"snapshots":[],"visitor_id":"123"}
+                ],
+                "enrich_decisions":true,
+                "project_id":"33331",
+                "client_name":"swift-sdk",
+                "anonymize_ip":true
+            }
+        """
+    
     static func model<T: Codable>(from raw: Any) throws -> T {
         return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
     }

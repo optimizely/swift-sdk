@@ -39,7 +39,7 @@ class DatafileHandlerTests: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        OTUtils.removeAFile(name: sdkKey)
+        _ = OTUtils.removeAFile(name: sdkKey)
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
 

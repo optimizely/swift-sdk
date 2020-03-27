@@ -76,7 +76,30 @@ class DataStoreTests: XCTestCase {
     }
     
     func testBackgroundSave() {
+        // default is now file.
         let datastore = DataStoreMemory<String>(storeName: "testingBackgroundSave")
+        
+        let key = "testingBackgroundSave"
+        datastore.saveItem(forKey: key, value: "value")
+        print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
+        datastore.applicationDidEnterBackground()
+        datastore.saveItem(forKey: key, value:"v")
+        print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
+        datastore.applicationDidBecomeActive()
+        
+        print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+        XCTAssertNotNil(datastore.data)
+        
+        datastore.load(forKey: key)
+        
+        print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+        XCTAssertEqual(datastore.data, "value")
+    }
+
+    func testBackgroundSaveUserDefaults() {
+        let datastore = DataStoreMemory<String>(storeName: "testingBackgroundSave",backupStore: DataStoreMemory.BackingStore.UserDefaults)
         
         let key = "testingBackgroundSave"
         datastore.saveItem(forKey: key, value: "value")

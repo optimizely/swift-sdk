@@ -99,9 +99,9 @@ class DataStoreTests: XCTestCase {
     }
 
     func testBackgroundSaveUserDefaults() {
-        let datastore = DataStoreMemory<String>(storeName: "testingBackgroundSave",backupStore: DataStoreMemory.BackingStore.UserDefaults)
+        let datastore = DataStoreMemory<String>(storeName: "testBackgroundSaveUserDefaults",backupStore: DataStoreMemory.BackingStore.UserDefaults)
         
-        let key = "testingBackgroundSave"
+        let key = "testBackgroundSaveUserDefaults"
         datastore.saveItem(forKey: key, value: "value")
         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
 
@@ -118,18 +118,22 @@ class DataStoreTests: XCTestCase {
         
         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
         XCTAssertEqual(datastore.data, "value")
+        
+        datastore.removeItem(forKey: key)
     }
 
     func testFileStore() {
         // simple file store test
         
-        let datastore = DataStoreFile<[String]>(storeName: "testingDataStoreFile")
+        let datastore = DataStoreFile<[String]>(storeName: "testFileStore")
         
         datastore.saveItem(forKey: "testString", value: ["value"])
         
         let vj = datastore.getItem(forKey: "testString") as! [String]
         
         XCTAssert(vj.first == "value")
+        
+        datastore.removeItem(forKey: "testString")
         
     }
     
@@ -143,6 +147,8 @@ class DataStoreTests: XCTestCase {
         let value = datastore.getItem(forKey: "testString") as! String
         
         XCTAssert(value == "value")
+        
+        datastore.removeItem(forKey: "testString")
         
     }
 

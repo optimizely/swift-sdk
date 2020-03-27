@@ -22,7 +22,13 @@ class EventDispatcherTests: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+        #if os(tvOS)
+        let directory = FileManager.SearchPathDirectory.cachesDirectory
+        #else
+        let directory = FileManager.SearchPathDirectory.documentDirectory
+        #endif
+        
+        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
@@ -295,8 +301,9 @@ class EventDispatcherTests: XCTestCase {
         #if os(tvOS)
         let dispatcher = MockEventDispatcher(backingStore: .memory)
         let memoryStore: DataStoreMemory<[Data]> = dispatcher.dataStore.dataStore as! DataStoreMemory
-        UserDefaults.standard.set(saveFormat, forKey: queueName)
-        UserDefaults.standard.synchronize()
+        var url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        url = url.appendingPathComponent(queueName, isDirectory: false)
+        try! saveFormat.write(to: url, options: .atomic)
         memoryStore.load(forKey: queueName)
         #else
         let dispatcher = MockEventDispatcher()

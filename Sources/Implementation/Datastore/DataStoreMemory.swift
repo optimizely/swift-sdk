@@ -48,13 +48,8 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     
     public func load(forKey: String) {
         lock.sync {
-            do {
-                if let contents = backupDataStore.getItem(forKey: dataStoreName) as? Data {
-                    let item = try JSONDecoder().decode(T.self, from: contents)
-                    self.data = item
-                }
-            } catch let error {
-                self.logger?.e(error.localizedDescription)
+            if let contents = backupDataStore.getItem(forKey: dataStoreName) as? T {
+                self.data = contents
             }
         }
     }

@@ -83,11 +83,12 @@ class DataStoreTests: XCTestCase {
         datastore.saveItem(forKey: key, value: "value")
         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
 
-        datastore.applicationDidEnterBackground()
+        datastore.save(forKey:key, value: datastore.data!)
+        
         datastore.saveItem(forKey: key, value:"v")
         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
 
-        datastore.applicationDidBecomeActive()
+        datastore.load(forKey: key)
         
         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
         XCTAssertNotNil(datastore.data)

@@ -57,6 +57,23 @@ class DataStoreTests: XCTestCase {
         
         XCTAssert(v2 == value)
     }
+
+    func testUserDefaults2() {
+        let ds = DataStoreUserDefaults()
+        let data = "{}".data(using: .utf8)
+        
+        ds.saveItem(forKey: "item", value: [data])
+        
+        var item = ds.getItem(forKey: "item") as? [Data]
+        
+        XCTAssertNotNil(item)
+        
+        ds.removeItem(forKey: "item")
+
+        item = ds.getItem(forKey: "item") as? [Data]
+        
+        XCTAssertNil(item)
+    }
     
     func testBackgroundSave() {
         let datastore = DataStoreMemory<String>(storeName: "testingBackgroundSave")

@@ -32,7 +32,7 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
         lock = DispatchQueue(label: storeName)
         switch backupStore {
         case .File:
-            self.backupDataStore = DataStoreFile<T>(storeName: storeName)
+            self.backupDataStore = DataStoreFile<T>(storeName: storeName, async: false)
         case .UserDefaults:
             self.backupDataStore = DataStoreUserDefaults()
         }

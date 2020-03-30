@@ -24,12 +24,18 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     let lock: DispatchQueue
     var data: T?
     var backupDataStore: OPTDataStore
+    public enum BackingStore { case UserDefaults, File }
     lazy var logger: OPTLogger? = OPTLoggerFactory.getLogger()
     
-    init(storeName: String, backupStore: OPTDataStore = DataStoreUserDefaults()) {
+    init(storeName: String, backupStore:BackingStore = .File) {
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
-        backupDataStore = backupStore
+        switch backupStore {
+        case .File:
+            self.backupDataStore = DataStoreFile<T>(storeName: storeName, async: false)
+        case .UserDefaults:
+            self.backupDataStore = DataStoreUserDefaults()
+        }
         load(forKey: dataStoreName)
         subscribe()
     }
@@ -48,13 +54,8 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     
     public func load(forKey: String) {
         lock.sync {
-            do {
-                if let contents = backupDataStore.getItem(forKey: dataStoreName) as? Data {
-                    let item = try JSONDecoder().decode(T.self, from: contents)
-                    self.data = item
-                }
-            } catch let error {
-                self.logger?.e(error.localizedDescription)
+            if let contents = backupDataStore.getItem(forKey: dataStoreName) as? T {
+                self.data = contents
             }
         }
     }
@@ -82,12 +83,12 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     }
     
     @objc func applicationDidEnterBackground() {
-        if let data = data {
-            save(forKey: dataStoreName, value: data as Any)
+        if let data = self.data {
+            self.save(forKey: dataStoreName, value: data as Any)
         }
     }
 
     @objc func applicationDidBecomeActive() {
-        load(forKey: dataStoreName)
+        self.load(forKey: dataStoreName)
     }
 }

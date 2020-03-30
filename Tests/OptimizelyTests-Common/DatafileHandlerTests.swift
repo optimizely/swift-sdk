@@ -524,18 +524,20 @@ class DatafileHandlerTests: XCTestCase {
         let datafileData = datafileString.data(using: .utf8)!
 
         #if os(tvOS)
-        UserDefaults.standard.set(datafileData, forKey: testSDKKey)
-        UserDefaults.standard.synchronize()
+        var url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         #else
         var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        #endif
         url = url.appendingPathComponent(testSDKKey, isDirectory: false)
         try! datafileData.write(to: url, options: .atomic)
-        #endif
         
         // verify that a new datafileHandler can read an existing datafile cache
 
         let datafileFromCache = DefaultDatafileHandler().loadSavedDatafile(sdkKey: testSDKKey)
         XCTAssert(datafileFromCache == datafileData, "failed to support old datafile cached data format")
+        
+        let project = try! JSONDecoder().decode(Project.self, from: datafileFromCache!)
+        XCTAssert(project.revision == "241")
     }
 
 }

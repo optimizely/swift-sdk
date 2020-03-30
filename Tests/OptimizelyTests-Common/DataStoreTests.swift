@@ -57,29 +57,76 @@ class DataStoreTests: XCTestCase {
         
         XCTAssert(v2 == value)
     }
+
+    func testUserDefaults2() {
+        let ds = DataStoreUserDefaults()
+        let data = "{}".data(using: .utf8)
+        
+        ds.saveItem(forKey: "item", value: [data])
+        
+        var item = ds.getItem(forKey: "item") as? [Data]
+        
+        XCTAssertNotNil(item)
+        
+        ds.removeItem(forKey: "item")
+
+        item = ds.getItem(forKey: "item") as? [Data]
+        
+        XCTAssertNil(item)
+    }
     
     func testBackgroundSave() {
-        let datastore = DataStoreMemory<String>(storeName: "testingBackgroundSave")
+         let datastore = DataStoreMemory<[String]>(storeName: "testBackgroundSave")
+         
+         let key = "testBackgroundSave"
+         datastore.saveItem(forKey: key, value: ["value"])
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
+         datastore.applicationDidEnterBackground()
+         datastore.saveItem(forKey: key, value:["v"])
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
+         datastore.applicationDidBecomeActive()
+         
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+         XCTAssertNotNil(datastore.data)
+
+        datastore.load(forKey: key)
+         
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+         XCTAssertEqual(datastore.data, ["value"])
+         
+         datastore.removeItem(forKey: key)
+     }
+
+    func testBackgroundSaveUserDefaults() {
+        let datastore = DataStoreMemory<String>(storeName: "testBackgroundSaveUserDefaults",backupStore: DataStoreMemory.BackingStore.UserDefaults)
         
-        datastore.saveItem(forKey: "testString1", value: "value")
-        
+        let key = "testBackgroundSaveUserDefaults"
+        datastore.saveItem(forKey: key, value: "value")
+        print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
         datastore.applicationDidEnterBackground()
-        
+        datastore.saveItem(forKey: key, value:"v")
+        print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
         datastore.applicationDidBecomeActive()
         
+        print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
         XCTAssertNotNil(datastore.data)
         
-        datastore.save(forKey: "testString1", value: 100)
+        datastore.load(forKey: key)
         
-        datastore.load(forKey: "testingBackgroundSave")
-        
+        print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
         XCTAssertEqual(datastore.data, "value")
+        
+        datastore.removeItem(forKey: key)
     }
 
     func testFileStore() {
         // simple file store test
         
-        let datastore = DataStoreFile<[String]>(storeName: "testingDataStoreFile")
+        let datastore = DataStoreFile<[String]>(storeName: "testFileStore")
         
         datastore.saveItem(forKey: "testString", value: ["value"])
         
@@ -87,7 +134,41 @@ class DataStoreTests: XCTestCase {
         
         XCTAssert(vj.first == "value")
         
+        datastore.removeItem(forKey: "testString")
+        
     }
+    
+    func testFileStoreString() {
+         let datastore = DataStoreFile<String>(storeName: "testFileStoreString")
+         
+         let key = "testFileStoreString"
+         datastore.saveItem(forKey: key, value: "value")
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+        let item = datastore.getItem(forKey:key) as? String
+        
+         XCTAssertEqual(item, "value")
+         
+         datastore.removeItem(forKey: key)
+     }
+
+    func testFileStoreInt() {
+         let datastore = DataStoreFile<Int>(storeName: "testFileStoreInt")
+         
+         let key = "testFileStoreInt"
+         datastore.saveItem(forKey: key, value: 5)
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+        let item = datastore.getItem(forKey:key) as? Int
+        
+         XCTAssertEqual(item, 5)
+         
+         datastore.removeItem(forKey: key)
+     }
+
+
     
     func testUserDefaults() {
         // simple user defaults test
@@ -99,6 +180,8 @@ class DataStoreTests: XCTestCase {
         let value = datastore.getItem(forKey: "testString") as! String
         
         XCTAssert(value == "value")
+        
+        datastore.removeItem(forKey: "testString")
         
     }
 

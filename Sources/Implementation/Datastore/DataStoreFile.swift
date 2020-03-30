@@ -29,24 +29,46 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
         self.async = async
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+        #if os(tvOS)
+        let directory = FileManager.SearchPathDirectory.cachesDirectory
+        #else
+        let directory = FileManager.SearchPathDirectory.documentDirectory
+        #endif
+        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
             self.url = url.appendingPathComponent(storeName, isDirectory: false)
         } else {
             self.url = URL(fileURLWithPath: storeName)
         }
+        
     }
     
+    func isArray() -> Bool {
+        let t = "\(type(of: T.self))"
+        return t.hasPrefix("Array") || t.hasPrefix("Swift.Array") || t.hasPrefix("__C.NSArray") || t.hasPrefix("NSArray")
+    }
     public func getItem(forKey: String) -> Any? {
         var returnItem: T?
         
         lock.sync {
             do {
+                
+                if !FileManager.default.fileExists(atPath: self.url.path) {
+                    return
+                }
+                
                 let contents = try Data(contentsOf: self.url)
+
                 if type(of: T.self) == type(of: Data.self) {
                     returnItem = contents as? T
                 } else {
-                    let item = try JSONDecoder().decode(T.self, from: contents)
-                    returnItem = item
+                    if isArray() {
+                        let item = try JSONDecoder().decode(T.self, from: contents)
+                        returnItem = item
+                    }
+                    else {
+                        let item = try JSONDecoder().decode([T].self, from: contents)
+                        returnItem = item.first
+                    }
                 }
             } catch let e as NSError {
                 if e.code != 260 {
@@ -78,8 +100,11 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
                     // don't bother to convert... otherwise, do
                     if let value = value as? Data {
                         data = value
-                    } else {
+                    } else if (value as? NSArray) != nil {
                         data = try JSONEncoder().encode(value)
+                    }
+                    else {
+                        data = try JSONEncoder().encode([value])
                     }
                     if let data = data {
                         try data.write(to: self.url, options: .atomic)

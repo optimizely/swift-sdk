@@ -22,7 +22,13 @@ class EventDispatcherTests: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+        #if os(tvOS)
+        let directory = FileManager.SearchPathDirectory.cachesDirectory
+        #else
+        let directory = FileManager.SearchPathDirectory.documentDirectory
+        #endif
+        
+        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
@@ -293,19 +299,16 @@ class EventDispatcherTests: XCTestCase {
         let saveFormat = try! JSONEncoder().encode(events)
 
         #if os(tvOS)
-        let dispatcher = MockEventDispatcher(backingStore: .memory)
-        let memoryStore: DataStoreMemory<[Data]> = dispatcher.dataStore.dataStore as! DataStoreMemory
-        UserDefaults.standard.set(saveFormat, forKey: queueName)
-        UserDefaults.standard.synchronize()
-        memoryStore.load(forKey: queueName)
+        var url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         #else
-        let dispatcher = MockEventDispatcher()
         var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        #endif
         url = url.appendingPathComponent(queueName, isDirectory: false)
         try! saveFormat.write(to: url, options: .atomic)
-        #endif
         
         // verify that a new dataStore can read an existing queue items
+        
+        let dispatcher = MockEventDispatcher()
         
         XCTAssert(dispatcher.dataStore.count == 2)
         dispatcher.flushEvents()

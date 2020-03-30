@@ -260,15 +260,9 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         if let cache = datafileCache[sdkKey] {
             return cache
         } else {
-            #if os(tvOS)
-            let store = DataStoreUserDefaults()
-            datafileCache[sdkKey] = store
-            return store
-            #else
             let store = DataStoreFile<Data>(storeName: sdkKey)
             datafileCache[sdkKey] = store
             return store
-            #endif
         }
     }
     

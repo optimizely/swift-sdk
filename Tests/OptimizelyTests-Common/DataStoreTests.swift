@@ -76,27 +76,25 @@ class DataStoreTests: XCTestCase {
     }
     
     func testBackgroundSave() {
-         let datastore = DataStoreMemory<String>(storeName: "testBackgroundSave")
+         let datastore = DataStoreMemory<[String]>(storeName: "testBackgroundSave")
          
          let key = "testBackgroundSave"
-         datastore.saveItem(forKey: key, value: "value")
+         datastore.saveItem(forKey: key, value: ["value"])
          print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
 
          datastore.applicationDidEnterBackground()
-         datastore.saveItem(forKey: key, value:"v")
+         datastore.saveItem(forKey: key, value:["v"])
          print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
 
          datastore.applicationDidBecomeActive()
          
          print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
          XCTAssertNotNil(datastore.data)
-        while !FileManager.default.fileExists(atPath: (datastore.backupDataStore as! DataStoreFile<String>).url.path) {
-            sleep(1)
-        }
-         datastore.load(forKey: key)
+
+        datastore.load(forKey: key)
          
          print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
-         XCTAssertEqual(datastore.data, "value")
+         XCTAssertEqual(datastore.data, ["value"])
          
          datastore.removeItem(forKey: key)
      }

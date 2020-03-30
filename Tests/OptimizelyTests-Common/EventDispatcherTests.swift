@@ -299,20 +299,16 @@ class EventDispatcherTests: XCTestCase {
         let saveFormat = try! JSONEncoder().encode(events)
 
         #if os(tvOS)
-        let dispatcher = MockEventDispatcher(backingStore: .memory)
-        let memoryStore: DataStoreMemory<[Data]> = dispatcher.dataStore.dataStore as! DataStoreMemory
         var url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-        url = url.appendingPathComponent(queueName, isDirectory: false)
-        try! saveFormat.write(to: url, options: .atomic)
-        memoryStore.load(forKey: queueName)
         #else
-        let dispatcher = MockEventDispatcher()
         var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        #endif
         url = url.appendingPathComponent(queueName, isDirectory: false)
         try! saveFormat.write(to: url, options: .atomic)
-        #endif
         
         // verify that a new dataStore can read an existing queue items
+        
+        let dispatcher = MockEventDispatcher()
         
         XCTAssert(dispatcher.dataStore.count == 2)
         dispatcher.flushEvents()

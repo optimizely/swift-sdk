@@ -138,6 +138,38 @@ class DataStoreTests: XCTestCase {
         
     }
     
+    func testFileStoreString() {
+         let datastore = DataStoreFile<String>(storeName: "testFileStoreString")
+         
+         let key = "testFileStoreString"
+         datastore.saveItem(forKey: key, value: "value")
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+        let item = datastore.getItem(forKey:key) as? String
+        
+         XCTAssertEqual(item, "value")
+         
+         datastore.removeItem(forKey: key)
+     }
+
+    func testFileStoreInt() {
+         let datastore = DataStoreFile<Int>(storeName: "testFileStoreInt")
+         
+         let key = "testFileStoreInt"
+         datastore.saveItem(forKey: key, value: 5)
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+
+         print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
+        let item = datastore.getItem(forKey:key) as? Int
+        
+         XCTAssertEqual(item, 5)
+         
+         datastore.removeItem(forKey: key)
+     }
+
+
+    
     func testUserDefaults() {
         // simple user defaults test
         

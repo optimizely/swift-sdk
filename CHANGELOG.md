@@ -1,5 +1,12 @@
 # Optimizely Swift SDK Changelog
 
+## 3.3.1
+March 30, 2020
+
+### Bug Fixes
+* When a datafile download for initialization returns connection errors, the SDK fails to initialize. This is fixed to continue initialization with a cached datafile. ([#308](https://github.com/optimizely/swift-sdk/pull/308))
+* Events are not stored persistently in the tvOS devices. ([#310](https://github.com/optimizely/swift-sdk/pull/310), [#311](https://github.com/optimizely/swift-sdk/pull/311))
+
 ## 3.3.0
 March 11, 2020
 

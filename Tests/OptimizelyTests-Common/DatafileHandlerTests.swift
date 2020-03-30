@@ -536,8 +536,8 @@ class DatafileHandlerTests: XCTestCase {
         let datafileFromCache = DefaultDatafileHandler().loadSavedDatafile(sdkKey: testSDKKey)
         XCTAssert(datafileFromCache == datafileData, "failed to support old datafile cached data format")
         
-        let projectConfig = try! ProjectConfig(datafile: datafileFromCache!)
-        XCTAssert(projectConfig.project.revision == "241")
+        let project = try! JSONDecoder().decode(Project.self, from: datafileFromCache!)
+        XCTAssert(project.revision == "241")
     }
 
 }

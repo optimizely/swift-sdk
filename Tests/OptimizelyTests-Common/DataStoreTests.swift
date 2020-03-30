@@ -90,7 +90,9 @@ class DataStoreTests: XCTestCase {
          
          print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")
          XCTAssertNotNil(datastore.data)
-         
+        while !FileManager.default.fileExists(atPath: (datastore.backupDataStore as! DataStoreFile<String>).url.path) {
+            sleep(1)
+        }
          datastore.load(forKey: key)
          
          print("[DataStoreTest] \(String(describing: datastore.getItem(forKey: key)))")

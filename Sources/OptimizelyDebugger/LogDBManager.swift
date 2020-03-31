@@ -50,7 +50,7 @@ class LogDBManager {
     
     var sessions = [Int: FetchSession]()
     
-    // MARK: - Core Data stack
+    // MARK: - Thread-safe CoreData
 
     lazy var persistentContainer: NSPersistentContainer? = {
         let modelName = "LogModel"
@@ -70,25 +70,31 @@ class LogDBManager {
                 print("[ERROR] Unresolved error \(error), \(error.userInfo)")
             }
         })
+        
+        let storeDescription = NSPersistentStoreDescription()
+        storeDescription.shouldMigrateStoreAutomatically = true
+        storeDescription.shouldInferMappingModelAutomatically = true
+        container.persistentStoreDescriptions = [storeDescription]
+        
         return container
     }()
-
-    // MARK: - Core Data Saving support
-
-    func saveContext () {
-        guard let container = persistentContainer else { return }
-
-        let context = container.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                let nserror = error as NSError
-                print("Unresolved error \(nserror), \(nserror.userInfo)")
-            }
+    
+    lazy var mainContext: NSManagedObjectContext? = {
+        return self.persistentContainer?.viewContext
+    }()
+    
+    lazy var backgroundContext: NSManagedObjectContext? = {
+        return self.persistentContainer?.newBackgroundContext()
+    }()
+    
+    lazy var defaultContext: NSManagedObjectContext? = {
+        if Thread.isMainThread {
+            return self.mainContext
+        } else {
+            return self.backgroundContext
         }
-    }
-
+    }()
+    
     // MARK: - init
     
     private init() {
@@ -96,19 +102,35 @@ class LogDBManager {
     
     // MARK: - methods
     
-    func insert(level: OptimizelyLogLevel, module: String, text: String) {
-        guard let container = persistentContainer else { return }
-        
-        let context = container.viewContext
-        let entity = NSEntityDescription.entity(forEntityName: "LogItem", in: context)!
-        let logItem = NSManagedObject(entity: entity, insertInto: context)
-        
-        logItem.setValue(level.rawValue, forKey: "level")
-        logItem.setValue(module, forKey: "module")
-        logItem.setValue(text, forKey: "text")
-        logItem.setValue(Date(), forKey: "date")
+    func saveContext () {
+        guard let context = defaultContext else { return }
 
-        saveContext()
+        context.perform {   // thread-safe
+            if context.hasChanges {
+                do {
+                    try context.save()
+                } catch {
+                    let nserror = error as NSError
+                    print("Unresolved error \(nserror), \(nserror.userInfo)")
+                }
+            }
+        }
+    }
+
+    func insert(level: OptimizelyLogLevel, module: String, text: String) {
+        guard let context = defaultContext else { return }
+
+        context.perform {
+            let entity = NSEntityDescription.entity(forEntityName: "LogItem", in: context)!
+            let logItem = NSManagedObject(entity: entity, insertInto: context)
+            
+            logItem.setValue(level.rawValue, forKey: "level")
+            logItem.setValue(module, forKey: "module")
+            logItem.setValue(text, forKey: "text")
+            logItem.setValue(Date(), forKey: "date")
+            
+            self.saveContext()
+        }
     }
     
     func read(level: OptimizelyLogLevel, keyword: String?, countPerPage: Int = 25) -> (Int, [LogItem]) {
@@ -132,41 +154,47 @@ class LogDBManager {
     }
     
     func clear() {
-        guard let container = persistentContainer else { return }
+        guard let context = defaultContext else { return }
 
-        let context = container.viewContext
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LogItem")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
-        
-        do {
-            try context.execute(deleteRequest)
-            try context.save()
-        } catch {
-            print("[ERROR] log clear failed: \(error)")
+        context.perform {
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LogItem")
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+            
+            do {
+                try context.execute(deleteRequest)
+                try context.save()
+            } catch {
+                print("[ERROR] log clear failed: \(error)")
+            }
         }
     }
     
     private func fetchDB(session: FetchSession) -> [LogItem] {
-        guard let container = persistentContainer else { return [] }
-        
-        let context = container.viewContext
-        let request = NSFetchRequest<NSManagedObject>(entityName: "LogItem")
-        let sort = NSSortDescriptor(key: "date", ascending: false)
-        request.sortDescriptors = [sort]
-        var subpredicates = [NSPredicate]()
-        subpredicates.append(NSPredicate(format: "level <= %d", session.level.rawValue))
-        if let kw = session.keyword {
-            subpredicates.append(NSPredicate(format: "text CONTAINS[cd] %@", kw))
-        }
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+        guard let context = defaultContext else { return [] }
 
-        if let items = try? context.fetch(request) as? [LogItem] {
-            print("Fetched log items: \(items)")
-            return items
-        } else {
-            print("[ERROR] Failed to read log DB)")
-            return []
+        var items = [LogItem]()
+        
+        context.performAndWait {
+            let request = NSFetchRequest<NSManagedObject>(entityName: "LogItem")
+            let sort = NSSortDescriptor(key: "date", ascending: false)
+            request.sortDescriptors = [sort]
+            var subpredicates = [NSPredicate]()
+            subpredicates.append(NSPredicate(format: "level <= %d", session.level.rawValue))
+            if let kw = session.keyword {
+                subpredicates.append(NSPredicate(format: "text CONTAINS[cd] %@", kw))
+            }
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+            
+            if let fetched = try? context.fetch(request) as? [LogItem] {
+                print("Fetched log items: \(fetched)")
+                items = fetched
+            } else {
+                print("[ERROR] Failed to read log DB)")
+                items = []
+            }
         }
+        
+        return items
     }
     
 }

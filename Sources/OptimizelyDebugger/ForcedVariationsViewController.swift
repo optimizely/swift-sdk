@@ -78,19 +78,21 @@ class ForcedVariationsViewController: UITableViewController {
         var cy: CGFloat = py
         let height: CGFloat = 40
         
-        let hv = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 200))
+        let hv = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 210))
         
         userView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
         hv.addSubview(userView)
         cy += height + py
         
         userView.placeholder = "Enter a user id"
+        userView.borderStyle = .roundedRect
         
         expView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
         hv.addSubview(expView)
         cy += height + py
 
         expView.placeholder = "Select an experiment key"
+        expView.borderStyle = .roundedRect
 
         var pickerView = UIPickerView()
         pickerView.tag = self.tagExperimentPicker
@@ -103,6 +105,7 @@ class ForcedVariationsViewController: UITableViewController {
         cy += height + py
 
         varView.placeholder = "Select a variation key"
+        varView.borderStyle = .roundedRect
         
         pickerView = UIPickerView()
         pickerView.tag = self.tagVariationPicker
@@ -112,17 +115,20 @@ class ForcedVariationsViewController: UITableViewController {
         
         let width = (hv.frame.width - 3*px) / 2.0
         cancelBtn = UIButton(frame: CGRect(x: px, y: cy, width: width, height: height))
-        cancelBtn.backgroundColor = .gray
+        cancelBtn.backgroundColor = .white
+        cancelBtn.setTitleColor(.red, for: .normal)
         cancelBtn.setTitle("Cancel", for: .normal)
         cancelBtn.addTarget(self, action: #selector(hideHeaderView), for: .touchUpInside)
         hv.addSubview(cancelBtn)
 
         saveBtn = UIButton(frame: CGRect(x: width + 2*px, y: cy, width: width, height: height))
-        saveBtn.backgroundColor = .blue
+        saveBtn.backgroundColor = .white
+        saveBtn.setTitleColor(.blue, for: .normal)
         saveBtn.setTitle("Save", for: .normal)
         saveBtn.addTarget(self, action: #selector(saveForcedVariation), for: .touchUpInside)
         hv.addSubview(saveBtn)
         
+        hv.backgroundColor = .gray
         headerView = hv
     }
     

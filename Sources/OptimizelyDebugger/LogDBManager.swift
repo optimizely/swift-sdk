@@ -33,7 +33,6 @@ class LogDBManager {
         }
     }
     
-    
     struct FetchSession {
         var id: Int
         var level: OptimizelyLogLevel
@@ -55,7 +54,7 @@ class LogDBManager {
 
     lazy var persistentContainer: NSPersistentContainer? = {
         let modelName = "LogModel"
-        guard let modelURL = Bundle(for: type(of: self)).url(forResource: modelName, withExtension:"momd") else {
+        guard let modelURL = Bundle(for: type(of: self)).url(forResource: modelName, withExtension: "momd") else {
             print("[ERROR] loading model from bundle")
             return nil
         }
@@ -66,7 +65,7 @@ class LogDBManager {
         }
 
         let container = NSPersistentContainer(name: modelName, managedObjectModel: mom)
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        container.loadPersistentStores(completionHandler: { (_, error) in
             if let error = error as NSError? {
                 print("[ERROR] Unresolved error \(error), \(error.userInfo)")
             }

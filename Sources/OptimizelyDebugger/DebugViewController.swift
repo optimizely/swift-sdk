@@ -31,11 +31,11 @@ class DebugViewController: UITableViewController {
         items.append(DebuggerItem(title: "ProjectConfig") {
             self.openPropsView(title: "ProjectConfig", props: config)
         })
-        items.append(DebuggerItem(title: "Forced Variations") {
-            self.openForcedVariations()
-        })
         items.append(DebuggerItem(title: "Logs") {
             self.openLogView()
+        })
+        items.append(DebuggerItem(title: "Forced Variations") {
+            self.openForcedVariations()
         })
 
         tableView.rowHeight = 60.0

@@ -54,7 +54,7 @@ open class DefaultLogger: OPTLogger {
         osLogUsed = true
         
         
-        
+        // [TODO] this is for debug mode only
         // OptimizelyDebugger
         LogDBManager.shared.insert(level: level, module: "N/A", text: message)
     }

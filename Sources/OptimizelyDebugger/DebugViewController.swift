@@ -31,6 +31,9 @@ class DebugViewController: UITableViewController {
         items.append(DebuggerItem(title: "ProjectConfig") {
             self.openPropsView(title: "ProjectConfig", props: config)
         })
+        items.append(DebuggerItem(title: "Forced Variations") {
+            self.openForcedVariations()
+        })
         items.append(DebuggerItem(title: "Logs") {
             self.openLogView()
         })
@@ -47,8 +50,16 @@ class DebugViewController: UITableViewController {
     
     func openLogView() {
         let logView = LogViewController()
+        logView.client = client
         logView.title = "Logs"
         self.show(logView, sender: self)
+    }
+    
+    func openForcedVariations() {
+        let forceView = ForcedVariationsViewController()
+        forceView.client = client
+        forceView.title = "Forced Variations"
+        self.show(forceView, sender: self)
     }
 
     // MARK: - Table view data source

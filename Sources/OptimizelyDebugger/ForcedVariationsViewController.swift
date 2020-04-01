@@ -141,6 +141,10 @@ class ForcedVariationsViewController: UITableViewController {
         expView.text = nil
         varView.text = nil
         
+        // clear previous selections
+        (expView.inputView as! UIPickerView).selectRow(0, inComponent: 0, animated: false)
+        (varView.inputView as! UIPickerView).selectRow(0, inComponent: 0, animated: false)
+
         tableView.tableHeaderView = nil
     }
     
@@ -159,6 +163,12 @@ class ForcedVariationsViewController: UITableViewController {
         
         refreshTableView()
         hideHeaderView()
+    }
+    
+    func removeForcedVariation(userId: String, experimentKey: String) {
+        _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: nil)
+        
+        refreshTableView()
     }
             
     func refreshTableView() {
@@ -201,6 +211,16 @@ class ForcedVariationsViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let item = forcedList[indexPath.row]
+            let userId = item.userId
+            let expKey = item.experimentKey
+
+            removeForcedVariation(userId: userId, experimentKey: expKey)
+        }
     }
 
 }

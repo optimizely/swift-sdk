@@ -215,7 +215,7 @@ class SamplesForAPI {
         
         // [S1] Synchronous initialization
         //      1. SDK is initialized instantly with a cached (or bundled) datafile
-        //      2. A new datafile can be downloaded in background and cached.
+        //      2. A new datafile can be downloaded in background and cached after the SDK is initialized.
         //         The cached datafile will be used only when the SDK re-starts in the next session.
         optimizely = OptimizelyClient(sdkKey: "<Your_SDK_Key>")
         try? optimizely.start(datafile: localDatafile)
@@ -223,7 +223,7 @@ class SamplesForAPI {
         
         // [S2] Synchronous initialization
         //      1. SDK is initialized instantly with a cached (or bundled) datafile
-        //      2. A new datafile can be downloaded in background and cached.
+        //      2. A new datafile can be downloaded in background and cached after the SDK is initialized.
         //         The cached datafile is used immediately to update the SDK project config.
         optimizely = OptimizelyClient(sdkKey: "<Your_SDK_Key>")
         try? optimizely.start(datafile: localDatafile,
@@ -232,7 +232,9 @@ class SamplesForAPI {
         
         // [S3] Synchronous initialization
         //      1. SDK is initialized instantly with a cached (or bundled) datafile
-        //      2. Polling datafile periodically.
+        //      2. A new datafile can be downloaded in background and cached after the SDK is initialized.
+        //         The cached datafile is used immediately to update the SDK project config.
+        //      3. Polling datafile periodically.
         //         The cached datafile is used immediately to update the SDK project config.
         optimizely = OptimizelyClient(sdkKey: "<Your_SDK_Key>",
                                       periodicDownloadInterval: 60)

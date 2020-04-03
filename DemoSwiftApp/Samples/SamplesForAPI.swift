@@ -202,6 +202,9 @@ class SamplesForAPI {
     // MARK: - OptimizelyConfig
 
     static func samplesForInitialization() {
+        
+        // These are sample codes for synchronous and asynchronous SDK initializations with multiple options
+
         guard let localDatafileUrl = Bundle.main.url(forResource: "demoTestDatafile", withExtension: "json"),
             let localDatafile = try? Data(contentsOf: localDatafileUrl)
         else {
@@ -260,6 +263,7 @@ class SamplesForAPI {
             variationKey = try? optimizely.activate(experimentKey: "<Experiment_Key", userId: "<User_ID>")
         }
         
+        print("activated variation: \(String(describing: variationKey))")
     }
 
 }

@@ -198,5 +198,72 @@ class SamplesForAPI {
         }
 
     }
+    
+    // MARK: - OptimizelyConfig
+
+    static func samplesForInitialization() {
+        
+        // These are sample codes for synchronous and asynchronous SDK initializations with multiple options
+
+        guard let localDatafileUrl = Bundle.main.url(forResource: "demoTestDatafile", withExtension: "json"),
+            let localDatafile = try? Data(contentsOf: localDatafileUrl)
+        else {
+            fatalError("Local datafile cannot be found")
+        }
+
+        var optimizely: OptimizelyClient
+        var variationKey: String?
+        
+        // [Synchronous]
+        
+        // [S1] Synchronous initialization
+        //      1. SDK is initialized instantly with a cached (or bundled) datafile
+        //      2. A new datafile can be downloaded in background and cached after the SDK is initialized.
+        //         The cached datafile will be used only when the SDK re-starts in the next session.
+        optimizely = OptimizelyClient(sdkKey: "<Your_SDK_Key>")
+        try? optimizely.start(datafile: localDatafile)
+        variationKey = try? optimizely.activate(experimentKey: "<Experiment_Key", userId: "<User_ID>")
+        
+        // [S2] Synchronous initialization
+        //      1. SDK is initialized instantly with a cached (or bundled) datafile
+        //      2. A new datafile can be downloaded in background and cached after the SDK is initialized.
+        //         The cached datafile is used immediately to update the SDK project config.
+        optimizely = OptimizelyClient(sdkKey: "<Your_SDK_Key>")
+        try? optimizely.start(datafile: localDatafile,
+                              doUpdateConfigOnNewDatafile: true)
+        variationKey = try? optimizely.activate(experimentKey: "<Experiment_Key", userId: "<User_ID>")
+        
+        // [S3] Synchronous initialization
+        //      1. SDK is initialized instantly with a cached (or bundled) datafile
+        //      2. A new datafile can be downloaded in background and cached after the SDK is initialized.
+        //         The cached datafile is used immediately to update the SDK project config.
+        //      3. Polling datafile periodically.
+        //         The cached datafile is used immediately to update the SDK project config.
+        optimizely = OptimizelyClient(sdkKey: "<Your_SDK_Key>",
+                                      periodicDownloadInterval: 60)
+        try? optimizely.start(datafile: localDatafile)
+        variationKey = try? optimizely.activate(experimentKey: "<Experiment_Key", userId: "<User_ID>")
+        
+        // [Asynchronous]
+        
+        // [A1] Asynchronous initialization
+        //      1. A datafile is downloaded from the server and the SDK is initialized with the datafile
+        optimizely = OptimizelyClient(sdkKey: "<Your_SDK_Key>")
+        optimizely.start { result in
+            variationKey = try? optimizely.activate(experimentKey: "<Experiment_Key", userId: "<User_ID>")
+        }
+        
+        // [A2] Asynchronous initialization
+        //      1. A datafile is downloaded from the server and the SDK is initialized with the datafile
+        //      2. Polling datafile periodically.
+        //         The cached datafile is used immediately to update the SDK project config.
+        optimizely = OptimizelyClient(sdkKey: "<Your_SDK_Key>",
+                                      periodicDownloadInterval: 60)
+        optimizely.start { result in
+            variationKey = try? optimizely.activate(experimentKey: "<Experiment_Key", userId: "<User_ID>")
+        }
+        
+        print("activated variation: \(String(describing: variationKey))")
+    }
 
 }

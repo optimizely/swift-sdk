@@ -22,6 +22,13 @@ class ForcedVariationsViewController: UITableViewController {
     var forcedList = [ForcedVariation]()
     var experiments = [String]()
     var variations = [String]()
+    
+    var selectedUserId: String? {
+        didSet {
+            userView.text = self.selectedUserId
+        }
+    }
+    
     var selectedExperimentIndex: Int? {
         didSet {
             guard let index = self.selectedExperimentIndex else {
@@ -29,9 +36,18 @@ class ForcedVariationsViewController: UITableViewController {
                 return
             }
             
-            expView.text = self.experiments[index]
+            let selectedExperiment = experiments[index]
+            expView.text = selectedExperiment
+            
+            // update variations candidates for a selected experiment
+            
+            if let opt = try? client?.getOptimizelyConfig(),
+                let experiment = opt.experimentsMap[selectedExperiment] {
+                variations = Array(experiment.variationsMap.keys)
+            }
         }
     }
+    
     var selectedVariationIndex: Int? {
         didSet {
             guard let index = self.selectedVariationIndex else {
@@ -84,9 +100,10 @@ class ForcedVariationsViewController: UITableViewController {
         hv.addSubview(userView)
         cy += height + py
         
-        userView.placeholder = "Enter a user id"
         userView.borderStyle = .roundedRect
-        
+        userView.isEnabled = false
+        selectedUserId = client?.getUserContext()?.userId
+
         expView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
         hv.addSubview(expView)
         cy += height + py
@@ -137,7 +154,6 @@ class ForcedVariationsViewController: UITableViewController {
     }
     
     @objc func hideHeaderView() {
-        userView.text = nil
         expView.text = nil
         varView.text = nil
         
@@ -207,10 +223,18 @@ class ForcedVariationsViewController: UITableViewController {
         
         cell.textLabel!.text = "UserID: \(item.userId)"
         cell.detailTextLabel!.text = "\(item.experimentKey) -> \(item.variationKey)"
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = forcedList[indexPath.row]
+        
+        selectedUserId = item.userId
+        selectedExperimentIndex = experiments.firstIndex(of: item.experimentKey)
+        selectedVariationIndex = variations.firstIndex(of: item.variationKey)
+        
+        showHeaderView()
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -268,12 +292,6 @@ extension ForcedVariationsViewController: UIPickerViewDelegate, UIPickerViewData
             }
 
             selectedExperimentIndex = adjustedRow
-            let selectedExperiment = experiments[adjustedRow]
-        
-            if let opt = try? client?.getOptimizelyConfig(),
-                let experiment = opt.experimentsMap[selectedExperiment] {
-                variations = Array(experiment.variationsMap.keys)
-            }
         } else {
             guard row > 0 else {
                 selectedVariationIndex = nil

@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -126,21 +127,37 @@
                                     <action selector="attemptTrackAndShowSuccessOrFailure:" destination="Gt1-ok-FkN" eventType="touchUpInside" id="UPx-um-CFd"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" alpha="0.80000000000000004" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoDark" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WUj-CN-BBZ">
-                                <rect key="frame" x="36" y="20" width="50" height="50"/>
-                                <color key="backgroundColor" systemColor="systemYellowColor" red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="TPq-sw-C24">
+                                <rect key="frame" x="46" y="20" width="299" height="50"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoDark" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WUj-CN-BBZ">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <color key="backgroundColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="debugger"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="WUj-CN-BBZ" secondAttribute="height" multiplier="1:1" id="81o-AG-qZq"/>
+                                        </constraints>
+                                        <connections>
+                                            <action selector="openDebugger:" destination="Gt1-ok-FkN" eventType="touchUpInside" id="lU6-aK-vym"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pSL-Wp-l7j">
+                                        <rect key="frame" x="249" y="0.0" width="50" height="50"/>
+                                        <color key="backgroundColor" systemColor="systemYellowColor" red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="refresh"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="pSL-Wp-l7j" secondAttribute="height" multiplier="1:1" id="8xU-Xg-cto"/>
+                                        </constraints>
+                                        <state key="normal" image="refresh"/>
+                                        <connections>
+                                            <action selector="refresh:" destination="Gt1-ok-FkN" eventType="touchUpInside" id="cqj-pB-MCD"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="50" id="B0x-3q-Sri"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="LCQ-ek-5gH"/>
-                                    <constraint firstAttribute="height" constant="50" id="ViC-z4-rbS"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="XiL-Tf-7zb"/>
+                                    <constraint firstAttribute="height" constant="50" id="83J-Wi-obR"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <connections>
-                                    <action selector="openDebugger:" destination="fdp-bn-DAy" eventType="touchUpInside" id="Ivb-qS-Ie4"/>
-                                    <action selector="openDebugger:" destination="Gt1-ok-FkN" eventType="touchUpInside" id="lU6-aK-vym"/>
-                                </connections>
-                            </button>
+                            </stackView>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="P8x-8I-Y50">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
@@ -198,14 +215,15 @@
                             <constraint firstItem="P8x-8I-Y50" firstAttribute="top" secondItem="ZDA-v7-RgX" secondAttribute="top" id="X0h-Jd-EVd"/>
                             <constraint firstItem="eHj-DU-rky" firstAttribute="leading" secondItem="Pxf-lJ-vhB" secondAttribute="leadingMargin" constant="90" id="Ywc-gQ-W0J"/>
                             <constraint firstItem="ZDA-v7-RgX" firstAttribute="top" secondItem="Pxf-lJ-vhB" secondAttribute="top" id="bCE-xf-Orz"/>
-                            <constraint firstItem="WUj-CN-BBZ" firstAttribute="leading" secondItem="Pxf-lJ-vhB" secondAttribute="leadingMargin" constant="20" id="f3h-T4-Nz2"/>
+                            <constraint firstAttribute="trailing" secondItem="TPq-sw-C24" secondAttribute="trailing" constant="30" id="c0G-kc-iHD"/>
+                            <constraint firstItem="TPq-sw-C24" firstAttribute="leading" secondItem="Pxf-lJ-vhB" secondAttribute="leadingMargin" constant="30" id="eXx-yC-nQj"/>
                             <constraint firstAttribute="trailing" secondItem="ZDA-v7-RgX" secondAttribute="trailing" id="kId-8h-KkR"/>
                             <constraint firstItem="P8x-8I-Y50" firstAttribute="centerX" secondItem="8CQ-8i-O97" secondAttribute="centerX" id="ne4-QL-Rq1"/>
                             <constraint firstItem="GuL-M1-dn2" firstAttribute="top" secondItem="LE4-TO-HJE" secondAttribute="bottom" constant="233" id="pdO-VB-4ej"/>
                             <constraint firstItem="P8x-8I-Y50" firstAttribute="leading" secondItem="ZDA-v7-RgX" secondAttribute="leading" id="qeC-oH-fUE"/>
                             <constraint firstItem="eHj-DU-rky" firstAttribute="top" secondItem="GuL-M1-dn2" secondAttribute="bottom" constant="46" id="rl5-eU-WyI"/>
-                            <constraint firstItem="WUj-CN-BBZ" firstAttribute="top" secondItem="LE4-TO-HJE" secondAttribute="bottom" constant="20" id="tIs-eE-ppN"/>
                             <constraint firstItem="eHj-DU-rky" firstAttribute="top" secondItem="8CQ-8i-O97" secondAttribute="bottom" constant="32" id="x0i-xv-Nvy"/>
+                            <constraint firstItem="TPq-sw-C24" firstAttribute="top" secondItem="LE4-TO-HJE" secondAttribute="bottom" constant="20" id="zqA-bn-r5X"/>
                         </constraints>
                     </view>
                     <connections>
@@ -281,5 +299,6 @@
         <image name="background_confirmation" width="375" height="667"/>
         <image name="background_error" width="375" height="667"/>
         <image name="logo" width="183" height="178"/>
+        <image name="refresh" width="840" height="844"/>
     </resources>
 </document>

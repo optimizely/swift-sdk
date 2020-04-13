@@ -48,6 +48,10 @@ open class OptimizelyClient: NSObject {
             return false
         }
     }
+    
+    // MARK: - UserContext
+    
+    var userContext: OptimizelyUserContext?
 
     // MARK: - Customizable Services
     
@@ -251,6 +255,16 @@ open class OptimizelyClient: NSObject {
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
             throw OptimizelyError.experimentKeyInvalid(experimentKey)
+        }
+        
+        // UserContext
+        var userId = userId
+        var attributes = attributes
+        if let user = userContext {
+            userId = user.userId
+            attributes = user.attributes
+        } else {
+            userContext = OptimizelyUserContext(userId: userId)
         }
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
@@ -630,6 +644,18 @@ open class OptimizelyClient: NSObject {
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
 
         return OptimizelyConfigImp(projectConfig: config)
+    }
+}
+
+// MARK: - UserContext
+
+extension OptimizelyClient {
+    public func setUserContext(_ user: OptimizelyUserContext?) {
+        userContext = user
+    }
+    
+    public func getUserContext() -> OptimizelyUserContext? {
+        return userContext
     }
 }
 

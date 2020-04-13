@@ -42,9 +42,13 @@ class VariationViewController: UIViewController {
 
     @IBAction func unwindToVariationAction(unwindSegue: UIStoryboardSegue) {
     }
-
+    
     @IBAction func openDebugger(_ sender: UIButton) {
         OptimizelyDebugger.open(client: optimizely, parent: self)
+    }
+    
+    @IBAction func refresh(_ sender: UIButton) {
+        (UIApplication.shared.delegate as! AppDelegate).startWithRootViewController()
     }
     
     @IBAction func attemptTrackAndShowSuccessOrFailure(_ sender: Any) {

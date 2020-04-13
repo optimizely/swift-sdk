@@ -24,10 +24,6 @@ public class OptimizelyDebugger {
         self.debugVC = UINavigationController()
     }
     
-    public static func startLogging(client: OptimizelyClient?) {
-        guard let client = client else { return }
-    }
-    
     public static func open(client: OptimizelyClient?, parent: UIViewController?) {
         guard let client = client else { return }
         guard let parent = parent else { return }

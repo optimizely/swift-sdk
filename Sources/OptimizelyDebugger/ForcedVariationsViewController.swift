@@ -201,8 +201,11 @@ class ForcedVariationsViewController: UITableViewController {
 
         tableView.reloadData()
     }
-            
-    // MARK: - Table view data source
+}
+
+// MARK: - Table view data source
+
+extension ForcedVariationsViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -246,7 +249,6 @@ class ForcedVariationsViewController: UITableViewController {
             removeForcedVariation(userId: userId, experimentKey: expKey)
         }
     }
-
 }
 
 // Experiment PickerView

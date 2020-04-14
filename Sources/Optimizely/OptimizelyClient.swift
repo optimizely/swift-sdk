@@ -264,7 +264,7 @@ open class OptimizelyClient: NSObject {
             userId = user.userId
             attributes = user.attributes
         } else {
-            userContext = OptimizelyUserContext(userId: userId)
+            userContext = OptimizelyUserContext(userId: userId, attributes: attributes)
         }
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)

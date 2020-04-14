@@ -37,33 +37,46 @@ class DebugViewController: UITableViewController {
         items.append(DebuggerItem(title: "Forced Variations") {
             self.openForcedVariations()
         })
+        items.append(DebuggerItem(title: "User Contexts") {
+            self.openUserContexts()
+        })
 
         tableView.rowHeight = 60.0
     }
     
     func openPropsView(title: String, props: Any) {
-        let propsView = PropsTableViewController()
-        propsView.title = title
-        propsView.props = props
-        self.show(propsView, sender: self)
+        let vc = PropsTableViewController()
+        vc.title = title
+        vc.props = props
+        self.show(vc, sender: self)
     }
     
     func openLogView() {
-        let logView = LogViewController()
-        logView.client = client
-        logView.title = "Logs"
-        self.show(logView, sender: self)
+        let vc = LogViewController()
+        vc.client = client
+        vc.title = "Logs"
+        self.show(vc, sender: self)
     }
     
     func openForcedVariations() {
-        let forceView = ForcedVariationsViewController()
-        forceView.client = client
-        forceView.title = "Forced Variations"
-        self.show(forceView, sender: self)
+        let vc = ForcedVariationsViewController()
+        vc.client = client
+        vc.title = "Forced Variations"
+        self.show(vc, sender: self)
     }
+    
+    func openUserContexts() {
+        let vc = UserContextViewController()
+        vc.client = client
+        vc.title = "User Contexts"
+        self.show(vc, sender: self)
+    }
+}
 
-    // MARK: - Table view data source
+// MARK: - TableView
 
+extension DebugViewController {
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }

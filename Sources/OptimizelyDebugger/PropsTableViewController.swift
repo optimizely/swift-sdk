@@ -46,8 +46,11 @@ class PropsTableViewController: UITableViewController {
         
         return Dictionary(uniqueKeysWithValues: zip(keys, values))
     }
-    
-    // MARK: - Table view data source
+}
+
+// MARK: - Table view data source
+
+extension PropsTableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1

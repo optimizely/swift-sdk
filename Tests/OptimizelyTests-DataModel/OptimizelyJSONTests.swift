@@ -135,7 +135,7 @@ extension OptimizelyJSONTests {
             err = error
         }
         XCTAssertNil(err)
-
+        
         var optimizelyJSON2: OptimizelyJSON?
         do {
             try optimizelyJSON2 = OptimizelyJSON(data: self.data)
@@ -143,7 +143,7 @@ extension OptimizelyJSONTests {
             err = error
         }
         XCTAssertNil(err)
-
+        
         var optimizelyJSON1ToString: String?
         var optimizelyJSON2ToString: String?
         do {
@@ -157,7 +157,7 @@ extension OptimizelyJSONTests {
         XCTAssertEqual(optimizelyJSON1ToString, self.payload)
         // We cannot compare both string since when converting dict to string, the order is not certain
         XCTAssertNotNil(optimizelyJSON2ToString)
-
+        
         var optimizelyJSON1ToMap: [String:Any]!
         var optimizelyJSON2ToMap: [String:Any]!
         do {
@@ -170,7 +170,7 @@ extension OptimizelyJSONTests {
         XCTAssertNotNil(optimizelyJSON1ToMap)
         XCTAssertNotNil(optimizelyJSON2ToMap)
         XCTAssertTrue(NSDictionary(dictionary: optimizelyJSON1ToMap).isEqual(to: optimizelyJSON2ToMap))
-
+        
         // Verifying json2 toString was valid by converting it to dict and comparing with json1 dict
         let json2StringToMap = OTUtils.convertToDictionary(text: optimizelyJSON2ToString!)
         XCTAssertNotNil(json2StringToMap)
@@ -246,14 +246,14 @@ extension OptimizelyJSONTests {
     }
     
     func testGetValueForInvalidJSONKeyAndEmptySchema() {
-           var err: Error?
-           var schema = EmptySchema()
-           do {
-               try self.optimizelyJSON.getValue(jsonPath: "field4.", schema: &schema)
-           } catch {
-               err = error
-           }
-           XCTAssertEqual(err?.localizedDescription, OptimizelyError.valueForKeyNotFound("").reason)
+        var err: Error?
+        var schema = EmptySchema()
+        do {
+            try self.optimizelyJSON.getValue(jsonPath: "field4.", schema: &schema)
+        } catch {
+            err = error
+        }
+        XCTAssertEqual(err?.localizedDescription, OptimizelyError.valueForKeyNotFound("").reason)
     }
     
     func testGetValueForMissingJSONKeyAndEmptySchema() {
@@ -298,7 +298,7 @@ extension OptimizelyJSONTests {
             err = error
         }
         XCTAssertEqual(err?.localizedDescription, OptimizelyError.failedToAssignValueToSchema.reason)
-
+        
     }
     
     func testGetValueForValidJSONMultipleKeyAndEmptySchema() {
@@ -313,15 +313,15 @@ extension OptimizelyJSONTests {
     }
     
     func testGetValueForValidJSONMultipleKeyAndNonDecodableSchema() {
-           var err: Error?
-           var schema: [Any] = []
-           do {
-               try self.optimizelyJSON.getValue(jsonPath: "field4.inner_field1", schema: &schema)
-           } catch {
-               err = error
-           }
-           XCTAssertEqual(err?.localizedDescription, OptimizelyError.failedToAssignValueToSchema.reason)
-       }
+        var err: Error?
+        var schema: [Any] = []
+        do {
+            try self.optimizelyJSON.getValue(jsonPath: "field4.inner_field1", schema: &schema)
+        } catch {
+            err = error
+        }
+        XCTAssertEqual(err?.localizedDescription, OptimizelyError.failedToAssignValueToSchema.reason)
+    }
     
     func testGetValueForValidJSONMultipleKeyAndValidSchema() {
         var err: Error?

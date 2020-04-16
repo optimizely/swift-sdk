@@ -18,10 +18,45 @@ import XCTest
 
 // MARK: - Sample Data and Setup
 
-class OptimizelyJSONTests: XCTestCase {
+class OptimizelyClientTests_OptimizelyJSON: XCTestCase {
+    
+    private var payload = ""
+    private var data = [String: Any]()
+    private var innerField2List = [InnerField2]()
+    private var optimizelyJSON: OptimizelyJSON!
+    
+    override func setUp() {
+        self.innerField2List = [
+            InnerField2.string("1"),
+            InnerField2.string("2"),
+            InnerField2.double(3.01),
+            InnerField2.double(4.23),
+            InnerField2.bool(true)
+        ]
+        self.payload = """
+        {
+        "field1": 1,
+        "field2": 2.5,
+        "field3": "three",
+        "field4": {"inner_field1":3,"inner_field2":["1","2",3.01,4.23,true]},
+        "field5": true,
+        }
+        """
+        self.data = [
+            "field1": 1,
+            "field2": 2.5,
+            "field3": "three",
+            "field4": [
+                "inner_field1": 3.0,
+                "inner_field2": ["1","2",3.01,4.23,true]
+            ],
+            "field5": true,
+        ]
+        try! self.optimizelyJSON = OptimizelyJSON(payload: self.payload)
+    }
     
     private struct ValidSchema: Decodable, Equatable {
-        static func == (lhs: OptimizelyJSONTests.ValidSchema, rhs: OptimizelyJSONTests.ValidSchema) -> Bool {
+        static func == (lhs: ValidSchema, rhs: ValidSchema) -> Bool {
             return lhs.field1 == rhs.field1 && lhs.field2 == rhs.field2 && lhs.field3 == rhs.field3 &&
                 lhs.field4 == rhs.field4 && lhs.field5 == rhs.field5
         }
@@ -35,7 +70,7 @@ class OptimizelyJSONTests: XCTestCase {
     
     private struct Field4: Decodable, Equatable {
         
-        static func == (lhs: OptimizelyJSONTests.Field4, rhs: OptimizelyJSONTests.Field4) -> Bool {
+        static func == (lhs: Field4, rhs: Field4) -> Bool {
             if (lhs.innerField1 != rhs.innerField1 || lhs.innerField2.count != rhs.innerField2.count) {
                 return false
             }
@@ -86,47 +121,16 @@ class OptimizelyJSONTests: XCTestCase {
         var incorrectField: Int = 0
     }
     
-    private var payload = ""
-    private var data = [String: Any]()
-    private var innerField2List = [InnerField2]()
-    private var optimizelyJSON: OptimizelyJSON!
-    
-    override func setUp() {
-        self.innerField2List = [
-            InnerField2.string("1"),
-            InnerField2.string("2"),
-            InnerField2.double(3.01),
-            InnerField2.double(4.23),
-            InnerField2.bool(true)
-        ]
-        self.payload = """
-        {
-        "field1": 1,
-        "field2": 2.5,
-        "field3": "three",
-        "field4": {"inner_field1":3,"inner_field2":["1","2",3.01,4.23,true]},
-        "field5": true,
-        }
-        """
-        self.data = [
-            "field1": 1,
-            "field2": 2.5,
-            "field3": "three",
-            "field4": [
-                "inner_field1": 3.0,
-                "inner_field2": ["1","2",3.01,4.23,true]
-            ],
-            "field5": true,
-        ]
-        try! self.optimizelyJSON = OptimizelyJSON(payload: self.payload)
+    private struct NonDecodableSchema {
     }
+    
 }
 
 // MARK: - Tests
 
-extension OptimizelyJSONTests {
+extension OptimizelyClientTests_OptimizelyJSON {
     
-    func testConstructorsHappyPath() {
+    func testConstructorsHappyPathToString() {
         var err: Error?
         var optimizelyJSON1: OptimizelyJSON?
         do {
@@ -157,12 +161,18 @@ extension OptimizelyJSONTests {
         XCTAssertEqual(optimizelyJSON1ToString, self.payload)
         // We cannot compare both string since when converting dict to string, the order is not certain
         XCTAssertNotNil(optimizelyJSON2ToString)
+    }
+    
+    func testConstructorsHappyPathToMap() {
+        var err: Error?
+        let optimizelyJSON1 = try! OptimizelyJSON(payload: self.payload)
+        let optimizelyJSON2 = try! OptimizelyJSON(data: self.data)
         
         var optimizelyJSON1ToMap: [String:Any]!
         var optimizelyJSON2ToMap: [String:Any]!
         do {
-            try optimizelyJSON1ToMap = optimizelyJSON1?.toMap()
-            try optimizelyJSON2ToMap = optimizelyJSON2?.toMap()
+            try optimizelyJSON1ToMap = optimizelyJSON1.toMap()
+            try optimizelyJSON2ToMap = optimizelyJSON2.toMap()
         } catch {
             err = error
         }
@@ -172,7 +182,7 @@ extension OptimizelyJSONTests {
         XCTAssertTrue(NSDictionary(dictionary: optimizelyJSON1ToMap).isEqual(to: optimizelyJSON2ToMap))
         
         // Verifying json2 toString was valid by converting it to dict and comparing with json1 dict
-        let json2StringToMap = OTUtils.convertToDictionary(text: optimizelyJSON2ToString!)
+        let json2StringToMap = OTUtils.convertToDictionary(text: try! optimizelyJSON2.toString())
         XCTAssertNotNil(json2StringToMap)
         XCTAssertTrue(NSDictionary(dictionary: optimizelyJSON1ToMap).isEqual(to: json2StringToMap!))
     }
@@ -289,7 +299,18 @@ extension OptimizelyJSONTests {
         XCTAssertNil(err)
     }
     
-    func testGetValueForValidJSONKeyAndIncorrectSchema() {
+    func testGetValueForValidJSONKeyAndNonDecodableEmptySchema() {
+        var err: Error?
+        var schema = NonDecodableSchema()
+        do {
+            try self.optimizelyJSON.getValue(jsonPath: "field4", schema: &schema)
+        } catch {
+            err = error
+        }
+        XCTAssertEqual(err?.localizedDescription, OptimizelyError.failedToAssignValueToSchema.reason)
+    }
+    
+    func testGetValueForValidJSONKeyAndIncorrectDecodableStructSchema() {
         var err: Error?
         var schema = IncorrectSchema()
         do {
@@ -314,7 +335,7 @@ extension OptimizelyJSONTests {
     
     func testGetValueForValidJSONMultipleKeyAndNonDecodableSchema() {
         var err: Error?
-        var schema: [Any] = []
+        var schema = NonDecodableSchema()
         do {
             try self.optimizelyJSON.getValue(jsonPath: "field4.inner_field1", schema: &schema)
         } catch {

@@ -16,7 +16,7 @@
 
 import Foundation
 
-class OptimizelyJSON {
+class OptimizelyJSON: NSObject {
     
     private typealias schemaHandler = (Any) throws -> Void
     private var payload: String?
@@ -24,7 +24,7 @@ class OptimizelyJSON {
     
     // MARK: - Init
     
-    init(payload: String) throws {
+    @objc init(payload: String) throws {
         do {
             guard let data = payload.data(using: .utf8),
                 let jsonData = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String: Any] else
@@ -38,62 +38,61 @@ class OptimizelyJSON {
         }
     }
     
-    init(data: [String: Any]) throws {
+    @objc init(data: [String: Any]) throws {
         if !JSONSerialization.isValidJSONObject(data) {
             throw OptimizelyError.invalidDictionary
         }
         self.data = data
     }
     
-    private init() {}
-    
     // MARK: - OptimizelyJSON Implementation
     
-    /// - Returns:  the string representation of json
+    /// - Returns: The string representation of json
     /// - Throws: `OptimizelyError`
-    func toString() throws -> String {
+    @objc public func toString() throws -> String {
         guard let payload = self.payload else {
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
-                if let jsonString = String(data: jsonData, encoding: .utf8) {
-                    self.payload = jsonString
-                    return jsonString
-                }
-            } catch {
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: data,
+                                                             options: []),
+                let jsonString = String(data: jsonData,
+                                        encoding: .utf8) else {
+                                            throw OptimizelyError.failedToConvertDictionaryToString
             }
-            throw OptimizelyError.failedToConvertDictionaryToString
+            self.payload = jsonString
+            return jsonString
         }
         return payload
     }
     
-    /// - Returns:  the json dictionary
+    /// - Returns: The json dictionary
     /// - Throws: `OptimizelyError`
-    func toMap() throws -> [String: Any] {
+    @objc public func toMap() throws -> [String: Any] {
         return data
     }
     
-    /// populates the decodable schema passed by the user
+    /// Populates the decodable schema passed by the user
+    ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
     ///   - schema: Decodable schema to populate.
     /// - Throws: `OptimizelyError`
-    func getValue<T: Decodable>(jsonPath: String, schema: inout T) throws {
+    public func getValue<T: Decodable>(jsonPath: String, schema: UnsafeMutablePointer<T>) throws {
         func populateDecodableSchema(value: Any) throws {
-            // Try to decode value into schema
-            if JSONSerialization.isValidJSONObject(value) {
-                do {
-                    let jsonData = try JSONSerialization.data(
-                        withJSONObject: value,
-                        options: .prettyPrinted
-                    )
-                    schema = try JSONDecoder().decode(T.self, from: jsonData)
+            guard JSONSerialization.isValidJSONObject(value) else {
+                // Try and assign value directly to schema
+                if let v = value as? T {
+                    schema.pointee = v
                     return
-                } catch {
                 }
+                throw OptimizelyError.failedToAssignValueToSchema
             }
-            // Assign directly to schema if possible
-            if let v = value as? T {
-                schema = v
+            // Try to decode value into schema
+            if let jsonData = try? JSONSerialization.data(
+                withJSONObject: value,
+                options: []
+                ),
+                let decodedValue = try? JSONDecoder().decode(T.self, from: jsonData)
+            {
+                schema.pointee = decodedValue
                 return
             }
             throw OptimizelyError.failedToAssignValueToSchema
@@ -101,18 +100,18 @@ class OptimizelyJSON {
         try getValue(jsonPath: jsonPath, schemaHandler: populateDecodableSchema(value:))
     }
     
-    /// populates the schema passed by the user
+    /// Populates the schema passed by the user
+    ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
-    ///   - schema: schema to populate.
+    ///   - schema: Schema to populate.
     /// - Throws: `OptimizelyError`
-    func getValue<T>(jsonPath: String, schema: inout T) throws {
+    public func getValue<T>(jsonPath: String, schema: UnsafeMutablePointer<T>) throws {
         func populateSchema(value: Any) throws {
-            if let v = value as? T {
-                schema = v
-                return
+            guard let v = value as? T else {
+                throw OptimizelyError.failedToAssignValueToSchema
             }
-            throw OptimizelyError.failedToAssignValueToSchema
+            schema.pointee = v
         }
         try getValue(jsonPath: jsonPath, schemaHandler: populateSchema(value:))
     }

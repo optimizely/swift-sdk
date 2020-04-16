@@ -16,7 +16,7 @@
 
 import Foundation
 
-class OptimizelyJSON: NSObject {
+public class OptimizelyJSON: NSObject {
     
     private typealias schemaHandler = (Any) throws -> Void
     private var payload: String?

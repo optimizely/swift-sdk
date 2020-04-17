@@ -490,6 +490,26 @@ open class OptimizelyClient: NSObject {
                                       attributes: attributes)
     }
     
+    /// Gets json feature variable value.
+    ///
+    /// - Parameters:
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
+    /// - Returns: feature variable value of type OptimizelyJSON.
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
+    public func getFeatureVariableJSON(featureKey: String,
+                                       variableKey: String,
+                                       userId: String,
+                                       attributes: OptimizelyAttributes? = nil) throws -> OptimizelyJSON {
+        
+        return try getFeatureVariable(featureKey: featureKey,
+                                      variableKey: variableKey,
+                                      userId: userId,
+                                      attributes: attributes)
+    }
+    
     func getFeatureVariable<T>(featureKey: String,
                                variableKey: String,
                                userId: String,
@@ -543,13 +563,18 @@ open class OptimizelyClient: NSObject {
         case is Bool.Type:
             typeName = "boolean"
             valueParsed = Bool(featureValue) as? T
+        case is OptimizelyJSON.Type:
+            typeName = "json"
+            if let optimizelyJSON = OptimizelyJSON(payload: featureValue) {
+                valueParsed = optimizelyJSON as? T
+            }
         default:
             break
         }
         
         guard let value = valueParsed,
             variable.type == typeName else {
-            throw OptimizelyError.variableValueInvalid(variableKey)
+                throw OptimizelyError.variableValueInvalid(variableKey)
         }
         
         // Decision Notification
@@ -568,7 +593,7 @@ open class OptimizelyClient: NSObject {
                                  variableKey: variableKey,
                                  variableType: typeName,
                                  variableValue: value)
-
+        
         return value
     }
     

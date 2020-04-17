@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -24,13 +24,25 @@ class FeatureVariableTests: XCTestCase {
     // MARK: - Decode
 
     func testDecodeSuccessWithJSONValid() {
-        let data = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100"]
+        let data = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100", "subType": "random"]
         let model: FeatureVariable = try! OTUtils.model(from: data)
 
         XCTAssert(model.id == "553339214")
         XCTAssert(model.key == "price")
         XCTAssert(model.type == "integer")
         XCTAssert(model.defaultValue == "100")
+        XCTAssert(model.subType == "random")
+    }
+    
+    func testDecodeWithJsonSubtypeOverridesType() {
+        let data = ["id": "553339214", "key": "price", "type": "string", "defaultValue": "{}", "subType": "json"]
+        let model: FeatureVariable = try! OTUtils.model(from: data)
+
+        XCTAssert(model.id == "553339214")
+        XCTAssert(model.key == "price")
+        XCTAssert(model.type == "json")
+        XCTAssert(model.defaultValue == "{}")
+        XCTAssert(model.subType == "json")
     }
     
     func testDecodeSuccessWithExtraFields() {
@@ -70,7 +82,7 @@ class FeatureVariableTests: XCTestCase {
     // MARK: - Encode
     
     func testEncodeJSON() {
-        let model = FeatureVariable(id: "553339214", key: "price", type: "integer", defaultValue: "100")
+        let model = FeatureVariable(id: "553339214", key: "price", type: "integer", subType: nil, defaultValue: "100")
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(model))
    }
 }

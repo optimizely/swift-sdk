@@ -19,14 +19,40 @@ import Foundation
 extension OptimizelyJSON {
     
     @available(swift, obsoleted: 1.0)
-    @objc(getValueWithJsonPath:schema:error:)
+    @objc(initWithPayload:)
+    convenience init?(p: String) {
+        self.init(payload: p)
+    }
+    
+    @available(swift, obsoleted: 1.0)
+    @objc(initWithMap:)
+    convenience init?(m: [String: Any]) {
+        self.init(map: m)
+    }
+    
+    @available(swift, obsoleted: 1.0)
+    @objc(toString)
+    /// - Returns: The string representation of json
+    public func objcToString() -> String? {
+        return self.toString()
+    }
+    
+    @available(swift, obsoleted: 1.0)
+    @objc(toMap)
+    /// - Returns: The json dictionary
+    public func objcToMap() -> [String: Any] {
+        return self.toMap()
+    }
+    
+    @available(swift, obsoleted: 1.0)
+    @objc(getValueWithJsonPath:schema:)
     /// Populates the schema passed by the user
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
     ///   - schema: Schema to populate.
-    /// - Throws: `OptimizelyError`
-    public func objcGetValue(jsonPath: String, schema: UnsafeMutablePointer<AnyObject>) throws {
-        try self.getValue(jsonPath: jsonPath, schema: schema)
+    /// - Returns: true if value decoded successfully
+    public func objcGetValue(jsonPath: String, schema: UnsafeMutablePointer<AnyObject>) -> Bool {
+        return self.getValue(jsonPath: jsonPath, schema: schema)
     }
 }

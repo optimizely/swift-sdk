@@ -73,14 +73,6 @@ public enum OptimizelyError: Error {
     
     case eventDispatchFailed(_ reason: String)
     case eventDispatcherConfigError(_ reason: String)
-    
-    // MARK: - OptimizelyJSON Errors
-    
-    case invalidDictionary
-    case failedToConvertStringToDictionary
-    case failedToConvertDictionaryToString
-    case failedToAssignValueToSchema
-    case valueForKeyNotFound(_ key: String)
 }
 
 // MARK: - CustomStringConvertible
@@ -141,11 +133,6 @@ extension OptimizelyError: CustomStringConvertible {
             
         case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))"
         case .eventDispatcherConfigError(let hint):         message = "EventDispatcher config error (\(hint))"
-        case .invalidDictionary:                            message = "Provided dictionary is in an invalid format."
-        case .failedToConvertStringToDictionary:            message = "Provided string could not be converted to dictionary."
-        case .failedToConvertDictionaryToString:            message = "Provided dictionary could not be converted to string."
-        case .failedToAssignValueToSchema:                  message = "Value for path could not be assigned to provided schema."
-        case .valueForKeyNotFound(let key):                 message = "Value for JSON key (\(key)) not found."
         }
         
         return message

@@ -20,58 +20,57 @@
 @interface OptimizelyClientTests_OptimizelyJSON_Objc : XCTestCase
 @property(nonatomic) OptimizelyJSON *optimizelyJSON;
 @property(nonatomic) NSString *payload;
-@property(nonatomic) NSDictionary *data;
+@property(nonatomic) NSDictionary *map;
 @end
 
 @implementation OptimizelyClientTests_OptimizelyJSON_Objc
 
 - (void)setUp {
     _payload = @"{\"testfield\":1}";
-    _data = @{@"testfield":@1};
+    _map = @{@"testfield":@1};
 }
 
-- (void)testConstructorWithPayload {
-    NSError *err;
-    OptimizelyJSON *optimizelyJSON = [[OptimizelyJSON alloc] initWithPayload:_payload error:nil];
-    NSString *jsonString = [optimizelyJSON toStringAndReturnError:&err];
-    XCTAssertTrue([jsonString isEqualToString:_payload]);
-    XCTAssertNil(err);
-    
-    NSDictionary<NSString *, id> *jsonDictionary = [optimizelyJSON toMapAndReturnError:&err];
-    NSInteger expectedValue = [[_data valueForKey:@"testfield"] integerValue];
-    NSInteger actualValue = [[jsonDictionary valueForKey:@"testfield"] integerValue];
-    XCTAssertEqual(expectedValue, actualValue);
-    XCTAssertNil(err);
+- (void)testConstructorWithInvalidPayload {
+    XCTAssertNil([[OptimizelyJSON alloc] initWithPayload:@""]);
+    XCTAssertNil([[OptimizelyJSON alloc] initWithPayload:@"invalid_string"]);
+    XCTAssertNil([[OptimizelyJSON alloc] initWithPayload:@"[{}]"]);
 }
 
-- (void)testConstructorWithData {
-    NSError *err;
-    OptimizelyJSON *optimizelyJSON = [[OptimizelyJSON alloc] initWithData:_data error:nil];
-    NSString *jsonString = [optimizelyJSON toStringAndReturnError:&err];
+- (void)testConstructorWithValidPayload {
+    OptimizelyJSON *optimizelyJSON = [[OptimizelyJSON alloc] initWithPayload:_payload];
+    NSString *jsonString = [optimizelyJSON toString];
     XCTAssertTrue([jsonString isEqualToString:_payload]);
-    XCTAssertNil(err);
     
-    NSDictionary<NSString *, id> *jsonDictionary = [optimizelyJSON toMapAndReturnError:&err];
-    NSInteger expectedValue = [[_data valueForKey:@"testfield"] integerValue];
+    NSDictionary<NSString *, id> *jsonDictionary = [optimizelyJSON toMap];
+    NSInteger expectedValue = [[_map valueForKey:@"testfield"] integerValue];
     NSInteger actualValue = [[jsonDictionary valueForKey:@"testfield"] integerValue];
     XCTAssertEqual(expectedValue, actualValue);
-    XCTAssertNil(err);
+}
+
+- (void)testConstructorWithMap {
+    OptimizelyJSON *optimizelyJSON = [[OptimizelyJSON alloc] initWithMap:_map];
+    NSString *jsonString = [optimizelyJSON toString];
+    XCTAssertTrue([jsonString isEqualToString:_payload]);
+    
+    NSDictionary<NSString *, id> *jsonDictionary = [optimizelyJSON toMap];
+    NSInteger expectedValue = [[_map valueForKey:@"testfield"] integerValue];
+    NSInteger actualValue = [[jsonDictionary valueForKey:@"testfield"] integerValue];
+    XCTAssertEqual(expectedValue, actualValue);
 }
 
 - (void)testGetValue {
-    NSError *err;
-    OptimizelyJSON *optimizelyJSON = [[OptimizelyJSON alloc] initWithData:_data error:nil];
+    OptimizelyJSON *optimizelyJSON = [[OptimizelyJSON alloc] initWithMap:_map];
     // Fetching integer type
     id expectedValue = @1;
     id actualIntValue = @0;
-    [optimizelyJSON getValueWithJsonPath:@"testfield" schema: &actualIntValue error:&err];
+    XCTAssertTrue([optimizelyJSON getValueWithJsonPath:@"testfield" schema: &actualIntValue]);
     XCTAssertEqual(expectedValue, actualIntValue);
     
     // Fetching dictionary type
-    optimizelyJSON = [[OptimizelyJSON alloc] initWithData:_data error:nil];
+    optimizelyJSON = [[OptimizelyJSON alloc] initWithMap:_map];
     id actualDictionaryValue = @{};
-    [optimizelyJSON getValueWithJsonPath:@"" schema: &actualDictionaryValue error:&err];
-    XCTAssertTrue([_data isEqualToDictionary:(NSDictionary *)actualDictionaryValue]);
+    XCTAssertTrue([optimizelyJSON getValueWithJsonPath:@"" schema: &actualDictionaryValue]);
+    XCTAssertTrue([_map isEqualToDictionary:(NSDictionary *)actualDictionaryValue]);
 }
 
 @end

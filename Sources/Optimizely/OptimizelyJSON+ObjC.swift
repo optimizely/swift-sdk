@@ -53,6 +53,6 @@ extension OptimizelyJSON {
     ///   - schema: Schema to populate.
     /// - Returns: true if value decoded successfully
     public func objcGetValue(jsonPath: String, schema: UnsafeMutablePointer<AnyObject>) -> Bool {
-        return self.getValue(jsonPath: jsonPath, schema: schema)
+        return self.getValue(jsonPath: jsonPath, schema: &schema.pointee)
     }
 }

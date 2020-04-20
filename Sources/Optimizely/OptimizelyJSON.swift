@@ -73,12 +73,12 @@ public class OptimizelyJSON: NSObject {
     ///   - jsonPath: Key path for the value.
     ///   - schema: Decodable schema to populate.
     /// - Returns: true if value decoded successfully
-    public func getValue<T: Decodable>(jsonPath: String, schema: UnsafeMutablePointer<T>) -> Bool {
+    public func getValue<T: Decodable>(jsonPath: String?, schema: inout T) -> Bool {
         func populateDecodableSchema(value: Any) -> Bool {
             guard JSONSerialization.isValidJSONObject(value) else {
                 // Try and assign value directly to schema
                 if let v = value as? T {
-                    schema.pointee = v
+                    schema = v
                     return true
                 }
                 logger.e(.failedToAssignValueToSchema)
@@ -90,7 +90,7 @@ public class OptimizelyJSON: NSObject {
                     logger.e(.failedToAssignValueToSchema)
                     return false
             }
-            schema.pointee = decodedValue
+            schema = decodedValue
             return true
         }
         return getValue(jsonPath: jsonPath, schemaHandler: populateDecodableSchema(value:))
@@ -102,26 +102,26 @@ public class OptimizelyJSON: NSObject {
     ///   - jsonPath: Key path for the value.
     ///   - schema: Schema to populate.
     /// - Returns: true if value decoded successfully
-    public func getValue<T>(jsonPath: String, schema: UnsafeMutablePointer<T>) -> Bool {
+    public func getValue<T>(jsonPath: String?, schema: inout T) -> Bool {
         func populateSchema(value: Any) -> Bool {
             guard let v = value as? T else {
                 self.logger.e(.failedToAssignValueToSchema)
                 return false
             }
-            schema.pointee = v
+            schema = v
             return true
         }
         return getValue(jsonPath: jsonPath, schemaHandler: populateSchema(value:))
     }
     
-    private func getValue(jsonPath: String, schemaHandler: SchemaHandler) -> Bool {
+    private func getValue(jsonPath: String?, schemaHandler: SchemaHandler) -> Bool {
         
-        if jsonPath.isEmpty {
+        guard let path = jsonPath, !path.isEmpty else {
             // Populate the whole schema
             return schemaHandler(map)
         }
         
-        let pathArray = jsonPath.components(separatedBy: ".")
+        let pathArray = path.components(separatedBy: ".")
         let lastIndex = pathArray.count - 1
         
         var internalMap = map

@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -66,6 +66,9 @@ enum LogMessage {
     case unrecognizedAttribute(_ key: String)
     case eventBatchFailed
     case eventSendRetyFailed(_ count: Int)
+    case failedToConvertMapToString
+    case failedToAssignValueToSchema
+    case valueForKeyNotFound(_ key: String)
 }
 
 extension LogMessage: CustomStringConvertible {
@@ -122,6 +125,9 @@ extension LogMessage: CustomStringConvertible {
         case .unrecognizedAttribute(let key):                                   message = "Unrecognized attribute (\(key)) provided. Pruning before sending event to Optimizely."
         case .eventBatchFailed:                                                 message = "Failed to batch events"
         case .eventSendRetyFailed(let count):                                   message = "Event dispatch retries failed (\(count)) times"
+        case .failedToConvertMapToString:                                       message = "Provided map could not be converted to string."
+        case .failedToAssignValueToSchema:                                      message = "Value for path could not be assigned to provided schema."
+        case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
         }
         
         return message

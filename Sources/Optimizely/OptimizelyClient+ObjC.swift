@@ -323,7 +323,7 @@ extension OptimizelyClient {
     ///   - featureKey: The key for the feature flag.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: The user's attributes.
-    /// - Returns: A dictionary with all the variables for a given feature.
+    /// - Returns: all the variables for a given feature.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
     public func objcGetAllFeatureVariables(featureKey: String,
                                            userId: String,

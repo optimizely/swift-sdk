@@ -624,30 +624,30 @@ open class OptimizelyClient: NSObject {
             }
             
             var valueParsed: Any? = value
-            let valueType = Constants.VariableValueType(rawValue: v.type)
             var shouldSendNotification = true
             
-            switch valueType {
-            case .string:
-                break
-            case .integer:
-                valueParsed = Int(value)
-                break
-            case .double:
-                valueParsed = Double(value)
-                break
-            case .boolean:
-                valueParsed = Bool(value)
-                break
-            case .json:
-                valueParsed = OptimizelyJSON(payload: value)?.toMap()
-                break
-            default:
+            if let valueType = Constants.VariableValueType(rawValue: v.type) {
+                switch valueType {
+                case .string:
+                    break
+                case .integer:
+                    valueParsed = Int(value)
+                    break
+                case .double:
+                    valueParsed = Double(value)
+                    break
+                case .boolean:
+                    valueParsed = Bool(value)
+                    break
+                case .json:
+                    valueParsed = OptimizelyJSON(payload: value)?.toMap()
+                    break
+                }
+            } else {
                 logger.i(.variableTypeInvalid(v.type))
                 shouldSendNotification = false
-                break
             }
-            
+
             if let vp = valueParsed, shouldSendNotification {
                 variableMap[v.key] = vp
                 sendDecisionNotification(decisionType: .featureVariable,

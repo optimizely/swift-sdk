@@ -296,6 +296,27 @@ extension OptimizelyClient {
     }
     
     @available(swift, obsoleted: 1.0)
+    @objc(getFeatureVariableJSONWithFeatureKey:variableKey:userId:attributes:error:)
+    /// Gets json feature variable value.
+    ///
+    /// - Parameters:
+    ///   - featureKey: The key for the feature flag.
+    ///   - variableKey: The key for the variable.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
+    /// - Returns: feature variable value of type OptimizelyJSON.
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
+    public func objcGetFeatureVariableJSON(featureKey: String,
+                                           variableKey: String,
+                                           userId: String,
+                                           attributes: [String: Any]?) throws -> OptimizelyJSON {
+        return try self.getFeatureVariableJSON(featureKey: featureKey,
+                                               variableKey: variableKey,
+                                               userId: userId,
+                                               attributes: attributes)
+    }
+    
+    @available(swift, obsoleted: 1.0)
     @objc(getEnabledFeaturesWithUserId:attributes:)
     /// Get array of features that are enabled for the user.
     ///

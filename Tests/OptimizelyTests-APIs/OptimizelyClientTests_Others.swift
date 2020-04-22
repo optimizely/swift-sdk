@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -28,6 +28,9 @@ class OptimizelyClientTests_Others: XCTestCase {
 
     let kVariableKeyString = "s_foo"
     let kInvalidVariableKeyString = "invalid_key"
+    
+    let kVariableKeyJSON = "j_1"
+    let kInvalidVariableKeyJSON = "invalid_key"
 
     let kUserId = "user"
     let kNotRealSdkKey = "notrealkey123"
@@ -74,12 +77,28 @@ class OptimizelyClientTests_Others: XCTestCase {
         value = try? optimizely.getFeatureVariableString(featureKey: kInvalidFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
         XCTAssertNil(value)
     }
+    
+    func testGetFeatureVariableJSON_InvalidFeatureKey() {
+        var value = try? optimizely.getFeatureVariableJSON(featureKey: kFeatureKey, variableKey: kVariableKeyJSON, userId: kUserId)
+        XCTAssertNotNil(value)
+        
+        value = try? optimizely.getFeatureVariableJSON(featureKey: kInvalidFeatureKey, variableKey: kVariableKeyJSON, userId: kUserId)
+        XCTAssertNil(value)
+    }
 
     func testGetFeatureVariableString_InvalidVariableKey() {
         var value = try? optimizely.getFeatureVariableString(featureKey: kFeatureKey, variableKey: kVariableKeyString, userId: kUserId)
         XCTAssertNotNil(value)
         
         value = try? optimizely.getFeatureVariableString(featureKey: kFeatureKey, variableKey: kInvalidVariableKeyString, userId: kUserId)
+        XCTAssertNil(value)
+    }
+    
+    func testGetFeatureVariableJSON_InvalidVariableKey() {
+        var value = try? optimizely.getFeatureVariableJSON(featureKey: kFeatureKey, variableKey: kVariableKeyJSON, userId: kUserId)
+        XCTAssertNotNil(value)
+        
+        value = try? optimizely.getFeatureVariableJSON(featureKey: kFeatureKey, variableKey: kInvalidVariableKeyJSON, userId: kUserId)
         XCTAssertNil(value)
     }
     

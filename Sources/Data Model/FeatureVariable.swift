@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -20,6 +20,36 @@ struct FeatureVariable: Codable, Equatable {
     var id: String
     var key: String
     var type: String
+    var subType: String?
     // datafile schema rquires this, but test has "null" value case. keep optional for FSC
     var defaultValue: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case key
+        case type
+        case subType
+        case defaultValue
+    }
+    
+    init(id: String, key: String, type: String, subType: String?, defaultValue: String?) {
+        self.id = id
+        self.key = key
+        self.type = type
+        self.subType = subType
+        self.defaultValue = defaultValue
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        key = try container.decode(String.self, forKey: .key)
+        type = try container.decode(String.self, forKey: .type)
+        subType = try container.decodeIfPresent(String.self, forKey: .subType)
+        defaultValue = try container.decodeIfPresent(String.self, forKey: .defaultValue)
+        
+        if type == "string" && subType == "json" {
+            type = "json"
+        }
+    }
 }

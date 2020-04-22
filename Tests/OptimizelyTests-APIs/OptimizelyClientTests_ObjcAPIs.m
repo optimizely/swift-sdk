@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -31,11 +31,13 @@ static NSString * const kVariableKeyString = @"s_foo";
 static NSString * const kVariableKeyInt = @"i_42";
 static NSString * const kVariableKeyDouble = @"d_4_2";
 static NSString * const kVariableKeyBool = @"b_true";
+static NSString * const kVariableKeyJSON = @"j_1";
 
 static NSString * const kVariableValueString = @"foo";
 static const int kVariableValueInt = 42;
 static const double kVariableValueDouble = 4.2;
 static const BOOL kVariableValueBool = true;
+static NSString * const kVariableValueJSON = @"{\"value\":1}";
 
 static NSString * const kEventKey = @"event1";
 
@@ -190,6 +192,15 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
                                                                     attributes:self.attributes
                                                                          error:nil];
     XCTAssertEqualObjects(result, kVariableValueString);
+}
+
+- (void)testGetFeatureVariableJSON {
+    OptimizelyJSON *result = [self.optimizely getFeatureVariableJSONWithFeatureKey:kFeatureKey
+                                                                       variableKey:kVariableKeyJSON
+                                                                            userId:kUserId
+                                                                        attributes:self.attributes
+                                                                             error:nil];
+    XCTAssertEqualObjects([result toString], kVariableValueJSON);
 }
     
 - (void)testGetEnabledFeatures {

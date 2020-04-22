@@ -48,8 +48,8 @@ struct FeatureVariable: Codable, Equatable {
         subType = try container.decodeIfPresent(String.self, forKey: .subType)
         defaultValue = try container.decodeIfPresent(String.self, forKey: .defaultValue)
         
-        if type == "string" && subType == "json" {
-            type = "json"
+        if type == Constants.VariableValueType.string.rawValue && subType == Constants.VariableValueType.json.rawValue {
+            type = Constants.VariableValueType.json.rawValue
         }
     }
 }

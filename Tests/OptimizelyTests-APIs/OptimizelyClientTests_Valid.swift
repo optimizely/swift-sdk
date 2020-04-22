@@ -147,6 +147,17 @@ class OptimizelyClientTests_Valid: XCTestCase {
         XCTAssert(intValue == 1)
     }
     
+    func testGetAllFeatureVariables() {
+        let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
+                                                                         userId: kUserId)
+        let variablesMap = optimizelyJSON!.toMap()
+        XCTAssert(variablesMap[kVariableKeyString] as! String == kVariableValueString)
+        XCTAssert(variablesMap[kVariableKeyBool] as! Bool == kVariableValueBool)
+        XCTAssert(variablesMap[kVariableKeyInt] as! Int == kVariableValueInt)
+        XCTAssert(variablesMap[kVariableKeyDouble] as! Double == kVariableValueDouble)
+        XCTAssert((variablesMap[kVariableKeyJSON] as! [String: Any])["value"] as! Int == 1)
+    }
+    
     func testGetEnabledFeatures() {
         let result: [String] = self.optimizely.getEnabledFeatures(userId: kUserId)
         XCTAssert(result == [kFeatureKey])

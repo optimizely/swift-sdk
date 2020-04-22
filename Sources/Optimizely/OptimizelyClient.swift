@@ -547,33 +547,26 @@ open class OptimizelyClient: NSObject {
             logger.i(.userReceivedDefaultVariableValue(userId, featureKey, variableKey))
         }
         
-        var typeName: String?
+        let type = Constants.VariableValueType(rawValue: variable.type)
         var valueParsed: T?
         
         switch T.self {
         case is String.Type:
-            typeName = "string"
             valueParsed = featureValue as? T
         case is Int.Type:
-            typeName = "integer"
             valueParsed = Int(featureValue) as? T
         case is Double.Type:
-            typeName = "double"
             valueParsed = Double(featureValue) as? T
         case is Bool.Type:
-            typeName = "boolean"
             valueParsed = Bool(featureValue) as? T
         case is OptimizelyJSON.Type:
-            typeName = "json"
-            if let optimizelyJSON = OptimizelyJSON(payload: featureValue) {
-                valueParsed = optimizelyJSON as? T
-            }
+            valueParsed = OptimizelyJSON(payload: featureValue) as? T
         default:
             break
         }
         
         guard let value = valueParsed,
-            variable.type == typeName else {
+            let valueType = type else {
                 throw OptimizelyError.variableValueInvalid(variableKey)
         }
         
@@ -591,10 +584,92 @@ open class OptimizelyClient: NSObject {
                                  feature: featureFlag,
                                  featureEnabled: featureEnabled,
                                  variableKey: variableKey,
-                                 variableType: typeName,
+                                 variableType: valueType.rawValue,
                                  variableValue: value)
         
         return value
+    }
+    
+    /// Gets all the variables for a given feature.
+    ///
+    /// - Parameters:
+    ///   - featureKey: The key for the feature flag.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
+    /// - Returns: all the variables for a given feature.
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
+    public func getAllFeatureVariables(featureKey: String,
+                                       userId: String,
+                                       attributes: OptimizelyAttributes? = nil) throws -> OptimizelyJSON {
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        var variableMap = [String: Any]()
+        var enabled = false
+        
+        guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
+            throw OptimizelyError.featureKeyInvalid(featureKey)
+        }
+        
+        let decision = self.decisionService.getVariationForFeature(config: config,
+                                                                   featureFlag: featureFlag,
+                                                                   userId: userId,
+                                                                   attributes: attributes ?? OptimizelyAttributes())
+        if let featureEnabled = decision?.variation?.featureEnabled {
+            enabled = featureEnabled
+        }
+        
+        for (_, v) in featureFlag.variablesMap {
+            var value = v.value
+            if enabled, let variable = decision?.variation?.getVariable(id: v.id) {
+                value = variable.value
+            }
+            
+            var valueParsed: Any? = value
+            let valueType = Constants.VariableValueType(rawValue: v.type)
+            var shouldSendNotification = true
+            
+            switch valueType {
+            case .string:
+                break
+            case .integer:
+                valueParsed = Int(value)
+                break
+            case .double:
+                valueParsed = Double(value)
+                break
+            case .boolean:
+                valueParsed = Bool(value)
+                break
+            case .json:
+                valueParsed = OptimizelyJSON(payload: value)?.toMap()
+                break
+            default:
+                logger.i(.variableTypeInvalid(v.type))
+                shouldSendNotification = false
+                break
+            }
+            
+            if let vp = valueParsed, shouldSendNotification {
+                variableMap[v.key] = vp
+                sendDecisionNotification(decisionType: .featureVariable,
+                                         userId: userId,
+                                         attributes: attributes,
+                                         experiment: decision?.experiment,
+                                         variation: decision?.variation,
+                                         feature: featureFlag,
+                                         featureEnabled: enabled,
+                                         variableKey: v.key,
+                                         variableType: v.type,
+                                         variableValue: value)
+                
+            } else {
+                logger.e(OptimizelyError.variableValueInvalid(v.key))
+            }
+        }
+        
+        guard let optimizelyJSON = OptimizelyJSON(map: variableMap) else {
+            throw OptimizelyError.invalidDictionary
+        }
+        return optimizelyJSON
     }
     
     /// Get array of features that are enabled for the user.

@@ -33,6 +33,7 @@ public enum OptimizelyError: Error {
     case variationUnknown(_ userId: String, _ key: String)
     case variableKeyInvalid(_ varKey: String, _ feature: String)
     case variableValueInvalid(_ key: String)
+    case variableTypeInvalid(_ type: String)
     case eventKeyInvalid(_ key: String)
     case eventBuildFailure(_ key: String)
     case eventTagsFormatInvalid
@@ -73,6 +74,10 @@ public enum OptimizelyError: Error {
     
     case eventDispatchFailed(_ reason: String)
     case eventDispatcherConfigError(_ reason: String)
+    
+    // MARK: - OptimizelyJSON Errors
+    
+    case invalidDictionary
 }
 
 // MARK: - CustomStringConvertible
@@ -101,6 +106,7 @@ extension OptimizelyError: CustomStringConvertible {
         case .variationUnknown(let userId, let key):        message = "User (\(userId)) does not meet conditions to be in experiment/feature (\(key))."
         case .variableKeyInvalid(let varKey, let feature):  message = "Variable with key (\(varKey)) associated with feature with key (\(feature)) is not in datafile."
         case .variableValueInvalid(let key):                message = "Variable value for key (\(key)) is invalid or wrong type"
+        case .variableTypeInvalid(let type):                message = "Variable type (\(type)) is unknown, returning string."
         case .eventKeyInvalid(let key):                     message = "Event key (\(key)) is not in datafile."
         case .eventBuildFailure(let key):                   message = "Failed to create a dispatch event (\(key))"
         case .eventTagsFormatInvalid:                       message = "Provided event tags are in an invalid format."
@@ -133,6 +139,7 @@ extension OptimizelyError: CustomStringConvertible {
             
         case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))"
         case .eventDispatcherConfigError(let hint):         message = "EventDispatcher config error (\(hint))"
+        case .invalidDictionary:                          message = "Unable to initialize OptimizelyJSON with the provided dictionary."
         }
         
         return message

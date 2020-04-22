@@ -23,6 +23,14 @@ struct Constants {
         static let OptimizelyUserAgent = "$opt_user_agent"
     }
     
+    enum VariableValueType: String {
+        case string = "string"
+        case integer  = "integer"
+        case double  = "double"
+        case boolean = "boolean"
+        case json = "json"
+    }
+    
     enum DecisionType: String {
         case abTest = "ab-test"
         case feature  = "feature"

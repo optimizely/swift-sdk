@@ -104,6 +104,11 @@ extension OptimizelyClientTests_Invalid {
         XCTAssertNil(result)
     }
     
+    func testGetAllFeatureVariables_WhenManagerNonInitialized() {
+        let result = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey, userId: kUserId)
+        XCTAssertNil(result)
+    }
+    
     func testGetEnabledFeatures_WhenManagerNonInitialized() {
         let result = self.optimizely.getEnabledFeatures(userId: kUserId)
         XCTAssert(result.count == 0)

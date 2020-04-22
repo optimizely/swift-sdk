@@ -566,7 +566,7 @@ open class OptimizelyClient: NSObject {
         }
         
         guard let value = valueParsed,
-            let valueType = type else {
+            type?.rawValue == variable.type else {
                 throw OptimizelyError.variableValueInvalid(variableKey)
         }
         
@@ -584,7 +584,7 @@ open class OptimizelyClient: NSObject {
                                  feature: featureFlag,
                                  featureEnabled: featureEnabled,
                                  variableKey: variableKey,
-                                 variableType: valueType.rawValue,
+                                 variableType: variable.type,
                                  variableValue: value)
         
         return value
@@ -618,38 +618,38 @@ open class OptimizelyClient: NSObject {
         }
         
         for (_, v) in featureFlag.variablesMap {
-            var value = v.value
+            var featureValue = v.value
             if enabled, let variable = decision?.variation?.getVariable(id: v.id) {
-                value = variable.value
+                featureValue = variable.value
             }
             
-            var valueParsed: Any? = value
-            var shouldSendNotification = true
+            var valueParsed: Any? = featureValue
+            var isValidType = true
             
             if let valueType = Constants.VariableValueType(rawValue: v.type) {
                 switch valueType {
                 case .string:
                     break
                 case .integer:
-                    valueParsed = Int(value)
+                    valueParsed = Int(featureValue)
                     break
                 case .double:
-                    valueParsed = Double(value)
+                    valueParsed = Double(featureValue)
                     break
                 case .boolean:
-                    valueParsed = Bool(value)
+                    valueParsed = Bool(featureValue)
                     break
                 case .json:
-                    valueParsed = OptimizelyJSON(payload: value)?.toMap()
+                    valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
                     break
                 }
             } else {
                 logger.i(.variableTypeInvalid(v.type))
-                shouldSendNotification = false
+                isValidType = false
             }
 
-            if let vp = valueParsed, shouldSendNotification {
-                variableMap[v.key] = vp
+            if let value = valueParsed, isValidType {
+                variableMap[v.key] = value
                 sendDecisionNotification(decisionType: .featureVariable,
                                          userId: userId,
                                          attributes: attributes,

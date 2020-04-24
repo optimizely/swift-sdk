@@ -32,6 +32,10 @@ class OptimizelyClientTests_Others: XCTestCase {
     
     let kVariableKeyJSON = "j_1"
     let kInvalidVariableKeyJSON = "invalid_key"
+    
+    let kVariableKeyBool = "b_true"
+    let kVariableKeyDouble = "d_4_2"
+    let kVariableKeyInt = "i_42"
 
     let kUserId = "user"
     let kNotRealSdkKey = "notrealkey123"
@@ -85,6 +89,27 @@ class OptimizelyClientTests_Others: XCTestCase {
         
         value = try? optimizely.getFeatureVariableJSON(featureKey: kInvalidFeatureKey, variableKey: kVariableKeyJSON, userId: kUserId)
         XCTAssertNil(value)
+    }
+    
+    func testGetAllFeatureVariables_InvalidType() {
+        for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
+            if featureFlag.key == kFeatureKey {
+                var flag = featureFlag
+                flag.variables.append(FeatureVariable(id: "2689660113", key: "valid_key", type: "invalid_type", subType: nil, defaultValue: "true"))
+                self.optimizely.config?.project.featureFlags[index] = flag
+                break
+            }
+        }
+        let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
+                                                                         userId: kUserId)
+        let variablesMap = optimizelyJSON!.toMap()
+        XCTAssert((variablesMap[kVariableKeyJSON] as! [String: Any])["value"] as! Int == 1)
+        XCTAssertEqual(variablesMap[kVariableKeyString] as! String, "foo")
+        XCTAssertEqual(variablesMap[kVariableKeyBool] as! Bool, true)
+        XCTAssertEqual(variablesMap[kVariableKeyDouble] as! Double, 4.2)
+        XCTAssertEqual(variablesMap[kVariableKeyInt] as! Int, 42)
+        // Verifying that map contains value as string if type is invalid
+        XCTAssertEqual(variablesMap["valid_key"] as! String, "true")
     }
     
     func testGetAllFeatureVariables_InvalidFeatureKey() {

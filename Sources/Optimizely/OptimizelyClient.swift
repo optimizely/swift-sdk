@@ -629,7 +629,6 @@ open class OptimizelyClient: NSObject {
             }
             
             var valueParsed: Any? = featureValue
-            var isValidType = true
             
             if let valueType = Constants.VariableValueType(rawValue: v.type) {
                 switch valueType {
@@ -648,24 +647,10 @@ open class OptimizelyClient: NSObject {
                     valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
                     break
                 }
-            } else {
-                logger.i(.variableTypeInvalid(v.type))
-                isValidType = false
             }
 
-            if let value = valueParsed, isValidType {
+            if let value = valueParsed {
                 variableMap[v.key] = value
-                sendDecisionNotification(decisionType: .featureVariable,
-                                         userId: userId,
-                                         attributes: attributes,
-                                         experiment: decision?.experiment,
-                                         variation: decision?.variation,
-                                         feature: featureFlag,
-                                         featureEnabled: enabled,
-                                         variableKey: v.key,
-                                         variableType: v.type,
-                                         variableValue: value)
-                
             } else {
                 logger.e(OptimizelyError.variableValueInvalid(v.key))
             }
@@ -674,6 +659,15 @@ open class OptimizelyClient: NSObject {
         guard let optimizelyJSON = OptimizelyJSON(map: variableMap) else {
             throw OptimizelyError.invalidDictionary
         }
+        
+        sendDecisionNotification(decisionType: .allFeatureVariables,
+                                 userId: userId,
+                                 attributes: attributes,
+                                 experiment: decision?.experiment,
+                                 variation: decision?.variation,
+                                 feature: featureFlag,
+                                 featureEnabled: enabled,
+                                 variableValues: variableMap)
         return optimizelyJSON
     }
     
@@ -863,6 +857,7 @@ extension OptimizelyClient {
                                   variableKey: String? = nil,
                                   variableType: String? = nil,
                                   variableValue: Any? = nil,
+                                  variableValues: [String: Any]? = nil,
                                   async: Bool = true) {
         self.sendNotification(type: .decision,
                               args: [decisionType.rawValue,
@@ -875,7 +870,8 @@ extension OptimizelyClient {
                                                            featureEnabled: featureEnabled,
                                                            variableKey: variableKey,
                                                            variableType: variableType,
-                                                           variableValue: variableValue)],
+                                                           variableValue: variableValue,
+                                                           variableValues: variableValues)],
                               async: async)
     }
     
@@ -890,7 +886,8 @@ extension OptimizelyClient {
                           featureEnabled: Bool? = nil,
                           variableKey: String? = nil,
                           variableType: String? = nil,
-                          variableValue: Any? = nil) -> [String: Any] {
+                          variableValue: Any? = nil,
+                          variableValues: [String: Any]? = nil) -> [String: Any] {
         
         var decisionInfo = [String: Any]()
         
@@ -901,7 +898,7 @@ extension OptimizelyClient {
             decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
             decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation?.key ?? NSNull()
             
-        case .feature, .featureVariable:
+        case .feature, .featureVariable, .allFeatureVariables:
             guard let feature = feature, let featureEnabled = featureEnabled else { return decisionInfo }
             
             decisionInfo[Constants.DecisionInfoKeys.feature] = feature.key
@@ -921,15 +918,20 @@ extension OptimizelyClient {
             
             if decisionType == .featureVariable {
                 guard let variableKey = variableKey, let variableType = variableType, let variableValue = variableValue else {
-                        return decisionInfo
+                    return decisionInfo
                 }
                 
                 decisionInfo[Constants.DecisionInfoKeys.variable] = variableKey
                 decisionInfo[Constants.DecisionInfoKeys.variableType] = variableType
                 decisionInfo[Constants.DecisionInfoKeys.variableValue] = variableValue
+            } else if  decisionType == .allFeatureVariables {
+                guard let variableValues = variableValues else {
+                    return decisionInfo
+                }
+                decisionInfo[Constants.DecisionInfoKeys.variableValues] = variableValues
             }
         }
-
+        
         return decisionInfo
     }
     

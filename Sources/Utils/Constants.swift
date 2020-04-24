@@ -35,6 +35,7 @@ struct Constants {
         case abTest = "ab-test"
         case feature  = "feature"
         case featureVariable  = "feature-variable"
+        case allFeatureVariables = "all-feature-variables"
         case featureTest = "feature-test"
     }
     
@@ -51,6 +52,7 @@ struct Constants {
         static let variable = "variableKey"
         static let variableType = "variableType"
         static let variableValue = "variableValue"
+        static let variableValues = "variableValues"
     }
     
     struct ExperimentDecisionInfoKeys {

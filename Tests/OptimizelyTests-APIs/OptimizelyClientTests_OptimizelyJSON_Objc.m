@@ -63,13 +63,13 @@
     // Fetching integer type
     id expectedValue = @1;
     id actualIntValue = @0;
-    XCTAssertTrue([optimizelyJSON getValueWithJsonPath:@"testfield" schema: &actualIntValue]);
+    actualIntValue = [optimizelyJSON getValueWithJsonPath:@"testfield"];
     XCTAssertEqual(expectedValue, actualIntValue);
     
     // Fetching dictionary type
     optimizelyJSON = [[OptimizelyJSON alloc] initWithMap:_map];
     id actualDictionaryValue = @{};
-    XCTAssertTrue([optimizelyJSON getValueWithJsonPath:@"" schema: &actualDictionaryValue]);
+    actualDictionaryValue = [optimizelyJSON getValueWithJsonPath:@""];
     XCTAssertTrue([_map isEqualToDictionary:(NSDictionary *)actualDictionaryValue]);
 }
 

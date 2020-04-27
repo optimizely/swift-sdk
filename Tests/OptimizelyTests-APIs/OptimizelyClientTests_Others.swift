@@ -110,6 +110,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         XCTAssertEqual(variablesMap[kVariableKeyInt] as! Int, 42)
         // Verifying that map contains value as string if type is invalid
         XCTAssertEqual(variablesMap["valid_key"] as! String, "true")
+        XCTAssertEqual(variablesMap["i_1"] as! String, "invalid")
     }
     
     func testGetAllFeatureVariables_InvalidFeatureKey() {

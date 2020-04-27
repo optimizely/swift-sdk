@@ -42,6 +42,13 @@
                   "key": "j_1",
                   "type": "string",
                   "subType": "json"
+              },
+              {
+                  "defaultValue": "invalid",
+                  "id": "2696150068",
+                  "key": "i_1",
+                  "type": "invalid",
+                  "subType": ""
               }
           ]
       },

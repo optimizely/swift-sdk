@@ -180,6 +180,16 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testGetAllFeatureVariablesFeatureDisabled() {
+        let config = self.optimizely.config
+        config?.allExperiments[0].variations[0].variables?.append(contentsOf:[
+            Variable(id: "2687470095", value: "43"),
+            Variable(id: "2689280165", value: "4.3"),
+            Variable(id: "2689660112", value: "false"),
+            Variable(id: "2696150066", value: "f_foo"),
+            Variable(id: "2696150067", value: "{\"value\":2}")
+            ]
+        )
+        self.optimizely.config = config
         self.optimizely.config?.allExperiments[0].variations[0].featureEnabled = false
         let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
                                                                          userId: kUserId)

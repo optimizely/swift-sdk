@@ -192,54 +192,54 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForInvalidJSONKeyAndEmptySchema() {
-        var schema = EmptySchema()
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: "field4.", schema: &schema))
+        let schema: EmptySchema? = self.optimizelyJSON.getValue(jsonPath: "field4.")
+        XCTAssertNil(schema)
     }
     
     func testGetValueForMissingJSONKeyAndEmptySchema() {
-        var schema = EmptySchema()
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: "some_key", schema: &schema))
+        let schema: EmptySchema? = self.optimizelyJSON.getValue(jsonPath: "some_key")
+        XCTAssertNil(schema)
     }
     
     func testGetValueForInvalidJSONMultipleKeyAndEmptySchema() {
-        var schema = EmptySchema()
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: "field3.some_key", schema: &schema))
+        let schema: EmptySchema? = self.optimizelyJSON.getValue(jsonPath: "field3.some_key")
+        XCTAssertNil(schema)
     }
     
     func testGetValueForValidJSONKeyAndEmptySchema() {
-        var schema = EmptySchema()
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field4", schema: &schema))
+        let schema: EmptySchema? = self.optimizelyJSON.getValue(jsonPath: "field4")
+        XCTAssertNotNil(schema)
     }
     
     func testGetValueForValidJSONKeyAndNonDecodableEmptySchema() {
-        var schema = NonDecodableSchema()
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: "field4", schema: &schema))
+        let schema: NonDecodableSchema? = self.optimizelyJSON.getValue(jsonPath: "field4")
+        XCTAssertNil(schema)
     }
     
     func testGetValueForValidJSONKeyAndIncorrectDecodableStructSchema() {
-        var schema = IncorrectSchema()
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: "field4", schema: &schema))
+        let schema: IncorrectSchema? = self.optimizelyJSON.getValue(jsonPath: "field4")
+        XCTAssertNil(schema)
     }
     
     func testGetValueForValidJSONMultipleKeyAndEmptySchema() {
-        var schema = EmptySchema()
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: "field4.inner_field1", schema: &schema))
+        let schema: EmptySchema? = self.optimizelyJSON.getValue(jsonPath: "field4.inner_field1")
+        XCTAssertNil(schema)
     }
     
     func testGetValueForValidJSONMultipleKeyAndNonDecodableSchema() {
-        var schema = NonDecodableSchema()
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: "field4.inner_field1", schema: &schema))
+        let schema: NonDecodableSchema? = self.optimizelyJSON.getValue(jsonPath: "field4.inner_field1")
+        XCTAssertNil(schema)
     }
     
     func testGetValueForValidJSONMultipleKeyAndValidSchema() {
-        var schema: Int = 0
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field4.inner_field1", schema: &schema))
+        let schema: Int? = self.optimizelyJSON.getValue(jsonPath: "field4.inner_field1")
+        XCTAssertNotNil(schema)
         XCTAssertEqual(schema, 3)
     }
     
     func testGetValueForValidJSONMultipleKeyAndValidGenericSchema() {
-        var schema: Any!
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field4.inner_field2", schema: &schema))
+        let schema: Any? = self.optimizelyJSON.getValue(jsonPath: "field4.inner_field2")
+        XCTAssertNotNil(schema)
         XCTAssertTrue(schema is [Any])
         
         let v = schema as! [Any]
@@ -251,57 +251,57 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForValidJSONKeyAndIntValue() {
-        var schema: Int = 0
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field1", schema: &schema))
+        let schema: Int? = self.optimizelyJSON.getValue(jsonPath: "field1")
+        XCTAssertNotNil(schema)
         XCTAssertEqual(schema, 1)
     }
     
     func testGetValueForValidJSONKeyAndDoubleValue() {
-        var schema: Double = 0
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field2", schema: &schema))
+        let schema: Double? = self.optimizelyJSON.getValue(jsonPath: "field2")
+        XCTAssertNotNil(schema)
         XCTAssertEqual(schema, 2.5)
     }
     
     func testGetValueForValidJSONKeyAndStringValue() {
-        var schema: String = ""
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field3", schema: &schema))
+        let schema: String? = self.optimizelyJSON.getValue(jsonPath: "field3")
+        XCTAssertNotNil(schema)
         XCTAssertEqual(schema, "three")
     }
     
     func testGetValueForValidJSONKeyAndBoolValue() {
-        var schema: Bool = false
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field5", schema: &schema))
+        let schema: Bool? = self.optimizelyJSON.getValue(jsonPath: "field5")
+        XCTAssertNotNil(schema)
         XCTAssertEqual(schema, true)
     }
     
     func testGetValueForEmptyJSONKeyAndInvalidSchema() {
-        var schema: Int = 0
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: "", schema: &schema))
+        let schema: Int? = self.optimizelyJSON.getValue(jsonPath: "")
+        XCTAssertNil(schema)
     }
     
     func testGetValueForNilJSONKeyAndInvalidSchema() {
-        var schema: Int = 0
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: nil, schema: &schema))
+        let schema: Int? = self.optimizelyJSON.getValue(jsonPath: nil)
+        XCTAssertNil(schema)
     }
     
     func testGetValueForEmptyJSONKeyAndEmptySchema() {
-        var schema = EmptySchema()
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "", schema: &schema))
+        let schema: EmptySchema? = self.optimizelyJSON.getValue(jsonPath: "")
+        XCTAssertNotNil(schema)
     }
     
     func testGetValueForNilJSONKeyAndEmptySchema() {
-        var schema = EmptySchema()
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: nil, schema: &schema))
+        let schema: EmptySchema? = self.optimizelyJSON.getValue(jsonPath: nil)
+        XCTAssertNotNil(schema)
     }
     
     func testGetValueForEmptyJSONMultipleKeyAndEmptySchema() {
-        var schema = EmptySchema()
-        XCTAssertFalse(self.optimizelyJSON.getValue(jsonPath: "field4..some_field", schema: &schema))
+        let schema: EmptySchema? = self.optimizelyJSON.getValue(jsonPath: "field4..some_field")
+        XCTAssertNil(schema)
     }
     
     func testGetValueForEmptyJsonKeyAndWholeSchema() {
-        var schema = ValidSchema()
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "", schema: &schema))
+        let schema: ValidSchema? = self.optimizelyJSON.getValue(jsonPath: "")
+        XCTAssertNotNil(schema)
         
         let expectedStruct = ValidSchema(
             field1: 1,
@@ -314,8 +314,8 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForNilJsonKeyAndWholeSchema() {
-        var schema = ValidSchema()
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: nil, schema: &schema))
+        let schema: ValidSchema? = self.optimizelyJSON.getValue(jsonPath: nil)
+        XCTAssertNotNil(schema)
         
         let expectedStruct = ValidSchema(
             field1: 1,
@@ -328,8 +328,8 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForValidJsonKeyAndPartialSchema() {
-        var schema = Field4()
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field4", schema: &schema))
+        var schema: Field4? = self.optimizelyJSON.getValue(jsonPath: "field4")
+        XCTAssertNotNil(schema)
         
         let expectedStruct = Field4(
             innerField1: 3,
@@ -338,18 +338,19 @@ extension OptimizelyClientTests_OptimizelyJSON {
         XCTAssertEqual(schema, expectedStruct)
         
         // check if it does not destroy original object
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field4", schema: &schema))
+        schema = self.optimizelyJSON.getValue(jsonPath: "field4")
+        XCTAssertNotNil(schema)
         XCTAssertEqual(schema, expectedStruct)
     }
     
     func testGetValueForValidJsonKeyAndArraySchema() {
-        var schema: [Any]!
-        XCTAssertTrue(self.optimizelyJSON.getValue(jsonPath: "field4.inner_field2", schema: &schema))
+        let schema: [Any]? = self.optimizelyJSON.getValue(jsonPath: "field4.inner_field2")
+        XCTAssertNotNil(schema)
         
-        XCTAssertEqual(schema[0] as! String, "1")
-        XCTAssertEqual(schema[1] as! String, "2")
-        XCTAssertEqual(schema[2] as! Double, 3.01)
-        XCTAssertEqual(schema[3] as! Double, 4.23)
-        XCTAssertEqual(schema[4] as! Bool, true)
+        XCTAssertEqual(schema?[0] as! String, "1")
+        XCTAssertEqual(schema?[1] as! String, "2")
+        XCTAssertEqual(schema?[2] as! Double, 3.01)
+        XCTAssertEqual(schema?[3] as! Double, 4.23)
+        XCTAssertEqual(schema?[4] as! Bool, true)
     }
 }

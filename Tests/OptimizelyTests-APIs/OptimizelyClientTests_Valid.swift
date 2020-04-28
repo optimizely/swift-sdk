@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -32,11 +32,13 @@ class OptimizelyClientTests_Valid: XCTestCase {
     let kVariableKeyInt = "i_42"
     let kVariableKeyDouble = "d_4_2"
     let kVariableKeyBool = "b_true"
+    let kVariableKeyJSON = "j_1"
     
     let kVariableValueString = "foo"
     let kVariableValueInt = 42
     let kVariableValueDouble = 4.2
     let kVariableValueBool = true
+    let kVariableValueJSON = "{\"value\":1}"
     
     let kEventKey = "event1"
     
@@ -132,6 +134,17 @@ class OptimizelyClientTests_Valid: XCTestCase {
                                                                             variableKey: kVariableKeyString,
                                                                             userId: kUserId)
         XCTAssert(result == kVariableValueString)
+    }
+    
+    func testGetFeatureVariableJSON() {
+        let result: OptimizelyJSON? = try? self.optimizely.getFeatureVariableJSON(featureKey: kFeatureKey,
+                                                                                  variableKey: kVariableKeyJSON,
+                                                                                  userId: kUserId)
+        XCTAssert(result?.toString() == kVariableValueJSON)
+        XCTAssert((result?.toMap()["value"] as! Int) == 1)
+        var intValue: Int = 0
+        XCTAssertTrue(result!.getValue(jsonPath: "value", schema: &intValue))
+        XCTAssert(intValue == 1)
     }
     
     func testGetEnabledFeatures() {

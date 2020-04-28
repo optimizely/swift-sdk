@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -94,6 +94,13 @@ extension OptimizelyClientTests_Invalid {
         let result: String? = try? self.optimizely.getFeatureVariableString(featureKey: kFeatureKey,
                                                                            variableKey: kVariableKey,
                                                                            userId: kUserId)
+        XCTAssertNil(result)
+    }
+    
+    func testGetFeatureVariableJSON_WhenManagerNonInitialized() {
+        let result: OptimizelyJSON? = try? self.optimizely.getFeatureVariableJSON(featureKey: kFeatureKey,
+                                                                                  variableKey: kVariableKey,
+                                                                                  userId: kUserId)
         XCTAssertNil(result)
     }
     

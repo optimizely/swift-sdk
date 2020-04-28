@@ -35,6 +35,13 @@
                   "id": "2696150066",
                   "key": "s_foo",
                   "type": "string"
+              },
+              {
+                  "defaultValue": "{\"value\":1}",
+                  "id": "2696150067",
+                  "key": "j_1",
+                  "type": "string",
+                  "subType": "json"
               }
           ]
       },

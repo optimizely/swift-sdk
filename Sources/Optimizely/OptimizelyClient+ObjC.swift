@@ -332,7 +332,7 @@ extension OptimizelyClient {
                                                userId: userId,
                                                attributes: attributes)
     }
-    
+
     @available(swift, obsoleted: 1.0)
     @objc(getEnabledFeaturesWithUserId:attributes:)
     /// Get array of features that are enabled for the user.

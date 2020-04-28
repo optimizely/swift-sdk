@@ -21,7 +21,7 @@ struct FeatureVariable: Codable, Equatable {
     var key: String
     var type: String
     var subType: String?
-    // datafile schema rquires this, but test has "null" value case. keep optional for FSC
+    // datafile schema requires this, but test has "null" value case. keep optional for FSC
     var defaultValue: String?
     
     enum CodingKeys: String, CodingKey {
@@ -38,6 +38,7 @@ struct FeatureVariable: Codable, Equatable {
         self.type = type
         self.subType = subType
         self.defaultValue = defaultValue
+        overrideTypeIfJSON()
     }
     
     init(from decoder: Decoder) throws {
@@ -47,7 +48,10 @@ struct FeatureVariable: Codable, Equatable {
         type = try container.decode(String.self, forKey: .type)
         subType = try container.decodeIfPresent(String.self, forKey: .subType)
         defaultValue = try container.decodeIfPresent(String.self, forKey: .defaultValue)
-        
+        overrideTypeIfJSON()
+    }
+    
+    mutating func overrideTypeIfJSON() {
         if type == Constants.VariableValueType.string.rawValue && subType == Constants.VariableValueType.json.rawValue {
             type = Constants.VariableValueType.json.rawValue
         }

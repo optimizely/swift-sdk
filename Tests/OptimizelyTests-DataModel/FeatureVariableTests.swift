@@ -45,6 +45,16 @@ class FeatureVariableTests: XCTestCase {
         XCTAssert(model.subType == "json")
     }
     
+    func testInitWithJsonSubtypeOverridesType() {
+        let model = FeatureVariable(id: "553339214", key: "price", type: "string", subType: "json", defaultValue: "{}")
+
+        XCTAssert(model.id == "553339214")
+        XCTAssert(model.key == "price")
+        XCTAssert(model.type == "json")
+        XCTAssert(model.defaultValue == "{}")
+        XCTAssert(model.subType == "json")
+    }
+    
     func testDecodeSuccessWithExtraFields() {
         let data = ["id": "553339214", "key": "price", "type": "integer", "defaultValue": "100", "extra": "123"]
         let model: FeatureVariable = try! OTUtils.model(from: data)

@@ -71,7 +71,7 @@ public class OptimizelyJSON: NSObject {
     ///
     /// If JSON Data is {"k1":true, "k2":{"k3":"v3"}}
     ///
-    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to to "k2.k3" to access "v3"
+    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3"
     /// Set it to nil or empty to access the entire JSON data.
     ///
     /// - Parameters:
@@ -102,7 +102,7 @@ public class OptimizelyJSON: NSObject {
     ///
     /// If JSON Data is {"k1":true, "k2":{"k3":"v3"}}
     ///
-    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to to "k2.k3" to access "v3"
+    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3"
     /// Set it to nil or empty to access the entire JSON data.
     ///
     /// - Parameters:

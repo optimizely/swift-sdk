@@ -24,6 +24,7 @@ class OptimizelyClientTests_Others: XCTestCase {
     let kVariationKey = "a"
     
     let kFeatureKey = "feature_1"
+    let kFeatureKeyNoVariables = "feature_2"
     let kInvalidFeatureKey = "invalid_key"
 
     let kVariableKeyString = "s_foo"
@@ -31,6 +32,10 @@ class OptimizelyClientTests_Others: XCTestCase {
     
     let kVariableKeyJSON = "j_1"
     let kInvalidVariableKeyJSON = "invalid_key"
+    
+    let kVariableKeyBool = "b_true"
+    let kVariableKeyDouble = "d_4_2"
+    let kVariableKeyInt = "i_42"
 
     let kUserId = "user"
     let kNotRealSdkKey = "notrealkey123"
@@ -84,6 +89,36 @@ class OptimizelyClientTests_Others: XCTestCase {
         
         value = try? optimizely.getFeatureVariableJSON(featureKey: kInvalidFeatureKey, variableKey: kVariableKeyJSON, userId: kUserId)
         XCTAssertNil(value)
+    }
+    
+    func testGetAllFeatureVariables_InvalidType() {
+        for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
+            if featureFlag.key == kFeatureKey {
+                var flag = featureFlag
+                flag.variables.append(FeatureVariable(id: "2689660113", key: "valid_key", type: "invalid_type", subType: nil, defaultValue: "true"))
+                self.optimizely.config?.project.featureFlags[index] = flag
+                break
+            }
+        }
+        let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
+                                                                         userId: kUserId)
+        let variablesMap = optimizelyJSON!.toMap()
+        XCTAssert((variablesMap[kVariableKeyJSON] as! [String: Any])["value"] as! Int == 1)
+        XCTAssertEqual(variablesMap[kVariableKeyString] as! String, "foo")
+        XCTAssertEqual(variablesMap[kVariableKeyBool] as! Bool, true)
+        XCTAssertEqual(variablesMap[kVariableKeyDouble] as! Double, 4.2)
+        XCTAssertEqual(variablesMap[kVariableKeyInt] as! Int, 42)
+        // Verifying that map contains value as string if type is invalid
+        XCTAssertEqual(variablesMap["valid_key"] as! String, "true")
+        XCTAssertEqual(variablesMap["i_1"] as! String, "invalid")
+    }
+    
+    func testGetAllFeatureVariables_InvalidFeatureKey() {
+        var optimizelyJSON = try? optimizely.getAllFeatureVariables(featureKey: kFeatureKey, userId: kUserId)
+        XCTAssertNotNil(optimizelyJSON)
+        
+        optimizelyJSON = try? optimizely.getAllFeatureVariables(featureKey: kInvalidFeatureKey, userId: kUserId)
+        XCTAssertNil(optimizelyJSON)
     }
 
     func testGetFeatureVariableString_InvalidVariableKey() {
@@ -147,6 +182,40 @@ class OptimizelyClientTests_Others: XCTestCase {
         XCTAssert(value == variableDefaultValue)
     }
     
+    func testGetAllFeatureVariables_DecisionFailed() {
+        var optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
+                                                  clearUserProfileService: true)!
+        
+        let featureKey = "feature_running_exp_enabled_targeted_with_variable_overrides"
+        let attributeKey = "string_attribute"
+        let attributeValue = "exact_match"
+        
+        let variableKey = "s_foo"
+        let variableValue = "foo bar"
+        let variableDefaultValue = "foo"
+        
+        let userId = "user"
+        let attributes: [String: Any] = [attributeKey: attributeValue]
+        let attributesNotMatch: [String: Any] = [attributeKey: "wrong_value"]
+        
+        var optimizelyJSON = try? optimizely.getAllFeatureVariables(featureKey: featureKey,
+                                                                    userId: userId,
+                                                                    attributes: attributes)
+        var variableMap = optimizelyJSON!.toMap()
+        XCTAssert((variableMap[variableKey] as! String) == variableValue)
+        
+        // reset user-profile-service to test variation-not-found case (default variable value)
+        
+        optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
+                                              clearUserProfileService: true)!
+        
+        optimizelyJSON = try? optimizely.getAllFeatureVariables(featureKey: featureKey,
+                                                                userId: userId,
+                                                                attributes: attributesNotMatch)
+        variableMap = optimizelyJSON!.toMap()
+        XCTAssert((variableMap[variableKey] as! String) == variableDefaultValue)
+    }
+    
     func testGetFeatureVariable_MissingDefaultValue() {
         let optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
                                                   clearUserProfileService: true)!
@@ -179,6 +248,40 @@ class OptimizelyClientTests_Others: XCTestCase {
                                                                userId: userId,
                                                                attributes: attributesNotMatch)
         XCTAssert(valueString == "", "Should return empty string when default value is not defined")
+    }
+    
+    func testGetAllFeatureVariables_MissingDefaultValue() {
+        let optimizely = OTUtils.createOptimizely(datafileName: "feature_variables",
+                                                  clearUserProfileService: true)!
+        
+        let featureKey = "feature_running_exp_enabled_targeted_with_variable_overrides"
+        let attributeKey = "string_attribute"
+        
+        let variableKey = "s_foo"
+        let variableDefaultValue = "foo"
+        
+        let userId = "user"
+        let attributesNotMatch: [String: Any] = [attributeKey: "wrong_value"]
+        
+        var optimizelyJSON = try? optimizely.getAllFeatureVariables(featureKey: featureKey,
+                                                                    userId: userId,
+                                                                    attributes: attributesNotMatch)
+        var variableMap = optimizelyJSON!.toMap()
+        XCTAssert((variableMap[variableKey] as! String) == variableDefaultValue)
+        
+        // remove defaultValue of the target featureFlag variable
+        
+        var featureFlag = optimizely.config!.getFeatureFlag(key: featureKey)!
+        var variable = featureFlag.getVariable(key: variableKey)!
+        variable.defaultValue = nil
+        featureFlag.variables = [variable]
+        optimizely.config!.featureFlagKeyMap[featureKey] = featureFlag
+        
+        optimizelyJSON = try? optimizely.getAllFeatureVariables(featureKey: featureKey,
+                                                                userId: userId,
+                                                                attributes: attributesNotMatch)
+        variableMap = optimizelyJSON!.toMap()
+        XCTAssert((variableMap[variableKey] as! String) == "", "Should return empty string when default value is not defined")
     }
     
     func testSendImpressionEvent_FailToCreateEvent() {

@@ -73,6 +73,10 @@ public enum OptimizelyError: Error {
     
     case eventDispatchFailed(_ reason: String)
     case eventDispatcherConfigError(_ reason: String)
+    
+    // MARK: - OptimizelyJSON Errors
+    
+    case invalidDictionary
 }
 
 // MARK: - CustomStringConvertible
@@ -133,6 +137,7 @@ extension OptimizelyError: CustomStringConvertible {
             
         case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))"
         case .eventDispatcherConfigError(let hint):         message = "EventDispatcher config error (\(hint))"
+        case .invalidDictionary:                          message = "Unable to initialize OptimizelyJSON with the provided dictionary."
         }
         
         return message

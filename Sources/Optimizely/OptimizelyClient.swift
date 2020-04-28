@@ -547,33 +547,31 @@ open class OptimizelyClient: NSObject {
             logger.i(.userReceivedDefaultVariableValue(userId, featureKey, variableKey))
         }
         
-        var typeName: String?
+        var type: Constants.VariableValueType?
         var valueParsed: T?
         
         switch T.self {
         case is String.Type:
-            typeName = "string"
+            type = .string
             valueParsed = featureValue as? T
         case is Int.Type:
-            typeName = "integer"
+            type = .integer
             valueParsed = Int(featureValue) as? T
         case is Double.Type:
-            typeName = "double"
+            type = .double
             valueParsed = Double(featureValue) as? T
         case is Bool.Type:
-            typeName = "boolean"
+            type = .boolean
             valueParsed = Bool(featureValue) as? T
         case is OptimizelyJSON.Type:
-            typeName = "json"
-            if let optimizelyJSON = OptimizelyJSON(payload: featureValue) {
-                valueParsed = optimizelyJSON as? T
-            }
+            type = .json
+            valueParsed = OptimizelyJSON(payload: featureValue) as? T
         default:
             break
         }
         
         guard let value = valueParsed,
-            variable.type == typeName else {
+            type?.rawValue == variable.type else {
                 throw OptimizelyError.variableValueInvalid(variableKey)
         }
         
@@ -591,10 +589,86 @@ open class OptimizelyClient: NSObject {
                                  feature: featureFlag,
                                  featureEnabled: featureEnabled,
                                  variableKey: variableKey,
-                                 variableType: typeName,
+                                 variableType: variable.type,
                                  variableValue: value)
         
         return value
+    }
+    
+    /// Gets all the variables for a given feature.
+    ///
+    /// - Parameters:
+    ///   - featureKey: The key for the feature flag.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
+    /// - Returns: all the variables for a given feature.
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
+    public func getAllFeatureVariables(featureKey: String,
+                                       userId: String,
+                                       attributes: OptimizelyAttributes? = nil) throws -> OptimizelyJSON {
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        var variableMap = [String: Any]()
+        var enabled = false
+        
+        guard let featureFlag = config.getFeatureFlag(key: featureKey) else {
+            throw OptimizelyError.featureKeyInvalid(featureKey)
+        }
+        
+        let decision = self.decisionService.getVariationForFeature(config: config,
+                                                                   featureFlag: featureFlag,
+                                                                   userId: userId,
+                                                                   attributes: attributes ?? OptimizelyAttributes())
+        if let featureEnabled = decision?.variation?.featureEnabled {
+            enabled = featureEnabled
+        }
+        
+        for (_, v) in featureFlag.variablesMap {
+            var featureValue = v.value
+            if enabled, let variable = decision?.variation?.getVariable(id: v.id) {
+                featureValue = variable.value
+            }
+            
+            var valueParsed: Any? = featureValue
+            
+            if let valueType = Constants.VariableValueType(rawValue: v.type) {
+                switch valueType {
+                case .string:
+                    break
+                case .integer:
+                    valueParsed = Int(featureValue)
+                    break
+                case .double:
+                    valueParsed = Double(featureValue)
+                    break
+                case .boolean:
+                    valueParsed = Bool(featureValue)
+                    break
+                case .json:
+                    valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
+                    break
+                }
+            }
+
+            if let value = valueParsed {
+                variableMap[v.key] = value
+            } else {
+                logger.e(OptimizelyError.variableValueInvalid(v.key))
+            }
+        }
+        
+        guard let optimizelyJSON = OptimizelyJSON(map: variableMap) else {
+            throw OptimizelyError.invalidDictionary
+        }
+        
+        sendDecisionNotification(decisionType: .allFeatureVariables,
+                                 userId: userId,
+                                 attributes: attributes,
+                                 experiment: decision?.experiment,
+                                 variation: decision?.variation,
+                                 feature: featureFlag,
+                                 featureEnabled: enabled,
+                                 variableValues: variableMap)
+        return optimizelyJSON
     }
     
     /// Get array of features that are enabled for the user.
@@ -783,6 +857,7 @@ extension OptimizelyClient {
                                   variableKey: String? = nil,
                                   variableType: String? = nil,
                                   variableValue: Any? = nil,
+                                  variableValues: [String: Any]? = nil,
                                   async: Bool = true) {
         self.sendNotification(type: .decision,
                               args: [decisionType.rawValue,
@@ -795,7 +870,8 @@ extension OptimizelyClient {
                                                            featureEnabled: featureEnabled,
                                                            variableKey: variableKey,
                                                            variableType: variableType,
-                                                           variableValue: variableValue)],
+                                                           variableValue: variableValue,
+                                                           variableValues: variableValues)],
                               async: async)
     }
     
@@ -810,7 +886,8 @@ extension OptimizelyClient {
                           featureEnabled: Bool? = nil,
                           variableKey: String? = nil,
                           variableType: String? = nil,
-                          variableValue: Any? = nil) -> [String: Any] {
+                          variableValue: Any? = nil,
+                          variableValues: [String: Any]? = nil) -> [String: Any] {
         
         var decisionInfo = [String: Any]()
         
@@ -821,7 +898,7 @@ extension OptimizelyClient {
             decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
             decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation?.key ?? NSNull()
             
-        case .feature, .featureVariable:
+        case .feature, .featureVariable, .allFeatureVariables:
             guard let feature = feature, let featureEnabled = featureEnabled else { return decisionInfo }
             
             decisionInfo[Constants.DecisionInfoKeys.feature] = feature.key
@@ -841,15 +918,20 @@ extension OptimizelyClient {
             
             if decisionType == .featureVariable {
                 guard let variableKey = variableKey, let variableType = variableType, let variableValue = variableValue else {
-                        return decisionInfo
+                    return decisionInfo
                 }
                 
                 decisionInfo[Constants.DecisionInfoKeys.variable] = variableKey
                 decisionInfo[Constants.DecisionInfoKeys.variableType] = variableType
                 decisionInfo[Constants.DecisionInfoKeys.variableValue] = variableValue
+            } else if  decisionType == .allFeatureVariables {
+                guard let variableValues = variableValues else {
+                    return decisionInfo
+                }
+                decisionInfo[Constants.DecisionInfoKeys.variableValues] = variableValues
             }
         }
-
+        
         return decisionInfo
     }
     

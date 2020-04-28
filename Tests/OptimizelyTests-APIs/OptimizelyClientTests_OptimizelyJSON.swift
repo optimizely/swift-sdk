@@ -280,7 +280,7 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForNilJSONKeyAndInvalidSchema() {
-        let schema: Int? = self.optimizelyJSON.getValue(jsonPath: nil)
+        let schema: Int? = self.optimizelyJSON.getValue()
         XCTAssertNil(schema)
     }
     
@@ -290,7 +290,7 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForNilJSONKeyAndEmptySchema() {
-        let schema: EmptySchema? = self.optimizelyJSON.getValue(jsonPath: nil)
+        let schema: EmptySchema? = self.optimizelyJSON.getValue()
         XCTAssertNotNil(schema)
     }
     
@@ -314,7 +314,7 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForNilJsonKeyAndWholeSchema() {
-        let schema: ValidSchema? = self.optimizelyJSON.getValue(jsonPath: nil)
+        let schema: ValidSchema? = self.optimizelyJSON.getValue()
         XCTAssertNotNil(schema)
         
         let expectedStruct = ValidSchema(

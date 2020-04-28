@@ -67,12 +67,17 @@ public class OptimizelyJSON: NSObject {
         return map
     }
     
-    /// Populates the decodable schema passed by the user
+    /// Returns decoded value for jsonPath
+    ///
+    /// If JSON Data is {"k1":true, "k2":{"k3":"v2"}}
+    ///
+    /// Set jsonPath to "k1" to access the true boolean value or set it to to "k2.k3" to access {"k3":"v2"}.
+    /// Set it to nil or empty to access the entire JSON data.
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
     /// - Returns: Value if decoded successfully
-    public func getValue<T: Decodable>(jsonPath: String?) -> T? {
+    public func getValue<T: Decodable>(jsonPath: String? = nil) -> T? {
         func populateDecodableSchema(value: Any) -> T? {
             guard JSONSerialization.isValidJSONObject(value) else {
                 // Try and assign value directly to schema
@@ -93,12 +98,16 @@ public class OptimizelyJSON: NSObject {
         return getValue(jsonPath: jsonPath, schemaHandler: populateDecodableSchema(value:))
     }
     
-    /// Populates the schema passed by the user
+    /// Returns parsed value for jsonPath
+    ///
+    /// If JSON Data is {"k1":true, "k2":{"k3":"v2"}}
+    ///
+    /// Set jsonPath to "k1" to access the true boolean value or set it to to "k2.k3" to access {"k3":"v2"}.
+    /// Set it to nil or empty to access the entire JSON data.
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
-    ///   - schema: Schema to populate.
-    /// - Returns: Value if decoded successfully
+    /// - Returns: Value if parsed successfully
     public func getValue<T>(jsonPath: String?) -> T? {
         func populateSchema(value: Any) -> T? {
             guard let v = value as? T else {

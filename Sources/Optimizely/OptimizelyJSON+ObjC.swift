@@ -46,11 +46,16 @@ extension OptimizelyJSON {
     
     @available(swift, obsoleted: 1.0)
     @objc(getValueWithJsonPath:)
-    /// Populates the schema passed by the user
+    /// Returns parsed value for jsonPath
+    ///
+    /// If JSON Data is {"k1":true, "k2":{"k3":"v2"}}
+    ///
+    /// Set jsonPath to "k1" to access the true boolean value or set it to to "k2.k3" to access {"k3":"v2"}.
+    /// Set it to nil or empty to access the entire JSON data.
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
-    /// - Returns: Value if decoded successfully
+    /// - Returns: Value if parsed successfully
     public func objcGetValue(jsonPath: String) -> Any? {
         return self.getValue(jsonPath: jsonPath)
     }

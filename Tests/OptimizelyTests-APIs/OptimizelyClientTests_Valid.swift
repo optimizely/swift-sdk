@@ -142,8 +142,9 @@ class OptimizelyClientTests_Valid: XCTestCase {
                                                                                   userId: kUserId)
         XCTAssert(result?.toString() == kVariableValueJSON)
         XCTAssert((result?.toMap()["value"] as! Int) == 1)
-        var intValue: Int = 0
-        XCTAssertTrue(result!.getValue(jsonPath: "value", schema: &intValue))
+        let intValue: Int? = result?.getValue(jsonPath: "value")
+        
+        XCTAssertNotNil(intValue)
         XCTAssert(intValue == 1)
     }
     

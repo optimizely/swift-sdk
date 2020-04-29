@@ -43,16 +43,4 @@ extension OptimizelyJSON {
     public func objcToMap() -> [String: Any] {
         return self.toMap()
     }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(getValueWithJsonPath:schema:)
-    /// Populates the schema passed by the user
-    ///
-    /// - Parameters:
-    ///   - jsonPath: Key path for the value.
-    ///   - schema: Schema to populate.
-    /// - Returns: true if value decoded successfully
-    public func objcGetValue(jsonPath: String, schema: UnsafeMutablePointer<AnyObject>) -> Bool {
-        return self.getValue(jsonPath: jsonPath, schema: &schema.pointee)
-    }
 }

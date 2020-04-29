@@ -19,7 +19,7 @@ import Foundation
 public class OptimizelyJSON: NSObject {
     
     private lazy var logger = OPTLoggerFactory.getLogger()
-    private typealias SchemaHandler = (Any) -> Bool
+    private typealias ValueHandler<T> = (Any) -> T?
     var payload: String?
     var map = [String: Any]()
     
@@ -67,58 +67,63 @@ public class OptimizelyJSON: NSObject {
         return map
     }
     
-    /// Populates the decodable schema passed by the user
+    /// Returns decoded value for jsonPath
+    ///
+    /// If JSON Data is {"k1":true, "k2":{"k3":"v3"}}
+    ///
+    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3"
+    /// Set it to nil or empty to access the entire JSON data.
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
-    ///   - schema: Decodable schema to populate.
-    /// - Returns: true if value decoded successfully
-    public func getValue<T: Decodable>(jsonPath: String?, schema: inout T) -> Bool {
-        func populateDecodableSchema(value: Any) -> Bool {
+    /// - Returns: Value if decoded successfully
+    public func getValue<T: Decodable>(jsonPath: String? = nil) -> T? {
+        func handler(value: Any) -> T? {
             guard JSONSerialization.isValidJSONObject(value) else {
-                // Try and assign value directly to schema
+                // Try and typecast value to required return type
                 if let v = value as? T {
-                    schema = v
-                    return true
+                    return v
                 }
-                logger.e(.failedToAssignValueToSchema)
-                return false
+                logger.e(.failedToAssignValue)
+                return nil
             }
-            // Try to decode value into schema
+            // Try to decode value into return type
             guard let jsonData = try? JSONSerialization.data(withJSONObject: value, options: []),
                 let decodedValue = try? JSONDecoder().decode(T.self, from: jsonData) else {
-                    logger.e(.failedToAssignValueToSchema)
-                    return false
+                    logger.e(.failedToAssignValue)
+                    return nil
             }
-            schema = decodedValue
-            return true
+            return decodedValue
         }
-        return getValue(jsonPath: jsonPath, schemaHandler: populateDecodableSchema(value:))
+        return getValue(jsonPath: jsonPath, valueHandler: handler(value:))
     }
     
-    /// Populates the schema passed by the user
+    /// Returns parsed value for jsonPath
+    ///
+    /// If JSON Data is {"k1":true, "k2":{"k3":"v3"}}
+    ///
+    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3"
+    /// Set it to nil or empty to access the entire JSON data.
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
-    ///   - schema: Schema to populate.
-    /// - Returns: true if value decoded successfully
-    public func getValue<T>(jsonPath: String?, schema: inout T) -> Bool {
-        func populateSchema(value: Any) -> Bool {
+    /// - Returns: Value if parsed successfully
+    public func getValue<T>(jsonPath: String?) -> T? {
+        func handler(value: Any) -> T? {
             guard let v = value as? T else {
-                self.logger.e(.failedToAssignValueToSchema)
-                return false
+                self.logger.e(.failedToAssignValue)
+                return nil
             }
-            schema = v
-            return true
+            return v
         }
-        return getValue(jsonPath: jsonPath, schemaHandler: populateSchema(value:))
+        return getValue(jsonPath: jsonPath, valueHandler: handler(value:))
     }
     
-    private func getValue(jsonPath: String?, schemaHandler: SchemaHandler) -> Bool {
+    private func getValue<T>(jsonPath: String?, valueHandler: ValueHandler<T>) -> T? {
         
         guard let path = jsonPath, !path.isEmpty else {
-            // Populate the whole schema
-            return schemaHandler(map)
+            // Retrieve value for path
+            return valueHandler(map)
         }
         
         let pathArray = path.components(separatedBy: ".")
@@ -128,15 +133,15 @@ public class OptimizelyJSON: NSObject {
         for (index, key) in pathArray.enumerated() {
             guard let value = internalMap[key] else {
                 self.logger.e(.valueForKeyNotFound(key))
-                return false
+                return nil
             }
             if let dict = value as? [String: Any] {
                 internalMap = dict
             }
             if index == lastIndex {
-                return schemaHandler(value)
+                return valueHandler(value)
             }
         }
-        return false
+        return nil
     }
 }

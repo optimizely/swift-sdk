@@ -316,6 +316,23 @@ extension OptimizelyClient {
                                                attributes: attributes)
     }
     
+    @objc(getAllFeatureVariablesWithFeatureKey:userId:attributes:error:)
+    /// Gets all the variables for a given feature.
+    ///
+    /// - Parameters:
+    ///   - featureKey: The key for the feature flag.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: The user's attributes.
+    /// - Returns: all the variables for a given feature.
+    /// - Throws: `OptimizelyError` if feature parameter is not valid
+    public func objcGetAllFeatureVariables(featureKey: String,
+                                           userId: String,
+                                           attributes: [String: Any]?) throws -> OptimizelyJSON {
+        return try self.getAllFeatureVariables(featureKey: featureKey,
+                                               userId: userId,
+                                               attributes: attributes)
+    }
+
     @available(swift, obsoleted: 1.0)
     @objc(getEnabledFeaturesWithUserId:attributes:)
     /// Get array of features that are enabled for the user.

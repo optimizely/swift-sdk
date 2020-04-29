@@ -19,7 +19,7 @@ import Foundation
 public class OptimizelyJSON: NSObject {
     
     private lazy var logger = OPTLoggerFactory.getLogger()
-    private typealias SchemaHandler<T> = (Any) -> T?
+    private typealias ValueHandler<T> = (Any) -> T?
     var payload: String?
     var map = [String: Any]()
     
@@ -78,24 +78,24 @@ public class OptimizelyJSON: NSObject {
     ///   - jsonPath: Key path for the value.
     /// - Returns: Value if decoded successfully
     public func getValue<T: Decodable>(jsonPath: String? = nil) -> T? {
-        func populateDecodableSchema(value: Any) -> T? {
+        func handler(value: Any) -> T? {
             guard JSONSerialization.isValidJSONObject(value) else {
-                // Try and assign value directly to schema
+                // Try and typecast value to required return type
                 if let v = value as? T {
                     return v
                 }
-                logger.e(.failedToAssignValueToSchema)
+                logger.e(.failedToAssignValue)
                 return nil
             }
-            // Try to decode value into schema
+            // Try to decode value into return type
             guard let jsonData = try? JSONSerialization.data(withJSONObject: value, options: []),
                 let decodedValue = try? JSONDecoder().decode(T.self, from: jsonData) else {
-                    logger.e(.failedToAssignValueToSchema)
+                    logger.e(.failedToAssignValue)
                     return nil
             }
             return decodedValue
         }
-        return getValue(jsonPath: jsonPath, schemaHandler: populateDecodableSchema(value:))
+        return getValue(jsonPath: jsonPath, valueHandler: handler(value:))
     }
     
     /// Returns parsed value for jsonPath
@@ -109,21 +109,21 @@ public class OptimizelyJSON: NSObject {
     ///   - jsonPath: Key path for the value.
     /// - Returns: Value if parsed successfully
     public func getValue<T>(jsonPath: String?) -> T? {
-        func populateSchema(value: Any) -> T? {
+        func handler(value: Any) -> T? {
             guard let v = value as? T else {
-                self.logger.e(.failedToAssignValueToSchema)
+                self.logger.e(.failedToAssignValue)
                 return nil
             }
             return v
         }
-        return getValue(jsonPath: jsonPath, schemaHandler: populateSchema(value:))
+        return getValue(jsonPath: jsonPath, valueHandler: handler(value:))
     }
     
-    private func getValue<T>(jsonPath: String?, schemaHandler: SchemaHandler<T>) -> T? {
+    private func getValue<T>(jsonPath: String?, valueHandler: ValueHandler<T>) -> T? {
         
         guard let path = jsonPath, !path.isEmpty else {
-            // Populate the whole schema
-            return schemaHandler(map)
+            // Retrieve value for path
+            return valueHandler(map)
         }
         
         let pathArray = path.components(separatedBy: ".")
@@ -139,7 +139,7 @@ public class OptimizelyJSON: NSObject {
                 internalMap = dict
             }
             if index == lastIndex {
-                return schemaHandler(value)
+                return valueHandler(value)
             }
         }
         return nil

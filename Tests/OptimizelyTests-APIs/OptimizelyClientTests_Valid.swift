@@ -148,6 +148,60 @@ class OptimizelyClientTests_Valid: XCTestCase {
         XCTAssert(intValue == 1)
     }
     
+    func testGetAllFeatureVariables() {
+        let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
+                                                                         userId: kUserId)
+        let variablesMap = optimizelyJSON!.toMap()
+        XCTAssert(variablesMap[kVariableKeyString] as! String == kVariableValueString)
+        XCTAssert(variablesMap[kVariableKeyBool] as! Bool == kVariableValueBool)
+        XCTAssert(variablesMap[kVariableKeyInt] as! Int == kVariableValueInt)
+        XCTAssert(variablesMap[kVariableKeyDouble] as! Double == kVariableValueDouble)
+        XCTAssert((variablesMap[kVariableKeyJSON] as! [String: Any])["value"] as! Int == 1)
+    }
+    
+    func testGetAllFeatureVariablesWithFeatureVariables() {
+        let config = self.optimizely.config
+        config?.allExperiments[0].variations[0].variables?.append(contentsOf:[
+            Variable(id: "2687470095", value: "43"),
+            Variable(id: "2689280165", value: "4.3"),
+            Variable(id: "2689660112", value: "false"),
+            Variable(id: "2696150066", value: "f_foo"),
+            Variable(id: "2696150067", value: "{\"value\":2}")
+            ]
+        )
+        self.optimizely.config = config
+        let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
+                                                                         userId: kUserId)
+        let variablesMap = optimizelyJSON!.toMap()
+        XCTAssert(variablesMap[kVariableKeyString] as! String == "f_foo")
+        XCTAssert(variablesMap[kVariableKeyBool] as! Bool == false)
+        XCTAssert(variablesMap[kVariableKeyInt] as! Int == 43)
+        XCTAssert(variablesMap[kVariableKeyDouble] as! Double == 4.3)
+        XCTAssert((variablesMap[kVariableKeyJSON] as! [String: Any])["value"] as! Int == 2)
+    }
+    
+    func testGetAllFeatureVariablesFeatureDisabled() {
+        let config = self.optimizely.config
+        config?.allExperiments[0].variations[0].variables?.append(contentsOf:[
+            Variable(id: "2687470095", value: "43"),
+            Variable(id: "2689280165", value: "4.3"),
+            Variable(id: "2689660112", value: "false"),
+            Variable(id: "2696150066", value: "f_foo"),
+            Variable(id: "2696150067", value: "{\"value\":2}")
+            ]
+        )
+        self.optimizely.config = config
+        self.optimizely.config?.allExperiments[0].variations[0].featureEnabled = false
+        let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
+                                                                         userId: kUserId)
+        let variablesMap = optimizelyJSON!.toMap()
+        XCTAssert(variablesMap[kVariableKeyString] as! String == kVariableValueString)
+        XCTAssert(variablesMap[kVariableKeyBool] as! Bool == kVariableValueBool)
+        XCTAssert(variablesMap[kVariableKeyInt] as! Int == kVariableValueInt)
+        XCTAssert(variablesMap[kVariableKeyDouble] as! Double == kVariableValueDouble)
+        XCTAssert((variablesMap[kVariableKeyJSON] as! [String: Any])["value"] as! Int == 1)
+    }
+    
     func testGetEnabledFeatures() {
         let result: [String] = self.optimizely.getEnabledFeatures(userId: kUserId)
         XCTAssert(result == [kFeatureKey])

@@ -67,7 +67,7 @@ enum LogMessage {
     case eventBatchFailed
     case eventSendRetyFailed(_ count: Int)
     case failedToConvertMapToString
-    case failedToAssignValueToSchema
+    case failedToAssignValue
     case valueForKeyNotFound(_ key: String)
 }
 
@@ -126,7 +126,7 @@ extension LogMessage: CustomStringConvertible {
         case .eventBatchFailed:                                                 message = "Failed to batch events"
         case .eventSendRetyFailed(let count):                                   message = "Event dispatch retries failed (\(count)) times"
         case .failedToConvertMapToString:                                       message = "Provided map could not be converted to string."
-        case .failedToAssignValueToSchema:                                      message = "Value for path could not be assigned to provided schema."
+        case .failedToAssignValue:                                      message = "Value for path could not be assigned to provided type."
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
         }
         

@@ -202,6 +202,18 @@ static enum OptimizelyLogLevel logLevel = OptimizelyLogLevelInfo;
                                                                              error:nil];
     XCTAssertEqualObjects([result toString], kVariableValueJSON);
 }
+
+- (void)testGetAllFeatureVariables {
+    OptimizelyJSON *optimizelyJSON = [self.optimizely getAllFeatureVariablesWithFeatureKey:kFeatureKey userId:kUserId attributes:self.attributes error:nil];
+    
+    NSDictionary *featureVariables = [optimizelyJSON toMap];
+    XCTAssert([kVariableValueString isEqualToString: [featureVariables valueForKey:kVariableKeyString]]);
+    XCTAssertEqual([[featureVariables objectForKey:kVariableKeyInt] integerValue], kVariableValueInt);
+    XCTAssertEqual([[featureVariables objectForKey:kVariableKeyDouble] doubleValue], kVariableValueDouble);
+    XCTAssertEqual([[featureVariables objectForKey:kVariableKeyBool] boolValue], kVariableValueBool);
+    NSDictionary *jsonValue = [featureVariables valueForKey:kVariableKeyJSON];
+    XCTAssertEqual([[jsonValue objectForKey:@"value"] integerValue], 1);
+}
     
 - (void)testGetEnabledFeatures {
     NSArray *result = [self.optimizely getEnabledFeaturesWithUserId:kUserId

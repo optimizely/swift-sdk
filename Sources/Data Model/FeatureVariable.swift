@@ -52,8 +52,8 @@ struct FeatureVariable: Codable, Equatable {
     }
     
     mutating func overrideTypeIfJSON() {
-        if type == "string" && subType == "json" {
-            type = "json"
+        if type == Constants.VariableValueType.string.rawValue && subType == Constants.VariableValueType.json.rawValue {
+            type = Constants.VariableValueType.json.rawValue
         }
     }
 }

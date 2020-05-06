@@ -114,7 +114,7 @@ open class OptimizelyClient: NSObject {
     ///   - resourceTimeout: timeout for datafile download (optional)
     ///   - completion: callback when initialization is completed
     public func start(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)? = nil) {
-        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: true) { result in
+        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: true, resourceTimeoutInterval: resourceTimeout) { result in
             switch result {
             case .success(let datafile):
                 guard let datafile = datafile else {

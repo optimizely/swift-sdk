@@ -49,4 +49,12 @@ public class OptimizelyUserContext {
             forcedFeatures?.removeValue(forKey: featureKey)
         }
     }
+    
+    func addAttributeValue(attributeKey: String, value: Any?) {
+        if let value = value {
+            attributes?.updateValue(value, forKey: attributeKey)
+        } else {
+            attributes?.removeValue(forKey: attributeKey)
+        }
+    }
 }

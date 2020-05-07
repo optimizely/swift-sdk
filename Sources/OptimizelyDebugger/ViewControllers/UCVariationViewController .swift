@@ -16,20 +16,10 @@
 
 import UIKit
 
-class UCVariationViewController: UIViewController {
-    weak var client: OptimizelyClient?
-    
-    var userId: String!
-    var value: (experimentKey: String, variationKey: String)?
-    
+class UCVariationViewController: UCItemViewController {
     var experiments = [String]()
     var variations = [String]()
-    
-    var saveBtn: UIButton!
-    var removeBtn: UIButton!
-    
-    var actionOnDismiss: (() -> Void)?
-    
+        
     var selectedExperimentIndex: Int? {
         didSet {
             guard let index = self.selectedExperimentIndex else {
@@ -74,29 +64,24 @@ class UCVariationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        createViews()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(close))
-
         experiments = client?.config?.allExperiments.map { $0.key } ?? []
-        
-        // initial values
-        
-        if let value = value {
-            selectedExperimentIndex = experiments.firstIndex(of: value.experimentKey)
-            selectedVariationIndex = variations.firstIndex(of: value.variationKey)
+                
+        if let pair = pair, let value = pair.value as? String {
+            selectedExperimentIndex = experiments.firstIndex(of: pair.key)
+            selectedVariationIndex = variations.firstIndex(of: value)
         }
     }
     
-    func createViews() {
+    override func createContentsView() -> UIView {
         let px: CGFloat = 10
         let py: CGFloat = 10
         var cy: CGFloat = py
         let height: CGFloat = 40
         
-        let hv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 210))
-        
-        expView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        hv.addSubview(expView)
+        let cv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 120))
+
+        expView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        cv.addSubview(expView)
         cy += height + py
 
         expView.placeholder = "Select an experiment key"
@@ -108,8 +93,8 @@ class UCVariationViewController: UIViewController {
         pickerView.delegate = self
         expView.inputView = pickerView
 
-        varView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        hv.addSubview(varView)
+        varView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        cv.addSubview(varView)
         cy += height + py
 
         varView.placeholder = "Select a variation key"
@@ -121,63 +106,29 @@ class UCVariationViewController: UIViewController {
         pickerView.delegate = self
         varView.inputView = pickerView
         
-        cy += 20
-        let width = (hv.frame.width - 3*px) / 2.0
-        let cancelBtn = UIButton(frame: CGRect(x: px, y: cy, width: width, height: height))
-        cancelBtn.backgroundColor = .gray
-        cancelBtn.setTitleColor(.white, for: .normal)
-        cancelBtn.setTitle("Cancel", for: .normal)
-        cancelBtn.addTarget(self, action: #selector(close), for: .touchUpInside)
-        hv.addSubview(cancelBtn)
-
-        saveBtn = UIButton(frame: CGRect(x: width + 2*px, y: cy, width: width, height: height))
-        saveBtn.backgroundColor = .green
-        saveBtn.setTitleColor(.black, for: .normal)
-        saveBtn.setTitle("Save", for: .normal)
-        saveBtn.addTarget(self, action: #selector(save), for: .touchUpInside)
-        saveBtn.isEnabled = false
-        saveBtn.alpha = 0.3
-        hv.addSubview(saveBtn)
-                
-        cy += height + 20
-        removeBtn = UIButton(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        removeBtn.backgroundColor = .red
-        removeBtn.setTitleColor(.white, for: .normal)
-        removeBtn.setTitle("Remove", for: .normal)
-        removeBtn.addTarget(self, action: #selector(remove), for: .touchUpInside)
-        removeBtn.isEnabled = false
-        removeBtn.alpha = 0.3
-        hv.addSubview(removeBtn)
-
-        view.backgroundColor = .black
-        view.addSubview(hv)
-        hv.center = view.center
+        return cv
     }
     
-    @objc func save() {
-        guard let experimentKey = expView.text, experimentKey.isEmpty == false,
-            let variationKey = varView.text, variationKey.isEmpty == false
-            else {
-                let alert = UIAlertController(title: "Error", message: "Enter valid values and try again", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                return
+    override func readyToSave() -> Bool {
+        if let experimentKey = expView.text, experimentKey.isEmpty == false,
+            let variationKey = varView.text, variationKey.isEmpty == false {
+            return true
+        } else {
+            return false
         }
-        
+    }
+    
+    override func saveValue() {
+        guard let experimentKey = expView.text,
+            let variationKey = varView.text else { return }
+
         _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: variationKey)
-        close()
     }
     
-    @objc func remove() {
-        if let experimentKey = expView.text {
-            _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: nil)
-        }
-        close()
-    }
-    
-    @objc func close() {
-        actionOnDismiss?()
-        dismiss(animated: true, completion: nil)
+    override func removeValue() {
+        guard let experimentKey = expView.text else { return }
+            
+        _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: nil)
     }
 
 }

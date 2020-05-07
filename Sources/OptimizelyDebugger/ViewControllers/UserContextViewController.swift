@@ -209,41 +209,33 @@ extension UserContextViewController {
 
     func openItem(sectionId: Int, keyValuePair: (String, Any?)?) {
         guard let uc = userContext else { return }
+                
+        let vc: UCItemViewController
         
-        var rootVC: UIViewController
         let section = sections[sectionId]
         switch section {
         case .attributes:
-            let vc = UCAttributeViewController()
-            vc.title = section.rawValue
-            vc.client = client
-            vc.userId = uc.userId
-            vc.value = keyValuePair
-            rootVC = vc
+            vc = UCAttributeViewController()
         case .userProfiles,
              .forcedVariations:
-            let vc = UCVariationViewController()
-            vc.title = section.rawValue
-            vc.client = client
-            vc.userId = uc.userId
-            vc.value = keyValuePair as? (String, String) ?? nil
-            vc.actionOnDismiss = {
-                self.refreshUserContext()
-            }
-            rootVC = vc
+            vc = UCVariationViewController()
         case .forcedFeatures:
-            let vc = UCFeatureViewController()
-            vc.title = section.rawValue
-            vc.client = client
-            vc.userId = uc.userId
-            vc.value = keyValuePair as? (String, Bool) ?? nil
-            vc.actionOnDismiss = {
-                self.refreshUserContext()
-            }
-            rootVC = vc
+            vc = UCFeatureViewController()
         }
         
-        let nvc = UINavigationController(rootViewController: rootVC)
+        vc.client = client
+        vc.title = section.rawValue
+        if let pair = keyValuePair, let value = pair.1 {
+            vc.pair = (pair.0, value)   // do not support nil value
+        } else {
+            vc.pair = nil               // new item
+        }
+        vc.userId = uc.userId
+        vc.actionOnDismiss = {
+            self.refreshUserContext()
+        }
+        
+        let nvc = UINavigationController(rootViewController: vc)
         self.present(nvc, animated: true, completion: nil)
     }
 }

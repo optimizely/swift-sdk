@@ -16,19 +16,9 @@
 
 import UIKit
 
-class UCFeatureViewController: UIViewController {
-    weak var client: OptimizelyClient?
-    
-    var userId: String!
-    var value: (featureKey: String, enabled: Bool)?
-    
+class UCFeatureViewController: UCItemViewController {
     var features = [String]()
     var values = [true, false]
-    
-    var saveBtn: UIButton!
-    var removeBtn: UIButton!
-    
-    var actionOnDismiss: (() -> Void)?
     
     var selectedFeatureIndex: Int? {
         didSet {
@@ -67,29 +57,24 @@ class UCFeatureViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        createViews()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(close))
-
         features = client?.config?.featureFlagKeyMap.map { $0.key } ?? []
-        
-        // initial values
-        
-        if let value = value {
-            selectedFeatureIndex = features.firstIndex(of: value.featureKey)
-            selectedValueIndex = values.firstIndex(of: value.enabled)
+                
+        if let pair = pair, let enabled = pair.value as? Bool {
+            selectedFeatureIndex = features.firstIndex(of: pair.key)
+            selectedValueIndex = values.firstIndex(of: enabled)
         }
     }
     
-    func createViews() {
+    override func createContentsView() -> UIView {
         let px: CGFloat = 10
         let py: CGFloat = 10
         var cy: CGFloat = py
         let height: CGFloat = 40
         
-        let hv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 210))
-        
-        featureView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        hv.addSubview(featureView)
+        let cv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 120))
+
+        featureView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        cv.addSubview(featureView)
         cy += height + py
 
         featureView.placeholder = "Select a feature key"
@@ -101,8 +86,8 @@ class UCFeatureViewController: UIViewController {
         pickerView.delegate = self
         featureView.inputView = pickerView
 
-        valueView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        hv.addSubview(valueView)
+        valueView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        cv.addSubview(valueView)
         cy += height + py
 
         valueView.placeholder = "Select a value"
@@ -113,65 +98,30 @@ class UCFeatureViewController: UIViewController {
         pickerView.dataSource = self
         pickerView.delegate = self
         valueView.inputView = pickerView
-        
-        cy += 20
-        let width = (hv.frame.width - 3*px) / 2.0
-        let cancelBtn = UIButton(frame: CGRect(x: px, y: cy, width: width, height: height))
-        cancelBtn.backgroundColor = .gray
-        cancelBtn.setTitleColor(.white, for: .normal)
-        cancelBtn.setTitle("Cancel", for: .normal)
-        cancelBtn.addTarget(self, action: #selector(close), for: .touchUpInside)
-        hv.addSubview(cancelBtn)
 
-        saveBtn = UIButton(frame: CGRect(x: width + 2*px, y: cy, width: width, height: height))
-        saveBtn.backgroundColor = .green
-        saveBtn.setTitleColor(.black, for: .normal)
-        saveBtn.setTitle("Save", for: .normal)
-        saveBtn.addTarget(self, action: #selector(save), for: .touchUpInside)
-        saveBtn.isEnabled = false
-        saveBtn.alpha = 0.3
-        hv.addSubview(saveBtn)
-                
-        cy += height + 20
-        removeBtn = UIButton(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        removeBtn.backgroundColor = .red
-        removeBtn.setTitleColor(.white, for: .normal)
-        removeBtn.setTitle("Remove", for: .normal)
-        removeBtn.addTarget(self, action: #selector(remove), for: .touchUpInside)
-        removeBtn.isEnabled = false
-        removeBtn.alpha = 0.3
-        hv.addSubview(removeBtn)
-
-        view.backgroundColor = .black
-        view.addSubview(hv)
-        hv.center = view.center
+        return cv
     }
     
-    @objc func save() {
-        guard let featureKey = featureView.text, featureKey.isEmpty == false,
-            let enabled = valueView.text, enabled.isEmpty == false
-            else {
-                let alert = UIAlertController(title: "Error", message: "Enter valid values and try again", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                return
+    override func readyToSave() -> Bool {
+        if let featureKey = featureView.text, !featureKey.isEmpty,
+            let enabled = valueView.text, !enabled.isEmpty {
+            return true
+        } else {
+            return false
         }
+    }
+    
+    override func saveValue() {
+        guard let featureKey = featureView.text, !featureKey.isEmpty,
+            let enabled = valueView.text, !enabled.isEmpty else { return }
         
         client?.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: Bool(enabled))
+    }
+    
+    override func removeValue() {
+        guard let featureKey = featureView.text else { return }
         
-        close()
-    }
-    
-    @objc func remove() {
-        if let featureKey = featureView.text {
-            client?.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: nil)
-        }
-        close()
-    }
-    
-    @objc func close() {
-        actionOnDismiss?()
-        dismiss(animated: true, completion: nil)
+        client?.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: nil)
     }
 
 }

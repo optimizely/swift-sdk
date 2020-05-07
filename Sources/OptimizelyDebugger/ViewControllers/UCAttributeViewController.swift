@@ -16,19 +16,9 @@
 
 import UIKit
 
-class UCAttributeViewController: UIViewController {
-    weak var client: OptimizelyClient?
-    
-    var userId: String!
-    var value: (attributeKey: String, value: Any)?
-    
+class UCAttributeViewController: UCItemViewController {
     var attributes = [String]()
-    
-    var saveBtn: UIButton!
-    var removeBtn: UIButton!
-    
-    var actionOnDismiss: (() -> Void)?
-    
+            
     var selectedAttributeIndex: Int? {
         didSet {
             guard let index = self.selectedAttributeIndex else {
@@ -52,28 +42,23 @@ class UCAttributeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        createViews()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(close))
-
         attributes = client?.config?.attributeKeyMap.map { $0.key } ?? []
-        
-        // initial values
-        
-        if let value = value {
-            selectedAttributeIndex = attributes.firstIndex(of: value.attributeKey)
+                
+        if let pair = pair {
+            selectedAttributeIndex = attributes.firstIndex(of: pair.key)
         }
     }
     
-    func createViews() {
+    override func createContentsView() -> UIView {
         let px: CGFloat = 10
         let py: CGFloat = 10
         var cy: CGFloat = py
         let height: CGFloat = 40
-        
-        let hv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 210))
-        
-        attributeView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        hv.addSubview(attributeView)
+
+        let cv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 120))
+                
+        attributeView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        cv.addSubview(attributeView)
         cy += height + py
 
         attributeView.placeholder = "Select an attribute key"
@@ -83,9 +68,11 @@ class UCAttributeViewController: UIViewController {
         pickerView.dataSource = self
         pickerView.delegate = self
         attributeView.inputView = pickerView
+        attributeView.autocapitalizationType = .none
+        attributeView.autocorrectionType = .no
 
-        valueView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        hv.addSubview(valueView)
+        valueView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        cv.addSubview(valueView)
         cy += height + py
 
         valueView.placeholder = "Select a value"
@@ -95,66 +82,32 @@ class UCAttributeViewController: UIViewController {
         valueView.autocapitalizationType = .none
         valueView.autocorrectionType = .no
         
-        cy += 20
-        let width = (hv.frame.width - 3*px) / 2.0
-        let cancelBtn = UIButton(frame: CGRect(x: px, y: cy, width: width, height: height))
-        cancelBtn.backgroundColor = .gray
-        cancelBtn.setTitleColor(.white, for: .normal)
-        cancelBtn.setTitle("Cancel", for: .normal)
-        cancelBtn.addTarget(self, action: #selector(close), for: .touchUpInside)
-        hv.addSubview(cancelBtn)
-
-        saveBtn = UIButton(frame: CGRect(x: width + 2*px, y: cy, width: width, height: height))
-        saveBtn.backgroundColor = .green
-        saveBtn.setTitleColor(.black, for: .normal)
-        saveBtn.setTitle("Save", for: .normal)
-        saveBtn.addTarget(self, action: #selector(save), for: .touchUpInside)
-        saveBtn.isEnabled = false
-        saveBtn.alpha = 0.3
-        hv.addSubview(saveBtn)
-                
-        cy += height + 20
-        removeBtn = UIButton(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        removeBtn.backgroundColor = .red
-        removeBtn.setTitleColor(.white, for: .normal)
-        removeBtn.setTitle("Remove", for: .normal)
-        removeBtn.addTarget(self, action: #selector(remove), for: .touchUpInside)
-        removeBtn.isEnabled = false
-        removeBtn.alpha = 0.3
-        hv.addSubview(removeBtn)
-
-        view.backgroundColor = .black
-        view.addSubview(hv)
-        hv.center = view.center
+        return cv
     }
     
-    @objc func save() {
-        guard let attributeKey = attributeView.text, attributeKey.isEmpty == false,
-            let value = valueView.text, value.isEmpty == false
-            else {
-                let alert = UIAlertController(title: "Error", message: "Enter valid values and try again", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                return
+    override func readyToSave() -> Bool {
+        if let attributeKey = attributeView.text, attributeKey.isEmpty == false,
+            let value = valueView.text,
+            value.isEmpty == false {
+            return true
+        } else {
+            return false
         }
-        
-        //client?.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: Bool(enabled))
-        
-        close()
     }
     
-    @objc func remove() {
-        if let attributeKey = attributeView.text {
-            //client?.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: nil)
-        }
-        close()
+    override func saveValue() {
+        guard let attributeKey = attributeView.text,
+            let value = valueView.text else { return }
+        
+        client?.getUserContext()?.addAttributeValue(attributeKey: attributeKey, value: value)
     }
     
-    @objc func close() {
-        actionOnDismiss?()
-        dismiss(animated: true, completion: nil)
+    override func removeValue() {
+        guard let attributeKey = attributeView.text else { return }
+            
+        client?.getUserContext()?.addAttributeValue(attributeKey: attributeKey, value: nil)
     }
-
+    
 }
 
 // PickerView

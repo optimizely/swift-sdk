@@ -34,9 +34,9 @@ class DebugViewController: UITableViewController {
         items.append(DebuggerItem(title: "Logs") {
             self.openLogView()
         })
-        items.append(DebuggerItem(title: "Forced Variations") {
-            self.openForcedVariations()
-        })
+//        items.append(DebuggerItem(title: "Forced Variations") {
+//            self.openForcedVariations()
+//        })
         items.append(DebuggerItem(title: "User Contexts") {
             self.openUserContexts()
         })

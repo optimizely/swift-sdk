@@ -142,34 +142,39 @@ extension UserContextViewController {
         }
         let cell = reuse!
 
-        let (key, rawValue) = keyValueForIndexPath(indexPath)
-        var value: String?
-        if let rv = rawValue {
-            switch rv {
-            case let rv as String:
-                value = rv
-            case let rv as Int:
-                value = String(rv)
-            case let rv as Bool:
-                value = String(rv)
-            case let rv as Double:
-                value = String(rv)
-            default:
-                value = "[Unknown]"
+        if let (key, rawValue) = keyValueForIndexPath(indexPath) {
+            var value: String?
+            if let rv = rawValue {
+                switch rv {
+                case let rv as String:
+                    value = rv
+                case let rv as Int:
+                    value = String(rv)
+                case let rv as Bool:
+                    value = String(rv)
+                case let rv as Double:
+                    value = String(rv)
+                default:
+                    value = "[Unknown]"
+                }
             }
+            
+            cell.textLabel!.text = key
+            cell.detailTextLabel!.text = value
         }
         
-        cell.textLabel!.text = key
-        cell.detailTextLabel!.text = value
         cell.accessoryType = .disclosureIndicator
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let (key, value) = keyValueForIndexPath(indexPath) {
+            openItem(section: indexPath.section, keyValuePair: (key, value))
+        }
     }
     
-    func keyValueForIndexPath(_ indexPath: IndexPath) -> (String?, Any?) {
-        guard let userContext = userContext else { return (nil, nil) }
+    func keyValueForIndexPath(_ indexPath: IndexPath) -> (String, Any?)? {
+        guard let userContext = userContext else { return nil }
 
         var data: [String: Any?]?
         
@@ -186,7 +191,7 @@ extension UserContextViewController {
             data = nil
         }
         
-        guard let dict = data else { return (nil, nil) }
+        guard let dict = data else { return nil }
         
         let key = dict.keys.sorted()[indexPath.row]
         let value = dict[key] as Any?
@@ -194,13 +199,21 @@ extension UserContextViewController {
     }
     
     @objc func addItem(sender: UIButton) {
+        openItem(section: sender.tag, keyValuePair: nil)
+    }
+
+    func openItem(section: Int, keyValuePair: (String, Any?)?) {
         guard let uc = userContext else { return }
         
         let vc = UserContextItemViewController()
         vc.client = client
         vc.userId = uc.userId
+        vc.value = keyValuePair as? (String, String) ?? nil
+        vc.actionOnDismiss = {
+            self.refreshUserContext()
+        }
 
-        switch sender.tag {
+        switch section {
         case 0: print("section 0")
             vc.title = "Attributes"
         case 1: print("section 1")
@@ -210,10 +223,6 @@ extension UserContextViewController {
         case 3: print("section 3")
             vc.title = "Features"
         default: print("section other")
-        }
-        
-        vc.actionOnDismiss = {
-            self.refreshUserContext()
         }
         
         let nvc = UINavigationController(rootViewController: vc)

@@ -20,8 +20,13 @@ class UserContextItemViewController: UIViewController {
     weak var client: OptimizelyClient?
     
     var userId: String!
+    var value: (experimentKey: String, variationKey: String)?
+    
     var experiments = [String]()
     var variations = [String]()
+    
+    var saveBtn: UIButton!
+    var removeBtn: UIButton!
     
     var actionOnDismiss: (() -> Void)?
     
@@ -41,6 +46,11 @@ class UserContextItemViewController: UIViewController {
                 let experiment = opt.experimentsMap[selectedExperiment] {
                 variations = Array(experiment.variationsMap.keys)
             }
+            
+            saveBtn.isEnabled = true
+            saveBtn.alpha = 1.0
+            removeBtn.isEnabled = true
+            removeBtn.alpha = 1.0
         }
     }
     
@@ -60,14 +70,7 @@ class UserContextItemViewController: UIViewController {
     
     var expView: UITextField!
     var varView: UITextField!
-    var cancelBtn: UIButton!
-    var saveBtn: UIButton!
        
-    struct ExperimentVariationPair {
-        let experimentKey: String
-        let variationKey: String
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -75,6 +78,13 @@ class UserContextItemViewController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(close))
 
         experiments = client?.config?.allExperiments.map { $0.key } ?? []
+        
+        // initial values
+        
+        if let value = value {
+            selectedExperimentIndex = experiments.firstIndex(of: value.experimentKey)
+            selectedVariationIndex = variations.firstIndex(of: value.variationKey)
+        }
     }
     
     func createViews() {
@@ -113,20 +123,32 @@ class UserContextItemViewController: UIViewController {
         
         cy += 20
         let width = (hv.frame.width - 3*px) / 2.0
-        cancelBtn = UIButton(frame: CGRect(x: px, y: cy, width: width, height: height))
-        cancelBtn.backgroundColor = .red
+        let cancelBtn = UIButton(frame: CGRect(x: px, y: cy, width: width, height: height))
+        cancelBtn.backgroundColor = .gray
         cancelBtn.setTitleColor(.white, for: .normal)
         cancelBtn.setTitle("Cancel", for: .normal)
         cancelBtn.addTarget(self, action: #selector(close), for: .touchUpInside)
         hv.addSubview(cancelBtn)
 
         saveBtn = UIButton(frame: CGRect(x: width + 2*px, y: cy, width: width, height: height))
-        saveBtn.backgroundColor = .blue
-        saveBtn.setTitleColor(.white, for: .normal)
+        saveBtn.backgroundColor = .green
+        saveBtn.setTitleColor(.black, for: .normal)
         saveBtn.setTitle("Save", for: .normal)
         saveBtn.addTarget(self, action: #selector(save), for: .touchUpInside)
+        saveBtn.isEnabled = false
+        saveBtn.alpha = 0.3
         hv.addSubview(saveBtn)
                 
+        cy += height + 20
+        removeBtn = UIButton(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
+        removeBtn.backgroundColor = .red
+        removeBtn.setTitleColor(.white, for: .normal)
+        removeBtn.setTitle("Remove", for: .normal)
+        removeBtn.addTarget(self, action: #selector(remove), for: .touchUpInside)
+        removeBtn.isEnabled = false
+        removeBtn.alpha = 0.3
+        hv.addSubview(removeBtn)
+
         view.backgroundColor = .black
         view.addSubview(hv)
         hv.center = view.center
@@ -143,6 +165,13 @@ class UserContextItemViewController: UIViewController {
         }
         
         _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: variationKey)
+        close()
+    }
+    
+    @objc func remove() {
+        if let experimentKey = expView.text {
+            _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: nil)
+        }
         close()
     }
     

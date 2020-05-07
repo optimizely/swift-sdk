@@ -25,6 +25,8 @@ class UserContextViewController: UITableViewController {
     var allAttributes = [String]()
     var attributes = [String]()
     
+    var sections = [String]()
+    
     let sectionHeaderHeight: CGFloat = 50.0
         
     override func viewDidLoad() {
@@ -33,7 +35,7 @@ class UserContextViewController: UITableViewController {
         if let keys = client?.config?.attributeKeyMap.keys {
             allAttributes = Array(keys)
         }
-                
+                        
         userView = UITextView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 40))
         userView.backgroundColor = .lightGray
         userView.font = .systemFont(ofSize: 18)
@@ -95,7 +97,7 @@ extension UserContextViewController {
         case 0: return userContext.attributes?.count ?? 0
         case 1: return userContext.userProfiles?.count ?? 0
         case 2: return userContext.forcedVariations?.count ?? 0
-        case 3: return userContext.features?.count ?? 0
+        case 3: return userContext.forcedFeatures?.count ?? 0
         default: return 0
         }
     }
@@ -111,7 +113,7 @@ extension UserContextViewController {
         case 0: title = "Attributes"
         case 1: title = "User Profiles"
         case 2: title = "Forced Variations"
-        case 3: title = "Features"
+        case 3: title = "Forced Features"
         default: title = "N/A"
         }
         
@@ -171,6 +173,8 @@ extension UserContextViewController {
         if let (key, value) = keyValueForIndexPath(indexPath) {
             openItem(section: indexPath.section, keyValuePair: (key, value))
         }
+        
+        tableView.deselectRow(at: indexPath, animated: false)
     }
     
     func keyValueForIndexPath(_ indexPath: IndexPath) -> (String, Any?)? {
@@ -186,7 +190,7 @@ extension UserContextViewController {
         case 2:
             data = userContext.forcedVariations
         case 3:
-            data = userContext.features
+            data = userContext.forcedFeatures
         default:
             data = nil
         }
@@ -205,27 +209,38 @@ extension UserContextViewController {
     func openItem(section: Int, keyValuePair: (String, Any?)?) {
         guard let uc = userContext else { return }
         
-        let vc = UserContextItemViewController()
-        vc.client = client
-        vc.userId = uc.userId
-        vc.value = keyValuePair as? (String, String) ?? nil
-        vc.actionOnDismiss = {
-            self.refreshUserContext()
-        }
-
+        var rootVC: UIViewController
         switch section {
-        case 0: print("section 0")
+        case 0:
+            let vc = UCVariationViewController()
             vc.title = "Attributes"
-        case 1: print("section 1")
-            vc.title = "User Profile"
-        case 2: print("section 2")
-            vc.title = "Forced Variations"
-        case 3: print("section 3")
-            vc.title = "Features"
-        default: print("section other")
+            rootVC = vc
+        case 1, 2:
+            let vc = UCVariationViewController()
+            vc.title = section == 1 ? "User Profile" : "Forced Variation"
+            vc.client = client
+            vc.userId = uc.userId
+            vc.value = keyValuePair as? (String, String) ?? nil
+            vc.actionOnDismiss = {
+                self.refreshUserContext()
+            }
+            rootVC = vc
+        case 3:
+            let vc = UCFeatureViewController()
+            vc.title = "Feature"
+            vc.client = client
+            vc.userId = uc.userId
+            vc.value = keyValuePair as? (String, Bool) ?? nil
+            vc.actionOnDismiss = {
+                self.refreshUserContext()
+            }
+            rootVC = vc
+        default: 
+            let vc = UCFeatureViewController()
+            rootVC = vc
         }
         
-        let nvc = UINavigationController(rootViewController: vc)
+        let nvc = UINavigationController(rootViewController: rootVC)
         self.present(nvc, animated: true, completion: nil)
     }
 }

@@ -24,14 +24,14 @@ public class OptimizelyUserContext {
     
     var userProfiles: [String: String]?
     var forcedVariations: [String: String]?
-    var features: [String: Bool]?
+    var forcedFeatures: [String: Bool]?
     
     init(userId: String, attributes: OptimizelyAttributes?) {
         self.userId = userId
         self.attributes = attributes
         self.userProfiles = [:]
         self.forcedVariations = [:]
-        self.features = [:]
+        self.forcedFeatures = [:]
     }
     
     func addForcedVariation(experimentKey: String, variationKey: String?) {
@@ -39,6 +39,14 @@ public class OptimizelyUserContext {
             forcedVariations?.updateValue(variationKey, forKey: experimentKey)
         } else {
             forcedVariations?.removeValue(forKey: experimentKey)
+        }
+    }
+    
+    func addForcedFeatureEnabled(featureKey: String, enabled: Bool?) {
+        if let enabled = enabled {
+            forcedFeatures?.updateValue(enabled, forKey: featureKey)
+        } else {
+            forcedFeatures?.removeValue(forKey: featureKey)
         }
     }
 }

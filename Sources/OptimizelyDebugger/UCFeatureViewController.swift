@@ -16,37 +16,30 @@
 
 import UIKit
 
-class UserContextItemViewController: UIViewController {
+class UCFeatureViewController: UIViewController {
     weak var client: OptimizelyClient?
     
     var userId: String!
-    var value: (experimentKey: String, variationKey: String)?
+    var value: (featureKey: String, enabled: Bool)?
     
-    var experiments = [String]()
-    var variations = [String]()
+    var features = [String]()
+    var values = [true, false]
     
     var saveBtn: UIButton!
     var removeBtn: UIButton!
     
     var actionOnDismiss: (() -> Void)?
     
-    var selectedExperimentIndex: Int? {
+    var selectedFeatureIndex: Int? {
         didSet {
-            guard let index = self.selectedExperimentIndex else {
-                expView.text = nil
+            guard let index = self.selectedFeatureIndex else {
+                featureView.text = nil
                 return
             }
             
-            let selectedExperiment = experiments[index]
-            expView.text = selectedExperiment
-            
-            // update variations candidates for a selected experiment
-            
-            if let opt = try? client?.getOptimizelyConfig(),
-                let experiment = opt.experimentsMap[selectedExperiment] {
-                variations = Array(experiment.variationsMap.keys)
-            }
-            
+            let selectedFeature = features[index]
+            featureView.text = selectedFeature
+                        
             saveBtn.isEnabled = true
             saveBtn.alpha = 1.0
             removeBtn.isEnabled = true
@@ -54,22 +47,22 @@ class UserContextItemViewController: UIViewController {
         }
     }
     
-    var selectedVariationIndex: Int? {
+    var selectedValueIndex: Int? {
         didSet {
-            guard let index = self.selectedVariationIndex else {
-                varView.text = nil
+            guard let index = self.selectedValueIndex else {
+                valueView.text = nil
                 return
             }
             
-            varView.text = self.variations[index]
+            valueView.text = String(self.values[index])
         }
     }
 
-    let tagExperimentPicker = 1
-    let tagVariationPicker = 2
+    let tagFeaturePicker = 1
+    let tagValuePicker = 2
     
-    var expView: UITextField!
-    var varView: UITextField!
+    var featureView: UITextField!
+    var valueView: UITextField!
        
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,13 +70,13 @@ class UserContextItemViewController: UIViewController {
         createViews()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(close))
 
-        experiments = client?.config?.allExperiments.map { $0.key } ?? []
+        features = client?.config?.featureFlagKeyMap.map { $0.key } ?? []
         
         // initial values
         
         if let value = value {
-            selectedExperimentIndex = experiments.firstIndex(of: value.experimentKey)
-            selectedVariationIndex = variations.firstIndex(of: value.variationKey)
+            selectedFeatureIndex = features.firstIndex(of: value.featureKey)
+            selectedValueIndex = values.firstIndex(of: value.enabled)
         }
     }
     
@@ -95,31 +88,31 @@ class UserContextItemViewController: UIViewController {
         
         let hv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 210))
         
-        expView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        hv.addSubview(expView)
+        featureView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
+        hv.addSubview(featureView)
         cy += height + py
 
-        expView.placeholder = "Select an experiment key"
-        expView.borderStyle = .roundedRect
+        featureView.placeholder = "Select a feature key"
+        featureView.borderStyle = .roundedRect
 
         var pickerView = UIPickerView()
-        pickerView.tag = self.tagExperimentPicker
+        pickerView.tag = self.tagFeaturePicker
         pickerView.dataSource = self
         pickerView.delegate = self
-        expView.inputView = pickerView
+        featureView.inputView = pickerView
 
-        varView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
-        hv.addSubview(varView)
+        valueView = UITextField(frame: CGRect(x: px, y: cy, width: hv.frame.width - 2*px, height: height))
+        hv.addSubview(valueView)
         cy += height + py
 
-        varView.placeholder = "Select a variation key"
-        varView.borderStyle = .roundedRect
+        valueView.placeholder = "Select a value"
+        valueView.borderStyle = .roundedRect
         
         pickerView = UIPickerView()
-        pickerView.tag = self.tagVariationPicker
+        pickerView.tag = self.tagValuePicker
         pickerView.dataSource = self
         pickerView.delegate = self
-        varView.inputView = pickerView
+        valueView.inputView = pickerView
         
         cy += 20
         let width = (hv.frame.width - 3*px) / 2.0
@@ -155,8 +148,8 @@ class UserContextItemViewController: UIViewController {
     }
     
     @objc func save() {
-        guard let experimentKey = expView.text, experimentKey.isEmpty == false,
-            let variationKey = varView.text, variationKey.isEmpty == false
+        guard let featureKey = featureView.text, featureKey.isEmpty == false,
+            let enabled = valueView.text, enabled.isEmpty == false
             else {
                 let alert = UIAlertController(title: "Error", message: "Enter valid values and try again", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
@@ -164,13 +157,14 @@ class UserContextItemViewController: UIViewController {
                 return
         }
         
-        _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: variationKey)
+        client?.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: Bool(enabled))
+        
         close()
     }
     
     @objc func remove() {
-        if let experimentKey = expView.text {
-            _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: nil)
+        if let featureKey = featureView.text {
+            client?.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: nil)
         }
         close()
     }
@@ -184,33 +178,33 @@ class UserContextItemViewController: UIViewController {
 
 // Experiment PickerView
 
-extension UserContextItemViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+extension UCFeatureViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if pickerView.tag == tagExperimentPicker {
-            return experiments.count + 1
+        if pickerView.tag == tagFeaturePicker {
+            return features.count + 1
         } else {
-            return variations.count + 1
+            return values.count + 1
         }
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         let adjustedRow = row - 1
 
-        if pickerView.tag == tagExperimentPicker {
+        if pickerView.tag == tagFeaturePicker {
             if row == 0 {
-                return "[Select an experiment key]"
+                return "[Select a feature key]"
             } else {
-                return experiments[adjustedRow]
+                return features[adjustedRow]
             }
         } else {
             if row == 0 {
-                return "[Select a variation key]"
+                return "[Select a value]"
             } else {
-                return variations[adjustedRow]
+                return String(values[adjustedRow])
             }
         }
     }
@@ -218,20 +212,20 @@ extension UserContextItemViewController: UIPickerViewDelegate, UIPickerViewDataS
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         let adjustedRow = row - 1
         
-        if pickerView.tag == tagExperimentPicker {
+        if pickerView.tag == tagFeaturePicker {
             guard row > 0 else {
-                selectedExperimentIndex = nil
+                selectedFeatureIndex = nil
                 return
             }
 
-            selectedExperimentIndex = adjustedRow
+            selectedFeatureIndex = adjustedRow
         } else {
             guard row > 0 else {
-                selectedVariationIndex = nil
+                selectedValueIndex = nil
                 return
             }
 
-            selectedVariationIndex = adjustedRow
+            selectedValueIndex = adjustedRow
         }
     }
 }

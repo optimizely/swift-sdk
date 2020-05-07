@@ -14,11 +14,31 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
 
 import Foundation
 
-public struct OptimizelyUserContext {
+public class OptimizelyUserContext {
     var userId: String
+    
     var attributes: OptimizelyAttributes?
+    
+    var userProfiles: [String: String]?
+    var forcedVariations: [String: String]?
+    var features: [String: Bool]?
+    
+    init(userId: String, attributes: OptimizelyAttributes?) {
+        self.userId = userId
+        self.attributes = attributes
+        self.userProfiles = [:]
+        self.forcedVariations = [:]
+        self.features = [:]
+    }
+    
+    func addForcedVariation(experimentKey: String, variationKey: String?) {
+        if let variationKey = variationKey {
+            forcedVariations?.updateValue(variationKey, forKey: experimentKey)
+        } else {
+            forcedVariations?.removeValue(forKey: experimentKey)
+        }
+    }
 }

@@ -66,7 +66,7 @@ class DebugViewController: UITableViewController {
     }
     
     func openUserContexts() {
-        let vc = UserContextViewController()
+        let vc = UserContextViewController(style: .grouped)
         vc.client = client
         vc.title = "User Contexts"
         self.show(vc, sender: self)

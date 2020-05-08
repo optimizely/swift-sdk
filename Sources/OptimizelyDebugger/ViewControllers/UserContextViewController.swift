@@ -48,7 +48,7 @@ class UserContextViewController: UITableViewController {
                     .forcedFeatures]
                         
         userView = UITextView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 40))
-        userView.backgroundColor = .lightGray
+        userView.backgroundColor = .orange
         userView.font = .systemFont(ofSize: 18)
         userView.textAlignment = .center
         

@@ -31,17 +31,9 @@ public class OptimizelyDebugger {
         let coreVC = DebugViewController()
         coreVC.client = client
         coreVC.title = "Optimizely Debugger"
-        coreVC.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Menu", style: .plain, target: self, action: nil)
-        coreVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done,
-                                                                       target: self,
-                                                                       action: #selector(close))
         shared.debugVC.setViewControllers([coreVC], animated: true)
 
         parent.present(shared.debugVC, animated: true, completion: nil)
-    }
-    
-    @objc public static func close() {
-        shared.debugVC.dismiss(animated: true, completion: nil)
     }
     
 }

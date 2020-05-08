@@ -27,6 +27,11 @@ class DebugViewController: UITableViewController {
         guard let client = client else { return }
         guard let config = try? client.getOptimizelyConfig() else { return }
         
+        //navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Menu", style: .plain, target: self, action: nil)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done,
+                                                                       target: self,
+                                                                       action: #selector(close))
+        
         items.append(DebuggerItem(title: "SDK Key", text: client.sdkKey, action: nil))
         items.append(DebuggerItem(title: "ProjectConfig") {
             self.openPropsView(title: "ProjectConfig", props: config)
@@ -40,6 +45,12 @@ class DebugViewController: UITableViewController {
 
         tableView.rowHeight = 60.0
     }
+    
+    @objc public func close() {
+        dismiss(animated: true, completion: nil)
+    }
+
+    // MARK: - segues
     
     func openPropsView(title: String, props: Any) {
         let vc = PropsTableViewController()
@@ -61,6 +72,7 @@ class DebugViewController: UITableViewController {
         vc.title = "User Contexts"
         self.show(vc, sender: self)
     }
+    
 }
 
 // MARK: - TableView

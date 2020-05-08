@@ -1731,9 +1731,9 @@
 				6E3F9B71242C336300D3491A /* OptimizelyDebugger.swift */,
 				6E3F9B6F242C336300D3491A /* DebuggerItem.swift */,
 				6E177C182444CE3D00DF5087 /* OptimizelyUserContext.swift */,
+				6E242CF02465D493006F8A99 /* UserContextManager.swift */,
 				6E3F9B72242C336300D3491A /* LogDBManager.swift */,
 				6E3F9B75242C336300D3491A /* LogModel.xcdatamodeld */,
-				6E242CF02465D493006F8A99 /* UserContextManager.swift */,
 			);
 			path = OptimizelyDebugger;
 			sourceTree = "<group>";

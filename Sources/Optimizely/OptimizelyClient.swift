@@ -253,9 +253,16 @@ open class OptimizelyClient: NSObject {
             throw OptimizelyError.experimentKeyInvalid(experimentKey)
         }
         
-        // UserContext
-        var (userId, attributes) = UserContextManager.syncUserContext(userId: userId, attributes: attributes)
-        
+        // UserContext ------------------------------------------
+        let (userId, attributes) = UserContextManager.syncUserContext(userId: userId,
+                                                                      attributes: attributes)
+        if let variationKey = UserContextManager.getVariation(experimentKey: experimentKey,
+                                                              userId: userId,
+                                                              attributes: attributes) {
+            return variationKey
+        }
+        //-------------------------------------------------------
+
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
         
         sendImpressionEvent(experiment: experiment,
@@ -349,11 +356,6 @@ open class OptimizelyClient: NSObject {
         
         guard let config = self.config else { return false }
         
-        // UserContext
-        UserContextManager.addForcedVariation(userId: userId,
-                                              experimentKey: experimentKey,
-                                              variationKey: variationKey)
-        
         return config.setForcedVariation(experimentKey: experimentKey,
                                          userId: userId,
                                          variationKey: variationKey)
@@ -380,6 +382,16 @@ open class OptimizelyClient: NSObject {
             return false
         }
         
+        // UserContext ------------------------------------------
+        let (userId, attributes) = UserContextManager.syncUserContext(userId: userId,
+                                                                      attributes: attributes)
+        if let featureEnabled = UserContextManager.getFeatureEnabled(featureKey: featureKey,
+                                                                   userId: userId,
+                                                                   attributes: attributes) {
+            return featureEnabled
+        }
+        //-------------------------------------------------------
+
         let pair = decisionService.getVariationForFeature(config: config,
                                                           featureFlag: featureFlag,
                                                           userId: userId,

@@ -34,7 +34,7 @@ class UCVariationViewController: UCItemViewController {
             
             if let opt = try? client?.getOptimizelyConfig(),
                 let experiment = opt.experimentsMap[selectedExperiment] {
-                variations = Array(experiment.variationsMap.keys)
+                variations = Array(experiment.variationsMap.keys).sorted()
             }
             
             saveBtn.isEnabled = true
@@ -62,7 +62,7 @@ class UCVariationViewController: UCItemViewController {
     var varView: UITextField!
        
     override func setupData() {        
-        experiments = client?.config?.allExperiments.map { $0.key } ?? []
+        experiments = client?.config?.allExperiments.map { $0.key }.sorted() ?? []
                 
         if let pair = pair, let value = pair.value as? String {
             selectedExperimentIndex = experiments.firstIndex(of: pair.key)
@@ -71,35 +71,31 @@ class UCVariationViewController: UCItemViewController {
     }
     
     override func createContentsView() -> UIView {
-        let px: CGFloat = 10
-        let py: CGFloat = 10
-        var cy: CGFloat = py
-        let height: CGFloat = 40
-        
-        let cv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 120))
+        let gap: CGFloat = 10.0
+        var cy: CGFloat = gap
+        let cv = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
 
         // experiment-key picker
         
-        expView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        expView = makeTextInput(yPosition: cy,
+                                      prompt: "Select an experiment key",
+                                      isPickerEnabled: true,
+                                      tag: tagExperimentPicker,
+                                      pickerDelegate: self)
         cv.addSubview(expView)
-        cy += height + py
-
-        expView.placeholder = "Select an experiment key"
-        expView.borderStyle = .roundedRect
-        expView.inputView = makePickerView(tag: tagExperimentPicker, delegate: self)
-        expView.inputAccessoryView = makePickerToolbar()
+        cy += expView.frame.height + gap
 
         // variation-key picker
-        
-        varView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+      
+        varView = makeTextInput(yPosition: cy,
+                                      prompt: "Select a variation key",
+                                      isPickerEnabled: true,
+                                      tag: tagVariationPicker,
+                                      pickerDelegate: self)
         cv.addSubview(varView)
-        cy += height + py
-
-        varView.placeholder = "Select a variation key"
-        varView.borderStyle = .roundedRect
-        varView.inputView = makePickerView(tag: tagVariationPicker, delegate: self)
-        varView.inputAccessoryView = makePickerToolbar()
+        cy += varView.frame.height + gap
         
+        cv.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: cy)
         return cv
     }
     

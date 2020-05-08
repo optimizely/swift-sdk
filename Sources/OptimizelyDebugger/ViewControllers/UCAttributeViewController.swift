@@ -86,7 +86,7 @@ class UCAttributeViewController: UCItemViewController {
     var valueBooleanView: UITextField!
 
     override func setupData() {
-        attributes = client?.config?.attributeKeyMap.map { $0.key } ?? []
+        attributes = client?.config?.attributeKeyMap.map { $0.key }.sorted() ?? []
         types = ValueType.allCases
                 
         if let pair = pair {
@@ -119,61 +119,51 @@ class UCAttributeViewController: UCItemViewController {
     }
     
     override func createContentsView() -> UIView {
-        let px: CGFloat = 10
-        let py: CGFloat = 10
-        var cy: CGFloat = py
-        let height: CGFloat = 40
-
-        let cv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 150))
-              
+        let gap: CGFloat = 10.0
+        var cy: CGFloat = gap
+        let cv = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
+        
         // attribute picker
         
-        attributeView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        attributeView = makeTextInput(yPosition: cy,
+                                      prompt: "Select an attribute key",
+                                      isPickerEnabled: true,
+                                      tag: tagAttributePicker,
+                                      pickerDelegate: self)
         cv.addSubview(attributeView)
-        cy += height + py
-
-        attributeView.placeholder = "Select an attribute key"
-        attributeView.borderStyle = .roundedRect
-        attributeView.inputView = makePickerView(tag: tagAttributePicker, delegate: self)
-        attributeView.inputAccessoryView = makePickerToolbar()
-
+        cy += attributeView.frame.height + gap
+        
         // type picker
         
-        typeView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        typeView = makeTextInput(yPosition: cy,
+                                 prompt: "Select a value type",
+                                 isPickerEnabled: true,
+                                 tag: tagTypePicker,
+                                 pickerDelegate: self)
         cv.addSubview(typeView)
-        cy += height + py
-
-        typeView.placeholder = "Select a value type"
-        typeView.borderStyle = .roundedRect
-        typeView.inputView = makePickerView(tag: tagTypePicker, delegate: self)
-        typeView.inputAccessoryView = makePickerToolbar()
-
+        cy += typeView.frame.height + gap
+        
         // value input
         
-        valueView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        valueView = makeTextInput(yPosition: cy,
+                                  prompt: "Enter a value",
+                                  isPickerEnabled: false,
+                                  textFieldDelegate: self)
         cv.addSubview(valueView)
-
-        valueView.placeholder = "Select a value"
-        valueView.borderStyle = .roundedRect
-        valueView.returnKeyType = .done
-        valueView.delegate = self
-        valueView.autocapitalizationType = .none
-        valueView.autocorrectionType = .no
         
         // value-boolean picker
         
-        valueBooleanView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        valueBooleanView = makeTextInput(yPosition: cy,
+                                         prompt: "Select a value",
+                                         isPickerEnabled: true,
+                                         tag: tagValueBooleanPicker,
+                                         pickerDelegate: self)
         cv.addSubview(valueBooleanView)
-        cy += height + py
-
-        valueBooleanView.placeholder = "Select a value"
-        valueBooleanView.borderStyle = .roundedRect
-        valueBooleanView.inputView = makePickerView(tag: tagValueBooleanPicker, delegate: self)
-        valueBooleanView.inputAccessoryView = makePickerToolbar()
-
+        cy += valueBooleanView.frame.height + gap
+        
+        cv.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: cy)
         return cv
     }
-    
     
     override func readyToSave() -> Bool {
         if let attributeKey = attributeView.text, attributeKey.isEmpty == false,

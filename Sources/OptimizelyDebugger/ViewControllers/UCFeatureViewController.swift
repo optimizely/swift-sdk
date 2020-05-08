@@ -55,7 +55,7 @@ class UCFeatureViewController: UCItemViewController {
     var valueView: UITextField!
        
     override func setupData() {        
-        features = client?.config?.featureFlagKeyMap.map { $0.key } ?? []
+        features = client?.config?.featureFlagKeyMap.map { $0.key }.sorted() ?? []
                 
         if let pair = pair, let enabled = pair.value as? Bool {
             selectedFeatureIndex = features.firstIndex(of: pair.key)
@@ -64,35 +64,31 @@ class UCFeatureViewController: UCItemViewController {
     }
     
     override func createContentsView() -> UIView {
-        let px: CGFloat = 10
-        let py: CGFloat = 10
-        var cy: CGFloat = py
-        let height: CGFloat = 40
-        
-        let cv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 120))
+        let gap: CGFloat = 10.0
+        var cy: CGFloat = gap
+        let cv = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
 
         // feature-key picker
         
-        featureView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        featureView = makeTextInput(yPosition: cy,
+                                      prompt: "Select a feature key",
+                                      isPickerEnabled: true,
+                                      tag: tagFeaturePicker,
+                                      pickerDelegate: self)
         cv.addSubview(featureView)
-        cy += height + py
-
-        featureView.placeholder = "Select a feature key"
-        featureView.borderStyle = .roundedRect
-        featureView.inputView = makePickerView(tag: tagFeaturePicker, delegate: self)
-        featureView.inputAccessoryView = makePickerToolbar()
+        cy += featureView.frame.height + gap
 
         // value picker
         
-        valueView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
+        valueView = makeTextInput(yPosition: cy,
+                                      prompt: "Select a value",
+                                      isPickerEnabled: true,
+                                      tag: tagValuePicker,
+                                      pickerDelegate: self)
         cv.addSubview(valueView)
-        cy += height + py
+        cy += valueView.frame.height + gap
 
-        valueView.placeholder = "Select a value"
-        valueView.borderStyle = .roundedRect
-        valueView.inputView = makePickerView(tag: tagValuePicker, delegate: self)
-        valueView.inputAccessoryView = makePickerToolbar()
-
+        cv.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: cy)
         return cv
     }
     

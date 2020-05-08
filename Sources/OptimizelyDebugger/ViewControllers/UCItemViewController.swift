@@ -77,8 +77,48 @@ class UCItemViewController: UIViewController {
         view.backgroundColor = .black
         view.addSubview(hv)
         
-        hv.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: cy)
-        hv.center = view.center
+        hv.frame = CGRect(x: 0, y: 100, width: view.frame.size.width, height: cy)
+    }
+    
+    func makeTextInput(yPosition: CGFloat,
+                       prompt: String,
+                       isPickerEnabled: Bool,
+                       tag: Int? = nil,
+                       textFieldDelegate: UITextFieldDelegate? = nil,
+                       pickerDelegate: (UIPickerViewDelegate & UIPickerViewDataSource)? = nil) -> UITextField {
+        let xPosition: CGFloat = 10.0
+        let height: CGFloat = 50.0
+        let v = UITextField(frame: CGRect(x: xPosition,
+                                          y: yPosition,
+                                          width: view.frame.width - 2*xPosition,
+                                          height: height))
+        v.textAlignment = .right
+        v.borderStyle = .roundedRect
+        v.autocapitalizationType = .none
+        v.autocorrectionType = .no
+        v.returnKeyType = .done
+        // add padding to the right
+        v.rightView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
+        v.rightViewMode = .always
+        // keyboard input mode
+        if let delegate = textFieldDelegate {
+            v.delegate = delegate
+        }
+        // associated picker mode
+        if isPickerEnabled, let tag = tag, let delegate = pickerDelegate {
+            v.inputView = makePickerView(tag: tag, delegate: delegate)
+            v.inputAccessoryView = makePickerToolbar()
+        }
+
+        let mv = UILabel(frame: CGRect(x: 10.0, y: 5.0, width: v.frame.width - 20.0, height: 14))
+        mv.textAlignment = .left
+        mv.adjustsFontSizeToFitWidth = true
+        mv.font = mv.font.withSize(12)
+        mv.text = prompt
+        mv.textColor = .gray
+        v.addSubview(mv)
+        
+        return v
     }
     
     func makePickerView(tag: Int, delegate: UIPickerViewDelegate & UIPickerViewDataSource) -> UIPickerView {
@@ -98,10 +138,10 @@ class UCItemViewController: UIViewController {
         
         let spaceButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItem.Style.plain, target: self, action: #selector(closePicker))
-
+        
         toolBar.setItems([spaceButton, doneButton], animated: false)
         toolBar.isUserInteractionEnabled = true
-
+        
         return toolBar
     }
     
@@ -116,7 +156,7 @@ class UCItemViewController: UIViewController {
             self.present(alert, animated: true, completion: nil)
             return
         }
-            
+        
         saveValue()
         close()
     }

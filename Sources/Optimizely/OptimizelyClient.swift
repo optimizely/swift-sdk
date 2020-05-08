@@ -49,10 +49,6 @@ open class OptimizelyClient: NSObject {
         }
     }
     
-    // MARK: - UserContext
-    
-    var userContext: OptimizelyUserContext?
-
     // MARK: - Customizable Services
     
     lazy var logger = OPTLoggerFactory.getLogger()
@@ -258,7 +254,7 @@ open class OptimizelyClient: NSObject {
         }
         
         // UserContext
-        var (userId, attributes) = syncUserContext(userId: userId, attributes: attributes)
+        var (userId, attributes) = UserContextManager.syncUserContext(userId: userId, attributes: attributes)
         
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
         
@@ -354,9 +350,9 @@ open class OptimizelyClient: NSObject {
         guard let config = self.config else { return false }
         
         // UserContext
-        if var uc = userContext, uc.userId == userId {
-            uc.addForcedVariation(experimentKey: experimentKey, variationKey: variationKey)
-        }
+        UserContextManager.addForcedVariation(userId: userId,
+                                              experimentKey: experimentKey,
+                                              variationKey: variationKey)
         
         return config.setForcedVariation(experimentKey: experimentKey,
                                          userId: userId,
@@ -642,36 +638,6 @@ open class OptimizelyClient: NSObject {
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
 
         return OptimizelyConfigImp(projectConfig: config)
-    }
-}
-
-// MARK: - UserContext
-
-extension OptimizelyClient {
-    public func setUserContext(_ user: OptimizelyUserContext?) {
-        userContext = user
-    }
-    
-    public func getUserContext() -> OptimizelyUserContext? {
-        return userContext
-    }
-    
-    func syncUserContext(userId: String? = nil, attributes: OptimizelyAttributes? = nil) -> (String, OptimizelyAttributes?) {
-        
-        if userContext == nil, let userId = userId {
-            userContext = OptimizelyUserContext(userId: userId, attributes: attributes)
-        }
-        
-        if userId != nil {
-            return (userId!, attributes)
-        }
-        
-        if let uc = userContext {
-            return (uc.userId, uc.attributes)
-        }
-            
-        logger.e("Invalid user context")
-        return ("invalid", nil)
     }
 }
 

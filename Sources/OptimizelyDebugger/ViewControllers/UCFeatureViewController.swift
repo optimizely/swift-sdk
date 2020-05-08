@@ -105,13 +105,13 @@ class UCFeatureViewController: UCItemViewController {
         guard let featureKey = featureView.text, !featureKey.isEmpty,
             let enabled = valueView.text, !enabled.isEmpty else { return }
         
-        client?.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: Bool(enabled))
+        UserContextManager.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: Bool(enabled))
     }
     
     override func removeValue() {
         guard let featureKey = featureView.text else { return }
         
-        client?.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: nil)
+        UserContextManager.getUserContext()?.addForcedFeatureEnabled(featureKey: featureKey, enabled: nil)
     }
 
 }

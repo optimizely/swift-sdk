@@ -114,7 +114,11 @@ class UCAttributeViewController: UCItemViewController {
                  
             selectedAttributeIndex = attributes.firstIndex(of: pair.key)
             selectedTypeIndex = types.firstIndex(of: type)
-            valueView.text = "\(value)"
+            if case .boolean = type {
+                selectedValueBooleanIndex = valuesBoolean.firstIndex(of: Bool(value) ?? false)
+            } else {
+                valueView.text = "\(value)"
+            }
         }
     }
     
@@ -167,25 +171,42 @@ class UCAttributeViewController: UCItemViewController {
     
     override func readyToSave() -> Bool {
         if let attributeKey = attributeView.text, attributeKey.isEmpty == false,
-            let value = valueView.text,
-            value.isEmpty == false {
-            return true
+            let type = typeView.text, !type.isEmpty {
+            if case .boolean = ValueType(rawValue: type) {
+                return valueBooleanView.text != nil  && valueBooleanView.text!.isEmpty == false
+            } else {
+                return valueView.text != nil && valueView.text!.isEmpty == false
+            }
         } else {
             return false
         }
     }
     
     override func saveValue() {
-        guard let attributeKey = attributeView.text,
-            let value = valueView.text else { return }
+        guard let attributeKey = attributeView.text, let type = typeView.text else { return }
+    
+        var value: Any
         
-        client?.getUserContext()?.addAttributeValue(attributeKey: attributeKey, value: value)
+        switch ValueType(rawValue: type) {
+        case .string:
+            value = valueView.text as Any
+        case .integer:
+            value = Int(valueView.text ?? "") as Any
+        case .double:
+            value = Double(valueView.text ?? "") as Any
+        case .boolean:
+            value = Bool(valueBooleanView.text ?? "") as Any
+        case .none:
+            return
+        }
+        
+        UserContextManager.getUserContext()?.addAttributeValue(attributeKey: attributeKey, value: value)
     }
     
     override func removeValue() {
         guard let attributeKey = attributeView.text else { return }
             
-        client?.getUserContext()?.addAttributeValue(attributeKey: attributeKey, value: nil)
+        UserContextManager.getUserContext()?.addAttributeValue(attributeKey: attributeKey, value: nil)
     }
     
 }

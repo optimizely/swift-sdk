@@ -59,7 +59,7 @@ class UserContextViewController: UITableViewController {
     }
     
     func refreshUserContext() {
-        userContext = self.client?.getUserContext()
+        userContext = UserContextManager.getUserContext()
         userView.text = "UserID: \( userContext?.userId ?? "N/A")"
         refreshTableView()
     }
@@ -73,13 +73,13 @@ class UserContextViewController: UITableViewController {
                 return
         }
         
-        _ = self.client?.setUserContext(OptimizelyUserContext(userId: userId, attributes: nil))
+        _ = UserContextManager.setUserContext(OptimizelyUserContext(userId: userId, attributes: nil))
         
         refreshTableView()
     }
     
     func removeUserContext(userId: String, experimentKey: String) {
-        _ = self.client?.setUserContext(nil)
+        _ = UserContextManager.setUserContext(nil)
         
         refreshTableView()
     }

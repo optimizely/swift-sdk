@@ -54,9 +54,7 @@ class UCFeatureViewController: UCItemViewController {
     var featureView: UITextField!
     var valueView: UITextField!
        
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    override func setupData() {        
         features = client?.config?.featureFlagKeyMap.map { $0.key } ?? []
                 
         if let pair = pair, let enabled = pair.value as? Bool {
@@ -73,31 +71,27 @@ class UCFeatureViewController: UCItemViewController {
         
         let cv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 120))
 
+        // feature-key picker
+        
         featureView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
         cv.addSubview(featureView)
         cy += height + py
 
         featureView.placeholder = "Select a feature key"
         featureView.borderStyle = .roundedRect
+        featureView.inputView = makePickerView(tag: tagFeaturePicker, delegate: self)
+        featureView.inputAccessoryView = makePickerToolbar()
 
-        var pickerView = UIPickerView()
-        pickerView.tag = self.tagFeaturePicker
-        pickerView.dataSource = self
-        pickerView.delegate = self
-        featureView.inputView = pickerView
-
+        // value picker
+        
         valueView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
         cv.addSubview(valueView)
         cy += height + py
 
         valueView.placeholder = "Select a value"
         valueView.borderStyle = .roundedRect
-        
-        pickerView = UIPickerView()
-        pickerView.tag = self.tagValuePicker
-        pickerView.dataSource = self
-        pickerView.delegate = self
-        valueView.inputView = pickerView
+        valueView.inputView = makePickerView(tag: tagValuePicker, delegate: self)
+        valueView.inputAccessoryView = makePickerToolbar()
 
         return cv
     }

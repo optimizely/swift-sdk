@@ -375,8 +375,6 @@
 		6E14CDCA2423FA0800010234 /* UnsupportedVersionDatafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75197D22C5211100B2B157 /* UnsupportedVersionDatafile.json */; };
 		6E177C192444CE3D00DF5087 /* OptimizelyUserContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E177C182444CE3D00DF5087 /* OptimizelyUserContext.swift */; };
 		6E177C1A2444CE3D00DF5087 /* OptimizelyUserContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E177C182444CE3D00DF5087 /* OptimizelyUserContext.swift */; };
-		6E1CBFFA2433A3AB0047E174 /* ForcedVariationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBFF92433A3AB0047E174 /* ForcedVariationsViewController.swift */; };
-		6E1CBFFB2433A3AB0047E174 /* ForcedVariationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBFF92433A3AB0047E174 /* ForcedVariationsViewController.swift */; };
 		6E242CEE24648B56006F8A99 /* UCItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E242CED24648B56006F8A99 /* UCItemViewController.swift */; };
 		6E242CEF24648B56006F8A99 /* UCItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E242CED24648B56006F8A99 /* UCItemViewController.swift */; };
 		6E34A6172319EBB800BAE302 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
@@ -1389,7 +1387,6 @@
 /* Begin PBXFileReference section */
 		6E14CD632423F80B00010234 /* OptimizelyTests-Batch-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Batch-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E177C182444CE3D00DF5087 /* OptimizelyUserContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContext.swift; sourceTree = "<group>"; };
-		6E1CBFF92433A3AB0047E174 /* ForcedVariationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForcedVariationsViewController.swift; sourceTree = "<group>"; };
 		6E242CED24648B56006F8A99 /* UCItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UCItemViewController.swift; sourceTree = "<group>"; };
 		6E34A6162319EBB700BAE302 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_datafile_new_project_id.json; sourceTree = "<group>"; };
@@ -2122,7 +2119,6 @@
 				6EC62CAB2464668800857D5A /* UCAttributeViewController.swift */,
 				6EBF7B24246373410080FFB6 /* UCVariationViewController .swift */,
 				6EC62CA82463C2E300857D5A /* UCFeatureViewController.swift */,
-				6E1CBFF92433A3AB0047E174 /* ForcedVariationsViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -2989,7 +2985,6 @@
 				6E7516E322C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
 				6E75186522C520D400B2B157 /* Rollout.swift in Sources */,
 				6E75190122C520D500B2B157 /* Attribute.swift in Sources */,
-				6E1CBFFB2433A3AB0047E174 /* ForcedVariationsViewController.swift in Sources */,
 				6E7516B322C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E75183522C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E7517D522C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
@@ -3811,7 +3806,6 @@
 				6E75190C22C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
 				6E75180422C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E75195422C520D500B2B157 /* OPTBucketer.swift in Sources */,
-				6E1CBFFA2433A3AB0047E174 /* ForcedVariationsViewController.swift in Sources */,
 				6E75171E22C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E75172A22C520D400B2B157 /* Constants.swift in Sources */,
 				6E7516A622C520D400B2B157 /* DefaultLogger.swift in Sources */,

@@ -61,9 +61,7 @@ class UCVariationViewController: UCItemViewController {
     var expView: UITextField!
     var varView: UITextField!
        
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    override func setupData() {        
         experiments = client?.config?.allExperiments.map { $0.key } ?? []
                 
         if let pair = pair, let value = pair.value as? String {
@@ -80,31 +78,27 @@ class UCVariationViewController: UCItemViewController {
         
         let cv = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 120))
 
+        // experiment-key picker
+        
         expView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
         cv.addSubview(expView)
         cy += height + py
 
         expView.placeholder = "Select an experiment key"
         expView.borderStyle = .roundedRect
+        expView.inputView = makePickerView(tag: tagExperimentPicker, delegate: self)
+        expView.inputAccessoryView = makePickerToolbar()
 
-        var pickerView = UIPickerView()
-        pickerView.tag = self.tagExperimentPicker
-        pickerView.dataSource = self
-        pickerView.delegate = self
-        expView.inputView = pickerView
-
+        // variation-key picker
+        
         varView = UITextField(frame: CGRect(x: px, y: cy, width: cv.frame.width - 2*px, height: height))
         cv.addSubview(varView)
         cy += height + py
 
         varView.placeholder = "Select a variation key"
         varView.borderStyle = .roundedRect
-        
-        pickerView = UIPickerView()
-        pickerView.tag = self.tagVariationPicker
-        pickerView.dataSource = self
-        pickerView.delegate = self
-        varView.inputView = pickerView
+        varView.inputView = makePickerView(tag: tagVariationPicker, delegate: self)
+        varView.inputAccessoryView = makePickerToolbar()
         
         return cv
     }

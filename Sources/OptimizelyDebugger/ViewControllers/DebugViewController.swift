@@ -34,9 +34,6 @@ class DebugViewController: UITableViewController {
         items.append(DebuggerItem(title: "Logs") {
             self.openLogView()
         })
-//        items.append(DebuggerItem(title: "Forced Variations") {
-//            self.openForcedVariations()
-//        })
         items.append(DebuggerItem(title: "User Contexts") {
             self.openUserContexts()
         })
@@ -57,14 +54,7 @@ class DebugViewController: UITableViewController {
         vc.title = "Logs"
         self.show(vc, sender: self)
     }
-    
-    func openForcedVariations() {
-        let vc = ForcedVariationsViewController()
-        vc.client = client
-        vc.title = "Forced Variations"
-        self.show(vc, sender: self)
-    }
-    
+        
     func openUserContexts() {
         let vc = UserContextViewController(style: .grouped)
         vc.client = client

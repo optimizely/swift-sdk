@@ -173,7 +173,7 @@ extension UserContextViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let (key, value) = keyValueForIndexPath(indexPath) {
+        if let (key, rawValue) = keyValueForIndexPath(indexPath), let value = rawValue {
             openItem(sectionId: indexPath.section, keyValuePair: (key, value))
         }
         
@@ -207,7 +207,7 @@ extension UserContextViewController {
         openItem(sectionId: sender.tag, keyValuePair: nil)
     }
 
-    func openItem(sectionId: Int, keyValuePair: (String, Any?)?) {
+    func openItem(sectionId: Int, keyValuePair: (String, Any)?) {
         guard let uc = userContext else { return }
                 
         let vc: UCItemViewController
@@ -225,11 +225,7 @@ extension UserContextViewController {
         
         vc.client = client
         vc.title = section.rawValue
-        if let pair = keyValuePair, let value = pair.1 {
-            vc.pair = (pair.0, value)   // do not support nil value
-        } else {
-            vc.pair = nil               // new item
-        }
+        vc.pair = keyValuePair
         vc.userId = uc.userId
         vc.actionOnDismiss = {
             self.refreshUserContext()

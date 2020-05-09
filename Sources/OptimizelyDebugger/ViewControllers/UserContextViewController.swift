@@ -46,6 +46,10 @@ class UserContextViewController: UITableViewController {
                     .forcedVariations,
                     //.userProfiles,
                     .forcedFeatures]
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action,
+                                                            target: self,
+                                                            action: #selector(openMenu))
                         
         userView = UITextView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 40))
         userView.backgroundColor = .orange
@@ -62,6 +66,10 @@ class UserContextViewController: UITableViewController {
         userContext = UserContextManager.getUserContext()
         userView.text = "UserID: \( userContext?.userId ?? "N/A")"
         refreshTableView()
+    }
+    
+    @objc func openMenu() {
+        
     }
     
     @objc func saveUserContext() {

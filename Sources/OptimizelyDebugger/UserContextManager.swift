@@ -31,10 +31,14 @@ class UserContextManager {
         return shared.userContext
     }
     
+    static func setUserContext(userId: String, attributes: OptimizelyAttributes?) {
+        shared.userContext = OptimizelyUserContext(userId: userId, attributes: attributes)
+    }
+    
     static func syncUserContext(userId: String? = nil, attributes: OptimizelyAttributes? = nil) -> (String, OptimizelyAttributes?) {
         
         if shared.userContext == nil, let userId = userId {
-            shared.userContext = OptimizelyUserContext(userId: userId, attributes: attributes)
+            setUserContext(userId: userId, attributes: attributes)
         }
         
         if userId != nil {

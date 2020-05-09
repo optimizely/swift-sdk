@@ -112,13 +112,14 @@ class UCVariationViewController: UCItemViewController {
         guard let experimentKey = expView.text,
             let variationKey = varView.text else { return }
 
-        _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: variationKey)
+        UserContextManager.getUserContext()?.addForcedVariation(experimentKey: experimentKey,
+                                                                variationKey: variationKey)
     }
     
     override func removeValue() {
         guard let experimentKey = expView.text else { return }
             
-        _ = self.client?.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: nil)
+        UserContextManager.getUserContext()?.addForcedVariation(experimentKey: experimentKey, variationKey: nil)
     }
 
 }

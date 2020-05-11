@@ -27,7 +27,9 @@ class DecisionServiceTests_Features: XCTestCase {
     var kExperimentId = "country11"
     var kRolloutId = "rollout11"
     var kRolloutExperimentId = "rolloutExp11"
-    
+    var kRolloutExperimentId2 = "rolloutExp12"
+    var kRolloutExperimentId3 = "rolloutExp13"
+
     var kVariationKeyA = "a"
     var kVariationKeyB = "b"
     var kVariationKeyC = "c"
@@ -127,32 +129,78 @@ class DecisionServiceTests_Features: XCTestCase {
     var sampleRolloutData: [String: Any] { return
         [
             "id": kRolloutId,
-            "experiments": [sampleRolloutExperimentData]
+            "experiments": sampleRolloutExperimentData
         ]
     }
     
-    var sampleRolloutExperimentData: [String: Any] { return
+    var sampleRolloutExperimentData: [[String: Any]] { return
         [
-            "status": "Running",
-            "id": kRolloutExperimentId,
-            "key": "rolloutExp",
-            "layerId": "10420273888",
-            "trafficAllocation": [
-                [
-                    "entityId": "10389700000",
-                    "endOfRange": 10000
-                ]
+            [
+                "status": "Running",
+                "id": kRolloutExperimentId,
+                "key": "rolloutExp",
+                "layerId": "10420273888",
+                "trafficAllocation": [
+                    [
+                        "entityId": "10389700000",
+                        "endOfRange": 10000
+                    ]
+                ],
+                "audienceIds": [kAudienceIdAge],
+                "variations": [
+                    [
+                        "variables": [],
+                        "id": "10389700000",
+                        "key": kVariationKeyA,
+                        "featureEnabled": true
+                    ]
+                ],
+                "forcedVariations": [:]
             ],
-            "audienceIds": [],
-            "variations": [
-                [
-                    "variables": [],
-                    "id": "10389700000",
-                    "key": kVariationKeyA,
-                    "featureEnabled": true
-                ]
+            [
+                "status": "Running",
+                "id": kRolloutExperimentId2,
+                "key": "rolloutExp2",
+                "layerId": "10420273889",
+                "trafficAllocation": [
+                    [
+                        "entityId": "10389700000",
+                        "endOfRange": 10000
+                    ]
+                ],
+                "audienceIds": [kAudienceIdCountry],
+                "variations": [
+                    [
+                        "variables": [],
+                        "id": "10389700000",
+                        "key": kVariationKeyB,
+                        "featureEnabled": true
+                    ]
+                ],
+                "forcedVariations": [:]
             ],
-            "forcedVariations": [:]
+            [
+                "status": "Running",
+                "id": kRolloutExperimentId3,
+                "key": "rolloutExp2",
+                "layerId": "10420273890",
+                "trafficAllocation": [
+                    [
+                        "entityId": "10389700000",
+                        "endOfRange": 10000
+                    ]
+                ],
+                "audienceIds": [],
+                "variations": [
+                    [
+                        "variables": [],
+                        "id": "10389700000",
+                        "key": kVariationKeyC,
+                        "featureEnabled": true
+                    ]
+                ],
+                "forcedVariations": [:]
+            ]
         ]
     }
     
@@ -228,7 +276,7 @@ extension DecisionServiceTests_Features {
         let variation = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesEmpty)
+                                                                           attributes: kAttributesAgeMatch)
         XCTAssert(variation!.key == kVariationKeyA)
     }
     
@@ -253,10 +301,58 @@ extension DecisionServiceTests_Features {
         XCTAssertNil(variation)
     }
     
-    func testGetVariationForFeatureRolloutMultiple() {
-        // add tests for last rollout handling
+    func testGetVariationForFeatureRolloutFallbackRule() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        self.config.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesAgeMatch)
+        XCTAssert(variation!.key == kVariationKeyC)
     }
     
+    func testGetVariationForFeatureRolloutEvaluatesNextIfAudienceEvaluationFails() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesCountryMatch)
+        XCTAssert(variation!.key == kVariationKeyB)
+    }
+    
+    func testGetVariationForFeatureRolloutReturnsNilIfAudienceEvaluationFailsForFallback() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        self.config.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
+        self.config.project.rollouts[0].experiments[2].audienceIds = [kAudienceIdCountry]
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesAgeMatch)
+        XCTAssertNil(variation)
+    }
+    
+    func testGetVariationForFeatureRolloutReturnsNilIfBucketingFailsForFallback() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        self.config.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
+        self.config.project.rollouts[0].experiments[2].trafficAllocation[0].endOfRange = 0
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesAgeMatch)
+        XCTAssertNil(variation)
+    }
 }
 
 // MARK: - Test getVariationForFeatureERollout()
@@ -293,7 +389,7 @@ extension DecisionServiceTests_Features {
                                                                attributes: kAttributesCountryNotMatch)
         XCTAssertNotNil(pair)
         XCTAssertNil(pair!.experiment)
-        XCTAssert(pair!.variation!.key == kVariationKeyA)
+        XCTAssert(pair!.variation!.key == kVariationKeyC)
     }
     
 }

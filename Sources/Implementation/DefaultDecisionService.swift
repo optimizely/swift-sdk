@@ -200,9 +200,9 @@ class DefaultDecisionService: OPTDecisionService {
                     logger.d(.userBucketedIntoTargetingRule(userId, index + 1))
                     
                     return variation
-                } else {
-                    logger.d(.userNotBucketedIntoTargetingRule(userId, index + 1))
                 }
+                logger.d(.userNotBucketedIntoTargetingRule(userId, index + 1))
+                break
             } else {
                 logger.d(.userDoesntMeetConditionsForTargetingRule(userId, index + 1))
             }

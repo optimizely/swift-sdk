@@ -28,8 +28,6 @@ class UCItemViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(close))
-        
         setupViews(contentsView: createContentsView())
         setupData()
     }

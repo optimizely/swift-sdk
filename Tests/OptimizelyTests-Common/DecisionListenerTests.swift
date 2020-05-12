@@ -33,7 +33,6 @@ class DecisionListenerTests: XCTestCase {
     let kVariableValueInt = 42
     let kVariableValueDouble = 4.2
     let kVariableValueBool = true
-    let kVariableValueJSON = "{\"value\":1}"
     
     // MARK: - Properties
     
@@ -159,7 +158,7 @@ class DecisionListenerTests: XCTestCase {
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.rollout.rawValue)
-            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! OptimizelyJSON).toString(), self.kVariableValueJSON)
+            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! [String: Any])["value"] as! Int, 1)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variableType] as! String, Constants.VariableValueType.json.rawValue)
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
@@ -359,7 +358,7 @@ class DecisionListenerTests: XCTestCase {
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, true)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.rollout.rawValue)
-            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! OptimizelyJSON).toString(), "{\"value\":2}")
+            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! [String: Any])["value"] as! Int, 2)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variableType] as! String, Constants.VariableValueType.json.rawValue)
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
@@ -376,7 +375,7 @@ class DecisionListenerTests: XCTestCase {
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.rollout.rawValue)
-            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! OptimizelyJSON).toString(), self.kVariableValueJSON)
+            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! [String: Any])["value"] as! Int, 1)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variableType] as! String, Constants.VariableValueType.json.rawValue)
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
@@ -652,7 +651,7 @@ class DecisionListenerTests: XCTestCase {
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, true)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.featureTest.rawValue)
-            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! OptimizelyJSON).toString(), "{\"value\":2}")
+            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! [String: Any])["value"] as! Int, 2)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variableType] as! String, Constants.VariableValueType.json.rawValue)
             let sourceInfo: [String: Any] = decisionInfo[Constants.DecisionInfoKeys.sourceInfo]! as! [String: Any]
             XCTAssertNotNil(sourceInfo)
@@ -671,7 +670,7 @@ class DecisionListenerTests: XCTestCase {
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.featureTest.rawValue)
-            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! OptimizelyJSON).toString(), self.kVariableValueJSON)
+            XCTAssertEqual((decisionInfo[Constants.DecisionInfoKeys.variableValue] as! [String: Any])["value"] as! Int, 1)
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variableType] as! String, Constants.VariableValueType.json.rawValue)
             let sourceInfo: [String: Any] = decisionInfo[Constants.DecisionInfoKeys.sourceInfo]! as! [String: Any]
             XCTAssertNotNil(sourceInfo)

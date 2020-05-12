@@ -24,16 +24,16 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     let lock: DispatchQueue
     var data: T?
     var backupDataStore: OPTDataStore
-    public enum BackingStore { case UserDefaults, File }
+    public enum BackingStore { case userDefaults, file }
     lazy var logger: OPTLogger? = OPTLoggerFactory.getLogger()
     
-    init(storeName: String, backupStore:BackingStore = .File) {
+    init(storeName: String, backupStore: BackingStore = .file) {
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
         switch backupStore {
-        case .File:
+        case .file:
             self.backupDataStore = DataStoreFile<T>(storeName: storeName, async: false)
-        case .UserDefaults:
+        case .userDefaults:
             self.backupDataStore = DataStoreUserDefaults()
         }
         load(forKey: dataStoreName)

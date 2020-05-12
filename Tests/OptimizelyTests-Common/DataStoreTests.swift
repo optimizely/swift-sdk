@@ -100,7 +100,8 @@ class DataStoreTests: XCTestCase {
      }
 
     func testBackgroundSaveUserDefaults() {
-        let datastore = DataStoreMemory<String>(storeName: "testBackgroundSaveUserDefaults",backupStore: DataStoreMemory.BackingStore.UserDefaults)
+        let datastore = DataStoreMemory<String>(storeName: "testBackgroundSaveUserDefaults",
+                                                backupStore: .userDefaults)
         
         let key = "testBackgroundSaveUserDefaults"
         datastore.saveItem(forKey: key, value: "value")

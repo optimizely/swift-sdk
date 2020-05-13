@@ -549,23 +549,30 @@ open class OptimizelyClient: NSObject {
         
         var type: Constants.VariableValueType?
         var valueParsed: T?
+        var notificationValue: Any? = featureValue
         
         switch T.self {
         case is String.Type:
             type = .string
             valueParsed = featureValue as? T
+            notificationValue = valueParsed
         case is Int.Type:
             type = .integer
             valueParsed = Int(featureValue) as? T
+            notificationValue = valueParsed
         case is Double.Type:
             type = .double
             valueParsed = Double(featureValue) as? T
+            notificationValue = valueParsed
         case is Bool.Type:
             type = .boolean
             valueParsed = Bool(featureValue) as? T
+            notificationValue = valueParsed
         case is OptimizelyJSON.Type:
             type = .json
-            valueParsed = OptimizelyJSON(payload: featureValue) as? T
+            let jsonValue = OptimizelyJSON(payload: featureValue)
+            valueParsed = jsonValue as? T
+            notificationValue = jsonValue?.toMap()
         default:
             break
         }
@@ -590,7 +597,7 @@ open class OptimizelyClient: NSObject {
                                  featureEnabled: featureEnabled,
                                  variableKey: variableKey,
                                  variableType: variable.type,
-                                 variableValue: value)
+                                 variableValue: notificationValue)
         
         return value
     }

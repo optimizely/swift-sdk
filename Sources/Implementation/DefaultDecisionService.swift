@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -200,9 +200,9 @@ class DefaultDecisionService: OPTDecisionService {
                     logger.d(.userBucketedIntoTargetingRule(userId, index + 1))
                     
                     return variation
-                } else {
-                    logger.d(.userNotBucketedIntoTargetingRule(userId, index + 1))
                 }
+                logger.d(.userNotBucketedIntoTargetingRule(userId, index + 1))
+                break
             } else {
                 logger.d(.userDoesntMeetConditionsForTargetingRule(userId, index + 1))
             }

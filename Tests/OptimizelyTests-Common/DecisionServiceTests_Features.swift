@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -27,7 +27,9 @@ class DecisionServiceTests_Features: XCTestCase {
     var kExperimentId = "country11"
     var kRolloutId = "rollout11"
     var kRolloutExperimentId = "rolloutExp11"
-    
+    var kRolloutExperimentId2 = "rolloutExp12"
+    var kRolloutExperimentId3 = "rolloutExp13"
+
     var kVariationKeyA = "a"
     var kVariationKeyB = "b"
     var kVariationKeyC = "c"
@@ -37,11 +39,21 @@ class DecisionServiceTests_Features: XCTestCase {
     var kAudienceIdAge = "20"
     var kAudienceIdInvalid = "9999999"
     
+    var kRolloutVariationKeyA = "rolloutA"
+    var kRolloutVariationKeyB = "rolloutB"
+    var kRolloutVariationKeyC = "rolloutC"
+    
+    var kRolloutAudienceIdAge1 = "30"
+    var kRolloutAudienceIdAge2 = "40"
+    
     var kAttributesCountryMatch: [String: Any] = ["country": "us"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
     var kAttributesAgeMatch: [String: Any] = ["age": 30]
     var kAttributesAgeNotMatch: [String: Any] = ["age": 10]
     var kAttributesEmpty: [String: Any] = [:]
+    var kAttributesRolloutAge1Match: [String: Any] = ["age": 20]
+    var kAttributesRolloutAge2Match: [String: Any] = ["age": 30]
+    var kAttributesRolloutNotMatch: [String: Any] = ["age": 40]
     
     var experiment: Experiment!
     var variation: Variation!
@@ -127,32 +139,93 @@ class DecisionServiceTests_Features: XCTestCase {
     var sampleRolloutData: [String: Any] { return
         [
             "id": kRolloutId,
-            "experiments": [sampleRolloutExperimentData]
+            "experiments": sampleRolloutExperimentData
         ]
     }
     
-    var sampleRolloutExperimentData: [String: Any] { return
+    var sampleRolloutExperimentData: [[String: Any]] { return
         [
-            "status": "Running",
-            "id": kRolloutExperimentId,
-            "key": "rolloutExp",
-            "layerId": "10420273888",
-            "trafficAllocation": [
-                [
-                    "entityId": "10389700000",
-                    "endOfRange": 10000
-                ]
+            [
+                "status": "Running",
+                "id": kRolloutExperimentId,
+                "key": "rolloutExp",
+                "layerId": "10420273888",
+                "trafficAllocation": [
+                    [
+                        "entityId": "10389700000",
+                        "endOfRange": 10000
+                    ]
+                ],
+                "audienceIds": [kRolloutAudienceIdAge1],
+                "variations": [
+                    [
+                        "variables": [],
+                        "id": "10389700000",
+                        "key": kRolloutVariationKeyA,
+                        "featureEnabled": true
+                    ]
+                ],
+                "forcedVariations": [:]
             ],
-            "audienceIds": [],
-            "variations": [
-                [
-                    "variables": [],
-                    "id": "10389700000",
-                    "key": kVariationKeyA,
-                    "featureEnabled": true
-                ]
+            [
+                "status": "Running",
+                "id": kRolloutExperimentId2,
+                "key": "rolloutExp1",
+                "layerId": "10420273889",
+                "trafficAllocation": [
+                    [
+                        "entityId": "10389700000",
+                        "endOfRange": 10000
+                    ]
+                ],
+                "audienceIds": [kRolloutAudienceIdAge2],
+                "variations": [
+                    [
+                        "variables": [],
+                        "id": "10389700000",
+                        "key": kRolloutVariationKeyB,
+                        "featureEnabled": true
+                    ]
+                ],
+                "forcedVariations": [:]
             ],
-            "forcedVariations": [:]
+            [
+                "status": "Running",
+                "id": kRolloutExperimentId3,
+                "key": "rolloutExp2",
+                "layerId": "10420273890",
+                "trafficAllocation": [
+                    [
+                        "entityId": "10389700000",
+                        "endOfRange": 10000
+                    ]
+                ],
+                "audienceIds": [],
+                "variations": [
+                    [
+                        "variables": [],
+                        "id": "10389700000",
+                        "key": kRolloutVariationKeyC,
+                        "featureEnabled": true
+                    ]
+                ],
+                "forcedVariations": [:]
+            ]
+        ]
+    }
+    
+    var sampleRolloutTypedAudiencesData: [[String: Any]] { return
+        [
+            [
+                "id": kRolloutAudienceIdAge1,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "lt", "value": 30 ],
+                "name": "age"
+            ],
+            [
+                "id": kRolloutAudienceIdAge2,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "lt", "value": 40 ],
+                "name": "age"
+            ]
         ]
     }
     
@@ -222,14 +295,15 @@ extension DecisionServiceTests_Features {
     func testGetVariationForFeatureRollout() {
         // rollout set
         self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
         featureFlag.rolloutId = kRolloutId
         self.config.project.featureFlags = [featureFlag]
         
         let variation = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesEmpty)
-        XCTAssert(variation!.key == kVariationKeyA)
+                                                                           attributes: kAttributesRolloutAge1Match)
+        XCTAssert(variation!.key == kRolloutVariationKeyA)
     }
     
     func testGetVariationForFeatureRolloutEmpty() {
@@ -253,10 +327,63 @@ extension DecisionServiceTests_Features {
         XCTAssertNil(variation)
     }
     
-    func testGetVariationForFeatureRolloutMultiple() {
-        // add tests for last rollout handling
+    func testGetVariationForFeatureRolloutFallbackRule() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+        self.config.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesRolloutAge1Match)
+        XCTAssert(variation!.key == kRolloutVariationKeyC)
     }
     
+    func testGetVariationForFeatureRolloutEvaluatesNextIfAudienceEvaluationFails() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesRolloutAge2Match)
+        XCTAssert(variation!.key == kRolloutVariationKeyB)
+    }
+    
+    func testGetVariationForFeatureRolloutReturnsNilIfAudienceEvaluationFailsForFallback() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        self.config.project.rollouts[0].experiments[0].audienceIds = [kRolloutAudienceIdAge2]
+        self.config.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
+        self.config.project.rollouts[0].experiments[2].audienceIds = [kRolloutAudienceIdAge1]
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesRolloutAge2Match)
+        XCTAssertNil(variation)
+    }
+    
+    func testGetVariationForFeatureRolloutReturnsNilIfBucketingFailsForFallback() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        self.config.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
+        self.config.project.rollouts[0].experiments[2].trafficAllocation[0].endOfRange = 0
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesRolloutAge1Match)
+        XCTAssertNil(variation)
+    }
 }
 
 // MARK: - Test getVariationForFeatureERollout()
@@ -293,7 +420,7 @@ extension DecisionServiceTests_Features {
                                                                attributes: kAttributesCountryNotMatch)
         XCTAssertNotNil(pair)
         XCTAssertNil(pair!.experiment)
-        XCTAssert(pair!.variation!.key == kVariationKeyA)
+        XCTAssert(pair!.variation!.key == kRolloutVariationKeyC)
     }
     
 }

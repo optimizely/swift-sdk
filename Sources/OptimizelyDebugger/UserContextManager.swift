@@ -35,21 +35,11 @@ class UserContextManager {
         shared.userContext = OptimizelyUserContext(userId: userId, attributes: attributes)
     }
     
-    static func syncUserContext(userId: String? = nil, attributes: OptimizelyAttributes? = nil) -> (String, OptimizelyAttributes?) {
+    static func syncUserContext(userId: String? = nil, attributes: OptimizelyAttributes? = nil) {
         
         if shared.userContext == nil, let userId = userId {
             setUserContext(userId: userId, attributes: attributes)
         }
-        
-        if userId != nil {
-            return (userId!, attributes)
-        }
-        
-        if let uc = shared.userContext {
-            return (uc.userId, uc.attributes)
-        }
-        
-        return ("invalid", nil)
     }
     
     static func addForcedVariation(userId: String, experimentKey: String, variationKey: String?) {
@@ -61,6 +51,8 @@ class UserContextManager {
     static func getVariation(experimentKey: String,
                              userId: String,
                              attributes: OptimizelyAttributes?) -> String? {
+        syncUserContext(userId: userId, attributes: attributes)
+
         guard let uc = shared.userContext, uc.userId == userId  else { return nil }
 
         if let fvs = uc.forcedVariations {
@@ -73,6 +65,8 @@ class UserContextManager {
     static func getFeatureEnabled(featureKey: String,
                                   userId: String,
                                   attributes: OptimizelyAttributes?) -> Bool? {
+        syncUserContext(userId: userId, attributes: attributes)
+
         guard let uc = shared.userContext, uc.userId == userId  else { return nil }
 
         if let fvs = uc.forcedFeatures {

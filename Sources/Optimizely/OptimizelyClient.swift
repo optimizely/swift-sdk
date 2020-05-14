@@ -253,16 +253,6 @@ open class OptimizelyClient: NSObject {
             throw OptimizelyError.experimentKeyInvalid(experimentKey)
         }
         
-        // UserContext ------------------------------------------
-        let (userId, attributes) = UserContextManager.syncUserContext(userId: userId,
-                                                                      attributes: attributes)
-        if let variationKey = UserContextManager.getVariation(experimentKey: experimentKey,
-                                                              userId: userId,
-                                                              attributes: attributes) {
-            return variationKey
-        }
-        //-------------------------------------------------------
-
         let variation = try getVariation(experimentKey: experimentKey, userId: userId, attributes: attributes)
         
         sendImpressionEvent(experiment: experiment,
@@ -299,11 +289,20 @@ open class OptimizelyClient: NSObject {
             throw OptimizelyError.experimentKeyInvalid(experimentKey)
         }
         
-        let variation = decisionService.getVariation(config: config,
+        // ClientDebugger+UserContext ---------------------------
+        var variation: Variation?
+        if let forcedVariationKey = UserContextManager.getVariation(experimentKey: experimentKey,
+                                                                    userId: userId,
+                                                                    attributes: attributes) {
+            variation = config.getVariation(key: forcedVariationKey)
+        } else {
+            variation = decisionService.getVariation(config: config,
                                                      userId: userId,
                                                      experiment: experiment,
                                                      attributes: attributes ?? OptimizelyAttributes())
-        
+        }
+        //-------------------------------------------------------
+
         let decisionType: Constants.DecisionType = config.isFeatureExperiment(id: experiment.id) ? .featureTest : .abTest
         sendDecisionNotification(decisionType: decisionType,
                                  userId: userId,
@@ -382,13 +381,11 @@ open class OptimizelyClient: NSObject {
             return false
         }
         
-        // UserContext ------------------------------------------
-        let (userId, attributes) = UserContextManager.syncUserContext(userId: userId,
-                                                                      attributes: attributes)
-        if let featureEnabled = UserContextManager.getFeatureEnabled(featureKey: featureKey,
-                                                                   userId: userId,
-                                                                   attributes: attributes) {
-            return featureEnabled
+        // ClientDebugger+UserContext ---------------------------
+        if let forcedFeatureEnabled = UserContextManager.getFeatureEnabled(featureKey: featureKey,
+                                                                           userId: userId,
+                                                                           attributes: attributes) {
+            return forcedFeatureEnabled
         }
         //-------------------------------------------------------
 

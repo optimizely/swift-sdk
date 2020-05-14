@@ -56,6 +56,16 @@ class ProjectConfig {
         return experimentFeatureMap
     }()
     
+    lazy var variationKeyMap: [String: Variation] = {
+        var map = [String: Variation]()
+        allExperiments.forEach { exp in
+            exp.variations.forEach { variation in
+                map[variation.key] = variation
+            }
+        }
+        return map
+    }()
+    
     lazy var eventKeyMap: [String: Event] = {
         var eventKeyMap = [String: Event]()
         project.events.forEach { eventKeyMap[$0.key] = $0 }
@@ -196,6 +206,13 @@ extension ProjectConfig {
      **/
     func getExperimentId(key: String) -> String? {
         return getExperiment(key: key)?.id
+    }
+    
+    /**
+     * Get a Variation object for a key.
+     */
+    func getVariation(key: String) -> Variation? {
+        return variationKeyMap[key]
     }
     
     /**

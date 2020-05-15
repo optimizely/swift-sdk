@@ -32,6 +32,7 @@ class DebugViewController: UITableViewController {
                                                                        target: self,
                                                                        action: #selector(close))
         
+        items.append(DebuggerItem(title: "SDK Version", text: client.version, action: nil))
         items.append(DebuggerItem(title: "SDK Key", text: client.sdkKey, action: nil))
         items.append(DebuggerItem(title: "ProjectConfig") {
             self.openPropsView(title: "ProjectConfig", props: config)

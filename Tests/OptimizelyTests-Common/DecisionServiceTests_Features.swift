@@ -327,6 +327,20 @@ extension DecisionServiceTests_Features {
         XCTAssertNil(variation)
     }
     
+    func testGetVariationForFeatureRolloutEmptyRules() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        self.config.project.rollouts[0].experiments = []
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesRolloutAge1Match)
+        XCTAssertNil(variation)
+    }
+    
     func testGetVariationForFeatureRolloutFallbackRule() {
         self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
@@ -352,6 +366,20 @@ extension DecisionServiceTests_Features {
                                                                            userId: kUserId,
                                                                            attributes: kAttributesRolloutAge2Match)
         XCTAssert(variation!.key == kRolloutVariationKeyB)
+    }
+    
+    func testGetVariationForFeatureRolloutWithSameAudiencesReturnsFirstVariation() {
+        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+        self.config.project.rollouts[0].experiments[1].audienceIds = [kRolloutAudienceIdAge1]
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+        featureFlag.rolloutId = kRolloutId
+        self.config.project.featureFlags = [featureFlag]
+        
+        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+                                                                           featureFlag: featureFlag,
+                                                                           userId: kUserId,
+                                                                           attributes: kAttributesRolloutAge1Match)
+        XCTAssert(variation!.key == kRolloutVariationKeyA)
     }
     
     func testGetVariationForFeatureRolloutReturnsNilIfAudienceEvaluationFailsForFallback() {

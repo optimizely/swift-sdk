@@ -14,6 +14,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
+#if DEBUG || OPT_DBG
+
 import UIKit
 
 class LogViewController: UITableViewController {
@@ -122,3 +124,5 @@ extension LogViewController: UISearchBarDelegate {
     }
     
 }
+
+#endif

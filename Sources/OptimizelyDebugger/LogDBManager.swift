@@ -14,6 +14,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
+#if DEBUG || OPT_DBG
+
 import Foundation
 import CoreData
 
@@ -198,3 +200,5 @@ class LogDBManager {
     }
     
 }
+
+#endif

@@ -14,6 +14,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
+#if DEBUG || OPT_DBG
+
 import UIKit
 
 class UCFeatureViewController: UCItemViewController {
@@ -169,3 +171,5 @@ extension UCFeatureViewController: UIPickerViewDelegate, UIPickerViewDataSource 
         }
     }
 }
+
+#endif

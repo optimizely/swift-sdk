@@ -15,6 +15,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
+#if DEBUG || OPT_DBG
+
 import Foundation
 
 extension OptimizelyClient {
@@ -80,3 +82,5 @@ extension OptimizelyClient {
     }
 
 }
+
+#endif

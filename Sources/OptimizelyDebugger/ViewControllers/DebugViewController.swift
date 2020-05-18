@@ -14,6 +14,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
+#if DEBUG || OPT_DBG
+
 import UIKit
 
 class DebugViewController: UITableViewController {
@@ -108,3 +110,5 @@ extension DebugViewController {
     }
 
 }
+
+#endif

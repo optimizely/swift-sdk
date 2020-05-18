@@ -14,6 +14,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
+#if DEBUG || OPT_DBG
+
 import UIKit
 
 class UCVariationViewController: UCItemViewController {
@@ -177,3 +179,5 @@ extension UCVariationViewController: UIPickerViewDelegate, UIPickerViewDataSourc
         }
     }
 }
+
+#endif

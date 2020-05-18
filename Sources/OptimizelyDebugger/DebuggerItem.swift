@@ -14,6 +14,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
+#if DEBUG || OPT_DBG
+
 import Foundation
 
 struct DebuggerItem {
@@ -29,3 +31,5 @@ struct DebuggerItem {
         self.action = action
     }
 }
+
+#endif

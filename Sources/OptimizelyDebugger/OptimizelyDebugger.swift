@@ -14,26 +14,40 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
-import Foundation
+import UIKit
 
 public class OptimizelyDebugger {
     static let shared = OptimizelyDebugger()
-    let debugVC: UINavigationController
-    
-    private init() {
-        self.debugVC = UINavigationController()
-    }
     
     public static func open(client: OptimizelyClient?, parent: UIViewController?) {
+        #if DEBUG || OPT_DBG
+        openDebugger(client: client, parent: parent)
+        #endif
+    }
+    
+    public static func logForDebugSession(level: OptimizelyLogLevel, module: String, text: String) {
+        #if DEBUG || OPT_DBG
+        LogDBManager.shared.insert(level: level, module: module, text: text)
+        #endif
+    }
+}
+
+#if DEBUG || OPT_DBG
+extension OptimizelyDebugger {
+    
+    private static func openDebugger(client: OptimizelyClient?, parent: UIViewController?) {
         guard let client = client else { return }
         guard let parent = parent else { return }
         
         let coreVC = DebugViewController()
         coreVC.client = client
         coreVC.title = "Optimizely Debugger"
-        shared.debugVC.setViewControllers([coreVC], animated: true)
-
-        parent.present(shared.debugVC, animated: true, completion: nil)
+        
+        let debugNVC = UINavigationController()
+        debugNVC.setViewControllers([coreVC], animated: true)
+        
+        parent.present(debugNVC, animated: true, completion: nil)
     }
     
 }
+#endif

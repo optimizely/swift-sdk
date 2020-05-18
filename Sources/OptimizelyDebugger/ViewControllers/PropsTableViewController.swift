@@ -13,7 +13,9 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
+  
+#if DEBUG || OPT_DBG
+
 import UIKit
 
 class PropsTableViewController: UITableViewController {
@@ -93,3 +95,5 @@ extension PropsTableViewController {
         self.show(propsView, sender: self)
     }
 }
+
+#endif

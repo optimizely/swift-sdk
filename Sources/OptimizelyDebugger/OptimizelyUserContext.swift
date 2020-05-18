@@ -15,6 +15,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
+#if DEBUG || OPT_DBG
+
 import Foundation
 
 public class OptimizelyUserContext {
@@ -58,3 +60,5 @@ public class OptimizelyUserContext {
         }
     }
 }
+
+#endif

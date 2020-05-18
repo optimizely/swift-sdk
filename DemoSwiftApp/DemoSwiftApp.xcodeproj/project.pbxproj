@@ -132,6 +132,13 @@
 			remoteGlobalIDString = 6E614DCC21E3F389005982A1;
 			remoteInfo = "OptimizelySwiftSDK-tvOS";
 		};
+		6E7C243424730ACA00F5DE0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E14CD632423F80B00010234;
+			remoteInfo = "OptimizelyTests-Batch-iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -224,6 +231,7 @@
 				6E4D2FCA22C5454400062EB3 /* Optimizely.framework */,
 				6E4D2FCC22C5454400062EB3 /* OptimizelyTests-iOS.xctest */,
 				6E4D2FCE22C5454400062EB3 /* OptimizelyTests-Common-iOS.xctest */,
+				6E7C243524730ACA00F5DE0B /* OptimizelyTests-Batch-iOS.xctest */,
 				6E4D2FD022C5454400062EB3 /* OptimizelyTests-APIs-iOS.xctest */,
 				6E4D2FD222C5454400062EB3 /* OptimizelyTests-DataModel-iOS.xctest */,
 				6E4D2FD422C5454400062EB3 /* OptimizelyTests-Others-iOS.xctest */,
@@ -398,6 +406,7 @@
 				TargetAttributes = {
 					252D7DEC21C8800800134A7A = {
 						CreatedOnToolsVersion = 10.1;
+						DevelopmentTeam = BDMC9C2X5M;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -524,6 +533,13 @@
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-Others-tvOS.xctest";
 			remoteRef = 6E4D2FDD22C5454400062EB3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E7C243524730ACA00F5DE0B /* OptimizelyTests-Batch-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Batch-iOS.xctest";
+			remoteRef = 6E7C243424730ACA00F5DE0B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -707,13 +723,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = BDMC9C2X5M;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/DemoSwiftiOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftiOS;
@@ -736,12 +752,16 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = BDMC9C2X5M;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/DemoSwiftiOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.1;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = OPT_DBG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -14,15 +14,64 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
+
 import Foundation
 
 class UserContextManager {
     public static let shared = UserContextManager()
     
-    var userContext: OptimizelyUserContext?
-
     private init() {}
     
+    static func getVariation(experimentKey: String,
+                             userId: String,
+                             attributes: OptimizelyAttributes?) -> String? {
+        #if !(DEBUG || OPT_DBG)
+        
+        return nil
+        
+        #else
+
+        syncUserContext(userId: userId, attributes: attributes)
+
+        guard let uc = shared.userContext, uc.userId == userId  else { return nil }
+
+        if let fvs = uc.forcedVariations {
+            return fvs[experimentKey]
+        } else {
+            return nil
+        }
+        
+        #endif
+    }
+    
+    static func getFeatureEnabled(featureKey: String,
+                                  userId: String,
+                                  attributes: OptimizelyAttributes?) -> Bool? {
+        
+        #if !(DEBUG || OPT_DBG)
+        
+        return nil
+
+        #else
+        
+        syncUserContext(userId: userId, attributes: attributes)
+
+        guard let uc = shared.userContext, uc.userId == userId  else { return nil }
+
+        if let fvs = uc.forcedFeatures {
+            return fvs[featureKey]
+        } else {
+            return nil
+        }
+        
+        #endif
+    }
+    
+    
+    #if DEBUG || OPT_DBG
+    
+    var userContext: OptimizelyUserContext?
+
     static func setUserContext(_ user: OptimizelyUserContext?) {
         shared.userContext = user
     }
@@ -47,33 +96,9 @@ class UserContextManager {
             uc.addForcedVariation(experimentKey: experimentKey, variationKey: variationKey)
         }
     }
+
+    #endif
     
-    static func getVariation(experimentKey: String,
-                             userId: String,
-                             attributes: OptimizelyAttributes?) -> String? {
-        syncUserContext(userId: userId, attributes: attributes)
-
-        guard let uc = shared.userContext, uc.userId == userId  else { return nil }
-
-        if let fvs = uc.forcedVariations {
-            return fvs[experimentKey]
-        } else {
-            return nil
-        }
-    }
-    
-    static func getFeatureEnabled(featureKey: String,
-                                  userId: String,
-                                  attributes: OptimizelyAttributes?) -> Bool? {
-        syncUserContext(userId: userId, attributes: attributes)
-
-        guard let uc = shared.userContext, uc.userId == userId  else { return nil }
-
-        if let fvs = uc.forcedFeatures {
-            return fvs[featureKey]
-        } else {
-            return nil
-        }
-    }
-
 }
+
+

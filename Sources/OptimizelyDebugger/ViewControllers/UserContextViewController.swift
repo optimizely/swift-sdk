@@ -14,6 +14,8 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
+#if DEBUG || OPT_DBG
+
 import UIKit
 
 class UserContextViewController: UITableViewController {
@@ -243,3 +245,5 @@ extension UserContextViewController {
         self.present(nvc, animated: true, completion: nil)
     }
 }
+
+#endif

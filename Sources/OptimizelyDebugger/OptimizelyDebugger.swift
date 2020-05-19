@@ -16,7 +16,7 @@
 
 import UIKit
 
-public class OptimizelyDebugger {
+@objcMembers public class OptimizelyDebugger: NSObject {
     static let shared = OptimizelyDebugger()
     
     public static func open(client: OptimizelyClient?, parent: UIViewController?) {

@@ -19,7 +19,7 @@
 
 import Foundation
 
-public class OptimizelyUserContext {
+@objcMembers public class OptimizelyUserContext {
     var userId: String
     
     var attributes: OptimizelyAttributes?

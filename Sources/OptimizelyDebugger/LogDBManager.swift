@@ -55,7 +55,7 @@ class LogDBManager {
     // MARK: - Thread-safe CoreData
 
     lazy var persistentContainer: NSPersistentContainer? = {
-        let modelName = "LogModel"
+        let modelName = "OptimizelyLogModel"
         guard let modelURL = Bundle(for: type(of: self)).url(forResource: modelName, withExtension: "momd") else {
             print("[ERROR] loading model from bundle")
             return nil
@@ -123,7 +123,7 @@ class LogDBManager {
         guard let context = defaultContext else { return }
 
         context.perform {
-            let entity = NSEntityDescription.entity(forEntityName: "LogItem", in: context)!
+            let entity = NSEntityDescription.entity(forEntityName: "OptimizelyLogItem", in: context)!
             let logItem = NSManagedObject(entity: entity, insertInto: context)
             
             logItem.setValue(level.rawValue, forKey: "level")
@@ -135,7 +135,7 @@ class LogDBManager {
         }
     }
     
-    func read(level: OptimizelyLogLevel, keyword: String?, countPerPage: Int = 25) -> (Int, [LogItem]) {
+    func read(level: OptimizelyLogLevel, keyword: String?, countPerPage: Int = 25) -> (Int, [OptimizelyLogItem]) {
         priSessionId.performAtomic { value in
             priSessionId.property = value + 1
         }
@@ -148,7 +148,7 @@ class LogDBManager {
         return (sessionId, items)
     }
     
-    func read(sessionId: Int) -> (Int, [LogItem]) {
+    func read(sessionId: Int) -> (Int, [OptimizelyLogItem]) {
         guard let session = sessions[sessionId] else { return (sessionId, []) }
         
         let items = fetchDB(session: session)
@@ -159,7 +159,7 @@ class LogDBManager {
         guard let context = defaultContext else { return }
 
         context.perform {
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LogItem")
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "OptimizelyLogItem")
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
             
             do {
@@ -171,13 +171,13 @@ class LogDBManager {
         }
     }
     
-    private func fetchDB(session: FetchSession) -> [LogItem] {
+    private func fetchDB(session: FetchSession) -> [OptimizelyLogItem] {
         guard let context = defaultContext else { return [] }
 
-        var items = [LogItem]()
+        var items = [OptimizelyLogItem]()
         
         context.performAndWait {
-            let request = NSFetchRequest<NSManagedObject>(entityName: "LogItem")
+            let request = NSFetchRequest<NSManagedObject>(entityName: "OptimizelyLogItem")
             let sort = NSSortDescriptor(key: "date", ascending: false)
             request.sortDescriptors = [sort]
             var subpredicates = [NSPredicate]()
@@ -187,7 +187,7 @@ class LogDBManager {
             }
             request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
             
-            if let fetched = try? context.fetch(request) as? [LogItem] {
+            if let fetched = try? context.fetch(request) as? [OptimizelyLogItem] {
                 print("Fetched log items: \(fetched)")
                 items = fetched
             } else {

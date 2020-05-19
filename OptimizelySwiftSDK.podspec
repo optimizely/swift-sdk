@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   }
   s.source_files            = "Sources/**/*.swift"
   # OptimizelyDebugger log database
-  s.resource_bundles        = {"Optimizely" => "Sources/OptimizelyDebugger/LogModel.xcdatamodeld"}
+  s.resource_bundles        = {"Optimizely" => "Sources/OptimizelyDebugger/OptimizelyLogModel.xcdatamodeld"}
   
   s.swift_version           = ["5.0", "5.1"]
   s.framework               = "Foundation"

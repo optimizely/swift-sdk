@@ -435,8 +435,8 @@
 		6E3F9B82242C336300D3491A /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B73242C336300D3491A /* DebugViewController.swift */; };
 		6E3F9B83242C336300D3491A /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B74242C336300D3491A /* LogViewController.swift */; };
 		6E3F9B84242C336300D3491A /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B74242C336300D3491A /* LogViewController.swift */; };
-		6E3F9B85242C336300D3491A /* LogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B75242C336300D3491A /* LogModel.xcdatamodeld */; };
-		6E3F9B86242C336300D3491A /* LogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B75242C336300D3491A /* LogModel.xcdatamodeld */; };
+		6E3F9B85242C336300D3491A /* OptimizelyLogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B75242C336300D3491A /* OptimizelyLogModel.xcdatamodeld */; };
+		6E3F9B86242C336300D3491A /* OptimizelyLogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B75242C336300D3491A /* OptimizelyLogModel.xcdatamodeld */; };
 		6E5AB69323F6130D007A82B1 /* OptimizelyClientTests_Init_Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */; };
 		6E5AB69423F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */; };
 		6E614DD621E3F38A005982A1 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
@@ -1404,7 +1404,7 @@
 		6E3F9B72242C336300D3491A /* LogDBManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogDBManager.swift; sourceTree = "<group>"; };
 		6E3F9B73242C336300D3491A /* DebugViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugViewController.swift; sourceTree = "<group>"; };
 		6E3F9B74242C336300D3491A /* LogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewController.swift; sourceTree = "<group>"; };
-		6E3F9B76242C336300D3491A /* LogModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = LogModel.xcdatamodel; sourceTree = "<group>"; };
+		6E3F9B76242C336300D3491A /* OptimizelyLogModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OptimizelyLogModel.xcdatamodel; sourceTree = "<group>"; };
 		6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Init_Sync.swift; sourceTree = "<group>"; };
 		6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Init_Async.swift; sourceTree = "<group>"; };
 		6E614DCD21E3F389005982A1 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1737,7 +1737,7 @@
 				6E177C182444CE3D00DF5087 /* OptimizelyUserContext.swift */,
 				6E242CF324662398006F8A99 /* OptimizelyClient+UserContext.swift */,
 				6E3F9B72242C336300D3491A /* LogDBManager.swift */,
-				6E3F9B75242C336300D3491A /* LogModel.xcdatamodeld */,
+				6E3F9B75242C336300D3491A /* OptimizelyLogModel.xcdatamodeld */,
 			);
 			path = OptimizelyDebugger;
 			sourceTree = "<group>";
@@ -3010,7 +3010,7 @@
 				6E75172B22C520D400B2B157 /* Constants.swift in Sources */,
 				6E7516BF22C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
 				6EA1E9B4244500BA00A89711 /* UserContextViewController.swift in Sources */,
-				6E3F9B86242C336300D3491A /* LogModel.xcdatamodeld in Sources */,
+				6E3F9B86242C336300D3491A /* OptimizelyLogModel.xcdatamodeld in Sources */,
 				6E177C1A2444CE3D00DF5087 /* OptimizelyUserContext.swift in Sources */,
 				6E7517E122C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E75178B22C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
@@ -3833,7 +3833,7 @@
 				6E75194822C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E7518E822C520D400B2B157 /* ConditionHolder.swift in Sources */,
 				6EA1E9B3244500BA00A89711 /* UserContextViewController.swift in Sources */,
-				6E3F9B85242C336300D3491A /* LogModel.xcdatamodeld in Sources */,
+				6E3F9B85242C336300D3491A /* OptimizelyLogModel.xcdatamodeld in Sources */,
 				6E177C192444CE3D00DF5087 /* OptimizelyUserContext.swift in Sources */,
 				6E75191822C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E7518B822C520D400B2B157 /* Variable.swift in Sources */,
@@ -4792,13 +4792,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		6E3F9B75242C336300D3491A /* LogModel.xcdatamodeld */ = {
+		6E3F9B75242C336300D3491A /* OptimizelyLogModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				6E3F9B76242C336300D3491A /* LogModel.xcdatamodel */,
+				6E3F9B76242C336300D3491A /* OptimizelyLogModel.xcdatamodel */,
 			);
-			currentVersion = 6E3F9B76242C336300D3491A /* LogModel.xcdatamodel */;
-			path = LogModel.xcdatamodeld;
+			currentVersion = 6E3F9B76242C336300D3491A /* OptimizelyLogModel.xcdatamodel */;
+			path = OptimizelyLogModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

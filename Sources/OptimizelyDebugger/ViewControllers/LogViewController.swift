@@ -20,7 +20,7 @@ import UIKit
 
 class LogViewController: UITableViewController {
     weak var client: OptimizelyClient?
-    var items = [LogItem]()
+    var items = [OptimizelyLogItem]()
     var sessionId: Int = 0
     var keyword: String?
     var level: OptimizelyLogLevel = .info

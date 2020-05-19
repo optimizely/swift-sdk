@@ -15,7 +15,7 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
-#if DEBUG || OPT_DBG
+#if os(iOS) && (DEBUG || OPT_DBG)
 
 import Foundation
 

@@ -24,11 +24,7 @@ class UserContextManager {
     static func getVariation(experimentKey: String,
                              userId: String,
                              attributes: OptimizelyAttributes?) -> String? {
-        #if !(DEBUG || OPT_DBG)
-        
-        return nil
-        
-        #else
+        #if os(iOS) && (DEBUG || OPT_DBG)
 
         syncUserContext(userId: userId, attributes: attributes)
 
@@ -40,6 +36,10 @@ class UserContextManager {
             return nil
         }
         
+        #else
+        
+        return nil
+        
         #endif
     }
     
@@ -47,11 +47,7 @@ class UserContextManager {
                                   userId: String,
                                   attributes: OptimizelyAttributes?) -> Bool? {
         
-        #if !(DEBUG || OPT_DBG)
-        
-        return nil
-
-        #else
+        #if os(iOS) && (DEBUG || OPT_DBG)
         
         syncUserContext(userId: userId, attributes: attributes)
 
@@ -63,12 +59,15 @@ class UserContextManager {
             return nil
         }
         
+        #else
+        
+        return nil
+        
         #endif
     }
     
-    
-    #if DEBUG || OPT_DBG
-    
+    #if os(iOS) && (DEBUG || OPT_DBG)
+
     var userContext: OptimizelyUserContext?
 
     static func setUserContext(_ user: OptimizelyUserContext?) {
@@ -99,5 +98,3 @@ class UserContextManager {
     #endif
     
 }
-
-

@@ -20,19 +20,19 @@ import UIKit
     static let shared = OptimizelyDebugger()
     
     public static func open(client: OptimizelyClient?, parent: UIViewController?) {
-        #if DEBUG || OPT_DBG
+        #if os(iOS) && (DEBUG || OPT_DBG)
         openDebugger(client: client, parent: parent)
         #endif
     }
     
     public static func logForDebugSession(level: OptimizelyLogLevel, module: String, text: String) {
-        #if DEBUG || OPT_DBG
+        #if os(iOS) && (DEBUG || OPT_DBG)
         LogDBManager.shared.insert(level: level, module: module, text: text)
         #endif
     }
 }
 
-#if DEBUG || OPT_DBG
+#if os(iOS) && (DEBUG || OPT_DBG)
 extension OptimizelyDebugger {
     
     private static func openDebugger(client: OptimizelyClient?, parent: UIViewController?) {

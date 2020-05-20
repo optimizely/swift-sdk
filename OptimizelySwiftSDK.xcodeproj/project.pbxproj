@@ -435,8 +435,8 @@
 		6E3F9B82242C336300D3491A /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B73242C336300D3491A /* DebugViewController.swift */; };
 		6E3F9B83242C336300D3491A /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B74242C336300D3491A /* LogViewController.swift */; };
 		6E3F9B84242C336300D3491A /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B74242C336300D3491A /* LogViewController.swift */; };
-        6E3F9B85242C336300D3491A /* OptimizelyLogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B75242C336300D3491A /* OptimizelyLogModel.xcdatamodeld */; };
-        6E3F9B86242C336300D3491A /* OptimizelyLogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B75242C336300D3491A /* OptimizelyLogModel.xcdatamodeld */; };
+		6E3F9B85242C336300D3491A /* OptimizelyLogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B75242C336300D3491A /* OptimizelyLogModel.xcdatamodeld */; };
+		6E3F9B86242C336300D3491A /* OptimizelyLogModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F9B75242C336300D3491A /* OptimizelyLogModel.xcdatamodeld */; };
 		6E435FBE2474B2EF00E8C9A0 /* LogItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E435FBC2474B2EF00E8C9A0 /* LogItem+CoreDataClass.swift */; };
 		6E435FBF2474B2EF00E8C9A0 /* LogItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E435FBC2474B2EF00E8C9A0 /* LogItem+CoreDataClass.swift */; };
 		6E435FC02474B2EF00E8C9A0 /* LogItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E435FBD2474B2EF00E8C9A0 /* LogItem+CoreDataProperties.swift */; };
@@ -1733,6 +1733,17 @@
 			path = "OptimizelyTests-Batch-iOS";
 			sourceTree = "<group>";
 		};
+		6E1981F62475B220008460B9 /* UserContextItems */ = {
+			isa = PBXGroup;
+			children = (
+				6E242CED24648B56006F8A99 /* UCItemViewController.swift */,
+				6EC62CAB2464668800857D5A /* UCAttributeViewController.swift */,
+				6EBF7B24246373410080FFB6 /* UCVariationViewController .swift */,
+				6EC62CA82463C2E300857D5A /* UCFeatureViewController.swift */,
+			);
+			path = UserContextItems;
+			sourceTree = "<group>";
+		};
 		6E3F9B6E242C336300D3491A /* OptimizelyDebugger */ = {
 			isa = PBXGroup;
 			children = (
@@ -2131,10 +2142,7 @@
 				6E3F9B74242C336300D3491A /* LogViewController.swift */,
 				6E3F9B70242C336300D3491A /* PropsTableViewController.swift */,
 				6EA1E9B2244500BA00A89711 /* UserContextViewController.swift */,
-				6E242CED24648B56006F8A99 /* UCItemViewController.swift */,
-				6EC62CAB2464668800857D5A /* UCAttributeViewController.swift */,
-				6EBF7B24246373410080FFB6 /* UCVariationViewController .swift */,
-				6EC62CA82463C2E300857D5A /* UCFeatureViewController.swift */,
+				6E1981F62475B220008460B9 /* UserContextItems */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";

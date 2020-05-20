@@ -16,7 +16,7 @@
     
 #if os(iOS) && (DEBUG || OPT_DBG)
 
-import Foundation
+import UIKit
 
 struct DebuggerItem {
     let title: String

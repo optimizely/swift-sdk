@@ -28,15 +28,22 @@ class LogViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        addHeaderViews()
+        setupTableView()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(clearLogs))
         
         refreshTableView()
-        
-        tableView.rowHeight = 60.0
     }
     
-    func addHeaderViews() {
+    func setupTableView() {
+        addHeaderView()
+        
+        // variable cell height
+        
+        tableView.estimatedRowHeight = 60.0
+        tableView.rowHeight = UITableView.automaticDimension
+    }
+    
+    func addHeaderView() {
         let hv = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 100))
         
         // LogLevel selector
@@ -96,8 +103,15 @@ class LogViewController: UITableViewController {
 
         let item = items[indexPath.row]
         
-        cell.textLabel!.text = "[\(OptimizelyLogLevel(rawValue: Int(item.level))!.name)] \(item.date!)"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .medium
+        let dateStr = dateFormatter.string(from: item.date!)
+        
+        cell.textLabel!.text = "[\(OptimizelyLogLevel(rawValue: Int(item.level))!.name)] \(dateStr)"
         cell.detailTextLabel!.text = item.text
+        cell.detailTextLabel!.numberOfLines = 0   // variable cell height
+        
         return cell
     }
     
@@ -113,6 +127,7 @@ extension LogViewController: UISearchBarDelegate {
         keyword = searchBar.text
         if keyword != nil, keyword!.isEmpty { keyword = nil }
         refreshTableView()
+        view.endEditing(true)
     }
     
     // clear table when "x" pressed

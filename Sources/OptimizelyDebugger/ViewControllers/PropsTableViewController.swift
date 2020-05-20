@@ -21,32 +21,34 @@ import UIKit
 class PropsTableViewController: UITableViewController {
     var props: Any?
     var dict: [String: Any]!
-    var sorted = [String]()
+    var fixedOrder = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if props is [String: Any] {
             dict = (props as! [String: Any])
+            fixedOrder = dict.keys.sorted()
         } else if let array = props as? [Any] {
             dict = Dictionary(uniqueKeysWithValues: zip([Int](0..<array.count).map { String($0) }, array))
+            fixedOrder = dict.keys.sorted()
         } else {
-            dict = convertToDict(props)
+            // presentation order of Object fields are determined by custom mirroring
+            (fixedOrder, dict) = convertToDict(props)
         }
-        
-        sorted = dict.keys.sorted()
-        
+                
         tableView.rowHeight = 60
     }
     
-    func convertToDict(_ props: Any?) -> [String: Any] {
-        guard let props = props else { return [String: Any]() }
+    func convertToDict(_ props: Any?) -> ([String], [String: Any]) {
+        guard let props = props else { return ([String](), [String: Any]()) }
         
         let mirror = Mirror(reflecting: props)
         let keys = mirror.children.map { $0.label ?? "N/A - \(Int.random(in: 0..<1000000))" }
         let values = mirror.children.map { $0.value }
         
-        return Dictionary(uniqueKeysWithValues: zip(keys, values))
+        return (keys,       // keep mirror-defined order
+                Dictionary(uniqueKeysWithValues: zip(keys, values)))
     }
 }
 
@@ -59,7 +61,7 @@ extension PropsTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sorted.count
+        return fixedOrder.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -69,25 +71,47 @@ extension PropsTableViewController {
         }
         let cell = reuse!
         
-        let key = sorted[indexPath.row]
+        let key = fixedOrder[indexPath.row]
         
         let item = dict[key]
         cell.textLabel?.text = key
-        if item is String {
-            cell.detailTextLabel?.text = (item as! String)
+        
+        if let value = item as? String {
+            cell.detailTextLabel?.text = value
             cell.accessoryType = .none
+        } else if let value = item as? Bool {
+            cell.detailTextLabel?.text = String(value)
+            cell.accessoryType = .none
+        } else if let value = item as? [String: Any] {
+            if value.isEmpty {
+                cell.detailTextLabel?.text = "[empty]"
+                cell.accessoryType = .none
+            } else {
+                cell.detailTextLabel?.text = nil
+                cell.accessoryType = .disclosureIndicator
+            }
+        } else if let value = item as? [Any] {
+            if value.isEmpty {
+                cell.detailTextLabel?.text = "[empty]"
+                cell.accessoryType = .none
+            } else {
+                cell.detailTextLabel?.text = nil
+                cell.accessoryType = .disclosureIndicator
+            }
         } else {
             cell.detailTextLabel?.text = nil
             cell.accessoryType = .disclosureIndicator
         }
+        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let key = sorted[indexPath.row]
+        let key = fixedOrder[indexPath.row]
         
         guard let item = dict[key] else { return }
-        guard !(item is String) else { return }
+        guard let cell = tableView.cellForRow(at: indexPath),
+            case .disclosureIndicator = cell.accessoryType else { return }
 
         let propsView = PropsTableViewController()
         propsView.title = key

@@ -13,9 +13,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "Optimizely",
-                path: "Sources",
-                swiftSettings: [.define("OPT_DBG", .when(configuration: .release))]
-        )
+                path: "Sources")
     ],
     swiftLanguageVersions: [.v5]
 )

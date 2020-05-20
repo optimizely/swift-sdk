@@ -2,6 +2,18 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Sources/OptimizelyDebugger/LogItem+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Sources/OptimizelyDebugger/LogItem+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Sources/OptimizelyDebugger/OptimizelyLogItem+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Sources/OptimizelyDebugger/OptimizelyLogItem+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
       location = "group:DemoSwiftApp/DemoSwiftApp.xcodeproj">
    </FileRef>
    <FileRef

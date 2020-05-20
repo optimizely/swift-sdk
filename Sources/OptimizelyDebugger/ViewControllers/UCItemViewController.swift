@@ -22,13 +22,15 @@ class UCItemViewController: UIViewController {
     weak var client: OptimizelyClient?
     var userId: String!
     var pair: (key: String, value: Any)?
-    var actionOnDismiss: (() -> Void)?
 
     var saveBtn: UIButton!
     var removeBtn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // hide back button to avoid confusion about returning without saving
+        navigationItem.hidesBackButton = true
         
         setupViews(contentsView: createContentsView())
         setupData()
@@ -167,8 +169,7 @@ class UCItemViewController: UIViewController {
     }
     
     @objc func close() {
-        actionOnDismiss?()
-        dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
     }
     
     // override

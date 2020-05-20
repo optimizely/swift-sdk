@@ -60,7 +60,10 @@ class UserContextViewController: UITableViewController {
         
         tableView.tableHeaderView = userView
         tableView.rowHeight = 60.0
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         refreshUserContext()
     }
     
@@ -237,12 +240,10 @@ extension UserContextViewController {
         vc.title = section.rawValue
         vc.pair = keyValuePair
         vc.userId = uc.userId
-        vc.actionOnDismiss = {
-            self.refreshUserContext()
-        }
         
         let nvc = UINavigationController(rootViewController: vc)
-        self.present(nvc, animated: true, completion: nil)
+     //   self.present(nvc, animated: true, completion: nil)
+        self.show(vc, sender: self)
     }
 }
 

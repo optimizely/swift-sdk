@@ -45,6 +45,7 @@ jobs:
         - SDK=swift
         - BUILD_NUMBER=${TRAVIS_JOB_NUMBER/.}
         - TESTAPP_TAG=master
+        - TESTAPP_BRANCH=3.3.x-test
         - SDK_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
       cache: false
       install:

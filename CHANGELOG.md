@@ -4,8 +4,8 @@
 May 21, 2020
 
 ### Bug Fixes
-* Fix a decision bug for multi-rule rollouts ([#323](https://github.com/optimizely/swift-sdk/pull/323), [#323](https://github.com/optimizely/swift-sdk/pull/323))
-* Fix to forward resourceTimeout to datafileHandler ([#320](https://github.com/optimizely/swift-sdk/pull/323), [#323](https://github.com/optimizely/swift-sdk/pull/320))
+* Fix a decision bug for multi-rule rollouts ([#323](https://github.com/optimizely/swift-sdk/pull/323))
+* Fix to forward resourceTimeout to datafileHandler ([#320](https://github.com/optimizely/swift-sdk/pull/320))
 
 ## 3.3.1
 March 30, 2020

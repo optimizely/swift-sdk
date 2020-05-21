@@ -78,6 +78,15 @@ class DebugViewController: UITableViewController {
     }
     
     func openLogView() {
+        guard LogDBManager.isSupported else {
+            let alert = UIAlertController(title: "Not Supported",
+                                          message: "CoreData for session logging is not supported by Swift Package Manager (SPM) for now.\n\nUse CocoaPods or Carthage for this feature until SPM gets ready for this support.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
         let vc = LogViewController()
         vc.client = client
         vc.title = "Logs"

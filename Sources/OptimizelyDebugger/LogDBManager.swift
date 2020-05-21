@@ -25,6 +25,11 @@ class LogDBManager {
     
     // MARK: - props
     
+    // Swift-Package-Manager does not support resources, so .xcdatamodel cannot be used
+    static var isSupported: Bool {
+        return shared.persistentContainer != nil
+    }
+    
     private var priSessionId = AtomicProperty<Int>(property: 0)
     var sessionId: Int {
         get {
@@ -55,7 +60,7 @@ class LogDBManager {
     // MARK: - Thread-safe CoreData
 
     lazy var persistentContainer: NSPersistentContainer? = {
-        let modelName = "OptimizelyLogModel"
+        let modelName = "OptimizelyLogModel-xxxxxx"
         guard let modelURL = Bundle(for: type(of: self)).url(forResource: modelName, withExtension: "momd") else {
             print("[ERROR] loading model from bundle")
             return nil
@@ -91,8 +96,7 @@ class LogDBManager {
     
     // MARK: - init
     
-    private init() {
-    }
+    private init() {}
     
     // MARK: - methods
     

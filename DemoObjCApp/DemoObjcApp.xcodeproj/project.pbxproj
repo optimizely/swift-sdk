@@ -36,6 +36,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6E12C9FD2476E42D009A09F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E14CD632423F80B00010234;
+			remoteInfo = "OptimizelyTests-Batch-iOS";
+		};
 		6E4D2FF622C5457F00062EB3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
@@ -220,6 +227,7 @@
 				6E4D2FF922C5457F00062EB3 /* Optimizely.framework */,
 				6E4D2FFB22C5457F00062EB3 /* OptimizelyTests-iOS.xctest */,
 				6E4D2FFD22C5457F00062EB3 /* OptimizelyTests-Common-iOS.xctest */,
+				6E12C9FE2476E42D009A09F5 /* OptimizelyTests-Batch-iOS.xctest */,
 				6E4D2FFF22C5457F00062EB3 /* OptimizelyTests-APIs-iOS.xctest */,
 				6E4D300122C5457F00062EB3 /* OptimizelyTests-DataModel-iOS.xctest */,
 				6E4D300322C5457F00062EB3 /* OptimizelyTests-Others-iOS.xctest */,
@@ -445,6 +453,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		6E12C9FE2476E42D009A09F5 /* OptimizelyTests-Batch-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Batch-iOS.xctest";
+			remoteRef = 6E12C9FD2476E42D009A09F5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6E4D2FF722C5457F00062EB3 /* Optimizely.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -789,11 +804,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
 				INFOPLIST_FILE = ../DemoSwiftApp/DemoSwiftiOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoObjciOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -808,11 +825,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
 				INFOPLIST_FILE = ../DemoSwiftApp/DemoSwiftiOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoObjciOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";

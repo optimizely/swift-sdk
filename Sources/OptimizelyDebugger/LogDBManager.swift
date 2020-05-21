@@ -19,6 +19,17 @@
 import Foundation
 import CoreData
 
+// MARK: - LogItem
+
+final class LogItem: NSManagedObject {
+    @NSManaged public var date: Date?
+    @NSManaged public var level: Int16
+    @NSManaged public var module: String?
+    @NSManaged public var text: String?
+}
+
+// MARK: - LogDBManager
+
 class LogDBManager {
     
     static let shared = LogDBManager()
@@ -60,18 +71,8 @@ class LogDBManager {
     // MARK: - Thread-safe CoreData
 
     lazy var persistentContainer: NSPersistentContainer? = {
-        let modelName = "OptimizelyLogModel"
-        guard let modelURL = Bundle(for: type(of: self)).url(forResource: modelName, withExtension: "momd") else {
-            print("[ERROR] loading model from bundle")
-            return nil
-        }
-
-        guard let mom = NSManagedObjectModel(contentsOf: modelURL) else {
-            print("[ERROR] Error initializing mom from: \(modelURL)")
-            return nil
-        }
-
-        let container = NSPersistentContainer(name: modelName, managedObjectModel: mom)
+        let container = NSPersistentContainer(name: "OptimizelyLogModel",
+                                              managedObjectModel: generateObjectModel())
         container.loadPersistentStores(completionHandler: { (_, error) in
             if let error = error as NSError? {
                 print("[ERROR] Unresolved error \(error), \(error.userInfo)")
@@ -198,6 +199,48 @@ class LogDBManager {
         }
         
         return items
+    }
+    
+}
+
+extension LogDBManager {
+    
+    func generateObjectModel() -> NSManagedObjectModel {
+        
+         // Manual model creation (replacing .xcdatamodeld)
+         // - Swift Package Manager(SPM) does not support CoreData resource file,
+         //   therefore the object model (LogItem) is manually coded here.
+         
+         let logItem = NSEntityDescription()
+         logItem.name = "LogItem"
+         logItem.managedObjectClassName = NSStringFromClass(LogItem.self)
+         
+         let date = NSAttributeDescription()
+         date.name = "date"
+         date.attributeType = .dateAttributeType
+         date.isOptional = true
+        
+         let level = NSAttributeDescription()
+         level.name = "level"
+         level.attributeType = .integer16AttributeType
+         level.isOptional = false
+         
+         let module = NSAttributeDescription()
+         module.name = "module"
+         module.attributeType = .stringAttributeType
+         module.isOptional = true
+
+         let text = NSAttributeDescription()
+         text.name = "text"
+         text.attributeType = .stringAttributeType
+         text.isOptional = true
+
+         logItem.properties = [date, level, module, text]
+         
+         let model = NSManagedObjectModel()
+         model.entities = [logItem]
+         
+        return model
     }
     
 }

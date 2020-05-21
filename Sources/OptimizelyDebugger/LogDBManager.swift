@@ -60,7 +60,7 @@ class LogDBManager {
     // MARK: - Thread-safe CoreData
 
     lazy var persistentContainer: NSPersistentContainer? = {
-        let modelName = "OptimizelyLogModel-xxxxxx"
+        let modelName = "OptimizelyLogModel"
         guard let modelURL = Bundle(for: type(of: self)).url(forResource: modelName, withExtension: "momd") else {
             print("[ERROR] loading model from bundle")
             return nil

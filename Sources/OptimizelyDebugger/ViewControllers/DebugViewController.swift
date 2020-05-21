@@ -19,6 +19,21 @@
 import UIKit
 
 class DebugViewController: UITableViewController {
+    
+    struct DebuggerItem {
+        let title: String
+        let text: String?
+        let icon: UIImage?
+        let action: (() -> Void)?
+        
+        init(title: String, text: String? = nil, icon: UIImage? = nil, action: (() -> Void)?) {
+            self.title = title
+            self.text = text
+            self.icon = icon
+            self.action = action
+        }
+    }
+
     weak var client: OptimizelyClient?
     
     var items = [DebuggerItem]()

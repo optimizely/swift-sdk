@@ -55,7 +55,7 @@ jobs:
     
     - <<: *integrationtest
       stage: 'Benchmarking tests'
-      env: SDK=swift FULLSTACK_TEST_REPO=Benchmarking BUILD_NUMBER=${TRAVIS_JOB_NUMBER/.} SDK_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
+      env: SDK=swift TESTAPP_BRANCH=3.3.x-test FULLSTACK_TEST_REPO=Benchmarking BUILD_NUMBER=${TRAVIS_JOB_NUMBER/.} SDK_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
 
     - stage: 'SourceClear and Lint'
       language: swift

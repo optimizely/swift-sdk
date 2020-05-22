@@ -19,15 +19,22 @@ import UIKit
 @objcMembers public class OptimizelyDebugger: NSObject {
     static let shared = OptimizelyDebugger()
     
+    let logManager: LogDBManager
+    let maxLogItemsCount = 100000
+    
+    private override init() {
+        logManager = LogDBManager(maxItemsCount: maxLogItemsCount)
+    }
+    
     public static func open(client: OptimizelyClient?, parent: UIViewController?) {
         #if os(iOS) && (DEBUG || OPT_DBG)
-        openDebugger(client: client, parent: parent)
+        shared.openDebugger(client: client, parent: parent)
         #endif
     }
     
     public static func logForDebugSession(level: OptimizelyLogLevel, module: String, text: String) {
         #if os(iOS) && (DEBUG || OPT_DBG)
-        LogDBManager.shared.insert(level: level, module: module, text: text)
+        shared.logManager.insert(level: level, module: module, text: text)
         #endif
     }
 }
@@ -35,13 +42,14 @@ import UIKit
 #if os(iOS) && (DEBUG || OPT_DBG)
 extension OptimizelyDebugger {
     
-    private static func openDebugger(client: OptimizelyClient?, parent: UIViewController?) {
+    private func openDebugger(client: OptimizelyClient?, parent: UIViewController?) {
         guard let client = client else { return }
         guard let parent = parent else { return }
         
         let coreVC = DebugViewController()
         coreVC.client = client
         coreVC.title = "Optimizely Debugger"
+        coreVC.logManager = logManager
         
         let debugNVC = UINavigationController()
         debugNVC.setViewControllers([coreVC], animated: true)

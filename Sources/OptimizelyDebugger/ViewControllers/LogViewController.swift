@@ -20,6 +20,7 @@ import UIKit
 
 class LogViewController: UITableViewController {
     weak var client: OptimizelyClient?
+    weak var logManager: LogDBManager?
     var items = [LogItem]()
     var sessionId: Int = 0
     var keyword: String?
@@ -75,13 +76,20 @@ class LogViewController: UITableViewController {
     }
     
     @objc func clearLogs(sender: UIBarButtonItem) {
-        LogDBManager.shared.clear()
-        refreshTableView()
+        guard let logm = logManager else { return }
+
+        logm.asyncClear {
+            self.refreshTableView()
+        }
     }
     
     func refreshTableView() {
-        (sessionId, items) = LogDBManager.shared.read(level: level, keyword: keyword)
-        tableView.reloadData()
+        guard let logm = logManager else { return }
+        
+        logm.asyncRead(level: level, keyword: keyword) { (id, logs) in
+            (self.sessionId, self.items) = (id, logs)
+            self.tableView.reloadData()
+        }
     }
     
     // MARK: - Table view data source

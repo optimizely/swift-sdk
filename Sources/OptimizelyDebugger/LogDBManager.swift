@@ -32,15 +32,10 @@ final class LogItem: NSManagedObject {
 
 class LogDBManager {
     
-    static let shared = LogDBManager()
-    
     // MARK: - props
     
-    // Swift-Package-Manager does not support resources, so .xcdatamodel cannot be used
-    static var isSupported: Bool {
-        return shared.persistentContainer != nil
-    }
-    
+    let maxItemsCount: Int
+
     private var priSessionId = AtomicProperty<Int>(property: 0)
     var sessionId: Int {
         get {
@@ -97,7 +92,9 @@ class LogDBManager {
     
     // MARK: - init
     
-    private init() {}
+    init(maxItemsCount: Int) {
+        self.maxItemsCount = maxItemsCount
+    }
     
     // MARK: - methods
     
@@ -137,7 +134,28 @@ class LogDBManager {
         }
     }
     
-    func read(level: OptimizelyLogLevel, keyword: String?, countPerPage: Int = 25) -> (Int, [LogItem]) {
+    func asyncRead(level: OptimizelyLogLevel,
+                   keyword: String?,
+                   countPerPage: Int = 25,
+                   completion: @escaping (Int, [LogItem]) -> Void) {
+        DispatchQueue.global().async {
+            let (sessionId, items) = self.read(level: level, keyword: keyword)
+            DispatchQueue.main.async {
+                completion(sessionId, items)
+            }
+        }
+    }
+    
+    func asyncClear(completion: @escaping () -> Void) {
+        DispatchQueue.global().async {
+            self.clear()
+            DispatchQueue.main.async {
+                completion()
+            }
+        }
+    }
+
+    private func read(level: OptimizelyLogLevel, keyword: String?, countPerPage: Int = 25) -> (Int, [LogItem]) {
         priSessionId.performAtomic { value in
             priSessionId.property = value + 1
         }
@@ -150,17 +168,17 @@ class LogDBManager {
         return (sessionId, items)
     }
     
-    func read(sessionId: Int) -> (Int, [LogItem]) {
+    private func read(sessionId: Int) -> (Int, [LogItem]) {
         guard let session = sessions[sessionId] else { return (sessionId, []) }
         
         let items = fetchDB(session: session)
         return (sessionId, items)
     }
     
-    func clear() {
+    private func clear() {
         guard let context = defaultContext else { return }
 
-        context.perform {
+        context.performAndWait { // synchronous clear
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LogItem")
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
             
@@ -178,7 +196,7 @@ class LogDBManager {
 
         var items = [LogItem]()
         
-        context.performAndWait {
+        context.performAndWait {  // synchronous fetch
             let request = NSFetchRequest<NSManagedObject>(entityName: "LogItem")
             let sort = NSSortDescriptor(key: "date", ascending: false)
             request.sortDescriptors = [sort]
@@ -190,7 +208,6 @@ class LogDBManager {
             request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
             
             if let fetched = try? context.fetch(request) as? [LogItem] {
-                print("Fetched log items: \(fetched)")
                 items = fetched
             } else {
                 print("[ERROR] Failed to read log DB)")

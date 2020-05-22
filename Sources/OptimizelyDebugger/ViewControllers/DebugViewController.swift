@@ -35,6 +35,7 @@ class DebugViewController: UITableViewController {
     }
 
     weak var client: OptimizelyClient?
+    weak var logManager: LogDBManager?
     
     var items = [DebuggerItem]()
         
@@ -81,6 +82,7 @@ class DebugViewController: UITableViewController {
         let vc = LogViewController()
         vc.client = client
         vc.title = "Logs"
+        vc.logManager = logManager
         self.show(vc, sender: self)
     }
         

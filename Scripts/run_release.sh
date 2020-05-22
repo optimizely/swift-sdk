@@ -22,7 +22,7 @@ function release_github {
 
   DESCRIPTION=$(awk "/^${NEW_VERSION}$/,/^${LAST_VERSION:-nothingmatched}$/" ${CHANGELOG} | grep -v "^${LAST_VERSION:-nothingmatched}$")
 
-  hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}"
+  hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${TRAVIS_BRANCH}"
 
 }
 

@@ -19,8 +19,7 @@
 import Foundation
 import CoreData
 
-// MARK: - LogItem
-
+/// Log message data stored in the session log database
 final class LogItem: NSManagedObject {
     @NSManaged public var date: Date?
     @NSManaged public var level: Int16
@@ -28,8 +27,7 @@ final class LogItem: NSManagedObject {
     @NSManaged public var text: String?
 }
 
-// MARK: - LogDBManager
-
+/// This manages log messages stored into database during the current session.
 class LogDBManager {
     
     // MARK: - props
@@ -134,9 +132,15 @@ class LogDBManager {
         }
     }
     
+    /// Asynchronously read log items from the session log database
+    /// - Parameters:
+    ///   - level: maximum log level to be included
+    ///   - keyword: search keyword
+    ///   - countPerPage: the number of items to be read at a time
+    ///   - completion: a handler to be called in the main thread after completion
     func asyncRead(level: OptimizelyLogLevel,
                    keyword: String?,
-                   countPerPage: Int = 25,
+                   countPerPage: Int = 100,
                    completion: @escaping (Int, [LogItem]) -> Void) {
         DispatchQueue.global().async {
             let (sessionId, items) = self.read(level: level, keyword: keyword)
@@ -146,6 +150,8 @@ class LogDBManager {
         }
     }
     
+    /// Asynchronously remove all log items from the session log database
+    /// - Parameter completion: a handler to be called in the main thread after completion
     func asyncClear(completion: @escaping () -> Void) {
         DispatchQueue.global().async {
             self.clear()
@@ -154,6 +160,8 @@ class LogDBManager {
             }
         }
     }
+
+    // MARK: - private methods
 
     private func read(level: OptimizelyLogLevel, keyword: String?, countPerPage: Int = 25) -> (Int, [LogItem]) {
         priSessionId.performAtomic { value in

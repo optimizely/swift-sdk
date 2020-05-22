@@ -7,9 +7,6 @@ set -e
 
 # COCOAPODS_TRUNK_TOKEN - should be defined in job settings so that we can `pod trunk push`
 
-# if releasing from branch other than master, specify REL_BRANCH=3.3.x (for example)
-
-
 function release_github {
   CHANGELOG="CHANGELOG.md"
 
@@ -25,7 +22,7 @@ function release_github {
 
   DESCRIPTION=$(awk "/^${NEW_VERSION}$/,/^${LAST_VERSION:-nothingmatched}$/" ${CHANGELOG} | grep -v "^${LAST_VERSION:-nothingmatched}$")
 
-  hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${REL_BRANCH:-master}"
+  hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${TRAVIS_BRANCH}"
 
 }
 

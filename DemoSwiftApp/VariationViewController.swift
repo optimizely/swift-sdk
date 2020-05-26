@@ -44,7 +44,7 @@ class VariationViewController: UIViewController {
     }
     
     @IBAction func openDebugger(_ sender: UIButton) {
-        OptimizelyDebugger.open(client: optimizely, parent: self)
+        OptimizelyDebugger.open(client: optimizely, inViewController: self)
     }
     
     @IBAction func refresh(_ sender: UIButton) {
@@ -62,6 +62,9 @@ class VariationViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // shake-action support
+        self.becomeFirstResponder()
 
         if let variationKey = self.variationKey {
             switch variationKey {
@@ -83,6 +86,22 @@ class VariationViewController: UIViewController {
             self.variationLetterLabel.text = "U"
             self.variationLetterLabel.textColor = UIColor.gray
             self.variationSubheaderLabel.textColor = UIColor.white
+        }
+    }
+    
+}
+
+// MARK: - Shake-action support
+
+extension VariationViewController {
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if case .motionShake = motion {
+            OptimizelyDebugger.open(client: optimizely, inViewController: self)
         }
     }
 

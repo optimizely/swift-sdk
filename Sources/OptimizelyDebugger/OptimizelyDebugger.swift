@@ -26,9 +26,9 @@ import UIKit
         logManager = LogDBManager(maxItemsCount: maxLogItemsCount)
     }
     
-    public static func open(client: OptimizelyClient?, parent: UIViewController?) {
+    public static func open(client: OptimizelyClient?, inViewController parent: UIViewController) {
         #if os(iOS) && (DEBUG || OPT_DBG)
-        shared.openDebugger(client: client, parent: parent)
+        shared.openDebugger(client: client, inViewController: parent)
         #endif
     }
     
@@ -42,7 +42,7 @@ import UIKit
 #if os(iOS) && (DEBUG || OPT_DBG)
 extension OptimizelyDebugger {
     
-    private func openDebugger(client: OptimizelyClient?, parent: UIViewController?) {
+    private func openDebugger(client: OptimizelyClient?, inViewController parent: UIViewController?) {
         guard let client = client else { return }
         guard let parent = parent else { return }
         

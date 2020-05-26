@@ -22,9 +22,9 @@ class LogViewController: UITableViewController {
     weak var client: OptimizelyClient?
     weak var logManager: LogDBManager?
     var items = [LogItem]()
-    var sessionId: Int = 0
     var keyword: String?
     var level: OptimizelyLogLevel = .info
+    var refreshController: UIRefreshControl!
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,6 +37,7 @@ class LogViewController: UITableViewController {
     
     func setupTableView() {
         addHeaderView()
+        addRefreshController()
         
         // variable cell height
         
@@ -84,16 +85,45 @@ class LogViewController: UITableViewController {
     }
     
     func refreshTableView() {
+        self.items = []
+        loadMoreItems(direction: .reset)
+    }
+    
+    func loadMoreItems(direction: LogDBManager.Direction = .forward) {
         guard let logm = logManager else { return }
         
-        logm.asyncRead(level: level, keyword: keyword) { (id, logs) in
-            (self.sessionId, self.items) = (id, logs)
+        logm.asyncRead(level: level, keyword: keyword, direction: direction) { logs in
+            self.items += logs
             self.tableView.reloadData()
         }
     }
     
-    // MARK: - Table view data source
+}
 
+// MARK: - UIRefreshControl
+
+extension LogViewController {
+    
+    func addRefreshController() {
+        refreshController = UIRefreshControl()
+        refreshController.addTarget(self, action: #selector(refreshContentsByPullDown), for: .valueChanged)
+        tableView.refreshControl = refreshController
+    }
+    
+    @objc func refreshContentsByPullDown() {
+        refreshController.beginRefreshing()
+        
+        refreshTableView()
+        
+        refreshController.endRefreshing()
+    }
+    
+}
+    
+// MARK: - TableView deletage
+
+extension LogViewController {
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -116,7 +146,7 @@ class LogViewController: UITableViewController {
         dateFormatter.timeStyle = .medium
         let dateStr = dateFormatter.string(from: item.date!)
         
-        cell.textLabel!.text = "[\(OptimizelyLogLevel(rawValue: Int(item.level))!.name)] \(dateStr)"
+        cell.textLabel!.text = "\(indexPath.row): [\(OptimizelyLogLevel(rawValue: Int(item.level))!.name)] \(dateStr)"
         cell.detailTextLabel!.text = item.text
         cell.detailTextLabel!.numberOfLines = 0   // variable cell height
         
@@ -125,7 +155,22 @@ class LogViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     }
+}
+    
+// MARK: - ScrollView delegate
 
+extension LogViewController {
+    
+    // autmatically fetching the next page when scrolling down to the end of table
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let currentOffset = scrollView.contentOffset.y
+        let maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height
+        
+        if maximumOffset - currentOffset <= 20.0 {
+            loadMoreItems()
+        }
+    }
+    
 }
 
 // MARK: - SearchBar delegate

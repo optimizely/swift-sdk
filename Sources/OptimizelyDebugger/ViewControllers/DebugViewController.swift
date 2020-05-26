@@ -63,6 +63,11 @@ class DebugViewController: UITableViewController {
         })
 
         tableView.rowHeight = 60.0
+        
+        // disable closeing modal-view by pull-down
+        if #available(iOS 13.0, *) {
+            self.isModalInPresentation = true
+        }
     }
     
     @objc public func close() {

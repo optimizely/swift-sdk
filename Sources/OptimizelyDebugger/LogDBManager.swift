@@ -33,33 +33,65 @@ class LogDBManager {
     // MARK: - props
     
     let maxItemsCount: Int
+    private var itemsCount = AtomicProperty<Int>(property: 0)
 
-    private var priSessionId = AtomicProperty<Int>(property: 0)
-    var sessionId: Int {
-        get {
-            return priSessionId.property!
-        }
-        set {
-            priSessionId.property = newValue
-        }
-    }
-    
     struct FetchSession {
-        var id: Int
         var level: OptimizelyLogLevel
         var keyword: String?
-        var countPerPage: Int
         var nextPage: Int = 0
+        let countPerPage = 30
         
-        init(id: Int, level: OptimizelyLogLevel, keyword: String? = nil, countPerPage: Int) {
-            self.id = id
+        var fetchOffset: Int {
+            return countPerPage * nextPage
+        }
+        var fetchLimit: Int {
+            return countPerPage
+        }
+        
+        var lastFetchCount: Int = 0
+        
+        var direction: Direction = .forward {
+            didSet {
+                switch direction {
+                case .forward:
+                    nextPage += 1
+                case .backward:
+                    nextPage = nextPage > 0 ? (nextPage - 1) : 0
+                case .reset:
+                    nextPage = 0
+                default:
+                    break
+                }
+            }
+        }
+        
+        init(level: OptimizelyLogLevel, keyword: String? = nil) {
             self.level = level
             self.keyword = keyword
-            self.countPerPage = countPerPage
         }
+        
+        /// Restart from the first page if level or keyward is changed
+        /// - Parameters:
+        ///   - level: new level
+        ///   - keyword: new keyword
+        mutating func reSyncIfNeeded(level: OptimizelyLogLevel, keyword: String? = nil) {
+            if level != self.level || keyword != self.keyword {
+                self.level = level
+                self.keyword = keyword
+                self.direction = .reset
+            }
+        }
+        
     }
     
-    var sessions = [Int: FetchSession]()
+    enum Direction {
+        case forward
+        case backward
+        case current
+        case reset
+    }
+    
+    var session: FetchSession?
     
     // MARK: - Thread-safe CoreData
 
@@ -120,6 +152,23 @@ class LogDBManager {
         guard let context = defaultContext else { return }
 
         context.perform {
+            
+            // count sync (session logs can be written in multiple contexts)
+            
+            self.itemsCount.performAtomic { (value) in
+                var count = value
+                if count >= self.maxItemsCount {
+                    let numToBeRemoved = Int(Double(self.maxItemsCount) * 0.2)
+                    if let countAfter = self.removeOldestItems(count: numToBeRemoved) {
+                        count = countAfter
+                    }
+                }
+                
+                self.itemsCount.property = count + 1
+            }
+            
+            // add log item
+            
             let entity = NSEntityDescription.entity(forEntityName: "LogItem", in: context)!
             let logItem = NSManagedObject(entity: entity, insertInto: context)
             
@@ -140,12 +189,12 @@ class LogDBManager {
     ///   - completion: a handler to be called in the main thread after completion
     func asyncRead(level: OptimizelyLogLevel,
                    keyword: String?,
-                   countPerPage: Int = 100,
-                   completion: @escaping (Int, [LogItem]) -> Void) {
+                   direction: Direction = .forward,
+                   completion: @escaping ([LogItem]) -> Void) {
         DispatchQueue.global().async {
-            let (sessionId, items) = self.read(level: level, keyword: keyword)
+            let items = self.read(level: level, keyword: keyword, direction: direction)
             DispatchQueue.main.async {
-                completion(sessionId, items)
+                completion(items)
             }
         }
     }
@@ -163,24 +212,17 @@ class LogDBManager {
 
     // MARK: - private methods
 
-    private func read(level: OptimizelyLogLevel, keyword: String?, countPerPage: Int = 25) -> (Int, [LogItem]) {
-        priSessionId.performAtomic { value in
-            priSessionId.property = value + 1
+    private func read(level: OptimizelyLogLevel, keyword: String?, direction: Direction) -> [LogItem] {
+        if session == nil {
+            session = FetchSession(level: level, keyword: keyword)
+        } else {
+            session!.reSyncIfNeeded(level: level, keyword: keyword)
         }
+        session!.direction = direction
+
+        let items = fetchDB(session: session!)
         
-        let session = FetchSession(id: sessionId, level: level, keyword: keyword, countPerPage: countPerPage)
-        sessions[session.id] = session
-        
-        let items = fetchDB(session: session)
-        
-        return (sessionId, items)
-    }
-    
-    private func read(sessionId: Int) -> (Int, [LogItem]) {
-        guard let session = sessions[sessionId] else { return (sessionId, []) }
-        
-        let items = fetchDB(session: session)
-        return (sessionId, items)
+        return items
     }
     
     private func clear() {
@@ -193,10 +235,44 @@ class LogDBManager {
             do {
                 try context.execute(deleteRequest)
                 try context.save()
+                
+                session = nil
             } catch {
                 print("[ERROR] log clear failed: \(error)")
             }
         }
+    }
+    
+    private func removeOldestItems(count: Int) -> Int? {
+        var updatedCount: Int?
+
+        guard let context = defaultContext else { return updatedCount }
+
+        context.performAndWait { // synchronous clear
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LogItem")
+            let sort = NSSortDescriptor(key: "date", ascending: true)   // old date first
+            request.sortDescriptors = [sort]
+            
+            
+//            var subpredicates = [NSPredicate]()
+//            subpredicates.append(NSPredicate(format: "level <= %d", session.level.rawValue))
+//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+//
+            
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+            
+            do {
+                try context.execute(deleteRequest)
+                try context.save()
+                
+                // get accurate count after removing some items
+                updatedCount = try context.count(for: NSFetchRequest<NSManagedObject>(entityName: "LogItem"))
+            } catch {
+                print("[ERROR] log clear failed: \(error)")
+            }
+        }
+        
+        return updatedCount
     }
     
     private func fetchDB(session: FetchSession) -> [LogItem] {
@@ -206,7 +282,10 @@ class LogDBManager {
         
         context.performAndWait {  // synchronous fetch
             let request = NSFetchRequest<NSManagedObject>(entityName: "LogItem")
-            let sort = NSSortDescriptor(key: "date", ascending: false)
+            request.fetchLimit = session.fetchLimit
+            request.fetchOffset = session.fetchOffset
+            
+            let sort = NSSortDescriptor(key: "date", ascending: false)  // new date first
             request.sortDescriptors = [sort]
             var subpredicates = [NSPredicate]()
             subpredicates.append(NSPredicate(format: "level <= %d", session.level.rawValue))

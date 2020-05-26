@@ -81,7 +81,7 @@ class LogDBManager {
     
     // MARK: - props
     
-    let maxItemsCount: Int
+    var maxItemsCount = AtomicProperty<Int>(property: 10000)
     private var itemsCount = AtomicProperty<Int>(property: 0)
     var session: FetchSession?
     
@@ -114,14 +114,17 @@ class LogDBManager {
     
     // MARK: - init
     
-    init(maxItemsCount: Int, clearOnStart: Bool = true) {
-        self.maxItemsCount = maxItemsCount
-        
-        if clearOnStart {
-            self.asyncClear(completion: nil)
-        }
+    init() {
+        // dump old logs and start fresh
+        self.asyncClear(completion: nil)
     }
     
+    // MARK: - configurable
+    
+    func changeMaxItemsCount(_ count: Int) {
+        maxItemsCount.property = count
+    }
+        
     // MARK: - methods
     
     func saveContext () {
@@ -151,13 +154,13 @@ class LogDBManager {
             
             // count sync (session logs can be written in multiple contexts)
             
-            self.itemsCount.performAtomic { (value) in
+            self.itemsCount.performAtomic { value in
                 var count = value
-                if count >= self.maxItemsCount {
-                    let numToBeRemoved = Int(Double(self.maxItemsCount) * 0.2)
+                if let maxCount = self.maxItemsCount.property, count >= maxCount {
+                    let numToBeRemoved = Int(Double(maxCount) * 0.2)
                     if let countAfter = self.removeOldestItems(count: numToBeRemoved) {
-                        print(">>>>> removeOldestItems: \(self.maxItemsCount) \(numToBeRemoved) \(count) \(countAfter)")
                         count = countAfter
+                        print("[OptimizelyDebugger] removeOldestItems: maxCount=\(maxCount) countAfterRemove=\(countAfter)")
                     }
                 }
                 

@@ -18,23 +18,54 @@ import UIKit
 
 @objcMembers public class OptimizelyDebugger: NSObject {
     static let shared = OptimizelyDebugger()
-    
+    static var enabled = true
+
     let logManager: LogDBManager
-    let maxLogItemsCount = 10000
     
     private override init() {
-        logManager = LogDBManager(maxItemsCount: maxLogItemsCount)
+        logManager = LogDBManager()
     }
     
-    public static func open(client: OptimizelyClient?, inViewController parent: UIViewController) {
+    /// Open the OptimizelyDebugger UI
+    /// - Parameters:
+    ///   - client: an instance of OptimizelyClint to be debugged
+    ///   - parent: the parent view controller to present the debugger UI to
+    public static func open(client: OptimizelyClient?,
+                            inViewController parent: UIViewController) {
         #if os(iOS) && (DEBUG || OPT_DBG)
-        shared.openDebugger(client: client, inViewController: parent)
+        if enabled {
+            shared.openDebugger(client: client, inViewController: parent)
+        }
         #endif
     }
     
+    /// Disable OptimizelyDebugger programmatically
+    ///
+    /// Call this before initializing OptimizelyClient to disable the debugger  (default: enabled)
+    /// - Parameter enable: true for enabled
+    public static func enable(_ enable: Bool) {
+        enabled = enable
+    }
+    
+    /// Change maximum log items count in the session log database
+    /// - Parameter maxLogItemsCount: max count (default: 10000)
+    public static func setConfig(maxLogItemsCount: Int? = nil) {
+        if let maxCount = maxLogItemsCount {
+            shared.logManager.changeMaxItemsCount(maxCount)
+        }
+    }
+    
+    /// Call this to log messages into the session log database (necessary only if a cusom logger is used)
+    ///
+    /// - Parameters:
+    ///   - level: log level
+    ///   - module: module name
+    ///   - text: log message
     public static func logForDebugSession(level: OptimizelyLogLevel, module: String, text: String) {
         #if os(iOS) && (DEBUG || OPT_DBG)
-        shared.logManager.insert(level: level, module: module, text: text)
+        if enabled {
+            shared.logManager.insert(level: level, module: module, text: text)
+        }
         #endif
     }
 }
@@ -46,11 +77,9 @@ extension OptimizelyDebugger {
         guard let client = client else { return }
         guard let parent = parent else { return }
         
-        let coreVC = DebugViewController()
-        coreVC.client = client
-        coreVC.title = "Optimizely Debugger"
-        coreVC.logManager = logManager
-        
+        let coreVC = DebugViewController(client: client,
+                                         title: "Optimizely Debugger",
+                                         logManager: logManager)        
         let debugNVC = UINavigationController()
         debugNVC.setViewControllers([coreVC], animated: true)
         

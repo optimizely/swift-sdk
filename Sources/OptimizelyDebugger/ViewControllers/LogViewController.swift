@@ -26,6 +26,14 @@ class LogViewController: UITableViewController {
     var level: OptimizelyLogLevel = .info
     var refreshController: UIRefreshControl!
         
+    convenience init(client: OptimizelyClient, title: String, logManager: LogDBManager) {
+        self.init(nibName: nil, bundle: nil)
+        
+        self.client = client
+        self.title = title
+        self.logManager = logManager
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         

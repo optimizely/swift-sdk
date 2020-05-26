@@ -19,10 +19,17 @@
 import UIKit
 
 class PropsTableViewController: UITableViewController {
-    var props: Any?
+    var props: Any!
     var dict: [String: Any]!
     var fixedOrder = [String]()
     
+    convenience init(props: Any, title: String) {
+        self.init(nibName: nil, bundle: nil)
+        
+        self.props = props
+        self.title = title
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         

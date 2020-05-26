@@ -37,6 +37,13 @@ class UserContextViewController: UITableViewController {
         case userProfiles = "User Profiles"
     }
         
+    convenience init(client: OptimizelyClient, title: String) {
+        self.init(style: .grouped)
+
+        self.client = client
+        self.title = title
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         

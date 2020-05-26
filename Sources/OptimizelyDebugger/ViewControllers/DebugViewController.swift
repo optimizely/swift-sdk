@@ -34,15 +34,22 @@ class DebugViewController: UITableViewController {
         }
     }
 
-    weak var client: OptimizelyClient?
-    weak var logManager: LogDBManager?
+    weak var client: OptimizelyClient!
+    weak var logManager: LogDBManager!
     
     var items = [DebuggerItem]()
+    
+    convenience init(client: OptimizelyClient, title: String, logManager: LogDBManager) {
+        self.init(nibName: nil, bundle: nil)
+        
+        self.client = client
+        self.title = title
+        self.logManager = logManager
+    }
         
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let client = client else { return }
         guard let config = try? client.getOptimizelyConfig() else { return }
         
         //navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Menu", style: .plain, target: self, action: nil)
@@ -77,24 +84,17 @@ class DebugViewController: UITableViewController {
     // MARK: - segues
     
     func openPropsView(title: String, props: Any) {
-        let vc = PropsTableViewController()
-        vc.title = title
-        vc.props = props
+        let vc = PropsTableViewController(props: props, title: title)
         self.show(vc, sender: self)
     }
     
     func openLogView() {
-        let vc = LogViewController()
-        vc.client = client
-        vc.title = "Logs"
-        vc.logManager = logManager
+        let vc = LogViewController(client: client, title: "Logs", logManager: logManager)
         self.show(vc, sender: self)
     }
         
     func openUserContexts() {
-        let vc = UserContextViewController(style: .grouped)
-        vc.client = client
-        vc.title = "User Contexts"
+        let vc = UserContextViewController(client: client, title: "User Contexts")
         self.show(vc, sender: self)
     }
     

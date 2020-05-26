@@ -32,9 +32,12 @@ class LogDBManager {
     
     // MARK: - props
     
-    let maxItemsCount: Int
+    let maxItemsCount: Int    
     private var itemsCount = AtomicProperty<Int>(property: 0)
-
+    var session: FetchSession?
+    
+    // MARK: - FetchSession
+    
     struct FetchSession {
         var level: OptimizelyLogLevel
         var keyword: String?
@@ -71,8 +74,9 @@ class LogDBManager {
             self.keyword = keyword
             self.currentTime = Date()
         }
-        
     }
+    
+    // MARK: - Direction
     
     enum Direction {
         case forward
@@ -80,8 +84,6 @@ class LogDBManager {
         case current
         case reset
     }
-    
-    var session: FetchSession?
     
     // MARK: - Thread-safe CoreData
 
@@ -112,8 +114,12 @@ class LogDBManager {
     
     // MARK: - init
     
-    init(maxItemsCount: Int) {
+    init(maxItemsCount: Int, clearOnStart: Bool = true) {
         self.maxItemsCount = maxItemsCount
+        
+        if clearOnStart {
+            self.asyncClear(completion: nil)
+        }
     }
     
     // MARK: - methods
@@ -191,11 +197,11 @@ class LogDBManager {
     
     /// Asynchronously remove all log items from the session log database
     /// - Parameter completion: a handler to be called in the main thread after completion
-    func asyncClear(completion: @escaping () -> Void) {
+    func asyncClear(completion: (() -> Void)?) {
         DispatchQueue.global().async {
             self.clear()
             DispatchQueue.main.async {
-                completion()
+                completion?()
             }
         }
     }

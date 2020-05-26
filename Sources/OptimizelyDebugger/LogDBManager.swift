@@ -30,12 +30,6 @@ final class LogItem: NSManagedObject {
 /// This manages log messages stored into database during the current session.
 class LogDBManager {
     
-    // MARK: - props
-    
-    let maxItemsCount: Int    
-    private var itemsCount = AtomicProperty<Int>(property: 0)
-    var session: FetchSession?
-    
     // MARK: - FetchSession
     
     struct FetchSession {
@@ -84,6 +78,12 @@ class LogDBManager {
         case current
         case reset
     }
+    
+    // MARK: - props
+    
+    let maxItemsCount: Int
+    private var itemsCount = AtomicProperty<Int>(property: 0)
+    var session: FetchSession?
     
     // MARK: - Thread-safe CoreData
 
@@ -156,6 +156,7 @@ class LogDBManager {
                 if count >= self.maxItemsCount {
                     let numToBeRemoved = Int(Double(self.maxItemsCount) * 0.2)
                     if let countAfter = self.removeOldestItems(count: numToBeRemoved) {
+                        print(">>>>> removeOldestItems: \(self.maxItemsCount) \(numToBeRemoved) \(count) \(countAfter)")
                         count = countAfter
                     }
                 }
@@ -217,9 +218,7 @@ class LogDBManager {
             session!.direction = direction
         }
 
-        let items = fetchDB(session: session!)
-        
-        return items
+        return fetchDB(session: session!)
     }
     
     private func clear() {
@@ -249,13 +248,7 @@ class LogDBManager {
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "LogItem")
             let sort = NSSortDescriptor(key: "date", ascending: true)   // old date first
             request.sortDescriptors = [sort]
-            
-            
-//            var subpredicates = [NSPredicate]()
-//            subpredicates.append(NSPredicate(format: "level <= %d", session.level.rawValue))
-//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
-//
-            
+            request.fetchLimit = count
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
             
             do {

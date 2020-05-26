@@ -20,7 +20,7 @@ import UIKit
     static let shared = OptimizelyDebugger()
     
     let logManager: LogDBManager
-    let maxLogItemsCount = 100000
+    let maxLogItemsCount = 10000
     
     private override init() {
         logManager = LogDBManager(maxItemsCount: maxLogItemsCount)

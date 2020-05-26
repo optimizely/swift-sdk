@@ -38,6 +38,7 @@ class LogDBManager {
     struct FetchSession {
         var level: OptimizelyLogLevel
         var keyword: String?
+        var currentTime: Date
         var nextPage: Int = 0
         let countPerPage = 30
         
@@ -68,18 +69,7 @@ class LogDBManager {
         init(level: OptimizelyLogLevel, keyword: String? = nil) {
             self.level = level
             self.keyword = keyword
-        }
-        
-        /// Restart from the first page if level or keyward is changed
-        /// - Parameters:
-        ///   - level: new level
-        ///   - keyword: new keyword
-        mutating func reSyncIfNeeded(level: OptimizelyLogLevel, keyword: String? = nil) {
-            if level != self.level || keyword != self.keyword {
-                self.level = level
-                self.keyword = keyword
-                self.direction = .reset
-            }
+            self.currentTime = Date()
         }
         
     }
@@ -215,10 +205,11 @@ class LogDBManager {
     private func read(level: OptimizelyLogLevel, keyword: String?, direction: Direction) -> [LogItem] {
         if session == nil {
             session = FetchSession(level: level, keyword: keyword)
+        } else if case .reset = direction {
+            session = FetchSession(level: level, keyword: keyword)
         } else {
-            session!.reSyncIfNeeded(level: level, keyword: keyword)
+            session!.direction = direction
         }
-        session!.direction = direction
 
         let items = fetchDB(session: session!)
         
@@ -289,6 +280,11 @@ class LogDBManager {
             request.sortDescriptors = [sort]
             var subpredicates = [NSPredicate]()
             subpredicates.append(NSPredicate(format: "level <= %d", session.level.rawValue))
+            
+            // use fixed date as boundary so that fetch-by-page page boundaries do not change while exploring
+            // - this date boundary is reset when a new search (level or keyword chnages) starts.
+            subpredicates.append(NSPredicate(format: "date <= %@", session.currentTime as NSDate))
+            
             if let kw = session.keyword {
                 subpredicates.append(NSPredicate(format: "text CONTAINS[cd] %@", kw))
             }

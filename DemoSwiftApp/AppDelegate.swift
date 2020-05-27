@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let eventKey = "sample_conversion"
 
     let userId = String(Int.random(in: 0..<100000))
-    let attributes: [String: Any?] = ["browser_type": "safari", "bool_attr": false]
+    let attributes: [String: Any?] = ["browser_type": "safari", "bool_attr": false, "location": "IL"]
 
     var window: UIWindow?
     var optimizely: OptimizelyClient!
@@ -193,7 +193,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             as? VariationViewController {
 
             variationViewController.showCoupon = optimizely.isFeatureEnabled(featureKey: "show_coupon",
-                                                                         userId: userId)
+                                                                             userId: userId,
+                                                                             attributes: attributes)
             variationViewController.optimizely = optimizely
             variationViewController.userId = userId
             variationViewController.variationKey = variationKey

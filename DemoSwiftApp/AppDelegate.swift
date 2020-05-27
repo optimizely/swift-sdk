@@ -27,8 +27,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let eventKey = "sample_conversion"
 
     let userId = String(Int.random(in: 0..<100000))
-    let attributes: [String: Any?] = ["browser_type": "safari", "bool_attr": false]
-
+   // let attributes: [String: Any?] = ["browser_type": "safari", "bool_attr": false]
+    //let attributes: [String: Any?]? = nil
+    let attributes: [String: Any?] = ["testAttr": 15]
+    
+    
     var window: UIWindow?
     var optimizely: OptimizelyClient!
     var storyboard: UIStoryboard {

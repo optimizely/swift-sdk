@@ -19,8 +19,8 @@
 import UIKit
 
 class LogViewController: UITableViewController {
-    weak var client: OptimizelyClient?
-    weak var logManager: LogDBManager?
+    weak var client: OptimizelyClient!
+    weak var logManager: LogDBManager!
     var items = [LogItem]()
     var keyword: String?
     var level: OptimizelyLogLevel = .info

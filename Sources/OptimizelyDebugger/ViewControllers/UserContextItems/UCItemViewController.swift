@@ -19,13 +19,22 @@
 import UIKit
 
 class UCItemViewController: UIViewController {
-    weak var client: OptimizelyClient?
+    weak var client: OptimizelyClient!
     var userId: String!
     var pair: (key: String, value: Any)?
 
     var saveBtn: UIButton!
     var removeBtn: UIButton!
     
+    convenience init(client: OptimizelyClient, title: String, userId: String, pair: (String, Any)?) {
+        self.init(nibName: nil, bundle: nil)
+        
+        self.client = client
+        self.title = title
+        self.userId = userId
+        self.pair = pair
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         

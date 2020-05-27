@@ -30,7 +30,7 @@ import Foundation
     
     init(userId: String, attributes: OptimizelyAttributes?) {
         self.userId = userId
-        self.attributes = attributes
+        self.attributes = attributes ?? [:]
         self.userProfiles = [:]
         self.forcedVariations = [:]
         self.forcedFeatures = [:]

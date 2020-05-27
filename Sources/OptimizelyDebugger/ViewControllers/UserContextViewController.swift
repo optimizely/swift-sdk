@@ -19,13 +19,12 @@
 import UIKit
 
 class UserContextViewController: UITableViewController {
-    weak var client: OptimizelyClient?
+    weak var client: OptimizelyClient!
     
     var userView: UITextView!
     
     var userContext: OptimizelyUserContext?
     var allAttributes = [String]()
-    var attributes = [String]()
         
     let sectionHeaderHeight: CGFloat = 50.0
     var sections = [ContextItem]()
@@ -83,32 +82,8 @@ class UserContextViewController: UITableViewController {
     @objc func openMenu() {
         
     }
-    
-    @objc func saveUserContext() {
-        guard let userId = userView.text, userId.isEmpty == false
-            else {
-                let alert = UIAlertController(title: "Error", message: "Enter valid values and try again", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                return
-        }
-        
-        _ = UserContextManager.setUserContext(OptimizelyUserContext(userId: userId, attributes: nil))
-        
-        refreshTableView()
-    }
-    
-    func removeUserContext(userId: String, experimentKey: String) {
-        _ = UserContextManager.setUserContext(nil)
-        
-        refreshTableView()
-    }
             
     func refreshTableView() {
-        guard let user = userContext, let attrs = user.attributes else { return }
-        
-        attributes = Array(attrs.keys)
-        
         tableView.reloadData()
     }
 }
@@ -219,7 +194,7 @@ extension UserContextViewController {
         guard let dict = data else { return nil }
         
         let key = dict.keys.sorted()[indexPath.row]
-        let value = dict[key] as Any?
+        let value = dict[key]!    // NOTE: forced-unwrap required to avoid ?? attribute value
         return (key, value)
     }
     
@@ -235,21 +210,23 @@ extension UserContextViewController {
         let section = sections[sectionId]
         switch section {
         case .attributes:
-            vc = UCAttributeViewController()
+            vc = UCAttributeViewController(client: client,
+                                           title: section.rawValue,
+                                           userId: uc.userId,
+                                           pair: keyValuePair)
         case .userProfiles,
              .forcedVariations:
-            vc = UCVariationViewController()
+            vc = UCVariationViewController(client: client,
+                                           title: section.rawValue,
+                                           userId: uc.userId,
+                                           pair: keyValuePair)
         case .forcedFeatures:
-            vc = UCFeatureViewController()
+            vc = UCFeatureViewController(client: client,
+                                           title: section.rawValue,
+                                           userId: uc.userId,
+                                           pair: keyValuePair)
         }
         
-        vc.client = client
-        vc.title = section.rawValue
-        vc.pair = keyValuePair
-        vc.userId = uc.userId
-        
-        let nvc = UINavigationController(rootViewController: vc)
-     //   self.present(nvc, animated: true, completion: nil)
         self.show(vc, sender: self)
     }
 }

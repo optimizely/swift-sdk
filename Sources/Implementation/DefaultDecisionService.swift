@@ -188,6 +188,7 @@ class DefaultDecisionService: OPTDecisionService {
         let rolloutRules = rollout.experiments
         if rolloutRules.isEmpty {
             logger.e(.rolloutHasNoExperiments(rolloutId))
+            return nil
         }
 
         // Evaluate all rollout rules except for last one

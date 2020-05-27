@@ -20,11 +20,13 @@ import UIKit
     static let shared = OptimizelyDebugger()
     static var enabled = true
 
+    #if os(iOS) && (DEBUG || OPT_DBG)
     let logManager: LogDBManager
     
     private override init() {
         logManager = LogDBManager()
     }
+    #endif
     
     /// Open the OptimizelyDebugger UI
     /// - Parameters:
@@ -50,9 +52,11 @@ import UIKit
     /// Change maximum log items count in the session log database
     /// - Parameter maxLogItemsCount: max count (default: 10000)
     public static func setConfig(maxLogItemsCount: Int? = nil) {
+        #if os(iOS) && (DEBUG || OPT_DBG)
         if let maxCount = maxLogItemsCount {
             shared.logManager.changeMaxItemsCount(maxCount)
         }
+        #endif
     }
     
     /// Call this to log messages into the session log database (necessary only if a cusom logger is used)

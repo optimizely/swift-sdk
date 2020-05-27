@@ -28,6 +28,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    // shake-action support
+    [self becomeFirstResponder];
+
     if ([self.variationKey isEqualToString:@"variation_a"]) {
         self.variationLetterLabel.text = @"A";
         self.variationLetterLabel.textColor = [UIColor blackColor];
@@ -57,5 +60,16 @@
     }
 }
 
+// MARK: - Shake-action support
+
+-(bool)canBecomeFirstResponder {
+    return true;
+}
+
+-(void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+    if (motion == UIEventSubtypeMotionShake) {
+        [OptimizelyDebugger openWithClient:self.optimizely inViewController:self];
+    }
+}
 
 @end

@@ -48,7 +48,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     //     - initialize immediately with the given JSON datafile or its cached copy
     //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
     
-    [self initializeOptimizelySDKWithCustomization];
+    [self initializeOptimizelySDKAsynchronous];
     return YES;
 }
 

@@ -191,13 +191,13 @@ class UCAttributeViewController: UCItemViewController {
         
         switch ValueType(rawValue: type) {
         case .string:
-            value = valueView.text as Any
+            value = valueView.text ?? ""
         case .integer:
-            value = Int(valueView.text ?? "") as Any
+            value = Int(valueView.text ?? "") ?? 0
         case .double:
-            value = Double(valueView.text ?? "") as Any
+            value = Double(valueView.text ?? "") ?? 0.0
         case .boolean:
-            value = Bool(valueBooleanView.text ?? "") as Any
+            value = Bool(valueBooleanView.text ?? "") ?? false
         case .none:
             return
         }

@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BD64853A2491474500F30986"
-               BuildableName = "OptimizelySwiftSDK-macOS.framework"
+               BuildableName = "Optimizely.framework"
                BlueprintName = "OptimizelySwiftSDK-macOS"
                ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BD64853A2491474500F30986"
-            BuildableName = "OptimizelySwiftSDK-macOS.framework"
+            BuildableName = "Optimizely.framework"
             BlueprintName = "OptimizelySwiftSDK-macOS"
             ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
          </BuildableReference>

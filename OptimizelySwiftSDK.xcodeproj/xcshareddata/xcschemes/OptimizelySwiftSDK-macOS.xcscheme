@@ -40,6 +40,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "BD64853A2491474500F30986"
+            BuildableName = "Optimizely.framework"
+            BlueprintName = "OptimizelySwiftSDK-macOS"
+            ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

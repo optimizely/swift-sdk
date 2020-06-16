@@ -111,7 +111,7 @@ class DefaultDecisionService: OPTDecisionService {
                 result = try holder.evaluate(project: config.project, attributes: attributes)
             }
         } catch {
-            logger.d(error as? OptimizelyError, source: "isInExperiment(experiment: \(experiment.key), userId: \(userId))")
+            logger.i(error as? OptimizelyError, source: "isInExperiment(experiment: \(experiment.key), userId: \(userId))")
             result = false
         }
         

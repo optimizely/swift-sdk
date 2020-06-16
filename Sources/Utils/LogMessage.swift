@@ -61,6 +61,7 @@ enum LogMessage {
     case variableNotUsedReturnDefaultVariableValue(_ variable: String)
     case userReceivedVariableValue(_ userId: String, _ feature: String, _ variable: String, _ value: String)
     case variationRemovedForUser(_ userId: String, _ expKey: String)
+    case audienceEvaluationStarted(_ audience: String, _ conditions: String)
     case audienceEvaluationResult(_ audience: String, _ result: String)
     case audienceEvaluationResultCombined(_ expKey: String, _ result: String)
     case unrecognizedAttribute(_ key: String)
@@ -120,6 +121,7 @@ extension LogMessage: CustomStringConvertible {
         case .variableNotUsedReturnDefaultVariableValue(let variable):          message = "Variable (\(variable)) is not used in variation. Returning default value."
         case .userReceivedVariableValue(let userId, let feature, let variable, let value): message = "Value for variable (\(variable)) of feature flag (\(feature)) is (\(value)) for user (\(userId))"
         case .variationRemovedForUser(let userId, let expKey):                  message = "Variation mapped to experiment (\(expKey)) has been removed for user (\(userId))."
+        case .audienceEvaluationStarted(let audience, let conditions):          message = "Starting to evaluate audience \"\(audience)\" with conditions: \(conditions)."
         case .audienceEvaluationResult(let audience, let result):               message = "Audience (\(audience)) evaluated to (\(result))."
         case .audienceEvaluationResultCombined(let expKey, let result):         message = "Audiences for experiment (\(expKey)) collectively evaluated to (\(result))."
         case .unrecognizedAttribute(let key):                                   message = "Unrecognized attribute (\(key)) provided. Pruning before sending event to Optimizely."

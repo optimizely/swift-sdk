@@ -115,7 +115,7 @@ class DefaultDecisionService: OPTDecisionService {
             result = false
         }
         
-        logger.d(.audienceEvaluationResultCombined(experiment.key, result.description))
+        logger.i(.audienceEvaluationResultCombined(experiment.key, result.description))
 
         return result
     }

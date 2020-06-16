@@ -64,6 +64,21 @@ struct Audience: Codable, Equatable {
     }
     
     func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
-        return try conditions.evaluate(project: project, attributes: attributes)
+        let logger = OPTLoggerFactory.getLogger()
+        if let conditions = try? JSONEncoder().encode(conditions), let conditionsString = String(data: conditions, encoding: .utf8)  {
+            logger.d(.audienceEvaluationStarted(id, conditionsString))
+        }
+        var result: Bool?
+        var err: Error?
+        do {
+            result = try conditions.evaluate(project: project, attributes: attributes)
+        } catch {
+            err = error
+        }
+        logger.d(.audienceEvaluationResult(id, result?.description ?? "unknown"))
+        guard let error = err else {
+            return result!
+        }
+        throw error
     }
 }

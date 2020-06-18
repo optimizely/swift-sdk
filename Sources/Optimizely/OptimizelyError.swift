@@ -119,10 +119,10 @@ extension OptimizelyError: CustomStringConvertible {
         case .conditionInvalidFormat(let hint):             message = "Condition has an invalid format (\(hint))"
         case .conditionCannotBeEvaluated(let hint):         message = "Condition cannot be evaluated (\(hint))"
         case .evaluateAttributeInvalidType(let hint):       message = "Evaluation attribute has an invalid value (\(hint))"
-        case .evaluateAttributeValueOutOfRange(let hint):   message = "Evaluation attribute has a value out of range (\(hint))"
+        case .evaluateAttributeValueOutOfRange(let hint):   message = "Evaluation attribute has a value out of range [-2^53, +2^53]. (\(hint))"
         case .evaluateAttributeInvalidFormat(let hint):     message = "Evaluation attribute has an invalid format (\(hint))"
-        case .userAttributeInvalidType(let hint):           message = "UserAttribute has an invalid attribute type (\(hint))"
-        case .userAttributeInvalidMatch(let hint):          message = "UserAttribute has an invalid match type (\(hint))"
+        case .userAttributeInvalidType(let hint):           message = "UserAttribute has an unknown attribute type (\(hint)). You may need to upgrade to a newer release of the Optimizely SDK."
+        case .userAttributeInvalidMatch(let hint):          message = "UserAttribute has an unknown match type (\(hint)). You may need to upgrade to a newer release of the Optimizely SDK."
         case .userAttributeInvalidFormat(let hint):         message = "UserAttribute has an invalid format (\(hint))"
 
         case .userIdInvalid:                                message = "Provided user ID is in an invalid format."

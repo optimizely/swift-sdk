@@ -110,7 +110,7 @@ extension UserAttribute {
         
         if matchFinal != .exists {
             if value == nil {
-                throw OptimizelyError.userAttributeInvalidFormat("missing value (\(nameFinal)) in condition)")
+                throw OptimizelyError.userAttributeInvalidFormat("no value was passed for user attribute (\(nameFinal)) in condition)")
             }
             
             if rawAttributeValue == nil {

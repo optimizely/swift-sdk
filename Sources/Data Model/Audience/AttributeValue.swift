@@ -163,6 +163,10 @@ extension AttributeValue {
 
         return currentDouble > targetDouble
     }
+
+    func isGreaterOrEqual(than target: Any) throws -> Bool {
+        return try isGreater(than: target) || isExactMatch(with: target)
+    }
     
     func isLess(than target: Any) throws -> Bool {
         guard let targetValue = AttributeValue(value: target) else {
@@ -177,6 +181,10 @@ extension AttributeValue {
         try checkValidAttributeNumber(target)
 
         return currentDouble < targetDouble
+    }
+    
+    func isLessOrEqual(than target: Any) throws -> Bool {
+        return try isLess(than: target) || isExactMatch(with: target)
     }
     
     var doubleValue: Double? {

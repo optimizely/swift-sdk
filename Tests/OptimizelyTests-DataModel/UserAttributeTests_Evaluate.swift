@@ -204,7 +204,32 @@ extension UserAttributeTests_Evaluate {
         let model = UserAttribute(name: "country", type: "custom_attribute", match: "gt", value: .double(101.2))
         XCTAssertFalse(try! model.evaluate(attributes: attributes))
     }
+    
+}
 
+// MARK: - Evaluate (GE)
+
+extension UserAttributeTests_Evaluate {
+    
+    func testGreaterThanOrEqualIntToInt() {
+        var attributes = ["country": 50]
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "ge", value: .int(50))
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 49
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testGreaterThanOrEqualDoubleToDouble() {
+        var attributes = ["country": 100.0]
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "ge", value: .double(51.3))
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51.3
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51.0
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
 }
 
 // MARK: - Evaluate (LT)
@@ -266,3 +291,31 @@ extension UserAttributeTests_Evaluate {
     }
 
 }
+
+// MARK: - Evaluate (LE)
+
+extension UserAttributeTests_Evaluate {
+    
+    func testLessThanOrEqualIntToInt() {
+        var attributes = ["country": 50]
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "le", value: .int(50))
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 49
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testLessThanOrEqualDoubleToDouble() {
+        var attributes = ["country": 25.0]
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "le", value: .double(51.3))
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51.3
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 52.0
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+
+}
+

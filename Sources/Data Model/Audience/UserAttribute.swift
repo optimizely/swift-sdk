@@ -43,7 +43,13 @@ struct UserAttribute: Codable, Equatable {
         case exists
         case substring
         case lt
+        case le
         case gt
+        case ge
+        case semver_lt
+        case semver_le
+        case semver_gt
+        case semver_ge
     }
     
     var typeSupported: ConditionType? {
@@ -129,10 +135,18 @@ extension UserAttribute {
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
             return try value!.isGreater(than: rawAttributeValue!)
+        case .le:
+            // user attribute "less than" or equal this condition value
+            // so evaluate if this condition value "isGreater" than or equal the user attribute value
+            return try value!.isGreaterOrEqual(than: rawAttributeValue!)
         case .gt:
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
             return try value!.isLess(than: rawAttributeValue!)
+        case .ge:
+            // user attribute "greater than or equal" this condition value
+            // so evaluate if this condition value "isLess" than or equal the user attribute value
+            return try value!.isLessOrEqual(than: rawAttributeValue!)
         }
     }
     

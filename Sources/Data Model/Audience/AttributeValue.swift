@@ -187,6 +187,40 @@ extension AttributeValue {
         return try isLess(than: target) || isExactMatch(with: target)
     }
     
+    func isSemanticVersionEqual(than target: Any) throws -> Bool {
+        guard let targetValue = AttributeValue(value: target) else {
+            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+        }
+
+        return (self.stringValue as SemanticVersion).compareVersion(targetedVersion: targetValue.stringValue) == 0
+    }
+
+    func isSemanticVersionGreater(than target: Any) throws -> Bool {
+        guard let targetValue = AttributeValue(value: target) else {
+            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+        }
+
+        return (self.stringValue as SemanticVersion).compareVersion(targetedVersion: targetValue.stringValue) > 0
+    }
+
+    func isSemanticVersionLess(than target: Any) throws -> Bool {
+        guard let targetValue = AttributeValue(value: target) else {
+            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+        }
+
+        return (self.stringValue as SemanticVersion).compareVersion(targetedVersion: targetValue.stringValue) < 0
+    }
+
+    func isSemanticVersionGreaterOrEqual(than target: Any) throws -> Bool {
+        return try isSemanticVersionGreater(than: target) ||
+        isSemanticVersionEqual(than: target)
+    }
+
+    func isSemanticVersionLessOrEqual(than target: Any) throws -> Bool {
+        return try isSemanticVersionLess(than: target) ||
+        isSemanticVersionEqual(than: target)
+    }
+
     var doubleValue: Double? {
         switch self {
         case .double(let value): return value

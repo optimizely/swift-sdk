@@ -256,5 +256,38 @@ extension AttributeValueTests_Evaluate {
     func allValueTypes(value: Double) -> [Any] {
         return allIntTypes(value: value) + allNumTypes(value: value)
     }
+ }
+
+// MARK: - SemanticVersion
+extension AttributeValueTests_Evaluate {
+    func testIsSemanticSame() {
+        let model = try! OTUtils.getAttributeValueFromNative("2.0.0")
+        XCTAssertTrue(try! model.isSemanticVersionEqual(than: "2.0"))
+    }
+
+    func testIsSemanticSameFull() {
+        let model = try! OTUtils.getAttributeValueFromNative("3.0.0")
+        XCTAssertTrue(try! model.isSemanticVersionEqual(than: "3.0.0"))
+    }
+
+    func testIsSemanticLess() {
+        let model = try! OTUtils.getAttributeValueFromNative("2.1.6")
+        XCTAssertTrue(try! model.isSemanticVersionLess(than: "2.2"))
+    }
+
+    func testIsSemanticFullLess() {
+        let model = try! OTUtils.getAttributeValueFromNative("2.1.6")
+        XCTAssertTrue(try! model.isSemanticVersionLess(than: "2.1.9"))
+    }
+
+    func testIsSemanticMore() {
+        let model = try! OTUtils.getAttributeValueFromNative("2.3.6")
+        XCTAssertTrue(try! model.isSemanticVersionGreater(than: "2.2"))
+    }
+
+    func testIsSemanticFullMore() {
+        let model = try! OTUtils.getAttributeValueFromNative("2.1.9")
+        XCTAssertTrue(try! model.isSemanticVersionGreater(than: "2.1.6"))
+    }
 
 }

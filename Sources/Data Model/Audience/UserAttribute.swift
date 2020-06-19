@@ -46,6 +46,7 @@ struct UserAttribute: Codable, Equatable {
         case le
         case gt
         case ge
+        case semver_eq
         case semver_lt
         case semver_le
         case semver_gt
@@ -147,6 +148,16 @@ extension UserAttribute {
             // user attribute "greater than or equal" this condition value
             // so evaluate if this condition value "isLess" than or equal the user attribute value
             return try value!.isLessOrEqual(than: rawAttributeValue!)
+        case .semver_eq:
+            return try value!.isSemanticVersionEqual(than: rawAttributeValue!)
+        case .semver_lt:
+            return try value!.isSemanticVersionGreater(than: rawAttributeValue!)
+        case .semver_le:
+            return try value!.isSemanticVersionGreaterOrEqual(than: rawAttributeValue!)
+        case .semver_gt:
+            return try value!.isSemanticVersionLess(than: rawAttributeValue!)
+        case .semver_ge:
+            return try value!.isSemanticVersionLessOrEqual(than: rawAttributeValue!)
         }
     }
     

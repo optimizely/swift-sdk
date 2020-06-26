@@ -5,7 +5,8 @@ let package = Package(
     name: "Optimizely",
     platforms: [
         .iOS(.v10),
-        .tvOS(.v10)
+        .tvOS(.v10),
+        .macOS(.v10_14)
     ],
     products: [
         .library(name: "Optimizely",

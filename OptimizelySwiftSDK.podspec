@@ -8,6 +8,7 @@ Pod::Spec.new do |s|
   s.author                  = { "Optimizely" => "support@optimizely.com" }
   s.ios.deployment_target   = "10.0"
   s.tvos.deployment_target  = "10.0"
+  s.osx.deployment_target  = "10.14"
   s.source                  = {
     :git => "https://github.com/optimizely/swift-sdk.git",
     :tag => "v"+s.version.to_s
@@ -18,4 +19,3 @@ Pod::Spec.new do |s|
   s.requires_arc            = true
   s.xcconfig                = { 'GCC_PREPROCESSOR_DEFINITIONS' => "OPTIMIZELY_SDK_VERSION=@\\\"#{s.version}\\\"" }
 end
-

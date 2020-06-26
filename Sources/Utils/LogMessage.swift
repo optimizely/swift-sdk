@@ -38,7 +38,6 @@ enum LogMessage {
     case userDoesntMeetConditionsForTargetingRule(_ userId: String, _ index: Int)
     case userBucketedIntoTargetingRule(_ userId: String, _ index: Int)
     case userBucketedIntoEveryoneTargetingRule(_ userId: String)
-    case userNotBucketedIntoEveryoneTargetingRule(_ userId: String)
     case userNotBucketedIntoTargetingRule(_ userId: String, _ index: Int)
     case userHasForcedVariation(_ userId: String, _ expKey: String, _ varKey: String)
     case userHasForcedVariationButInvalid(_ userId: String, _ expKey: String)
@@ -61,8 +60,10 @@ enum LogMessage {
     case variableNotUsedReturnDefaultVariableValue(_ variable: String)
     case userReceivedVariableValue(_ userId: String, _ feature: String, _ variable: String, _ value: String)
     case variationRemovedForUser(_ userId: String, _ expKey: String)
+    case audienceEvaluationStarted(_ audience: String, _ conditions: String)
     case audienceEvaluationResult(_ audience: String, _ result: String)
-    case audienceEvaluationResultCombined(_ expKey: String, _ result: String)
+    case evaluatingAudiencesCombined(_ type: String, _ loggingKey: String, _ conditions: String)
+    case audienceEvaluationResultCombined(_ type: String, _ loggingKey: String, _ result: String)
     case unrecognizedAttribute(_ key: String)
     case eventBatchFailed
     case eventSendRetyFailed(_ count: Int)
@@ -95,10 +96,9 @@ extension LogMessage: CustomStringConvertible {
         case .userMappedToForcedVariation(let userId, let expId, let varId):    message = "Set variation (\(varId)) for experiment (\(expId)) and user (\(userId)) in the forced variation map."
         case .userMeetsConditionsForTargetingRule(let userId, let index):       message = "User (\(userId)) meets conditions for targeting rule (\(index))."
         case .userDoesntMeetConditionsForTargetingRule(let userId, let index):  message = "User (\(userId)) does not meet conditions for targeting rule (\(index))."
-        case .userBucketedIntoTargetingRule(let userId, let index):             message = "User (\(userId)) bucketed into targeting rule (\(index))."
-        case .userNotBucketedIntoTargetingRule(let userId, let index):          message = "User (\(userId)) not bucketed into targeting rule (\(index)) due to traffic allocation. Trying everyone rule."
-        case .userBucketedIntoEveryoneTargetingRule(let userId):                message = "User (\(userId)) bucketed into everyone targeting rule."
-        case .userNotBucketedIntoEveryoneTargetingRule(let userId):             message = "User (\(userId)) not bucketed into everyone targeting rule due to traffic allocation."
+        case .userBucketedIntoTargetingRule(let userId, let index):             message = "User \"\(userId)\" is in the traffic group of targeting rule (\(index))."
+        case .userBucketedIntoEveryoneTargetingRule(let userId):                message = "User \"\(userId)\" meets conditions for targeting rule \"Everyone Else\"."
+        case .userNotBucketedIntoTargetingRule(let userId, let index):     message = "User \"\(userId)\" is not in the traffic group for targeting rule \(index). Checking \"Everyone Else\" rule now."
         case .userHasForcedVariation(let userId, let expKey, let varKey):       message = "Variation (\(varKey)) is mapped to experiment (\(expKey)) and user \(userId)) in the forced variation map."
         case .userHasForcedVariationButInvalid(let userId, let expKey):         message = "Invalid variation is mapped to experiment (\(expKey)) and user (\(userId)) in the forced variation map."
         case .userHasNoForcedVariation(let userId):                             message = "User (\(userId)) is not in the forced variation map."
@@ -120,8 +120,10 @@ extension LogMessage: CustomStringConvertible {
         case .variableNotUsedReturnDefaultVariableValue(let variable):          message = "Variable (\(variable)) is not used in variation. Returning default value."
         case .userReceivedVariableValue(let userId, let feature, let variable, let value): message = "Value for variable (\(variable)) of feature flag (\(feature)) is (\(value)) for user (\(userId))"
         case .variationRemovedForUser(let userId, let expKey):                  message = "Variation mapped to experiment (\(expKey)) has been removed for user (\(userId))."
-        case .audienceEvaluationResult(let audience, let result):               message = "Audience (\(audience)) evaluated to (\(result))."
-        case .audienceEvaluationResultCombined(let expKey, let result):         message = "Audiences for experiment (\(expKey)) collectively evaluated to (\(result))."
+        case .audienceEvaluationStarted(let audience, let conditions):          message = "Starting to evaluate audience \"\(audience)\" with conditions: \(conditions)."
+        case .audienceEvaluationResult(let audience, let result):               message = "Audience \"(\(audience))\" evaluated to (\(result))."
+        case .evaluatingAudiencesCombined(let type, let loggingKey, let conditions):      message = "Evaluating audiences for \(type) \"\(loggingKey)\": \(conditions)."
+        case .audienceEvaluationResultCombined(let type, let loggingKey, let result):      message = "Audiences for \(type) \"\(loggingKey)\" collectively evaluated to (\(result))."
         case .unrecognizedAttribute(let key):                                   message = "Unrecognized attribute (\(key)) provided. Pruning before sending event to Optimizely."
         case .eventBatchFailed:                                                 message = "Failed to batch events"
         case .eventSendRetyFailed(let count):                                   message = "Event dispatch retries failed (\(count)) times"

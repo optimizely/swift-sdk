@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -48,12 +48,16 @@ public enum OptimizelyError: Error {
     case conditionNoMatchingAudience(_ id: String)
     case conditionInvalidFormat(_ hint: String)
     case conditionCannotBeEvaluated(_ hint: String)
-    case evaluateAttributeInvalidType(_ hint: String)
-    case evaluateAttributeValueOutOfRange(_ hint: String)
+    case evaluateAttributeInvalidCondition(_ condition: String)
+    case evaluateAttributeInvalidType(_ condition: String, _ value: Any, _ key: String)
+    case evaluateAttributeValueOutOfRange(_ condition: String, _ key: String)
     case evaluateAttributeInvalidFormat(_ hint: String)
-    case userAttributeInvalidType(_ hint: String)
-    case userAttributeInvalidMatch(_ hint: String)
-    case userAttributeInvalidFormat(_ hint: String)
+    case userAttributeInvalidType(_ condition: String)
+    case userAttributeInvalidMatch(_ condition: String)
+    case userAttributeNilValue(_ condition: String)
+    case nilAttributeValue(_ condition: String, _ key: String)
+    case userAttributeInvalidName(_ condition: String)
+    case missingAttributeValue(_ condition: String, _ key: String)
 
     // MARK: - Bucketing
     
@@ -118,13 +122,16 @@ extension OptimizelyError: CustomStringConvertible {
         case .conditionNoMatchingAudience(let id):          message = "Audience (\(id)) is not in datafile."
         case .conditionInvalidFormat(let hint):             message = "Condition has an invalid format (\(hint))"
         case .conditionCannotBeEvaluated(let hint):         message = "Condition cannot be evaluated (\(hint))"
-        case .evaluateAttributeInvalidType(let hint):       message = "Evaluation attribute has an invalid value (\(hint))"
-        case .evaluateAttributeValueOutOfRange(let hint):   message = "Evaluation attribute has a value out of range (\(hint))"
+        case .evaluateAttributeInvalidCondition(let condition): message = "Audience condition \"\(condition)\" has an unsupported condition value. You may need to upgrade to a newer release of the Optimizely SDK."
+        case .evaluateAttributeInvalidType(let condition, let value, let key):       message = "Audience condition \"\(condition)\" evaluated to UNKNOWN because a value of type \"\(value)\" was passed for user attribute \"\(key)\"."
+        case .evaluateAttributeValueOutOfRange(let condition, let key):   message = "Audience condition \"\(condition)\" evaluated to UNKNOWN because the number value for user attribute \"\(key)\" is not in the range [-2^53, +2^53]."
         case .evaluateAttributeInvalidFormat(let hint):     message = "Evaluation attribute has an invalid format (\(hint))"
-        case .userAttributeInvalidType(let hint):           message = "UserAttribute has an invalid attribute type (\(hint))"
-        case .userAttributeInvalidMatch(let hint):          message = "UserAttribute has an invalid match type (\(hint))"
-        case .userAttributeInvalidFormat(let hint):         message = "UserAttribute has an invalid format (\(hint))"
-
+        case .userAttributeInvalidType(let condition):      message = "Audience condition \"\(condition)\" uses an unknown condition type. You may need to upgrade to a newer release of the Optimizely SDK."
+        case .userAttributeInvalidMatch(let condition):     message = "Audience condition \"\(condition)\" uses an unknown match type. You may need to upgrade to a newer release of the Optimizely SDK."
+        case .userAttributeNilValue(let condition):         message = "Audience condition \"\(condition)\" evaluated to UNKNOWN because of null value."
+        case .nilAttributeValue(let condition, let key):    message = "Audience condition \"\(condition)\" evaluated to UNKNOWN because a null value was passed for user attribute \"\(key)\"."
+        case .userAttributeInvalidName(let condition):      message = "Audience condition \(condition) evaluated to UNKNOWN because of invalid attribute name."
+        case .missingAttributeValue(let condition, let key):    message = "Audience condition \(condition) evaluated to UNKNOWN because no value was passed for user attribute \"\(key)\"."
         case .userIdInvalid:                                message = "Provided user ID is in an invalid format."
         case .bucketingIdInvalid (let id):                  message = "Invalid bucketing ID (\(id))"
         case .userProfileInvalid:                           message = "Provided user profile object is invalid."

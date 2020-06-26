@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -42,6 +42,23 @@ struct Project: Codable, Equatable {
     var typedAudiences: [Audience]?
     var featureFlags: [FeatureFlag]
     var botFiltering: Bool?
+    let logger = OPTLoggerFactory.getLogger()
+    
+    // Required since logger in not decodable
+    enum CodingKeys: String, CodingKey {
+        // V2
+        case version, projectId, experiments, audiences, groups, attributes, accountId, events, revision
+        // V3
+        case anonymizeIP
+        // V4
+        case rollouts, typedAudiences, featureFlags, botFiltering
+    }
+    
+    // Required since logger in not equatable
+    static func ==(lhs: Project, rhs: Project) -> Bool {
+        return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments &&
+            lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes && lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision && lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts && lhs.typedAudiences == rhs.typedAudiences && lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering
+    }
 }
 
 extension Project: ProjectProtocol {
@@ -50,8 +67,22 @@ extension Project: ProjectProtocol {
         guard let audience = getAudience(id: audienceId) else {
             throw OptimizelyError.conditionNoMatchingAudience(audienceId)
         }
+        if let conditionString = Utils.getConditionString(conditions: audience.conditions) {
+            logger.d(.audienceEvaluationStarted(audienceId, conditionString))
+        }
         
-        return try audience.evaluate(project: self, attributes: attributes)
+        var result: Bool?
+        var err: Error?
+        do {
+            result = try audience.evaluate(project: self, attributes: attributes)
+        } catch {
+            err = error
+        }
+        logger.d(.audienceEvaluationResult(audienceId, result?.description ?? "unknown"))
+        guard let error = err else {
+            return result!
+        }
+        throw error
     }
     
 }

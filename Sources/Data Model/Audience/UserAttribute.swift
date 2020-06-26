@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -90,31 +90,37 @@ extension UserAttribute {
     
     func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {
         
+        let conditionString = Utils.getConditionString(conditions: self) ?? ""
+        
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         if typeSupported == nil {
-            throw OptimizelyError.userAttributeInvalidType(self.type ?? "empty")
+            throw OptimizelyError.userAttributeInvalidType(conditionString)
         }
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            throw OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty")
+            throw OptimizelyError.userAttributeInvalidMatch(conditionString)
         }
         
         guard let nameFinal = name else {
-            throw OptimizelyError.userAttributeInvalidFormat("empty name in condition")
+            throw OptimizelyError.userAttributeInvalidName(conditionString)
         }
         
         let attributes = attributes ?? OptimizelyAttributes()
-        
-        let rawAttributeValue = attributes[nameFinal] ?? nil  // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
+        var rawAttributeValue: Any?
+        if attributes.keys.contains(nameFinal) {
+            rawAttributeValue = attributes[nameFinal] ?? nil // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
+        } else {
+            throw OptimizelyError.missingAttributeValue(conditionString, nameFinal)
+        }
         
         if matchFinal != .exists {
             if value == nil {
-                throw OptimizelyError.userAttributeInvalidFormat("missing value (\(nameFinal)) in condition)")
+                throw OptimizelyError.userAttributeNilValue(conditionString)
             }
             
             if rawAttributeValue == nil {
-                throw OptimizelyError.evaluateAttributeInvalidFormat("no attribute value for (\(nameFinal))")
+                throw OptimizelyError.nilAttributeValue(conditionString, nameFinal)
             }
         }
         
@@ -122,17 +128,17 @@ extension UserAttribute {
         case .exists:
             return !(rawAttributeValue is NSNull || rawAttributeValue == nil)
         case .exact:
-            return try value!.isExactMatch(with: rawAttributeValue!)
+            return try value!.isExactMatch(with: rawAttributeValue!, condition: conditionString, name: nameFinal)
         case .substring:
-            return try value!.isSubstring(of: rawAttributeValue!)
+            return try value!.isSubstring(of: rawAttributeValue!, condition: conditionString, name: nameFinal)
         case .lt:
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
-            return try value!.isGreater(than: rawAttributeValue!)
+            return try value!.isGreater(than: rawAttributeValue!, condition: conditionString, name: nameFinal)
         case .gt:
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
-            return try value!.isLess(than: rawAttributeValue!)
+            return try value!.isLess(than: rawAttributeValue!, condition: conditionString, name: nameFinal)
         }
     }
     

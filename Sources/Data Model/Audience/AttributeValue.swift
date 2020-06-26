@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -113,16 +113,20 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
 
 extension AttributeValue {
     
-    func isExactMatch(with target: Any) throws -> Bool {
-        guard let targetValue = AttributeValue(value: target) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+    func isExactMatch(with target: Any, condition: String? = nil, name: String? = nil) throws -> Bool {
+        
+        let conditionString = condition ?? ""
+        let nameString = name ?? ""
+        
+        if !self.isValidForExactMatcher() || (self.doubleValue?.isInfinite ?? false) {
+            throw OptimizelyError.evaluateAttributeInvalidCondition(conditionString)
         }
         
-        guard self.isComparable(with: targetValue) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+        guard let targetValue = AttributeValue(value: target), self.isComparable(with: targetValue) else {
+            throw OptimizelyError.evaluateAttributeInvalidType(conditionString, target, nameString)
         }
         
-        try checkValidAttributeNumber(target)
+        try checkValidAttributeNumber(target, condition: conditionString, name: nameString)
         
         // same type and same value
         if self == targetValue {
@@ -136,45 +140,56 @@ extension AttributeValue {
         
         return false
     }
-
-    func isSubstring(of target: Any) throws -> Bool {
+    
+    func isSubstring(of target: Any, condition: String? = nil, name: String? = nil) throws -> Bool {
+        
+        let conditionString = condition ?? ""
+        let nameString = name ?? ""
+        
         guard case .string(let value) = self else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+            throw OptimizelyError.evaluateAttributeInvalidCondition(conditionString)
         }
         
         guard let targetStr = target as? String else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+            throw OptimizelyError.evaluateAttributeInvalidType(conditionString, target, nameString)
         }
         
         return targetStr.contains(value)
     }
     
-    func isGreater(than target: Any) throws -> Bool {
-        guard let targetValue = AttributeValue(value: target) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+    func isGreater(than target: Any, condition: String? = nil, name: String? = nil) throws -> Bool {
+        
+        let conditionString = condition ?? ""
+        let nameString = name ?? ""
+        
+        guard let currentDouble = self.doubleValue, currentDouble.isFinite else {
+            throw OptimizelyError.evaluateAttributeInvalidCondition(conditionString)
         }
         
-        guard let currentDouble = self.doubleValue,
+        guard let targetValue = AttributeValue(value: target),
             let targetDouble = targetValue.doubleValue else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+                throw OptimizelyError.evaluateAttributeInvalidType(conditionString, target, nameString)
         }
         
-        try checkValidAttributeNumber(target)
-
+        try checkValidAttributeNumber(target, condition: condition ?? "", name: name ?? "")
+        
         return currentDouble > targetDouble
     }
     
-    func isLess(than target: Any) throws -> Bool {
-        guard let targetValue = AttributeValue(value: target) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+    func isLess(than target: Any, condition: String? = nil, name: String? = nil) throws -> Bool {
+        
+        let conditionString = condition ?? ""
+        let nameString = name ?? ""
+        
+        guard let currentDouble = self.doubleValue, currentDouble.isFinite else {
+            throw OptimizelyError.evaluateAttributeInvalidCondition(conditionString)
         }
         
-        guard let currentDouble = self.doubleValue,
+        guard let targetValue = AttributeValue(value: target),
             let targetDouble = targetValue.doubleValue else {
-                throw OptimizelyError.evaluateAttributeInvalidType(prettySrc(#function, target: target))
+                throw OptimizelyError.evaluateAttributeInvalidType(conditionString, target, nameString)
         }
-        
-        try checkValidAttributeNumber(target)
+        try checkValidAttributeNumber(target, condition: condition ?? "", name: name ?? "")
 
         return currentDouble < targetDouble
     }
@@ -214,7 +229,17 @@ extension AttributeValue {
         }
     }
     
-    func checkValidAttributeNumber(_ number: Any?, caller: String = #function) throws {
+    func isValidForExactMatcher() -> Bool {
+        switch (self) {
+        case (.string): return true
+        case (.int): return true
+        case (.double): return true
+        case (.bool): return true
+        default: return false
+        }
+    }
+    
+    func checkValidAttributeNumber(_ number: Any?, condition: String, name: String, caller: String = #function) throws {
         // check range for any value types (Int, Int64, Double, Float...)
         // do not check value range for string types
         
@@ -231,7 +256,7 @@ extension AttributeValue {
 
         // valid range: [-2^53, 2^53]
         if abs(num) > pow(2, 53) {
-            throw OptimizelyError.evaluateAttributeValueOutOfRange(prettySrc(caller, target: number))
+            throw OptimizelyError.evaluateAttributeValueOutOfRange(condition, name)
         }
     }
 

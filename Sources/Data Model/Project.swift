@@ -67,22 +67,11 @@ extension Project: ProjectProtocol {
         guard let audience = getAudience(id: audienceId) else {
             throw OptimizelyError.conditionNoMatchingAudience(audienceId)
         }
-        if let conditionString = Utils.getConditionString(conditions: audience.conditions) {
-            logger.d(.audienceEvaluationStarted(audienceId, conditionString))
-        }
+        logger.d(.audienceEvaluationStarted(audienceId, Utils.getConditionString(conditions: audience.conditions)))
         
-        var result: Bool?
-        var err: Error?
-        do {
-            result = try audience.evaluate(project: self, attributes: attributes)
-        } catch {
-            err = error
-        }
-        logger.d(.audienceEvaluationResult(audienceId, result?.description ?? "unknown"))
-        guard let error = err else {
-            return result!
-        }
-        throw error
+        let result = try audience.evaluate(project: self, attributes: attributes)
+        logger.d(.audienceEvaluationResult(audienceId, result.description))
+        return result
     }
     
 }

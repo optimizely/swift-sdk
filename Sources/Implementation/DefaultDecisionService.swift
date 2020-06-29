@@ -96,9 +96,7 @@ class DefaultDecisionService: OPTDecisionService {
         
         do {
             if let conditions = experiment.audienceConditions {
-                if let conditionString = Utils.getConditionString(conditions: conditions) {
-                    logger.d(.evaluatingAudiencesCombined(evaluationFor, finalLoggingKey, conditionString))
-                }
+                logger.d(.evaluatingAudiencesCombined(evaluationFor, finalLoggingKey, Utils.getConditionString(conditions: conditions)))
                 switch conditions {
                 case .array(let arrConditions):
                     if arrConditions.count > 0 {
@@ -120,9 +118,7 @@ class DefaultDecisionService: OPTDecisionService {
                 for id in experiment.audienceIds {
                     holder.append(.leaf(.audienceId(id)))
                 }
-                if let conditionString = Utils.getConditionString(conditions: holder) {
-                    logger.d(.evaluatingAudiencesCombined(evaluationFor, finalLoggingKey, conditionString))
-                }
+                logger.d(.evaluatingAudiencesCombined(evaluationFor, finalLoggingKey, Utils.getConditionString(conditions: holder)))
                 result = try holder.evaluate(project: config.project, attributes: attributes)
             }
         } catch {

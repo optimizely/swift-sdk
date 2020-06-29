@@ -127,10 +127,10 @@ class Utils {
         return (value as! Bool)
     }
     
-    static func getConditionString<T: Encodable>(conditions: T) -> String? {
+    static func getConditionString<T: Encodable>(conditions: T) -> String {
         if let jsonData = try? self.jsonEncoder.encode(conditions), let jsonString = String(data: jsonData, encoding: .utf8) {
             return jsonString
         }
-        return nil
+        return "Invalid conditions format."
     }
 }

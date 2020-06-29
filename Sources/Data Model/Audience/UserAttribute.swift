@@ -90,7 +90,7 @@ extension UserAttribute {
     
     func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {
         
-        let conditionString = Utils.getConditionString(conditions: self) ?? ""
+        let conditionString = Utils.getConditionString(conditions: self)
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         if typeSupported == nil {
@@ -107,14 +107,14 @@ extension UserAttribute {
         }
         
         let attributes = attributes ?? OptimizelyAttributes()
-        var rawAttributeValue: Any?
-        if attributes.keys.contains(nameFinal) {
-            rawAttributeValue = attributes[nameFinal] ?? nil // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
-        } else {
-            throw OptimizelyError.missingAttributeValue(conditionString, nameFinal)
-        }
         
+        let rawAttributeValue = attributes[nameFinal] ?? nil // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
+     
         if matchFinal != .exists {
+            if attributes.keys.contains(nameFinal) {
+                throw OptimizelyError.missingAttributeValue(conditionString, nameFinal)
+            }
+
             if value == nil {
                 throw OptimizelyError.userAttributeNilValue(conditionString)
             }

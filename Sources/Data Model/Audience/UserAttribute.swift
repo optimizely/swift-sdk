@@ -111,7 +111,7 @@ extension UserAttribute {
         let rawAttributeValue = attributes[nameFinal] ?? nil // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
      
         if matchFinal != .exists {
-            if attributes.keys.contains(nameFinal) {
+            if !attributes.keys.contains(nameFinal) {
                 throw OptimizelyError.missingAttributeValue(conditionString, nameFinal)
             }
 

@@ -21,6 +21,8 @@ class Utils {
     // from auto-generated variable OPTIMIZELYSDKVERSION
     static var sdkVersion: String = OPTIMIZELYSDKVERSION
     
+    private static var jsonEncoder = JSONEncoder()
+    
     // @objc NSNumber can be casted either Bool, Int, or Double
     // more filtering required to avoid NSNumber(false, true) interpreted as Int(0, 1) instead of Bool
     
@@ -126,7 +128,7 @@ class Utils {
     }
     
     static func getConditionString<T: Encodable>(conditions: T) -> String? {
-        if let jsonData = try? JSONEncoder().encode(conditions), let jsonString = String(data: jsonData, encoding: .utf8) {
+        if let jsonData = try? self.jsonEncoder.encode(conditions), let jsonString = String(data: jsonData, encoding: .utf8) {
             return jsonString
         }
         return nil

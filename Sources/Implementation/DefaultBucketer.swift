@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -33,7 +33,7 @@ class DefaultBucketer: OPTBucketer {
         
         // check for mutex
         
-        let group = config.project.groups.filter { $0.getExperiemnt(id: experiment.id) != nil }.first
+        let group = config.project.groups.filter { $0.getExperiment(id: experiment.id) != nil }.first
         
         if let group = group {
             switch group.policy {
@@ -61,10 +61,8 @@ class DefaultBucketer: OPTBucketer {
         // bucket to variation only if experiment passes Mutex check
 
         if let variation = bucketToVariation(experiment: experiment, bucketingId: bucketingId) {
-            logger.i(.userBucketedIntoVariationInExperiment(bucketingId, experiment.key, variation.key))
             return variation
         } else {
-            logger.i(.userNotBucketedIntoVariationInExperiment(bucketingId, experiment.key))
             return nil
         }
     }

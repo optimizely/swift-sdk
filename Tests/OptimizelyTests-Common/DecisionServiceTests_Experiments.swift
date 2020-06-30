@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -264,11 +264,11 @@ extension DecisionServiceTests_Experiments {
     
 }
 
-// MARK: - Test isInExperiment()
+// MARK: - Test doesMeetAudienceConditions()
 
 extension DecisionServiceTests_Experiments {
     
-    func testIsInExperimentWithAudienceConditions() {
+    func testDoesMeetAudienceConditionsWithAudienceConditions() {
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         // (1) matching true
@@ -278,28 +278,28 @@ extension DecisionServiceTests_Experiments {
         experiment.audienceIds = [kAudienceIdAge]
         self.config.project.experiments = [experiment]
         
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesCountryMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesCountryMatch)
         XCTAssert(result, "attribute should be matched to audienceConditions")
         
         // (2) matching false
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesCountryNotMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesCountryNotMatch)
         XCTAssertFalse(result, "attribute should be matched to audienceConditions")
         
         // (3) other attribute
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesAgeMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesAgeMatch)
         XCTAssertFalse(result, "no matching attribute provided")
     }
     
-    func testIsInExperimentWithAudienceIds() {
+    func testDoesMeetAudienceConditionsWithAudienceIds() {
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         // (1) matching true
@@ -309,56 +309,56 @@ extension DecisionServiceTests_Experiments {
         experiment.audienceIds = [kAudienceIdCountry]
         self.config.project.experiments = [experiment]
         
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesCountryMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesCountryMatch)
         XCTAssert(result, "attribute should be matched to audienceConditions")
         
         // (2) matching false
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesCountryNotMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesCountryNotMatch)
         XCTAssertFalse(result, "attribute should be matched to audienceConditions")
         
         // (3) other attribute
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesAgeMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesAgeMatch)
         XCTAssertFalse(result, "no matching attribute provided")
     }
     
-    func testIsInExperimentWithAudienceConditionsEmptyArray() {
+    func testDoesMeetAudienceConditionsWithAudienceConditionsEmptyArray() {
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         experiment = try! OTUtils.model(from: sampleExperimentData)
         experiment.audienceConditions = try! OTUtils.model(from: [])
         experiment.audienceIds = [kAudienceIdAge]
         self.config.project.experiments = [experiment]
         
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesCountryMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesCountryMatch)
         XCTAssert(result, "empty conditions is true always")
     }
     
-    func testIsInExperimentWithAudienceIdsEmpty() {
+    func testDoesMeetAudienceConditionsWithAudienceIdsEmpty() {
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         experiment = try! OTUtils.model(from: sampleExperimentData)
         experiment.audienceConditions = nil
         experiment.audienceIds = []
         self.config.project.experiments = [experiment]
         
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesCountryMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesCountryMatch)
         XCTAssert(result, "empty conditions is true always")
     }
     
-    func testIsInExperimentWithCornerCases() {
+    func testDoesMeetAudienceConditionsWithCornerCases() {
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         experiment = try! OTUtils.model(from: sampleExperimentData)
         
@@ -370,16 +370,16 @@ extension DecisionServiceTests_Experiments {
         experiment.audienceIds = [kAudienceIdAge]
         self.config.project.experiments = [experiment]
         
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesCountryMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesCountryMatch)
         XCTAssert(result)
         
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesEmpty)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesEmpty)
         XCTAssertFalse(result)
         
         // (2) invalid string in "audienceConditions"
@@ -387,10 +387,10 @@ extension DecisionServiceTests_Experiments {
         experiment.audienceConditions = array[0]
         self.config.project.experiments = [experiment]
         
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesCountryMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesCountryMatch)
         XCTAssert(result)
         
         // (2) invalid string in "audienceConditions"
@@ -398,10 +398,10 @@ extension DecisionServiceTests_Experiments {
         experiment.audienceIds = []
         self.config.project.experiments = [experiment]
         
-        result = self.decisionService.isInExperiment(config: config,
-                                                     experiment: experiment,
-                                                     userId: kUserId,
-                                                     attributes: kAttributesCountryMatch)
+        result = self.decisionService.doesMeetAudienceConditions(config: config,
+                                                                 experiment: experiment,
+                                                                 userId: kUserId,
+                                                                 attributes: kAttributesCountryMatch)
         XCTAssert(result)
     }
     

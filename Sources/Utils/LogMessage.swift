@@ -43,12 +43,8 @@ enum LogMessage {
     case userHasForcedVariationButInvalid(_ userId: String, _ expKey: String)
     case userHasNoForcedVariation(_ userId: String)
     case userHasNoForcedVariationForExperiment(_ userId: String, _ expKey: String)
-    case userInFeatureExperiment(_ userId: String, _ varKey: String, _ expKey: String, _ feature: String)
-    case userNotInFeatureExperiment(_ userId: String, _ feature: String)
-    case userInRollout(_ userId: String, _ feature: String)
-    case userNotInRollout(_ userId: String, _ feature: String)
     case userBucketedIntoVariationInExperiment(_ userId: String, _ expKey: String, _ varKey: String)
-    case userNotBucketedIntoVariationInExperiment(_ userId: String, _ expKey: String)
+    case userNotBucketedIntoVariation(_ userId: String)
     case userBucketedIntoInvalidVariation(_ id: String)
     case userBucketedIntoExperimentInGroup(_ userId: String, _ expKey: String, _ group: String)
     case userNotBucketedIntoExperimentInGroup(_ userId: String, _ expKey: String, _ group: String)
@@ -103,12 +99,8 @@ extension LogMessage: CustomStringConvertible {
         case .userHasForcedVariationButInvalid(let userId, let expKey):         message = "Invalid variation is mapped to experiment (\(expKey)) and user (\(userId)) in the forced variation map."
         case .userHasNoForcedVariation(let userId):                             message = "User (\(userId)) is not in the forced variation map."
         case .userHasNoForcedVariationForExperiment(let userId, let expKey):    message = "No experiment (\(expKey)) mapped to user (\(userId)) in the forced variation map."
-        case .userInFeatureExperiment(let userId, let varKey, let expKey, let feature):  message = "User (\(userId)) is in variation (\(varKey)) of experiment (\(expKey)) on the feature (\(feature))."
-        case .userNotInFeatureExperiment(let userId, let feature):              message = "User (\(userId)) is not in any experiment on the feature (\(feature))."
-        case .userInRollout(let userId, let feature):                           message = "User (\(userId)) is in rollout of feature (\(feature))."
-        case .userNotInRollout(let userId, let feature):                        message = "User (\(userId)) is not in rollout of feature (\(feature))."
         case .userBucketedIntoVariationInExperiment(let userId, let expKey, let varKey): message = "User (\(userId)) is in variation (\(varKey)) of experiment (\(expKey))"
-        case .userNotBucketedIntoVariationInExperiment(let userId, let expKey): message = "User (\(userId)) is in no variation of experiment (\(expKey))."
+        case .userNotBucketedIntoVariation(let userId):                         message = "User (\(userId)) is in no variation."
         case .userBucketedIntoInvalidVariation(let id):                         message = "Bucketed into an invalid variation id (\(id))"
         case .userBucketedIntoExperimentInGroup(let userId, let expId, let group): message = "User (\(userId)) is in experiment (\(expId)) of group (\(group))."
         case .userNotBucketedIntoExperimentInGroup(let userId, let expKey, let group): message = "User (\(userId)) is not in experiment (\(expKey)) of group (\(group))."

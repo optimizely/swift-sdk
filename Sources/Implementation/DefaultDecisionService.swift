@@ -85,10 +85,10 @@ class DefaultDecisionService: OPTDecisionService {
         return bucketedVariation
     }
     
-    func isInExperiment(config: ProjectConfig, experiment: Experiment, userId: String, attributes: OptimizelyAttributes, logType: evaluationLogType? = nil, loggingKey: String? = nil) -> Bool {
+    func isInExperiment(config: ProjectConfig, experiment: Experiment, userId: String, attributes: OptimizelyAttributes, logType: evaluationLogType = .experiment, loggingKey: String? = nil) -> Bool {
         
         var result = true   // success as default (no condition, etc)
-        let evType = logType?.rawValue ?? evaluationLogType.experiment.rawValue
+        let evType = logType.rawValue
         
         var finalLoggingKey = experiment.key
         if let key = loggingKey {

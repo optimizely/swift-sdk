@@ -18,6 +18,11 @@ import Foundation
 
 class DefaultDecisionService: OPTDecisionService {
     
+    enum evaluationLogType: String {
+        case experiment = "experiment"
+        case rolloutRule = "rule"
+    }
+    
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
     lazy var logger = OPTLoggerFactory.getLogger()
@@ -80,14 +85,10 @@ class DefaultDecisionService: OPTDecisionService {
         return bucketedVariation
     }
     
-    func isInExperiment(config: ProjectConfig, experiment: Experiment, userId: String, attributes: OptimizelyAttributes, isRule: Bool? = nil, loggingKey: String? = nil) -> Bool {
+    func isInExperiment(config: ProjectConfig, experiment: Experiment, userId: String, attributes: OptimizelyAttributes, logType: evaluationLogType? = nil, loggingKey: String? = nil) -> Bool {
         
         var result = true   // success as default (no condition, etc)
-        
-        var evaluationFor = "experiment"
-        if isRule == true {
-            evaluationFor = "rule"
-        }
+        let evType = logType?.rawValue ?? evaluationLogType.experiment.rawValue
         
         var finalLoggingKey = experiment.key
         if let key = loggingKey {
@@ -96,7 +97,7 @@ class DefaultDecisionService: OPTDecisionService {
         
         do {
             if let conditions = experiment.audienceConditions {
-                logger.d(.evaluatingAudiencesCombined(evaluationFor, finalLoggingKey, Utils.getConditionString(conditions: conditions)))
+                logger.d(.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: conditions)))
                 switch conditions {
                 case .array(let arrConditions):
                     if arrConditions.count > 0 {
@@ -118,7 +119,7 @@ class DefaultDecisionService: OPTDecisionService {
                 for id in experiment.audienceIds {
                     holder.append(.leaf(.audienceId(id)))
                 }
-                logger.d(.evaluatingAudiencesCombined(evaluationFor, finalLoggingKey, Utils.getConditionString(conditions: holder)))
+                logger.d(.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: holder)))
                 result = try holder.evaluate(project: config.project, attributes: attributes)
             }
         } catch {
@@ -126,7 +127,7 @@ class DefaultDecisionService: OPTDecisionService {
             result = false
         }
         
-        logger.i(.audienceEvaluationResultCombined(evaluationFor, finalLoggingKey, result.description))
+        logger.i(.audienceEvaluationResultCombined(evType, finalLoggingKey, result.description))
         
         return result
     }
@@ -206,7 +207,7 @@ class DefaultDecisionService: OPTDecisionService {
         for index in 0..<rolloutRules.count.advanced(by: -1) {
             let loggingKey = index + 1
             let experiment = rolloutRules[index]
-            if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes, isRule: true, loggingKey: "\(loggingKey)") {
+            if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes, logType: .rolloutRule, loggingKey: "\(loggingKey)") {
                 logger.d(.userMeetsConditionsForTargetingRule(userId, loggingKey))
                 if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
                     logger.d(.userBucketedIntoTargetingRule(userId, loggingKey))
@@ -221,7 +222,7 @@ class DefaultDecisionService: OPTDecisionService {
         // Evaluate fall back rule / last rule now
         let experiment = rolloutRules[rolloutRules.count - 1]
         
-        if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes, isRule: true, loggingKey: "Everyone Else") {
+        if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes, logType: .rolloutRule, loggingKey: "Everyone Else") {
             if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
                 logger.d(.userBucketedIntoEveryoneTargetingRule(userId))
                 

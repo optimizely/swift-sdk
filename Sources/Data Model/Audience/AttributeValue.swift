@@ -229,16 +229,6 @@ extension AttributeValue {
         }
     }
     
-    func isValidForExactMatcher() -> Bool {
-        switch (self) {
-        case (.string): return true
-        case (.int): return true
-        case (.double): return true
-        case (.bool): return true
-        default: return false
-        }
-    }
-    
     func checkValidAttributeNumber(_ number: Any?, condition: String, name: String, caller: String = #function) throws {
         // check range for any value types (Int, Int64, Double, Float...)
         // do not check value range for string types
@@ -257,6 +247,16 @@ extension AttributeValue {
         // valid range: [-2^53, 2^53]
         if abs(num) > pow(2, 53) {
             throw OptimizelyError.evaluateAttributeValueOutOfRange(condition, name)
+        }
+    }
+    
+    func isValidForExactMatcher() -> Bool {
+        switch (self) {
+        case (.string): return true
+        case (.int): return true
+        case (.double): return true
+        case (.bool): return true
+        default: return false
         }
     }
 

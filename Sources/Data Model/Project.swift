@@ -42,6 +42,7 @@ struct Project: Codable, Equatable {
     var typedAudiences: [Audience]?
     var featureFlags: [FeatureFlag]
     var botFiltering: Bool?
+    
     let logger = OPTLoggerFactory.getLogger()
     
     // Required since logger in not decodable
@@ -67,7 +68,9 @@ extension Project: ProjectProtocol {
         guard let audience = getAudience(id: audienceId) else {
             throw OptimizelyError.conditionNoMatchingAudience(audienceId)
         }
-        logger.d(.audienceEvaluationStarted(audienceId, Utils.getConditionString(conditions: audience.conditions)))
+        logger.d { () -> String in
+            return LogMessage.audienceEvaluationStarted(audienceId, Utils.getConditionString(conditions: audience.conditions)).description
+        }
         
         let result = try audience.evaluate(project: self, attributes: attributes)
         logger.d(.audienceEvaluationResult(audienceId, result.description))

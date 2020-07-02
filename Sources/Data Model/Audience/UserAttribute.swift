@@ -24,7 +24,7 @@ struct UserAttribute: Codable, Equatable {
     var type: String?
     var match: String?
     var value: AttributeValue?
-    
+
     enum CodingKeys: String, CodingKey {
         case name
         case type
@@ -90,20 +90,18 @@ extension UserAttribute {
     
     func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {
         
-        let conditionString = Utils.getConditionString(conditions: self)
-        
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         if typeSupported == nil {
-            throw OptimizelyError.userAttributeInvalidType(conditionString)
+            throw OptimizelyError.userAttributeInvalidType(Utils.getConditionString(conditions: self))
         }
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            throw OptimizelyError.userAttributeInvalidMatch(conditionString)
+            throw OptimizelyError.userAttributeInvalidMatch(Utils.getConditionString(conditions: self))
         }
         
         guard let nameFinal = name else {
-            throw OptimizelyError.userAttributeInvalidName(conditionString)
+            throw OptimizelyError.userAttributeInvalidName(Utils.getConditionString(conditions: self))
         }
         
         let attributes = attributes ?? OptimizelyAttributes()
@@ -112,18 +110,19 @@ extension UserAttribute {
      
         if matchFinal != .exists {
             if !attributes.keys.contains(nameFinal) {
-                throw OptimizelyError.missingAttributeValue(conditionString, nameFinal)
+                throw OptimizelyError.missingAttributeValue(Utils.getConditionString(conditions: self), nameFinal)
             }
 
             if value == nil {
-                throw OptimizelyError.userAttributeNilValue(conditionString)
+                throw OptimizelyError.userAttributeNilValue(Utils.getConditionString(conditions: self))
             }
             
             if rawAttributeValue == nil {
-                throw OptimizelyError.nilAttributeValue(conditionString, nameFinal)
+                throw OptimizelyError.nilAttributeValue(Utils.getConditionString(conditions: self), nameFinal)
             }
         }
         
+        let conditionString = Utils.getConditionString(conditions: self)
         switch matchFinal {
         case .exists:
             return !(rawAttributeValue is NSNull || rawAttributeValue == nil)

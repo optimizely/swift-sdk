@@ -18,11 +18,6 @@ import Foundation
 
 class DefaultDecisionService: OPTDecisionService {
     
-    enum evaluationLogType: String {
-        case experiment = "experiment"
-        case rolloutRule = "rule"
-    }
-    
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
     lazy var logger = OPTLoggerFactory.getLogger()
@@ -85,19 +80,17 @@ class DefaultDecisionService: OPTDecisionService {
         return bucketedVariation
     }
     
-    func isInExperiment(config: ProjectConfig, experiment: Experiment, userId: String, attributes: OptimizelyAttributes, logType: evaluationLogType = .experiment, loggingKey: String? = nil) -> Bool {
+    func isInExperiment(config: ProjectConfig, experiment: Experiment, userId: String, attributes: OptimizelyAttributes, logType: Constants.EvaluationLogType = .experiment, loggingKey: String? = nil) -> Bool {
         
         var result = true   // success as default (no condition, etc)
         let evType = logType.rawValue
-        
-        var finalLoggingKey = experiment.key
-        if let key = loggingKey {
-            finalLoggingKey = key
-        }
+        let finalLoggingKey = loggingKey ?? experiment.key
         
         do {
             if let conditions = experiment.audienceConditions {
-                logger.d(.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: conditions)))
+                logger.d { () -> String in
+                    return LogMessage.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: conditions)).description
+                }
                 switch conditions {
                 case .array(let arrConditions):
                     if arrConditions.count > 0 {
@@ -112,14 +105,16 @@ class DefaultDecisionService: OPTDecisionService {
                     result = true
                 }
             }
-                // backward compatibility with audiencIds list
+            // backward compatibility with audienceIds list
             else if experiment.audienceIds.count > 0 {
                 var holder = [ConditionHolder]()
                 holder.append(.logicalOp(.or))
                 for id in experiment.audienceIds {
                     holder.append(.leaf(.audienceId(id)))
                 }
-                logger.d(.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: holder)))
+                logger.d { () -> String in
+                    return LogMessage.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: holder)).description
+                }
                 result = try holder.evaluate(project: config.project, attributes: attributes)
             }
         } catch {

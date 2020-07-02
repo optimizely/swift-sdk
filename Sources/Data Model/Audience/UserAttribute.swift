@@ -24,6 +24,7 @@ struct UserAttribute: Codable, Equatable {
     var type: String?
     var match: String?
     var value: AttributeValue?
+    var stringRepresentation: String
 
     enum CodingKeys: String, CodingKey {
         case name
@@ -71,6 +72,9 @@ struct UserAttribute: Codable, Equatable {
             self.type = try container.decodeIfPresent(String.self, forKey: .type)
             self.match = try container.decodeIfPresent(String.self, forKey: .match)
             self.value = try container.decodeIfPresent(AttributeValue.self, forKey: .value)
+            // initializing with empty value before using self to avoid constructor warnings
+            self.stringRepresentation = ""
+            self.stringRepresentation = Utils.getConditionString(conditions: self)
         } catch {
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: container.codingPath, debugDescription: "Faild to decode User Attribute)"))
         }
@@ -81,6 +85,9 @@ struct UserAttribute: Codable, Equatable {
         self.type = type
         self.match = match
         self.value = value
+        // initializing with empty value before using self to avoid constructor warnings
+        self.stringRepresentation = ""
+        self.stringRepresentation = Utils.getConditionString(conditions: self)
     }
 }
 
@@ -92,16 +99,16 @@ extension UserAttribute {
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         if typeSupported == nil {
-            throw OptimizelyError.userAttributeInvalidType(Utils.getConditionString(conditions: self))
+            throw OptimizelyError.userAttributeInvalidType(stringRepresentation)
         }
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            throw OptimizelyError.userAttributeInvalidMatch(Utils.getConditionString(conditions: self))
+            throw OptimizelyError.userAttributeInvalidMatch(stringRepresentation)
         }
         
         guard let nameFinal = name else {
-            throw OptimizelyError.userAttributeInvalidName(Utils.getConditionString(conditions: self))
+            throw OptimizelyError.userAttributeInvalidName(stringRepresentation)
         }
         
         let attributes = attributes ?? OptimizelyAttributes()
@@ -110,34 +117,33 @@ extension UserAttribute {
      
         if matchFinal != .exists {
             if !attributes.keys.contains(nameFinal) {
-                throw OptimizelyError.missingAttributeValue(Utils.getConditionString(conditions: self), nameFinal)
+                throw OptimizelyError.missingAttributeValue(stringRepresentation, nameFinal)
             }
 
             if value == nil {
-                throw OptimizelyError.userAttributeNilValue(Utils.getConditionString(conditions: self))
+                throw OptimizelyError.userAttributeNilValue(stringRepresentation)
             }
             
             if rawAttributeValue == nil {
-                throw OptimizelyError.nilAttributeValue(Utils.getConditionString(conditions: self), nameFinal)
+                throw OptimizelyError.nilAttributeValue(stringRepresentation, nameFinal)
             }
         }
         
-        let conditionString = Utils.getConditionString(conditions: self)
         switch matchFinal {
         case .exists:
             return !(rawAttributeValue is NSNull || rawAttributeValue == nil)
         case .exact:
-            return try value!.isExactMatch(with: rawAttributeValue!, condition: conditionString, name: nameFinal)
+            return try value!.isExactMatch(with: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
         case .substring:
-            return try value!.isSubstring(of: rawAttributeValue!, condition: conditionString, name: nameFinal)
+            return try value!.isSubstring(of: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
         case .lt:
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
-            return try value!.isGreater(than: rawAttributeValue!, condition: conditionString, name: nameFinal)
+            return try value!.isGreater(than: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
         case .gt:
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
-            return try value!.isLess(than: rawAttributeValue!, condition: conditionString, name: nameFinal)
+            return try value!.isLess(than: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
         }
     }
     

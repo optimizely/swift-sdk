@@ -55,8 +55,8 @@ public enum OptimizelyError: Error {
     case userAttributeInvalidType(_ condition: String)
     case userAttributeInvalidMatch(_ condition: String)
     case userAttributeNilValue(_ condition: String)
-    case nilAttributeValue(_ condition: String, _ key: String)
     case userAttributeInvalidName(_ condition: String)
+    case nilAttributeValue(_ condition: String, _ key: String)
     case missingAttributeValue(_ condition: String, _ key: String)
 
     // MARK: - Bucketing
@@ -129,8 +129,8 @@ extension OptimizelyError: CustomStringConvertible {
         case .userAttributeInvalidType(let condition):      message = "Audience condition (\(condition)) uses an unknown condition type. You may need to upgrade to a newer release of the Optimizely SDK."
         case .userAttributeInvalidMatch(let condition):     message = "Audience condition (\(condition)) uses an unknown match type. You may need to upgrade to a newer release of the Optimizely SDK."
         case .userAttributeNilValue(let condition):         message = "Audience condition (\(condition)) evaluated to UNKNOWN because of null value."
-        case .nilAttributeValue(let condition, let key):    message = "Audience condition (\(condition)) evaluated to UNKNOWN because a null value was passed for user attribute (\(key))."
         case .userAttributeInvalidName(let condition):      message = "Audience condition (\(condition)) evaluated to UNKNOWN because of invalid attribute name."
+        case .nilAttributeValue(let condition, let key):    message = "Audience condition (\(condition)) evaluated to UNKNOWN because a null value was passed for user attribute (\(key))."
         case .missingAttributeValue(let condition, let key):    message = "Audience condition (\(condition)) evaluated to UNKNOWN because no value was passed for user attribute (\(key))."
         case .userIdInvalid:                                message = "Provided user ID is in an invalid format."
         case .bucketingIdInvalid (let id):                  message = "Invalid bucketing ID (\(id))"

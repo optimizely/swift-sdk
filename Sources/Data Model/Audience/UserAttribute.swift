@@ -24,7 +24,7 @@ struct UserAttribute: Codable, Equatable {
     var type: String?
     var match: String?
     var value: AttributeValue?
-    var stringRepresentation: String
+    var stringRepresentation: String = ""
 
     enum CodingKeys: String, CodingKey {
         case name
@@ -72,8 +72,6 @@ struct UserAttribute: Codable, Equatable {
             self.type = try container.decodeIfPresent(String.self, forKey: .type)
             self.match = try container.decodeIfPresent(String.self, forKey: .match)
             self.value = try container.decodeIfPresent(AttributeValue.self, forKey: .value)
-            // initializing with empty value before using self to avoid constructor warnings
-            self.stringRepresentation = ""
             self.stringRepresentation = Utils.getConditionString(conditions: self)
         } catch {
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: container.codingPath, debugDescription: "Faild to decode User Attribute)"))
@@ -85,8 +83,6 @@ struct UserAttribute: Codable, Equatable {
         self.type = type
         self.match = match
         self.value = value
-        // initializing with empty value before using self to avoid constructor warnings
-        self.stringRepresentation = ""
         self.stringRepresentation = Utils.getConditionString(conditions: self)
     }
 }

@@ -154,7 +154,7 @@ extension AttributeValue {
     func isGreater(than target: Any, condition: String = "", name: String = "") throws -> Bool {
         
         guard let currentDouble = self.doubleValue, currentDouble.isFinite else {
-            throw OptimizelyError.evaluateAttributeInvalidCondition(name)
+            throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
         }
         
         guard let targetValue = AttributeValue(value: target),

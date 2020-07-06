@@ -21,7 +21,7 @@ class Utils {
     // from auto-generated variable OPTIMIZELYSDKVERSION
     static var sdkVersion: String = OPTIMIZELYSDKVERSION
     
-    private static var jsonEncoder = JSONEncoder()
+    private static let jsonEncoder = JSONEncoder()
     
     // @objc NSNumber can be casted either Bool, Int, or Double
     // more filtering required to avoid NSNumber(false, true) interpreted as Int(0, 1) instead of Bool

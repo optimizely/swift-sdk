@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -17,6 +17,79 @@
 import XCTest
 
 class UserAttributeTests_Evaluate: XCTestCase {
+    
+    func testInvalidType() {
+        var err: Error?
+        let model = UserAttribute(name: "country", type: "unknown", match: "exact", value: .string("us"))
+        do {
+            try _ = model.evaluate(attributes: ["":""])
+        } catch {
+            err = error
+        }
+        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.userAttributeInvalidType(model.stringRepresentation).localizedDescription)
+    }
+    
+    func testInvalidMatchType() {
+        var err: Error?
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "unknown", value: .string("us"))
+        do {
+            try _ = model.evaluate(attributes: ["":""])
+        } catch {
+            err = error
+        }
+        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.userAttributeInvalidMatch(model.stringRepresentation).localizedDescription)
+    }
+    
+    func testInvalidName() {
+        var err: Error?
+        var model = UserAttribute(name: "", type: "custom_attribute", match: "exact", value: .string("us"))
+        model.name = nil
+        do {
+            try _ = model.evaluate(attributes: ["":""])
+        } catch {
+            err = error
+        }
+        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.userAttributeInvalidName(model.stringRepresentation).localizedDescription)
+    }
+    
+    func testMissingAttributeValue() {
+        let attributes = ["country1": "us"]
+        var err: Error?
+        let name = "country"
+        let model = UserAttribute(name: name, type: "custom_attribute", match: "exact", value: .string("us"))
+        do {
+            try _ = model.evaluate(attributes: attributes)
+        } catch {
+            err = error
+        }
+        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.missingAttributeValue(model.stringRepresentation, name).localizedDescription)
+    }
+    
+    func testNilUserAttributeValue() {
+        let attributes = ["country": "us"]
+        var err: Error?
+        let name = "country"
+        let model = UserAttribute(name: name, type: "custom_attribute", match: "exact", value: nil)
+        do {
+            try _ = model.evaluate(attributes: attributes)
+        } catch {
+            err = error
+        }
+        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.userAttributeNilValue(model.stringRepresentation).localizedDescription)
+    }
+    
+    func testNilAttributeValue() {
+        let attributes: [String : Any?] = ["country": nil]
+        var err: Error?
+        let name = "country"
+        let model = UserAttribute(name: name, type: "custom_attribute", match: "exact", value: .string("us"))
+        do {
+            try _ = model.evaluate(attributes: attributes)
+        } catch {
+            err = error
+        }
+        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.nilAttributeValue(model.stringRepresentation, name).localizedDescription)
+    }
     
     // MARK: - Evaluate (Exact)
     

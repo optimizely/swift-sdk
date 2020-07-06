@@ -113,20 +113,17 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
 
 extension AttributeValue {
     
-    func isExactMatch(with target: Any, condition: String? = nil, name: String? = nil) throws -> Bool {
-        
-        let conditionString = condition ?? ""
-        let nameString = name ?? ""
+    func isExactMatch(with target: Any, condition: String = "", name: String = "") throws -> Bool {
         
         if !self.isValidForExactMatcher() || (self.doubleValue?.isInfinite ?? false) {
-            throw OptimizelyError.evaluateAttributeInvalidCondition(conditionString)
+            throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
         }
         
         guard let targetValue = AttributeValue(value: target), self.isComparable(with: targetValue) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(conditionString, target, nameString)
+            throw OptimizelyError.evaluateAttributeInvalidType(condition, target, name)
         }
         
-        try checkValidAttributeNumber(target, condition: conditionString, name: nameString)
+        try checkValidAttributeNumber(target, condition: condition, name: name)
         
         // same type and same value
         if self == targetValue {
@@ -141,55 +138,46 @@ extension AttributeValue {
         return false
     }
     
-    func isSubstring(of target: Any, condition: String? = nil, name: String? = nil) throws -> Bool {
-        
-        let conditionString = condition ?? ""
-        let nameString = name ?? ""
+    func isSubstring(of target: Any, condition: String = "", name: String = "") throws -> Bool {
         
         guard case .string(let value) = self else {
-            throw OptimizelyError.evaluateAttributeInvalidCondition(conditionString)
+            throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
         }
         
         guard let targetStr = target as? String else {
-            throw OptimizelyError.evaluateAttributeInvalidType(conditionString, target, nameString)
+            throw OptimizelyError.evaluateAttributeInvalidType(condition, target, name)
         }
         
         return targetStr.contains(value)
     }
     
-    func isGreater(than target: Any, condition: String? = nil, name: String? = nil) throws -> Bool {
-        
-        let conditionString = condition ?? ""
-        let nameString = name ?? ""
+    func isGreater(than target: Any, condition: String = "", name: String = "") throws -> Bool {
         
         guard let currentDouble = self.doubleValue, currentDouble.isFinite else {
-            throw OptimizelyError.evaluateAttributeInvalidCondition(conditionString)
+            throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
         }
         
         guard let targetValue = AttributeValue(value: target),
             let targetDouble = targetValue.doubleValue else {
-                throw OptimizelyError.evaluateAttributeInvalidType(conditionString, target, nameString)
+                throw OptimizelyError.evaluateAttributeInvalidType(condition, target, name)
         }
         
-        try checkValidAttributeNumber(target, condition: condition ?? "", name: name ?? "")
+        try checkValidAttributeNumber(target, condition: condition, name: name)
         
         return currentDouble > targetDouble
     }
     
-    func isLess(than target: Any, condition: String? = nil, name: String? = nil) throws -> Bool {
-        
-        let conditionString = condition ?? ""
-        let nameString = name ?? ""
-        
+    func isLess(than target: Any, condition: String = "", name: String = "") throws -> Bool {
+                
         guard let currentDouble = self.doubleValue, currentDouble.isFinite else {
-            throw OptimizelyError.evaluateAttributeInvalidCondition(conditionString)
+            throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
         }
         
         guard let targetValue = AttributeValue(value: target),
             let targetDouble = targetValue.doubleValue else {
-                throw OptimizelyError.evaluateAttributeInvalidType(conditionString, target, nameString)
+                throw OptimizelyError.evaluateAttributeInvalidType(condition, target, name)
         }
-        try checkValidAttributeNumber(target, condition: condition ?? "", name: name ?? "")
+        try checkValidAttributeNumber(target, condition: condition, name: name)
 
         return currentDouble < targetDouble
     }
@@ -229,16 +217,6 @@ extension AttributeValue {
         }
     }
     
-    func isValidForExactMatcher() -> Bool {
-        switch (self) {
-        case (.string): return true
-        case (.int): return true
-        case (.double): return true
-        case (.bool): return true
-        default: return false
-        }
-    }
-    
     func checkValidAttributeNumber(_ number: Any?, condition: String, name: String, caller: String = #function) throws {
         // check range for any value types (Int, Int64, Double, Float...)
         // do not check value range for string types
@@ -257,6 +235,16 @@ extension AttributeValue {
         // valid range: [-2^53, 2^53]
         if abs(num) > pow(2, 53) {
             throw OptimizelyError.evaluateAttributeValueOutOfRange(condition, name)
+        }
+    }
+    
+    func isValidForExactMatcher() -> Bool {
+        switch (self) {
+        case (.string): return true
+        case (.int): return true
+        case (.double): return true
+        case (.bool): return true
+        default: return false
         }
     }
 

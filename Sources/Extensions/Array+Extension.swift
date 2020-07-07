@@ -40,11 +40,19 @@ extension Array where Element == ThrowableCondition {
     
     // return try if any item is true (even with other error items)
     func or() throws -> Bool {
+        var foundError: OptimizelyError?
         
         for eval in self {
-            if try eval() { return true }
+            do {
+                if try eval() { return true }
+            } catch let error as OptimizelyError {
+                foundError = error
+            }
         }
         
+        if let error = foundError {
+            throw error
+        }
         return false
     }
     

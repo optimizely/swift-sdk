@@ -30,12 +30,8 @@ extension Array where Element == ThrowableCondition {
         }
 
         for eval in self {
-            do {
-                if try eval() == false {
-                    return false
-                }
-            } catch let error as OptimizelyError {
-                throw OptimizelyError.conditionInvalidFormat("AND with invalid items [\(error.reason)]")
+            if try eval() == false {
+                return false
             }
         }
         
@@ -44,18 +40,9 @@ extension Array where Element == ThrowableCondition {
     
     // return try if any item is true (even with other error items)
     func or() throws -> Bool {
-        var foundError: OptimizelyError?
         
         for eval in self {
-            do {
-                if try eval() { return true }
-            } catch let error as OptimizelyError {
-                foundError = error
-            }
-        }
-        
-        if let error = foundError {
-            throw OptimizelyError.conditionInvalidFormat("OR with invalid items [\(error.reason)]")
+            if try eval() { return true }
         }
         
         return false
@@ -67,13 +54,7 @@ extension Array where Element == ThrowableCondition {
             throw OptimizelyError.conditionInvalidFormat("NOT with empty items")
         }
 
-        var error: OptimizelyError!
-        do {
-            let result = try eval()
-            return !result
-        } catch let err as OptimizelyError {
-            error = OptimizelyError.conditionInvalidFormat("NOT with invalid items [\(err.reason)]")
-        }
-        throw error
+        let result = try eval()
+        return !result
     }
 }

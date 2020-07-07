@@ -269,3 +269,53 @@ extension DefaultDecisionService {
     }
     
 }
+
+// MARK: - UserContext
+
+extension DefaultDecisionService {
+    
+    func getVariation(config: ProjectConfig, experiment: Experiment, user: OptimizelyUserContext) -> Variation? {
+        return getVariation(config: config, userId: user.userId!, experiment: experiment, attributes: user.attributes)
+    }
+
+    func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, user: OptimizelyUserContext) -> (experiment: Experiment?, variation: Variation?)? {
+        return getVariationForFeature(config: config, featureFlag: featureFlag, userId: user.userId!, attributes: user.attributes)
+    }
+
+    func saveProfile(config: ProjectConfig, userId: String, experimentKey: String, variationKey: String) {
+        guard let experimentId = config.getExperiment(key: experimentKey)?.id,
+            let variationId = config.getExperiment(key: experimentKey)?.getVariation(key: variationKey)?.id else {
+            return
+        }
+        
+        saveProfile(userId: userId, experimentId: experimentId, variationId: variationId)
+    }
+    
+    func removeProfile(config: ProjectConfig, userId: String, experimentKey: String?) {
+        if let experimentKey = experimentKey {
+            // remove UPS for the user and experiment-key
+            
+            guard let experimentId = config.getExperiment(key: experimentKey)?.id else { return }
+
+            guard var profile = userProfileService.lookup(userId: userId) else { return }
+            
+            guard var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap else { return }
+                
+            bucketMap.removeValue(forKey: experimentId)
+            
+            profile[UserProfileKeys.kBucketMap] = bucketMap
+            profile[UserProfileKeys.kUserId] = userId
+            
+            userProfileService.save(userProfile: profile)
+        } else {
+            // remove all UPS for the user
+            
+            var profile = OPTUserProfileService.UPProfile()
+            profile[UserProfileKeys.kUserId] = userId
+            profile[UserProfileKeys.kBucketMap] = OPTUserProfileService.UPBucketMap()
+            
+            userProfileService.save(userProfile: profile)
+        }
+    }
+
+}

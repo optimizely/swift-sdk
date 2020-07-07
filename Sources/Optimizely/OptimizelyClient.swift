@@ -24,14 +24,24 @@ open class OptimizelyClient: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
-    
-    private var atomicConfig: AtomicProperty<ProjectConfig> = AtomicProperty<ProjectConfig>()
+
+    private var atomicConfig = AtomicProperty<ProjectConfig>()
     var config: ProjectConfig? {
         get {
             return atomicConfig.property
         }
         set {
             atomicConfig.property = newValue
+        }
+    }
+    
+    private var atomicUserContext = AtomicProperty<OptimizelyUserContext>()
+    var userContext: OptimizelyUserContext? {
+        get {
+            return atomicUserContext.property
+        }
+        set {
+            atomicUserContext.property = newValue
         }
     }
 

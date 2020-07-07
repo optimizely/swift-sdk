@@ -274,14 +274,6 @@ extension DefaultDecisionService {
 
 extension DefaultDecisionService {
     
-    func getVariation(config: ProjectConfig, experiment: Experiment, user: OptimizelyUserContext) -> Variation? {
-        return getVariation(config: config, userId: user.userId!, experiment: experiment, attributes: user.attributes)
-    }
-
-    func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, user: OptimizelyUserContext) -> (experiment: Experiment?, variation: Variation?)? {
-        return getVariationForFeature(config: config, featureFlag: featureFlag, userId: user.userId!, attributes: user.attributes)
-    }
-
     func saveProfile(config: ProjectConfig, userId: String, experimentKey: String, variationKey: String) {
         guard let experimentId = config.getExperiment(key: experimentKey)?.id,
             let variationId = config.getExperiment(key: experimentKey)?.getVariation(key: variationKey)?.id else {

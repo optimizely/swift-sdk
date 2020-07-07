@@ -22,8 +22,6 @@ public struct OptimizelyUserContext {
     var userId: String?
     var attributes: [String: Any]
     var bucketingId: String?
-    
-    // [TODO] we should clear this after setUserContext
     var userProfileUpdates: [(String?, String?)]
     
     public init(userId: String?, attributes: [String: Any]? = nil) {

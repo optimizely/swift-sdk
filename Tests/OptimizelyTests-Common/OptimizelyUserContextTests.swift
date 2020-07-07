@@ -207,7 +207,47 @@ extension OptimizelyUserContextTests {
         XCTAssertNil(bucketMap[exp1Id])
         XCTAssertNil(bucketMap[exp2Id])
     }
+    
+    func testSetUserContext_replace() {
+        let attributes: [String: Any] = [
+            "country": "us",
+            "age": 100,
+            "old": true
+        ]
+        let user1 = OptimizelyUserContext(userId: expUserId, attributes: attributes)
+        let user2 = OptimizelyUserContext(userId: expUserId2, attributes: [:])
 
+        let optimizely = OptimizelyClient(sdkKey: "sdk-key")
+        try! optimizely.start(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
+        try! optimizely.setUserContext(user1)
+        XCTAssert(optimizely.userContext == user1)
+        
+        try! optimizely.setUserContext(user2)
+        XCTAssert(optimizely.userContext == user2)
+    }
+    
+    func testSetUserContext_emptyUserId() {
+        let optimizely = OptimizelyClient(sdkKey: "sdk-key")
+        try! optimizely.start(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
+        
+        let user1 = OptimizelyUserContext(userId: nil, attributes: [:])
+        try! optimizely.setUserContext(user1)
+        
+        let userId1 = optimizely.userContext!.userId
+        XCTAssertNotNil(userId1)
+        XCTAssert(userId1!.count > 10)
+        
+        let user2 = OptimizelyUserContext(userId: nil, attributes: [:])
+        try! optimizely.setUserContext(user2)
+
+        let userId2 = optimizely.userContext!.userId
+        XCTAssert(userId1 == userId2)
+        
+        print("UUID: \(userId1!)")
+        
+        clearOptimizelyUUID()   // clean up UUID store after testing
+    }
+    
 }
 
 // Mark: - Utils
@@ -224,6 +264,18 @@ extension OptimizelyUserContextTests {
         try! optimizely.setUserContext(user)
         
         return ups
+    }
+    
+    var uuidKey: String {
+        return "optimizely-uuid"
+    }
+    
+    func getOptimizelyUUID() -> String? {
+        return UserDefaults.standard.string(forKey: uuidKey)
+    }
+    
+    func clearOptimizelyUUID() {
+        UserDefaults.standard.removeObject(forKey: uuidKey)
     }
     
 }

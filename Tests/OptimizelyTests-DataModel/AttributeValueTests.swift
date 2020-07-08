@@ -346,11 +346,11 @@ extension AttributeValueTests {
         let attr = AttributeValue.others
         var tmpError: Error?
         do {
-            _ = try attr.isExactMatch(with: invalidValue)
+            _ = try attr.isExactMatch(with: invalidValue, condition: conditionString, name: attributeKey)
         } catch {
             tmpError = error
         }
-        XCTAssertNotNil(tmpError)
+        XCTAssertEqual("[Optimizely][Error] " + tmpError!.localizedDescription, OptimizelyError.evaluateAttributeInvalidCondition(conditionString).localizedDescription)
     }
     
     func testIsExactMatchWithInfiniteValue() {
@@ -368,11 +368,11 @@ extension AttributeValueTests {
         let attr = AttributeValue.string("string")
         var tmpError: Error?
         do {
-            _ = try attr.isExactMatch(with: invalidValue)
+            _ = try attr.isExactMatch(with: invalidValue, condition: conditionString, name: attributeKey)
         } catch {
             tmpError = error
         }
-        XCTAssertNotNil(tmpError)
+        XCTAssertEqual("[Optimizely][Error] " + tmpError!.localizedDescription, OptimizelyError.evaluateAttributeInvalidType(conditionString, invalidValue, attributeKey).localizedDescription)
     }
     
     func testIsExactMatchWithInfiniteAttributeValue() {
@@ -380,22 +380,22 @@ extension AttributeValueTests {
         let value = Double.infinity
         var tmpError: Error?
         do {
-            _ = try attr.isExactMatch(with: value)
+            _ = try attr.isExactMatch(with: value, condition: conditionString, name: attributeKey)
         } catch {
             tmpError = error
         }
-        XCTAssertNotNil(tmpError)
+        XCTAssertEqual("[Optimizely][Error] " + tmpError!.localizedDescription, OptimizelyError.evaluateAttributeValueOutOfRange(conditionString, attributeKey).localizedDescription)
     }
     
     func testIsGreaterWithInvalidValue() {
         let attr = AttributeValue.string("")
         var tmpError: Error?
         do {
-            _ = try attr.isGreater(than: Double(1))
+            _ = try attr.isGreater(than: Double(1), condition: conditionString, name: attributeKey)
         } catch {
             tmpError = error
         }
-        XCTAssertNotNil(tmpError)
+        XCTAssertEqual("[Optimizely][Error] " + tmpError!.localizedDescription, OptimizelyError.evaluateAttributeInvalidCondition(conditionString).localizedDescription)
     }
     
     func testIsGreaterWithInfiniteValue() {
@@ -413,22 +413,22 @@ extension AttributeValueTests {
         let attr = AttributeValue.double(100.23)
         var tmpError: Error?
         do {
-            _ = try attr.isGreater(than: invalidValue)
+            _ = try attr.isGreater(than: invalidValue, condition: conditionString, name: attributeKey)
         } catch {
             tmpError = error
         }
-        XCTAssertNotNil(tmpError)
+        XCTAssertEqual("[Optimizely][Error] " + tmpError!.localizedDescription, OptimizelyError.evaluateAttributeInvalidType(conditionString, invalidValue, attributeKey).localizedDescription)
     }
 
     func testIsLessWithInvalidValue() {
         let attr = AttributeValue.string("")
         var tmpError: Error?
         do {
-            _ = try attr.isLess(than: Double(1))
+            _ = try attr.isLess(than: Double(1), condition: conditionString, name: attributeKey)
         } catch {
             tmpError = error
         }
-        XCTAssertNotNil(tmpError)
+        XCTAssertEqual("[Optimizely][Error] " + tmpError!.localizedDescription, OptimizelyError.evaluateAttributeInvalidCondition(conditionString).localizedDescription)
     }
     
     func testIsLessWithInfiniteValue() {
@@ -446,33 +446,33 @@ extension AttributeValueTests {
         let attr = AttributeValue.double(100.23)
         var tmpError: Error?
         do {
-            _ = try attr.isLess(than: invalidValue)
+            _ = try attr.isLess(than: invalidValue, condition: conditionString, name: attributeKey)
         } catch {
             tmpError = error
         }
-        XCTAssertNotNil(tmpError)
+        XCTAssertEqual("[Optimizely][Error] " + tmpError!.localizedDescription, OptimizelyError.evaluateAttributeInvalidType(conditionString, invalidValue, attributeKey).localizedDescription)
     }
     
     func testIsSubstringWithInvalidValue() {
         let attr = AttributeValue.double(1)
         var tmpError: Error?
         do {
-            _ = try attr.isSubstring(of: "valid")
+            _ = try attr.isSubstring(of: "valid", condition: conditionString, name: attributeKey)
         } catch {
             tmpError = error
         }
-        XCTAssertNotNil(tmpError)
+        XCTAssertEqual("[Optimizely][Error] " + tmpError!.localizedDescription, OptimizelyError.evaluateAttributeInvalidCondition(conditionString).localizedDescription)
     }
     
     func testIsSubstringWithInvalidAttributeValue() {
         let attr = AttributeValue.string("valid")
         var tmpError: Error?
         do {
-            _ = try attr.isSubstring(of: invalidValue)
+            _ = try attr.isSubstring(of: invalidValue, condition: conditionString, name: attributeKey)
         } catch {
             tmpError = error
         }
-        XCTAssertNotNil(tmpError)
+        XCTAssertEqual("[Optimizely][Error] " + tmpError!.localizedDescription, OptimizelyError.evaluateAttributeInvalidType(conditionString, invalidValue, attributeKey).localizedDescription)
     }
     
     func testIsValidForExactMatcher() {

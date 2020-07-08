@@ -68,4 +68,253 @@ extension OptimizelyClient {
         userContext = user
     }
     
+    // MARK: - decide
+    
+    public func decide(key: String,
+                       user: OptimizelyUserContext?,
+                       options: [OptimizelyDecideOption]? = nil) throws -> OptimizelyDecision {
+        
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let user = user ?? userContext else { throw OptimizelyError.userIdInvalid }
+
+        var isFeatureKey = config.getFeatureFlag(key: key) != nil
+        if let options = options, options.contains(.forExperiment) {
+            isFeatureKey = false
+        }
+        
+        if isFeatureKey {
+            return try decide(featureKey: key, user: user, options: options)
+        } else {
+            return try decide(experimentKey: key, user: user, options: options)
+        }
+    }
+    
+    func decide(featureKey: String,
+                user: OptimizelyUserContext,
+                options: [OptimizelyDecideOption]?) throws -> OptimizelyDecision {
+        
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let userId = user.userId else { throw OptimizelyError.userIdInvalid }
+        guard let feature = config.getFeatureFlag(key: featureKey) else {
+            throw OptimizelyError.featureKeyInvalid(featureKey)
+        }
+        
+        let attributes = user.attributes
+        
+        let decision = self.decisionService.getVariationForFeature(config: config,
+                                                                   featureFlag: feature,
+                                                                   userId: userId,
+                                                                   attributes: attributes)
+        var enabled = false
+        if let featureEnabled = decision?.variation?.featureEnabled {
+            enabled = featureEnabled
+        }
+        
+        var variableMap = [String: Any]()
+        for (_, v) in feature.variablesMap {
+            var featureValue = v.value
+            if enabled, let variable = decision?.variation?.getVariable(id: v.id) {
+                featureValue = variable.value
+            }
+            
+            var valueParsed: Any? = featureValue
+            
+            if let valueType = Constants.VariableValueType(rawValue: v.type) {
+                switch valueType {
+                case .string:
+                    break
+                case .integer:
+                    valueParsed = Int(featureValue)
+                    break
+                case .double:
+                    valueParsed = Double(featureValue)
+                    break
+                case .boolean:
+                    valueParsed = Bool(featureValue)
+                    break
+                case .json:
+                    valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
+                    break
+                }
+            }
+
+            if let value = valueParsed {
+                variableMap[v.key] = value
+            } else {
+                logger.e(OptimizelyError.variableValueInvalid(v.key))
+            }
+        }
+        
+        guard let optimizelyJSON = OptimizelyJSON(map: variableMap) else {
+            throw OptimizelyError.invalidDictionary
+        }
+        
+        // TODO: fix for new notification type
+//        sendDecisionNotification(decisionType: .allFeatureVariables,
+//                                 userId: userId,
+//                                 attributes: attributes,
+//                                 experiment: decision?.experiment,
+//                                 variation: decision?.variation,
+//                                 feature: feature,
+//                                 featureEnabled: enabled,
+//                                 variableValues: variableMap)
+        
+        // TODO: fix reasons
+        let reasonsForDecision = [String]()
+        
+        var reasons: [String]? = nil
+        if let options = options, options.contains(.includeReasons) {
+            reasons = reasonsForDecision
+        }
+        
+        return OptimizelyDecision(variationKey: nil,
+                                  enabled: enabled,
+                                  variables: optimizelyJSON,
+                                  key: feature.key,
+                                  user: user,
+                                  reasons: reasons)
+    }
+    
+    func decide(experimentKey: String,
+                user: OptimizelyUserContext,
+                options: [OptimizelyDecideOption]?) throws -> OptimizelyDecision {
+        
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let userId = user.userId else { throw OptimizelyError.userIdInvalid }
+        guard let experiment = config.getExperiment(key: experimentKey) else {
+            throw OptimizelyError.experimentKeyInvalid(experimentKey)
+        }
+        
+        let attributes = user.attributes
+        
+        let variationDecision = decisionService.getVariation(config: config,
+                                                             userId: userId,
+                                                             experiment: experiment,
+                                                             attributes: attributes)
+        
+        guard let variation = variationDecision else {
+            throw OptimizelyError.variationUnknown(userId, experiment.key)
+        }
+        
+        // TODO: fix for new notification type
+        let decisionType: Constants.DecisionType = config.isFeatureExperiment(id: experiment.id) ? .featureTest : .abTest
+//        sendDecisionNotification(decisionType: decisionType,
+//                                 userId: userId,
+//                                 attributes: attributes,
+//                                 experiment: experiment,
+//                                 variation: variation)
+        
+        // TODO: fix reasons
+        let reasonsForDecision = [String]()
+        
+        var reasons: [String]? = nil
+        if let options = options, options.contains(.includeReasons) {
+            reasons = reasonsForDecision
+        }
+        
+        return OptimizelyDecision(variationKey: variation.key,
+                                  enabled: nil,
+                                  variables: nil,
+                                  key: experiment.key,
+                                  user: user,
+                                  reasons: reasons)
+    }
+
+    // MARK: - decideAll
+
+    public func decideAll(keys: [String]?,
+                          user: OptimizelyUserContext?,
+                          options: [OptimizelyDecideOption]? = nil) throws -> [String: OptimizelyDecision] {
+        
+        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let user = user ?? userContext else { throw OptimizelyError.userIdInvalid }
+
+        let keys = keys ?? {
+            if let options = options, options.contains(.forExperiment) {
+                return config.allExperiments.map{ $0.key }
+            } else {
+                return config.getFeatureFlags().map{ $0.key }
+            }
+        }()
+        
+        guard let firstKey = keys.first else { return [:] }
+        
+        var isFeatureKey = config.getFeatureFlag(key: firstKey) != nil
+        if let options = options, options.contains(.forExperiment) {
+            isFeatureKey = false
+        }
+        
+        if isFeatureKey {
+            return try decideAll(featureKeys: keys, user: user, options: options)
+        } else {
+            return try decideAll(experimentKeys: keys, user: user, options: options)
+        }
+    }
+    
+    func decideAll(featureKeys: [String],
+                user: OptimizelyUserContext,
+                options: [OptimizelyDecideOption]?) throws -> [String: OptimizelyDecision] {
+        var decisions = [String: OptimizelyDecision]()
+        
+        for key in featureKeys {
+            do {
+                let decision = try decide(featureKey: key, user: user, options: options)
+                decisions[key] = decision
+            } catch {
+                let reasons = [error.localizedDescription]
+                decisions[key] = OptimizelyDecision(variationKey: nil,
+                                                    enabled: nil,
+                                                    variables: nil,
+                                                    key: key,
+                                                    user: user,
+                                                    reasons: reasons)
+            }
+        }
+                
+        // TODO: fix for new notification type
+//        sendDecisionNotification(decisionType: .allFeatureVariables,
+//                                 userId: userId,
+//                                 attributes: attributes,
+//                                 experiment: decision?.experiment,
+//                                 variation: decision?.variation,
+//                                 feature: feature,
+//                                 featureEnabled: enabled,
+//                                 variableValues: variableMap)
+        
+        return decisions
+    }
+
+    func decideAll(experimentKeys: [String],
+                   user: OptimizelyUserContext,
+                   options: [OptimizelyDecideOption]?) throws -> [String: OptimizelyDecision] {
+        var decisions = [String: OptimizelyDecision]()
+        
+        for key in experimentKeys {
+            do {
+                let decision = try decide(experimentKey: key, user: user, options: options)
+                decisions[key] = decision
+            } catch {
+                let reasons = [error.localizedDescription]
+                decisions[key] = OptimizelyDecision(variationKey: nil,
+                                                    enabled: nil,
+                                                    variables: nil,
+                                                    key: key,
+                                                    user: user,
+                                                    reasons: reasons)
+            }
+        }
+
+                // TODO: fix for new notification type
+        //        sendDecisionNotification(decisionType: .allFeatureVariables,
+        //                                 userId: userId,
+        //                                 attributes: attributes,
+        //                                 experiment: decision?.experiment,
+        //                                 variation: decision?.variation,
+        //                                 feature: feature,
+        //                                 featureEnabled: enabled,
+        //                                 variableValues: variableMap)
+                
+        return decisions
+    }
+
 }

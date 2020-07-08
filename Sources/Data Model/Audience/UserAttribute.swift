@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -24,7 +24,8 @@ struct UserAttribute: Codable, Equatable {
     var type: String?
     var match: String?
     var value: AttributeValue?
-    
+    var stringRepresentation: String = ""
+
     enum CodingKeys: String, CodingKey {
         case name
         case type
@@ -71,6 +72,7 @@ struct UserAttribute: Codable, Equatable {
             self.type = try container.decodeIfPresent(String.self, forKey: .type)
             self.match = try container.decodeIfPresent(String.self, forKey: .match)
             self.value = try container.decodeIfPresent(AttributeValue.self, forKey: .value)
+            self.stringRepresentation = Utils.getConditionString(conditions: self)
         } catch {
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: container.codingPath, debugDescription: "Faild to decode User Attribute)"))
         }
@@ -81,6 +83,7 @@ struct UserAttribute: Codable, Equatable {
         self.type = type
         self.match = match
         self.value = value
+        self.stringRepresentation = Utils.getConditionString(conditions: self)
     }
 }
 
@@ -92,29 +95,33 @@ extension UserAttribute {
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         if typeSupported == nil {
-            throw OptimizelyError.userAttributeInvalidType(self.type ?? "empty")
+            throw OptimizelyError.userAttributeInvalidType(stringRepresentation)
         }
 
         // invalid match - parsed for forward compatibility only (but evaluation fails)
         guard let matchFinal = matchSupported else {
-            throw OptimizelyError.userAttributeInvalidMatch(self.match ?? "empty")
+            throw OptimizelyError.userAttributeInvalidMatch(stringRepresentation)
         }
         
         guard let nameFinal = name else {
-            throw OptimizelyError.userAttributeInvalidFormat("empty name in condition")
+            throw OptimizelyError.userAttributeInvalidName(stringRepresentation)
         }
         
         let attributes = attributes ?? OptimizelyAttributes()
         
-        let rawAttributeValue = attributes[nameFinal] ?? nil  // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
-        
+        let rawAttributeValue = attributes[nameFinal] ?? nil // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
+     
         if matchFinal != .exists {
+            if !attributes.keys.contains(nameFinal) {
+                throw OptimizelyError.missingAttributeValue(stringRepresentation, nameFinal)
+            }
+
             if value == nil {
-                throw OptimizelyError.userAttributeInvalidFormat("missing value (\(nameFinal)) in condition)")
+                throw OptimizelyError.userAttributeNilValue(stringRepresentation)
             }
             
             if rawAttributeValue == nil {
-                throw OptimizelyError.evaluateAttributeInvalidFormat("no attribute value for (\(nameFinal))")
+                throw OptimizelyError.nilAttributeValue(stringRepresentation, nameFinal)
             }
         }
         
@@ -122,17 +129,17 @@ extension UserAttribute {
         case .exists:
             return !(rawAttributeValue is NSNull || rawAttributeValue == nil)
         case .exact:
-            return try value!.isExactMatch(with: rawAttributeValue!)
+            return try value!.isExactMatch(with: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
         case .substring:
-            return try value!.isSubstring(of: rawAttributeValue!)
+            return try value!.isSubstring(of: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
         case .lt:
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
-            return try value!.isGreater(than: rawAttributeValue!)
+            return try value!.isGreater(than: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
         case .gt:
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
-            return try value!.isLess(than: rawAttributeValue!)
+            return try value!.isLess(than: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
         }
     }
     

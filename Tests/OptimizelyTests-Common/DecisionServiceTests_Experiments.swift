@@ -211,6 +211,12 @@ class DecisionServiceTests_Experiments: XCTestCase {
     override func setUp() {
         super.setUp()
         
+        HandlerRegistryService.shared.binders.property?.removeAll()
+        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self).to { () -> OPTLogger? in
+            return self.mockLogger
+        }
+        HandlerRegistryService.shared.registerBinding(binder: binder)
+        
         MockLogger.logFound = false
         MockLogger.expectedLog = ""
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",

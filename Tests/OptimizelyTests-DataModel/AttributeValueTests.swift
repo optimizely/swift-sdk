@@ -346,7 +346,7 @@ extension AttributeValueTests {
         let attr = AttributeValue.others
         var tmpError: Error?
         do {
-            _ = try attr.isExactMatch(with: invalidValue, condition: conditionString, name: attributeKey)
+            _ = try attr.isExactMatch(with: invalidValue)
         } catch {
             tmpError = error
         }
@@ -368,7 +368,7 @@ extension AttributeValueTests {
         let attr = AttributeValue.string("string")
         var tmpError: Error?
         do {
-            _ = try attr.isExactMatch(with: invalidValue, condition: conditionString, name: attributeKey)
+            _ = try attr.isExactMatch(with: invalidValue)
         } catch {
             tmpError = error
         }
@@ -380,7 +380,7 @@ extension AttributeValueTests {
         let value = Double.infinity
         var tmpError: Error?
         do {
-            _ = try attr.isExactMatch(with: value, condition: conditionString, name: attributeKey)
+            _ = try attr.isExactMatch(with: value)
         } catch {
             tmpError = error
         }
@@ -391,7 +391,7 @@ extension AttributeValueTests {
         let attr = AttributeValue.string("")
         var tmpError: Error?
         do {
-            _ = try attr.isGreater(than: Double(1), condition: conditionString, name: attributeKey)
+            _ = try attr.isGreater(than: Double(1))
         } catch {
             tmpError = error
         }
@@ -413,7 +413,7 @@ extension AttributeValueTests {
         let attr = AttributeValue.double(100.23)
         var tmpError: Error?
         do {
-            _ = try attr.isGreater(than: invalidValue, condition: conditionString, name: attributeKey)
+            _ = try attr.isGreater(than: invalidValue)
         } catch {
             tmpError = error
         }
@@ -424,7 +424,7 @@ extension AttributeValueTests {
         let attr = AttributeValue.string("")
         var tmpError: Error?
         do {
-            _ = try attr.isLess(than: Double(1), condition: conditionString, name: attributeKey)
+            _ = try attr.isLess(than: Double(1))
         } catch {
             tmpError = error
         }
@@ -446,7 +446,7 @@ extension AttributeValueTests {
         let attr = AttributeValue.double(100.23)
         var tmpError: Error?
         do {
-            _ = try attr.isLess(than: invalidValue, condition: conditionString, name: attributeKey)
+            _ = try attr.isLess(than: invalidValue)
         } catch {
             tmpError = error
         }
@@ -457,7 +457,7 @@ extension AttributeValueTests {
         let attr = AttributeValue.double(1)
         var tmpError: Error?
         do {
-            _ = try attr.isSubstring(of: "valid", condition: conditionString, name: attributeKey)
+            _ = try attr.isSubstring(of: "valid")
         } catch {
             tmpError = error
         }
@@ -468,7 +468,7 @@ extension AttributeValueTests {
         let attr = AttributeValue.string("valid")
         var tmpError: Error?
         do {
-            _ = try attr.isSubstring(of: invalidValue, condition: conditionString, name: attributeKey)
+            _ = try attr.isSubstring(of: invalidValue)
         } catch {
             tmpError = error
         }

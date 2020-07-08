@@ -67,8 +67,11 @@ extension OptimizelyClient {
         
         userContext = user
     }
+}
     
-    // MARK: - decide
+// MARK: - decide
+    
+extension OptimizelyClient {
     
     public func decide(key: String,
                        user: OptimizelyUserContext?,
@@ -149,15 +152,12 @@ extension OptimizelyClient {
             throw OptimizelyError.invalidDictionary
         }
         
-        // TODO: fix for new notification type
-//        sendDecisionNotification(decisionType: .allFeatureVariables,
-//                                 userId: userId,
-//                                 attributes: attributes,
-//                                 experiment: decision?.experiment,
-//                                 variation: decision?.variation,
-//                                 feature: feature,
-//                                 featureEnabled: enabled,
-//                                 variableValues: variableMap)
+        sendDecisionV2Notification(decisionType: .feature,
+                                   userId: userId,
+                                   attributes: attributes,
+                                   feature: feature,
+                                   featureEnabled: enabled,
+                                   variableValues: variableMap)
         
         // TODO: fix reasons
         let reasonsForDecision = [String]()
@@ -196,14 +196,12 @@ extension OptimizelyClient {
             throw OptimizelyError.variationUnknown(userId, experiment.key)
         }
         
-        // TODO: fix for new notification type
-        let decisionType: Constants.DecisionType = config.isFeatureExperiment(id: experiment.id) ? .featureTest : .abTest
-//        sendDecisionNotification(decisionType: decisionType,
-//                                 userId: userId,
-//                                 attributes: attributes,
-//                                 experiment: experiment,
-//                                 variation: variation)
-        
+        sendDecisionV2Notification(decisionType: .experiment,
+                                   userId: userId,
+                                   attributes: attributes,
+                                   experiment: experiment,
+                                   variation: variation)
+
         // TODO: fix reasons
         let reasonsForDecision = [String]()
         
@@ -219,8 +217,11 @@ extension OptimizelyClient {
                                   user: user,
                                   reasons: reasons)
     }
-
-    // MARK: - decideAll
+}
+    
+// MARK: - decideAll
+        
+extension OptimizelyClient {
 
     public func decideAll(keys: [String]?,
                           user: OptimizelyUserContext?,
@@ -271,16 +272,6 @@ extension OptimizelyClient {
             }
         }
                 
-        // TODO: fix for new notification type
-//        sendDecisionNotification(decisionType: .allFeatureVariables,
-//                                 userId: userId,
-//                                 attributes: attributes,
-//                                 experiment: decision?.experiment,
-//                                 variation: decision?.variation,
-//                                 feature: feature,
-//                                 featureEnabled: enabled,
-//                                 variableValues: variableMap)
-        
         return decisions
     }
 
@@ -303,18 +294,75 @@ extension OptimizelyClient {
                                                     reasons: reasons)
             }
         }
-
-                // TODO: fix for new notification type
-        //        sendDecisionNotification(decisionType: .allFeatureVariables,
-        //                                 userId: userId,
-        //                                 attributes: attributes,
-        //                                 experiment: decision?.experiment,
-        //                                 variation: decision?.variation,
-        //                                 feature: feature,
-        //                                 featureEnabled: enabled,
-        //                                 variableValues: variableMap)
                 
         return decisions
     }
 
+}
+
+// MARK: - DecisionV2 Notifications
+
+extension OptimizelyClient {
+    
+    func sendDecisionV2Notification(decisionType: Constants.DecisionV2Type,
+                                    userId: String,
+                                    attributes: OptimizelyAttributes?,
+                                    experiment: Experiment? = nil,
+                                    variation: Variation? = nil,
+                                    feature: FeatureFlag? = nil,
+                                    featureEnabled: Bool? = nil,
+                                    variableKey: String? = nil,
+                                    variableType: String? = nil,
+                                    variableValue: Any? = nil,
+                                    variableValues: [String: Any]? = nil,
+                                    async: Bool = true) {
+        self.sendNotification(type: .decisionV2,
+                              args: [decisionType.rawValue,
+                                     userId,
+                                     attributes ?? OptimizelyAttributes(),
+                                     self.makeDecisionV2Info(decisionType: decisionType,
+                                                             experiment: experiment,
+                                                             variation: variation,
+                                                             feature: feature,
+                                                             featureEnabled: featureEnabled,
+                                                             variableValues: variableValues)],
+                              async: async)
+    }
+    
+    func makeDecisionV2Info(decisionType: Constants.DecisionV2Type,
+                            experiment: Experiment? = nil,
+                            variation: Variation? = nil,
+                            feature: FeatureFlag? = nil,
+                            featureEnabled: Bool? = nil,
+                            variableValues: [String: Any]? = nil) -> [String: Any] {
+        
+        var decisionInfo = [String: Any]()
+        
+        switch decisionType {
+        case .experiment:
+            guard let experiment = experiment else { return decisionInfo }
+            
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation?.key ?? NSNull()
+            
+        case .feature:
+            guard let feature = feature, let featureEnabled = featureEnabled else { return decisionInfo }
+            
+            decisionInfo[Constants.DecisionInfoKeys.feature] = feature.key
+            decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
+            
+            let decisionSource: Constants.DecisionSource = experiment != nil ? .featureTest : .rollout
+            decisionInfo[Constants.DecisionInfoKeys.source] = decisionSource.rawValue
+            
+            var sourceInfo = [String: Any]()
+            if let experiment = experiment, let variation = variation {
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
+            }
+            decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
+            decisionInfo[Constants.DecisionInfoKeys.variableValues] = variableValues
+        }
+        
+        return decisionInfo
+    }
 }

@@ -39,6 +39,12 @@ struct Constants {
         case featureTest = "feature-test"
     }
     
+    // Decide API
+    enum DecisionV2Type: String {
+        case feature  = "feature"
+        case experiment = "experiment"
+    }
+    
     enum DecisionSource: String {
         case featureTest = "feature-test"
         case rollout = "rollout"

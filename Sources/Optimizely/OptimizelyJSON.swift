@@ -71,13 +71,31 @@ public class OptimizelyJSON: NSObject {
     ///
     /// If JSON Data is {"k1":true, "k2":{"k3":"v3"}}
     ///
-    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3"
-    /// Set it to empty to access the entire JSON data.
+    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3".
+    /// Set it to nil or empty to access the entire JSON data. See more examples below:
+    ///
+    ///
+    ///     struct Student: Decodable {
+    ///         let name: String
+    ///         let age: Int
+    ///         let address: Address
+    ///     }
+    ///
+    ///     struct Address: Decodable {
+    ///         let state: String
+    ///         let emails: [String]
+    ///     }
+    ///
+    ///     let student: Student? = optimizelyJSON.getValue(jsonPath: nil)
+    ///     let address: Address? = optimizelyJSON.getValue(jsonPath: "address")
+    ///     let name: String? = optimizelyJSON.getValue(jsonPath: "name")
+    ///     let emails: [String]? = optimizelyJSON.getValue(jsonPath: "address.emails")
+    ///
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
     /// - Returns: Value if decoded successfully
-    public func getValue<T: Decodable>(jsonPath: String) -> T? {
+    public func getValue<T: Decodable>(jsonPath: String?) -> T? {
         func handler(value: Any) -> T? {
             guard JSONSerialization.isValidJSONObject(value) else {
                 // Try and typecast value to required return type
@@ -102,13 +120,31 @@ public class OptimizelyJSON: NSObject {
     ///
     /// If JSON Data is {"k1":true, "k2":{"k3":"v3"}}
     ///
-    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3"
-    /// Set it to empty to access the entire JSON data.
+    /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3".
+    /// Set it to nil or empty to access the entire JSON data. See more examples below:
+    ///
+    ///
+    ///     struct Student: Decodable {
+    ///         let name: String
+    ///         let age: Int
+    ///         let address: Address
+    ///     }
+    ///
+    ///     struct Address: Decodable {
+    ///         let state: String
+    ///         let emails: [String]
+    ///     }
+    ///
+    ///     let student: Student? = optimizelyJSON.getValue(jsonPath: nil)
+    ///     let address: Address? = optimizelyJSON.getValue(jsonPath: "address")
+    ///     let name: String? = optimizelyJSON.getValue(jsonPath: "name")
+    ///     let emails: [String]? = optimizelyJSON.getValue(jsonPath: "address.emails")
+    ///
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
     /// - Returns: Value if parsed successfully
-    public func getValue<T>(jsonPath: String) -> T? {
+    public func getValue<T>(jsonPath: String?) -> T? {
         func handler(value: Any) -> T? {
             guard let v = value as? T else {
                 self.logger.e(.failedToAssignValue)
@@ -119,14 +155,14 @@ public class OptimizelyJSON: NSObject {
         return getValue(jsonPath: jsonPath, valueHandler: handler(value:))
     }
     
-    private func getValue<T>(jsonPath: String, valueHandler: ValueHandler<T>) -> T? {
+    private func getValue<T>(jsonPath: String?, valueHandler: ValueHandler<T>) -> T? {
         
-        if jsonPath.isEmpty {
+        guard let path = jsonPath, !path.isEmpty else {
             // Retrieve value for path
             return valueHandler(map)
         }
         
-        let pathArray = jsonPath.components(separatedBy: ".")
+        let pathArray = path.components(separatedBy: ".")
         let lastIndex = pathArray.count - 1
         
         var internalMap = map

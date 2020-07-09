@@ -279,9 +279,18 @@ extension OptimizelyClientTests_OptimizelyJSON {
         XCTAssertNil(value)
     }
     
+    func testGetValueForNilJSONKeyAndInvalidType() {
+        let value: Int? = self.optimizelyJSON.getValue(jsonPath: nil)
+        XCTAssertNil(value)
+    }
     
     func testGetValueForEmptyJSONKeyAndEmptyDecodableStruct() {
         let value: EmptyDecodableStruct? = self.optimizelyJSON.getValue(jsonPath: "")
+        XCTAssertNotNil(value)
+    }
+    
+    func testGetValueForNilJSONKeyAndEmptyDecodableStruct() {
+        let value: EmptyDecodableStruct? = self.optimizelyJSON.getValue(jsonPath: nil)
         XCTAssertNotNil(value)
     }
     
@@ -292,6 +301,20 @@ extension OptimizelyClientTests_OptimizelyJSON {
     
     func testGetValueForEmptyJsonKeyAndValidDecodableStruct() {
         let value: ValidDecodableStruct? = self.optimizelyJSON.getValue(jsonPath: "")
+        XCTAssertNotNil(value)
+        
+        let expectedStruct = ValidDecodableStruct(
+            field1: 1,
+            field2: 2.5,
+            field3: "three",
+            field4: Field4(innerField1: 3, innerField2: self.innerField2List),
+            field5: true
+        )
+        XCTAssertEqual(value, expectedStruct)
+    }
+    
+    func testGetValueForNilJsonKeyAndValidDecodableStruct() {
+        let value: ValidDecodableStruct? = self.optimizelyJSON.getValue(jsonPath: nil)
         XCTAssertNotNil(value)
         
         let expectedStruct = ValidDecodableStruct(

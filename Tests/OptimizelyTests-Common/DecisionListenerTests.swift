@@ -907,8 +907,122 @@ class DecisionListenerTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    func xxxx
-    
+    func testDecisionListenerDecideFeatureWithUserNotInExperimentAndRollout() {
+        let exp = expectation(description: "x")
+        
+        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil)
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(type, Constants.DecisionType.featureDecide.rawValue)
+            XCTAssertEqual(userId, user.userId)
+            XCTAssertEqual(attributes!["country"] as! String, "US")
+
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.rollout.rawValue)
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.variableValues])
+            let variableValues = decisionInfo[Constants.DecisionInfoKeys.variableValues] as! [String: Any]
+            XCTAssertEqual(variableValues[self.kVariableKeyString] as! String, self.kVariableValueString)
+            XCTAssertEqual(variableValues[self.kVariableKeyInt] as! Int, self.kVariableValueInt)
+            XCTAssertEqual(variableValues[self.kVariableKeyDouble] as! Double, self.kVariableValueDouble)
+            XCTAssertEqual(variableValues[self.kVariableKeyBool] as! Bool, self.kVariableValueBool)
+            let jsonMap = (variableValues[self.kVariableKeyJSON] as! [String: Any])
+            XCTAssertEqual(jsonMap["value"] as! Int, 1)
+            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
+            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
+            exp.fulfill()
+        }
+        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+
+        wait(for: [exp], timeout: 1)
+    }
+
+    func testDecisionListenerDecideFeatureWithUserInRollout() {
+        var exp = expectation(description: "x")
+        
+        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+
+        var variation: Variation = (self.optimizely.config?.allExperiments.first!.variations.first)!
+        variation.featureEnabled = true
+        variation.variables?.append(Variable(id: "2696150066", value: "123"))
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.rollout.rawValue)
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.variableValues])
+            let variableValues = decisionInfo[Constants.DecisionInfoKeys.variableValues] as! [String: Any]
+            XCTAssertEqual(variableValues[self.kVariableKeyString] as! String, "123")
+            XCTAssertEqual(variableValues[self.kVariableKeyInt] as! Int, self.kVariableValueInt)
+            XCTAssertEqual(variableValues[self.kVariableKeyDouble] as! Double, self.kVariableValueDouble)
+            XCTAssertEqual(variableValues[self.kVariableKeyBool] as! Bool, self.kVariableValueBool)
+            let jsonMap = (variableValues[self.kVariableKeyJSON] as! [String: Any])
+            XCTAssertEqual(jsonMap["value"] as! Int, 1)
+            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
+            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
+            exp.fulfill()
+        }
+        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+        wait(for: [exp], timeout: 1)
+        
+        exp = expectation(description: "x")
+        
+        variation.featureEnabled = false
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.rollout.rawValue)
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.variableValues])
+            let variableValues = decisionInfo[Constants.DecisionInfoKeys.variableValues] as! [String: Any]
+            XCTAssertEqual(variableValues[self.kVariableKeyString] as! String, self.kVariableValueString)
+            XCTAssertEqual(variableValues[self.kVariableKeyInt] as! Int, self.kVariableValueInt)
+            XCTAssertEqual(variableValues[self.kVariableKeyDouble] as! Double, self.kVariableValueDouble)
+            XCTAssertEqual(variableValues[self.kVariableKeyBool] as! Bool, self.kVariableValueBool)
+            let jsonMap = (variableValues[self.kVariableKeyJSON] as! [String: Any])
+            XCTAssertEqual(jsonMap["value"] as! Int, 1)
+            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
+            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
+            exp.fulfill()
+        }
+        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+        wait(for: [exp], timeout: 1)
+    }
+
+    func testDecisionListenerDecideFeatureWithInvalidType() {
+        let exp = expectation(description: "x")
+        
+        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+
+        for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
+            if featureFlag.key == kFeatureKey {
+                var flag = featureFlag
+                flag.variables.append(FeatureVariable(id: "2689660112", key: "b_true", type: "invalid", subType: nil, defaultValue: "true"))
+                self.optimizely.config?.project.featureFlags[index] = flag
+                break
+            }
+        }
+                
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.rollout.rawValue)
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.variableValues])
+            let variableValues = decisionInfo[Constants.DecisionInfoKeys.variableValues] as! [String: Any]
+            XCTAssertEqual(variableValues[self.kVariableKeyString] as! String, self.kVariableValueString)
+            XCTAssertEqual(variableValues[self.kVariableKeyInt] as! Int, self.kVariableValueInt)
+            XCTAssertEqual(variableValues[self.kVariableKeyDouble] as! Double, self.kVariableValueDouble)
+            XCTAssertEqual(variableValues[self.kVariableKeyBool] as! String, "true")
+            let jsonMap = (variableValues[self.kVariableKeyJSON] as! [String: Any])
+            XCTAssertEqual(jsonMap["value"] as! Int, 1)
+            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
+            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
+            exp.fulfill()
+        }
+        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+        wait(for: [exp], timeout: 1)
+    }
 
 }
 

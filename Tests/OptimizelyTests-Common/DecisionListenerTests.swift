@@ -843,7 +843,7 @@ class DecisionListenerTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    // MARK: - decide apis
+    // MARK: - decide api
     
     func testDecisionListenerDecideFeatureWithUserInExperiment() {
         var exp = expectation(description: "x")
@@ -1023,6 +1023,29 @@ class DecisionListenerTests: XCTestCase {
         _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
         wait(for: [exp], timeout: 1)
     }
+    
+    // MARK: - decide-all api
+    
+    func testDecisionListenerDecideAll() {
+        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+
+        var count = 0
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.feature])
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.featureEnabled])
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.source])
+            let sourceInfo: [String: Any] = decisionInfo[Constants.DecisionInfoKeys.sourceInfo]! as! [String: Any]
+            XCTAssertNotNil(sourceInfo)
+            count += 1
+        }
+        
+        _ = try? self.optimizely.decideAll(keys: nil, user: user)
+        sleep(1)
+        
+        XCTAssertEqual(count, 2)
+    }
+
 
 }
 

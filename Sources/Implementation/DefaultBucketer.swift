@@ -70,7 +70,7 @@ class DefaultBucketer: OPTBucketer {
     func bucketToExperiment(config: ProjectConfig, group: Group, bucketingId: String) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
-        logger.d(.userAssignedToExperimentBucketValue(bucketValue, bucketingId))
+        logger.d(.userAssignedToBucketValue(bucketValue, bucketingId))
         
         if group.trafficAllocation.count == 0 {
             logger.e(.groupHasNoTrafficAllocation(group.id))
@@ -95,7 +95,7 @@ class DefaultBucketer: OPTBucketer {
     func bucketToVariation(experiment: Experiment, bucketingId: String) -> Variation? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)
-        logger.d(.userAssignedToVariationBucketValue(bucketValue, bucketingId))
+        logger.d(.userAssignedToBucketValue(bucketValue, bucketingId))
 
         if experiment.trafficAllocation.count == 0 {
             logger.e(.experimentHasNoTrafficAllocation(experiment.key))

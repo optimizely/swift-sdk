@@ -31,8 +31,7 @@ enum LogMessage {
     case forcedVariationFound(_ key: String, _ userId: String)
     case forcedVariationFoundButInvalid(_ key: String, _ userId: String)
     case savedVariationInUserProfile(_ varId: String, _ expId: String, _ userId: String)
-    case userAssignedToVariationBucketValue(_ bucket: Int, _ userId: String)
-    case userAssignedToExperimentBucketValue(_ bucket: Int, _ userId: String)
+    case userAssignedToBucketValue(_ bucket: Int, _ userId: String)
     case userMappedToForcedVariation(_ userId: String, _ expId: String, _ varId: String)
     case userMeetsConditionsForTargetingRule(_ userId: String, _ index: Int)
     case userDoesntMeetConditionsForTargetingRule(_ userId: String, _ index: Int)
@@ -87,8 +86,7 @@ extension LogMessage: CustomStringConvertible {
         case .forcedVariationFound(let key, let userId):                        message = "Forced variation (\(key)) is found for user (\(userId))"
         case .forcedVariationFoundButInvalid(let key, let userId):              message = "Forced variation (\(key)) is found for user (\(userId)), but it's not in datafile."
         case .savedVariationInUserProfile(let varId, let expId, let userId):    message = "Saved variation (\(varId)) of experiment (\(expId)) for user (\(userId))."
-        case .userAssignedToVariationBucketValue(let bucket, let userId):       message = "Assigned variation bucket value (\(bucket)) to user (\(userId))"
-        case .userAssignedToExperimentBucketValue(let bucket, let userId):      message = "Assigned experiment bucket value (\(bucket)) to user (\(userId))"
+        case .userAssignedToBucketValue(let bucket, let userId):                message = "Assigned bucket (\(bucket)) to user with bucketing ID (\(userId))."
         case .userMappedToForcedVariation(let userId, let expId, let varId):    message = "Set variation (\(varId)) for experiment (\(expId)) and user (\(userId)) in the forced variation map."
         case .userMeetsConditionsForTargetingRule(let userId, let index):       message = "User (\(userId)) meets conditions for targeting rule (\(index))."
         case .userDoesntMeetConditionsForTargetingRule(let userId, let index):  message = "User (\(userId)) does not meet conditions for targeting rule (\(index))."

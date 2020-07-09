@@ -122,7 +122,7 @@ class DefaultDecisionService: OPTDecisionService {
                 result = try holder.evaluate(project: config.project, attributes: attributes)
             }
         } catch {
-            logger.i(error as? OptimizelyError, source: "doesMeetAudienceConditions(experiment: \(experiment.key), userId: \(userId))")
+            logger.i(error as? OptimizelyError)
             result = false
         }
         

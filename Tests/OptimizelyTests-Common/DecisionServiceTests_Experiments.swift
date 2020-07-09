@@ -16,11 +16,39 @@
 
 import XCTest
 
+class MockLogger: OPTLogger {
+    static var logFound = false
+    static var expectedLog = ""
+    private static var _logLevel: OptimizelyLogLevel?
+    
+    public static var logLevel: OptimizelyLogLevel {
+        get {
+            return _logLevel ?? .info
+        }
+        set (newLevel){
+            if _logLevel == nil {
+                _logLevel = newLevel
+            }
+        }
+    }
+    
+    required public init() {
+        MockLogger.logLevel = .info
+    }
+    
+    open func log(level: OptimizelyLogLevel, message: String) {
+        if  ("[Optimizely][Error] " + message) == MockLogger.expectedLog {
+            MockLogger.logFound = true
+        }
+    }
+}
+
 class DecisionServiceTests_Experiments: XCTestCase {
     
     var optimizely: OptimizelyClient!
     var config: ProjectConfig!
     var decisionService: DefaultDecisionService!
+    var mockLogger = MockLogger()
     
     var kUserId = "12345"
     var kExperimentKey = "countryExperiment"
@@ -33,7 +61,19 @@ class DecisionServiceTests_Experiments: XCTestCase {
     
     var kAudienceIdCountry = "10"
     var kAudienceIdAge = "20"
+    var kAudienceIdExactAge = "30"
+    var kAudienceIdLtAge = "40"
+    var kAudienceIdSubstringAge = "50"
     var kAudienceIdInvalid = "9999999"
+    
+    var kAudienceIdNilValue = "60"
+    var kAudienceIdExactInvalidValue = "70"
+    var kAudienceIdInvalidType = "80"
+    var kAudienceIdGtInvalidValue = "90"
+    var kAudienceIdInvalidMatchType = "100"
+    var kAudienceIdLtInvalidValue = "110"
+    var kAudienceIdSubstringInvalidValue = "120"
+    var kAudienceIdInvalidName = "130"
     
     var kAttributesCountryMatch: [String: Any] = ["country": "us"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
@@ -107,6 +147,61 @@ class DecisionServiceTests_Experiments: XCTestCase {
                 "id": kAudienceIdAge,
                 "conditions": [ "type": "custom_attribute", "name": "age", "match": "gt", "value": 17 ],
                 "name": "age"
+            ],
+            [
+                "id": kAudienceIdExactAge,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "exact", "value": 17 ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdLtAge,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "lt", "value": 17 ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdSubstringAge,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "substring", "value": "twelve" ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdInvalidType,
+                "conditions": [ "type": "", "name": "age", "match": "gt", "value": 17 ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdInvalidMatchType,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "", "value": 17 ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdInvalidName,
+                "conditions": [ "type": "custom_attribute", "match": "gt", "value": 17 ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdNilValue,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "gt" ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdExactInvalidValue,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "exact", "value": ["invalid"] ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdGtInvalidValue,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "gt", "value": ["invalid"] ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdLtInvalidValue,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "lt", "value": ["invalid"] ],
+                "name": "age"
+            ],
+            [
+                "id": kAudienceIdSubstringInvalidValue,
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "substring", "value": 151 ],
+                "name": "age"
             ]
         ]
     }
@@ -116,8 +211,17 @@ class DecisionServiceTests_Experiments: XCTestCase {
     override func setUp() {
         super.setUp()
         
+        HandlerRegistryService.shared.binders.property?.removeAll()
+        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self).to { () -> OPTLogger? in
+            return self.mockLogger
+        }
+        HandlerRegistryService.shared.registerBinding(binder: binder)
+        
+        MockLogger.logFound = false
+        MockLogger.expectedLog = ""
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
-                                                   clearUserProfileService: true)
+                                                   clearUserProfileService: true,
+                                                   logger: mockLogger)
         self.config = self.optimizely.config!
         self.decisionService = (optimizely.decisionService as! DefaultDecisionService)
     }
@@ -405,6 +509,266 @@ extension DecisionServiceTests_Experiments {
         XCTAssert(result)
     }
     
+}
+
+// MARK: - Test isInExperiment() Error Logs
+
+extension DecisionServiceTests_Experiments {
+    
+    func testIsInExperimentWithInvalidType() {
+        MockLogger.expectedLog = OptimizelyError.userAttributeInvalidType("{\"match\":\"gt\",\"value\":17,\"name\":\"age\",\"type\":\"\"}").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdInvalidType]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: kAttributesAgeMatch)
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithInvalidMatchType() {
+        MockLogger.expectedLog = OptimizelyError.userAttributeInvalidMatch("{\"match\":\"\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdInvalidMatchType]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: kAttributesAgeMatch)
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithInvalidName() {
+        MockLogger.expectedLog = OptimizelyError.userAttributeInvalidName("{\"type\":\"custom_attribute\",\"match\":\"gt\",\"value\":17}").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdInvalidName]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: kAttributesAgeMatch)
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithMissingAttributeValue() {
+        MockLogger.expectedLog = OptimizelyError.missingAttributeValue("{\"match\":\"gt\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}", "age").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdAge]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: kAttributesCountryMatch)
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithNilUserAttributeValue() {
+        MockLogger.expectedLog = OptimizelyError.userAttributeNilValue("{\"name\":\"age\",\"type\":\"custom_attribute\",\"match\":\"gt\"}").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdNilValue]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: kAttributesAgeMatch)
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithNilAttributeValue() {
+        MockLogger.expectedLog = OptimizelyError.nilAttributeValue("{\"match\":\"gt\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}", "age").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdAge]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: ["age": nil])
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithExactMatchAndInvalidValue() {
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"exact\",\"value\":{},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdExactInvalidValue]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: kAttributesAgeMatch)
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithExactMatchAndInvalidAttributeValue() {
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"exact\",\"value\":\"us\",\"name\":\"country\",\"type\":\"custom_attribute\"}",["invalid"],"country").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdCountry]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: ["country": ["invalid"]])
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithExactMatchAndInfiniteAttributeValue() {
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeValueOutOfRange("{\"match\":\"exact\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}","age").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdExactAge]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: ["age": Double.infinity])
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithGreaterMatchAndInvalidValue() {
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"gt\",\"value\":{},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdGtInvalidValue]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: kAttributesAgeMatch)
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithGreaterMatchAndInvalidAttributeValue() {
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"gt\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}", ["invalid"], "age").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdAge]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: ["age": ["invalid"]])
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithLessMatchAndInvalidValue() {
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"lt\",\"value\":{},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdLtInvalidValue]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: kAttributesAgeMatch)
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithLessMatchAndInvalidAttributeValue() {
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"lt\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}", ["invalid"], "age").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdLtAge]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: ["age": ["invalid"]])
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithSubstringMatchAndInvalidValue() {
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"substring\",\"value\":151,\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdSubstringInvalidValue]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: kAttributesAgeMatch)
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
+    
+    func testIsInExperimentWithSubstringMatchAndInvalidAttributeValue() {
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidType("{\"match\":\"substring\",\"value\":\"twelve\",\"name\":\"age\",\"type\":\"custom_attribute\"}", ["invalid"], "age").localizedDescription
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        experiment = try! OTUtils.model(from: sampleExperimentData)
+        experiment.audienceIds = [kAudienceIdSubstringAge]
+        self.config.project.experiments = [experiment]
+        
+        result = self.decisionService.isInExperiment(config: config,
+                                                     experiment: experiment,
+                                                     userId: kUserId,
+                                                     attributes: ["age": ["invalid"]])
+        
+        XCTAssert(MockLogger.logFound)
+        XCTAssertFalse(result)
+    }
 }
 
 // MARK: - Test getBucketingId()

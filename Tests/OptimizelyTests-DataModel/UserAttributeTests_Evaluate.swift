@@ -18,6 +18,8 @@ import XCTest
 
 class UserAttributeTests_Evaluate: XCTestCase {
     
+    // MARK: - Evaluate Errors
+    
     func testInvalidType() {
         var err: Error?
         let model = UserAttribute(name: "country", type: "unknown", match: "exact", value: .string("us"))
@@ -26,7 +28,7 @@ class UserAttributeTests_Evaluate: XCTestCase {
         } catch {
             err = error
         }
-        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.userAttributeInvalidType(model.stringRepresentation).localizedDescription)
+        XCTAssertNotNil(err)
     }
     
     func testInvalidMatchType() {
@@ -37,7 +39,7 @@ class UserAttributeTests_Evaluate: XCTestCase {
         } catch {
             err = error
         }
-        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.userAttributeInvalidMatch(model.stringRepresentation).localizedDescription)
+        XCTAssertNotNil(err)
     }
     
     func testInvalidName() {
@@ -49,7 +51,7 @@ class UserAttributeTests_Evaluate: XCTestCase {
         } catch {
             err = error
         }
-        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.userAttributeInvalidName(model.stringRepresentation).localizedDescription)
+        XCTAssertNotNil(err)
     }
     
     func testMissingAttributeValue() {
@@ -62,7 +64,7 @@ class UserAttributeTests_Evaluate: XCTestCase {
         } catch {
             err = error
         }
-        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.missingAttributeValue(model.stringRepresentation, name).localizedDescription)
+        XCTAssertNotNil(err)
     }
     
     func testNilUserAttributeValue() {
@@ -75,7 +77,7 @@ class UserAttributeTests_Evaluate: XCTestCase {
         } catch {
             err = error
         }
-        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.userAttributeNilValue(model.stringRepresentation).localizedDescription)
+        XCTAssertNotNil(err)
     }
     
     func testNilAttributeValue() {
@@ -88,7 +90,7 @@ class UserAttributeTests_Evaluate: XCTestCase {
         } catch {
             err = error
         }
-        XCTAssertEqual("[Optimizely][Error] " + err!.localizedDescription, OptimizelyError.nilAttributeValue(model.stringRepresentation, name).localizedDescription)
+        XCTAssertNotNil(err)
     }
     
     // MARK: - Evaluate (Exact)

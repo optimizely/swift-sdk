@@ -37,14 +37,11 @@ struct Constants {
         case featureVariable  = "feature-variable"
         case allFeatureVariables = "all-feature-variables"
         case featureTest = "feature-test"
+        // Decide-APIs
+        case featureDecide = "feature-decide"
+        case experimentDecide = "experiment-decide"
     }
-    
-    // Decide API
-    enum DecisionV2Type: String {
-        case feature  = "feature"
-        case experiment = "experiment"
-    }
-    
+        
     enum DecisionSource: String {
         case featureTest = "feature-test"
         case rollout = "rollout"

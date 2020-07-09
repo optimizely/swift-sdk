@@ -947,6 +947,31 @@ extension OptimizelyClient {
                 }
                 decisionInfo[Constants.DecisionInfoKeys.variableValues] = variableValues
             }
+            
+        // Decide-APIs
+            
+        case .experimentDecide:
+            guard let experiment = experiment else { return decisionInfo }
+            
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation?.key ?? NSNull()
+            
+        case .featureDecide:
+            guard let feature = feature, let featureEnabled = featureEnabled else { return decisionInfo }
+            
+            decisionInfo[Constants.DecisionInfoKeys.feature] = feature.key
+            decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
+            
+            let decisionSource: Constants.DecisionSource = experiment != nil ? .featureTest : .rollout
+            decisionInfo[Constants.DecisionInfoKeys.source] = decisionSource.rawValue
+            
+            var sourceInfo = [String: Any]()
+            if let experiment = experiment, let variation = variation {
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
+            }
+            decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
+            decisionInfo[Constants.DecisionInfoKeys.variableValues] = variableValues
         }
         
         return decisionInfo

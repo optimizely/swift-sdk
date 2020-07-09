@@ -23,8 +23,6 @@ import Foundation
     case datafileChange
     case decision
     case logEvent
-    // Decide API
-    case decisionV2
 }
 
 // TODO: fix this

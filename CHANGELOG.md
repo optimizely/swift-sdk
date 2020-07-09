@@ -1,5 +1,15 @@
 # Optimizely Swift SDK Changelog
 
+## 3.4.0
+July 9, 2020
+
+### New Features
+* Add support for JSON feature variables. ([#315](https://github.com/optimizely/swift-sdk/pull/315), [#317](https://github.com/optimizely/swift-sdk/pull/317), [#318](https://github.com/optimizely/swift-sdk/pull/318))
+* Add macOS Compatibility. ([#332](https://github.com/optimizely/swift-sdk/pull/332))
+
+### Bug Fixes
+* Add more audience evaluation logs. ([#336](https://github.com/optimizely/swift-sdk/pull/336))
+
 ## 3.3.2
 May 21, 2020
 

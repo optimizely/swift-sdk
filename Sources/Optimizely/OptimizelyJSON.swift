@@ -72,12 +72,12 @@ public class OptimizelyJSON: NSObject {
     /// If JSON Data is {"k1":true, "k2":{"k3":"v3"}}
     ///
     /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3"
-    /// Set it to nil or empty to access the entire JSON data.
+    /// Set it to empty to access the entire JSON data.
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
     /// - Returns: Value if decoded successfully
-    public func getValue<T: Decodable>(jsonPath: String? = nil) -> T? {
+    public func getValue<T: Decodable>(jsonPath: String) -> T? {
         func handler(value: Any) -> T? {
             guard JSONSerialization.isValidJSONObject(value) else {
                 // Try and typecast value to required return type
@@ -103,12 +103,12 @@ public class OptimizelyJSON: NSObject {
     /// If JSON Data is {"k1":true, "k2":{"k3":"v3"}}
     ///
     /// Set jsonPath to "k2" to access {"k3":"v3"} or set it to "k2.k3" to access "v3"
-    /// Set it to nil or empty to access the entire JSON data.
+    /// Set it to empty to access the entire JSON data.
     ///
     /// - Parameters:
     ///   - jsonPath: Key path for the value.
     /// - Returns: Value if parsed successfully
-    public func getValue<T>(jsonPath: String?) -> T? {
+    public func getValue<T>(jsonPath: String) -> T? {
         func handler(value: Any) -> T? {
             guard let v = value as? T else {
                 self.logger.e(.failedToAssignValue)
@@ -119,14 +119,14 @@ public class OptimizelyJSON: NSObject {
         return getValue(jsonPath: jsonPath, valueHandler: handler(value:))
     }
     
-    private func getValue<T>(jsonPath: String?, valueHandler: ValueHandler<T>) -> T? {
+    private func getValue<T>(jsonPath: String, valueHandler: ValueHandler<T>) -> T? {
         
-        guard let path = jsonPath, !path.isEmpty else {
+        if jsonPath.isEmpty {
             // Retrieve value for path
             return valueHandler(map)
         }
         
-        let pathArray = path.components(separatedBy: ".")
+        let pathArray = jsonPath.components(separatedBy: ".")
         let lastIndex = pathArray.count - 1
         
         var internalMap = map

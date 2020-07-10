@@ -1026,17 +1026,23 @@ class DecisionListenerTests: XCTestCase {
     
     // MARK: - decide-all api
     
-    func testDecisionListenerDecideAll() {
+    func testDecisionListenerDecideAllFeatures() {
         let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
 
         var count = 0
         notificationCenter.clearAllNotificationListeners()
-        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(type, Constants.DecisionType.featureDecide.rawValue)
+            XCTAssertEqual(userId, user.userId)
+            XCTAssertEqual(attributes!["country"] as! String, "US")
+
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.feature])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.featureEnabled])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.source])
             let sourceInfo: [String: Any] = decisionInfo[Constants.DecisionInfoKeys.sourceInfo]! as! [String: Any]
             XCTAssertNotNil(sourceInfo)
+            let variableValues = decisionInfo[Constants.DecisionInfoKeys.variableValues] as! [String: Any]
+            XCTAssertNotNil(variableValues)
             count += 1
         }
         
@@ -1045,7 +1051,27 @@ class DecisionListenerTests: XCTestCase {
         
         XCTAssertEqual(count, 2)
     }
+    
+    func testDecisionListenerDecideAllExperiments() {
+        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
 
+        var count = 0
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(type, Constants.DecisionType.experimentDecide.rawValue)
+            XCTAssertEqual(userId, user.userId)
+            XCTAssertEqual(attributes!["country"] as! String, "US")
+
+            XCTAssertNotNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
+            XCTAssertNotNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
+            count += 1
+        }
+        
+        _ = try? self.optimizely.decideAll(keys: nil, user: user, options: [.forExperiment])
+        sleep(1)
+        
+        XCTAssertEqual(count, 2)
+    }
 
 }
 

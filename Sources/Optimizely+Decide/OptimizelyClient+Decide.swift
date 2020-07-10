@@ -74,21 +74,22 @@ extension OptimizelyClient {
 extension OptimizelyClient {
     
     public func decide(key: String,
-                       user: OptimizelyUserContext?,
+                       user: OptimizelyUserContext? = nil,
                        options: [OptimizelyDecideOption]? = nil) throws -> OptimizelyDecision {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         guard let user = user ?? userContext else { throw OptimizelyError.userIdInvalid }
 
         var isFeatureKey = config.getFeatureFlag(key: key) != nil
+        let isExperimentKey = config.getExperiment(key: key) != nil
         if let options = options, options.contains(.forExperiment) {
             isFeatureKey = false
         }
         
-        if isFeatureKey {
-            return try decide(featureKey: key, user: user, options: options)
-        } else {
+        if isExperimentKey && !isFeatureKey {
             return try decide(experimentKey: key, user: user, options: options)
+        } else {
+            return try decide(featureKey: key, user: user, options: options)
         }
     }
     

@@ -78,12 +78,13 @@ extension OptimizelyClient {
                        options: [OptimizelyDecideOption]? = nil) throws -> OptimizelyDecision {
         
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
-        guard let user = user ?? userContext else { throw OptimizelyError.userIdInvalid }
+        guard let user = user ?? userContext else { throw OptimizelyError.userNotSet }
 
         var isFeatureKey = config.getFeatureFlag(key: key) != nil
-        let isExperimentKey = config.getExperiment(key: key) != nil
+        var isExperimentKey = config.getExperiment(key: key) != nil
         if let options = options, options.contains(.forExperiment) {
             isFeatureKey = false
+            isExperimentKey = true
         }
         
         if isExperimentKey && !isFeatureKey {

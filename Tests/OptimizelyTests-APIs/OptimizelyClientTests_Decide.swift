@@ -25,14 +25,14 @@ class OptimizelyClientTests_Decide: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let datafile = OTUtils.loadJSONDatafile("api_datafile")!
+        let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
 
         self.optimizely = OptimizelyClient(sdkKey: "12345",
                                            userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.start(datafile: datafile)
     }
     
-    func testDecideFeature() {
+    func testDecide_feature() {
         let featureKey = "feature_1"
         let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
 
@@ -50,7 +50,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
         XCTAssertNil(decision.reasons)
     }
     
-    func testDecideExperiment() {
+    func testDecide_experiment() {
         let experimentKey = "exp_with_audience"
 
         let user = OptimizelyUserContext(userId: kUserId)
@@ -65,6 +65,66 @@ class OptimizelyClientTests_Decide: XCTestCase {
         XCTAssertEqual(decision.user, user)
         XCTAssertNil(decision.reasons)
     }
+    
+    func testDecide_featureAndExperimentNameConflict() {
+        let featureKey = "common_name"
+        let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = try! optimizely.decide(key: featureKey)
+        
+        XCTAssertNil(decision.variationKey)
+        XCTAssertEqual(decision.enabled, false)
+        let variables = decision.variables!
+        XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
+        
+        XCTAssertEqual(decision.key, featureKey)
+        XCTAssertEqual(decision.user, user)
+        XCTAssertNil(decision.reasons)
+    }
+
+    func testDecide_userInParameter() {
+        let featureKey = "feature_1"
+        let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
+
+        let user = OptimizelyUserContext(userId: kUserId)
+
+        let decision = try! optimizely.decide(key: featureKey, user: user)
+        
+        XCTAssertNil(decision.variationKey)
+        XCTAssertEqual(decision.enabled, true)
+        let variables = decision.variables!
+        XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
+        
+        XCTAssertEqual(decision.key, featureKey)
+        XCTAssertEqual(decision.user, user)
+        XCTAssertNil(decision.reasons)
+    }
+    
+    func testDecide_userInParameterOverriding() {
+        let featureKey = "feature_1"
+        let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
+        
+        let user1 = OptimizelyUserContext(userId: kUserId)
+        let user2 = OptimizelyUserContext(userId: "newUser")
+        try? optimizely.setUserContext(user1)
+        let decision = try! optimizely.decide(key: featureKey, user: user2)
+        
+        XCTAssertNil(decision.variationKey)
+        XCTAssertEqual(decision.enabled, true)
+        let variables = decision.variables!
+        XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
+        
+        XCTAssertEqual(decision.key, featureKey)
+        XCTAssertEqual(decision.user, user2)
+        XCTAssertNil(decision.reasons)
+    }
+}
+    
+// MARK: - errors
+  
+extension OptimizelyClientTests_Decide {
     
     func testDecide_sdkNotReady() {
         let featureKey = "feature_1"
@@ -89,7 +149,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
             _ = try optimizely.decide(key: featureKey)
             XCTAssert(false)
         } catch {
-            XCTAssertEqual(error.localizedDescription, OptimizelyError.sdkNotReady.reason)
+            XCTAssertEqual(error.localizedDescription, OptimizelyError.userNotSet.reason)
         }
     }
 
@@ -119,8 +179,32 @@ class OptimizelyClientTests_Decide: XCTestCase {
         }
     }
 
+}
 
-    // MARK: - options
+// MARK: - reasons
+  
+extension OptimizelyClientTests_Decide {
 
+}
+
+// MARK: - options
+
+extension OptimizelyClientTests_Decide {
+    
+    func testDecideOptions_forExperiment() {
+        let commonKey = "common_name"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = try! optimizely.decide(key: commonKey, options: [.forExperiment])
+        
+        XCTAssertEqual(decision.variationKey, "variation_a")
+        XCTAssertNil(decision.enabled)
+        XCTAssertNil(decision.variables)
+        
+        XCTAssertEqual(decision.key, commonKey)
+        XCTAssertEqual(decision.user, user)
+        XCTAssertNil(decision.reasons)
+    }
 
 }

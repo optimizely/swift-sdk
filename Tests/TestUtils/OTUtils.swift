@@ -118,16 +118,18 @@ class OTUtils {
     
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
-                                 eventDispatcher: OPTEventDispatcher?=nil) -> OptimizelyClient? {
-
+                                 eventDispatcher: OPTEventDispatcher?=nil,
+                                 logger: OPTLogger?=nil) -> OptimizelyClient? {
+        
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
         
         // use random sdkKey to avoid registration conflicts when multiple tests running in parallel
-
+        
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
-                                           eventDispatcher: eventDispatcher,
-                                           userProfileService: userProfileService)
+                                          logger: logger,
+                                          eventDispatcher: eventDispatcher,
+                                          userProfileService: userProfileService)
         do {
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely

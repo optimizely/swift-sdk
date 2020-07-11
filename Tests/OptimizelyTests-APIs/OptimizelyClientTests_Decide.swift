@@ -200,7 +200,7 @@ extension OptimizelyClientTests_Decide {
 
         let user = OptimizelyUserContext(userId: kUserId)
         try? optimizely.setUserContext(user)
-        let decision = try! optimizely.decide(key: commonKey, options: [.forExperiment])
+        let decision = optimizely.decide(key: commonKey, options: [.forExperiment])
         
         XCTAssertEqual(decision.variationKey, "variation_a")
         XCTAssertNil(decision.enabled)

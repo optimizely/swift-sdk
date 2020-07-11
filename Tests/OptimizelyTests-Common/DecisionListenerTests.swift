@@ -878,7 +878,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertEqual(sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] as! String, "a")
             exp.fulfill()
         }
-        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = self.optimizely.decide(key: kFeatureKey, user: user)
         wait(for: [exp], timeout: 1)
         
         exp = expectation(description: "x")
@@ -903,7 +903,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertEqual(sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] as! String, "a")
             exp.fulfill()
         }
-        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = self.optimizely.decide(key: kFeatureKey, user: user)
         wait(for: [exp], timeout: 1)
     }
     
@@ -933,7 +933,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
             exp.fulfill()
         }
-        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = self.optimizely.decide(key: kFeatureKey, user: user)
 
         wait(for: [exp], timeout: 1)
     }
@@ -963,7 +963,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
             exp.fulfill()
         }
-        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = self.optimizely.decide(key: kFeatureKey, user: user)
         wait(for: [exp], timeout: 1)
         
         exp = expectation(description: "x")
@@ -986,7 +986,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
             exp.fulfill()
         }
-        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = self.optimizely.decide(key: kFeatureKey, user: user)
         wait(for: [exp], timeout: 1)
     }
 
@@ -1020,7 +1020,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
             exp.fulfill()
         }
-        _ = try? self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = self.optimizely.decide(key: kFeatureKey, user: user)
         wait(for: [exp], timeout: 1)
     }
 
@@ -1043,7 +1043,7 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as! String, "a")
             exp.fulfill()
         }
-        _ = try? self.optimizely.decide(key: experiment.key, user: user)
+        _ = self.optimizely.decide(key: experiment.key, user: user)
         wait(for: [exp], timeout: 1)
     }
 }

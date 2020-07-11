@@ -23,7 +23,20 @@ public struct OptimizelyDecision {
     public let variables: OptimizelyJSON?
 
     public let key: String
-    public let user: OptimizelyUserContext
-    public let reasons: [String]?
+    public let user: OptimizelyUserContext?
+    public let reasons: [String]
+}
+
+extension OptimizelyDecision {
+    
+    static func error(key: String, user: OptimizelyUserContext?, error: OptimizelyError) -> OptimizelyDecision {
+        return OptimizelyDecision(variationKey: nil,
+                                  enabled: nil,
+                                  variables: nil,
+                                  key: key,
+                                  user: user,
+                                  reasons: [error.reason])
+    }
+    
 }
 

@@ -75,10 +75,14 @@ extension OptimizelyClient {
     
     public func decide(key: String,
                        user: OptimizelyUserContext? = nil,
-                       options: [OptimizelyDecideOption]? = nil) throws -> OptimizelyDecision {
+                       options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
-        guard let user = user ?? userContext else { throw OptimizelyError.userNotSet }
+        guard let userContext = user ?? userContext else {
+            return OptimizelyDecision.error(key: key, user: nil, error: .userNotSet)
+        }
+        guard let config = self.config else {
+            return OptimizelyDecision.error(key: key, user: userContext, error: .sdkNotReady)
+        }
 
         var isFeatureKey = config.getFeatureFlag(key: key) != nil
         var isExperimentKey = config.getExperiment(key: key) != nil
@@ -88,21 +92,26 @@ extension OptimizelyClient {
         }
         
         if isExperimentKey && !isFeatureKey {
-            return try decide(experimentKey: key, user: user, options: options)
+            return decide(config: config, experimentKey: key, user: userContext, options: options)
         } else {
-            return try decide(featureKey: key, user: user, options: options)
+            return decide(config: config, featureKey: key, user: userContext, options: options)
         }
     }
     
-    func decide(featureKey: String,
+    func decide(config: ProjectConfig,
+                featureKey: String,
                 user: OptimizelyUserContext,
-                options: [OptimizelyDecideOption]?) throws -> OptimizelyDecision {
+                options: [OptimizelyDecideOption]?) -> OptimizelyDecision {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
-        guard let userId = user.userId else { throw OptimizelyError.userIdInvalid }
-        guard let feature = config.getFeatureFlag(key: featureKey) else {
-            throw OptimizelyError.featureKeyInvalid(featureKey)
+        guard let userId = user.userId else {
+            return OptimizelyDecision.error(key: featureKey, user: user, error: .userIdInvalid)
         }
+        guard let feature = config.getFeatureFlag(key: featureKey) else {
+            return OptimizelyDecision.error(key: featureKey, user: user, error: .featureKeyInvalid(featureKey))
+        }
+        
+        var reasonsRequired = [OptimizelyError]()
+        var reasonsOptional = [OptimizelyError]()   // TODO
         
         let attributes = user.attributes
         
@@ -150,10 +159,6 @@ extension OptimizelyClient {
             }
         }
         
-        guard let optimizelyJSON = OptimizelyJSON(map: variableMap) else {
-            throw OptimizelyError.invalidDictionary
-        }
-        
         sendDecisionNotification(decisionType: .featureDecide,
                                  userId: userId,
                                  attributes: attributes,
@@ -163,63 +168,65 @@ extension OptimizelyClient {
                                  featureEnabled: enabled,
                                  variableValues: variableMap)
         
-        // TODO: fix reasons
-        let reasonsForDecision = [String]()
-        
-        var reasons: [String]? = nil
-        if let options = options, options.contains(.includeReasons) {
-            reasons = reasonsForDecision
+        let optimizelyJSON = OptimizelyJSON(map: variableMap)
+        if optimizelyJSON == nil {
+            reasonsRequired.append(.invalidDictionary)
         }
-        
+
+        var reasons = reasonsRequired
+        if let options = options, options.contains(.includeReasons) {
+            reasons.append(contentsOf: reasonsOptional)
+        }
+                
         return OptimizelyDecision(variationKey: nil,
                                   enabled: enabled,
                                   variables: optimizelyJSON,
                                   key: feature.key,
                                   user: user,
-                                  reasons: reasons)
+                                  reasons: reasons.map{ $0.reason })
     }
     
-    func decide(experimentKey: String,
+    func decide(config: ProjectConfig,
+                experimentKey: String,
                 user: OptimizelyUserContext,
-                options: [OptimizelyDecideOption]?) throws -> OptimizelyDecision {
+                options: [OptimizelyDecideOption]?) -> OptimizelyDecision {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
-        guard let userId = user.userId else { throw OptimizelyError.userIdInvalid }
+        guard let userId = user.userId else {
+            return OptimizelyDecision.error(key: experimentKey, user: user, error: .userIdInvalid)
+        }
         guard let experiment = config.getExperiment(key: experimentKey) else {
-            throw OptimizelyError.experimentKeyInvalid(experimentKey)
+            return OptimizelyDecision.error(key: experimentKey, user: user, error: .experimentKeyInvalid(experimentKey))
         }
         
+        var reasonsRequired = [OptimizelyError]()   // TODO
+        var reasonsOptional = [OptimizelyError]()   // TODO
+
         let attributes = user.attributes
         
-        let variationDecision = decisionService.getVariation(config: config,
-                                                             userId: userId,
-                                                             experiment: experiment,
-                                                             attributes: attributes)
+        let variation = decisionService.getVariation(config: config,
+                                                     userId: userId,
+                                                     experiment: experiment,
+                                                     attributes: attributes)
         
-        guard let variation = variationDecision else {
-            throw OptimizelyError.variationUnknown(userId, experiment.key)
+        if let variationDecision = variation {
+            sendDecisionNotification(decisionType: .experimentDecide,
+                                     userId: userId,
+                                     attributes: attributes,
+                                     experiment: experiment,
+                                     variation: variationDecision)
         }
-        
-        sendDecisionNotification(decisionType: .experimentDecide,
-                                 userId: userId,
-                                 attributes: attributes,
-                                 experiment: experiment,
-                                 variation: variation)
 
-        // TODO: fix reasons
-        let reasonsForDecision = [String]()
-        
-        var reasons: [String]? = nil
+        var reasons = reasonsRequired
         if let options = options, options.contains(.includeReasons) {
-            reasons = reasonsForDecision
+            reasons.append(contentsOf: reasonsOptional)
         }
-        
-        return OptimizelyDecision(variationKey: variation.key,
+
+        return OptimizelyDecision(variationKey: variation?.key,
                                   enabled: nil,
                                   variables: nil,
                                   key: experiment.key,
                                   user: user,
-                                  reasons: reasons)
+                                  reasons: reasons.map{ $0.reason })
     }
 }
 

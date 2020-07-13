@@ -34,7 +34,7 @@ extension OptimizelyClient {
         }
         
         guard let userId = user.userId else {
-            throw OptimizelyError.generic    // TODO: refine error type
+            throw OptimizelyError.userIdInvalid
         }
         
         // userProfileUpdates

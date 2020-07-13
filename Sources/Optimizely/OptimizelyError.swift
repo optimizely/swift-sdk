@@ -21,6 +21,7 @@ public enum OptimizelyError: Error {
     // MARK: - SDK
     
     case sdkNotReady
+    case userNotSet
     
     // MARK: - Experiment
     
@@ -100,6 +101,7 @@ extension OptimizelyError: CustomStringConvertible {
         switch self {
         case .generic:                                      message = "Unknown reason"
         case .sdkNotReady:                                  message = "Optimizely SDK not configured properly yet"
+        case .userNotSet:                                   message = "User not set properly yet"
         case .experimentKeyInvalid(let key):                message = "Experiment key (\(key)) is not in datafile. It is either invalid, paused, or archived."
         case .experimentIdInvalid(let id):                  message = "Experiment ID (\(id)) is not in datafile."
         case .experimentHasNoTrafficAllocation(let key):    message = "No traffic allocation rules are defined for experiement (\(key))."

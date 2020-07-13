@@ -111,6 +111,7 @@ class OptimizelyUserContextTests: XCTestCase {
 
         XCTAssert(user.userId == expUserId)
         XCTAssert(user.bucketingId == expBucketingId)
+        XCTAssert(user.attributes["$opt_bucketing_id"] as! String == expBucketingId)
     }
 
     func testOptimizelyUserContext_setUserProfile() {
@@ -159,7 +160,7 @@ extension OptimizelyUserContextTests {
             let internalAttributes = optimizely.userContext?.attributes {
             
             let bucketingId = (optimizely.decisionService as! DefaultDecisionService)
-            .getBucketingId(userId: internalUserId, attributes: internalAttributes)
+                                .getBucketingId(userId: internalUserId, attributes: internalAttributes)
             XCTAssert(bucketingId == expBucketingId)
             
         } else {

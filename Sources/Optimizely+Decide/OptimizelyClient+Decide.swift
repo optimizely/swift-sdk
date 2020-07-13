@@ -230,10 +230,16 @@ extension OptimizelyClient {
 
     public func decideAll(keys: [String]?,
                           user: OptimizelyUserContext?,
-                          options: [OptimizelyDecideOption]? = nil) throws -> [String: OptimizelyDecision] {
+                          options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
-        guard let user = user ?? userContext else { throw OptimizelyError.userIdInvalid }
+        guard let userContext = user ?? userContext else {
+            logger.e(OptimizelyError.userNotSet)
+            return [:]
+        }
+        guard let config = self.config else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return [:]
+        }
 
         let keys = keys ?? {
             if let options = options, options.contains(.forExperiment) {
@@ -246,58 +252,41 @@ extension OptimizelyClient {
         guard let firstKey = keys.first else { return [:] }
         
         var isFeatureKey = config.getFeatureFlag(key: firstKey) != nil
+        var isExperimentKey = config.getExperiment(key: firstKey) != nil
         if let options = options, options.contains(.forExperiment) {
             isFeatureKey = false
+            isExperimentKey = true
         }
         
-        if isFeatureKey {
-            return try decideAll(featureKeys: keys, user: user, options: options)
+        if isExperimentKey && !isFeatureKey {
+            return decideAll(config: config, experimentKeys: keys, user: userContext, options: options)
         } else {
-            return try decideAll(experimentKeys: keys, user: user, options: options)
+            return decideAll(config: config, featureKeys: keys, user: userContext, options: options)
         }
     }
     
-    func decideAll(featureKeys: [String],
-                user: OptimizelyUserContext,
-                options: [OptimizelyDecideOption]?) throws -> [String: OptimizelyDecision] {
+    func decideAll(config: ProjectConfig,
+                   featureKeys: [String],
+                   user: OptimizelyUserContext,
+                   options: [OptimizelyDecideOption]?) -> [String: OptimizelyDecision] {
         var decisions = [String: OptimizelyDecision]()
         
         for key in featureKeys {
-            do {
-                let decision = try decide(featureKey: key, user: user, options: options)
-                decisions[key] = decision
-            } catch {
-                let reasons = [error.localizedDescription]
-                decisions[key] = OptimizelyDecision(variationKey: nil,
-                                                    enabled: nil,
-                                                    variables: nil,
-                                                    key: key,
-                                                    user: user,
-                                                    reasons: reasons)
-            }
+            let decision = decide(config: config, featureKey: key, user: user, options: options)
+            decisions[key] = decision
         }
                 
         return decisions
     }
 
-    func decideAll(experimentKeys: [String],
+    func decideAll(config: ProjectConfig,experimentKeys: [String],
                    user: OptimizelyUserContext,
-                   options: [OptimizelyDecideOption]?) throws -> [String: OptimizelyDecision] {
+                   options: [OptimizelyDecideOption]?) -> [String: OptimizelyDecision] {
         var decisions = [String: OptimizelyDecision]()
         
         for key in experimentKeys {
-            do {
-                let decision = try decide(experimentKey: key, user: user, options: options)
-                decisions[key] = decision
-            } catch {
-                let reasons = [error.localizedDescription]
-                decisions[key] = OptimizelyDecision(variationKey: nil,
-                                                    enabled: nil,
-                                                    variables: nil,
-                                                    key: key,
-                                                    user: user,
-                                                    reasons: reasons)
-            }
+            let decision = decide(config: config, experimentKey: key, user: user, options: options)
+            decisions[key] = decision
         }
                 
         return decisions

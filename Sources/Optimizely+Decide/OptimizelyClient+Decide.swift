@@ -72,10 +72,10 @@ extension OptimizelyClient {
                        options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
         
         guard let userContext = user ?? userContext else {
-            return OptimizelyDecision.error(key: key, user: nil, error: .userNotSet)
+            return OptimizelyDecision.errorDecision(key: key, user: nil, error: .userNotSet)
         }
         guard let config = self.config else {
-            return OptimizelyDecision.error(key: key, user: userContext, error: .sdkNotReady)
+            return OptimizelyDecision.errorDecision(key: key, user: userContext, error: .sdkNotReady)
         }
 
         var isFeatureKey = config.getFeatureFlag(key: key) != nil

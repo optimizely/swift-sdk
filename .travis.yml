@@ -1,7 +1,5 @@
 language: minimal
 os: linux
-addons:
-  srcclr: true
   
 # Integration tests need to run first to reset the PR build status to pending
 stages:
@@ -14,6 +12,7 @@ stages:
     if: env(PREP) = true and type = api
   - name: 'Release'
     if: env(RELEASE) = true and type = api
+  - name: 'Source Clear'
 
 jobs:
   include:
@@ -134,3 +133,13 @@ jobs:
         - gem install cocoapods -v '1.8.0'
       script:
         - Scripts/run_release.sh
+        
+   - stage: 'Source Clear'
+      if: type = cron
+      addons:
+        srcclr: true
+      before_install: skip
+      install: skip
+      before_script: skip
+      script: skip
+      after_success: skip

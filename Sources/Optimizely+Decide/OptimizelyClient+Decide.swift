@@ -98,10 +98,10 @@ extension OptimizelyClient {
                 options: [OptimizelyDecideOption]?) -> OptimizelyDecision {
         
         guard let userId = user.userId else {
-            return OptimizelyDecision.error(key: featureKey, user: user, error: .userIdInvalid)
+            return OptimizelyDecision.errorDecision(key: featureKey, user: user, error: .userIdInvalid)
         }
         guard let feature = config.getFeatureFlag(key: featureKey) else {
-            return OptimizelyDecision.error(key: featureKey, user: user, error: .featureKeyInvalid(featureKey))
+            return OptimizelyDecision.errorDecision(key: featureKey, user: user, error: .featureKeyInvalid(featureKey))
         }
         
         var reasonsRequired = [OptimizelyError]()
@@ -186,10 +186,10 @@ extension OptimizelyClient {
                 options: [OptimizelyDecideOption]?) -> OptimizelyDecision {
         
         guard let userId = user.userId else {
-            return OptimizelyDecision.error(key: experimentKey, user: user, error: .userIdInvalid)
+            return OptimizelyDecision.errorDecision(key: experimentKey, user: user, error: .userIdInvalid)
         }
         guard let experiment = config.getExperiment(key: experimentKey) else {
-            return OptimizelyDecision.error(key: experimentKey, user: user, error: .experimentKeyInvalid(experimentKey))
+            return OptimizelyDecision.errorDecision(key: experimentKey, user: user, error: .experimentKeyInvalid(experimentKey))
         }
         
         var reasonsRequired = [OptimizelyError]()   // TODO

@@ -29,7 +29,7 @@ public struct OptimizelyDecision {
 
 extension OptimizelyDecision {
     
-    static func error(key: String, user: OptimizelyUserContext?, error: OptimizelyError) -> OptimizelyDecision {
+    static func errorDecision(key: String, user: OptimizelyUserContext?, error: OptimizelyError) -> OptimizelyDecision {
         return OptimizelyDecision(variationKey: nil,
                                   enabled: nil,
                                   variables: nil,

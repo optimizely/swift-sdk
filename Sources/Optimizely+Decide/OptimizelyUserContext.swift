@@ -34,7 +34,8 @@ public struct OptimizelyUserContext {
     }
     
     public mutating func setBucketingId(_ id: String) {
-        self.bucketingId = id
+        bucketingId = id
+        attributes[Constants.Attributes.OptimizelyBucketIdAttribute] = bucketingId
     }
     
     public mutating func setUserProfile(key: String?, value: String?) {

@@ -37,12 +37,6 @@ extension OptimizelyClient {
             throw OptimizelyError.generic    // TODO: refine error type
         }
         
-        // bucketingId
-        
-        if let bucketingId = user.bucketingId {
-            user.attributes[Constants.Attributes.OptimizelyBucketIdAttribute] = bucketingId
-        }
-        
         // userProfileUpdates
         
         if let decisionService = self.decisionService as? DefaultDecisionService {

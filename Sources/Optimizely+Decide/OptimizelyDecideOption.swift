@@ -1,4 +1,3 @@
-//
 /****************************************************************************
 * Copyright 2020, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -18,31 +17,10 @@
 
 import Foundation
 
-public struct OptimizelyUserContext {
-    var userId: String?
-    var attributes: [String: Any]
-    var defaultOptions: [OptimizelyDecideOption]
-    
-    public init(userId: String?, attributes: [String: Any]? = nil) {
-        self.userId = userId
-        self.attributes = attributes ?? [:]
-        self.defaultOptions = []
-    }
-    
-    public mutating func setAttribute(key: String, value: Any) {
-        attributes[key] = value
-    }
-    
-    public mutating func setDefaultOptions(_ options: [OptimizelyDecideOption]) {
-        defaultOptions.append(contentsOf: options)
-    }
-}
-
-extension OptimizelyUserContext: Equatable {
-    
-    public static func ==(lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
-        return lhs.userId == rhs.userId &&
-            (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes) &&
-            Set(lhs.defaultOptions) == Set(rhs.defaultOptions)
-    }
+public enum OptimizelyDecideOption {
+    case disableTracking
+    case enabledOnly
+    case bypassUPS
+    case forExperiment
+    case includeReasons
 }

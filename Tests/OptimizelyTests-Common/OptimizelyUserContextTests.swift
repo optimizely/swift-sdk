@@ -42,8 +42,7 @@ class OptimizelyUserContextTests: XCTestCase {
         
         XCTAssert(user.userId == nil)
         XCTAssert(user.attributes.count == 0)
-        XCTAssert(user.bucketingId == nil)
-        XCTAssert(user.userProfileUpdates.count == 0)
+        XCTAssert(user.defaultOptions.count == 0)
     }
 
     func testOptimizelyUserContext_userId() {
@@ -51,8 +50,7 @@ class OptimizelyUserContextTests: XCTestCase {
         
         XCTAssert(user.userId == expUserId)
         XCTAssert(user.attributes.count == 0)
-        XCTAssert(user.bucketingId == nil)
-        XCTAssert(user.userProfileUpdates.count == 0)
+        XCTAssert(user.defaultOptions.count == 0)
     }
     
     func testOptimizelyUserContext_nilAttributes() {
@@ -104,31 +102,22 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.attributes["state"] as! String == "ca")
     }
 
-    func testOptimizelyUserContext_setBucketingId() {
-        let expBucketingId = "5678"
+    func testOptimizelyUserContext_setDefaultOptions() {
+        let expOptions: [OptimizelyDecideOption] = [.bypassUPS,
+                                                    .disableTracking,
+                                                    .enabledOnly,
+                                                    .forExperiment,
+                                                    .includeReasons]
         var user = OptimizelyUserContext(userId: expUserId)
-        user.setBucketingId(expBucketingId)
-
+        user.setDefaultOptions(expOptions)
+        
         XCTAssert(user.userId == expUserId)
-        XCTAssert(user.bucketingId == expBucketingId)
-        XCTAssert(user.attributes["$opt_bucketing_id"] as! String == expBucketingId)
+        XCTAssert(user.defaultOptions == expOptions)
     }
-
-    func testOptimizelyUserContext_setUserProfile() {
-        var user = OptimizelyUserContext(userId: expUserId)
-        user.setUserProfile(key: "k1", value: "v1")
-        user.setUserProfile(key: "k2", value: nil)
-        user.setUserProfile(key: nil, value: nil)
-
-        XCTAssert(user.userId == expUserId)
-        XCTAssert(user.userProfileUpdates.count == 3)
-        XCTAssert(user.userProfileUpdates[0] == ("k1", "v1"))
-        XCTAssert(user.userProfileUpdates[1] == ("k2", nil))
-        XCTAssert(user.userProfileUpdates[2] == (nil, nil))
-    }
+    
 }
     
-// MARK: - setOptimizelyUserContext
+// MARK: - setUserContext
     
 extension OptimizelyUserContextTests {
     
@@ -145,68 +134,6 @@ extension OptimizelyUserContextTests {
         try! optimizely.setUserContext(user)
         
         XCTAssert(optimizely.userContext == user)
-    }
-    
-    func testSetUserContext_bucketingId() {
-        let expBucketingId = "5678"
-        var user = OptimizelyUserContext(userId: expUserId)
-        user.setBucketingId(expBucketingId)
-        
-        let optimizely = OptimizelyClient(sdkKey: "sdk-key")
-        try! optimizely.start(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
-        try! optimizely.setUserContext(user)
-
-        if let internalUserId = optimizely.userContext?.userId,
-            let internalAttributes = optimizely.userContext?.attributes {
-            
-            let bucketingId = (optimizely.decisionService as! DefaultDecisionService)
-                                .getBucketingId(userId: internalUserId, attributes: internalAttributes)
-            XCTAssert(bucketingId == expBucketingId)
-            
-        } else {
-            XCTAssert(false)
-        }
-    }
-    
-    func testSetUserContext_userProfile() {
-        var user = OptimizelyUserContext(userId: expUserId)
-        user.setUserProfile(key: exp1Key, value: var1AKey)
-        user.setUserProfile(key: exp2Key, value: var2AKey)
-
-        let ups = setUserContextForUPSTest(user)
-        
-        let profile = ups.lookup(userId: expUserId)!
-        let bucketMap = profile["experiment_bucket_map"] as! OPTUserProfileService.UPBucketMap
-        XCTAssert(bucketMap[exp1Id] == ["variation_id": var1AId])
-        XCTAssert(bucketMap[exp2Id] == ["variation_id": var2AId])
-    }
-    
-    func testSetUserContext_userProfileRemove() {
-        var user = OptimizelyUserContext(userId: expUserId)
-        user.setUserProfile(key: exp1Key, value: var1AKey)
-        user.setUserProfile(key: exp2Key, value: var2AKey)
-        user.setUserProfile(key: exp1Key, value: nil)
-
-        let ups = setUserContextForUPSTest(user)
-        
-        let profile = ups.lookup(userId: expUserId)!
-        let bucketMap = profile["experiment_bucket_map"] as! OPTUserProfileService.UPBucketMap
-        XCTAssertNil(bucketMap[exp1Id])
-        XCTAssert(bucketMap[exp2Id] == ["variation_id": var2AId])
-    }
-    
-    func testSetUserContext_userProfileRemoveAll() {
-        var user = OptimizelyUserContext(userId: expUserId)
-        user.setUserProfile(key: exp1Key, value: var1AKey)
-        user.setUserProfile(key: exp2Key, value: var2AKey)
-        user.setUserProfile(key: nil, value: nil)
-
-        let ups = setUserContextForUPSTest(user)
-        
-        let profile = ups.lookup(userId: expUserId)!
-        let bucketMap = profile["experiment_bucket_map"] as! OPTUserProfileService.UPBucketMap
-        XCTAssertNil(bucketMap[exp1Id])
-        XCTAssertNil(bucketMap[exp2Id])
     }
     
     func testSetUserContext_replace() {

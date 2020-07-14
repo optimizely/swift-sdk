@@ -1,4 +1,3 @@
-//
 /****************************************************************************
 * Copyright 2020, Optimizely, Inc. and contributors                        *
 *                                                                          *
@@ -18,31 +17,26 @@
 
 import Foundation
 
-public struct OptimizelyUserContext {
-    var userId: String?
-    var attributes: [String: Any]
-    var defaultOptions: [OptimizelyDecideOption]
-    
-    public init(userId: String?, attributes: [String: Any]? = nil) {
-        self.userId = userId
-        self.attributes = attributes ?? [:]
-        self.defaultOptions = []
-    }
-    
-    public mutating func setAttribute(key: String, value: Any) {
-        attributes[key] = value
-    }
-    
-    public mutating func setDefaultOptions(_ options: [OptimizelyDecideOption]) {
-        defaultOptions.append(contentsOf: options)
-    }
+public struct OptimizelyDecision {
+    public let variationKey: String?
+    public let enabled: Bool?
+    public let variables: OptimizelyJSON?
+
+    public let key: String
+    public let user: OptimizelyUserContext?
+    public let reasons: [String]
 }
 
-extension OptimizelyUserContext: Equatable {
+extension OptimizelyDecision {
     
-    public static func ==(lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
-        return lhs.userId == rhs.userId &&
-            (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes) &&
-            Set(lhs.defaultOptions) == Set(rhs.defaultOptions)
+    static func errorDecision(key: String, user: OptimizelyUserContext?, error: OptimizelyError) -> OptimizelyDecision {
+        return OptimizelyDecision(variationKey: nil,
+                                  enabled: nil,
+                                  variables: nil,
+                                  key: key,
+                                  user: user,
+                                  reasons: [error.reason])
     }
+    
 }
+

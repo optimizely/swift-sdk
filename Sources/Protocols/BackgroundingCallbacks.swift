@@ -15,23 +15,37 @@
 ***************************************************************************/
 
 import Foundation
+#if os(macOS)
+import Cocoa
+#else // iOS, tvOS
 import UIKit
+#endif
 
 @objc protocol BackgroundingCallbacks {
     func applicationDidEnterBackground()
     func applicationDidBecomeActive()
 }
 
+private extension NSNotification.Name {
+    #if os(macOS)
+    static let didEnterBackground = NSApplication.didResignActiveNotification
+    static let didBecomeActive = NSApplication.didBecomeActiveNotification
+    #else // iOS, tvOS
+    static let didEnterBackground = UIApplication.didEnterBackgroundNotification
+    static let didBecomeActive = UIApplication.didBecomeActiveNotification
+    #endif
+}
+
 extension BackgroundingCallbacks {
     func subscribe() {
         // swift4.2+
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: .didEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: .didBecomeActive, object: nil)
     }
     
     func unsubscribe() {
         // swift4.2+
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didEnterBackground, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didBecomeActive, object: nil)
     }
 }

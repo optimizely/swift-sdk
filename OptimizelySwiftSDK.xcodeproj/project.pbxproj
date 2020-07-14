@@ -1291,6 +1291,69 @@
 		6ECB60D4234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */; };
 		6ECB60D5234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */; };
 		6ECB60D7234E601A00016D41 /* OptimizelyClientTests_OptimizelyConfig_Objc.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60D6234E601A00016D41 /* OptimizelyClientTests_OptimizelyConfig_Objc.m */; };
+		BD64853C2491474500F30986 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E75167A22C520D400B2B157 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BD64853E2491474500F30986 /* Audience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169822C520D400B2B157 /* Audience.swift */; };
+		BD64853F2491474500F30986 /* OptimizelyClient+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167622C520D400B2B157 /* OptimizelyClient+Extension.swift */; };
+		BD6485402491474500F30986 /* Attribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169D22C520D400B2B157 /* Attribute.swift */; };
+		BD6485412491474500F30986 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169522C520D400B2B157 /* Group.swift */; };
+		BD6485422491474500F30986 /* DefaultBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167E22C520D400B2B157 /* DefaultBucketer.swift */; };
+		BD6485432491474500F30986 /* DefaultDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167D22C520D400B2B157 /* DefaultDatafileHandler.swift */; };
+		BD6485442491474500F30986 /* OPTLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166322C520D400B2B157 /* OPTLogger.swift */; };
+		BD6485452491474500F30986 /* BatchEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168A22C520D400B2B157 /* BatchEvent.swift */; };
+		BD6485462491474500F30986 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168C22C520D400B2B157 /* Event.swift */; };
+		BD6485472491474500F30986 /* OPTEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166522C520D400B2B157 /* OPTEventDispatcher.swift */; };
+		BD6485482491474500F30986 /* DefaultNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167F22C520D400B2B157 /* DefaultNotificationCenter.swift */; };
+		BD6485492491474500F30986 /* OPTDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7516A322C520D400B2B157 /* OPTDecisionService.swift */; };
+		BD64854A2491474500F30986 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167222C520D400B2B157 /* Utils.swift */; };
+		BD64854B2491474500F30986 /* ArrayEventForDispatch+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167522C520D400B2B157 /* ArrayEventForDispatch+Extension.swift */; };
+		BD64854C2491474500F30986 /* DefaultEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166122C520D400B2B157 /* DefaultEventDispatcher.swift */; };
+		BD64854D2491474500F30986 /* UserAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169C22C520D400B2B157 /* UserAttribute.swift */; };
+		BD64854E2491474500F30986 /* BackgroundingCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169F22C520D400B2B157 /* BackgroundingCallbacks.swift */; };
+		BD64854F2491474500F30986 /* DataStoreFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168422C520D400B2B157 /* DataStoreFile.swift */; };
+		BD6485502491474500F30986 /* OPTBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7516A522C520D400B2B157 /* OPTBucketer.swift */; };
+		BD6485512491474500F30986 /* OptimizelyResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166B22C520D400B2B157 /* OptimizelyResult.swift */; };
+		BD6485522491474500F30986 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166D22C520D400B2B157 /* Constants.swift */; };
+		BD6485532491474500F30986 /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75165F22C520D400B2B157 /* DefaultLogger.swift */; };
+		BD6485542491474500F30986 /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169322C520D400B2B157 /* Experiment.swift */; };
+		BD6485552491474500F30986 /* OptimizelyConfig+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */; };
+		BD6485562491474500F30986 /* SDKVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167322C520D400B2B157 /* SDKVersion.swift */; };
+		BD6485572491474500F30986 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169222C520D400B2B157 /* Project.swift */; };
+		BD6485582491474500F30986 /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169922C520D400B2B157 /* AttributeValue.swift */; };
+		BD6485592491474500F30986 /* BatchEventBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168722C520D400B2B157 /* BatchEventBuilder.swift */; };
+		BD64855A2491474500F30986 /* ConditionLeaf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169A22C520D400B2B157 /* ConditionLeaf.swift */; };
+		BD64855B2491474500F30986 /* OptimizelyJSON+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78CAFA324486E0A009FE876 /* OptimizelyJSON+ObjC.swift */; };
+		BD64855C2491474500F30986 /* DataStoreUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168322C520D400B2B157 /* DataStoreUserDefaults.swift */; };
+		BD64855D2491474500F30986 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167822C520D400B2B157 /* Array+Extension.swift */; };
+		BD64855E2491474500F30986 /* OPTDatafileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7516A422C520D400B2B157 /* OPTDatafileHandler.swift */; };
+		BD64855F2491474500F30986 /* ConditionHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169B22C520D400B2B157 /* ConditionHolder.swift */; };
+		BD6485602491474500F30986 /* OPTNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7516A022C520D400B2B157 /* OPTNotificationCenter.swift */; };
+		BD6485612491474500F30986 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169622C520D400B2B157 /* Variable.swift */; };
+		BD6485622491474500F30986 /* MurmurHash3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166E22C520D400B2B157 /* MurmurHash3.swift */; };
+		BD6485632491474500F30986 /* FeatureVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168E22C520D400B2B157 /* FeatureVariable.swift */; };
+		BD6485642491474500F30986 /* Rollout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168F22C520D400B2B157 /* Rollout.swift */; };
+		BD6485652491474500F30986 /* DataStoreQueueStackImpl+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167722C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift */; };
+		BD6485662491474500F30986 /* OptimizelyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78CAF572445AD8D009FE876 /* OptimizelyJSON.swift */; };
+		BD6485672491474500F30986 /* OptimizelyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166922C520D400B2B157 /* OptimizelyClient.swift */; };
+		BD6485682491474500F30986 /* FeatureFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169422C520D400B2B157 /* FeatureFlag.swift */; };
+		BD6485692491474500F30986 /* HandlerRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166F22C520D400B2B157 /* HandlerRegistryService.swift */; };
+		BD64856A2491474500F30986 /* Variation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169022C520D400B2B157 /* Variation.swift */; };
+		BD64856B2491474500F30986 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168D22C520D400B2B157 /* ProjectConfig.swift */; };
+		BD64856C2491474500F30986 /* DataStoreQueueStackImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168522C520D400B2B157 /* DataStoreQueueStackImpl.swift */; };
+		BD64856D2491474500F30986 /* OptimizelyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166722C520D400B2B157 /* OptimizelyError.swift */; };
+		BD64856E2491474500F30986 /* EventForDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168B22C520D400B2B157 /* EventForDispatch.swift */; };
+		BD64856F2491474500F30986 /* OptimizelyClient+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166A22C520D400B2B157 /* OptimizelyClient+ObjC.swift */; };
+		BD6485702491474500F30986 /* OPTUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166422C520D400B2B157 /* OPTUserProfileService.swift */; };
+		BD6485712491474500F30986 /* DefaultUserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166022C520D400B2B157 /* DefaultUserProfileService.swift */; };
+		BD6485722491474500F30986 /* DataStoreQueueStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7516A122C520D400B2B157 /* DataStoreQueueStack.swift */; };
+		BD6485732491474500F30986 /* OptimizelyConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA2CC232345618E001E7531 /* OptimizelyConfig.swift */; };
+		BD6485742491474500F30986 /* OPTDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7516A222C520D400B2B157 /* OPTDataStore.swift */; };
+		BD6485752491474500F30986 /* DefaultDecisionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168022C520D400B2B157 /* DefaultDecisionService.swift */; };
+		BD6485762491474500F30986 /* OptimizelyLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75166822C520D400B2B157 /* OptimizelyLogLevel.swift */; };
+		BD6485772491474500F30986 /* TrafficAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169122C520D400B2B157 /* TrafficAllocation.swift */; };
+		BD6485782491474500F30986 /* DataStoreMemory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75168222C520D400B2B157 /* DataStoreMemory.swift */; };
+		BD6485792491474500F30986 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167022C520D400B2B157 /* LogMessage.swift */; };
+		BD64857A2491474500F30986 /* AtomicProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167122C520D400B2B157 /* AtomicProperty.swift */; };
+		BD64857B2491474500F30986 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34A6162319EBB700BAE302 /* Notifications.swift */; };
 		C78CAF582445AD8D009FE876 /* OptimizelyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78CAF572445AD8D009FE876 /* OptimizelyJSON.swift */; };
 		C78CAF592445AD8D009FE876 /* OptimizelyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78CAF572445AD8D009FE876 /* OptimizelyJSON.swift */; };
 		C78CAF5A2445AD8D009FE876 /* OptimizelyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78CAF572445AD8D009FE876 /* OptimizelyJSON.swift */; };
@@ -1583,6 +1646,7 @@
 		6ECB60C5234D329500016D41 /* OptimizelyClientTests_OptimizelyConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_OptimizelyConfig.swift; sourceTree = "<group>"; };
 		6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "OptimizelyConfig+ObjC.swift"; sourceTree = "<group>"; };
 		6ECB60D6234E601A00016D41 /* OptimizelyClientTests_OptimizelyConfig_Objc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OptimizelyClientTests_OptimizelyConfig_Objc.m; sourceTree = "<group>"; };
+		BD6485812491474500F30986 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C78CAF572445AD8D009FE876 /* OptimizelyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyJSON.swift; sourceTree = "<group>"; };
 		C78CAF652446DB91009FE876 /* OptimizelyClientTests_OptimizelyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_OptimizelyJSON.swift; sourceTree = "<group>"; };
 		C78CAF8524485029009FE876 /* OptimizelyClientTests_OptimizelyJSON_Objc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OptimizelyClientTests_OptimizelyJSON_Objc.m; sourceTree = "<group>"; };
@@ -1692,6 +1756,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BD64857C2491474500F30986 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1720,6 +1791,7 @@
 				6E636B8C2236C91F00AF3CEF /* OptimizelyTests-APIs-iOS.xctest */,
 				6E636B9B2236C96700AF3CEF /* OptimizelyTests-Legacy-iOS.xctest */,
 				6E14CD632423F80B00010234 /* OptimizelyTests-Batch-iOS.xctest */,
+				BD6485812491474500F30986 /* Optimizely.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2129,6 +2201,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BD64853B2491474500F30986 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD64853C2491474500F30986 /* Optimizely.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -2366,6 +2446,24 @@
 			productReference = 6EBAEB7421E3FEF900D13AA9 /* OptimizelyTests-iOS.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		BD64853A2491474500F30986 /* OptimizelySwiftSDK-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD64857E2491474500F30986 /* Build configuration list for PBXNativeTarget "OptimizelySwiftSDK-macOS" */;
+			buildPhases = (
+				BD64853B2491474500F30986 /* Headers */,
+				BD64853D2491474500F30986 /* Sources */,
+				BD64857C2491474500F30986 /* Frameworks */,
+				BD64857D2491474500F30986 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "OptimizelySwiftSDK-macOS";
+			productName = OptimizelySwiftSDKiOS;
+			productReference = BD6485812491474500F30986 /* Optimizely.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2433,6 +2531,7 @@
 			targets = (
 				6EBAEB6B21E3FEF800D13AA9 /* OptimizelySwiftSDK-iOS */,
 				6E614DCC21E3F389005982A1 /* OptimizelySwiftSDK-tvOS */,
+				BD64853A2491474500F30986 /* OptimizelySwiftSDK-macOS */,
 				6EBAEB7321E3FEF900D13AA9 /* OptimizelyTests-iOS */,
 				6EA425692218E60A00B074B5 /* OptimizelyTests-Common-iOS */,
 				6E14CD622423F80B00010234 /* OptimizelyTests-Batch-iOS */,
@@ -2869,6 +2968,13 @@
 				6E12B1D122C55A250005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
 				6E12B2BB22C55A330005E9E6 /* 50_entities.json in Resources */,
 				6E34A640231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD64857D2491474500F30986 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3933,6 +4039,75 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BD64853D2491474500F30986 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD64853E2491474500F30986 /* Audience.swift in Sources */,
+				BD64853F2491474500F30986 /* OptimizelyClient+Extension.swift in Sources */,
+				BD6485402491474500F30986 /* Attribute.swift in Sources */,
+				BD6485412491474500F30986 /* Group.swift in Sources */,
+				BD6485422491474500F30986 /* DefaultBucketer.swift in Sources */,
+				BD6485432491474500F30986 /* DefaultDatafileHandler.swift in Sources */,
+				BD6485442491474500F30986 /* OPTLogger.swift in Sources */,
+				BD6485452491474500F30986 /* BatchEvent.swift in Sources */,
+				BD6485462491474500F30986 /* Event.swift in Sources */,
+				BD6485472491474500F30986 /* OPTEventDispatcher.swift in Sources */,
+				BD6485482491474500F30986 /* DefaultNotificationCenter.swift in Sources */,
+				BD6485492491474500F30986 /* OPTDecisionService.swift in Sources */,
+				BD64854A2491474500F30986 /* Utils.swift in Sources */,
+				BD64854B2491474500F30986 /* ArrayEventForDispatch+Extension.swift in Sources */,
+				BD64854C2491474500F30986 /* DefaultEventDispatcher.swift in Sources */,
+				BD64854D2491474500F30986 /* UserAttribute.swift in Sources */,
+				BD64854E2491474500F30986 /* BackgroundingCallbacks.swift in Sources */,
+				BD64854F2491474500F30986 /* DataStoreFile.swift in Sources */,
+				BD6485502491474500F30986 /* OPTBucketer.swift in Sources */,
+				BD6485512491474500F30986 /* OptimizelyResult.swift in Sources */,
+				BD6485522491474500F30986 /* Constants.swift in Sources */,
+				BD6485532491474500F30986 /* DefaultLogger.swift in Sources */,
+				BD6485542491474500F30986 /* Experiment.swift in Sources */,
+				BD6485552491474500F30986 /* OptimizelyConfig+ObjC.swift in Sources */,
+				BD6485562491474500F30986 /* SDKVersion.swift in Sources */,
+				BD6485572491474500F30986 /* Project.swift in Sources */,
+				BD6485582491474500F30986 /* AttributeValue.swift in Sources */,
+				BD6485592491474500F30986 /* BatchEventBuilder.swift in Sources */,
+				BD64855A2491474500F30986 /* ConditionLeaf.swift in Sources */,
+				BD64855B2491474500F30986 /* OptimizelyJSON+ObjC.swift in Sources */,
+				BD64855C2491474500F30986 /* DataStoreUserDefaults.swift in Sources */,
+				BD64855D2491474500F30986 /* Array+Extension.swift in Sources */,
+				BD64855E2491474500F30986 /* OPTDatafileHandler.swift in Sources */,
+				BD64855F2491474500F30986 /* ConditionHolder.swift in Sources */,
+				BD6485602491474500F30986 /* OPTNotificationCenter.swift in Sources */,
+				BD6485612491474500F30986 /* Variable.swift in Sources */,
+				BD6485622491474500F30986 /* MurmurHash3.swift in Sources */,
+				BD6485632491474500F30986 /* FeatureVariable.swift in Sources */,
+				BD6485642491474500F30986 /* Rollout.swift in Sources */,
+				BD6485652491474500F30986 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
+				BD6485662491474500F30986 /* OptimizelyJSON.swift in Sources */,
+				BD6485672491474500F30986 /* OptimizelyClient.swift in Sources */,
+				BD6485682491474500F30986 /* FeatureFlag.swift in Sources */,
+				BD6485692491474500F30986 /* HandlerRegistryService.swift in Sources */,
+				BD64856A2491474500F30986 /* Variation.swift in Sources */,
+				BD64856B2491474500F30986 /* ProjectConfig.swift in Sources */,
+				BD64856C2491474500F30986 /* DataStoreQueueStackImpl.swift in Sources */,
+				BD64856D2491474500F30986 /* OptimizelyError.swift in Sources */,
+				BD64856E2491474500F30986 /* EventForDispatch.swift in Sources */,
+				BD64856F2491474500F30986 /* OptimizelyClient+ObjC.swift in Sources */,
+				BD6485702491474500F30986 /* OPTUserProfileService.swift in Sources */,
+				BD6485712491474500F30986 /* DefaultUserProfileService.swift in Sources */,
+				BD6485722491474500F30986 /* DataStoreQueueStack.swift in Sources */,
+				BD6485732491474500F30986 /* OptimizelyConfig.swift in Sources */,
+				BD6485742491474500F30986 /* OPTDataStore.swift in Sources */,
+				BD6485752491474500F30986 /* DefaultDecisionService.swift in Sources */,
+				BD6485762491474500F30986 /* OptimizelyLogLevel.swift in Sources */,
+				BD6485772491474500F30986 /* TrafficAllocation.swift in Sources */,
+				BD6485782491474500F30986 /* DataStoreMemory.swift in Sources */,
+				BD6485792491474500F30986 /* LogMessage.swift in Sources */,
+				BD64857A2491474500F30986 /* AtomicProperty.swift in Sources */,
+				BD64857B2491474500F30986 /* Notifications.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -4654,6 +4829,68 @@
 			};
 			name = Release;
 		};
+		BD64857F2491474500F30986 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Sources/Supporting Files/Info.plist";
+				INFOPLIST_OUTPUT_FORMAT = "same-as-input";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.OptimizelySwiftSDK;
+				PRODUCT_NAME = Optimizely;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BD6485802491474500F30986 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Sources/Supporting Files/Info.plist";
+				INFOPLIST_OUTPUT_FORMAT = "same-as-input";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.OptimizelySwiftSDK;
+				PRODUCT_NAME = Optimizely;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4779,6 +5016,15 @@
 			buildConfigurations = (
 				6EBAEB7F21E3FEF900D13AA9 /* Debug */,
 				6EBAEB8021E3FEF900D13AA9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BD64857E2491474500F30986 /* Build configuration list for PBXNativeTarget "OptimizelySwiftSDK-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD64857F2491474500F30986 /* Debug */,
+				BD6485802491474500F30986 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

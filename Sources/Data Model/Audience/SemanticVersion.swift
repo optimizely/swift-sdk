@@ -19,7 +19,6 @@ import Foundation
 typealias SemanticVersion = String
 /*
  This comparison is ported from the Optimizely web version of semantic version compare.
- https://github.com/optimizely/client-js/blob/devel/src/core/lib/compare_version.js
  Full testing in SemanticVersionTests.
  */
 extension SemanticVersion {

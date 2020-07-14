@@ -14,7 +14,7 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
-#import <UIKit/UIKit.h>
+@import Foundation;
 
 //! Project version number for Optimizely.
 FOUNDATION_EXPORT double OptimizelyVersionNumber;

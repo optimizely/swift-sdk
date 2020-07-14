@@ -113,14 +113,14 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
 
 extension AttributeValue {
     
-    func isExactMatch(with target: Any, condition: String = "", name: String = "") throws -> Bool {
+    func isExactMatch(with target: Any, condition: UserAttribute? = nil, name: String = "") throws -> Bool {
         
         if !self.isValidForExactMatcher() || (self.doubleValue?.isInfinite ?? false) {
-            throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
+            throw OptimizelyError.evaluateAttributeInvalidCondition(condition?.stringRepresentation ?? name)
         }
         
         guard let targetValue = AttributeValue(value: target), self.isComparable(with: targetValue) else {
-            throw OptimizelyError.evaluateAttributeInvalidType(condition, target, name)
+            throw OptimizelyError.evaluateAttributeInvalidType(condition?.stringRepresentation ?? name, target, name)
         }
         
         try checkValidAttributeNumber(target, condition: condition, name: name)
@@ -138,28 +138,28 @@ extension AttributeValue {
         return false
     }
     
-    func isSubstring(of target: Any, condition: String = "", name: String = "") throws -> Bool {
+    func isSubstring(of target: Any, condition: UserAttribute? = nil, name: String = "") throws -> Bool {
         
         guard case .string(let value) = self else {
-            throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
+            throw OptimizelyError.evaluateAttributeInvalidCondition(condition?.stringRepresentation ?? name)
         }
         
         guard let targetStr = target as? String else {
-            throw OptimizelyError.evaluateAttributeInvalidType(condition, target, name)
+            throw OptimizelyError.evaluateAttributeInvalidType(condition?.stringRepresentation ?? "", target, name)
         }
         
         return targetStr.contains(value)
     }
     
-    func isGreater(than target: Any, condition: String = "", name: String = "") throws -> Bool {
+    func isGreater(than target: Any, condition: UserAttribute? = nil, name: String = "") throws -> Bool {
         
         guard let currentDouble = self.doubleValue, currentDouble.isFinite else {
-            throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
+            throw OptimizelyError.evaluateAttributeInvalidCondition(condition?.stringRepresentation ?? name)
         }
         
         guard let targetValue = AttributeValue(value: target),
             let targetDouble = targetValue.doubleValue else {
-                throw OptimizelyError.evaluateAttributeInvalidType(condition, target, name)
+                throw OptimizelyError.evaluateAttributeInvalidType(condition?.stringRepresentation ?? "", target, name)
         }
         
         try checkValidAttributeNumber(target, condition: condition, name: name)
@@ -167,15 +167,15 @@ extension AttributeValue {
         return currentDouble > targetDouble
     }
     
-    func isLess(than target: Any, condition: String = "", name: String = "") throws -> Bool {
+    func isLess(than target: Any, condition: UserAttribute? = nil, name: String = "") throws -> Bool {
                 
         guard let currentDouble = self.doubleValue, currentDouble.isFinite else {
-            throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
+            throw OptimizelyError.evaluateAttributeInvalidCondition(condition?.stringRepresentation ?? name)
         }
         
         guard let targetValue = AttributeValue(value: target),
             let targetDouble = targetValue.doubleValue else {
-                throw OptimizelyError.evaluateAttributeInvalidType(condition, target, name)
+                throw OptimizelyError.evaluateAttributeInvalidType(condition?.stringRepresentation ?? "", target, name)
         }
         try checkValidAttributeNumber(target, condition: condition, name: name)
 
@@ -217,7 +217,7 @@ extension AttributeValue {
         }
     }
     
-    func checkValidAttributeNumber(_ number: Any?, condition: String, name: String, caller: String = #function) throws {
+    func checkValidAttributeNumber(_ number: Any?, condition: UserAttribute?, name: String, caller: String = #function) throws {
         // check range for any value types (Int, Int64, Double, Float...)
         // do not check value range for string types
         
@@ -234,7 +234,7 @@ extension AttributeValue {
 
         // valid range: [-2^53, 2^53]
         if abs(num) > pow(2, 53) {
-            throw OptimizelyError.evaluateAttributeValueOutOfRange(condition, name)
+            throw OptimizelyError.evaluateAttributeValueOutOfRange(condition?.stringRepresentation ?? "", name)
         }
     }
     

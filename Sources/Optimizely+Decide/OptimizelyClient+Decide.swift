@@ -19,7 +19,7 @@ import Foundation
 extension OptimizelyClient {
     
     public func setUserContext(_ user: OptimizelyUserContext) throws {
-        guard let config = self.config else { throw OptimizelyError.sdkNotReady }
+        guard let _ = self.config else { throw OptimizelyError.sdkNotReady }
               
         var user = user
         
@@ -33,32 +33,10 @@ extension OptimizelyClient {
             user.userId = uuid
         }
         
-        guard let userId = user.userId else {
-            throw OptimizelyError.generic    // TODO: refine error type
+        guard let _ = user.userId else {
+            throw OptimizelyError.userIdInvalid
         }
-        
-        // userProfileUpdates
-        
-        if let decisionService = self.decisionService as? DefaultDecisionService {
-            let requests = user.userProfileUpdates
-
-            requests.forEach { (key, value) in
-                if let key = key, let value = value {
-                    decisionService.saveProfile(config: config,
-                                                userId: userId,
-                                                experimentKey: key,
-                                                variationKey: value)
-                } else {
-                    // clear one or all UPS for the user
-                    decisionService.removeProfile(config: config,
-                                                  userId: userId,
-                                                  experimentKey: key)
-                }
-            }
-            
-            user.userProfileUpdates = []
-        }
-        
+                
         userContext = user
     }
 }

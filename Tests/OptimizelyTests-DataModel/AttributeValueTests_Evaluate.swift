@@ -260,34 +260,49 @@ extension AttributeValueTests_Evaluate {
 
 // MARK: - SemanticVersion
 extension AttributeValueTests_Evaluate {
+    // It is import in this implementation as to which is the target and which is the
+    // attribute. The target is always passed and evaluated on the attribute.
+    
+    // Test if same when all target is only major.minor
     func testIsSemanticSame() {
         let model = try! OTUtils.getAttributeValueFromNative("2.0.0")
         XCTAssertTrue(try! model.isSemanticVersionEqual(than: "2.0"))
     }
-
+    // Test when target is full semantic version major.minor.patch
     func testIsSemanticSameFull() {
         let model = try! OTUtils.getAttributeValueFromNative("3.0.0")
         XCTAssertTrue(try! model.isSemanticVersionEqual(than: "3.0.0"))
     }
 
+    // Test compare less when target is only major.minor
     func testIsSemanticLess() {
         let model = try! OTUtils.getAttributeValueFromNative("2.1.6")
         XCTAssertTrue(try! model.isSemanticVersionLess(than: "2.2"))
     }
 
+    // Test compare less when target is full major.minor.patch
     func testIsSemanticFullLess() {
         let model = try! OTUtils.getAttributeValueFromNative("2.1.6")
         XCTAssertTrue(try! model.isSemanticVersionLess(than: "2.1.9"))
     }
 
+    // Test compare greater when target is only major.minor
     func testIsSemanticMore() {
         let model = try! OTUtils.getAttributeValueFromNative("2.3.6")
         XCTAssertTrue(try! model.isSemanticVersionGreater(than: "2.2"))
     }
 
+    // Test compare greater when target is major.minor.patch
     func testIsSemanticFullMore() {
         let model = try! OTUtils.getAttributeValueFromNative("2.1.9")
         XCTAssertTrue(try! model.isSemanticVersionGreater(than: "2.1.6"))
     }
+    
+    // Test compare equal when target is major.minor.patch-beta
+    func testIsSemanticFullEqual() {
+        let model = try! OTUtils.getAttributeValueFromNative("2.1.9-beta")
+        XCTAssertTrue(try! model.isSemanticVersionEqual(than: "2.1.9-beta"))
+    }
+
 
 }

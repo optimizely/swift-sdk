@@ -341,5 +341,3 @@ extension UserAttributeTests_Evaluate {
     }
 
 }
-
-

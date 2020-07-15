@@ -37,14 +37,6 @@ class OptimizelyUserContextTests: XCTestCase {
     let expUserId = "1234"
     let expUserId2 = "3456"
 
-    func testOptimizelyUserContext() {
-        let user = OptimizelyUserContext(userId: nil)
-        
-        XCTAssert(user.userId == nil)
-        XCTAssert(user.attributes.count == 0)
-        XCTAssert(user.defaultOptions.count == 0)
-    }
-
     func testOptimizelyUserContext_userId() {
         let user = OptimizelyUserContext(userId: expUserId)
         
@@ -53,6 +45,23 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.defaultOptions.count == 0)
     }
     
+    func testOptimizelyUserContext_nilUserId() {
+        clearOptimizelyUUID()
+        
+        var user = OptimizelyUserContext(userId: nil)
+        
+        let expUserId1 = getOptimizelyUUID()
+        XCTAssert(user.userId == expUserId1)
+        XCTAssert(user.attributes.count == 0)
+        XCTAssert(user.defaultOptions.count == 0)
+        
+        user = OptimizelyUserContext(userId: nil)
+        
+        let expUserId2 = getOptimizelyUUID()
+        XCTAssert(user.userId == expUserId2)
+        XCTAssert(expUserId1 == expUserId2)
+    }
+
     func testOptimizelyUserContext_nilAttributes() {
         let user = OptimizelyUserContext(userId: expUserId, attributes: nil)
         
@@ -163,7 +172,7 @@ extension OptimizelyUserContextTests {
         
         let userId1 = optimizely.userContext!.userId
         XCTAssertNotNil(userId1)
-        XCTAssert(userId1!.count > 10)
+        XCTAssert(userId1.count > 10)
         
         let user2 = OptimizelyUserContext(userId: nil, attributes: [:])
         try! optimizely.setUserContext(user2)
@@ -171,7 +180,7 @@ extension OptimizelyUserContextTests {
         let userId2 = optimizely.userContext!.userId
         XCTAssert(userId1 == userId2)
         
-        print("UUID: \(userId1!)")
+        print("UUID: \(userId1)")
         
         clearOptimizelyUUID()   // clean up UUID store after testing
     }

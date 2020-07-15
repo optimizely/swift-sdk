@@ -19,12 +19,23 @@
 import Foundation
 
 public struct OptimizelyUserContext {
-    var userId: String?
+    var userId: String
     var attributes: [String: Any]
     var defaultOptions: [OptimizelyDecideOption]
     
     public init(userId: String?, attributes: [String: Any]? = nil) {
-        self.userId = userId
+        var validUserId = userId
+        if validUserId == nil {
+            let uuidKey = "optimizely-uuid"
+            var uuid = UserDefaults.standard.string(forKey: uuidKey)
+            if uuid == nil {
+                uuid = UUID().uuidString
+                UserDefaults.standard.set(uuid, forKey: uuidKey)
+            }
+            validUserId = uuid
+        }
+
+        self.userId = validUserId!
         self.attributes = attributes ?? [:]
         self.defaultOptions = []
     }

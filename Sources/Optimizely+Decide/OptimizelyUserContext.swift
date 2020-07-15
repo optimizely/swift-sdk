@@ -20,7 +20,7 @@ import Foundation
 public struct OptimizelyUserContext {
     var userId: String
     var attributes: [String: Any]
-    var defaultOptions: [OptimizelyDecideOption]
+    var defaultDecideOptions: [OptimizelyDecideOption]
     
     public init(userId: String?, attributes: [String: Any]? = nil) {
         var validUserId = userId
@@ -36,15 +36,15 @@ public struct OptimizelyUserContext {
 
         self.userId = validUserId!
         self.attributes = attributes ?? [:]
-        self.defaultOptions = []
+        self.defaultDecideOptions = []
     }
     
     public mutating func setAttribute(key: String, value: Any) {
         attributes[key] = value
     }
     
-    public mutating func setDefaultOptions(_ options: [OptimizelyDecideOption]) {
-        defaultOptions.append(contentsOf: options)
+    public mutating func setDefaultDecideOptions(_ options: [OptimizelyDecideOption]) {
+        defaultDecideOptions.append(contentsOf: options)
     }
 }
 
@@ -53,6 +53,6 @@ extension OptimizelyUserContext: Equatable {
     public static func ==(lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
         return lhs.userId == rhs.userId &&
             (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes) &&
-            Set(lhs.defaultOptions) == Set(rhs.defaultOptions)
+            Set(lhs.defaultDecideOptions) == Set(rhs.defaultDecideOptions)
     }
 }

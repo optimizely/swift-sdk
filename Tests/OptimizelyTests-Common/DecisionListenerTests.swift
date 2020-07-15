@@ -843,15 +843,11 @@ class DecisionListenerTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-<<<<<<< HEAD
-    // MARK: - decide api
-=======
 }
     
 // MARK: - decide apis
     
 extension DecisionListenerTests {
->>>>>>> jae/decide-api
     
     func testDecisionListenerDecideFeatureWithUserInExperiment() {
         var exp = expectation(description: "x")

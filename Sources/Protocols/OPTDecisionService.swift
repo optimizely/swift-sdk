@@ -35,7 +35,11 @@ protocol OPTDecisionService {
      - Parameter experiment: The experiment in which to bucket the user.
      - Returns: The variation assigned to the specified user ID for an experiment.
      */
-    func getVariation(config: ProjectConfig, userId: String, experiment: Experiment, attributes: OptimizelyAttributes) -> Variation?
+    func getVariation(config: ProjectConfig,
+                      userId: String,
+                      experiment: Experiment,
+                      attributes: OptimizelyAttributes,
+                      options: [OptimizelyDecideOption]?) -> Variation?
     
     /**
      Get a variation the user is bucketed into for the given FeatureFlag
@@ -44,6 +48,10 @@ protocol OPTDecisionService {
      - Parameter attributes: User attributes
      - Returns: The variation assigned to the specified user ID for a feature flag.
      */
-    func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment?, variation: Variation?)?
+    func getVariationForFeature(config: ProjectConfig,
+                                featureFlag: FeatureFlag,
+                                userId: String,
+                                attributes: OptimizelyAttributes,
+                                options: [OptimizelyDecideOption]?) -> (experiment: Experiment?, variation: Variation?)?
     
 }

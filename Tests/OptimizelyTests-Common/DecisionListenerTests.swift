@@ -843,7 +843,11 @@ class DecisionListenerTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    // MARK: - decide apis
+}
+    
+// MARK: - decide apis
+    
+extension DecisionListenerTests {
     
     func testDecisionListenerDecideFeatureWithUserInExperiment() {
         var exp = expectation(description: "x")

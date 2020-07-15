@@ -135,3 +135,9 @@ extension LogMessage: CustomStringConvertible {
         return message
     }
 }
+
+extension LogMessage: Reasonable {
+    var reason: String {
+        return description
+    }
+}

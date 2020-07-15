@@ -159,7 +159,7 @@ extension OptimizelyClientTests_Decide {
         XCTAssert(decision.reasons.count == 1)
         XCTAssert(decision.reasons.first == OptimizelyError.userNotSet.reason)
     }
-
+    
     func testDecide_invalidFeatureKey() {
         let featureKey = "invalid_key"
 
@@ -185,7 +185,7 @@ extension OptimizelyClientTests_Decide {
 
 }
 
-// MARK: - reasons
+// MARK: - debugging reasons
   
 extension OptimizelyClientTests_Decide {
 

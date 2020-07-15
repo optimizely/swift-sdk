@@ -18,49 +18,41 @@
 import Foundation
 
 public struct OptimizelyUserContext {
-    var userId: String?
+    var userId: String
     var attributes: [String: Any]
-    var bucketingId: String?
-    var userProfileUpdates: [(String?, String?)]
+    var defaultOptions: [OptimizelyDecideOption]
     
     public init(userId: String?, attributes: [String: Any]? = nil) {
-        self.userId = userId
+        var validUserId = userId
+        if validUserId == nil {
+            let uuidKey = "optimizely-uuid"
+            var uuid = UserDefaults.standard.string(forKey: uuidKey)
+            if uuid == nil {
+                uuid = UUID().uuidString
+                UserDefaults.standard.set(uuid, forKey: uuidKey)
+            }
+            validUserId = uuid
+        }
+
+        self.userId = validUserId!
         self.attributes = attributes ?? [:]
-        self.userProfileUpdates = []
+        self.defaultOptions = []
     }
     
     public mutating func setAttribute(key: String, value: Any) {
         attributes[key] = value
     }
     
-    public mutating func setBucketingId(_ id: String) {
-        bucketingId = id
-        attributes[Constants.Attributes.OptimizelyBucketIdAttribute] = bucketingId
-    }
-    
-    public mutating func setUserProfile(key: String?, value: String?) {
-        userProfileUpdates.append((key, value))
+    public mutating func setDefaultOptions(_ options: [OptimizelyDecideOption]) {
+        defaultOptions.append(contentsOf: options)
     }
 }
 
 extension OptimizelyUserContext: Equatable {
     
     public static func ==(lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
-        if !(lhs.userId == rhs.userId &&
-            lhs.bucketingId == rhs.bucketingId &&
-            lhs.attributes.count == rhs.attributes.count &&
-            lhs.userProfileUpdates.count == rhs.userProfileUpdates.count) {
-            return false
-        }
-                
-        if !(lhs.attributes as NSDictionary).isEqual(to: rhs.attributes) { return false }
-        
-        for idx in 0..<lhs.userProfileUpdates.count {
-            if lhs.userProfileUpdates[idx] != rhs.userProfileUpdates[idx] {
-                return false
-            }
-        }
-        
-        return true
+        return lhs.userId == rhs.userId &&
+            (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes) &&
+            Set(lhs.defaultOptions) == Set(rhs.defaultOptions)
     }
 }

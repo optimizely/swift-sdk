@@ -27,7 +27,11 @@ class DefaultDecisionService: OPTDecisionService {
         self.userProfileService = userProfileService
     }
     
-    func getVariation(config: ProjectConfig, userId: String, experiment: Experiment, attributes: OptimizelyAttributes) -> Variation? {
+    func getVariation(config: ProjectConfig,
+                      userId: String,
+                      experiment: Experiment,
+                      attributes: OptimizelyAttributes,
+                      options: [OptimizelyDecideOption]? = nil) -> Variation? {
         let experimentId = experiment.id
         
         // Acquire bucketingId .
@@ -57,7 +61,9 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         // ---- check if a valid variation is stored in the user profile ----
-        if let variationId = self.getVariationIdFromProfile(userId: userId, experimentId: experimentId),
+        if let variationId = self.getVariationIdFromProfile(userId: userId,
+                                                            experimentId: experimentId,
+                                                            options: options),
             let variation = experiment.getVariation(id: variationId) {
             logger.i(.gotVariationFromUserProfile(variation.key, experiment.key, userId))
             return variation
@@ -71,7 +77,10 @@ class DefaultDecisionService: OPTDecisionService {
             
             if let bucketedVariation = bucketedVariation {
                 // save to user profile
-                self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+                self.saveProfile(userId: userId,
+                                 experimentId: experimentId,
+                                 variationId: bucketedVariation.id,
+                                 options: options)
             }
         } else {
             logger.i(.userNotInExperiment(userId, experiment.key))
@@ -127,12 +136,20 @@ class DefaultDecisionService: OPTDecisionService {
         return result
     }
     
-    func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment?, variation: Variation?)? {
+    func getVariationForFeature(config: ProjectConfig,
+                                featureFlag: FeatureFlag,
+                                userId: String,
+                                attributes: OptimizelyAttributes,
+                                options: [OptimizelyDecideOption]? = nil) -> (experiment: Experiment?, variation: Variation?)? {
         //Evaluate in this order:
         
         //1. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
-        if let pair = getVariationForFeatureExperiment(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes) {
+        if let pair = getVariationForFeatureExperiment(config: config,
+                                                       featureFlag: featureFlag,
+                                                       userId: userId,
+                                                       attributes: attributes,
+                                                       options: options) {
             logger.d(.userInFeatureExperiment(userId, pair.variation?.key ?? "unknown", pair.experiment?.key ?? "unknown", featureFlag.key))
             return pair
         } else {
@@ -155,7 +172,8 @@ class DefaultDecisionService: OPTDecisionService {
     func getVariationForFeatureExperiment(config: ProjectConfig,
                                           featureFlag: FeatureFlag,
                                           userId: String,
-                                          attributes: OptimizelyAttributes) -> (experiment: Experiment?, variation: Variation?)? {
+                                          attributes: OptimizelyAttributes,
+                                          options: [OptimizelyDecideOption]?) -> (experiment: Experiment?, variation: Variation?)? {
         
         let experimentIds = featureFlag.experimentIds
         if experimentIds.isEmpty {
@@ -166,7 +184,11 @@ class DefaultDecisionService: OPTDecisionService {
         // Evaluate each experiment ID and return the first bucketed experiment variation
         for experimentId in experimentIds {
             if let experiment = config.getExperiment(id: experimentId),
-                let variation = getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes) {
+                let variation = getVariation(config: config,
+                                             userId: userId,
+                                             experiment: experiment,
+                                             attributes: attributes,
+                                             options: options) {
                 return (experiment, variation)
             }
         }
@@ -247,7 +269,9 @@ class DefaultDecisionService: OPTDecisionService {
 
 extension DefaultDecisionService {
     
-    func getVariationIdFromProfile(userId: String, experimentId: String) -> String? {
+    func getVariationIdFromProfile(userId: String, experimentId: String, options: [OptimizelyDecideOption]?) -> String? {
+        if (options ?? []).contains(.bypassUPS) { return nil }
+        
         if let profile = userProfileService.lookup(userId: userId),
             let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
             let experimentMap = bucketMap[experimentId],
@@ -258,7 +282,9 @@ extension DefaultDecisionService {
         }
     }
     
-    func saveProfile(userId: String, experimentId: String, variationId: String) {
+    func saveProfile(userId: String, experimentId: String, variationId: String, options: [OptimizelyDecideOption]?) {
+        if (options ?? []).contains(.bypassUPS) { return }
+
         var profile = userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
         
         var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
@@ -272,46 +298,4 @@ extension DefaultDecisionService {
         logger.i(.savedVariationInUserProfile(variationId, experimentId, userId))
     }
     
-}
-
-// MARK: - UserContext
-
-extension DefaultDecisionService {
-    
-    func saveProfile(config: ProjectConfig, userId: String, experimentKey: String, variationKey: String) {
-        guard let experimentId = config.getExperiment(key: experimentKey)?.id,
-            let variationId = config.getExperiment(key: experimentKey)?.getVariation(key: variationKey)?.id else {
-            return
-        }
-        
-        saveProfile(userId: userId, experimentId: experimentId, variationId: variationId)
-    }
-    
-    func removeProfile(config: ProjectConfig, userId: String, experimentKey: String?) {
-        if let experimentKey = experimentKey {
-            // remove UPS for the user and experiment-key
-            
-            guard let experimentId = config.getExperiment(key: experimentKey)?.id else { return }
-
-            guard var profile = userProfileService.lookup(userId: userId) else { return }
-            
-            guard var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap else { return }
-                
-            bucketMap.removeValue(forKey: experimentId)
-            
-            profile[UserProfileKeys.kBucketMap] = bucketMap
-            profile[UserProfileKeys.kUserId] = userId
-            
-            userProfileService.save(userProfile: profile)
-        } else {
-            // remove all UPS for the user
-            
-            var profile = OPTUserProfileService.UPProfile()
-            profile[UserProfileKeys.kUserId] = userId
-            profile[UserProfileKeys.kBucketMap] = OPTUserProfileService.UPBucketMap()
-            
-            userProfileService.save(userProfile: profile)
-        }
-    }
-
 }

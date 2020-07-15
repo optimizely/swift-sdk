@@ -62,20 +62,21 @@ extension OptimizelyClient {
                 options: [OptimizelyDecideOption]) -> OptimizelyDecision {
         
         guard let feature = config.getFeatureFlag(key: featureKey) else {
-            return OptimizelyDecision.errorDecision(key: featureKey, user: user, error: .featureKeyInvalid(featureKey))
+            return OptimizelyDecision.errorDecision(key: featureKey,
+                                                    user: user,
+                                                    error: .featureKeyInvalid(featureKey))
         }
-        
-        var reasonsRequired = [OptimizelyError]()
-        var reasonsOptional = [OptimizelyError]()   // TODO
         
         let userId = user.userId
         let attributes = user.attributes
-        
+        let decisionReasons = DecisionReasons()
+
         let decision = self.decisionService.getVariationForFeature(config: config,
                                                                    featureFlag: feature,
                                                                    userId: userId,
                                                                    attributes: attributes,
-                                                                   options: options)
+                                                                   options: options,
+                                                                   reasons: decisionReasons)
         var enabled = false
         if let featureEnabled = decision?.variation?.featureEnabled {
             enabled = featureEnabled
@@ -112,7 +113,9 @@ extension OptimizelyClient {
             if let value = valueParsed {
                 variableMap[v.key] = value
             } else {
-                logger.e(OptimizelyError.variableValueInvalid(v.key))
+                let info = OptimizelyError.variableValueInvalid(v.key)
+                logger.e(info)
+                decisionReasons.addError(info)
             }
         }
         
@@ -136,12 +139,7 @@ extension OptimizelyClient {
         
         let optimizelyJSON = OptimizelyJSON(map: variableMap)
         if optimizelyJSON == nil {
-            reasonsRequired.append(.invalidDictionary)
-        }
-
-        var reasons = reasonsRequired
-        if options.contains(.includeReasons) {
-            reasons.append(contentsOf: reasonsOptional)
+            decisionReasons.addError(OptimizelyError.invalidDictionary)
         }
 
         return OptimizelyDecision(variationKey: nil,
@@ -149,7 +147,7 @@ extension OptimizelyClient {
                                   variables: optimizelyJSON,
                                   key: feature.key,
                                   user: user,
-                                  reasons: reasons.map{ $0.reason })
+                                  reasons: decisionReasons.getReasonsToReport(options: options))
     }
     
     func decide(config: ProjectConfig,
@@ -158,20 +156,21 @@ extension OptimizelyClient {
                 options: [OptimizelyDecideOption]) -> OptimizelyDecision {
         
         guard let experiment = config.getExperiment(key: experimentKey) else {
-            return OptimizelyDecision.errorDecision(key: experimentKey, user: user, error: .experimentKeyInvalid(experimentKey))
+            return OptimizelyDecision.errorDecision(key: experimentKey,
+                                                    user: user,
+                                                    error: .experimentKeyInvalid(experimentKey))
         }
         
-        var reasonsRequired = [OptimizelyError]()   // TODO
-        var reasonsOptional = [OptimizelyError]()   // TODO
-
         let userId = user.userId
         let attributes = user.attributes
-        
+        let decisionReasons = DecisionReasons()
+
         let variation = decisionService.getVariation(config: config,
                                                      userId: userId,
                                                      experiment: experiment,
                                                      attributes: attributes,
-                                                     options: options)
+                                                     options: options,
+                                                     reasons: decisionReasons)
         
         if !options.contains(.disableTracking) {
             if let variationDecision = variation {
@@ -188,17 +187,12 @@ extension OptimizelyClient {
                                  experiment: experiment,
                                  variation: variation)
 
-        var reasons = reasonsRequired
-        if options.contains(.includeReasons) {
-            reasons.append(contentsOf: reasonsOptional)
-        }
-
         return OptimizelyDecision(variationKey: variation?.key,
                                   enabled: nil,
                                   variables: nil,
                                   key: experiment.key,
                                   user: user,
-                                  reasons: reasons.map{ $0.reason })
+                                  reasons: decisionReasons.getReasonsToReport(options: options))
     }
 }
 
@@ -207,7 +201,7 @@ extension OptimizelyClient {
 extension OptimizelyClient {
     
     func getAllOptions(with options: [OptimizelyDecideOption]?) -> [OptimizelyDecideOption] {
-        return (userContext?.defaultOptions ?? []) + (options ?? [])
+        return (userContext?.defaultDecideOptions ?? []) + (options ?? [])
     }
     
 }

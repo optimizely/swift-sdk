@@ -303,7 +303,8 @@ open class OptimizelyClient: NSObject {
                                                      userId: userId,
                                                      experiment: experiment,
                                                      attributes: attributes ?? OptimizelyAttributes(),
-                                                     options: nil)
+                                                     options: nil,
+                                                     reasons: nil)
         
         let decisionType: Constants.DecisionType = config.isFeatureExperiment(id: experiment.id) ? .featureTest : .abTest
         sendDecisionNotification(decisionType: decisionType,
@@ -387,7 +388,8 @@ open class OptimizelyClient: NSObject {
                                                           featureFlag: featureFlag,
                                                           userId: userId,
                                                           attributes: attributes ?? OptimizelyAttributes(),
-                                                          options: nil)
+                                                          options: nil,
+                                                          reasons: nil)
         
         guard let variation = pair?.variation else {
             logger.i(.variationUnknown(userId, featureKey))
@@ -543,7 +545,8 @@ open class OptimizelyClient: NSObject {
                                                                    featureFlag: featureFlag,
                                                                    userId: userId,
                                                                    attributes: attributes ?? OptimizelyAttributes(),
-                                                                   options: nil)
+                                                                   options: nil,
+                                                                   reasons: nil)
         if let decision = decision {
             if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
                 if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
@@ -638,7 +641,8 @@ open class OptimizelyClient: NSObject {
                                                                    featureFlag: featureFlag,
                                                                    userId: userId,
                                                                    attributes: attributes ?? OptimizelyAttributes(),
-                                                                   options: nil)
+                                                                   options: nil,
+                                                                   reasons: nil)
         if let featureEnabled = decision?.variation?.featureEnabled {
             enabled = featureEnabled
         }

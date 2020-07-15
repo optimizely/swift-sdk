@@ -86,7 +86,7 @@ public enum OptimizelyError: Error {
 
 // MARK: - CustomStringConvertible
 
-extension OptimizelyError: CustomStringConvertible {
+extension OptimizelyError: CustomStringConvertible, Reasonable {
     public var description: String {
         return "[Optimizely][Error] " + self.reason
     }

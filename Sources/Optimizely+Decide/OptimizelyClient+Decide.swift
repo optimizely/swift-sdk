@@ -20,23 +20,7 @@ extension OptimizelyClient {
     
     public func setUserContext(_ user: OptimizelyUserContext) throws {
         guard let _ = self.config else { throw OptimizelyError.sdkNotReady }
-              
-        var user = user
-        
-        if user.userId == nil {
-            let uuidKey = "optimizely-uuid"
-            var uuid = UserDefaults.standard.string(forKey: uuidKey)
-            if uuid == nil {
-                uuid = UUID().uuidString
-                UserDefaults.standard.set(uuid, forKey: uuidKey)
-            }
-            user.userId = uuid
-        }
-        
-        guard let _ = user.userId else {
-            throw OptimizelyError.userIdInvalid
-        }
-                
+                              
         userContext = user
     }
 }

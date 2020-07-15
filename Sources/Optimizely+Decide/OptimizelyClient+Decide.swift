@@ -207,7 +207,7 @@ extension OptimizelyClient {
 extension OptimizelyClient {
     
     func getAllOptions(with options: [OptimizelyDecideOption]?) -> [OptimizelyDecideOption] {
-        return (userContext?.defaultOptions ?? []) + (options ?? [])
+        return (userContext?.defaultDecideOptions ?? []) + (options ?? [])
     }
     
 }

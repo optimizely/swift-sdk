@@ -1093,7 +1093,11 @@ class FakeDecisionService: DefaultDecisionService {
         super.init(userProfileService: DefaultUserProfileService())
     }
     
-    override func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment?, variation: Variation?)? {
+    override func getVariationForFeature(config: ProjectConfig,
+                                         featureFlag: FeatureFlag,
+                                         userId: String,
+                                         attributes: OptimizelyAttributes,
+                                         options: [OptimizelyDecideOption]? = nil) -> (experiment: Experiment?, variation: Variation?)? {
         return (self.experiment, self.variation)
     }
 }

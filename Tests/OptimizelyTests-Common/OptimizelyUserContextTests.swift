@@ -42,7 +42,7 @@ class OptimizelyUserContextTests: XCTestCase {
         
         XCTAssert(user.userId == expUserId)
         XCTAssert(user.attributes.count == 0)
-        XCTAssert(user.defaultOptions.count == 0)
+        XCTAssert(user.defaultDecideOptions.count == 0)
     }
     
     func testOptimizelyUserContext_nilUserId() {
@@ -53,7 +53,7 @@ class OptimizelyUserContextTests: XCTestCase {
         let expUserId1 = getOptimizelyUUID()
         XCTAssert(user.userId == expUserId1)
         XCTAssert(user.attributes.count == 0)
-        XCTAssert(user.defaultOptions.count == 0)
+        XCTAssert(user.defaultDecideOptions.count == 0)
         
         user = OptimizelyUserContext(userId: nil)
         
@@ -111,17 +111,17 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.attributes["state"] as! String == "ca")
     }
 
-    func testOptimizelyUserContext_setDefaultOptions() {
+    func testOptimizelyUserContext_setDefaultDecideOptions() {
         let expOptions: [OptimizelyDecideOption] = [.bypassUPS,
                                                     .disableTracking,
                                                     .enabledOnly,
                                                     .forExperiment,
                                                     .includeReasons]
         var user = OptimizelyUserContext(userId: expUserId)
-        user.setDefaultOptions(expOptions)
+        user.setDefaultDecideOptions(expOptions)
         
         XCTAssert(user.userId == expUserId)
-        XCTAssert(user.defaultOptions == expOptions)
+        XCTAssert(user.defaultDecideOptions == expOptions)
     }
     
 }

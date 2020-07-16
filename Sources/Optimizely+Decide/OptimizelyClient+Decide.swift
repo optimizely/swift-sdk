@@ -199,7 +199,7 @@ extension OptimizelyClient {
 extension OptimizelyClient {
 
     public func decideAll(keys: [String]?,
-                          user: OptimizelyUserContext?,
+                          user: OptimizelyUserContext? = nil,
                           options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         
         guard let userContext = user ?? userContext else {
@@ -245,7 +245,7 @@ extension OptimizelyClient {
         
         for key in featureKeys {
             let decision = decide(config: config, featureKey: key, user: user, options: options)
-            if !options.contains(.enabledOnly) || (decision.enabled != nil) {
+            if !options.contains(.enabledOnly) || (decision.enabled != nil && decision.enabled!) {
                 decisions[key] = decision
             }
         }

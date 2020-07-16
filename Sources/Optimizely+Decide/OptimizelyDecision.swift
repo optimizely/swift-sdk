@@ -28,7 +28,6 @@ public struct OptimizelyDecision {
 }
 
 extension OptimizelyDecision {
-    
     static func errorDecision(key: String, user: OptimizelyUserContext?, error: OptimizelyError) -> OptimizelyDecision {
         return OptimizelyDecision(variationKey: nil,
                                   enabled: nil,
@@ -37,6 +36,21 @@ extension OptimizelyDecision {
                                   user: user,
                                   reasons: [error.reason])
     }
-    
 }
+
+extension OptimizelyDecision: Equatable {
+    public static func ==(lhs: OptimizelyDecision, rhs: OptimizelyDecision) -> Bool {
+        if !(lhs.variationKey == rhs.variationKey &&
+            lhs.enabled == rhs.enabled &&
+            lhs.key == rhs.key &&
+            lhs.user == rhs.user &&
+            lhs.reasons == rhs.reasons) {
+            return false
+        }
+        
+        return (lhs.variables == nil && rhs.variables == nil) ||
+            (lhs.variables != nil && rhs.variables != nil && lhs.variables! == rhs.variables!)
+    }
+}
+
 

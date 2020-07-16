@@ -14,7 +14,6 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-
 import Foundation
 
 public struct OptimizelyDecision {
@@ -39,4 +38,3 @@ extension OptimizelyDecision {
     }
     
 }
-

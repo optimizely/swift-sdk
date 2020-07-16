@@ -19,7 +19,7 @@ import Foundation
 extension OptimizelyClient {
     
     public func setUserContext(_ user: OptimizelyUserContext) throws {
-        guard let _ = self.config else { throw OptimizelyError.sdkNotReady }
+        guard self.config != nil else { throw OptimizelyError.sdkNotReady }
                               
         userContext = user
     }
@@ -119,12 +119,14 @@ extension OptimizelyClient {
             }
         }
         
+        var tracked = false
         if !options.contains(.disableTracking) {
             if let eventExperiment = decision?.experiment, let eventVariation = decision?.variation {
                 sendImpressionEvent(experiment: eventExperiment,
                                     variation: eventVariation,
                                     userId: userId,
                                     attributes: attributes)
+                tracked = true
             }
         }
 
@@ -135,7 +137,8 @@ extension OptimizelyClient {
                                  variation: decision?.variation,
                                  feature: feature,
                                  featureEnabled: enabled,
-                                 variableValues: variableMap)
+                                 variableValues: variableMap,
+                                 tracked: tracked)
         
         let optimizelyJSON = OptimizelyJSON(map: variableMap)
         if optimizelyJSON == nil {
@@ -172,12 +175,14 @@ extension OptimizelyClient {
                                                      options: options,
                                                      reasons: decisionReasons)
         
+        var tracked = false
         if !options.contains(.disableTracking) {
             if let variationDecision = variation {
                 sendImpressionEvent(experiment: experiment,
                                     variation: variationDecision,
                                     userId: userId,
                                     attributes: attributes)
+                tracked = true
             }
         }
 
@@ -185,7 +190,8 @@ extension OptimizelyClient {
                                  userId: userId,
                                  attributes: attributes,
                                  experiment: experiment,
-                                 variation: variation)
+                                 variation: variation,
+                                 tracked: tracked)
 
         return OptimizelyDecision(variationKey: variation?.key,
                                   enabled: nil,
@@ -193,6 +199,79 @@ extension OptimizelyClient {
                                   key: experiment.key,
                                   user: user,
                                   reasons: decisionReasons.getReasonsToReport(options: options))
+    }
+}
+    
+// MARK: - decideAll
+        
+extension OptimizelyClient {
+
+    public func decideAll(keys: [String]?,
+                          user: OptimizelyUserContext? = nil,
+                          options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+        
+        guard let userContext = user ?? userContext else {
+            logger.e(OptimizelyError.userNotSet)
+            return [:]
+        }
+        guard let config = self.config else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return [:]
+        }
+        
+        let allOptions = getAllOptions(with: options)
+
+        let keys = keys ?? {
+            if allOptions.contains(.forExperiment) {
+                return config.allExperiments.map{ $0.key }
+            } else {
+                return config.getFeatureFlags().map{ $0.key }
+            }
+        }()
+        
+        guard let firstKey = keys.first else { return [:] }
+        
+        var isFeatureKey = config.getFeatureFlag(key: firstKey) != nil
+        var isExperimentKey = config.getExperiment(key: firstKey) != nil
+        if allOptions.contains(.forExperiment) {
+            isFeatureKey = false
+            isExperimentKey = true
+        }
+        
+        if isExperimentKey && !isFeatureKey {
+            return decideAll(config: config, experimentKeys: keys, user: userContext, options: allOptions)
+        } else {
+            return decideAll(config: config, featureKeys: keys, user: userContext, options: allOptions)
+        }
+    }
+    
+    func decideAll(config: ProjectConfig,
+                   featureKeys: [String],
+                   user: OptimizelyUserContext,
+                   options: [OptimizelyDecideOption]) -> [String: OptimizelyDecision] {
+        var decisions = [String: OptimizelyDecision]()
+        
+        for key in featureKeys {
+            let decision = decide(config: config, featureKey: key, user: user, options: options)
+            if !options.contains(.enabledOnly) || (decision.enabled != nil && decision.enabled!) {
+                decisions[key] = decision
+            }
+        }
+                
+        return decisions
+    }
+
+    func decideAll(config: ProjectConfig,experimentKeys: [String],
+                   user: OptimizelyUserContext,
+                   options: [OptimizelyDecideOption]) -> [String: OptimizelyDecision] {
+        var decisions = [String: OptimizelyDecision]()
+        
+        for key in experimentKeys {
+            let decision = decide(config: config, experimentKey: key, user: user, options: options)
+            decisions[key] = decision
+        }
+                
+        return decisions
     }
 }
 

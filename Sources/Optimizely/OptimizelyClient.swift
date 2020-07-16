@@ -883,6 +883,7 @@ extension OptimizelyClient {
                                   variableType: String? = nil,
                                   variableValue: Any? = nil,
                                   variableValues: [String: Any]? = nil,
+                                  tracked: Bool = false,
                                   async: Bool = true) {
         self.sendNotification(type: .decision,
                               args: [decisionType.rawValue,
@@ -896,7 +897,8 @@ extension OptimizelyClient {
                                                            variableKey: variableKey,
                                                            variableType: variableType,
                                                            variableValue: variableValue,
-                                                           variableValues: variableValues)],
+                                                           variableValues: variableValues,
+                                                           tracked: tracked)],
                               async: async)
     }
     
@@ -912,7 +914,8 @@ extension OptimizelyClient {
                           variableKey: String? = nil,
                           variableType: String? = nil,
                           variableValue: Any? = nil,
-                          variableValues: [String: Any]? = nil) -> [String: Any] {
+                          variableValues: [String: Any]? = nil,
+                          tracked: Bool = false) -> [String: Any] {
         
         var decisionInfo = [String: Any]()
         
@@ -963,7 +966,8 @@ extension OptimizelyClient {
             
             decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
             decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation?.key ?? NSNull()
-            
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.tracked] = tracked
+
         case .featureDecide:
             guard let feature = feature, let featureEnabled = featureEnabled else { return decisionInfo }
             
@@ -977,6 +981,7 @@ extension OptimizelyClient {
             if let experiment = experiment, let variation = variation {
                 sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
                 sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
+                sourceInfo[Constants.ExperimentDecisionInfoKeys.tracked] = tracked
             }
             decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
             decisionInfo[Constants.DecisionInfoKeys.variableValues] = variableValues

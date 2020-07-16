@@ -21,15 +21,16 @@ class OptimizelyClientTests_Decide: XCTestCase {
     let kUserId = "tester"
     
     var optimizely: OptimizelyClient!
+    var eventDispatcher = MockEventDispatcher()
 
     override func setUp() {
         super.setUp()
         
         let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
-
-        self.optimizely = OptimizelyClient(sdkKey: "12345",
-                                           userProfileService: OTUtils.createClearUserProfileService())
-        try! self.optimizely.start(datafile: datafile)
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
+                                      eventDispatcher: eventDispatcher,
+                                      userProfileService: OTUtils.createClearUserProfileService())
+        try! optimizely.start(datafile: datafile)
     }
     
     func testDecide_feature() {
@@ -121,23 +122,98 @@ class OptimizelyClientTests_Decide: XCTestCase {
         XCTAssert(decision.reasons.isEmpty)
     }
     
-//    func testDecide_sendImpression() {
-//        let featureKey = "feature_1"
-//        let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
-//
-//        let user = OptimizelyUserContext(userId: kUserId)
-//        try? optimizely.setUserContext(user)
-//        let decision = optimizely.decide(key: featureKey)
-//        
-//        XCTAssertNil(decision.variationKey)
-//        XCTAssertEqual(decision.enabled, true)
-//        let variables = decision.variables!
-//        XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
-//        
-//        XCTAssertEqual(decision.key, featureKey)
-//        XCTAssertEqual(decision.user, user)
-//        XCTAssert(decision.reasons.isEmpty)
-//    }
+}
+
+// MARK: - decision events
+
+extension OptimizelyClientTests_Decide {
+    
+    // NOTE: we here validate impression events only.
+    //       all decision-notification tests are in "OptimizelyTests-Common/DecisionListenerTests"
+    
+    func testDecide_feature_sendImpression() {
+        let featureKey = "feature_1"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: featureKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.enabled)
+        XCTAssertNotNil(eventDispatcher.eventSent)
+        
+        let desc = eventDispatcher.eventSent!.description
+        XCTAssert(desc.contains("campaign_activated"))
+    }
+    
+    func testDecide_feature_doNotSendImpression() {
+        let featureKey = "common_name"   // no experiment
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: featureKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.enabled)
+        XCTAssertNil(eventDispatcher.eventSent)
+    }
+
+    func testDecide_feature_sendImpression_disbleTracking() {
+        let featureKey = "feature_1"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: featureKey, options: [.disableTracking])
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.enabled)
+        XCTAssertNil(eventDispatcher.eventSent)
+    }
+    
+    func testDecide_experiment_sendImpression() {
+        let experimentKey = "exp_with_audience"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: experimentKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.variationKey)
+        XCTAssertNotNil(eventDispatcher.eventSent)
+        
+        let desc = eventDispatcher.eventSent!.description
+        XCTAssert(desc.contains("campaign_activated"))
+    }
+
+    func testDecide_experiment_doNotSendImpression() {
+        let experimentKey = "exp_no_audience"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: experimentKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNil(decision.variationKey)
+        XCTAssertNil(eventDispatcher.eventSent)
+    }
+    
+    func testDecide_experiment_sendImpression_disableTracking() {
+        let experimentKey = "exp_with_audience"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: experimentKey, options: [.disableTracking])
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.variationKey)
+        XCTAssertNil(eventDispatcher.eventSent)
+    }
 
 }
     
@@ -230,4 +306,18 @@ extension OptimizelyClientTests_Decide {
         XCTAssert(decision.reasons.isEmpty)
     }
 
+}
+
+// MARK: - utils
+
+class MockEventDispatcher: OPTEventDispatcher {
+    var eventSent: EventForDispatch?
+    
+    func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        eventSent = event
+    }
+    
+    func flushEvents() {
+        
+    }
 }

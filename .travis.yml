@@ -51,14 +51,14 @@ jobs:
         - curl -sSL https://download.sourceclear.com/ci.sh | bash
 
     - stage: 'Source Clear'
-        if: type = cron
-        addons:
-          srcclr: true
-        before_install: skip
-        install: skip
-        before_script: skip
-        script: skip
-        after_success: skip
+      if: type = cron
+      addons:
+        srcclr: true
+      before_install: skip
+      install: skip
+      before_script: skip
+      script: skip
+      after_success: skip
 
     - &unittests
       stage: 'Unit Tests'
@@ -131,4 +131,3 @@ jobs:
         - gem install cocoapods -v '1.8.0'
       script:
         - Scripts/run_release.sh
-        

@@ -6,7 +6,8 @@ stages:
   - name: 'Lint markdown files'
   - name: 'Trigger Integration Tests'
     if: env(RUN_COMPAT_SUITE) = true
-  - name: 'SourceClear and Lint'
+  - name: 'Lint'
+  - name: 'Source Clear'
   - name: 'Unit Tests'
   - name: 'Prepare for release'
     if: env(PREP) = true and type = api
@@ -38,7 +39,7 @@ jobs:
       script:
         - $HOME/travisci-tools/trigger-script-with-status-update.sh
 
-    - stage: 'SourceClear and Lint'
+    - stage: 'Lint'
       language: swift
       os: osx
       osx_image: xcode11.3
@@ -48,6 +49,16 @@ jobs:
         - pod spec lint --quick
       after_script:
         - curl -sSL https://download.sourceclear.com/ci.sh | bash
+
+    - stage: 'Source Clear'
+      if: type = cron
+      addons:
+        srcclr: true
+      before_install: skip
+      install: skip
+      before_script: skip
+      script: skip
+      after_success: skip
 
     - &unittests
       stage: 'Unit Tests'

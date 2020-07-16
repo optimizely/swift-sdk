@@ -19,7 +19,7 @@ import Foundation
 extension OptimizelyClient {
     
     public func setUserContext(_ user: OptimizelyUserContext) throws {
-        guard let _ = self.config else { throw OptimizelyError.sdkNotReady }
+        guard self.config != nil else { throw OptimizelyError.sdkNotReady }
                               
         userContext = user
     }

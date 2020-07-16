@@ -21,15 +21,18 @@ class OptimizelyClientTests_Decide: XCTestCase {
     let kUserId = "tester"
     
     var optimizely: OptimizelyClient!
-    
+    var eventDispatcher = MockEventDispatcher()
+    var decisionService: DefaultDecisionService!
+
     override func setUp() {
         super.setUp()
         
         let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
-        
-        self.optimizely = OptimizelyClient(sdkKey: "12345",
-                                           userProfileService: OTUtils.createClearUserProfileService())
-        try! self.optimizely.start(datafile: datafile)
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
+                                      eventDispatcher: eventDispatcher,
+                                      userProfileService: OTUtils.createClearUserProfileService())
+        decisionService = optimizely.decisionService as? DefaultDecisionService
+        try! optimizely.start(datafile: datafile)
     }
     
 }
@@ -89,8 +92,7 @@ extension OptimizelyClientTests_Decide {
         XCTAssertEqual(decision.user, user)
         XCTAssert(decision.reasons.isEmpty)
     }
-    
-    func testDecide_userInParameter() {
+    func testDecide_userSetInCallParameter() {
         let featureKey = "feature_1"
         let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
         
@@ -108,7 +110,7 @@ extension OptimizelyClientTests_Decide {
         XCTAssert(decision.reasons.isEmpty)
     }
     
-    func testDecide_userInParameterOverriding() {
+    func testDecide_userSetInCallParameterOverriding() {
         let featureKey = "feature_1"
         let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
         
@@ -126,6 +128,74 @@ extension OptimizelyClientTests_Decide {
         XCTAssertEqual(decision.user, user2)
         XCTAssert(decision.reasons.isEmpty)
     }
+    
+}
+
+// MARK: - impression events
+
+extension OptimizelyClientTests_Decide {
+    
+    // NOTE: we here validate impression events only.
+    //       all decision-notification tests are in "OptimizelyTests-Common/DecisionListenerTests"
+    
+    func testDecide_feature_sendImpression() {
+        let featureKey = "feature_1"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: featureKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.enabled)
+        XCTAssertNotNil(eventDispatcher.eventSent)
+        
+        let desc = eventDispatcher.eventSent!.description
+        XCTAssert(desc.contains("campaign_activated"))
+    }
+    
+    func testDecide_feature_doNotSendImpression() {
+        let featureKey = "common_name"   // no experiment
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: featureKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.enabled)
+        XCTAssertNil(eventDispatcher.eventSent)
+    }
+
+    func testDecide_experiment_sendImpression() {
+        let experimentKey = "exp_with_audience"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: experimentKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.variationKey)
+        XCTAssertNotNil(eventDispatcher.eventSent)
+        
+        let desc = eventDispatcher.eventSent!.description
+        XCTAssert(desc.contains("campaign_activated"))
+    }
+
+    func testDecide_experiment_doNotSendImpression() {
+        let experimentKey = "exp_no_audience"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: experimentKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNil(decision.variationKey)
+        XCTAssertNil(eventDispatcher.eventSent)
+    }
+    
 }
 
 // MARK: - decideAll API
@@ -284,7 +354,7 @@ extension OptimizelyClientTests_Decide {
                                                                    key: experimentKey1,
                                                                    user: user,
                                                                    reasons: []))
-        XCTAssert(decisions[experimentKey2]! == OptimizelyDecision(variationKey: "variation_with_traffic",
+        XCTAssert(decisions[experimentKey2]! == OptimizelyDecision(variationKey: nil,   // traffic-allocation = 0
                                                                    enabled: nil,
                                                                    variables: nil,
                                                                    key: experimentKey2,
@@ -309,7 +379,7 @@ extension OptimizelyClientTests_Decide {
                                                                 key: experimentKey1,
                                                                 user: user,
                                                                 reasons: []))
-        XCTAssert(decisions[experimentKey2]! == OptimizelyDecision(variationKey: "variation_with_traffic",
+        XCTAssert(decisions[experimentKey2]! == OptimizelyDecision(variationKey: nil,    // traffic-allocation = 0
                                                                 enabled: nil,
                                                                 variables: nil,
                                                                 key: experimentKey2,
@@ -344,7 +414,104 @@ extension OptimizelyClientTests_Decide {
         XCTAssertEqual(decision, expDecision)
     }
     
-    func testDecideAll_nameConflict_forExperiment() {
+}
+
+// MARK: - options
+
+extension OptimizelyClientTests_Decide {
+    
+    func testDecide_feature_sendImpression_disbleTracking() {
+        let featureKey = "feature_1"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: featureKey, options: [.disableTracking])
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.enabled)
+        XCTAssertNil(eventDispatcher.eventSent)
+    }
+    
+    func testDecide_experiment_sendImpression_disableTracking() {
+        let experimentKey = "exp_with_audience"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: experimentKey, options: [.disableTracking])
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(decision.variationKey)
+        XCTAssertNil(eventDispatcher.eventSent)
+    }
+
+    func testDecideOptions_useUPSbyDefault() {
+        let experimentKey = "exp_with_audience"
+        let experimentId = "10390977673"
+        let variationId = "10389729780"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        
+        XCTAssertNil(getProfileVariation(userId: kUserId, experimentId: experimentId))
+
+        _ = optimizely.decide(key: experimentKey)
+        
+        XCTAssert(getProfileVariation(userId: kUserId, experimentId: experimentId) == variationId)
+    }
+    
+    func testDecideOptions_bypassUPS_doNotUpdateUPS() {
+        let experimentKey = "exp_with_audience"
+        let experimentId = "10390977673"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        
+        XCTAssertNil(getProfileVariation(userId: kUserId, experimentId: experimentId))
+
+        _ = optimizely.decide(key: experimentKey, options: [.bypassUPS])
+        
+        XCTAssertNil(getProfileVariation(userId: kUserId, experimentId: experimentId))
+    }
+
+    func testDecideOptions_bypassUPS_doNotReadUPS() {
+        let experimentKey = "exp_with_audience"
+        let experimentId = "10390977673"
+        let variationKey1 = "a"
+        let variationKey2 = "b"
+        let variationId2 = "10416523121"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        
+        setProfileVariation(userId: kUserId, experimentId: experimentId, variationId: variationId2)
+        XCTAssert(getProfileVariation(userId: kUserId, experimentId: experimentId) == variationId2)
+
+        let decision1 = optimizely.decide(key: experimentKey)
+        let decision2 = optimizely.decide(key: experimentKey, options: [.bypassUPS])
+
+        XCTAssert(decision1.variationKey == variationKey2)
+        XCTAssert(decision2.variationKey == variationKey1)
+    }
+
+    func testDecideOptions_forExperiment() {
+        let commonKey = "common_name"
+
+        let user = OptimizelyUserContext(userId: kUserId)
+        try? optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: commonKey, options: [.forExperiment])
+        
+        XCTAssertEqual(decision.variationKey, "variation_a")
+        XCTAssertNil(decision.enabled)
+        XCTAssertNil(decision.variables)
+        
+        XCTAssertEqual(decision.key, commonKey)
+        XCTAssertEqual(decision.user, user)
+        XCTAssert(decision.reasons.isEmpty)
+    }
+    
+    func testDecideOptions_decideAll_forExperiment() {
         let commonKey = "common_name"
         let keys = [commonKey]
         
@@ -363,6 +530,12 @@ extension OptimizelyClientTests_Decide {
                                              reasons: [])
         XCTAssertEqual(decision, expDecision)
     }
+    
+}
+    
+// MARK: - debugging reasons
+  
+extension OptimizelyClientTests_Decide {
 
 }
 
@@ -475,30 +648,41 @@ extension OptimizelyClientTests_Decide {
 
 }
 
-// MARK: - debugging reasons
+// MARK: - helpers
 
 extension OptimizelyClientTests_Decide {
-    
-}
-
-// MARK: - options
-
-extension OptimizelyClientTests_Decide {
-    
-    func testDecideOptions_forExperiment() {
-        let commonKey = "common_name"
-        
-        let user = OptimizelyUserContext(userId: kUserId)
-        try? optimizely.setUserContext(user)
-        let decision = optimizely.decide(key: commonKey, options: [.forExperiment])
-        
-        XCTAssertEqual(decision.variationKey, "variation_a")
-        XCTAssertNil(decision.enabled)
-        XCTAssertNil(decision.variables)
-        
-        XCTAssertEqual(decision.key, commonKey)
-        XCTAssertEqual(decision.user, user)
-        XCTAssert(decision.reasons.isEmpty)
+    func getProfileVariation(userId: String, experimentId: String) -> String? {
+        if let profile = decisionService.userProfileService.lookup(userId: userId),
+            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+            let experimentMap = bucketMap[experimentId],
+            let variationId = experimentMap[UserProfileKeys.kVariationId] {
+            return variationId
+        } else {
+            return nil
+        }
     }
     
+    func setProfileVariation(userId: String, experimentId: String, variationId: String){
+        var profile = decisionService.userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
+        
+        var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
+        bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
+        
+        profile[UserProfileKeys.kBucketMap] = bucketMap
+        profile[UserProfileKeys.kUserId] = userId
+        
+        decisionService.userProfileService.save(userProfile: profile)
+    }
+}
+    
+class MockEventDispatcher: OPTEventDispatcher {
+    var eventSent: EventForDispatch?
+    
+    func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
+        eventSent = event
+    }
+    
+    func flushEvents() {
+        
+    }
 }

@@ -14,7 +14,6 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-
 import Foundation
 
 public struct OptimizelyDecision {
@@ -52,5 +51,3 @@ extension OptimizelyDecision: Equatable {
             (lhs.variables != nil && rhs.variables != nil && lhs.variables! == rhs.variables!)
     }
 }
-
-

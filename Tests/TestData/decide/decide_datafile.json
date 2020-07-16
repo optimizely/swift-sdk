@@ -102,7 +102,7 @@
       "trafficAllocation": [
         {
           "entityId": "10418551353",
-          "endOfRange": 10000
+          "endOfRange": 0
         }
       ],
       "audienceIds": [],

@@ -55,4 +55,5 @@ extension OptimizelyUserContext: Equatable {
             (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes) &&
             Set(lhs.defaultDecideOptions) == Set(rhs.defaultDecideOptions)
     }
+    
 }

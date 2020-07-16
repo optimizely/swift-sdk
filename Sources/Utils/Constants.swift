@@ -66,6 +66,7 @@ struct Constants {
     struct ExperimentDecisionInfoKeys {
         static let experiment = "experimentKey"
         static let variation = "variationKey"
+        static let tracked = "tracked"
     }
     
 }

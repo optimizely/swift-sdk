@@ -84,7 +84,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
         XCTAssert(decision.reasons.isEmpty)
     }
 
-    func testDecide_userInParameter() {
+    func testDecide_userSetInCallParameter() {
         let featureKey = "feature_1"
         let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
 
@@ -102,7 +102,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
         XCTAssert(decision.reasons.isEmpty)
     }
     
-    func testDecide_userInParameterOverriding() {
+    func testDecide_userSetInCallParameterOverriding() {
         let featureKey = "feature_1"
         let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
         
@@ -120,6 +120,25 @@ class OptimizelyClientTests_Decide: XCTestCase {
         XCTAssertEqual(decision.user, user2)
         XCTAssert(decision.reasons.isEmpty)
     }
+    
+//    func testDecide_sendImpression() {
+//        let featureKey = "feature_1"
+//        let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
+//
+//        let user = OptimizelyUserContext(userId: kUserId)
+//        try? optimizely.setUserContext(user)
+//        let decision = optimizely.decide(key: featureKey)
+//        
+//        XCTAssertNil(decision.variationKey)
+//        XCTAssertEqual(decision.enabled, true)
+//        let variables = decision.variables!
+//        XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
+//        
+//        XCTAssertEqual(decision.key, featureKey)
+//        XCTAssertEqual(decision.user, user)
+//        XCTAssert(decision.reasons.isEmpty)
+//    }
+
 }
     
 // MARK: - errors

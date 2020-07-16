@@ -118,12 +118,14 @@ extension OptimizelyClient {
             }
         }
         
+        var tracked = false
         if !options.contains(.disableTracking) {
             if let eventExperiment = decision?.experiment, let eventVariation = decision?.variation {
                 sendImpressionEvent(experiment: eventExperiment,
                                     variation: eventVariation,
                                     userId: userId,
                                     attributes: attributes)
+                tracked = true
             }
         }
 
@@ -134,7 +136,8 @@ extension OptimizelyClient {
                                  variation: decision?.variation,
                                  feature: feature,
                                  featureEnabled: enabled,
-                                 variableValues: variableMap)
+                                 variableValues: variableMap,
+                                 tracked: tracked)
         
         let optimizelyJSON = OptimizelyJSON(map: variableMap)
         if optimizelyJSON == nil {
@@ -170,12 +173,14 @@ extension OptimizelyClient {
                                                      attributes: attributes,
                                                      options: options)
         
+        var tracked = false
         if !options.contains(.disableTracking) {
             if let variationDecision = variation {
                 sendImpressionEvent(experiment: experiment,
                                     variation: variationDecision,
                                     userId: userId,
                                     attributes: attributes)
+                tracked = true
             }
         }
 
@@ -183,7 +188,8 @@ extension OptimizelyClient {
                                  userId: userId,
                                  attributes: attributes,
                                  experiment: experiment,
-                                 variation: variation)
+                                 variation: variation,
+                                 tracked: tracked)
 
         return OptimizelyDecision(variationKey: variation?.key,
                                   enabled: nil,

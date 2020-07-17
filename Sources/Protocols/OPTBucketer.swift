@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -27,7 +27,7 @@ protocol OPTBucketer {
     
     /**
      Bucket a bucketingId into an experiment.
-     - Parameter experiment: The experiment in which to bucket the bucketingId.
+     - Parameter experiment: The experiment or rollout rule in which to bucket the bucketingId.
      - Parameter bucketingId: The ID to bucket. This must be a non-null, non-empty string.
      - Returns: The variation the bucketingId was bucketed into.
      */

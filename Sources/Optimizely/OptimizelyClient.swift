@@ -551,13 +551,10 @@ open class OptimizelyClient: NSObject {
             if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
                 if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
                     featureValue = featureVariable.value
-                    
-                    logger.i(.userReceivedVariableValue(userId, featureKey, variableKey, featureValue))
+                    logger.i(.userReceivedVariableValue(featureValue, variableKey, featureKey))
                 } else {
                     logger.i(.featureNotEnabledReturnDefaultVariableValue(userId, featureKey, variableKey))
                 }
-            } else {
-                logger.i(.variableNotUsedReturnDefaultVariableValue(variableKey))
             }
         } else {
             logger.i(.userReceivedDefaultVariableValue(userId, featureKey, variableKey))
@@ -645,6 +642,13 @@ open class OptimizelyClient: NSObject {
                                                                    reasons: nil)
         if let featureEnabled = decision?.variation?.featureEnabled {
             enabled = featureEnabled
+            if featureEnabled {
+                logger.i(.featureEnabledForUser(featureKey, userId))
+            } else {
+                logger.i(.featureNotEnabledForUser(featureKey, userId))
+            }
+        } else {
+            logger.i(.userReceivedAllDefaultVariableValues(userId, featureKey))
         }
         
         for (_, v) in featureFlag.variablesMap {

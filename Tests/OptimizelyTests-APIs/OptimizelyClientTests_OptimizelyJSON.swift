@@ -280,7 +280,7 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForNilJSONKeyAndInvalidType() {
-        let value: Int? = self.optimizelyJSON.getValue()
+        let value: Int? = self.optimizelyJSON.getValue(jsonPath: nil)
         XCTAssertNil(value)
     }
     
@@ -290,7 +290,7 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForNilJSONKeyAndEmptyDecodableStruct() {
-        let value: EmptyDecodableStruct? = self.optimizelyJSON.getValue()
+        let value: EmptyDecodableStruct? = self.optimizelyJSON.getValue(jsonPath: nil)
         XCTAssertNotNil(value)
     }
     
@@ -314,7 +314,7 @@ extension OptimizelyClientTests_OptimizelyJSON {
     }
     
     func testGetValueForNilJsonKeyAndValidDecodableStruct() {
-        let value: ValidDecodableStruct? = self.optimizelyJSON.getValue()
+        let value: ValidDecodableStruct? = self.optimizelyJSON.getValue(jsonPath: nil)
         XCTAssertNotNil(value)
         
         let expectedStruct = ValidDecodableStruct(

@@ -81,7 +81,12 @@ class DefaultDecisionService: OPTDecisionService {
         
         var bucketedVariation: Variation?
         // ---- check if the user passes audience targeting before bucketing ----
-        if doesMeetAudienceConditions(config: config, experiment: experiment, userId: userId, attributes: attributes) {
+        if doesMeetAudienceConditions(config: config,
+                                      experiment: experiment,
+                                      userId: userId,
+                                      attributes: attributes,
+                                      options: options,
+                                      reasons: reasons) {
             // bucket user into a variation
             bucketedVariation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId)
             

@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -25,7 +25,7 @@ class DecisionServiceTests_Others: XCTestCase {
     let kAttributeKey = "browser_type"
     let kAttributeValue = "firefox"
 
-    func testUserInExperimentWithValidAudienceIdAndEmptyAudienceConditions() {
+    func testDoesMeetAudienceConditionsWithValidAudienceIdAndEmptyAudienceConditions() {
         let optimizely = OTUtils.createOptimizely(datafileName: ktypeAudienceDatafileName, clearUserProfileService: true)!
         let config = optimizely.config!
         
@@ -33,10 +33,10 @@ class DecisionServiceTests_Others: XCTestCase {
 
         var experiment = optimizely.config!.getExperiment(key: kExperimentWithTypedAudienceKey)!
         experiment.audienceConditions = ConditionHolder.array([])
-        let isValid = (optimizely.decisionService as! DefaultDecisionService).isInExperiment(config: config,
-                                                                                                  experiment: experiment,
-                                                                                                  userId: kUserId,
-                                                                                                  attributes: attributes)
+        let isValid = (optimizely.decisionService as! DefaultDecisionService).doesMeetAudienceConditions(config: config,
+                                                                                                         experiment: experiment,
+                                                                                                         userId: kUserId,
+                                                                                                         attributes: attributes)
         XCTAssert(isValid)
     }
     

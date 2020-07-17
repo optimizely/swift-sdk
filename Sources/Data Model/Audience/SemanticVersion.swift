@@ -37,11 +37,6 @@ extension SemanticVersion {
             if versionParts.count <= idx {
               return -1;
             } else if !versionParts[idx].isNumber {
-                if !targetedVersionParts[idx].isNumber {
-                    if targetedVersionParts[idx].isPreRelease {
-                        
-                    }
-                }
                 //Compare strings
                 if versionParts[idx] != targetedVersionParts[idx] {
                     return -1;

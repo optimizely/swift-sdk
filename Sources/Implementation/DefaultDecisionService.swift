@@ -268,9 +268,9 @@ class DefaultDecisionService: OPTDecisionService {
                                           userId: userId,
                                           attributes: attributes,
                                           logType: .rolloutRule,
-                                          loggingKey: "\(loggingKey)",
-                options: options,
-                reasons: reasons) {
+                                          loggingKey: String(loggingKey),
+                                          options: options,
+                                          reasons: reasons) {
                 var info = LogMessage.userMeetsConditionsForTargetingRule(userId, loggingKey)
                 logger.d(info)
                 reasons?.addInfo(info)

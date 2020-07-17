@@ -27,16 +27,21 @@ extension SemanticVersion {
             // Any version.
             return 0
           }
+        
 
-          // Expect a version string of the form x.y.z
-        let targetedVersionParts = targetedVersion.split(separator: ".");
-        let versionParts = self.split(separator: ".");
+        let targetedVersionParts = targetedVersion.splitSemanticVersion()
+        let versionParts = self.splitSemanticVersion()
 
         // Up to the precision of targetedVersion, expect version to match exactly.
         for (idx, _) in targetedVersionParts.enumerated() {
             if versionParts.count <= idx {
               return -1;
-            } else if !String(versionParts[idx]).isNumber {
+            } else if !versionParts[idx].isNumber {
+                if !targetedVersionParts[idx].isNumber {
+                    if targetedVersionParts[idx].isPreRelease {
+                        
+                    }
+                }
                 //Compare strings
                 if versionParts[idx] != targetedVersionParts[idx] {
                     return -1;
@@ -52,10 +57,58 @@ extension SemanticVersion {
             }
         }
 
-          return 0;
+        return 0;
+    }
+    
+    func splitSemanticVersion() -> [Substring] {
+        var targetParts:[Substring]?
+        var targetPrefix = self
+        var targetSuffix:ArraySlice<Substring>?
+        
+        if isPreRelease || isBuild {
+            targetParts = split(separator: isPreRelease ? preReleaseSeperator : buildSeperator)
+            targetPrefix = String(targetParts![0])
+            targetSuffix = targetParts![1...]
         }
+        // Expect a version string of the form x.y.z
+        var targetedVersionParts = targetPrefix.split(separator: ".");
+        if let targetSuffix = targetSuffix {
+            targetedVersionParts.append(contentsOf: targetSuffix)
+        }
+        return targetedVersionParts
+    }
 
     var isNumber: Bool {
         return !isEmpty && rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
     }
+    
+    var isPreRelease: Bool {
+        return contains("-")
+    }
+
+    var isBuild: Bool {
+        return contains("+")
+    }
+    
+    var buildSeperator:Character {
+        return "+"
+    }
+    var preReleaseSeperator:Character {
+        return "-"
+    }
+}
+
+extension Substring {
+    var isNumber: Bool {
+        return !isEmpty && rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
+    }
+
+    var isPreRelease: Bool {
+        return contains("-")
+    }
+
+    var isBuild: Bool {
+        return contains("+")
+    }
+
 }

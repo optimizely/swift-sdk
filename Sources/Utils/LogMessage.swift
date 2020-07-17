@@ -31,8 +31,7 @@ enum LogMessage {
     case forcedVariationFound(_ key: String, _ userId: String)
     case forcedVariationFoundButInvalid(_ key: String, _ userId: String)
     case savedVariationInUserProfile(_ varId: String, _ expId: String, _ userId: String)
-    case userAssignedToVariationBucketValue(_ bucket: Int, _ userId: String)
-    case userAssignedToExperimentBucketValue(_ bucket: Int, _ userId: String)
+    case userAssignedToBucketValue(_ bucket: Int, _ userId: String)
     case userMappedToForcedVariation(_ userId: String, _ expId: String, _ varId: String)
     case userMeetsConditionsForTargetingRule(_ userId: String, _ index: Int)
     case userDoesntMeetConditionsForTargetingRule(_ userId: String, _ index: Int)
@@ -43,12 +42,8 @@ enum LogMessage {
     case userHasForcedVariationButInvalid(_ userId: String, _ expKey: String)
     case userHasNoForcedVariation(_ userId: String)
     case userHasNoForcedVariationForExperiment(_ userId: String, _ expKey: String)
-    case userInFeatureExperiment(_ userId: String, _ varKey: String, _ expKey: String, _ feature: String)
-    case userNotInFeatureExperiment(_ userId: String, _ feature: String)
-    case userInRollout(_ userId: String, _ feature: String)
-    case userNotInRollout(_ userId: String, _ feature: String)
     case userBucketedIntoVariationInExperiment(_ userId: String, _ expKey: String, _ varKey: String)
-    case userNotBucketedIntoVariationInExperiment(_ userId: String, _ expKey: String)
+    case userNotBucketedIntoVariation(_ userId: String)
     case userBucketedIntoInvalidVariation(_ id: String)
     case userBucketedIntoExperimentInGroup(_ userId: String, _ expKey: String, _ group: String)
     case userNotBucketedIntoExperimentInGroup(_ userId: String, _ expKey: String, _ group: String)
@@ -56,9 +51,9 @@ enum LogMessage {
     case userBucketedIntoInvalidExperiment(_ id: String)
     case userNotInExperiment(_ userId: String, _ expKey: String)
     case userReceivedDefaultVariableValue(_ userId: String, _ feature: String, _ variable: String)
+    case userReceivedAllDefaultVariableValues(_ userId: String, _ feature: String)
     case featureNotEnabledReturnDefaultVariableValue(_ userId: String, _ feature: String, _ variable: String)
-    case variableNotUsedReturnDefaultVariableValue(_ variable: String)
-    case userReceivedVariableValue(_ userId: String, _ feature: String, _ variable: String, _ value: String)
+    case userReceivedVariableValue(_ value: String, _ variable: String, _ feature: String)
     case variationRemovedForUser(_ userId: String, _ expKey: String)
     case audienceEvaluationStarted(_ audience: String, _ conditions: String)
     case audienceEvaluationResult(_ audience: String, _ result: String)
@@ -91,8 +86,7 @@ extension LogMessage: CustomStringConvertible {
         case .forcedVariationFound(let key, let userId):                        message = "Forced variation (\(key)) is found for user (\(userId))"
         case .forcedVariationFoundButInvalid(let key, let userId):              message = "Forced variation (\(key)) is found for user (\(userId)), but it's not in datafile."
         case .savedVariationInUserProfile(let varId, let expId, let userId):    message = "Saved variation (\(varId)) of experiment (\(expId)) for user (\(userId))."
-        case .userAssignedToVariationBucketValue(let bucket, let userId):       message = "Assigned variation bucket value (\(bucket)) to user (\(userId))"
-        case .userAssignedToExperimentBucketValue(let bucket, let userId):      message = "Assigned experiment bucket value (\(bucket)) to user (\(userId))"
+        case .userAssignedToBucketValue(let bucket, let userId):                message = "Assigned bucket (\(bucket)) to user with bucketing ID (\(userId))."
         case .userMappedToForcedVariation(let userId, let expId, let varId):    message = "Set variation (\(varId)) for experiment (\(expId)) and user (\(userId)) in the forced variation map."
         case .userMeetsConditionsForTargetingRule(let userId, let index):       message = "User (\(userId)) meets conditions for targeting rule (\(index))."
         case .userDoesntMeetConditionsForTargetingRule(let userId, let index):  message = "User (\(userId)) does not meet conditions for targeting rule (\(index))."
@@ -103,12 +97,8 @@ extension LogMessage: CustomStringConvertible {
         case .userHasForcedVariationButInvalid(let userId, let expKey):         message = "Invalid variation is mapped to experiment (\(expKey)) and user (\(userId)) in the forced variation map."
         case .userHasNoForcedVariation(let userId):                             message = "User (\(userId)) is not in the forced variation map."
         case .userHasNoForcedVariationForExperiment(let userId, let expKey):    message = "No experiment (\(expKey)) mapped to user (\(userId)) in the forced variation map."
-        case .userInFeatureExperiment(let userId, let varKey, let expKey, let feature):  message = "User (\(userId)) is in variation (\(varKey)) of experiment (\(expKey)) on the feature (\(feature))."
-        case .userNotInFeatureExperiment(let userId, let feature):              message = "User (\(userId)) is not in any experiment on the feature (\(feature))."
-        case .userInRollout(let userId, let feature):                           message = "User (\(userId)) is in rollout of feature (\(feature))."
-        case .userNotInRollout(let userId, let feature):                        message = "User (\(userId)) is not in rollout of feature (\(feature))."
         case .userBucketedIntoVariationInExperiment(let userId, let expKey, let varKey): message = "User (\(userId)) is in variation (\(varKey)) of experiment (\(expKey))"
-        case .userNotBucketedIntoVariationInExperiment(let userId, let expKey): message = "User (\(userId)) is in no variation of experiment (\(expKey))."
+        case .userNotBucketedIntoVariation(let userId):                         message = "User (\(userId)) is in no variation."
         case .userBucketedIntoInvalidVariation(let id):                         message = "Bucketed into an invalid variation id (\(id))"
         case .userBucketedIntoExperimentInGroup(let userId, let expId, let group): message = "User (\(userId)) is in experiment (\(expId)) of group (\(group))."
         case .userNotBucketedIntoExperimentInGroup(let userId, let expKey, let group): message = "User (\(userId)) is not in experiment (\(expKey)) of group (\(group))."
@@ -116,9 +106,9 @@ extension LogMessage: CustomStringConvertible {
         case .userBucketedIntoInvalidExperiment(let id):                        message = "Bucketed into an invalid experiment id (\(id))"
         case .userNotInExperiment(let userId, let expKey):                      message = "User (\(userId)) does not meet conditions to be in experiment (\(expKey))."
         case .userReceivedDefaultVariableValue(let userId, let feature, let variable): message = "User (\(userId)) is not in any variation or rollout rule. Returning default value for variable (\(variable)) of feature flag (\(feature))."
-        case .featureNotEnabledReturnDefaultVariableValue(let userId, let feature, let variable): message = "Feature (\(feature)) is not enabled for user (\(userId)). Returning default value for variable (\(variable)."
-        case .variableNotUsedReturnDefaultVariableValue(let variable):          message = "Variable (\(variable)) is not used in variation. Returning default value."
-        case .userReceivedVariableValue(let userId, let feature, let variable, let value): message = "Value for variable (\(variable)) of feature flag (\(feature)) is (\(value)) for user (\(userId))"
+        case .userReceivedAllDefaultVariableValues(let userId, let feature): message = "User (\(userId)) is not in any variation or rollout rule. Returning default value for all variables of feature flag (\(feature))."
+        case .featureNotEnabledReturnDefaultVariableValue(let userId, let feature, let variable): message = "Feature (\(feature)) is not enabled for user (\(userId)). Returning the default variable value (\(variable))."
+        case .userReceivedVariableValue(let value, let variable, let feature): message = "Got variable value (\(value)) for variable (\(variable)) of feature flag (\(feature))."
         case .variationRemovedForUser(let userId, let expKey):                  message = "Variation mapped to experiment (\(expKey)) has been removed for user (\(userId))."
         case .audienceEvaluationStarted(let audience, let conditions):          message = "Starting to evaluate audience (\(audience)) with conditions: (\(conditions))."
         case .audienceEvaluationResult(let audience, let result):               message = "Audience (\(audience)) evaluated to (\(result))."

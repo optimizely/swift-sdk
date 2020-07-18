@@ -22,15 +22,15 @@ typealias SemanticVersion = String
  Full testing in SemanticVersionTests.
  */
 extension SemanticVersion {
-    func compareVersion(targetedVersion: SemanticVersion?) -> Int {
+    func compareVersion(targetedVersion: SemanticVersion?) throws -> Int {
         guard let targetedVersion = targetedVersion else {
             // Any version.
             return 0
           }
         
 
-        let targetedVersionParts = targetedVersion.splitSemanticVersion()
-        let versionParts = self.splitSemanticVersion()
+        let targetedVersionParts = try targetedVersion.splitSemanticVersion()
+        let versionParts = try self.splitSemanticVersion()
 
         // Up to the precision of targetedVersion, expect version to match exactly.
         for (idx, _) in targetedVersionParts.enumerated() {
@@ -55,22 +55,25 @@ extension SemanticVersion {
         return 0;
     }
     
-    func splitSemanticVersion() -> [Substring] {
+    func splitSemanticVersion() throws -> [Substring] {
         var targetParts:[Substring]?
         var targetPrefix = self
         var targetSuffix:ArraySlice<Substring>?
         
         if isPreRelease || isBuild {
             targetParts = split(separator: isPreRelease ? preReleaseSeperator : buildSeperator)
-            if targetParts?.count ?? 0 > 0 {
-                targetPrefix = String(targetParts![0])
+            guard let targetParts = targetParts, targetParts.count > 1 else {
+                throw OptimizelyError.attributeFormatInvalid
             }
-            if targetParts?.count ?? 0 > 1 {
-                targetSuffix = targetParts![1...]
-            }
+            
+            targetPrefix = String(targetParts[0])
+            targetSuffix = targetParts[1...]
         }
         // Expect a version string of the form x.y.z
-        var targetedVersionParts = targetPrefix.split(separator: ".");
+        var targetedVersionParts = targetPrefix.split(separator: ".")
+        guard targetedVersionParts.count > 0 else {
+            throw OptimizelyError.attributeFormatInvalid
+        }
         if let targetSuffix = targetSuffix {
             targetedVersionParts.append(contentsOf: targetSuffix)
         }

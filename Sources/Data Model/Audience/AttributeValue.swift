@@ -191,25 +191,22 @@ extension AttributeValue {
     }
     
     func isSemanticVersionEqual(than target: SemanticVersion) throws -> Bool {
-        return (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) == 0
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) == 0
     }
 
     func isSemanticVersionGreater(than target: SemanticVersion) throws -> Bool {
-        return (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) > 0
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) > 0
     }
 
     func isSemanticVersionLess(than target: SemanticVersion) throws -> Bool {
-        return (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) < 0
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) < 0
     }
 
     func isSemanticVersionGreaterOrEqual(than target: SemanticVersion) throws -> Bool {
-        return try isSemanticVersionGreater(than: target) ||
-        isSemanticVersionEqual(than: target)
-    }
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) >= 0    }
 
     func isSemanticVersionLessOrEqual(than target: SemanticVersion) throws -> Bool {
-        return try isSemanticVersionLess(than: target) ||
-        isSemanticVersionEqual(than: target)
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) <= 0
     }
 
     var doubleValue: Double? {

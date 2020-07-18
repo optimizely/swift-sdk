@@ -97,16 +97,12 @@ extension OptimizelyClient {
                     break
                 case .integer:
                     valueParsed = Int(featureValue)
-                    break
                 case .double:
                     valueParsed = Double(featureValue)
-                    break
                 case .boolean:
                     valueParsed = Bool(featureValue)
-                    break
                 case .json:
                     valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
-                    break
                 }
             }
 
@@ -142,7 +138,7 @@ extension OptimizelyClient {
         
         let optimizelyJSON = OptimizelyJSON(map: variableMap)
         if optimizelyJSON == nil {
-            decisionReasons.addError(OptimizelyError.invalidDictionary)
+            decisionReasons.addError(OptimizelyError.invalidJSONVariable)
         }
 
         return OptimizelyDecision(variationKey: nil,

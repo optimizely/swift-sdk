@@ -1,6 +1,61 @@
 {
   "version": "4",
-  "rollouts": [],
+  "rollouts": [
+    {
+      "experiments": [
+        {
+          "audienceIds": ["13389130056"],
+          "forcedVariations": {},
+          "id": "3332020515",
+          "key": "3332020515",
+          "layerId": "3319450668",
+          "status": "Running",
+          "trafficAllocation": [
+            {
+              "endOfRange": 10000,
+              "entityId": "3324490633"
+            }
+          ],
+          "variations": [
+            {
+              "featureEnabled": true,
+              "id": "3324490633",
+              "key": "3324490633",
+              "variables": [
+                  {
+                      "id": "2687470095",
+                      "value": "invalid"
+                  }
+              ]
+            }
+          ]
+        },
+        {
+          "audienceIds": ["12208130097"],
+          "forcedVariations": {},
+          "id": "3332020494",
+          "key": "3332020494",
+          "layerId": "3319450668",
+          "status": "Running",
+          "trafficAllocation": [
+            {
+              "endOfRange": 5000,
+              "entityId": "3324490562"
+            }
+          ],
+          "variations": [
+            {
+              "featureEnabled": true,
+              "id": "3324490562",
+              "key": "3324490562",
+              "variables": []
+            }
+          ]
+        }
+      ],
+      "id": "3319450668"
+    }
+  ],
   "anonymizeIP": true,
   "botFiltering": true,
   "projectId": "10431130345",
@@ -56,8 +111,15 @@
           "experimentIds": ["10420810910"],
           "id": "4482920078",
           "key": "feature_2",
-          "rolloutId": "",
-          "variables": []
+          "rolloutId": "3319450668",
+          "variables": [
+              {
+                  "defaultValue": "42",
+                  "id": "2687470095",
+                  "key": "i_42",
+                  "type": "integer"
+              },
+          ]
       },
       {
           "experimentIds": [],
@@ -149,11 +211,51 @@
     }
   ],
   "audiences": [
-    {
-      "id": "10413101795",
-      "conditions": "[\"and\", [\"or\", [\"or\", {\"type\": \"custom_attribute\", \"name\": \"testvar\", \"value\": \"testvalue\"}]]]",
-      "name": "testvalue_audience"
-    }
+      {
+          "id": "13389130056",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"US\"}]]]",
+          "name": "US"
+      },
+      {
+          "id": "12208130097",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"browser_type\", \"type\": \"custom_attribute\", \"value\": \"safari\"}]]]",
+          "name": "safari"
+      },
+      {
+          "id": "age_18",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"name\": \"age\", \"type\": \"custom_attribute\", \"value\": 18}]]]",
+          "name": "age_18"
+      },
+      {
+          "id": "invalid_format",
+          "conditions": "[]",
+          "name": "invalid_format"
+      },
+      {
+          "id": "invalid_condition",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"name\": \"age\", \"type\": \"custom_attribute\", \"value\": \"US\"}]]]",
+          "name": "invalid_condition"
+      },
+      {
+          "id": "invalid_type",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"name\": \"age\", \"type\": \"invalid\", \"value\": 18}]]]",
+          "name": "invalid_type"
+      },
+      {
+          "id": "invalid_match",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"invalid\", \"name\": \"age\", \"type\": \"custom_attribute\", \"value\": 18}]]]",
+          "name": "invalid_match"
+      },
+      {
+          "id": "nil_value",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"name\": \"age\", \"type\": \"custom_attribute\"}]]]",
+          "name": "nil_value"
+      },
+      {
+          "id": "invalid_name",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"type\": \"custom_attribute\", \"value\": 18}]]]",
+          "name": "invalid_name"
+      },
   ],
   "groups": [],
   "attributes": [

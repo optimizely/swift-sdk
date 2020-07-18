@@ -21,6 +21,8 @@ class OptimizelyClientTests_Decide_Reasons: XCTestCase {
     let kUserId = "tester"
     
     var optimizely: OptimizelyClient!
+    var decisionService: DefaultDecisionService!
+    var ups: OPTUserProfileService!
     var user: OptimizelyUserContext!
 
     override func setUp() {
@@ -29,6 +31,8 @@ class OptimizelyClientTests_Decide_Reasons: XCTestCase {
         user = OptimizelyUserContext(userId: kUserId)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       userProfileService: OTUtils.createClearUserProfileService())
+        decisionService = optimizely.decisionService as? DefaultDecisionService
+        ups = decisionService.userProfileService
         try! optimizely.start(datafile: OTUtils.loadJSONDatafile("decide_datafile")!)
     }
     
@@ -54,17 +58,19 @@ userAttributeNilValue
 userAttributeInvalidName
 nilAttributeValue
 missingAttributeValue
-invalidVariableJSON (OptimizelyJSON parsing error)
+ 
+invalidJSONVariable (OptimizelyJSON parsing error)
 variableValueInvalid
+ 
  
 experimentNotRunning
 gotVariationFromUserProfile
 forcedVariationFound
 forcedVariationFoundButInvalid
 userMeetsConditionsForTargetingRule
+userDoesntMeetConditionsForTargetingRule
 userBucketedIntoTargetingRule
 userBucketedIntoEveryoneTargetingRule
-userNotBucketedIntoEveryoneTargetingRule
 userNotBucketedIntoTargetingRule
 userInFeatureExperiment
 userNotInFeatureExperiment
@@ -109,10 +115,179 @@ extension OptimizelyClientTests_Decide_Reasons {
         let decision = optimizely.decide(key: key, user: user, options: [.forExperiment])
         XCTAssertEqual(decision.reasons, [OptimizelyError.experimentKeyInvalid(key).reason])
     }
+    
+    // includeReasons
+    func testDecideReasons_conditionNoMatchingAudience() {
+        let key = "exp_with_audience"
+        let audienceId = "invalid_id"
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
 
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(OptimizelyError.conditionNoMatchingAudience(audienceId).reason))
+    }
+    
+    // includeReasons
+    func testDecideReasons_conditionInvalidFormat() {
+        let key = "exp_with_audience"
+        let audienceId = "invalid_format"
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+        
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(OptimizelyError.conditionInvalidFormat("Empty condition array").reason))
+    }
+    
+    func testDecideReasons_conditionCannotBeEvaluated() {
+        // no need?
+    }
+    
+    // includeReasons (No need?)
+    func testDecideReasons_evaluateAttributeInvalidCondition() {
+        let key = "exp_with_audience"
+        let audienceId = "invalid_condition"
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+        
+        user.setAttribute(key: "age", value: 25)
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        let condition = "{\"match\":\"gt\",\"value\":\"US\",\"name\":\"age\",\"type\":\"custom_attribute\"}"
+        XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeInvalidCondition(condition).reason))
+    }
+    
+    // includeReasons
+    func testDecideReasons_evaluateAttributeInvalidType() {
+        let key = "exp_with_audience"
+        let audienceId = "13389130056"    // (country = US)
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+        
+        let condition = "{\"match\":\"exact\",\"value\":\"US\",\"name\":\"country\",\"type\":\"custom_attribute\"}"
+        let attributeKey = "country"
+        let attributeValue = 25
+        user.setAttribute(key: attributeKey, value: attributeValue)
+        
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeInvalidType(condition, attributeValue, attributeKey).reason))
+    }
+    
+    func testDecideReasons_evaluateAttributeValueOutOfRange() {
+        let key = "exp_with_audience"
+        let audienceId = "age_18"
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+                
+        let condition = "{\"match\":\"gt\",\"value\":18,\"name\":\"age\",\"type\":\"custom_attribute\"}"
+        user.setAttribute(key: "age", value: pow(2,54) as Double)   // TOO-BIG value
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeValueOutOfRange(condition, "age").reason))
+    }
+    
+    func testDecideReasons_evaluateAttributeInvalidFormat() {
+        // No need? (not used)
+    }
+    
+    // includeReasons
+    func testDecideReasons_userAttributeInvalidType() {
+        let key = "exp_with_audience"
+        let audienceId = "invalid_type"
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+                
+        let condition = "{\"match\":\"gt\",\"value\":18,\"name\":\"age\",\"type\":\"invalid\"}"
+        user.setAttribute(key: "age", value: 25)
+        
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidType(condition).reason))
+    }
+    
+    // includeReasons
+    func testDecideReasons_userAttributeInvalidMatch() {
+        let key = "exp_with_audience"
+        let audienceId = "invalid_match"
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+                
+        let condition = "{\"match\":\"invalid\",\"value\":18,\"name\":\"age\",\"type\":\"custom_attribute\"}"
+        user.setAttribute(key: "age", value: 25)
+        
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidMatch(condition).reason))
+    }
+    
+    // includeReasons
+    func testDecideReasons_userAttributeNilValue() {
+        let key = "exp_with_audience"
+        let audienceId = "nil_value"
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+                
+        let condition = "{\"name\":\"age\",\"type\":\"custom_attribute\",\"match\":\"gt\"}"
+        user.setAttribute(key: "age", value: 25)
+        
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeNilValue(condition).reason))
+    }
+    
+    // includeReasons
+    func testDecideReasons_userAttributeInvalidName() {
+        let key = "exp_with_audience"
+        let audienceId = "invalid_name"
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+                
+        let condition = "{\"type\":\"custom_attribute\",\"match\":\"gt\",\"value\":18}"
+        user.setAttribute(key: "age", value: 25)
+        
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidName(condition).reason))
+    }
+    
+    // includeReasons
+    func testDecideReasons_nilAttributeValue() {
+        // No need (not supported)
+    }
+    
+    // includeReasons
+    func testDecideReasons_missingAttributeValue() {
+        let key = "exp_with_audience"
+        let audienceId = "age_18"
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.audienceIds = [audienceId]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+                
+        let condition = "{\"match\":\"gt\",\"value\":18,\"name\":\"age\",\"type\":\"custom_attribute\"}"
+        
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(OptimizelyError.missingAttributeValue(condition, "age").reason))
+    }
+     
+    func testDecideReasons_invalidJSONVariable() {
+        // no need? (cannot create a case)
+    }
+
+    func testDecideReasons_variableValueInvalid() {
+        let featureKey = "feature_2"
+
+        // rollout rule 1 (country="US") has an invalid variable value ("invalid" as an integer value)
+        
+        user.setAttribute(key: "country", value: "US")
+        let decision = optimizely.decide(key: featureKey, user: user)
+        XCTAssert(decision.reasons.contains(OptimizelyError.variableValueInvalid("i_42").reason))
+    }
+    
 }
 
-// MARK: - debugging messages ("includeReasons")
+// MARK: - log messages (for "includeReasons")
 
 extension OptimizelyClientTests_Decide_Reasons {
 
@@ -124,6 +299,63 @@ extension OptimizelyClientTests_Decide_Reasons {
 
         let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
         XCTAssertEqual(decision.reasons, [LogMessage.experimentNotRunning(key).reason])
+    }
+    
+    func testDecideReasons_gotVariationFromUserProfile() {
+        let experimentKey = "exp_with_audience"
+        let experimentId = "10390977673"
+        let variationKey2 = "b"
+        let variationId2 = "10416523121"
+
+        OTUtils.setVariationToUPS(ups: ups, userId: kUserId, experimentId: experimentId, variationId: variationId2)
+        let decision = optimizely.decide(key: experimentKey, user: user, options: [.includeReasons])
+        XCTAssertEqual(decision.variationKey, variationKey2)
+        XCTAssertEqual(decision.reasons,
+                       [LogMessage.gotVariationFromUserProfile(variationKey2, experimentKey, kUserId).reason])
+    }
+    
+    func testDecideReasons_forcedVariationFound() {
+        let key = "exp_with_audience"
+        let variationKey = "b"
+        
+        // white-list
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.forcedVariations = [kUserId: variationKey]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssertEqual(decision.variationKey, variationKey)
+        XCTAssertEqual(decision.reasons, [LogMessage.forcedVariationFound(variationKey, kUserId).reason])
+    }
+    
+    func testDecideReasons_forcedVariationFoundButInvalid() {
+        let key = "exp_with_audience"
+        let variationKey = "invalid-key"
+        
+        // white-list
+        var experiment = optimizely.config!.getExperiment(key: key)!
+        experiment.forcedVariations = [kUserId: variationKey]
+        optimizely.config!.experimentKeyMap = [key: experiment]
+
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssertNotNil(decision.variationKey)
+        XCTAssertEqual(decision.reasons, [LogMessage.forcedVariationFoundButInvalid(variationKey, kUserId).reason])
+    }
+
+    func testDecideReasons_userMeetsConditionsForTargetingRule() {
+        let key = "feature_2"
+        
+        user.setAttribute(key: "country", value: "US")
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userMeetsConditionsForTargetingRule(kUserId, 1).reason))
+    }
+    
+    func testDecideReasons_userDoesntMeetConditionsForTargetingRule() {
+        let key = "feature_2"
+        
+        user.setAttribute(key: "country", value: "CA")
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userDoesntMeetConditionsForTargetingRule(kUserId, 1).reason))
     }
     
 }

@@ -686,7 +686,7 @@ open class OptimizelyClient: NSObject {
         }
         
         guard let optimizelyJSON = OptimizelyJSON(map: variableMap) else {
-            throw OptimizelyError.invalidDictionary
+            throw OptimizelyError.invalidJSONVariable
         }
         
         sendDecisionNotification(decisionType: .allFeatureVariables,

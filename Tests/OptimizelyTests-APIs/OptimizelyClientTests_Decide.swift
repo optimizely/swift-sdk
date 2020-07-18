@@ -375,12 +375,14 @@ extension OptimizelyClientTests_Decide {
         let experimentKey1 = "exp_with_audience"
         let experimentKey2 = "exp_no_audience"
         let experimentKey3 = "common_name"
-        
+        let experimentKey4 = "group_exp_1"
+        let experimentKey5 = "group_exp_2"
+
         let user = OptimizelyUserContext(userId: kUserId)
         try? optimizely.setUserContext(user)
         let decisions = optimizely.decideAll(keys: nil, options: [.forExperiment])
         
-        XCTAssert(decisions.count == 3)
+        XCTAssert(decisions.count == 5)
         
         XCTAssert(decisions[experimentKey1]! == OptimizelyDecision(variationKey: nil,
                                                                    enabled: nil,
@@ -398,6 +400,18 @@ extension OptimizelyClientTests_Decide {
                                                                    enabled: nil,
                                                                    variables: nil,
                                                                    key: experimentKey3,
+                                                                   user: user,
+                                                                   reasons: []))
+        XCTAssert(decisions[experimentKey4]! == OptimizelyDecision(variationKey: "a",
+                                                                   enabled: nil,
+                                                                   variables: nil,
+                                                                   key: experimentKey4,
+                                                                   user: user,
+                                                                   reasons: []))
+        XCTAssert(decisions[experimentKey5]! == OptimizelyDecision(variationKey: nil,       // group-exclusion
+                                                                   enabled: nil,
+                                                                   variables: nil,
+                                                                   key: experimentKey5,
                                                                    user: user,
                                                                    reasons: []))
     }

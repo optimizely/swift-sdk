@@ -286,12 +286,81 @@
           "name": "invalid_name"
       },
   ],
-  "groups": [],
+  "groups": [
+      {
+          "policy": "random",
+          "trafficAllocation": [
+              {
+                  "entityId": "10390965532",
+                  "endOfRange": 10000
+              }
+          ],
+          "experiments": [
+              {
+                  "status": "Running",
+                  "key": "group_exp_1",
+                  "layerId": "10420222423",
+                  "trafficAllocation": [
+                      {
+                          "entityId": "10389752311",
+                          "endOfRange": 10000
+                      }
+                  ],
+                  "audienceIds": [],
+                  "variations": [
+                      {
+                          "variables": [],
+                          "featureEnabled": false,
+                          "id": "10389752311",
+                          "key": "a"
+                      },
+                      {
+                          "variables": [],
+                          "featureEnabled": true,
+                          "id": "10416553432",
+                          "key": "b"
+                      }
+                  ],
+                  "forcedVariations": {},
+                  "id": "10390965532"
+              },
+              {
+                  "status": "Running",
+                  "key": "group_exp_2",
+                  "layerId": "10417730432",
+                  "trafficAllocation": [
+                      {
+                          "entityId": "10418524243",
+                          "endOfRange": 10000
+                      }
+                  ],
+                  "audienceIds": [],
+                  "variations": [
+                      {
+                          "variables": [],
+                          "featureEnabled": false,
+                          "id": "10418524243",
+                          "key": "a"
+                      },
+                      {
+                          "variables": [],
+                          "featureEnabled": true,
+                          "id": "10418547898",
+                          "key": "b"
+                      }
+                  ],
+                  "forcedVariations": {},
+                  "id": "10420843432"
+              },
+          ],
+          "id": "13142870430"
+      }
+  ],
   "attributes": [
-    {
-      "id": "10401066170",
-      "key": "testvar"
-    }
+      {
+          "id": "10401066170",
+          "key": "testvar"
+      }
   ],
   "accountId": "10367498574",
   "events": [

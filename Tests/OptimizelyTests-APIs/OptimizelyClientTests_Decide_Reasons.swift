@@ -81,7 +81,6 @@ userNotBucketedIntoExperimentInGroup
 userNotBucketedIntoAnyExperimentInGroup
 userBucketedIntoInvalidExperiment
 userNotInExperiment
-userReceivedDefaultVariableValue
 */
 
 // MARK: - error messages
@@ -421,27 +420,58 @@ extension OptimizelyClientTests_Decide_Reasons {
     }
     
     func testDecideReasons_userBucketedIntoExperimentInGroup() {
-        
+        let experimentKey = "group_exp_1"
+        let groupId = "13142870430"
+
+        let decision = optimizely.decide(key: experimentKey, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoExperimentInGroup(kUserId,
+                                                                                         experimentKey,
+                                                                                         groupId).reason))
     }
     
     func testDecideReasons_userNotBucketedIntoExperimentInGroup() {
-        
+        let experimentKey = "group_exp_2"
+        let groupId = "13142870430"
+
+        let decision = optimizely.decide(key: experimentKey, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoExperimentInGroup(kUserId,
+                                                                                            experimentKey,
+                                                                                            groupId).reason))
     }
     
     func testDecideReasons_userNotBucketedIntoAnyExperimentInGroup() {
-        
+        let experimentKey = "group_exp_1"
+
+        let groupId = "13142870430"
+        var group = optimizely.config!.getGroup(id: groupId)!
+        group.trafficAllocation = []
+        optimizely.config!.project.groups = [group]
+
+        let decision = optimizely.decide(key: experimentKey, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoAnyExperimentInGroup(kUserId,
+                                                                                               groupId).reason))
     }
     
-    func userBucketedIntoInvalidExperiment() {
-        
+    func testDecideReasons_userBucketedIntoInvalidExperiment() {
+        let experimentKey = "group_exp_1"
+        let experimentIdInvalid = "invalid"
+
+        let groupId = "13142870430"
+        var group = optimizely.config!.getGroup(id: groupId)!
+        var trafficAllocation = group.trafficAllocation[0]
+        trafficAllocation.entityId = experimentIdInvalid
+        group.trafficAllocation = [trafficAllocation]
+        optimizely.config!.project.groups = [group]
+
+        let decision = optimizely.decide(key: experimentKey, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoInvalidExperiment(experimentIdInvalid).reason))
     }
     
     func testDecideReasons_userNotInExperiment() {
+        let experimentKey = "exp_with_audience"
         
+        let decision = optimizely.decide(key: experimentKey, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userNotInExperiment(kUserId, experimentKey).reason))
     }
-    
-    func testDecideReasons_userReceivedDefaultVariableValue() {
         
-    }
-    
 }

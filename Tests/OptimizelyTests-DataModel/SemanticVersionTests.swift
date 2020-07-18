@@ -155,4 +155,12 @@ class SemanticVersionTests: XCTestCase {
             XCTAssert(versions[idx].compareVersion(targetedVersion: target) == 0)
         }
     }
+    
+    func testInvalidAttributes() {
+        let target = "2.1.0"
+        let versions = ["-", ".", "..", "0.-false"]
+        for (idx, version) in versions.enumerated() {
+            XCTAssert(version.compareVersion(targetedVersion: target) < 0)
+        }
+    }
 }

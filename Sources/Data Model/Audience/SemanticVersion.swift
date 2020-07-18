@@ -62,8 +62,12 @@ extension SemanticVersion {
         
         if isPreRelease || isBuild {
             targetParts = split(separator: isPreRelease ? preReleaseSeperator : buildSeperator)
-            targetPrefix = String(targetParts![0])
-            targetSuffix = targetParts![1...]
+            if targetParts?.count ?? 0 > 0 {
+                targetPrefix = String(targetParts![0])
+            }
+            if targetParts?.count ?? 0 > 1 {
+                targetSuffix = targetParts![1...]
+            }
         }
         // Expect a version string of the form x.y.z
         var targetedVersionParts = targetPrefix.split(separator: ".");

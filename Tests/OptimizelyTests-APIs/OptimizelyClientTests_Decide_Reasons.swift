@@ -72,16 +72,14 @@ userDoesntMeetConditionsForTargetingRule
 userBucketedIntoTargetingRule
 userBucketedIntoEveryoneTargetingRule
 userNotBucketedIntoTargetingRule
-userInFeatureExperiment
-userNotInFeatureExperiment
-userInRollout
-userNotInRollout
+ 
 userBucketedIntoVariationInExperiment
-userNotBucketedIntoVariationInExperiment
+userNotBucketedIntoVariation
 userBucketedIntoInvalidVariation
 userBucketedIntoExperimentInGroup
 userNotBucketedIntoExperimentInGroup
-userNotBucketedIntoAnyExperimentInGroup userBucketedIntoInvalidExperiment
+userNotBucketedIntoAnyExperimentInGroup
+userBucketedIntoInvalidExperiment
 userNotInExperiment
 userReceivedDefaultVariableValue
 */
@@ -276,7 +274,7 @@ extension OptimizelyClientTests_Decide_Reasons {
     }
 
     func testDecideReasons_variableValueInvalid() {
-        let featureKey = "feature_2"
+        let featureKey = "feature_1"
 
         // rollout rule 1 (country="US") has an invalid variable value ("invalid" as an integer value)
         
@@ -329,7 +327,7 @@ extension OptimizelyClientTests_Decide_Reasons {
     }
     
     func testDecideReasons_forcedVariationFoundButInvalid() {
-        let key = "exp_with_audience"
+        let key = "exp_no_audience"
         let variationKey = "invalid-key"
         
         // white-list
@@ -339,11 +337,11 @@ extension OptimizelyClientTests_Decide_Reasons {
 
         let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
         XCTAssertNotNil(decision.variationKey)
-        XCTAssertEqual(decision.reasons, [LogMessage.forcedVariationFoundButInvalid(variationKey, kUserId).reason])
+        XCTAssert(decision.reasons.contains(LogMessage.forcedVariationFoundButInvalid(variationKey, kUserId).reason))
     }
 
     func testDecideReasons_userMeetsConditionsForTargetingRule() {
-        let key = "feature_2"
+        let key = "feature_1"
         
         user.setAttribute(key: "country", value: "US")
         let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
@@ -351,11 +349,99 @@ extension OptimizelyClientTests_Decide_Reasons {
     }
     
     func testDecideReasons_userDoesntMeetConditionsForTargetingRule() {
-        let key = "feature_2"
+        let key = "feature_1"
         
         user.setAttribute(key: "country", value: "CA")
         let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userDoesntMeetConditionsForTargetingRule(kUserId, 1).reason))
+    }
+    
+    func testDecideReasons_userBucketedIntoTargetingRule() {
+        let key = "feature_1"
+        
+        user.setAttribute(key: "country", value: "US")
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoTargetingRule(kUserId, 1).reason))
+    }
+    
+    func testDecideReasons_userBucketedIntoEveryoneTargetingRule() {
+        let key = "feature_1"
+        
+        user.setAttribute(key: "country", value: "KO")
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoEveryoneTargetingRule(kUserId).reason))
+    }
+    
+    func testDecideReasons_userNotBucketedIntoTargetingRule() {
+        let key = "feature_1"
+        
+        user.setAttribute(key: "browser", value: "safari")
+        let decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoTargetingRule(kUserId, 2).reason))
+    }
+        
+    func testDecideReasons_userBucketedIntoVariationInExperiment() {
+        let experimentKey = "exp_no_audience"
+        let variationKey = "variation_with_traffic"
+        
+        let decision = optimizely.decide(key: experimentKey, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoVariationInExperiment(kUserId,
+                                                                                             experimentKey,
+                                                                                             variationKey).reason))
+    }
+    
+    func testDecideReasons_userNotBucketedIntoVariation() {
+        let experimentKey = "exp_no_audience"
+        
+        var experiment = optimizely.config!.getExperiment(key: experimentKey)!
+        var trafficAllocation = experiment.trafficAllocation[0]
+        trafficAllocation.endOfRange = 0
+        experiment.trafficAllocation = [trafficAllocation]
+        optimizely.config!.experimentKeyMap = [experimentKey: experiment]
+
+        let decision = optimizely.decide(key: experimentKey, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoVariation(kUserId).reason))
+    }
+    
+    func testDecideReasons_userBucketedIntoInvalidVariation() {
+        let experimentKey = "exp_no_audience"
+        let variationKey = "variation_with_traffic"
+        let variationIdCorrect = "10418551353"
+        let variationIdInvalid = "invalid"
+        
+        var experiment = optimizely.config!.getExperiment(key: experimentKey)!
+        var variation = experiment.getVariation(key: variationKey)!
+        variation.id = variationIdInvalid
+        experiment.variations = [variation]
+        optimizely.config!.experimentKeyMap = [experimentKey: experiment]
+
+        
+        let decision = optimizely.decide(key: experimentKey, user: user, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoInvalidVariation(variationIdCorrect).reason))
+    }
+    
+    func testDecideReasons_userBucketedIntoExperimentInGroup() {
+        
+    }
+    
+    func testDecideReasons_userNotBucketedIntoExperimentInGroup() {
+        
+    }
+    
+    func testDecideReasons_userNotBucketedIntoAnyExperimentInGroup() {
+        
+    }
+    
+    func userBucketedIntoInvalidExperiment() {
+        
+    }
+    
+    func testDecideReasons_userNotInExperiment() {
+        
+    }
+    
+    func testDecideReasons_userReceivedDefaultVariableValue() {
+        
     }
     
 }

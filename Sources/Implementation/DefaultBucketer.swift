@@ -28,7 +28,11 @@ class DefaultBucketer: OPTBucketer {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
     }
 
-    func bucketExperiment(config: ProjectConfig, experiment: Experiment, bucketingId: String) -> Variation? {
+    func bucketExperiment(config: ProjectConfig,
+                          experiment: Experiment,
+                          bucketingId: String,
+                          options: [OptimizelyDecideOption]? = nil,
+                          reasons: DecisionReasons? = nil) -> Variation? {
         var mutexAllowed = true
         
         // check for mutex
@@ -40,18 +44,31 @@ class DefaultBucketer: OPTBucketer {
             case .overlapping:
                 break
             case .random:
-                let mutexExperiment = bucketToExperiment(config: config, group: group, bucketingId: bucketingId)
+                let mutexExperiment = bucketToExperiment(config: config,
+                                                         group: group,
+                                                         bucketingId: bucketingId,
+                                                         options: options,
+                                                         reasons: reasons)
                 if let mutexExperiment = mutexExperiment {
                     if mutexExperiment.id == experiment.id {
                         mutexAllowed = true
-                        logger.i(.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
+                        
+                        let info = LogMessage.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
+                        logger.i(info)
+                        reasons?.addInfo(info)
                     } else {
                         mutexAllowed = false
-                        logger.i(.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
+                        
+                        let info = LogMessage.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
+                        logger.i(info)
+                        reasons?.addInfo(info)
                     }
                 } else {
                     mutexAllowed = false
-                    logger.i(.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id))
+                    
+                    let info = LogMessage.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id)
+                    logger.i(info)
+                    reasons?.addInfo(info)
                 }
             }
         }
@@ -60,20 +77,32 @@ class DefaultBucketer: OPTBucketer {
         
         // bucket to variation only if experiment passes Mutex check
 
-        if let variation = bucketToVariation(experiment: experiment, bucketingId: bucketingId) {
+        if let variation = bucketToVariation(experiment: experiment,
+                                             bucketingId: bucketingId,
+                                             options: options,
+                                             reasons: reasons) {
             return variation
         } else {
             return nil
         }
     }
     
-    func bucketToExperiment(config: ProjectConfig, group: Group, bucketingId: String) -> Experiment? {
+    func bucketToExperiment(config: ProjectConfig,
+                            group: Group,
+                            bucketingId: String,
+                            options: [OptimizelyDecideOption]? = nil,
+                            reasons: DecisionReasons? = nil) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
-        logger.d(.userAssignedToBucketValue(bucketValue, bucketingId))
+        
+        let info = LogMessage.userAssignedToBucketValue(bucketValue, bucketingId)
+        logger.d(info)
+        reasons?.addInfo(info)
         
         if group.trafficAllocation.count == 0 {
-            logger.e(.groupHasNoTrafficAllocation(group.id))
+            let info = OptimizelyError.groupHasNoTrafficAllocation(group.id)
+            logger.e(info)
+            reasons?.addInfo(info)
             return nil
         }
         
@@ -84,7 +113,9 @@ class DefaultBucketer: OPTBucketer {
             if let experiment = config.getExperiment(id: experimentId) {
                 return experiment
             } else {
-                logger.e(.userBucketedIntoInvalidExperiment(experimentId))
+                let info = LogMessage.userBucketedIntoInvalidExperiment(experimentId)
+                logger.e(info)
+                reasons?.addInfo(info)
                 return nil
             }
         }
@@ -92,13 +123,18 @@ class DefaultBucketer: OPTBucketer {
         return nil
     }
     
-    func bucketToVariation(experiment: Experiment, bucketingId: String) -> Variation? {
+    func bucketToVariation(experiment: Experiment,
+                           bucketingId: String,
+                           options: [OptimizelyDecideOption]? = nil,
+                           reasons: DecisionReasons? = nil) -> Variation? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)
         logger.d(.userAssignedToBucketValue(bucketValue, bucketingId))
 
         if experiment.trafficAllocation.count == 0 {
-            logger.e(.experimentHasNoTrafficAllocation(experiment.key))
+            let info = OptimizelyError.experimentHasNoTrafficAllocation(experiment.key)
+            logger.e(info)
+            reasons?.addInfo(info)
             return nil
         }
         
@@ -109,7 +145,9 @@ class DefaultBucketer: OPTBucketer {
             if let variation = experiment.getVariation(id: variationId) {
                 return variation
             } else {
-                logger.e(.userBucketedIntoInvalidVariation(variationId))
+                let info = LogMessage.userBucketedIntoInvalidVariation(variationId)
+                logger.e(info)
+                reasons?.addInfo(info)
                 return nil
             }
         }

@@ -88,17 +88,26 @@ class DefaultDecisionService: OPTDecisionService {
                                       options: options,
                                       reasons: reasons) {
             // bucket user into a variation
-            bucketedVariation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId)
+            bucketedVariation = bucketer.bucketExperiment(config: config,
+                                                          experiment: experiment,
+                                                          bucketingId: bucketingId,
+                                                          options: options,
+                                                          reasons: reasons)
             
             if let bucketedVariation = bucketedVariation {
-                logger.i(.userBucketedIntoVariationInExperiment(userId, experiment.key, bucketedVariation.key))
+                let info = LogMessage.userBucketedIntoVariationInExperiment(userId, experiment.key,
+                                                                            bucketedVariation.key)
+                logger.i(info)
+                reasons?.addInfo(info)
                 // save to user profile
                 self.saveProfile(userId: userId,
                                  experimentId: experimentId,
                                  variationId: bucketedVariation.id,
                                  options: options)
             } else {
-                logger.i(.userNotBucketedIntoVariation(userId))
+                let info = LogMessage.userNotBucketedIntoVariation(userId)
+                logger.i(info)
+                reasons?.addInfo(info)
             }
             
         } else {
@@ -279,7 +288,11 @@ class DefaultDecisionService: OPTDecisionService {
                 var info = LogMessage.userMeetsConditionsForTargetingRule(userId, loggingKey)
                 logger.d(info)
                 reasons?.addInfo(info)
-                if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
+                if let variation = bucketer.bucketExperiment(config: config,
+                                                             experiment: experiment,
+                                                             bucketingId: bucketingId,
+                                                             options: options,
+                                                             reasons: reasons) {
                     info = LogMessage.userBucketedIntoTargetingRule(userId, loggingKey)
                     logger.d(info)
                     reasons?.addInfo(info)
@@ -306,7 +319,11 @@ class DefaultDecisionService: OPTDecisionService {
                                       loggingKey: "Everyone Else",
                                       options: options,
                                       reasons: reasons) {
-            if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
+            if let variation = bucketer.bucketExperiment(config: config,
+                                                         experiment: experiment,
+                                                         bucketingId: bucketingId,
+                                                         options: options,
+                                                         reasons: reasons) {
                 let info = LogMessage.userBucketedIntoEveryoneTargetingRule(userId)
                 logger.d(info)
                 reasons?.addInfo(info)

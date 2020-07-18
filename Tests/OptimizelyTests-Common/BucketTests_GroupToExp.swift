@@ -20,7 +20,7 @@ class BucketTests_GroupToExp: XCTestCase {
 
     var optimizely: OptimizelyClient!
     var config: ProjectConfig!
-    var bucketer: OPTBucketer!
+    var bucketer: DefaultBucketer!
     
     var kUserId = "12345"
     var kGroupId = "333333"

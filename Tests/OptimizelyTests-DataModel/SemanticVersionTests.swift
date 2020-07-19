@@ -133,6 +133,13 @@ class SemanticVersionTests: XCTestCase {
         XCTAssert(try version.compareVersion(targetedVersion: target) < 0)
     }
     
+    func testReleaseToBeta() {
+        let version = "2.1.2-release"
+        let target = "2.1.2-beta"
+        
+        XCTAssert(try version.compareVersion(targetedVersion: target) > 0)
+    }
+
     func testTargetWithVersionBetaEqual() {
         let target = "2.1.3"
         let version = "2.1.3-beta"

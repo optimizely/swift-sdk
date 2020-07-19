@@ -38,9 +38,13 @@ extension SemanticVersion {
               return -1;
             } else if !versionParts[idx].isNumber {
                 //Compare strings
-                if versionParts[idx] != targetedVersionParts[idx] {
+                if versionParts[idx] < targetedVersionParts[idx] {
                     return -1;
-              }
+                }
+                else if versionParts[idx] > targetedVersionParts[idx] {
+                    return 1;
+                }
+                
             } else if let part = Int(versionParts[idx]), let target = Int(targetedVersionParts[idx]){
                 if (part < target) {
                   return -1;

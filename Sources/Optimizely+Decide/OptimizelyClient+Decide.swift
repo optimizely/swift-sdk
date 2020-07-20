@@ -70,59 +70,33 @@ extension OptimizelyClient {
         let userId = user.userId
         let attributes = user.attributes
         let decisionReasons = DecisionReasons()
+        var tracked = false
+        var enabled = false
 
         let decision = self.decisionService.getVariationForFeature(config: config,
                                                                    featureFlag: feature,
                                                                    userId: userId,
                                                                    attributes: attributes,
                                                                    options: options)
-        var enabled = false
+        
         if let featureEnabled = decision?.variation?.featureEnabled {
             enabled = featureEnabled
         }
         
-        var variableMap = [String: Any]()
-        for (_, v) in feature.variablesMap {
-            var featureValue = v.value
-            if enabled, let variable = decision?.variation?.getVariable(id: v.id) {
-                featureValue = variable.value
-            }
-            
-            var valueParsed: Any? = featureValue
-            
-            if let valueType = Constants.VariableValueType(rawValue: v.type) {
-                switch valueType {
-                case .string:
-                    break
-                case .integer:
-                    valueParsed = Int(featureValue)
-                    break
-                case .double:
-                    valueParsed = Double(featureValue)
-                    break
-                case .boolean:
-                    valueParsed = Bool(featureValue)
-                    break
-                case .json:
-                    valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
-                    break
-                }
-            }
-
-            if let value = valueParsed {
-                variableMap[v.key] = value
-            } else {
-                let info = OptimizelyError.variableValueInvalid(v.key)
-                logger.e(info)
-                decisionReasons.addError(info)
-            }
-        }
+        let variableMap = getDecisionVariableMap(feature: feature,
+                                                 variation: decision?.variation,
+                                                 enabled: enabled,
+                                                 reasons: decisionReasons)
         
-        var tracked = false
-        if !options.contains(.disableTracking) {
-            if let eventExperiment = decision?.experiment, let eventVariation = decision?.variation {
-                sendImpressionEvent(experiment: eventExperiment,
-                                    variation: eventVariation,
+        let optimizelyJSON = OptimizelyJSON(map: variableMap)
+        if optimizelyJSON == nil {
+            decisionReasons.addError(OptimizelyError.invalidDictionary)
+        }
+
+        if let experimentDecision = decision?.experiment, let variationDecision = decision?.variation {
+            if !options.contains(.disableTracking) {
+                sendImpressionEvent(experiment: experimentDecision,
+                                    variation: variationDecision,
                                     userId: userId,
                                     attributes: attributes)
                 tracked = true
@@ -139,11 +113,6 @@ extension OptimizelyClient {
                                  variableValues: variableMap,
                                  tracked: tracked)
         
-        let optimizelyJSON = OptimizelyJSON(map: variableMap)
-        if optimizelyJSON == nil {
-            decisionReasons.addError(OptimizelyError.invalidDictionary)
-        }
-
         return OptimizelyDecision(variationKey: nil,
                                   enabled: enabled,
                                   variables: optimizelyJSON,
@@ -166,6 +135,7 @@ extension OptimizelyClient {
         let userId = user.userId
         let attributes = user.attributes
         let decisionReasons = DecisionReasons()
+        var tracked = false
 
         let variation = decisionService.getVariation(config: config,
                                                      userId: userId,
@@ -173,9 +143,8 @@ extension OptimizelyClient {
                                                      attributes: attributes,
                                                      options: options)
         
-        var tracked = false
-        if !options.contains(.disableTracking) {
-            if let variationDecision = variation {
+        if let variationDecision = variation {
+            if !options.contains(.disableTracking) {
                 sendImpressionEvent(experiment: experiment,
                                     variation: variationDecision,
                                     userId: userId,
@@ -203,6 +172,47 @@ extension OptimizelyClient {
 // MARK: - utils
 
 extension OptimizelyClient {
+    
+    func getDecisionVariableMap(feature: FeatureFlag,
+                                variation: Variation?,
+                                enabled: Bool,
+                                reasons: DecisionReasons) -> [String: Any] {
+        var variableMap = [String: Any]()
+        
+        for (_, v) in feature.variablesMap {
+            var featureValue = v.value
+            if enabled, let variable = variation?.getVariable(id: v.id) {
+                featureValue = variable.value
+            }
+            
+            var valueParsed: Any? = featureValue
+            
+            if let valueType = Constants.VariableValueType(rawValue: v.type) {
+                switch valueType {
+                case .string:
+                    break
+                case .integer:
+                    valueParsed = Int(featureValue)
+                case .double:
+                    valueParsed = Double(featureValue)
+                case .boolean:
+                    valueParsed = Bool(featureValue)
+                case .json:
+                    valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
+                }
+            }
+
+            if let value = valueParsed {
+                variableMap[v.key] = value
+            } else {
+                let info = OptimizelyError.variableValueInvalid(v.key)
+                logger.e(info)
+                reasons.addError(info)
+            }
+        }
+
+        return variableMap
+    }
     
     func getAllOptions(with options: [OptimizelyDecideOption]?) -> [OptimizelyDecideOption] {
         return (userContext?.defaultDecideOptions ?? []) + (options ?? [])

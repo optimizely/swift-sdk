@@ -43,7 +43,7 @@ struct Constants {
         case allFeatureVariables = "all-feature-variables"
         case featureTest = "feature-test"
         // Decide-APIs
-        case featureDecide = "feature-decide"
+        case featureDecide = "flag-decide"
         case experimentDecide = "experiment-decide"
     }
         

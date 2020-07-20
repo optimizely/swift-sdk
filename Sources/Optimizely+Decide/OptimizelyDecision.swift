@@ -35,6 +35,10 @@ extension OptimizelyDecision {
                                   user: user,
                                   reasons: [error.reason])
     }
+    
+    var hasFailed: Bool {
+        return variationKey == nil && enabled == nil
+    }
 }
 
 extension OptimizelyDecision: Equatable {

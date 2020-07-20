@@ -21,12 +21,7 @@
               "featureEnabled": true,
               "id": "3324490633",
               "key": "3324490633",
-              "variables": [
-                  {
-                      "id": "2687470095",
-                      "value": "invalid"
-                  }
-              ]
+              "variables": []
             }
           ]
         },

@@ -396,8 +396,9 @@ extension UserAttributeTests_Evaluate {
 extension UserAttributeTests_Evaluate {
     
     func testLessThanOrEqualSemanticVersion() {
-        var attributes = ["version": "2.0.0"]
         let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_le", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
         XCTAssertTrue(try! model.evaluate(attributes: attributes))
         attributes["version"] = "1.9"
         XCTAssertTrue(try! model.evaluate(attributes: attributes))
@@ -406,11 +407,45 @@ extension UserAttributeTests_Evaluate {
     }
 
     func testGreaterThanOrEqualSemanticVersion() {
-        var attributes = ["version": "2.0.0"]
         let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_ge", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
         XCTAssertTrue(try! model.evaluate(attributes: attributes))
         attributes["version"] = "2.9"
         XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "1.9"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testLessThanSemanticVersion() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_lt", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "1.9"
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "2.5.1"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testGreaterThanSemanticVersion() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_gt", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "2.9"
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "1.9"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testEqualSemanticVersion() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_eq", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "2.9"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
         attributes["version"] = "1.9"
         XCTAssertFalse(try! model.evaluate(attributes: attributes))
     }

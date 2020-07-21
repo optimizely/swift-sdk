@@ -38,11 +38,11 @@ class DecisionReasons {
     }
     
     var reasonsRequired: [String] {
-        return errors.map{ $0.reason }
+        return errors.map { $0.reason }
     }
     
     var reasonsOptional: [String] {
-        return logs.map{ $0.reason }
+        return logs.map { $0.reason }
     }
     
     func getReasonsToReport(options: [OptimizelyDecideOption]) -> [String] {

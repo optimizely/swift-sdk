@@ -72,10 +72,6 @@ extension OptimizelyClientTests_Decide_Reasons {
         XCTAssertEqual(decision.reasons, [OptimizelyError.experimentKeyInvalid(key).reason])
     }
     
-    func testDecideReasons_invalidJSONVariable() {
-        // no need? (cannot create a case)
-    }
-
     func testDecideReasons_variableValueInvalid() {
         let featureKey = "feature_1"
         let rolloutId = "3319450668"
@@ -126,10 +122,6 @@ extension OptimizelyClientTests_Decide_Reasons {
         XCTAssert(decision.reasons.contains(OptimizelyError.conditionInvalidFormat("Empty condition array").reason))
     }
     
-    func testDecideReasons_conditionCannotBeEvaluated() {
-        // no need?
-    }
-    
     func testDecideReasons_evaluateAttributeInvalidCondition() {
         let key = "exp_with_audience"
         let audienceId = "invalid_condition"
@@ -178,10 +170,6 @@ extension OptimizelyClientTests_Decide_Reasons {
         XCTAssert(decision.reasons.isEmpty)
         decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeValueOutOfRange(condition, "age").reason))
-    }
-    
-    func testDecideReasons_evaluateAttributeInvalidFormat() {
-        // No need? (not used)
     }
     
     func testDecideReasons_userAttributeInvalidType() {
@@ -246,10 +234,6 @@ extension OptimizelyClientTests_Decide_Reasons {
         XCTAssert(decision.reasons.isEmpty)
         decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidName(condition).reason))
-    }
-    
-    func testDecideReasons_nilAttributeValue() {
-        // No need (not supported)
     }
     
     func testDecideReasons_missingAttributeValue() {

@@ -728,8 +728,9 @@ open class OptimizelyClient: NSObject {
     /// - Parameters:
     ///   - eventKey: The event name
     ///   - userId: The user ID associated with the event to track
+    ///   - attributes: The user's attributes.
     ///   - eventTags: A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean)
-    /// - Throws: `OptimizelyError` if event parameter is not valid
+    /// - Throws: `OptimizelyError` if error is detected
     public func track(eventKey: String,
                       userId: String,
                       attributes: OptimizelyAttributes? = nil,

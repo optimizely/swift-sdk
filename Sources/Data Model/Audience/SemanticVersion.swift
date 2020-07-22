@@ -64,6 +64,10 @@ extension SemanticVersion {
         var targetPrefix = self
         var targetSuffix:ArraySlice<Substring>?
         
+        if hasWhiteSpace {
+            throw OptimizelyError.attributeFormatInvalid
+        }
+        
         if isPreRelease || isBuild {
             targetParts = split(separator: isPreRelease ? preReleaseSeperator : buildSeperator)
             guard let targetParts = targetParts, targetParts.count > 1 else {
@@ -82,6 +86,10 @@ extension SemanticVersion {
             targetedVersionParts.append(contentsOf: targetSuffix)
         }
         return targetedVersionParts
+    }
+    
+    var hasWhiteSpace: Bool {
+        return contains(" ")
     }
 
     var isNumber: Bool {

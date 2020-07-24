@@ -1939,7 +1939,6 @@
 			isa = PBXGroup;
 			children = (
 				6E75166D22C520D400B2B157 /* Constants.swift */,
-				6EF8DE3024BF7D69008B9488 /* DecisionReasons.swift */,
 				6E34A6162319EBB700BAE302 /* Notifications.swift */,
 				6E75166E22C520D400B2B157 /* MurmurHash3.swift */,
 				6E75166F22C520D400B2B157 /* HandlerRegistryService.swift */,
@@ -1978,6 +1977,7 @@
 				6E75167E22C520D400B2B157 /* DefaultBucketer.swift */,
 				6E75167F22C520D400B2B157 /* DefaultNotificationCenter.swift */,
 				6E75168022C520D400B2B157 /* DefaultDecisionService.swift */,
+				6EF8DE3024BF7D69008B9488 /* DecisionReasons.swift */,
 				6E75168122C520D400B2B157 /* Datastore */,
 				6E75168622C520D400B2B157 /* Events */,
 			);

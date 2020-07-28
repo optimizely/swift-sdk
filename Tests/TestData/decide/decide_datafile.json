@@ -233,7 +233,7 @@
       {
           "id": "13389141123",
           "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"f\"}]]]",
-          "name": "US"
+          "name": "gender"
       },
       {
           "id": "13389130056",

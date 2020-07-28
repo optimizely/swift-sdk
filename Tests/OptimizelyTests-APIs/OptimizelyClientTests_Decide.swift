@@ -31,7 +31,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       eventDispatcher: eventDispatcher,
                                       userProfileService: OTUtils.createClearUserProfileService())
-        decisionService = optimizely.decisionService as? DefaultDecisionService
+        decisionService = (optimizely.decisionService as! DefaultDecisionService)
         try! optimizely.start(datafile: datafile)
     }
     
@@ -49,7 +49,7 @@ extension OptimizelyClientTests_Decide {
         try? optimizely.setUserContext(user)
         let decision = optimizely.decide(key: featureKey)
         
-        XCTAssertNil(decision.variationKey)
+        XCTAssertEqual(decision.variationKey, "a")
         XCTAssertEqual(decision.enabled, true)
         let variables = decision.variables!
         XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
@@ -100,7 +100,7 @@ extension OptimizelyClientTests_Decide {
         
         let decision = optimizely.decide(key: featureKey, user: user)
         
-        XCTAssertNil(decision.variationKey)
+        XCTAssertEqual(decision.variationKey, "a")
         XCTAssertEqual(decision.enabled, true)
         let variables = decision.variables!
         XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
@@ -119,7 +119,7 @@ extension OptimizelyClientTests_Decide {
         try? optimizely.setUserContext(user1)
         let decision = optimizely.decide(key: featureKey, user: user2)
         
-        XCTAssertNil(decision.variationKey)
+        XCTAssertEqual(decision.variationKey, "a")
         XCTAssertEqual(decision.enabled, true)
         let variables = decision.variables!
         XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
@@ -147,6 +147,7 @@ extension OptimizelyClientTests_Decide {
         
         optimizely.eventLock.sync{}
 
+        XCTAssertEqual(decision.variationKey, "a")
         XCTAssertNotNil(decision.enabled)
         XCTAssertNotNil(eventDispatcher.eventSent)
         
@@ -163,6 +164,7 @@ extension OptimizelyClientTests_Decide {
         
         optimizely.eventLock.sync{}
 
+        XCTAssertNil(decision.variationKey)
         XCTAssertNotNil(decision.enabled)
         XCTAssertNil(eventDispatcher.eventSent)
     }

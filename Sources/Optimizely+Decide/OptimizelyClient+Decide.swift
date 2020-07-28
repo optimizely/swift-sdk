@@ -72,6 +72,7 @@ extension OptimizelyClient {
         let decisionReasons = DecisionReasons()
         var tracked = false
         var enabled = false
+        var decisionFromFeatureTest = false
 
         let decision = self.decisionService.getVariationForFeature(config: config,
                                                                    featureFlag: feature,
@@ -94,6 +95,8 @@ extension OptimizelyClient {
         }
 
         if let experimentDecision = decision?.experiment, let variationDecision = decision?.variation {
+            decisionFromFeatureTest = true
+            
             if !options.contains(.disableTracking) {
                 sendImpressionEvent(experiment: experimentDecision,
                                     variation: variationDecision,
@@ -102,7 +105,7 @@ extension OptimizelyClient {
                 tracked = true
             }
         }
-
+        
         sendDecisionNotification(decisionType: .featureDecide,
                                  userId: userId,
                                  attributes: attributes,
@@ -113,7 +116,7 @@ extension OptimizelyClient {
                                  variableValues: variableMap,
                                  tracked: tracked)
         
-        return OptimizelyDecision(variationKey: nil,
+        return OptimizelyDecision(variationKey: decisionFromFeatureTest ? decision?.variation?.key : nil,
                                   enabled: enabled,
                                   variables: optimizelyJSON,
                                   key: feature.key,

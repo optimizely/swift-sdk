@@ -216,7 +216,7 @@ extension OptimizelyClientTests_Decide {
         XCTAssert(decisions.count == 1)
         let decision = decisions[featureKey]!
         
-        let expDecision = OptimizelyDecision(variationKey: nil,
+        let expDecision = OptimizelyDecision(variationKey: "a",
                                              enabled: true,
                                              variables: variablesExpected,
                                              key: featureKey,
@@ -239,7 +239,7 @@ extension OptimizelyClientTests_Decide {
         
         XCTAssert(decisions.count == 2)
         
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: nil,
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
                                                                 enabled: true,
                                                                 variables: variablesExpected1,
                                                                 key: featureKey1,
@@ -268,7 +268,7 @@ extension OptimizelyClientTests_Decide {
         
         XCTAssert(decisions.count == 3)
         
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: nil,
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
                                                                 enabled: true,
                                                                 variables: variablesExpected1,
                                                                 key: featureKey1,
@@ -299,7 +299,7 @@ extension OptimizelyClientTests_Decide {
         
         XCTAssert(decisions.count == 1)
         
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: nil,
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
                                                                 enabled: true,
                                                                 variables: variablesExpected1,
                                                                 key: featureKey1,
@@ -637,7 +637,7 @@ extension OptimizelyClientTests_Decide {
         
         XCTAssert(decisions.count == 2)
         
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: nil,
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
                                                                 enabled: true,
                                                                 variables: variablesExpected1,
                                                                 key: featureKey1,

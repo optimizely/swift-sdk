@@ -140,18 +140,18 @@ class SemanticVersionTests: XCTestCase {
         XCTAssert(try version.compareVersion(targetedVersion: target) > 0)
     }
 
-    func testTargetWithVersionBetaEqual() {
+    func testTargetWithVersionBetaLess() {
         let target = "2.1.3"
         let version = "2.1.3-beta"
         
-        XCTAssert(try version.compareVersion(targetedVersion: target) == 0)
+        XCTAssert(try version.compareVersion(targetedVersion: target) < 0)
     }
 
-    func testVersionBetaLess() {
-        let target = "2.1.4"
-        let version = "2.1.3-beta"
+    func testTargetBetaLess() {
+        let target = "2.1.3-beta"
+        let version = "2.1.3"
         
-        XCTAssert(try version.compareVersion(targetedVersion: target) < 0)
+        XCTAssert(try version.compareVersion(targetedVersion: target) > 0)
     }
 
     func testOtherTests() {
@@ -165,7 +165,7 @@ class SemanticVersionTests: XCTestCase {
     
     func testInvalidAttributes() {
         let target = "2.1.0"
-        let versions = ["-", ".", "..", "+", "+test", " ", "2 .3. 0"]
+        let versions = ["-", ".", "..", "+", "+test", " ", "2 .3. 0", "2.", ".2.2"]
         for (_, version) in versions.enumerated() {
             XCTAssert(((try? (version.compareVersion(targetedVersion: target)) < 0) == nil))
         }

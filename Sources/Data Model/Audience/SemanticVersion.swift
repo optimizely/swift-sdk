@@ -35,7 +35,8 @@ extension SemanticVersion {
         // Up to the precision of targetedVersion, expect version to match exactly.
         for (idx, _) in targetedVersionParts.enumerated() {
             if versionParts.count <= idx {
-              return -1;
+                // even if they are equal at this point. if the target is a prerelease then it must be greater than the pre release.
+                return targetedVersion.isPreRelease ?  1 : -1
             } else if !versionParts[idx].isNumber {
                 //Compare strings
                 if versionParts[idx] < targetedVersionParts[idx] {
@@ -55,7 +56,11 @@ extension SemanticVersion {
                 return -1;
             }
         }
-
+        
+        if self.isPreRelease && !targetedVersion.isPreRelease {
+            return -1;
+        }
+    
         return 0;
     }
     
@@ -78,8 +83,12 @@ extension SemanticVersion {
             targetSuffix = targetParts[1...]
         }
         // Expect a version string of the form x.y.z
+        let dotCount = targetPrefix.filter({$0 == "."}).count
+        if dotCount > 3 {
+            throw OptimizelyError.attributeFormatInvalid
+        }
         var targetedVersionParts = targetPrefix.split(separator: ".")
-        guard targetedVersionParts.count > 0 else {
+        guard targetedVersionParts.count == dotCount + 1 else {
             throw OptimizelyError.attributeFormatInvalid
         }
         if let targetSuffix = targetSuffix {

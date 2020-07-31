@@ -84,7 +84,7 @@ extension SemanticVersion {
         }
         // Expect a version string of the form x.y.z
         let dotCount = targetPrefix.filter({$0 == "."}).count
-        if dotCount > 3 {
+        if dotCount > 2 {
             throw OptimizelyError.attributeFormatInvalid
         }
         var targetedVersionParts = targetPrefix.split(separator: ".")

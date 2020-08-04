@@ -21,7 +21,9 @@ import Optimizely
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let logLevel = OptimizelyLogLevel.debug
 
-    let sdkKey = "FCnSegiEkRry9rhVMroit4"
+    //let sdkKey = "FCnSegiEkRry9rhVMroit4"
+    let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
+    
     let datafileName = "demoTestDatafile"
     let experimentKey = "background_experiment"
     let eventKey = "sample_conversion"
@@ -38,8 +40,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UIStoryboard(name: "tvOSMain", bundle: nil)
         #endif
     }
+    
+    let pushManager = PushManager()
 
     func applicationDidFinishLaunching(_ application: UIApplication) {
+        
+        pushManager.registerForPushNotifications()
+
 
         // initialize SDK in one of these two ways:
         // (1) asynchronous SDK initialization (RECOMMENDED)
@@ -103,10 +110,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let eventDispatcher = DefaultEventDispatcher(timerInterval: 0)
 
         // customize logger
-        let customLogger = CustomLogger()
+        //let customLogger = CustomLogger()
         
         optimizely = OptimizelyClient(sdkKey: sdkKey,
-                                       logger: customLogger,
+                                       //logger: customLogger,
                                        eventDispatcher: eventDispatcher,
                                        periodicDownloadInterval: downloadIntervalInSecs,
                                        defaultLogLevel: logLevel)
@@ -230,5 +237,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // add background fetch task here
 
         completionHandler(.newData)
+    }
+}
+
+// MARK: - Push
+
+extension AppDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        pushManager.registerDeviceTokenToServer(deviceToken: deviceToken)
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("[swift-sdk] didFailToRegisterForRemoteNotificationsWithError: \(error)")
     }
 }

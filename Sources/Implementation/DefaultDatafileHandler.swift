@@ -17,8 +17,9 @@ import Foundation
 
 class DefaultDatafileHandler: OPTDatafileHandler {
     // endpoint used to get the datafile.  This is settable after you create a OptimizelyClient instance.
-    public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
-    
+    //public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
+    public var endPointStringFormat = "http://10.0.0.228:8000/datafiles/%@.json"
+
     // lazy load the logger from the logger factory.
     lazy var logger = OPTLoggerFactory.getLogger()
     // the timers for all sdk keys are atomic to allow for thread access.

@@ -248,6 +248,15 @@ extension AppDelegate {
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("[swift-sdk] didFailToRegisterForRemoteNotificationsWithError: \(error)")
+        NSLog("[PushExp] didFailToRegisterForRemoteNotificationsWithError: \(error)")
+    }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+
+        NSLog("[PushExp] didReceiveRemoteNotification: \(userInfo)")
+        
+        // check and process Optimizely metadata
+        OptimizelyPushManager.processPushMessage(userInfo: userInfo)
+        completionHandler(.newData)
     }
 }

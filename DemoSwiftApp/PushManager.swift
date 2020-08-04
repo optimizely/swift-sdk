@@ -22,7 +22,7 @@ class PushManager: NSObject {
         UNUserNotificationCenter
             .current()
             .requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
-                print("[PushExp] Push Permission granted: \(granted)")
+                NSLog("[PushExp] Push Permission granted: \(granted)")
                 
                 guard granted else { return }
                 self.getNotificationSettings()
@@ -33,7 +33,7 @@ class PushManager: NSObject {
         UNUserNotificationCenter
             .current()
             .getNotificationSettings { settings in
-                print("[PushExp] Notification Settings: \(settings)")
+                NSLog("[PushExp] Notification Settings: \(settings)")
                 
                 guard settings.authorizationStatus == .authorized else { return }
                 DispatchQueue.main.async {
@@ -47,7 +47,7 @@ class PushManager: NSObject {
         
         guard let token = currentDeviceToken else { return }
         
-        print("[PushExp] Push DeviceToken Registered: \(token) ")
+        NSLog("[PushExp] Push DeviceToken Registered: \(token) ")
         
         // token should be forwarded to the server for sending push
         // but we do manual push-testing with Mac PushNotifications app, so skip the process.
@@ -62,12 +62,8 @@ extension PushManager: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-        dump("[PushExp] Open App By Touching Push Notification: \(response.notification.request.content)")
-        
-        // check and process Optimizely metadata
-        OptimizelyPushManager.processPushMessage(userInfo: response.notification.request.content.userInfo)
+        NSLog("[PushExp] Open App By Touching Push Notification: \(response.notification.request.content)")
     
         completionHandler()
     }
-    
 }

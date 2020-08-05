@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "252D7DEC21C8800800134A7A"
-               BuildableName = "DemoSwiftiOS.app"
+               BuildableName = "DemoSwiftiOS-Pull.app"
                BlueprintName = "DemoSwiftiOS"
                ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
             </BuildableReference>
@@ -31,7 +31,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "252D7DEC21C8800800134A7A"
-            BuildableName = "DemoSwiftiOS.app"
+            BuildableName = "DemoSwiftiOS-Pull.app"
             BlueprintName = "DemoSwiftiOS"
             ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "252D7DEC21C8800800134A7A"
-            BuildableName = "DemoSwiftiOS.app"
+            BuildableName = "DemoSwiftiOS-Pull.app"
             BlueprintName = "DemoSwiftiOS"
             ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
          </BuildableReference>
@@ -81,7 +81,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "252D7DEC21C8800800134A7A"
-            BuildableName = "DemoSwiftiOS.app"
+            BuildableName = "DemoSwiftiOS-Pull.app"
             BlueprintName = "DemoSwiftiOS"
             ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
          </BuildableReference>

@@ -132,6 +132,20 @@
 			remoteGlobalIDString = 6E614DCC21E3F389005982A1;
 			remoteInfo = "OptimizelySwiftSDK-tvOS";
 		};
+		6EC651A124DA56DB00A6661E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BD6485812491474500F30986;
+			remoteInfo = "OptimizelySwiftSDK-macOS";
+		};
+		6EC651A324DA56DB00A6661E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E14CD632423F80B00010234;
+			remoteInfo = "OptimizelyTests-Batch-iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -161,7 +175,7 @@
 
 /* Begin PBXFileReference section */
 		0B886F5E161647DB427A8FBC /* Pods_DemoSwiftiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoSwiftiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		252D7DED21C8800800134A7A /* DemoSwiftiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwiftiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		252D7DED21C8800800134A7A /* DemoSwiftiOS-Pull.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DemoSwiftiOS-Pull.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwifttvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
 		6E96818E21EEA391009B7FEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -222,8 +236,10 @@
 			children = (
 				6E4D2FC822C5454400062EB3 /* Optimizely.framework */,
 				6E4D2FCA22C5454400062EB3 /* Optimizely.framework */,
+				6EC651A224DA56DB00A6661E /* Optimizely.framework */,
 				6E4D2FCC22C5454400062EB3 /* OptimizelyTests-iOS.xctest */,
 				6E4D2FCE22C5454400062EB3 /* OptimizelyTests-Common-iOS.xctest */,
+				6EC651A424DA56DB00A6661E /* OptimizelyTests-Batch-iOS.xctest */,
 				6E4D2FD022C5454400062EB3 /* OptimizelyTests-APIs-iOS.xctest */,
 				6E4D2FD222C5454400062EB3 /* OptimizelyTests-DataModel-iOS.xctest */,
 				6E4D2FD422C5454400062EB3 /* OptimizelyTests-Others-iOS.xctest */,
@@ -316,7 +332,7 @@
 		EA5246BE1DC7186800AF6685 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				252D7DED21C8800800134A7A /* DemoSwiftiOS.app */,
+				252D7DED21C8800800134A7A /* DemoSwiftiOS-Pull.app */,
 				252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */,
 			);
 			name = Products;
@@ -362,7 +378,7 @@
 			);
 			name = DemoSwiftiOS;
 			productName = OptimizelyiOSDemoApp;
-			productReference = 252D7DED21C8800800134A7A /* DemoSwiftiOS.app */;
+			productReference = 252D7DED21C8800800134A7A /* DemoSwiftiOS-Pull.app */;
 			productType = "com.apple.product-type.application";
 		};
 		252D7E1021C8804E00134A7A /* DemoSwifttvOS */ = {
@@ -398,6 +414,7 @@
 				TargetAttributes = {
 					252D7DEC21C8800800134A7A = {
 						CreatedOnToolsVersion = 10.1;
+						DevelopmentTeam = BDMC9C2X5M;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -524,6 +541,20 @@
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-Others-tvOS.xctest";
 			remoteRef = 6E4D2FDD22C5454400062EB3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6EC651A224DA56DB00A6661E /* Optimizely.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Optimizely.framework;
+			remoteRef = 6EC651A124DA56DB00A6661E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6EC651A424DA56DB00A6661E /* OptimizelyTests-Batch-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Batch-iOS.xctest";
+			remoteRef = 6EC651A324DA56DB00A6661E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -707,6 +738,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = BDMC9C2X5M;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -716,8 +748,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftiOS;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.optimizely.DemoSwiftiOS-Pull";
+				PRODUCT_NAME = "DemoSwiftiOS-Pull";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -736,12 +768,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = BDMC9C2X5M;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/DemoSwiftiOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.DemoSwiftiOS;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.optimizely.DemoSwiftiOS-Pull";
+				PRODUCT_NAME = "DemoSwiftiOS-Pull";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

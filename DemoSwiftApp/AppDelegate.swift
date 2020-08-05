@@ -256,7 +256,12 @@ extension AppDelegate {
         NSLog("[PushExp] didReceiveRemoteNotification: \(userInfo)")
         
         // check and process Optimizely metadata
-        OptimizelyPushManager.processPushMessage(userInfo: userInfo)
-        completionHandler(.newData)
+        OptimizelyPushManager.processPushMessage(userInfo: userInfo) { status in
+            if status {
+                completionHandler(.newData)
+            } else {
+                completionHandler(.failed)
+            }
+        }
     }
 }

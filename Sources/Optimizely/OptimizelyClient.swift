@@ -102,6 +102,10 @@ open class OptimizelyClient: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
+        if #available(iOSApplicationExtension 13.0, *) {
+            OptimizelyBackgroundManager.registerOptimizelyClient(self)
+        }
+        
         logger.d("SDK Version: \(version)")
     }
     
@@ -184,7 +188,10 @@ open class OptimizelyClient: NSObject {
     func configSDK(datafile: Data) throws {
         do {
             self.config = try ProjectConfig(datafile: datafile)
-
+            if let revision = config?.project.revision {
+                logger.d("project config set (revision: \(revision))")
+            }
+            
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
                 self.updateConfigFromBackgroundFetch(data: data)

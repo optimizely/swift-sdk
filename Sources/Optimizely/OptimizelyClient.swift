@@ -48,6 +48,8 @@ open class OptimizelyClient: NSObject {
             return false
         }
     }
+    
+    var notificationObservers = [NSObjectProtocol]()
 
     // MARK: - Customizable Services
     
@@ -102,7 +104,13 @@ open class OptimizelyClient: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
+        addObserversForDidDownloadNewDatafileBackground()
+        
         logger.d("SDK Version: \(version)")
+    }
+    
+    deinit {
+        notificationObservers.forEach { NotificationCenter.default.removeObserver($0) }
     }
     
     /// Start Optimizely SDK (Asynchronous)

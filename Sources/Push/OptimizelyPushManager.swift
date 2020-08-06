@@ -59,9 +59,12 @@ public class OptimizelyPushManager {
             if case .update(let value) = message.info {
                 let sdkKey = value.sdkKey
                 
-                DefaultDatafileHandler().downloadDatafileSilent(sdkKey: sdkKey,
+                if let datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: sdkKey) as? DefaultDatafileHandler {
+                
+                    datafileHandler.downloadDatafileSilent(sdkKey: sdkKey,
                                                                 resourceTimeoutInterval: 30.0,
                                                                 completionHandler: completionHandler)
+                }
             } else {
                 logger.e("[PushExp] OptimizelyMessage fomrat is not valid")
                 completionHandler(true)
@@ -69,6 +72,35 @@ public class OptimizelyPushManager {
         }
     }
     
+}
+
+// MARK: - OptimizelyClient
+
+extension Notification.Name {
+    static let didDownloadNewDatafile = Notification.Name("didDownloadNewDatafile")
+}
+
+extension OptimizelyClient {
+    
+    func addObserversForDidDownloadNewDatafileBackground() {
+        let observer = NotificationCenter.default.addObserver(forName: .didDownloadNewDatafile, object: nil, queue: nil) { [weak self] notif in
+            
+            guard let self = self else { return }
+            guard let sdkKey = notif.object as? String, !sdkKey.isEmpty, sdkKey == self.sdkKey else { return }
+            guard let cachedDatafile = self.datafileHandler?.loadSavedDatafile(sdkKey: sdkKey) else { return }
+            
+            do {
+                try self.configSDK(datafile: cachedDatafile)
+                self.logger.d("[PushExp] Project config updated with a new datafile")
+            } catch {
+                self.logger.e("[PushExp] Project config update failed with a new datafile")
+            }
+        }
+        
+        // keep to remove all observers when deinit
+        notificationObservers.append(observer)
+    }
+        
 }
 
 // MARK: - DefaultDatafileHandler
@@ -89,7 +121,6 @@ extension DefaultDatafileHandler {
             }
             
             let task = session.downloadTask(with: request) { (url, response, error) in
-                var result = false
                 
                 if error != nil {
                     self.logger.e(error.debugDescription)
@@ -97,18 +128,25 @@ extension DefaultDatafileHandler {
                     switch response.statusCode {
                     case 200:
                         if self.getResponseData(sdkKey: sdkKey, response: response, url: url) != nil {
-                            result = true
                             self.logger.d("[PushExp] datafile revision downloaded silently for sdkKey: \(sdkKey)")
+                            
+                            NotificationCenter.default.post(name: .didDownloadNewDatafile, object: sdkKey)
+                            
+                            // extra delay for project config before notify completion to iOS
+                            DispatchQueue.global().asyncAfter(deadline: .now() + 3.0) {
+                                completionHandler(true)
+                            }
+                            
+                            return
                         }
                     case 304:
                         self.logger.d("[PushExp] The datafile was not modified and won't be downloaded again")
-                        result = true
                     default:
                         self.logger.i("[PushExp] got response code \(response.statusCode)")
                     }
                 }
                 
-                completionHandler(result)
+                completionHandler(true)   // always return true to get fair share from iOS
             }
             
             task.resume()

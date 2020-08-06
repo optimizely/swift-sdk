@@ -30,7 +30,8 @@ open class OptimizelyClient: NSObject {
             }
         }
     }
-    
+    var notificationObservers = [NSObjectProtocol]()
+
     private var atomicConfig: AtomicProperty<ProjectConfig> = AtomicProperty<ProjectConfig>()
     var config: ProjectConfig? {
         get {
@@ -108,9 +109,15 @@ open class OptimizelyClient: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
+        addObserversForDidDownloadNewDatafileBackground()
+        
         logger.d("SDK Version: \(version)")
     }
     
+    deinit {
+        notificationObservers.forEach { NotificationCenter.default.removeObserver($0) }
+    }
+
     /// Start Optimizely SDK (Asynchronous)
     ///
     /// If an updated datafile is available in the server, it's downloaded and the SDK is configured with

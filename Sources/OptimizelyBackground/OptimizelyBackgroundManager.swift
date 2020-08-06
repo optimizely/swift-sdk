@@ -22,6 +22,7 @@ public class OptimizelyBackgroundManager {
     
     public static let fetchTaskId = "com.optimizely.bgfetch"
     private static var optimizelyClients = [OptimizelyClient?]()
+    static var logger = OPTLoggerFactory.getLogger()
     
     public static func scheduleBackgroundDatafileFetch() {
         let fetchTask = BGAppRefreshTaskRequest(identifier: fetchTaskId)
@@ -36,15 +37,20 @@ public class OptimizelyBackgroundManager {
     }
     
     public static func handleBackgroundDatafileFetchTask(task: BGAppRefreshTask) {
-        scheduleBackgroundDatafileFetch()
-        
+        guard let sdkKey = sdkKeyCached else {
+            task.setTaskCompleted(success: true)
+            return
+        }
+
         task.expirationHandler = {
             task.setTaskCompleted(success: false)
         }
         
-        NSLog("[BGPoll] fetching datafile")
-        doFetchDatafilesInBackground { result in
-            task.setTaskCompleted(success: result)
+        scheduleBackgroundDatafileFetch()
+        
+        logger.d("[BGPoll] fetching datafile")
+        downloadDatafileSilent(sdkKey: sdkKey) { _ in
+            task.setTaskCompleted(success: true)
         }
     }
     
@@ -60,26 +66,45 @@ public class OptimizelyBackgroundManager {
 
 @available(iOSApplicationExtension 13.0, *)
 extension OptimizelyBackgroundManager {
-    static let sdkKeyCachedId = "com.optimizely.sdkKeyCached"
+    static let idForSdkKeyCached = "com.optimizely.sdkKeyCached"
     
     static var sdkKeyCached: String? {
         get {
-            return UserDefaults.standard.string(forKey: sdkKeyCachedId)
+            return UserDefaults.standard.string(forKey: idForSdkKeyCached)
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: sdkKeyCachedId)
+            UserDefaults.standard.set(newValue, forKey: idForSdkKeyCached)
         }
     }
     
-    static func doFetchDatafilesInBackground(completionHandler: @escaping (Bool) -> Void) {
-        guard let sdkKey = sdkKeyCached else {
-            completionHandler(false)
+    static func downloadDatafileSilent(sdkKey: String, completionHandler: @escaping (Bool) -> Void) {
+        // use existing datafileHandler for save-load datafile synchronization
+        guard let datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: sdkKey) else {
+            completionHandler(true)  // always return true to get fair share from iOS
             return
         }
-                        
-        DefaultDatafileHandler().downloadDatafileSilent(sdkKey: sdkKey,
-                                                        resourceTimeoutInterval: 30.0,
-                                                        completionHandler: completionHandler)
+        
+        datafileHandler.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false, resourceTimeoutInterval: 30.0) { result in
+            switch result {
+            case .success(let data):
+                if data != nil {
+                    self.logger.d("[BGPoll] datafile revision downloaded silently for sdkKey: \(sdkKey)")
+                    
+                    NotificationCenter.default.post(name: .didDownloadNewDatafile, object: sdkKey)
+                    
+                    // extra delay for project config before notify completion to iOS
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 3.0) {
+                        completionHandler(true)
+                    }
+                    
+                    return
+                }
+            case .failure(let error):
+                self.logger.e("[BGPoll] The datafile download failed: \(error)")
+            }
+            
+            completionHandler(true)
+        }
     }
    
     static func registerSdkKeyCache(sdkKey: String) {
@@ -87,49 +112,30 @@ extension OptimizelyBackgroundManager {
     }
 }
 
-// MARK: - DefaultDatafileHandler
+// MARK: - OptimizelyClient
 
-extension DefaultDatafileHandler {
-    
-    func downloadDatafileSilent(sdkKey: String,
-                                resourceTimeoutInterval: Double?,
-                                completionHandler: @escaping (Bool) -> Void) {
-        
-        downloadQueue.async {
-            let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
-            
-            guard let request = self.getRequest(sdkKey: sdkKey) else {
-                self.logger.e("[BGPoll] OptimizelyMessage update is failed with getRequest error")
-                completionHandler(false)
-                return
+extension Notification.Name {
+    static let didDownloadNewDatafile = Notification.Name("didDownloadNewDatafile")
+}
+
+extension OptimizelyClient {
+
+    func addObserversForDidDownloadNewDatafileBackground() {
+        let observer = NotificationCenter.default.addObserver(forName: .didDownloadNewDatafile, object: nil, queue: nil) { [weak self] notif in
+
+            guard let self = self else { return }
+            guard let sdkKey = notif.object as? String, !sdkKey.isEmpty, sdkKey == self.sdkKey else { return }
+            guard let cachedDatafile = self.datafileHandler?.loadSavedDatafile(sdkKey: sdkKey) else { return }
+
+            do {
+                try self.configSDK(datafile: cachedDatafile)
+            } catch {
+                self.logger.e("[BGPoll] Project config update failed with a new datafile")
             }
-            
-            let task = session.downloadTask(with: request) { (url, response, error) in
-                var result = false
-                
-                if error != nil {
-                    self.logger.e(error.debugDescription)
-                } else if let response = response as? HTTPURLResponse {
-                    switch response.statusCode {
-                    case 200:
-                        if let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url) {
-                            result = true
-                            let datafile = String(bytes: data, encoding: .utf8)
-                            self.logger.d("[BGPoll] datafile revision downloaded silently for sdkKey: \(sdkKey): [\(datafile)]")
-                        }
-                    case 304:
-                        self.logger.d("[BGPoll] The datafile was not modified and won't be downloaded again")
-                        result = true
-                    default:
-                        self.logger.i("[BGPoll] got response code \(response.statusCode)")
-                    }
-                }
-                
-                completionHandler(result)
-            }
-            
-            task.resume()
         }
+
+        // keep to remove all observers when deinit
+        notificationObservers.append(observer)
     }
-    
+
 }

@@ -56,14 +56,35 @@ public class OptimizelyBackgroundManager {
         optimizelyClients.append(weakClient)
     }
     
+}
+
+@available(iOSApplicationExtension 13.0, *)
+extension OptimizelyBackgroundManager {
+    static let sdkKeyCachedId = "com.optimizely.sdkKeyCached"
+    
+    static var sdkKeyCached: String? {
+        get {
+            return UserDefaults.standard.string(forKey: sdkKeyCachedId)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: sdkKeyCachedId)
+        }
+    }
+    
     static func doFetchDatafilesInBackground(completionHandler: @escaping (Bool) -> Void) {
-        guard let first = optimizelyClients.first, let client = first else { return }
-        
-        DefaultDatafileHandler().downloadDatafileSilent(sdkKey: client.sdkKey,
+        guard let sdkKey = sdkKeyCached else {
+            completionHandler(false)
+            return
+        }
+                        
+        DefaultDatafileHandler().downloadDatafileSilent(sdkKey: sdkKey,
                                                         resourceTimeoutInterval: 30.0,
                                                         completionHandler: completionHandler)
     }
-    
+   
+    static func registerSdkKeyCache(sdkKey: String) {
+        sdkKeyCached = sdkKey
+    }
 }
 
 // MARK: - DefaultDatafileHandler

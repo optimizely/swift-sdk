@@ -23,7 +23,13 @@ open class OptimizelyClient: NSObject {
     
     // MARK: - Properties
     
-    var sdkKey: String
+    var sdkKey: String {
+        didSet {
+            if #available(iOSApplicationExtension 13.0, *) {
+                OptimizelyBackgroundManager.registerSdkKeyCache(sdkKey: sdkKey)
+            }
+        }
+    }
     
     private var atomicConfig: AtomicProperty<ProjectConfig> = AtomicProperty<ProjectConfig>()
     var config: ProjectConfig? {
@@ -101,10 +107,6 @@ open class OptimizelyClient: NSObject {
                               datafileHandler: DefaultDatafileHandler(),
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
-        
-        if #available(iOSApplicationExtension 13.0, *) {
-            OptimizelyBackgroundManager.registerOptimizelyClient(self)
-        }
         
         logger.d("SDK Version: \(version)")
     }

@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //     - initialize immediately with the given JSON datafile or its cached copy
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
         
-        initializeOptimizelySDKWithCustomization()
+        initializeOptimizelySDKAsynchronous()
     }
 
     // MARK: - Initialization Examples

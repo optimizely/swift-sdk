@@ -175,7 +175,7 @@
 
 /* Begin PBXFileReference section */
 		0B886F5E161647DB427A8FBC /* Pods_DemoSwiftiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoSwiftiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		252D7DED21C8800800134A7A /* DemoSwiftiOS-Pull.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DemoSwiftiOS-Pull.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		252D7DED21C8800800134A7A /* Demo-Pull.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Demo-Pull.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwifttvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptimizelySwiftSDK.xcodeproj; path = ../OptimizelySwiftSDK.xcodeproj; sourceTree = "<group>"; };
 		6E96818E21EEA391009B7FEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -332,7 +332,7 @@
 		EA5246BE1DC7186800AF6685 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				252D7DED21C8800800134A7A /* DemoSwiftiOS-Pull.app */,
+				252D7DED21C8800800134A7A /* Demo-Pull.app */,
 				252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */,
 			);
 			name = Products;
@@ -378,7 +378,7 @@
 			);
 			name = DemoSwiftiOS;
 			productName = OptimizelyiOSDemoApp;
-			productReference = 252D7DED21C8800800134A7A /* DemoSwiftiOS-Pull.app */;
+			productReference = 252D7DED21C8800800134A7A /* Demo-Pull.app */;
 			productType = "com.apple.product-type.application";
 		};
 		252D7E1021C8804E00134A7A /* DemoSwifttvOS */ = {
@@ -749,7 +749,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optimizely.DemoSwiftiOS-Pull";
-				PRODUCT_NAME = "DemoSwiftiOS-Pull";
+				PRODUCT_NAME = "Demo-Pull";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -774,7 +774,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optimizely.DemoSwiftiOS-Pull";
-				PRODUCT_NAME = "DemoSwiftiOS-Pull";
+				PRODUCT_NAME = "Demo-Pull";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

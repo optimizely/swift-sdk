@@ -50,21 +50,13 @@ public class OptimizelyPushManager {
         }
     }
     
-    // This new API can be added to FullStack SDK API for general-message processing
-    
     static func processOptimizelyMessage(message: OptimizelyMessage,
                                          completionHandler: @escaping (Bool) -> Void) {
         switch message.type {
         case .update:
             if case .update(let value) = message.info {
                 let sdkKey = value.sdkKey
-                
-                if let datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: sdkKey) as? DefaultDatafileHandler {
-                
-                    datafileHandler.downloadDatafileSilent(sdkKey: sdkKey,
-                                                                resourceTimeoutInterval: 30.0,
-                                                                completionHandler: completionHandler)
-                }
+                downloadDatafileSilent(sdkKey: sdkKey, completionHandler: completionHandler)
             } else {
                 logger.e("[PushExp] OptimizelyMessage fomrat is not valid")
                 completionHandler(true)
@@ -72,6 +64,36 @@ public class OptimizelyPushManager {
         }
     }
     
+    static func downloadDatafileSilent(sdkKey: String, completionHandler: @escaping (Bool) -> Void) {
+        // use existing datafileHandler for save-load datafile synchronization
+        guard let datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: sdkKey) else {
+            completionHandler(true)  // always return true to get fair share from iOS
+            return
+        }
+        
+        datafileHandler.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false, resourceTimeoutInterval: 30.0) { result in
+            switch result {
+            case .success(let data):
+                if data != nil {
+                    self.logger.d("[PushExp] datafile revision downloaded silently for sdkKey: \(sdkKey)")
+                    
+                    NotificationCenter.default.post(name: .didDownloadNewDatafile, object: sdkKey)
+                    
+                    // extra delay for project config before notify completion to iOS
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 3.0) {
+                        completionHandler(true)
+                    }
+                    
+                    return
+                }
+            case .failure(let error):
+                self.logger.e("[PushExp] The datafile download failed: \(error)")
+            }
+            
+            completionHandler(true)
+        }
+    }
+
 }
 
 // MARK: - OptimizelyClient
@@ -91,7 +113,6 @@ extension OptimizelyClient {
             
             do {
                 try self.configSDK(datafile: cachedDatafile)
-                self.logger.d("[PushExp] Project config updated with a new datafile")
             } catch {
                 self.logger.e("[PushExp] Project config update failed with a new datafile")
             }
@@ -103,54 +124,3 @@ extension OptimizelyClient {
         
 }
 
-// MARK: - DefaultDatafileHandler
-
-extension DefaultDatafileHandler {
-    
-    func downloadDatafileSilent(sdkKey: String,
-                                resourceTimeoutInterval: Double?,
-                                completionHandler: @escaping (Bool) -> Void) {
-        
-        downloadQueue.async {
-            let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
-            
-            guard let request = self.getRequest(sdkKey: sdkKey) else {
-                self.logger.e("[PushExp] OptimizelyMessage update is failed with getRequest error")
-                completionHandler(false)
-                return
-            }
-            
-            let task = session.downloadTask(with: request) { (url, response, error) in
-                
-                if error != nil {
-                    self.logger.e(error.debugDescription)
-                } else if let response = response as? HTTPURLResponse {
-                    switch response.statusCode {
-                    case 200:
-                        if self.getResponseData(sdkKey: sdkKey, response: response, url: url) != nil {
-                            self.logger.d("[PushExp] datafile revision downloaded silently for sdkKey: \(sdkKey)")
-                            
-                            NotificationCenter.default.post(name: .didDownloadNewDatafile, object: sdkKey)
-                            
-                            // extra delay for project config before notify completion to iOS
-                            DispatchQueue.global().asyncAfter(deadline: .now() + 3.0) {
-                                completionHandler(true)
-                            }
-                            
-                            return
-                        }
-                    case 304:
-                        self.logger.d("[PushExp] The datafile was not modified and won't be downloaded again")
-                    default:
-                        self.logger.i("[PushExp] got response code \(response.statusCode)")
-                    }
-                }
-                
-                completionHandler(true)   // always return true to get fair share from iOS
-            }
-            
-            task.resume()
-        }
-    }
-    
-}

@@ -18,7 +18,6 @@ import UIKit
 
 public class OptimizelyPushManager {
     
-    static var unprocessedMessage: [AnyHashable: Any]?
     static var logger = OPTLoggerFactory.getLogger()
 
     public static func process(userInfo: [AnyHashable: Any],
@@ -32,7 +31,6 @@ public class OptimizelyPushManager {
             return
         }
         
-        unprocessedMessage = nil
         do {
             let optimizelyData = try JSONSerialization.data(withJSONObject: optimizelyInfo, options: .prettyPrinted)
             let messageModel = try JSONDecoder().decode(OptimizelyMessage.self, from: optimizelyData)
@@ -123,4 +121,3 @@ extension OptimizelyClient {
     }
         
 }
-

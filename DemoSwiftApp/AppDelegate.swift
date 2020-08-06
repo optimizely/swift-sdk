@@ -251,17 +251,28 @@ extension AppDelegate {
         NSLog("[PushExp] didFailToRegisterForRemoteNotificationsWithError: \(error)")
     }
     
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-
-        NSLog("[PushExp] didReceiveRemoteNotification: \(userInfo)")
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         
         // check and process Optimizely metadata
-        OptimizelyPushManager.processPushMessage(userInfo: userInfo) { status in
-            if status {
-                completionHandler(.newData)
-            } else {
-                completionHandler(.failed)
-            }
-        }
+        OptimizelyPushManager.process(userInfo: userInfo, completionHandler: completionHandler)
+        
     }
+    
+    // if a silent push arrives while app is terminated, iOS will launch the app in background.
+    // - in this case, the push message won't be delivered to "didReceiveRemoteNotification"
+    // - instead the push body will be passed as luanchOptions to "willFinishLaunchingWithOptions"
+    // - [TODO] parse and save it to do the same (or similar) processing as "didReceiveRemoteNotification"
+    
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        
+        if let launchOptions = launchOptions {
+            NSLog("[PushExp] willFinishLaunchingWithOptions: \(launchOptions)")
+        }
+        
+        return true
+    }
+    
+
 }

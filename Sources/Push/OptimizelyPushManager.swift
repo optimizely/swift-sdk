@@ -14,36 +14,39 @@
  * limitations under the License.                                           *
  ***************************************************************************/
 
-import Foundation
+import UIKit
 
 public class OptimizelyPushManager {
     
     static var unprocessedMessage: [AnyHashable: Any]?
     static var logger = OPTLoggerFactory.getLogger()
 
-    public static func processPushMessage(userInfo: [AnyHashable: Any]?,
-                                          completionHandler: @escaping (Bool) -> Void) {
-        guard let userInfo = userInfo,
-            let optimizelyInfo = userInfo["optimizely"] as? [String: Any] else {
-                logger.e("[PushExp] Received Push Notification without OptimizelyInfo")
-                completionHandler(false)
-                return
+    public static func process(userInfo: [AnyHashable: Any],
+                               completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+        logger.d("[PushExp] didReceiveRemoteNotification: \(userInfo)")
+        
+        guard let optimizelyInfo = userInfo["optimizely"] as? [String: Any] else {
+            logger.e("[PushExp] Received Push Notification without OptimizelyInfo")
+            completionHandler(.failed)
+            return
         }
         
-        if let prettyData = try? JSONSerialization.data(withJSONObject: optimizelyInfo, options: .prettyPrinted) {
-            let prettyString = String(bytes: prettyData, encoding: .utf8)!
-            logger.d("[PushExp] Received Push Notification with OptimizelyInfo:\n\n\(prettyString)")
-        }
-
         unprocessedMessage = nil
         do {
             let optimizelyData = try JSONSerialization.data(withJSONObject: optimizelyInfo, options: .prettyPrinted)
             let messageModel = try JSONDecoder().decode(OptimizelyMessage.self, from: optimizelyData)
 
-            processOptimizelyMessage(message: messageModel, completionHandler: completionHandler)
+            processOptimizelyMessage(message: messageModel) { result in
+                if result {
+                    completionHandler(.newData)
+                } else {
+                    completionHandler(.failed)
+                }
+            }
         } catch {
             logger.e("[PushExp] Received push message process failed: \(error)")
-            completionHandler(false)
+            completionHandler(.failed)
         }
     }
     
@@ -68,6 +71,8 @@ public class OptimizelyPushManager {
     
 }
 
+// MARK: - DefaultDatafileHandler
+
 extension DefaultDatafileHandler {
     
     func downloadDatafileSilent(sdkKey: String,
@@ -91,10 +96,9 @@ extension DefaultDatafileHandler {
                 } else if let response = response as? HTTPURLResponse {
                     switch response.statusCode {
                     case 200:
-                        if let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url) {
+                        if self.getResponseData(sdkKey: sdkKey, response: response, url: url) != nil {
                             result = true
-                            let datafile = String(bytes: data, encoding: .utf8)
-                            self.logger.d("[PushExp] datafile revision downloaded silently for sdkKey: \(sdkKey): [\(datafile)]")
+                            self.logger.d("[PushExp] datafile revision downloaded silently for sdkKey: \(sdkKey)")
                         }
                     case 304:
                         self.logger.d("[PushExp] The datafile was not modified and won't be downloaded again")

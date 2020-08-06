@@ -177,7 +177,7 @@
 
 /* Begin PBXFileReference section */
 		0B886F5E161647DB427A8FBC /* Pods_DemoSwiftiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DemoSwiftiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		252D7DED21C8800800134A7A /* DemoSwiftiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwiftiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		252D7DED21C8800800134A7A /* Demo-Push.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Demo-Push.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoSwifttvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E09D6BA24D8C20A0087C4F2 /* PushManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushManager.swift; sourceTree = "<group>"; };
 		6E09D6CD24D8DE4D0087C4F2 /* DemoSwiftiOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DemoSwiftiOS.entitlements; sourceTree = "<group>"; };
@@ -337,7 +337,7 @@
 		EA5246BE1DC7186800AF6685 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				252D7DED21C8800800134A7A /* DemoSwiftiOS.app */,
+				252D7DED21C8800800134A7A /* Demo-Push.app */,
 				252D7E1121C8804E00134A7A /* DemoSwifttvOS.app */,
 			);
 			name = Products;
@@ -384,7 +384,7 @@
 			);
 			name = DemoSwiftiOS;
 			productName = OptimizelyiOSDemoApp;
-			productReference = 252D7DED21C8800800134A7A /* DemoSwiftiOS.app */;
+			productReference = 252D7DED21C8800800134A7A /* Demo-Push.app */;
 			productType = "com.apple.product-type.application";
 		};
 		252D7E1021C8804E00134A7A /* DemoSwifttvOS */ = {
@@ -758,7 +758,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.PushExp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Demo-Push";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -784,7 +784,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.optimizely.PushExp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Demo-Push";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

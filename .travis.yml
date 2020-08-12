@@ -3,10 +3,11 @@ os: linux
 
 # Integration tests need to run first to reset the PR build status to pending
 stages:
+  - name: 'Source Clear'
   - name: 'Lint markdown files'
   - name: 'Trigger Integration Tests'
     if: env(RUN_COMPAT_SUITE) = true
-  - name: 'SourceClear and Lint'
+  - name: 'Lint'
   - name: 'Unit Tests'
   - name: 'Prepare for release'
     if: env(PREP) = true and type = api
@@ -24,18 +25,6 @@ jobs:
       notifications:
         email: false
 
-    - stage: 'Lint markdown files'
-      os: linux
-      language: generic
-      before_install: skip
-      install:
-        - npm i -g markdown-spellcheck
-      before_script:
-        - wget --quiet https://raw.githubusercontent.com/optimizely/mdspell-config/master/.spelling
-      script:
-        - mdspell -a -n -r --en-us '**/*.md'
-      after_success: skip
-
     - stage: 'Trigger Integration Tests'
       language: minimal
       os: linux
@@ -50,7 +39,7 @@ jobs:
       script:
         - $HOME/travisci-tools/trigger-script-with-status-update.sh
 
-    - stage: 'SourceClear and Lint'
+    - stage: 'Lint'
       language: swift
       os: osx
       osx_image: xcode11.3
@@ -60,6 +49,16 @@ jobs:
         - pod spec lint --quick
       after_script:
         - curl -sSL https://download.sourceclear.com/ci.sh | bash
+
+    - stage: 'Source Clear'
+      if: type = cron
+      addons:
+        srcclr: true
+      before_install: skip
+      install: skip
+      before_script: skip
+      script: skip
+      after_success: skip
 
     - &unittests
       stage: 'Unit Tests'
@@ -107,7 +106,7 @@ jobs:
       os: osx
       osx_image: xcode11.3
       env:
-        - VERSION=3.3.2
+        - VERSION=3.4.0
       install:
         # install hub
         - wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
@@ -124,7 +123,7 @@ jobs:
       os: osx
       osx_image: xcode11.3
       env:
-        - VERSION=3.3.2
+        - VERSION=3.4.0
       install:
         # install hub
         - wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub

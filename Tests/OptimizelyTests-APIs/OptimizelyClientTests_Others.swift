@@ -38,7 +38,6 @@ class OptimizelyClientTests_Others: XCTestCase {
     let kVariableKeyInt = "i_42"
 
     let kUserId = "user"
-    let kNotRealSdkKey = "notrealkey123"
     
     var optimizely: OptimizelyClient!
     let eventDispatcher = FakeEventDispatcher()
@@ -344,13 +343,13 @@ class OptimizelyClientTests_Others: XCTestCase {
         
         let handler = FakeDatafileHandler()
         HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
-            .sdkKey(key: kNotRealSdkKey)
+            .sdkKey(key: "testFetchedDatafileInvalid")
             .using(instance: handler)
             .to(factory: FakeDatafileHandler.init)
             .reInitializeStrategy(strategy: .reUse)
             .singetlon())
         
-        let optimizely = OptimizelyClient(sdkKey: kNotRealSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: "testFetchedDatafileInvalid")
         
         let exp = expectation(description: "a")
         var failureOccured = false
@@ -380,18 +379,18 @@ class OptimizelyClientTests_Others: XCTestCase {
 
         let handler = FakeDatafileHandler()
         HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
-            .sdkKey(key: kNotRealSdkKey)
+            .sdkKey(key: "testHandlerReinitializeOnBackgroundDatafileUpdate")
             .using(instance: handler)
             .to(factory: FakeDatafileHandler.init)
             .reInitializeStrategy(strategy: .reUse)
             .singetlon())
 
         
-        let optimizely = OptimizelyClient(sdkKey: kNotRealSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: "testHandlerReinitializeOnBackgroundDatafileUpdate")
 
         // all handlers before transfer
         
-        var handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.property?.keys.filter { $0.sdkKey == kNotRealSdkKey }
+        var handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.property?.keys.filter { $0.sdkKey == "testHandlerReinitializeOnBackgroundDatafileUpdate" }
         let oldHandlersCount = handlersForCurrentSdkKey?.count
 
         // remove one of the handler to test nil-handlers
@@ -405,7 +404,7 @@ class OptimizelyClientTests_Others: XCTestCase {
 
         // nil handlers must be cleaned up when re-init
         
-        handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.property?.keys.filter { $0.sdkKey == kNotRealSdkKey }
+        handlersForCurrentSdkKey = HandlerRegistryService.shared.binders.property?.keys.filter { $0.sdkKey == "testHandlerReinitializeOnBackgroundDatafileUpdate" }
         let newHandlersCount = handlersForCurrentSdkKey?.count
         
         XCTAssertEqual(newHandlersCount, oldHandlersCount! - 1, "nil handlers should be filtered out")

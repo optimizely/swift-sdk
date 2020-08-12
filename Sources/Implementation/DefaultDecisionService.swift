@@ -39,20 +39,20 @@ class DefaultDecisionService: OPTDecisionService {
             return nil
         }
         
-        // ---- check for whitelisted variation registered at runtime ----
+        // ---- check if the user is forced into a variation ----
         if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
             let variation = experiment.getVariation(id: variationId) {
             return variation
         }
         
-        // ---- check if the experiment has forced variation ----
+        // ---- check to see if user is white-listed for a certain variation ----
         if let variationKey = experiment.forcedVariations[userId] {
             if let variation = experiment.getVariation(key: variationKey) {
                 logger.i(.forcedVariationFound(variationKey, userId))
                 return variation
             }
             
-            // mapped to invalid variation - ignore and continue for other deciesions
+            // mapped to invalid variation - ignore and continue for other decisions
             logger.e(.forcedVariationFoundButInvalid(variationKey, userId))
         }
         
@@ -65,14 +65,18 @@ class DefaultDecisionService: OPTDecisionService {
         
         var bucketedVariation: Variation?
         // ---- check if the user passes audience targeting before bucketing ----
-        if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
+        if doesMeetAudienceConditions(config: config, experiment: experiment, userId: userId, attributes: attributes) {
             // bucket user into a variation
             bucketedVariation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId)
             
             if let bucketedVariation = bucketedVariation {
+                logger.i(.userBucketedIntoVariationInExperiment(userId, experiment.key, bucketedVariation.key))
                 // save to user profile
                 self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+            } else {
+                logger.i(.userNotBucketedIntoVariation(userId))
             }
+            
         } else {
             logger.i(.userNotInExperiment(userId, experiment.key))
         }
@@ -80,12 +84,17 @@ class DefaultDecisionService: OPTDecisionService {
         return bucketedVariation
     }
     
-    func isInExperiment(config: ProjectConfig, experiment: Experiment, userId: String, attributes: OptimizelyAttributes) -> Bool {
+    func doesMeetAudienceConditions(config: ProjectConfig, experiment: Experiment, userId: String, attributes: OptimizelyAttributes, logType: Constants.EvaluationLogType = .experiment, loggingKey: String? = nil) -> Bool {
         
         var result = true   // success as default (no condition, etc)
+        let evType = logType.rawValue
+        let finalLoggingKey = loggingKey ?? experiment.key
         
         do {
             if let conditions = experiment.audienceConditions {
+                logger.d { () -> String in
+                    return LogMessage.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: conditions)).description
+                }
                 switch conditions {
                 case .array(let arrConditions):
                     if arrConditions.count > 0 {
@@ -100,23 +109,25 @@ class DefaultDecisionService: OPTDecisionService {
                     result = true
                 }
             }
-            // backward compatibility with audiencIds list
+            // backward compatibility with audienceIds list
             else if experiment.audienceIds.count > 0 {
                 var holder = [ConditionHolder]()
                 holder.append(.logicalOp(.or))
                 for id in experiment.audienceIds {
                     holder.append(.leaf(.audienceId(id)))
                 }
-                
+                logger.d { () -> String in
+                    return LogMessage.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: holder)).description
+                }
                 result = try holder.evaluate(project: config.project, attributes: attributes)
             }
         } catch {
-            logger.i(error as? OptimizelyError, source: "isInExperiment(experiment: \(experiment.key), userId: \(userId))")
+            logger.i(error as? OptimizelyError)
             result = false
         }
         
-        logger.i(.audienceEvaluationResultCombined(experiment.key, result.description))
-
+        logger.i(.audienceEvaluationResultCombined(evType, finalLoggingKey, result.description))
+        
         return result
     }
     
@@ -126,19 +137,13 @@ class DefaultDecisionService: OPTDecisionService {
         //1. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
         if let pair = getVariationForFeatureExperiment(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes) {
-            logger.d(.userInFeatureExperiment(userId, pair.variation?.key ?? "unknown", pair.experiment?.key ?? "unknown", featureFlag.key))
             return pair
-        } else {
-            logger.d(.userNotInFeatureExperiment(userId, featureFlag.key))
         }
         
         //2. Attempt to bucket user into rollout using the feature flag.
         // Check if the feature flag has rollout and the user is bucketed into one of it's rules
         if let variation = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, userId: userId, attributes: attributes) {
-            logger.d(.userInRollout(userId, featureFlag.key))
             return (nil, variation)
-        } else {
-            logger.d(.userNotInRollout(userId, featureFlag.key))
         }
         
         return nil
@@ -193,31 +198,28 @@ class DefaultDecisionService: OPTDecisionService {
 
         // Evaluate all rollout rules except for last one
         for index in 0..<rolloutRules.count.advanced(by: -1) {
+            let loggingKey = index + 1
             let experiment = rolloutRules[index]
-            if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
-                logger.d(.userMeetsConditionsForTargetingRule(userId, index + 1))
-                
+            if doesMeetAudienceConditions(config: config, experiment: experiment, userId: userId, attributes: attributes, logType: .rolloutRule, loggingKey: "\(loggingKey)") {
+                logger.d(.userMeetsConditionsForTargetingRule(userId, loggingKey))
                 if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
-                    logger.d(.userBucketedIntoTargetingRule(userId, index + 1))
-                    
+                    logger.d(.userBucketedIntoTargetingRule(userId, loggingKey))
                     return variation
                 }
-                logger.d(.userNotBucketedIntoTargetingRule(userId, index + 1))
+                logger.d(.userNotBucketedIntoTargetingRule(userId, loggingKey))
                 break
             } else {
-                logger.d(.userDoesntMeetConditionsForTargetingRule(userId, index + 1))
+                logger.d(.userDoesntMeetConditionsForTargetingRule(userId, loggingKey))
             }
         }
         // Evaluate fall back rule / last rule now
         let experiment = rolloutRules[rolloutRules.count - 1]
         
-        if isInExperiment(config: config, experiment: experiment, userId: userId, attributes: attributes) {
+        if doesMeetAudienceConditions(config: config, experiment: experiment, userId: userId, attributes: attributes, logType: .rolloutRule, loggingKey: "Everyone Else") {
             if let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: bucketingId) {
                 logger.d(.userBucketedIntoEveryoneTargetingRule(userId))
                 
                 return variation
-            } else {
-                logger.d(.userNotBucketedIntoEveryoneTargetingRule(userId))
             }
         }
         

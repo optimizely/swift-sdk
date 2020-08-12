@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -17,6 +17,81 @@
 import XCTest
 
 class UserAttributeTests_Evaluate: XCTestCase {
+    
+    // MARK: - Evaluate Errors
+    
+    func testInvalidType() {
+        var err: Error?
+        let model = UserAttribute(name: "country", type: "unknown", match: "exact", value: .string("us"))
+        do {
+            try _ = model.evaluate(attributes: ["":""])
+        } catch {
+            err = error
+        }
+        XCTAssertNotNil(err)
+    }
+    
+    func testInvalidMatchType() {
+        var err: Error?
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "unknown", value: .string("us"))
+        do {
+            try _ = model.evaluate(attributes: ["":""])
+        } catch {
+            err = error
+        }
+        XCTAssertNotNil(err)
+    }
+    
+    func testInvalidName() {
+        var err: Error?
+        var model = UserAttribute(name: "", type: "custom_attribute", match: "exact", value: .string("us"))
+        model.name = nil
+        do {
+            try _ = model.evaluate(attributes: ["":""])
+        } catch {
+            err = error
+        }
+        XCTAssertNotNil(err)
+    }
+    
+    func testMissingAttributeValue() {
+        let attributes = ["country1": "us"]
+        var err: Error?
+        let name = "country"
+        let model = UserAttribute(name: name, type: "custom_attribute", match: "exact", value: .string("us"))
+        do {
+            try _ = model.evaluate(attributes: attributes)
+        } catch {
+            err = error
+        }
+        XCTAssertNotNil(err)
+    }
+    
+    func testNilUserAttributeValue() {
+        let attributes = ["country": "us"]
+        var err: Error?
+        let name = "country"
+        let model = UserAttribute(name: name, type: "custom_attribute", match: "exact", value: nil)
+        do {
+            try _ = model.evaluate(attributes: attributes)
+        } catch {
+            err = error
+        }
+        XCTAssertNotNil(err)
+    }
+    
+    func testNilAttributeValue() {
+        let attributes: [String : Any?] = ["country": nil]
+        var err: Error?
+        let name = "country"
+        let model = UserAttribute(name: name, type: "custom_attribute", match: "exact", value: .string("us"))
+        do {
+            try _ = model.evaluate(attributes: attributes)
+        } catch {
+            err = error
+        }
+        XCTAssertNotNil(err)
+    }
     
     // MARK: - Evaluate (Exact)
     
@@ -204,7 +279,32 @@ extension UserAttributeTests_Evaluate {
         let model = UserAttribute(name: "country", type: "custom_attribute", match: "gt", value: .double(101.2))
         XCTAssertFalse(try! model.evaluate(attributes: attributes))
     }
+    
+}
 
+// MARK: - Evaluate (GE)
+
+extension UserAttributeTests_Evaluate {
+    
+    func testGreaterThanOrEqualIntToInt() {
+        var attributes = ["country": 50]
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "ge", value: .int(50))
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 49
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testGreaterThanOrEqualDoubleToDouble() {
+        var attributes = ["country": 100.0]
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "ge", value: .double(51.3))
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51.3
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51.0
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
 }
 
 // MARK: - Evaluate (LT)
@@ -263,6 +363,100 @@ extension UserAttributeTests_Evaluate {
         let attributes = ["country": 101.2]
         let model = UserAttribute(name: "country", type: "custom_attribute", match: "lt", value: .double(101.2))
         XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+}
+
+// MARK: - Evaluate (LE)
+
+extension UserAttributeTests_Evaluate {
+    
+    func testLessThanOrEqualIntToInt() {
+        var attributes = ["country": 50]
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "le", value: .int(50))
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 49
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testLessThanOrEqualDoubleToDouble() {
+        var attributes = ["country": 25.0]
+        let model = UserAttribute(name: "country", type: "custom_attribute", match: "le", value: .double(51.3))
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 51.3
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["country"] = 52.0
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+}
+
+// MARK: - Evaluate (SemanticVersion)
+
+extension UserAttributeTests_Evaluate {
+    
+    func testLessThanOrEqualSemanticVersion() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_le", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "1.9"
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "2.5.1"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testGreaterThanOrEqualSemanticVersion() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_ge", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "2.9"
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "1.9"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testLessThanSemanticVersion() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_lt", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "1.9"
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "2.5.1"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testGreaterThanSemanticVersion() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_gt", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "2.9"
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "1.9"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testEqualSemanticVersion() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_eq", value: .string("2.0"))
+
+        var attributes = ["version": "2.0.0"]
+        XCTAssertTrue(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "2.9"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+        attributes["version"] = "1.9"
+        XCTAssertFalse(try! model.evaluate(attributes: attributes))
+    }
+
+    func testEqualSemanticVersionInvalidType() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_eq", value: .string("2.0"))
+
+        var attributes:[String: Any] = ["version": true]
+        XCTAssertNil(try? model.evaluate(attributes: attributes))
+        attributes["version"] = 37
+        XCTAssertNil(try? model.evaluate(attributes: attributes))
     }
 
 }

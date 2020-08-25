@@ -88,7 +88,7 @@ extension SemanticVersion {
             throw OptimizelyError.attributeFormatInvalid
         }
         var targetedVersionParts = targetPrefix.split(separator: ".")
-        guard targetedVersionParts.count == dotCount + 1 else {
+        guard targetedVersionParts.count == dotCount + 1 && targetedVersionParts.filter({$0.isNumber}).count == targetedVersionParts.count else {
             throw OptimizelyError.attributeFormatInvalid
         }
         if let targetSuffix = targetSuffix {

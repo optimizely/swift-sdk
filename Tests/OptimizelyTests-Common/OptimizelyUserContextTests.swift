@@ -115,7 +115,6 @@ class OptimizelyUserContextTests: XCTestCase {
         let expOptions: [OptimizelyDecideOption] = [.bypassUPS,
                                                     .disableTracking,
                                                     .enabledOnly,
-                                                    .forExperiment,
                                                     .includeReasons]
         var user = OptimizelyUserContext(userId: expUserId)
         user.setDefaultDecideOptions(expOptions)

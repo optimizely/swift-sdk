@@ -17,9 +17,10 @@
 import Foundation
 
 public struct OptimizelyDecision {
-    public let variationKey: String?
     public let enabled: Bool?
     public let variables: OptimizelyJSON?
+    public let variationKey: String?
+    public let ruleKey: String?
 
     public let key: String
     public let user: OptimizelyUserContext?
@@ -28,9 +29,10 @@ public struct OptimizelyDecision {
 
 extension OptimizelyDecision {
     static func errorDecision(key: String, user: OptimizelyUserContext?, error: OptimizelyError) -> OptimizelyDecision {
-        return OptimizelyDecision(variationKey: nil,
-                                  enabled: nil,
+        return OptimizelyDecision(enabled: nil,
                                   variables: nil,
+                                  variationKey: nil,
+                                  ruleKey: nil,
                                   key: key,
                                   user: user,
                                   reasons: [error.reason])
@@ -43,8 +45,9 @@ extension OptimizelyDecision {
 
 extension OptimizelyDecision: Equatable {
     public static func ==(lhs: OptimizelyDecision, rhs: OptimizelyDecision) -> Bool {
-        if !(lhs.variationKey == rhs.variationKey &&
-            lhs.enabled == rhs.enabled &&
+        if !(lhs.enabled == rhs.enabled &&
+            lhs.variationKey == rhs.variationKey &&
+            lhs.ruleKey == rhs.ruleKey &&
             lhs.key == rhs.key &&
             lhs.user == rhs.user &&
             lhs.reasons == rhs.reasons) {

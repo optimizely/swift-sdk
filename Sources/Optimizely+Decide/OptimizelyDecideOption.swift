@@ -21,6 +21,5 @@ public enum OptimizelyDecideOption {
     case disableTracking
     case enabledOnly
     case bypassUPS
-    case forExperiment
     case includeReasons
 }

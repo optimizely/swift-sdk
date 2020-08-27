@@ -965,13 +965,6 @@ extension OptimizelyClient {
             
         // Decide-APIs
             
-        case .experimentDecide:
-            guard let experiment = experiment else { return decisionInfo }
-            
-            decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
-            decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation?.key ?? NSNull()
-            decisionInfo[Constants.ExperimentDecisionInfoKeys.tracked] = tracked
-
         case .featureDecide:
             guard let feature = feature, let featureEnabled = featureEnabled else { return decisionInfo }
             

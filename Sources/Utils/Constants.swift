@@ -44,7 +44,6 @@ struct Constants {
         case featureTest = "feature-test"
         // Decide-APIs
         case featureDecide = "flag-decide"
-        case experimentDecide = "experiment-decide"
     }
         
     enum DecisionSource: String {

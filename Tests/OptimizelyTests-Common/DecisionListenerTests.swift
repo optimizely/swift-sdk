@@ -849,7 +849,7 @@ class DecisionListenerTests: XCTestCase {
     
 extension DecisionListenerTests {
     
-    func testDecisionListenerDecideFeatureWithUserInExperiment() {
+    func testDecisionListenerDecideWithUserInExperiment() {
         var exp = expectation(description: "x")
         
         let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
@@ -913,7 +913,7 @@ extension DecisionListenerTests {
         wait(for: [exp], timeout: 1)
     }
     
-    func testDecisionListenerDecideFeatureWithUserNotInExperimentAndRollout() {
+    func testDecisionListenerDecideWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
         
         let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
@@ -945,7 +945,7 @@ extension DecisionListenerTests {
         wait(for: [exp], timeout: 1)
     }
 
-    func testDecisionListenerDecideFeatureWithUserInRollout() {
+    func testDecisionListenerDecideWithUserInRollout() {
         var exp = expectation(description: "x")
         
         let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
@@ -999,7 +999,7 @@ extension DecisionListenerTests {
         wait(for: [exp], timeout: 1)
     }
 
-    func testDecisionListenerDecideFeatureWithInvalidType() {
+    func testDecisionListenerDecideWithInvalidType() {
         let exp = expectation(description: "x")
         
         let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
@@ -1007,7 +1007,7 @@ extension DecisionListenerTests {
         for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
             if featureFlag.key == kFeatureKey {
                 var flag = featureFlag
-                flag.variables.append(FeatureVariable(id: "2689660112", key: "b_true", type: "invalid", subType: nil, defaultValue: "true"))
+                flag.variables.append(FeatureVariable(id: "2689660112", key: kVariableKeyBool, type: "invalid", subType: nil, defaultValue: "true"))
                 self.optimizely.config?.project.featureFlags[index] = flag
                 break
             }
@@ -1033,34 +1033,10 @@ extension DecisionListenerTests {
         _ = self.optimizely.decide(key: kFeatureKey, user: user)
         wait(for: [exp], timeout: 1)
     }
-
-    func testDecisionListenerDecideExperiment() {
-        let exp = expectation(description: "x")
-        
-        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
-        
-        let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
-        let variation: Variation = (experiment.variations.first)!
-        
-        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation)
-        notificationCenter.clearAllNotificationListeners()
-        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(type, Constants.DecisionType.experimentDecide.rawValue)
-            XCTAssertEqual(userId, user.userId)
-            XCTAssertEqual(attributes!["country"] as! String, "US")
-
-            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as! String, "exp_with_audience")
-            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as! String, "a")
-            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.tracked] as! Bool, true)
-            exp.fulfill()
-        }
-        _ = self.optimizely.decide(key: experiment.key, user: user)
-        wait(for: [exp], timeout: 1)
-    }
     
     // disbleTracking
     
-    func testDecisionListenerDecideFeatureWithUserInExperiment_disableTracking() {
+    func testDecisionListenerDecideWithUserInExperiment_disableTracking() {
         let exp = expectation(description: "x")
         
         let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
@@ -1083,30 +1059,6 @@ extension DecisionListenerTests {
             exp.fulfill()
         }
         _ = self.optimizely.decide(key: kFeatureKey, user: user, options: [.disableTracking])
-        wait(for: [exp], timeout: 1)
-    }
-
-    func testDecisionListenerDecideExperiment_disableTracking() {
-        let exp = expectation(description: "x")
-        
-        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
-        
-        let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
-        let variation: Variation = (experiment.variations.first)!
-        
-        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation)
-        notificationCenter.clearAllNotificationListeners()
-        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(type, Constants.DecisionType.experimentDecide.rawValue)
-            XCTAssertEqual(userId, user.userId)
-            XCTAssertEqual(attributes!["country"] as! String, "US")
-
-            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as! String, "exp_with_audience")
-            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as! String, "a")
-            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.tracked] as! Bool, false)
-            exp.fulfill()
-        }
-        _ = self.optimizely.decide(key: experiment.key, user: user, options: [.disableTracking])
         wait(for: [exp], timeout: 1)
     }
 

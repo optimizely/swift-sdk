@@ -33,42 +33,21 @@ extension OptimizelyClient {
                        user: OptimizelyUserContext? = nil,
                        options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
         
-        guard let userContext = user ?? userContext else {
+        guard let user = user ?? userContext else {
             return OptimizelyDecision.errorDecision(key: key, user: nil, error: .userNotSet)
         }
+        
         guard let config = self.config else {
-            return OptimizelyDecision.errorDecision(key: key, user: userContext, error: .sdkNotReady)
+            return OptimizelyDecision.errorDecision(key: key, user: user, error: .sdkNotReady)
         }
         
-        let allOptions = getAllOptions(with: options)
+        guard let feature = config.getFeatureFlag(key: key) else {
+            return OptimizelyDecision.errorDecision(key: key, user: user, error: .featureKeyInvalid(key))
+        }
 
-        var isFeatureKey = config.getFeatureFlag(key: key) != nil
-        var isExperimentKey = config.getExperiment(key: key) != nil
-        if allOptions.contains(.forExperiment) {
-            isFeatureKey = false
-            isExperimentKey = true
-        }
-        
-        if isExperimentKey && !isFeatureKey {
-            return decide(config: config, experimentKey: key, user: userContext, options: allOptions)
-        } else {
-            return decide(config: config, featureKey: key, user: userContext, options: allOptions)
-        }
-    }
-    
-    func decide(config: ProjectConfig,
-                featureKey: String,
-                user: OptimizelyUserContext,
-                options: [OptimizelyDecideOption]) -> OptimizelyDecision {
-        
-        guard let feature = config.getFeatureFlag(key: featureKey) else {
-            return OptimizelyDecision.errorDecision(key: featureKey,
-                                                    user: user,
-                                                    error: .featureKeyInvalid(featureKey))
-        }
-        
         let userId = user.userId
         let attributes = user.attributes
+        let allOptions = getAllOptions(with: options)
         let decisionReasons = DecisionReasons()
         var tracked = false
         var enabled = false
@@ -78,7 +57,7 @@ extension OptimizelyClient {
                                                                    featureFlag: feature,
                                                                    userId: userId,
                                                                    attributes: attributes,
-                                                                   options: options)
+                                                                   options: allOptions)
         
         if let featureEnabled = decision?.variation?.featureEnabled {
             enabled = featureEnabled
@@ -97,7 +76,7 @@ extension OptimizelyClient {
         if let experimentDecision = decision?.experiment, let variationDecision = decision?.variation {
             decisionFromFeatureTest = true
             
-            if !options.contains(.disableTracking) {
+            if !allOptions.contains(.disableTracking) {
                 sendImpressionEvent(experiment: experimentDecision,
                                     variation: variationDecision,
                                     userId: userId,
@@ -116,60 +95,15 @@ extension OptimizelyClient {
                                  variableValues: variableMap,
                                  tracked: tracked)
         
-        return OptimizelyDecision(variationKey: decisionFromFeatureTest ? decision?.variation?.key : nil,
-                                  enabled: enabled,
+        return OptimizelyDecision(enabled: enabled,
                                   variables: optimizelyJSON,
+                                  variationKey: decisionFromFeatureTest ? decision?.variation?.key : nil,
+                                  ruleKey: nil,
                                   key: feature.key,
                                   user: user,
-                                  reasons: decisionReasons.getReasonsToReport(options: options))
+                                  reasons: decisionReasons.getReasonsToReport(options: allOptions))
     }
     
-    func decide(config: ProjectConfig,
-                experimentKey: String,
-                user: OptimizelyUserContext,
-                options: [OptimizelyDecideOption]) -> OptimizelyDecision {
-        
-        guard let experiment = config.getExperiment(key: experimentKey) else {
-            return OptimizelyDecision.errorDecision(key: experimentKey,
-                                                    user: user,
-                                                    error: .experimentKeyInvalid(experimentKey))
-        }
-        
-        let userId = user.userId
-        let attributes = user.attributes
-        let decisionReasons = DecisionReasons()
-        var tracked = false
-
-        let variation = decisionService.getVariation(config: config,
-                                                     userId: userId,
-                                                     experiment: experiment,
-                                                     attributes: attributes,
-                                                     options: options)
-        
-        if let variationDecision = variation {
-            if !options.contains(.disableTracking) {
-                sendImpressionEvent(experiment: experiment,
-                                    variation: variationDecision,
-                                    userId: userId,
-                                    attributes: attributes)
-                tracked = true
-            }
-        }
-
-        sendDecisionNotification(decisionType: .experimentDecide,
-                                 userId: userId,
-                                 attributes: attributes,
-                                 experiment: experiment,
-                                 variation: variation,
-                                 tracked: tracked)
-
-        return OptimizelyDecision(variationKey: variation?.key,
-                                  enabled: nil,
-                                  variables: nil,
-                                  key: experiment.key,
-                                  user: user,
-                                  reasons: decisionReasons.getReasonsToReport(options: options))
-    }
 }
 
 // MARK: - utils

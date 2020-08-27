@@ -1056,7 +1056,7 @@ extension DecisionListenerTests {
             count += 1
         }
         
-        _ = try? self.optimizely.decideAll(keys: nil, user: user)
+        _ = self.optimizely.decideAll(keys: nil, user: user)
         sleep(1)
         
         XCTAssertEqual(count, 2)

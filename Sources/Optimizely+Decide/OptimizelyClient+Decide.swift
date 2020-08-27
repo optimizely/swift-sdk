@@ -114,10 +114,11 @@ extension OptimizelyClient {
                           user: OptimizelyUserContext? = nil,
                           options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         
-        guard let userContext = user ?? userContext else {
+        guard let user = user ?? userContext else {
             logger.e(OptimizelyError.userNotSet)
             return [:]
         }
+        
         guard let config = self.config else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
@@ -125,39 +126,15 @@ extension OptimizelyClient {
         
         let allOptions = getAllOptions(with: options)
 
-        let keys = keys ?? {
-            if allOptions.contains(.forExperiment) {
-                return config.allExperiments.map{ $0.key }
-            } else {
-                return config.getFeatureFlags().map{ $0.key }
-            }
-        }()
+        let keys = keys ?? config.getFeatureFlags().map{ $0.key }
         
-        guard let firstKey = keys.first else { return [:] }
-        
-        var isFeatureKey = config.getFeatureFlag(key: firstKey) != nil
-        var isExperimentKey = config.getExperiment(key: firstKey) != nil
-        if allOptions.contains(.forExperiment) {
-            isFeatureKey = false
-            isExperimentKey = true
-        }
-        
-        if isExperimentKey && !isFeatureKey {
-            return decideAll(config: config, experimentKeys: keys, user: userContext, options: allOptions)
-        } else {
-            return decideAll(config: config, featureKeys: keys, user: userContext, options: allOptions)
-        }
-    }
-    
-    func decideAll(config: ProjectConfig,
-                   featureKeys: [String],
-                   user: OptimizelyUserContext,
-                   options: [OptimizelyDecideOption]) -> [String: OptimizelyDecision] {
+        guard keys.count > 0 else { return [:] }
+                
         var decisions = [String: OptimizelyDecision]()
         
-        for key in featureKeys {
-            let decision = decide(config: config, featureKey: key, user: user, options: options)
-            if !options.contains(.enabledOnly) || (decision.enabled != nil && decision.enabled!) {
+        keys.forEach { key in
+            let decision = decide(key: key, user: user, options: options)
+            if !allOptions.contains(.enabledOnly) || (decision.enabled != nil && decision.enabled!) {
                 decisions[key] = decision
             }
         }
@@ -165,18 +142,6 @@ extension OptimizelyClient {
         return decisions
     }
 
-    func decideAll(config: ProjectConfig,experimentKeys: [String],
-                   user: OptimizelyUserContext,
-                   options: [OptimizelyDecideOption]) -> [String: OptimizelyDecision] {
-        var decisions = [String: OptimizelyDecision]()
-        
-        for key in experimentKeys {
-            let decision = decide(config: config, experimentKey: key, user: user, options: options)
-            decisions[key] = decision
-        }
-                
-        return decisions
-    }
 }
 
 // MARK: - utils

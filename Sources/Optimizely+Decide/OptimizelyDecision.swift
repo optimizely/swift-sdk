@@ -41,8 +41,9 @@ extension OptimizelyDecision {
 
 extension OptimizelyDecision: Equatable {
     public static func ==(lhs: OptimizelyDecision, rhs: OptimizelyDecision) -> Bool {
-        if !(lhs.variationKey == rhs.variationKey &&
-            lhs.enabled == rhs.enabled &&
+        if !(lhs.enabled == rhs.enabled &&
+            lhs.variationKey == rhs.variationKey &&
+            lhs.ruleKey == rhs.ruleKey &&
             lhs.key == rhs.key &&
             lhs.user == rhs.user &&
             lhs.reasons == rhs.reasons) {

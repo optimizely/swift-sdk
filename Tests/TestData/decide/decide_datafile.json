@@ -141,7 +141,7 @@
       {
           "experimentIds": [],
           "id": "44829230000",
-          "key": "common_name",
+          "key": "feature_3",
           "rolloutId": "",
           "variables": []
       },
@@ -201,32 +201,6 @@
       ],
       "forcedVariations": {},
       "id": "10420810910"
-    },
-    {
-      "status": "Running",
-      "key": "common_name",
-      "layerId": "10417730551",
-      "trafficAllocation": [
-        {
-          "entityId": "10418534122",
-          "endOfRange": 10000
-        }
-      ],
-      "audienceIds": [],
-      "variations": [
-        {
-          "variables": [],
-          "id": "10418534122",
-          "key": "variation_a"
-        },
-        {
-          "variables": [],
-          "id": "10418534126",
-          "key": "variation_b"
-        }
-      ],
-      "forcedVariations": {},
-      "id": "10420810332"
     }
   ],
   "audiences": [
@@ -308,12 +282,6 @@
                           "featureEnabled": false,
                           "id": "10389752311",
                           "key": "a"
-                      },
-                      {
-                          "variables": [],
-                          "featureEnabled": true,
-                          "id": "10416553432",
-                          "key": "b"
                       }
                   ],
                   "forcedVariations": {},
@@ -336,12 +304,6 @@
                           "featureEnabled": false,
                           "id": "10418524243",
                           "key": "a"
-                      },
-                      {
-                          "variables": [],
-                          "featureEnabled": true,
-                          "id": "10418547898",
-                          "key": "b"
                       }
                   ],
                   "forcedVariations": {},

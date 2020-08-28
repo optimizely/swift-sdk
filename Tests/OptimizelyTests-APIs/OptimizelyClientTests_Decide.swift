@@ -125,16 +125,16 @@ extension OptimizelyClientTests_Decide {
     }
     
     func testDecide_doNotSendImpression() {
-        let featureKey = "common_name"   // no experiment
+        let featureKey = "feature_1"   // audience required for experiment
 
+        // no attribute, so audience-match fails
         let user = OptimizelyUserContext(userId: kUserId)
         try? optimizely.setUserContext(user)
         let decision = optimizely.decide(key: featureKey)
         
         optimizely.eventLock.sync{}
 
-        XCTAssertNil(decision.variationKey)
-        XCTAssertNotNil(decision.enabled)
+        XCTAssertNotNil(decision.variationKey)   // rollout variation
         XCTAssertNil(eventDispatcher.eventSent)
     }
     
@@ -174,7 +174,7 @@ extension OptimizelyClientTests_Decide {
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
         let variablesExpected2 = try! optimizely.getAllFeatureVariables(featureKey: featureKey2, userId: kUserId)
         
-        let user = OptimizelyUserContext(userId: kUserId)
+        let user = OptimizelyUserContext(userId: kUserId, attributes: ["gender": "f"])
         try? optimizely.setUserContext(user)
         let decisions = optimizely.decideAll(keys: featureKeys)
         
@@ -182,7 +182,7 @@ extension OptimizelyClientTests_Decide {
         
         XCTAssert(decisions[featureKey1]! == OptimizelyDecision(enabled: true,
                                                                 variables: variablesExpected1,
-                                                                variationKey: nil,
+                                                                variationKey: "a",
                                                                 ruleKey: nil,
                                                                 key: featureKey1,
                                                                 user: user,
@@ -199,13 +199,13 @@ extension OptimizelyClientTests_Decide {
     func testDecideAll_nilKeys() {
         let featureKey1 = "feature_1"
         let featureKey2 = "feature_2"
-        let featureKey3 = "common_name"
+        let featureKey3 = "feature_3"
         
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
         let variablesExpected2 = try! optimizely.getAllFeatureVariables(featureKey: featureKey2, userId: kUserId)
         let variablesExpected3 = OptimizelyJSON(map: [:])
         
-        let user = OptimizelyUserContext(userId: kUserId)
+        let user = OptimizelyUserContext(userId: kUserId, attributes: ["gender": "f"])
         try? optimizely.setUserContext(user)
         let decisions = optimizely.decideAll(keys: nil)
         
@@ -213,7 +213,7 @@ extension OptimizelyClientTests_Decide {
         
         XCTAssert(decisions[featureKey1]! == OptimizelyDecision(enabled: true,
                                                                 variables: variablesExpected1,
-                                                                variationKey: nil,
+                                                                variationKey: "a",
                                                                 ruleKey: nil,
                                                                 key: featureKey1,
                                                                 user: user,
@@ -240,7 +240,7 @@ extension OptimizelyClientTests_Decide {
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
         let variablesExpected2 = try! optimizely.getAllFeatureVariables(featureKey: featureKey2, userId: kUserId)
 
-        let user = OptimizelyUserContext(userId: kUserId)
+        let user = OptimizelyUserContext(userId: kUserId, attributes: ["gender": "f"])
         try? optimizely.setUserContext(user)
         let decisions = optimizely.decideAll(keys: nil, options: [.enabledOnly])
         
@@ -248,14 +248,16 @@ extension OptimizelyClientTests_Decide {
         
         XCTAssert(decisions[featureKey1]! == OptimizelyDecision(enabled: true,
                                                                 variables: variablesExpected1,
-                                                                variationKey: nil,
+                                                                variationKey: "a",
                                                                 ruleKey: nil,
                                                                 key: featureKey1,
                                                                 user: user,
                                                                 reasons: []))
-        XCTAssert(decisions[featureKey2]! == OptimizelyDecision(variationKey: "variation_with_traffic",
-                                                                enabled: true,
+        
+        XCTAssert(decisions[featureKey2]! == OptimizelyDecision(enabled: true,
                                                                 variables: variablesExpected2,
+                                                                variationKey: "variation_with_traffic",
+                                                                ruleKey: nil,
                                                                 key: featureKey2,
                                                                 user: user,
                                                                 reasons: []))

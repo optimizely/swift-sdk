@@ -106,11 +106,11 @@ extension SemanticVersion {
     }
     
     var isPreRelease: Bool {
-        return contains("-")
+        return contains("-") && firstIndex(of: "-")?.utf16Offset(in: self) ?? Int.max < firstIndex(of: "+")?.utf16Offset(in: self) ?? Int.max
     }
 
     var isBuild: Bool {
-        return contains("+")
+        return contains("+") && firstIndex(of: "+")?.utf16Offset(in: self) ?? Int.max < firstIndex(of: "-")?.utf16Offset(in: self) ?? Int.max
     }
     
     var buildSeperator:Character {
@@ -127,11 +127,11 @@ extension Substring {
     }
 
     var isPreRelease: Bool {
-        return contains("-")
+        return contains("-") && firstIndex(of: "-")?.utf16Offset(in: self) ?? Int.max < firstIndex(of: "+")?.utf16Offset(in: self) ?? Int.max
     }
 
     var isBuild: Bool {
-        return contains("+")
+        return contains("+") && firstIndex(of: "+")?.utf16Offset(in: self) ?? Int.max < firstIndex(of: "-")?.utf16Offset(in: self) ?? Int.max
     }
 
 }

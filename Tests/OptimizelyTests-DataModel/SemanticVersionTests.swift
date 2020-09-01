@@ -176,7 +176,34 @@ class SemanticVersionTests: XCTestCase {
             XCTAssert(try versions[idx].compareVersion(targetedVersion: target) == 0)
         }
     }
-    
+    func testDifferentAttributeAgainstBuild() {
+        let target = "3.7.0"
+        let version = "3.7.0+build"
+        
+        XCTAssert(try (version.compareVersion(targetedVersion: target)) == 0)
+    }
+
+    func testDifferentAttributeAgainstPreRelease() {
+        let target = "3.7.0"
+        let version = "3.7.0-prerelease"
+        
+        XCTAssert(try (version.compareVersion(targetedVersion: target)) < 0)
+    }
+
+    func testDifferentAttributeAgainstPreReleaseToBuild() {
+        let target = "3.7.0-prerelease"
+        let version = "3.7.0+build"
+        
+        XCTAssert(try (version.compareVersion(targetedVersion: target)) > 0)
+    }
+
+    func testDifferentAttributeAgainstPreReleaseToPreRelease() {
+        let target = "3.7.0-prerelease+build"
+        let version = "3.7.0-prerelease-prelrease+rc"
+        
+        XCTAssert(try (version.compareVersion(targetedVersion: target)) > 0)
+    }
+
     func testInvalidAttributes() {
         let target = "2.1.0"
         let versions = ["-", ".", "..", "+", "+test", " ", "2 .3. 0", "2.", ".2.2", "3.7.2.2", "3.x",

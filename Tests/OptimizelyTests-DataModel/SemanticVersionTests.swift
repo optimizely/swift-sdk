@@ -207,7 +207,7 @@ class SemanticVersionTests: XCTestCase {
     func testInvalidAttributes() {
         let target = "2.1.0"
         let versions = ["-", ".", "..", "+", "+test", " ", "2 .3. 0", "2.", ".2.2", "3.7.2.2", "3.x",
-        ",", "+build-prerelese"]
+        ",", "+build-prerelese","1.0.0+20130313144700+","1.1.2-.123","1.0.0-20130313144700+"]
         for (_, version) in versions.enumerated() {
             XCTAssert(((try? (version.compareVersion(targetedVersion: target)) < 0) == nil))
         }

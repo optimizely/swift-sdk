@@ -40,10 +40,10 @@ extension SemanticVersion {
             } else if !versionParts[idx].isNumber {
                 //Compare strings
                 if versionParts[idx] < targetedVersionParts[idx] {
-                    return -1;
+                    return targetedVersion.isPreRelease && !self.isPreRelease ? 1: -1;
                 }
                 else if versionParts[idx] > targetedVersionParts[idx] {
-                    return 1;
+                    return !targetedVersion.isPreRelease && self.isPreRelease ? -1: 1;
                 }
                 
             } else if let part = Int(versionParts[idx]), let target = Int(targetedVersionParts[idx]){
@@ -74,7 +74,8 @@ extension SemanticVersion {
         }
         
         if isPreRelease || isBuild {
-            targetParts = split(separator: isPreRelease ? preReleaseSeperator : buildSeperator)
+            targetParts = split(separator: isPreRelease ? preReleaseSeperator : buildSeperator,
+            maxSplits: 1)
             guard let targetParts = targetParts, targetParts.count > 1 else {
                 throw OptimizelyError.attributeFormatInvalid
             }
@@ -106,11 +107,11 @@ extension SemanticVersion {
     }
     
     var isPreRelease: Bool {
-        return contains("-")
+        return firstIndex(of: "-")?.utf16Offset(in: self) ?? Int.max < firstIndex(of: "+")?.utf16Offset(in: self) ?? Int.max
     }
 
     var isBuild: Bool {
-        return contains("+")
+        return firstIndex(of: "+")?.utf16Offset(in: self) ?? Int.max < firstIndex(of: "-")?.utf16Offset(in: self) ?? Int.max
     }
     
     var buildSeperator:Character {
@@ -127,11 +128,11 @@ extension Substring {
     }
 
     var isPreRelease: Bool {
-        return contains("-")
+        return firstIndex(of: "-")?.utf16Offset(in: self) ?? Int.max < firstIndex(of: "+")?.utf16Offset(in: self) ?? Int.max
     }
 
     var isBuild: Bool {
-        return contains("+")
+        return firstIndex(of: "+")?.utf16Offset(in: self) ?? Int.max < firstIndex(of: "-")?.utf16Offset(in: self) ?? Int.max
     }
 
 }

@@ -30,19 +30,23 @@ extension OptimizelyClient {
     /// - If a user-context has not been set yet and decide APIs are called without a user-context parameter, SDK will return an error decision (__userNotSet__).
     ///
     /// - Parameters:
-    ///   - user: a user-context
-    /// - Throws: `OptimizelyError` if SDK fails to set the user context
+    ///   - user: A user context.
+    /// - Throws: `OptimizelyError` if SDK fails to set the user context.
     public func setUserContext(_ user: OptimizelyUserContext) throws {
         guard self.config != nil else { throw OptimizelyError.sdkNotReady }
                               
         userContext = user
     }
-}
     
-// MARK: - decide
-    
-extension OptimizelyClient {
-    
+    /// Returns a decision result for a given flag key and a user context, which contains all data required to deliver the flag or experiment.
+    ///
+    /// If the SDK finds an error (__sdkNotReady__, __userNotSet__, etc), it’ll return a decision with `nil` for `enabled` and `variationKey`. The decision will include an error message in `reasons` (regardless of the __includeReasons__ option).
+    ///
+    /// - Parameters:
+    ///   - key: A flag key for which a decision will be made.
+    ///   - user: A user context. This is optional when a user context has been set before.
+    ///   - options: An array of options for decision-making.
+    /// - Returns: A decision result.
     public func decide(key: String,
                        user: OptimizelyUserContext? = nil,
                        options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {

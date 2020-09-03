@@ -119,12 +119,16 @@ extension OptimizelyClient {
                                   reasons: decisionReasons.getReasonsToReport(options: allOptions))
     }
     
-}
-    
-// MARK: - decideAll
-        
-extension OptimizelyClient {
-
+    /// Returns a key-map of decision results for multiple flag keys and a user context.
+    ///
+    /// - If the SDK finds an error (__flagKeyInvalid__, etc) for a key, the response will include a decision for the key showing `reasons` for the error (regardless of __includeReasons__ in options).
+    /// - The SDK will always return key-mapped decisions. When it can not process requests (on __sdkNotReady__ or __userNotSet__ errors), it’ll return an empty map after logging the errors.
+    ///
+    /// - Parameters:
+    ///   - keys: An array of flag keys for which decisions will be made. When set to `nil`, the SDK will return decisions for all active flag keys.
+    ///   - user: A user context. This is optional when a user context has been set before.
+    ///   - options: An array of options for decision-making.
+    /// - Returns: A dictionary of all decision results, mapped by flag keys.
     public func decideAll(keys: [String]?,
                           user: OptimizelyUserContext? = nil,
                           options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {

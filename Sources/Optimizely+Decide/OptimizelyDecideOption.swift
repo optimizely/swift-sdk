@@ -17,9 +17,17 @@
 
 import Foundation
 
+/// Options controlling flag decisions.
 public enum OptimizelyDecideOption {
+    /// disable decision event tracking.
     case disableTracking
+    
+    /// returns decisions only for flags which are enabled.
     case enabledOnly
+    
+    /// skip user profile service for decision.
     case bypassUPS
+    
+    /// include info and debug messages in the decision reasons.
     case includeReasons
 }

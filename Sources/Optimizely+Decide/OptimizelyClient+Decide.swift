@@ -18,17 +18,35 @@ import Foundation
 
 extension OptimizelyClient {
     
+    /// Set a context of the user for which decision APIs will be called.
+    ///
+    /// The SDK will keep this context until it is called again with a different context data.
+    ///
+    /// - This API can be called after SDK initialization is completed (otherwise the __sdkNotReady__ error will be returned).
+    /// - Only one user outstanding. The user-context can be changed any time by calling the same method with a different user-context value.
+    /// - The SDK will copy the parameter value to create an internal user-context data atomically, so any further change in its caller copy after the API call is not reflected into the SDK state.
+    /// - Once this API is called, the following other API calls can be called without a user-context parameter to use the same user-context.
+    /// - Each Decide API call can contain an optional user-context parameter when the call targets a different user-context. This optional user-context parameter value will be used once only, instead of replacing the saved user-context. This call-based context control can be used to support multiple users at the same time.
+    /// - If a user-context has not been set yet and decide APIs are called without a user-context parameter, SDK will return an error decision (__userNotSet__).
+    ///
+    /// - Parameters:
+    ///   - user: A user context.
+    /// - Throws: `OptimizelyError` if SDK fails to set the user context.
     public func setUserContext(_ user: OptimizelyUserContext) throws {
         guard self.config != nil else { throw OptimizelyError.sdkNotReady }
                               
         userContext = user
     }
-}
     
-// MARK: - decide
-    
-extension OptimizelyClient {
-    
+    /// Returns a decision result for a given flag key and a user context, which contains all data required to deliver the flag or experiment.
+    ///
+    /// If the SDK finds an error (__sdkNotReady__, __userNotSet__, etc), it’ll return a decision with `nil` for `enabled` and `variationKey`. The decision will include an error message in `reasons` (regardless of the __includeReasons__ option).
+    ///
+    /// - Parameters:
+    ///   - key: A flag key for which a decision will be made.
+    ///   - user: A user context. This is optional when a user context has been set before.
+    ///   - options: An array of options for decision-making.
+    /// - Returns: A decision result.
     public func decide(key: String,
                        user: OptimizelyUserContext? = nil,
                        options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {

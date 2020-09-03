@@ -18,13 +18,13 @@ import Foundation
 
 extension OptimizelyClient {
     
-    /// Track an event
+    /// Track an event.
     ///
     /// - Parameters:
-    ///   - eventKey: The event name
-    ///   - user: The user context associated with the event to track
-    ///   - eventTags: A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean)
-    /// - Throws: `OptimizelyError` if error is detected
+    ///   - eventKey: The event name.
+    ///   - user: The user context associated with the event to track.
+    ///   - eventTags: A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean).
+    /// - Throws: `OptimizelyError` if an error is detected.
     public func track(eventKey: String,
                       user: OptimizelyUserContext? = nil,
                       eventTags: OptimizelyEventTags? = nil) throws {

@@ -1,16 +1,20 @@
 PODS:
+  - OCMock (3.7.1)
   - SwiftLint (0.38.2)
 
 DEPENDENCIES:
+  - OCMock (= 3.7.1)
   - SwiftLint
 
 SPEC REPOS:
   trunk:
+    - OCMock
     - SwiftLint
 
 SPEC CHECKSUMS:
+  OCMock: 75fbeaa46a9b11f8c182bbb1d1f7e9a35ccc9955
   SwiftLint: 8f5d2f903e1c9bcbc832fd16771e80a263ac6cbb
 
-PODFILE CHECKSUM: 159491f53ea704c30be049e048d854a49f9b7433
+PODFILE CHECKSUM: f3ae2a9166c44e9a9ed1788198633dcc089a911c
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.3

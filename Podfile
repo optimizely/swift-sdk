@@ -13,6 +13,10 @@ def linter_pods
   pod 'SwiftLint'
 end
 
+def common_test_pods
+  pod 'OCMock', '3.7.1'
+end
+
 target 'DemoSwiftiOS' do
   project 'DemoSwiftApp/DemoSwiftApp.xcodeproj/'
   platform :ios, '10.0'
@@ -43,4 +47,10 @@ target 'DemoObjctvOS' do
   platform :tvos, '10.0'
   use_frameworks!
   #pod 'OptimizelySwiftSDK','3.0.0'
+end
+
+target 'OptimizelyTests-APIs-iOS' do
+  project 'OptimizelySwiftSDK.xcodeproj/'
+  platform :ios, '8.0'
+  common_test_pods
 end

@@ -17,7 +17,7 @@
 
 import Foundation
 
-public enum OptimizelyDecideOption {
+@objc public enum OptimizelyDecideOption: Int {
     case disableTracking
     case enabledOnly
     case bypassUPS

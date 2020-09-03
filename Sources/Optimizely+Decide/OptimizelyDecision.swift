@@ -16,14 +16,28 @@
     
 import Foundation
 
+/// A decision struct that the SDK makes for a flag key and a user context.
 public struct OptimizelyDecision {
+    
+    /// A boolean value indicating the flag is enabled or not.
     public let enabled: Bool?
+    
+    /// A collection of variables assocaited with the decision.
     public let variables: OptimizelyJSON?
+    
+    /// A variation key of the decision.
     public let variationKey: String?
+    
+    /// A rule key of the decision.
     public let ruleKey: String?
 
+    /// A flag key for which the decision has been made for.
     public let key: String
+    
+    /// A user context for which the decision has been made for.
     public let user: OptimizelyUserContext?
+    
+    /// An array of error/info/debug messages describing why the decision has been made.
     public let reasons: [String]
 }
 

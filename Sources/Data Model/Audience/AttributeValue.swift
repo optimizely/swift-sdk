@@ -166,6 +166,10 @@ extension AttributeValue {
         
         return currentDouble > targetDouble
     }
+
+    func isGreaterOrEqual(than target: Any, condition: String = "", name: String = "") throws -> Bool {
+        return try isGreater(than: target, condition: condition, name: name) || isExactMatch(with: target, condition: condition, name: name)
+    }
     
     func isLess(than target: Any, condition: String = "", name: String = "") throws -> Bool {
                 
@@ -182,6 +186,29 @@ extension AttributeValue {
         return currentDouble < targetDouble
     }
     
+    func isLessOrEqual(than target: Any, condition: String = "", name: String = "") throws -> Bool {
+        return try isLess(than: target, condition: condition, name: name) || isExactMatch(with: target, condition: condition, name: name)
+    }
+    
+    func isSemanticVersionEqual(than target: SemanticVersion) throws -> Bool {
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) == 0
+    }
+
+    func isSemanticVersionGreater(than target: SemanticVersion) throws -> Bool {
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) > 0
+    }
+
+    func isSemanticVersionLess(than target: SemanticVersion) throws -> Bool {
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) < 0
+    }
+
+    func isSemanticVersionGreaterOrEqual(than target: SemanticVersion) throws -> Bool {
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) >= 0    }
+
+    func isSemanticVersionLessOrEqual(than target: SemanticVersion) throws -> Bool {
+        return try (self.stringValue as SemanticVersion).compareVersion(targetedVersion: target) <= 0
+    }
+
     var doubleValue: Double? {
         switch self {
         case .double(let value): return value

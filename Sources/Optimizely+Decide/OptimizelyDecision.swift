@@ -32,7 +32,7 @@ public struct OptimizelyDecision {
     public let ruleKey: String?
 
     /// A flag key for which the decision has been made for.
-    public let key: String
+    public let flagKey: String
     
     /// A user context for which the decision has been made for.
     public let user: OptimizelyUserContext?
@@ -48,7 +48,7 @@ extension OptimizelyDecision {
                                   variables: nil,
                                   variationKey: nil,
                                   ruleKey: nil,
-                                  key: key,
+                                  flagKey: key,
                                   user: user,
                                   reasons: [error.reason])
     }

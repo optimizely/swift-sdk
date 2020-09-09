@@ -43,7 +43,7 @@ struct Constants {
         case allFeatureVariables = "all-feature-variables"
         case featureTest = "feature-test"
         // Decide-APIs
-        case featureDecide = "flag-decide"
+        case flag = "flag"
     }
         
     enum DecisionSource: String {
@@ -60,12 +60,18 @@ struct Constants {
         static let variableType = "variableType"
         static let variableValue = "variableValue"
         static let variableValues = "variableValues"
+        // Decide-API
+        static let flagKey = "flagKey"
+        static let enabled = "enabled"
+        static let variables = "variables"
+        static let variationKey = "variationKey"
+        static let ruleKey = "ruleKey"
+        static let sentEvent = "sentEvent"
     }
     
     struct ExperimentDecisionInfoKeys {
         static let experiment = "experimentKey"
         static let variation = "variationKey"
-        static let tracked = "tracked"
     }
     
 }

@@ -48,7 +48,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
         let variables = decision.variables!
         XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
         
-        XCTAssertEqual(decision.key, featureKey)
+        XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.user, user)
         XCTAssert(decision.reasons.isEmpty)
     }
@@ -66,7 +66,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
         let variables = decision.variables!
         XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
         
-        XCTAssertEqual(decision.key, featureKey)
+        XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.user, user)
         XCTAssert(decision.reasons.isEmpty)
     }
@@ -85,7 +85,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
         let variables = decision.variables!
         XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
         
-        XCTAssertEqual(decision.key, featureKey)
+        XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.user, user2)
         XCTAssert(decision.reasons.isEmpty)
     }
@@ -224,7 +224,7 @@ extension OptimizelyClientTests_Decide {
         XCTAssertNil(decision.variationKey)
         XCTAssertNil(decision.enabled)
         XCTAssertNil(decision.variables)
-        XCTAssertEqual(decision.key, featureKey)
+        XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.user, user)
         
         XCTAssert(decision.reasons.count == 1)
@@ -239,7 +239,7 @@ extension OptimizelyClientTests_Decide {
         XCTAssertNil(decision.variationKey)
         XCTAssertNil(decision.enabled)
         XCTAssertNil(decision.variables)
-        XCTAssertEqual(decision.key, featureKey)
+        XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.user, nil)
         
         XCTAssert(decision.reasons.count == 1)

@@ -319,7 +319,7 @@ class DatafileHandlerTests: XCTestCase {
         let now = Date()
         var count = 0
         var seconds = 0
-        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: 1) { (_) in
+        handler.startPeriodicUpdates(sdkKey: "testPeriodicDownload", updateInterval: 1) { (_) in
             count += 1
             if count == 10 {
                 handler.stopPeriodicUpdates()
@@ -353,7 +353,7 @@ class DatafileHandlerTests: XCTestCase {
         let idleTime = 5
         var count = 0
         var seconds = 0
-        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: updateInterval) { _ in
+        handler.startPeriodicUpdates(sdkKey: "testPeriodicDownload_PollingShouldNotBeAccumulatedWhileInBackground", updateInterval: updateInterval) { _ in
             // simulate going to background and coming back to foreground after 5secs
             if count == 0 {
                 sleep(UInt32(idleTime))
@@ -394,7 +394,7 @@ class DatafileHandlerTests: XCTestCase {
         let maxCount = 5
         var count = 0
         var seconds = 0
-        handler.startPeriodicUpdates(sdkKey: "notrealkey", updateInterval: updateInterval) { _ in
+        handler.startPeriodicUpdates(sdkKey: "testPeriodicDownload_PollingPeriodAdjustedByDelay", updateInterval: updateInterval) { _ in
             count += 1
             
             if count == maxCount {
@@ -423,9 +423,9 @@ class DatafileHandlerTests: XCTestCase {
         
         let handler = FakeDatafileHandler()
 
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "testPeriodicDownloadWithOptimizlyClient_SameRevision").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
         
-        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval: 1)
+        let optimizely = OptimizelyClient(sdkKey: "testPeriodicDownloadWithOptimizlyClient_SameRevision", periodicDownloadInterval: 1)
         
         _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { _ in
             optimizely.datafileHandler?.stopAllUpdates()
@@ -457,9 +457,9 @@ class DatafileHandlerTests: XCTestCase {
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
         let handler = FakeDatafileHandler()
 
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "notrealkey123").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "testPeriodicDownloadWithOptimizlyClient_DifferentRevision").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
         
-        let optimizely = OptimizelyClient(sdkKey: "notrealkey123", periodicDownloadInterval: 1)
+        let optimizely = OptimizelyClient(sdkKey: "testPeriodicDownloadWithOptimizlyClient_DifferentRevision", periodicDownloadInterval: 1)
         
         var count = 0
 

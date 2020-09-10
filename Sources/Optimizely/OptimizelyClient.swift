@@ -44,6 +44,8 @@ open class OptimizelyClient: NSObject {
             atomicUserContext.property = newValue
         }
     }
+    
+    var defaultDecideOptions = [OptimizelyDecideOption]()
 
     public var version: String {
         return Utils.sdkVersion
@@ -883,7 +885,8 @@ extension OptimizelyClient {
                                   variableType: String? = nil,
                                   variableValue: Any? = nil,
                                   variableValues: [String: Any]? = nil,
-                                  tracked: Bool = false,
+                                  reasons: [String]? = nil,
+                                  sentEvent: Bool = false,
                                   async: Bool = true) {
         self.sendNotification(type: .decision,
                               args: [decisionType.rawValue,
@@ -898,10 +901,11 @@ extension OptimizelyClient {
                                                            variableType: variableType,
                                                            variableValue: variableValue,
                                                            variableValues: variableValues,
-                                                           tracked: tracked)],
+                                                           reasons: reasons,
+                                                           sentEvent: sentEvent)],
                               async: async)
     }
-    
+        
     func sendDatafileChangeNotification(data: Data, async: Bool = true) {
         self.sendNotification(type: .datafileChange, args: [data], async: async)
     }
@@ -915,7 +919,9 @@ extension OptimizelyClient {
                           variableType: String? = nil,
                           variableValue: Any? = nil,
                           variableValues: [String: Any]? = nil,
-                          tracked: Bool = false) -> [String: Any] {
+                          ruleKey: String? = nil,
+                          reasons: [String]? = nil,
+                          sentEvent: Bool = false) -> [String: Any] {
         
         var decisionInfo = [String: Any]()
         
@@ -961,23 +967,16 @@ extension OptimizelyClient {
             
         // Decide-APIs
             
-        case .featureDecide:
-            guard let feature = feature, let featureEnabled = featureEnabled else { return decisionInfo }
+        case .flag:
+            guard let flagKey = feature?.key, let enabled = featureEnabled else { return decisionInfo }
             
-            decisionInfo[Constants.DecisionInfoKeys.feature] = feature.key
-            decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
-            
-            let decisionSource: Constants.DecisionSource = experiment != nil ? .featureTest : .rollout
-            decisionInfo[Constants.DecisionInfoKeys.source] = decisionSource.rawValue
-            
-            var sourceInfo = [String: Any]()
-            if let experiment = experiment, let variation = variation {
-                sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
-                sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
-                sourceInfo[Constants.ExperimentDecisionInfoKeys.tracked] = tracked
-            }
-            decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
-            decisionInfo[Constants.DecisionInfoKeys.variableValues] = variableValues
+            decisionInfo[Constants.DecisionInfoKeys.flagKey] = flagKey
+            decisionInfo[Constants.DecisionInfoKeys.enabled] = enabled
+            decisionInfo[Constants.DecisionInfoKeys.variables] = variableValues
+            decisionInfo[Constants.DecisionInfoKeys.variationKey] = variation?.key
+            decisionInfo[Constants.DecisionInfoKeys.ruleKey] = ruleKey
+            decisionInfo[Constants.DecisionInfoKeys.reasons] = reasons
+            decisionInfo[Constants.DecisionInfoKeys.sentEvent] = sentEvent
         }
         
         return decisionInfo

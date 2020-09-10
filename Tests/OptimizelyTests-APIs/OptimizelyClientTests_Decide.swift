@@ -35,12 +35,79 @@ class OptimizelyClientTests_Decide: XCTestCase {
         try! optimizely.start(datafile: datafile)
     }
     
+}
+
+// MARK: - setUserContext
+
+extension OptimizelyClientTests_Decide {
+    
+    func testSetUserContext() {
+        let attributes: [String: Any] = [
+            "country": "us",
+            "age": 100,
+            "old": true
+        ]
+        let user = OptimizelyUserContext(userId: "tester", attributes: attributes)
+        
+        optimizely.setUserContext(user)
+        XCTAssert(optimizely.userContext == user)
+    }
+    
+    func testSetUserContext_replace() {
+        let attributes: [String: Any] = [
+            "country": "us",
+            "age": 100,
+            "old": true
+        ]
+        let user1 = OptimizelyUserContext(userId: "tester1", attributes: attributes)
+        let user2 = OptimizelyUserContext(userId: "tester2", attributes: [:])
+        
+        optimizely.setUserContext(user1)
+        XCTAssert(optimizely.userContext == user1)
+        
+        optimizely.setUserContext(user2)
+        XCTAssert(optimizely.userContext == user2)
+    }
+    
+}
+    
+// MARK: - setDefaultDecideOptions
+
+extension OptimizelyClientTests_Decide {
+
+    func testSetDefaultDecideOptions() {
+        let expOptions: [OptimizelyDecideOption] = [.ignoreUPS,
+                                                    .disableDecisionEvent,
+                                                    .enabledOnly,
+                                                    .includeReasons]
+        optimizely.setDefaultDecideOptions(expOptions)
+        
+        XCTAssert(optimizely.defaultDecideOptions == expOptions)
+    }
+    
+    func testSetDefaultDecideOptions_replace() {
+        let options1: [OptimizelyDecideOption] = [.ignoreUPS, .disableDecisionEvent]
+        let options2: [OptimizelyDecideOption] = [.enabledOnly]
+
+        optimizely.setDefaultDecideOptions(options1)
+        XCTAssert(optimizely.defaultDecideOptions == options1)
+        
+        optimizely.setDefaultDecideOptions(options2)
+        XCTAssert(optimizely.defaultDecideOptions == options2)
+    }
+
+}
+
+// MARK: - decide
+
+extension OptimizelyClientTests_Decide {
+
     func testDecide() {
         let featureKey = "feature_1"
         let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
 
         let user = OptimizelyUserContext(userId: kUserId)
-        try? optimizely.setUserContext(user)
+        optimizely.setUserContext(user)
         let decision = optimizely.decide(key: featureKey)
         
         XCTAssertEqual(decision.variationKey, "a")
@@ -77,7 +144,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
         
         let user1 = OptimizelyUserContext(userId: kUserId)
         let user2 = OptimizelyUserContext(userId: "newUser")
-        try? optimizely.setUserContext(user1)
+        optimizely.setUserContext(user1)
         let decision = optimizely.decide(key: featureKey, user: user2)
         
         XCTAssertEqual(decision.variationKey, "a")
@@ -103,7 +170,7 @@ extension OptimizelyClientTests_Decide {
         let featureKey = "feature_1"
 
         let user = OptimizelyUserContext(userId: kUserId)
-        try? optimizely.setUserContext(user)
+        optimizely.setUserContext(user)
         let decision = optimizely.decide(key: featureKey)
         
         optimizely.eventLock.sync{}
@@ -120,7 +187,7 @@ extension OptimizelyClientTests_Decide {
         let featureKey = "common_name"   // no experiment
 
         let user = OptimizelyUserContext(userId: kUserId)
-        try? optimizely.setUserContext(user)
+        optimizely.setUserContext(user)
         let decision = optimizely.decide(key: featureKey)
         
         optimizely.eventLock.sync{}
@@ -140,8 +207,8 @@ extension OptimizelyClientTests_Decide {
         let featureKey = "feature_1"
 
         let user = OptimizelyUserContext(userId: kUserId)
-        try? optimizely.setUserContext(user)
-        let decision = optimizely.decide(key: featureKey, options: [.disableTracking])
+        optimizely.setUserContext(user)
+        let decision = optimizely.decide(key: featureKey, options: [.disableDecisionEvent])
         
         optimizely.eventLock.sync{}
 
@@ -155,7 +222,7 @@ extension OptimizelyClientTests_Decide {
         let variationId = "10389729780"
 
         let user = OptimizelyUserContext(userId: kUserId)
-        try? optimizely.setUserContext(user)
+        optimizely.setUserContext(user)
         
         XCTAssertNil(getProfileVariation(userId: kUserId, experimentId: experimentId))
 
@@ -170,12 +237,12 @@ extension OptimizelyClientTests_Decide {
         let experimentId = "10390977673"    // "exp_with_audience"
 
         let user = OptimizelyUserContext(userId: kUserId)
-        try? optimizely.setUserContext(user)
+        optimizely.setUserContext(user)
         
         XCTAssertNil(getProfileVariation(userId: kUserId, experimentId: experimentId))
 
         // this will not set UPS because of bypassUPS option
-        _ = optimizely.decide(key: featureKey, options: [.bypassUPS])
+        _ = optimizely.decide(key: featureKey, options: [.ignoreUPS])
         
         XCTAssertNil(getProfileVariation(userId: kUserId, experimentId: experimentId))
     }
@@ -188,13 +255,13 @@ extension OptimizelyClientTests_Decide {
         let variationId2 = "10416523121"
 
         let user = OptimizelyUserContext(userId: kUserId)
-        try? optimizely.setUserContext(user)
+        optimizely.setUserContext(user)
         
         setProfileVariation(userId: kUserId, experimentId: experimentId, variationId: variationId2)
         XCTAssert(getProfileVariation(userId: kUserId, experimentId: experimentId) == variationId2)
 
         let decision1 = optimizely.decide(key: featureKey)
-        let decision2 = optimizely.decide(key: featureKey, options: [.bypassUPS])
+        let decision2 = optimizely.decide(key: featureKey, options: [.ignoreUPS])
 
         XCTAssert(decision1.variationKey == variationKey2)
         XCTAssert(decision2.variationKey == variationKey1)
@@ -250,7 +317,7 @@ extension OptimizelyClientTests_Decide {
         let featureKey = "invalid_key"
 
         let user = OptimizelyUserContext(userId: kUserId)
-        try? optimizely.setUserContext(user)
+        optimizely.setUserContext(user)
         
         let decision = optimizely.decide(key: featureKey)
 

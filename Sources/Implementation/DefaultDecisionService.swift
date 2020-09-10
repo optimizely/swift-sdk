@@ -268,7 +268,7 @@ class DefaultDecisionService: OPTDecisionService {
 extension DefaultDecisionService {
     
     func getVariationIdFromProfile(userId: String, experimentId: String, options: [OptimizelyDecideOption]? = nil) -> String? {
-        if (options ?? []).contains(.bypassUPS) { return nil }
+        if (options ?? []).contains(.ignoreUPS) { return nil }
         
         if let profile = userProfileService.lookup(userId: userId),
             let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
@@ -281,7 +281,7 @@ extension DefaultDecisionService {
     }
     
     func saveProfile(userId: String, experimentId: String, variationId: String, options: [OptimizelyDecideOption]? = nil) {
-        if (options ?? []).contains(.bypassUPS) { return }
+        if (options ?? []).contains(.ignoreUPS) { return }
 
         var profile = userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
         

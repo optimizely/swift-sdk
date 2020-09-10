@@ -31,11 +31,17 @@ extension OptimizelyClient {
     ///
     /// - Parameters:
     ///   - user: A user context.
-    /// - Throws: `OptimizelyError` if SDK fails to set the user context.
-    public func setUserContext(_ user: OptimizelyUserContext) throws {
-        guard self.config != nil else { throw OptimizelyError.sdkNotReady }
-        
+    public func setUserContext(_ user: OptimizelyUserContext) {        
         userContext = user
+    }
+    
+    /// Set the default decide-options which are commonly applied to all following decide API calls.
+    ///
+    /// These options will be overridden when each decide-API call provides own options.
+    ///
+    /// - Parameter options: An array of default decision options.
+    public func setDefaultDecideOptions(_ options: [OptimizelyDecideOption]) {
+        defaultDecideOptions = options
     }
     
     /// Returns a decision result for a given flag key and a user context, which contains all data required to deliver the flag or experiment.
@@ -90,8 +96,10 @@ extension OptimizelyClient {
             decisionReasons.addError(OptimizelyError.invalidDictionary)
         }
         
+        let reasonsToReport = decisionReasons.getReasonsToReport(options: allOptions)
+        
         if let experimentDecision = decision?.experiment, let variationDecision = decision?.variation {
-            if !allOptions.contains(.disableTracking) {
+            if !allOptions.contains(.disableDecisionEvent) {
                 sendImpressionEvent(experiment: experimentDecision,
                                     variation: variationDecision,
                                     userId: userId,
@@ -108,6 +116,7 @@ extension OptimizelyClient {
                                  feature: feature,
                                  featureEnabled: enabled,
                                  variableValues: variableMap,
+                                 reasons: reasonsToReport,
                                  sentEvent: sentEvent)
         
         return OptimizelyDecision(enabled: enabled,
@@ -116,7 +125,7 @@ extension OptimizelyClient {
                                   ruleKey: nil,
                                   flagKey: feature.key,
                                   user: user,
-                                  reasons: decisionReasons.getReasonsToReport(options: allOptions))
+                                  reasons: reasonsToReport)
     }
     
 }
@@ -167,7 +176,7 @@ extension OptimizelyClient {
     }
     
     func getAllOptions(with options: [OptimizelyDecideOption]?) -> [OptimizelyDecideOption] {
-        return (userContext?.defaultDecideOptions ?? []) + (options ?? [])
+        return defaultDecideOptions + (options ?? [])
     }
     
 }

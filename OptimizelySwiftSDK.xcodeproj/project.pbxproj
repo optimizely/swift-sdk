@@ -1544,6 +1544,7 @@
 		0B97DD93249D327F003DE606 /* SemanticVersion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemanticVersion.swift; sourceTree = "<group>"; };
 		0B97DD96249D332C003DE606 /* SemanticVersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticVersionTests.swift; sourceTree = "<group>"; };
 		6E14CD632423F80B00010234 /* OptimizelyTests-Batch-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Batch-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E2D34B8250AD14000A0CDFE /* OptimizelyClientTests_Decide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Decide.swift; sourceTree = "<group>"; };
 		6E34A6162319EBB700BAE302 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		6E34A623231ED04900BAE302 /* empty_datafile_new_project_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_datafile_new_project_id.json; sourceTree = "<group>"; };
 		6E34A624231ED04900BAE302 /* empty_datafile_new_revision.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_datafile_new_revision.json; sourceTree = "<group>"; };
@@ -2239,6 +2240,7 @@
 		6E7519B922C5211100B2B157 /* OptimizelyTests-APIs */ = {
 			isa = PBXGroup;
 			children = (
+				6E2D34B8250AD14000A0CDFE /* OptimizelyClientTests_Decide.swift */,
 				6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */,
 				6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */,
 				6E7519BA22C5211100B2B157 /* OptimizelyClientTests_Evaluation.swift */,
@@ -2579,7 +2581,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1160;
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
 					6E14CD622423F80B00010234 = {

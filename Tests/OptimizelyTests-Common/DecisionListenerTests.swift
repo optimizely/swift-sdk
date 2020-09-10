@@ -1024,6 +1024,7 @@ extension DecisionListenerTests {
 
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.variationKey])
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
             exp.fulfill()
         }

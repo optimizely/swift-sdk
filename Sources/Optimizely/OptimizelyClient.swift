@@ -883,6 +883,7 @@ extension OptimizelyClient {
                                   variableType: String? = nil,
                                   variableValue: Any? = nil,
                                   variableValues: [String: Any]? = nil,
+                                  reasons: [String]? = nil,
                                   sentEvent: Bool = false,
                                   async: Bool = true) {
         self.sendNotification(type: .decision,
@@ -898,6 +899,7 @@ extension OptimizelyClient {
                                                            variableType: variableType,
                                                            variableValue: variableValue,
                                                            variableValues: variableValues,
+                                                           reasons: reasons,
                                                            sentEvent: sentEvent)],
                               async: async)
     }
@@ -916,6 +918,7 @@ extension OptimizelyClient {
                           variableValue: Any? = nil,
                           variableValues: [String: Any]? = nil,
                           ruleKey: String? = nil,
+                          reasons: [String]? = nil,
                           sentEvent: Bool = false) -> [String: Any] {
         
         var decisionInfo = [String: Any]()
@@ -970,6 +973,7 @@ extension OptimizelyClient {
             decisionInfo[Constants.DecisionInfoKeys.variables] = variableValues
             decisionInfo[Constants.DecisionInfoKeys.variationKey] = variation?.key
             decisionInfo[Constants.DecisionInfoKeys.ruleKey] = ruleKey
+            decisionInfo[Constants.DecisionInfoKeys.reasons] = reasons
             decisionInfo[Constants.DecisionInfoKeys.sentEvent] = sentEvent
         }
         

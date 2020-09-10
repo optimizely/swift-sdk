@@ -42,26 +42,8 @@ class OptimizelyUserContextTests: XCTestCase {
         
         XCTAssert(user.userId == expUserId)
         XCTAssert(user.attributes.count == 0)
-        XCTAssert(user.defaultDecideOptions.count == 0)
     }
     
-    func testOptimizelyUserContext_nilUserId() {
-        clearOptimizelyUUID()
-        
-        var user = OptimizelyUserContext(userId: nil)
-        
-        let expUserId1 = getOptimizelyUUID()
-        XCTAssert(user.userId == expUserId1)
-        XCTAssert(user.attributes.count == 0)
-        XCTAssert(user.defaultDecideOptions.count == 0)
-        
-        user = OptimizelyUserContext(userId: nil)
-        
-        let expUserId2 = getOptimizelyUUID()
-        XCTAssert(user.userId == expUserId2)
-        XCTAssert(expUserId1 == expUserId2)
-    }
-
     func testOptimizelyUserContext_nilAttributes() {
         let user = OptimizelyUserContext(userId: expUserId, attributes: nil)
         
@@ -111,81 +93,8 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.attributes["state"] as! String == "ca")
     }
 
-    func testOptimizelyUserContext_setDefaultDecideOptions() {
-        let expOptions: [OptimizelyDecideOption] = [.bypassUPS,
-                                                    .disableTracking,
-                                                    .enabledOnly,
-                                                    .includeReasons]
-        var user = OptimizelyUserContext(userId: expUserId)
-        user.setDefaultDecideOptions(expOptions)
-        
-        XCTAssert(user.userId == expUserId)
-        XCTAssert(user.defaultDecideOptions == expOptions)
-    }
-    
 }
     
-// MARK: - setUserContext
-    
-extension OptimizelyUserContextTests {
-    
-    func testSetUserContext() {
-        let attributes: [String: Any] = [
-            "country": "us",
-            "age": 100,
-            "old": true
-        ]
-        let user = OptimizelyUserContext(userId: expUserId, attributes: attributes)
-        
-        let optimizely = OptimizelyClient(sdkKey: "sdk-key")
-        try! optimizely.start(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
-        try! optimizely.setUserContext(user)
-        
-        XCTAssert(optimizely.userContext == user)
-    }
-    
-    func testSetUserContext_replace() {
-        let attributes: [String: Any] = [
-            "country": "us",
-            "age": 100,
-            "old": true
-        ]
-        let user1 = OptimizelyUserContext(userId: expUserId, attributes: attributes)
-        let user2 = OptimizelyUserContext(userId: expUserId2, attributes: [:])
-
-        let optimizely = OptimizelyClient(sdkKey: "sdk-key")
-        try! optimizely.start(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
-        try! optimizely.setUserContext(user1)
-        XCTAssert(optimizely.userContext == user1)
-        
-        try! optimizely.setUserContext(user2)
-        XCTAssert(optimizely.userContext == user2)
-    }
-    
-    func testSetUserContext_emptyUserId() {
-        let optimizely = OptimizelyClient(sdkKey: "sdk-key")
-        try! optimizely.start(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
-        
-        let user1 = OptimizelyUserContext(userId: nil, attributes: [:])
-        try! optimizely.setUserContext(user1)
-        
-        let userId1 = optimizely.userContext!.userId
-        XCTAssertNotNil(userId1)
-        XCTAssert(userId1.count > 10)
-        
-        let user2 = OptimizelyUserContext(userId: nil, attributes: [:])
-        try! optimizely.setUserContext(user2)
-
-        let userId2 = optimizely.userContext!.userId
-        XCTAssert(userId1 == userId2)
-        
-        print("UUID: \(userId1)")
-        
-        clearOptimizelyUUID()   // clean up UUID store after testing
-    }
-    
-}
-
 // Mark: - Utils
 
 extension OptimizelyUserContextTests {

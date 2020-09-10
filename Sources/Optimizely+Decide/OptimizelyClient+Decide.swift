@@ -38,4 +38,13 @@ extension OptimizelyClient {
         userContext = user
     }
     
+    /// Set the default decide-options which are commonly applied to all following decide API calls.
+    ///
+    /// These options will be overridden when each decide-API call provides own options.
+    ///
+    /// - Parameter options: An array of default decision options.
+    public func setDefaultDecideOptions(_ options: [OptimizelyDecideOption]) {
+        defaultDecideOptions = options
+    }
+    
 }

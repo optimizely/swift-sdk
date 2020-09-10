@@ -19,29 +19,13 @@
 import Foundation
 
 /// A struct for user contexts that the SDK will use to make decisions for.
-///
-/// If the userId parameter is nil, a random user-id will be created in the SDK (UUID).
-/// The created value will be saved to be used as a deterministic user-id.
 public struct OptimizelyUserContext {
     var userId: String
     var attributes: [String: Any]
-    var defaultDecideOptions: [OptimizelyDecideOption]
-    
-    public init(userId: String?, attributes: [String: Any]? = nil) {
-        var validUserId = userId
-        if validUserId == nil {
-            let uuidKey = "optimizely-uuid"
-            var uuid = UserDefaults.standard.string(forKey: uuidKey)
-            if uuid == nil {
-                uuid = UUID().uuidString
-                UserDefaults.standard.set(uuid, forKey: uuidKey)
-            }
-            validUserId = uuid
-        }
 
-        self.userId = validUserId!
+    public init(userId: String, attributes: [String: Any]? = nil) {
+        self.userId = userId
         self.attributes = attributes ?? [:]
-        self.defaultDecideOptions = []
     }
     
     /// Set an attribute for a given key.
@@ -52,22 +36,13 @@ public struct OptimizelyUserContext {
         attributes[key] = value
     }
     
-    /// Set the default decide-options which are commonly applied to all following decide API calls.
-    ///
-    /// These options will be overridden when each decide-API call provides own options.
-    ///
-    /// - Parameter options: An array of default decision options.
-    public mutating func setDefaultDecideOptions(_ options: [OptimizelyDecideOption]) {
-        defaultDecideOptions.append(contentsOf: options)
-    }
 }
 
 extension OptimizelyUserContext: Equatable {
     
     public static func ==(lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
         return lhs.userId == rhs.userId &&
-            (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes) &&
-            Set(lhs.defaultDecideOptions) == Set(rhs.defaultDecideOptions)
+            (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes)
     }
     
 }

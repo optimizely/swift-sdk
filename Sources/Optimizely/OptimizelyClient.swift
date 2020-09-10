@@ -44,6 +44,8 @@ open class OptimizelyClient: NSObject {
             atomicUserContext.property = newValue
         }
     }
+    
+    var defaultDecideOptions = [OptimizelyDecideOption]()
 
     public var version: String {
         return Utils.sdkVersion

@@ -333,7 +333,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         
         var decision = optimizely.decide(key: featureKey, user: user)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.bypassUPS, .includeReasons])
+        decision = optimizely.decide(key: featureKey, user: user, options: [.ignoreUPS, .includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoVariationInExperiment(kUserId,
                                                                                              experimentKey,
                                                                                              variationKey).reason))
@@ -380,7 +380,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         let groupId = "13142870430"
         setExperimentForFeatureTest(featureKey: featureKey, experimentKey: experimentKey)
 
-        let decision = optimizely.decide(key: featureKey, user: user, options: [.bypassUPS, .includeReasons])
+        let decision = optimizely.decide(key: featureKey, user: user, options: [.ignoreUPS, .includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoExperimentInGroup(kUserId,
                                                                                          experimentKey,
                                                                                          groupId).reason))

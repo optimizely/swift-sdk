@@ -59,7 +59,7 @@ extension OptimizelyClientTests_Decide_Legacy {
     
     func testTrackWithUserContext() {
         let user = OptimizelyUserContext(userId: kUserId, attributes: kAttributes)
-        try? optimizely.setUserContext(user)
+        optimizely.setUserContext(user)
 
         try! self.optimizely.track(eventKey: kEventKey,
                                    user: nil,

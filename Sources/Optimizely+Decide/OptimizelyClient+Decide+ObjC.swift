@@ -20,7 +20,7 @@ import Foundation
 @objcMembers public class ObjcOptimizelyUserContext: NSObject {
     var userContext: OptimizelyUserContext
     
-    public var userId: String? {
+    public var userId: String {
         return userContext.userId
     }
     
@@ -28,11 +28,7 @@ import Foundation
         return userContext.attributes
     }
     
-    public var defaultDecideOptions: [Int] {
-        return mapOptionsSwiftToObjc(userContext.defaultDecideOptions) ?? []
-    }
-    
-    public init(userId: String?, attributes: [String: Any]? = nil) {
+    public init(userId: String, attributes: [String: Any]? = nil) {
         userContext = OptimizelyUserContext(userId: userId, attributes: attributes)
     }
     
@@ -44,10 +40,6 @@ import Foundation
     public func setAttribute(key: String, value: Any) {
         userContext.setAttribute(key: key, value: value)
     }
-    
-    public func setDefaultDecideOptions(_ options: [Int]) {
-        userContext.setDefaultDecideOptions(mapOptionsObjcToSwift(options) ?? [])
-    }
 }
 
 @objc(OptimizelyDecision)
@@ -57,7 +49,7 @@ import Foundation
     public let variationKey: String?
     public let ruleKey: String?
 
-    public let key: String
+    public let flagKey: String
     public let user: ObjcOptimizelyUserContext?
     public let reasons: [String]
     
@@ -72,7 +64,7 @@ import Foundation
         variationKey = decision.variationKey
         ruleKey = decision.ruleKey
         
-        key = decision.key
+        flagKey = decision.flagKey
         user = ObjcOptimizelyUserContext(user: decision.user)
         reasons = decision.reasons
     }
@@ -82,9 +74,15 @@ import Foundation
 extension OptimizelyClient {
     
     @available(swift, obsoleted: 1.0)
-    @objc(setUserContext:error:)
-    public func objcSetUserContext(_ user: ObjcOptimizelyUserContext) throws {
-        try setUserContext(user.userContext)
+    @objc(setUserContext:)
+    public func objcSetUserContext(_ user: ObjcOptimizelyUserContext) {
+        setUserContext(user.userContext)
+    }
+    
+    @available(swift, obsoleted: 1.0)
+    @objc(setDefaultDecideOptions:)
+    public func objcSetDefaultDecideOptions(_ options: [Int]) {
+        setDefaultDecideOptions(mapOptionsObjcToSwift(options) ?? [])
     }
 
     @available(swift, obsoleted: 1.0)

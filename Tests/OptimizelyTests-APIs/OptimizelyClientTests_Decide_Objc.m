@@ -63,49 +63,22 @@ static NSString * datafile;
     XCTAssert([user.attributes[@"age"] isEqualToString:@"18"]);
 }
 
-- (void)testUserContext_setDefaultDecideOptions {
-    OptimizelyUserContext *user = [[OptimizelyUserContext alloc] initWithUserId:kUserId
-                                                                     attributes:nil];
-    NSArray *options = @[@(OptimizelyDecideOptionBypassUPS), @(OptimizelyDecideOptionEnabledOnly)];
-    [user setDefaultDecideOptions:options];
-    
-    XCTAssert([user.userId isEqualToString:kUserId]);
-    XCTAssert(user.defaultDecideOptions.count == options.count);
-    XCTAssert(user.defaultDecideOptions[0] == options[0]);
-    XCTAssert(user.defaultDecideOptions[1] == options[1]);
-}
-
-
-- (void)testSetUserContext {
-    // success
-    OptimizelyUserContext *user = [[OptimizelyUserContext alloc] initWithUserId:kUserId attributes:nil];
-    NSError *error = nil;
-    BOOL status = [self.optimizely setUserContext:user error:&error];
-    XCTAssert(status);
-    
-    // failure
-    self.optimizely = [[OptimizelyClient alloc] initWithSdkKey: kSdkKey];
-    [self.optimizely startWithDatafile:@"invalid" error:nil];
-    status = [self.optimizely setUserContext:user error:&error];
-    XCTAssertFalse(status);
-    XCTAssertNotNil(error);
-}
-
 // MARK: - decide
 
 - (void)testDecide {
     OptimizelyUserContext *user = [[OptimizelyUserContext alloc] initWithUserId:kUserId attributes:nil];
-    [self.optimizely setUserContext:user error:nil];
+    [self.optimizely setUserContext:user];
 
     NSString *featureKey = @"feature_2";
     OptimizelyDecision *decision = [self.optimizely decideWithKey:featureKey user:nil options:nil];
+    
     XCTAssertNotNil(decision.enabled);
     XCTAssertTrue(decision.enabled);
     XCTAssertNotNil(decision.variables);
     NSDictionary *variables = [decision.variables toMap];
     XCTAssert([variables[@"i_42"] intValue] == 42);
     XCTAssert([decision.variationKey isEqualToString:@"variation_with_traffic"]);
-    XCTAssert([decision.key isEqualToString:featureKey]);
+    XCTAssert([decision.flagKey isEqualToString:featureKey]);
     XCTAssert([decision.user.userId isEqualToString:kUserId]);
     XCTAssert(decision.reasons.count == 0);
 }
@@ -113,10 +86,11 @@ static NSString * datafile;
 - (void)testDecide_userNotSet {
     NSString *featureKey = @"feature_2";
     OptimizelyDecision *decision = [self.optimizely decideWithKey:featureKey user:nil options:nil];
+    
     XCTAssertNil(decision.enabled);
     XCTAssertNil(decision.variables);
     XCTAssertNil(decision.variationKey);
-    XCTAssert([decision.key isEqualToString:featureKey]);
+    XCTAssert([decision.flagKey isEqualToString:featureKey]);
     XCTAssertNil(decision.user);
     XCTAssert(decision.reasons.count == 1);
     XCTAssert([decision.reasons[0] isEqualToString:kErrorMessageUserNotSet]);
@@ -134,7 +108,7 @@ static NSString * datafile;
     NSDictionary *variables = [decision.variables toMap];
     XCTAssert([variables[@"i_42"] intValue] == 42);
     XCTAssert([decision.variationKey isEqualToString:@"variation_with_traffic"]);
-    XCTAssert([decision.key isEqualToString:featureKey]);
+    XCTAssert([decision.flagKey isEqualToString:featureKey]);
     XCTAssert([decision.user.userId isEqualToString:kUserId]);
     XCTAssert(decision.reasons.count == 0);
 }
@@ -146,11 +120,11 @@ static NSString * datafile;
     NSString *featureKey2 = @"feature_2";
 
     OptimizelyUserContext *user = [[OptimizelyUserContext alloc] initWithUserId:kUserId attributes:@{@"gender": @"f"}];
-    [self.optimizely setUserContext:user error:nil];
+    [self.optimizely setUserContext:user];
 
     NSDictionary<NSString*,OptimizelyDecision*> *decisions;
     decisions = [self.optimizely decideAllWithKeys:@[featureKey1, featureKey2]
-                                              user:user
+                                              user:nil
                                            options:nil];
     XCTAssert(decisions.count == 2);
     XCTAssertNotNil(decisions[featureKey1].enabled);
@@ -159,10 +133,10 @@ static NSString * datafile;
 
 - (void)testDecideAll_nilKeys {
     OptimizelyUserContext *user = [[OptimizelyUserContext alloc] initWithUserId:kUserId attributes:@{@"gender": @"f"}];
-    [self.optimizely setUserContext:user error:nil];
+    [self.optimizely setUserContext:user];
 
     NSDictionary<NSString*,OptimizelyDecision*> *decisions = [self.optimizely decideAllWithKeys:nil
-                                                                                           user:user
+                                                                                           user:nil
                                                                                         options:nil];
     XCTAssert(decisions.count == 3);
     XCTAssertNotNil(decisions[@"feature_1"].enabled);
@@ -194,23 +168,33 @@ static NSString * datafile;
     NSArray *options = @[@(OptimizelyDecideOptionEnabledOnly)];
 
     OptimizelyUserContext *user = [[OptimizelyUserContext alloc] initWithUserId:kUserId attributes:@{@"gender": @"f"}];
-    [self.optimizely setUserContext:user error:nil];
+    [self.optimizely setUserContext:user];
     
-    NSDictionary<NSString*,OptimizelyDecision*> *decisions = [self.optimizely decideAllWithKeys:nil
+    NSDictionary<NSString*,OptimizelyDecision*> *decisions1 = [self.optimizely decideAllWithKeys:nil
+                                                                                            user:nil
+                                                                                         options:nil];
+    XCTAssert(decisions1.count == 3);
+
+    NSDictionary<NSString*,OptimizelyDecision*> *decisions2 = [self.optimizely decideAllWithKeys:nil
                                                                                            user:nil
                                                                                         options:options];
-    XCTAssert(decisions.count == 2);
-    XCTAssertNotNil(decisions[@"feature_1"].enabled);
-    XCTAssertNotNil(decisions[@"feature_2"].enabled);
+    XCTAssert(decisions2.count == 2);
+    XCTAssertNotNil(decisions2[@"feature_1"].enabled);
+    XCTAssertNotNil(decisions2[@"feature_2"].enabled);
 }
 
 - (void)testDecide_defaultOptions {
     NSArray *defaultOptions = @[@(OptimizelyDecideOptionEnabledOnly)];
 
     OptimizelyUserContext *user = [[OptimizelyUserContext alloc] initWithUserId:kUserId attributes:@{@"gender": @"f"}];
-    [user setDefaultDecideOptions:defaultOptions];
-    [self.optimizely setUserContext:user error:nil];
-    
+    [self.optimizely setUserContext:user];
+
+    NSDictionary<NSString*,OptimizelyDecision*> *decisions1 = [self.optimizely decideAllWithKeys:nil
+                                                                                            user:nil
+                                                                                         options:nil];
+    XCTAssert(decisions1.count == 3);
+
+    [self.optimizely setDefaultDecideOptions:defaultOptions];
     NSDictionary<NSString*,OptimizelyDecision*> *decisions = [self.optimizely decideAllWithKeys:nil
                                                                                            user:nil
                                                                                         options:nil];
@@ -227,7 +211,7 @@ static NSString * datafile;
                                         completionHandler:nil]);
 
     OptimizelyUserContext *user = [[OptimizelyUserContext alloc] initWithUserId:kUserId attributes:nil];
-    [self.optimizely setUserContext:user error:nil];
+    [self.optimizely setUserContext:user];
 
     NSError *error = nil;
     BOOL status = [self.optimizely trackWithEventKey:@"event1" user:nil eventTags:nil error:&error];

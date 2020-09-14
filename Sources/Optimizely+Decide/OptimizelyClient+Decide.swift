@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2020, Optimizely, Inc. and contributors                        *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2020, Optimizely, Inc. and contributors                        *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -31,11 +31,17 @@ extension OptimizelyClient {
     ///
     /// - Parameters:
     ///   - user: A user context.
-    /// - Throws: `OptimizelyError` if SDK fails to set the user context.
-    public func setUserContext(_ user: OptimizelyUserContext) throws {
-        guard self.config != nil else { throw OptimizelyError.sdkNotReady }
-                              
+    public func setUserContext(_ user: OptimizelyUserContext) {        
         userContext = user
+    }
+    
+    /// Set the default decide-options which are commonly applied to all following decide API calls.
+    ///
+    /// These options will be overridden when each decide-API call provides own options.
+    ///
+    /// - Parameter options: An array of default decision options.
+    public func setDefaultDecideOptions(_ options: [OptimizelyDecideOption]) {
+        defaultDecideOptions = options
     }
     
     /// Returns a decision result for a given flag key and a user context, which contains all data required to deliver the flag or experiment.
@@ -62,14 +68,14 @@ extension OptimizelyClient {
         guard let feature = config.getFeatureFlag(key: key) else {
             return OptimizelyDecision.errorDecision(key: key, user: user, error: .featureKeyInvalid(key))
         }
-
+        
         let userId = user.userId
         let attributes = user.attributes
         let allOptions = getAllOptions(with: options)
         let decisionReasons = DecisionReasons()
-        var tracked = false
+        var sentEvent = false
         var enabled = false
-
+        
         let decision = self.decisionService.getVariationForFeature(config: config,
                                                                    featureFlag: feature,
                                                                    userId: userId,
@@ -90,18 +96,20 @@ extension OptimizelyClient {
         if optimizelyJSON == nil {
             decisionReasons.addError(OptimizelyError.invalidJSONVariable)
         }
-
+        
+        let reasonsToReport = decisionReasons.getReasonsToReport(options: allOptions)
+        
         if let experimentDecision = decision?.experiment, let variationDecision = decision?.variation {
-            if !allOptions.contains(.disableTracking) {
+            if !allOptions.contains(.disableDecisionEvent) {
                 sendImpressionEvent(experiment: experimentDecision,
                                     variation: variationDecision,
                                     userId: userId,
                                     attributes: attributes)
-                tracked = true
+                sentEvent = true
             }
         }
         
-        sendDecisionNotification(decisionType: .featureDecide,
+        sendDecisionNotification(decisionType: .flag,
                                  userId: userId,
                                  attributes: attributes,
                                  experiment: decision?.experiment,
@@ -109,15 +117,16 @@ extension OptimizelyClient {
                                  feature: feature,
                                  featureEnabled: enabled,
                                  variableValues: variableMap,
-                                 tracked: tracked)
+                                 reasons: reasonsToReport,
+                                 sentEvent: sentEvent)
         
         return OptimizelyDecision(enabled: enabled,
                                   variables: optimizelyJSON,
                                   variationKey: decision?.variation?.key,
                                   ruleKey: nil,
-                                  key: feature.key,
+                                  flagKey: feature.key,
                                   user: user,
-                                  reasons: decisionReasons.getReasonsToReport(options: allOptions))
+                                  reasons: reasonsToReport)
     }
     
     /// Returns a key-map of decision results for multiple flag keys and a user context.
@@ -196,7 +205,7 @@ extension OptimizelyClient {
                     valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
                 }
             }
-
+            
             if let value = valueParsed {
                 variableMap[v.key] = value
             } else {
@@ -205,12 +214,12 @@ extension OptimizelyClient {
                 reasons.addError(info)
             }
         }
-
+        
         return variableMap
     }
     
     func getAllOptions(with options: [OptimizelyDecideOption]?) -> [OptimizelyDecideOption] {
-        return (userContext?.defaultDecideOptions ?? []) + (options ?? [])
+        return defaultDecideOptions + (options ?? [])
     }
     
 }

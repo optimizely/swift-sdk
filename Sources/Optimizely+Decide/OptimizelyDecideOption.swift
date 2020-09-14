@@ -20,13 +20,13 @@ import Foundation
 /// Options controlling flag decisions.
 @objc public enum OptimizelyDecideOption: Int {
     /// disable decision event tracking.
-    case disableTracking
+    case disableDecisionEvent
     
     /// returns decisions only for flags which are enabled.
     case enabledOnly
     
     /// skip user profile service for decision.
-    case bypassUPS
+    case ignoreUPS
     
     /// include info and debug messages in the decision reasons.
     case includeReasons

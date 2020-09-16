@@ -68,7 +68,7 @@ jobs:
       branches:
         only:
           - master
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=12.1 NAME='iPhone 7'
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.2 NAME='iPhone X'
       name: PLATFORM='iOS Simulator' OS=13.2 NAME='iPhone X'
       install:
         - gem install slather --no-document --quiet

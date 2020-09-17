@@ -154,6 +154,20 @@ class SemanticVersionTests: XCTestCase {
         XCTAssert(try version.compareVersion(targetedVersion: target) > 0)
     }
 
+    func testTargetBetaComplex() {
+        let target = "2.1.3-beta+1"
+        let version = "2.1.3-beta+1.2.3"
+        
+        XCTAssert(try version.compareVersion(targetedVersion: target) > 0)
+    }
+
+    func testTargetBuildComplex() {
+        let target = "2.1.3+build-1.2.3"
+        let version = "2.1.3+build-1"
+        
+        XCTAssert(try version.compareVersion(targetedVersion: target) < 0)
+    }
+
     func testOtherTests() {
         let targets = ["2.1", "2.1", "2", "2"]
         let versions = ["2.1.0", "2.1.215", "2.12", "2.785.13"]
@@ -162,10 +176,38 @@ class SemanticVersionTests: XCTestCase {
             XCTAssert(try versions[idx].compareVersion(targetedVersion: target) == 0)
         }
     }
-    
+    func testDifferentAttributeAgainstBuild() {
+        let target = "3.7.0"
+        let version = "3.7.0+build"
+        
+        XCTAssert(try (version.compareVersion(targetedVersion: target)) == 0)
+    }
+
+    func testDifferentAttributeAgainstPreRelease() {
+        let target = "3.7.0"
+        let version = "3.7.0-prerelease"
+        
+        XCTAssert(try (version.compareVersion(targetedVersion: target)) < 0)
+    }
+
+    func testDifferentAttributeAgainstPreReleaseToBuild() {
+        let target = "3.7.0-prerelease"
+        let version = "3.7.0+build"
+        
+        XCTAssert(try (version.compareVersion(targetedVersion: target)) > 0)
+    }
+
+    func testDifferentAttributeAgainstPreReleaseToPreRelease() {
+        let target = "3.7.0-prerelease+build"
+        let version = "3.7.0-prerelease-prelrease+rc"
+        
+        XCTAssert(try (version.compareVersion(targetedVersion: target)) > 0)
+    }
+
     func testInvalidAttributes() {
         let target = "2.1.0"
-        let versions = ["-", ".", "..", "+", "+test", " ", "2 .3. 0", "2.", ".2.2"]
+        let versions = ["-", ".", "..", "+", "+test", " ", "2 .3. 0", "2.", ".2.2", "3.7.2.2", "3.x",
+        ",", "+build-prerelese"]
         for (_, version) in versions.enumerated() {
             XCTAssert(((try? (version.compareVersion(targetedVersion: target)) < 0) == nil))
         }

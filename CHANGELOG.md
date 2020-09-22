@@ -1,5 +1,12 @@
 # Optimizely Swift SDK Changelog
 
+## 3.4.1
+September 22, 2020
+
+### Bug Fixes
+* Fix a bucketing error at traffic allocation boundaries. ([#365](https://github.com/optimizely/swift-sdk/pull/365))
+* Update DataStore directory on macOS. ([#355](https://github.com/optimizely/swift-sdk/pull/355))
+
 ## 3.4.0
 July 9, 2020
 

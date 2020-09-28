@@ -30,4 +30,7 @@ public enum OptimizelyDecideOption {
     
     /// include info and debug messages in the decision reasons.
     case includeReasons
+    
+    /// exclude variable values from the decision result.
+    case excludeVariables
 }

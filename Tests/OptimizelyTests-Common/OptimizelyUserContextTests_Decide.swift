@@ -16,7 +16,7 @@
     
 import XCTest
 
-class OptimizelyClientTests_Decide: XCTestCase {
+class OptimizelyUserContextTests_Decide: XCTestCase {
 
     let kUserId = "tester"
     
@@ -69,7 +69,8 @@ class OptimizelyClientTests_Decide: XCTestCase {
         let expOptions: [OptimizelyDecideOption] = [.ignoreUPS,
                                                     .disableDecisionEvent,
                                                     .enabledOnly,
-                                                    .includeReasons]
+                                                    .includeReasons,
+                                                    .excludeVariables]
         
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         XCTAssert(optimizely.defaultDecideOptions.count == 0)
@@ -83,7 +84,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
 
 // MARK: - decide
 
-extension OptimizelyClientTests_Decide {
+extension OptimizelyUserContextTests_Decide {
 
     func testDecide() {
         let featureKey = "feature_1"
@@ -102,45 +103,11 @@ extension OptimizelyClientTests_Decide {
         XCTAssert(decision.reasons.isEmpty)
     }
         
-    func testDecide_userSetInCallParameter() {
-        let featureKey = "feature_1"
-        let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
-
-        let user = optimizely.createUserContext(userId: kUserId)
-
-        let decision = user.decide(key: featureKey)
-        
-        XCTAssertEqual(decision.variationKey, "a")
-        XCTAssertEqual(decision.enabled, true)
-        let variables = decision.variables!
-        XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
-        
-        XCTAssertEqual(decision.flagKey, featureKey)
-        XCTAssertEqual(decision.user, user)
-        XCTAssert(decision.reasons.isEmpty)
-    }
-    
-    func testDecide_multpleUsers() {
-        let featureKey = "feature_1"
-        
-        let user1 = optimizely.createUserContext(userId: kUserId)
-        let user2 = optimizely.createUserContext(userId: "u1")
-        
-        let decision1 = user1.decide(key: featureKey)
-        let decision2 = user2.decide(key: featureKey)
-
-        XCTAssertEqual(decision1.variationKey, "a")
-        XCTAssertEqual(decision1.enabled, true)
-
-        XCTAssertEqual(decision2.variationKey, "aasdf")
-        XCTAssertEqual(decision2.enabled, true)
-    }
-    
 }
 
 // MARK: - impression events
 
-extension OptimizelyClientTests_Decide {
+extension OptimizelyUserContextTests_Decide {
     
     // NOTE: we here validate impression events only.
     //       all decision-notification tests are in "OptimizelyTests-Common/DecisionListenerTests"
@@ -162,7 +129,7 @@ extension OptimizelyClientTests_Decide {
     }
     
     func testDecide_doNotSendImpression() {
-        let featureKey = "common_name"   // no experiment
+        let featureKey = "common_name"   // no experiment (so no impression event)
 
         let user = optimizely.createUserContext(userId: kUserId)
         let decision = user.decide(key: featureKey)
@@ -178,7 +145,7 @@ extension OptimizelyClientTests_Decide {
 
 // MARK: - options
 
-extension OptimizelyClientTests_Decide {
+extension OptimizelyUserContextTests_Decide {
     
     func testDecide_sendImpression_disbleTracking() {
         let featureKey = "feature_1"
@@ -239,18 +206,51 @@ extension OptimizelyClientTests_Decide {
         XCTAssert(decision1.variationKey == variationKey2)
         XCTAssert(decision2.variationKey == variationKey1)
     }
+    
+    func testDecide_excludeVariables() {
+        let featureKey = "feature_1"
+        let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
+
+        let user = optimizely.createUserContext(userId: kUserId)
+        
+        var decision = user.decide(key: featureKey)
+        XCTAssertTrue(NSDictionary(dictionary: decision.variables!.toMap()).isEqual(to: variablesExpected.toMap()))
+        
+        decision = user.decide(key: featureKey, options: [.excludeVariables])
+        XCTAssertTrue(decision.variables!.toMap().isEmpty)
+    }
+    
+    func testDecide_defaultDecideOption() {
+        
+        let featureKey = "feature_1"
+        let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
+
+        var user = optimizely.createUserContext(userId: kUserId)
+        var decision = user.decide(key: featureKey)
+        XCTAssertTrue(NSDictionary(dictionary: decision.variables!.toMap()).isEqual(to: variablesExpected.toMap()))
+        
+        // new optimizley instance with defaultDecideOptions and a new user-context
+        
+        let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
+                                      defaultDecideOptions: [.excludeVariables])
+        try! optimizely.start(datafile: datafile)
+        user = optimizely.createUserContext(userId: kUserId)
+        decision = user.decide(key: featureKey)
+        XCTAssertTrue(decision.variables!.toMap().isEmpty)
+    }
 
 }
     
 // MARK: - debugging reasons
   
-extension OptimizelyClientTests_Decide {
+extension OptimizelyUserContextTests_Decide {
 
 }
 
 // MARK: - errors
   
-extension OptimizelyClientTests_Decide {
+extension OptimizelyUserContextTests_Decide {
     
     func testDecide_sdkNotReady() {
         let featureKey = "feature_1"
@@ -278,6 +278,8 @@ extension OptimizelyClientTests_Decide {
 
         let decision = user.decide(key: featureKey)
 
+        XCTAssertNil(decision.variationKey)
+        XCTAssertNil(decision.enabled)
         XCTAssert(decision.reasons.count == 1)
         XCTAssert(decision.reasons.first == OptimizelyError.featureKeyInvalid(featureKey).reason)
     }
@@ -286,7 +288,7 @@ extension OptimizelyClientTests_Decide {
 
 // MARK: - helpers
 
-extension OptimizelyClientTests_Decide {
+extension OptimizelyUserContextTests_Decide {
     func getProfileVariation(userId: String, experimentId: String) -> String? {
         if let profile = decisionService.userProfileService.lookup(userId: userId),
             let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,

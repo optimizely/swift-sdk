@@ -70,7 +70,7 @@ class OptimizelyUserContextTests: XCTestCase {
     }
 
     func testOptimizelyUserContext_setAttribute() {
-        var user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: nil)
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: nil)
         user.setAttribute(key: "state", value: "ca")
         user.setAttribute(key: "num", value: 200)
         user.setAttribute(key: "many", value: false)
@@ -88,7 +88,7 @@ class OptimizelyUserContextTests: XCTestCase {
             "age": 100,
             "old": true
         ]
-        var user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
         user.setAttribute(key: "state", value: "ca")
 
         XCTAssert(user.optimizely == expOptimizely)

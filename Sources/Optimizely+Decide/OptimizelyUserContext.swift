@@ -71,7 +71,7 @@ public class OptimizelyUserContext {
         let decisionReasons = DecisionReasons()
         var sentEvent = false
         var enabled = false
-        
+    
         let decision = optimizely.decisionService.getVariationForFeature(config: config,
                                                                          featureFlag: feature,
                                                                          userId: userId,
@@ -82,10 +82,13 @@ public class OptimizelyUserContext {
             enabled = featureEnabled
         }
         
-        let variableMap = getDecisionVariableMap(feature: feature,
+        var variableMap = [String : Any]()
+        if !allOptions.contains(.excludeVariables) {
+            variableMap = getDecisionVariableMap(feature: feature,
                                                  variation: decision?.variation,
                                                  enabled: enabled,
                                                  reasons: decisionReasons)
+        }
         
         let optimizelyJSON = OptimizelyJSON(map: variableMap)
         if optimizelyJSON == nil {
@@ -182,7 +185,7 @@ extension OptimizelyUserContext {
     func getAllOptions(with options: [OptimizelyDecideOption]?) -> [OptimizelyDecideOption] {
         return (optimizely?.defaultDecideOptions ?? []) + (options ?? [])
     }
-
+    
 }
 
 extension OptimizelyUserContext: Equatable {

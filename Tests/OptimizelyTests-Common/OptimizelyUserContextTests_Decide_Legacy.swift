@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyClientTests_Decide_Legacy: XCTestCase {
+class OptimizelyUserContextTests_Decide_Legacy: XCTestCase {
     
     let kUserId = "tester"
     let kAttributes = ["country": "US"]
@@ -55,7 +55,7 @@ class OptimizelyClientTests_Decide_Legacy: XCTestCase {
 
 // MARK: - legacy APIs with UserContext
 
-extension OptimizelyClientTests_Decide_Legacy {
+extension OptimizelyUserContextTests_Decide_Legacy {
     
     func testTrackWithUserContext() {
         let user = OptimizelyUserContext(userId: kUserId, attributes: kAttributes)

@@ -450,4 +450,13 @@ extension UserAttributeTests_Evaluate {
         XCTAssertFalse(try! model.evaluate(attributes: attributes))
     }
 
+    func testEqualSemanticVersionInvalidType() {
+        let model = UserAttribute(name: "version", type: "custom_attribute", match: "semver_eq", value: .string("2.0"))
+
+        var attributes:[String: Any] = ["version": true]
+        XCTAssertNil(try? model.evaluate(attributes: attributes))
+        attributes["version"] = 37
+        XCTAssertNil(try? model.evaluate(attributes: attributes))
+    }
+
 }

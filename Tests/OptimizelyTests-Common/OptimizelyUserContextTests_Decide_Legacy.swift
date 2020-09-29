@@ -58,42 +58,13 @@ class OptimizelyUserContextTests_Decide_Legacy: XCTestCase {
 extension OptimizelyUserContextTests_Decide_Legacy {
     
     func testTrackWithUserContext() {
-        let user = OptimizelyUserContext(userId: kUserId, attributes: kAttributes)
-        try? optimizely.setUserContext(user)
-
-        try! self.optimizely.track(eventKey: kEventKey,
-                                   user: nil,
-                                   eventTags: kEventTags)
+        let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributes)
+        try! user.trackEvent(eventKey: kEventKey, eventTags: kEventTags)
         
         XCTAssertEqual(optimizely.trackEventKey, kEventKey)
         XCTAssertEqual(optimizely.trackUserId, kUserId)
         XCTAssertEqual(optimizely.trackAttributes, kAttributes)
         XCTAssertEqual(optimizely.trackEventTags, kEventTags)
-    }
-    
-    func testTrackWithUserContext_withUserContextInParamater() {
-        let user = OptimizelyUserContext(userId: kUserId, attributes: kAttributes)
-        try! self.optimizely.track(eventKey: kEventKey,
-                                   user: user,
-                                   eventTags: kEventTags)
-        
-        XCTAssertEqual(optimizely.trackEventKey, kEventKey)
-        XCTAssertEqual(optimizely.trackUserId, kUserId)
-        XCTAssertEqual(optimizely.trackAttributes, kAttributes)
-        XCTAssertEqual(optimizely.trackEventTags, kEventTags)
-    }
-    
-    func testTrackWithUserContext_userNotSet() {
-        do {
-            try self.optimizely.track(eventKey: kEventKey,
-                                   user: nil,
-                                   eventTags: kEventTags)
-            XCTAssert(false)
-        } catch OptimizelyError.userNotSet {
-            XCTAssert(true)
-        } catch {
-            XCTAssert(false)
-        }
     }
         
 }

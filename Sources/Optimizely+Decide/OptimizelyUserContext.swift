@@ -177,8 +177,25 @@ public class OptimizelyUserContext {
         return decideAll(keys: keys, options: options)
     }
 
-    public func trackEvent(eventKey: String, eventTags:  [String: Any]? = nil) {
+    /// Track an event.
+    ///
+    /// - Parameters:
+    ///   - eventKey: The event name.
+    ///   - eventTags: A map of event tag names to event tag values (NSString or NSNumber containing float, double, integer, or boolean).
+    /// - Throws: `OptimizelyError` if an error is detected.
+    public func trackEvent(eventKey: String,
+                           eventTags: OptimizelyEventTags? = nil) throws {
+        
+        guard let optimizely = self.optimizely, let _ = optimizely.config else {
+            throw OptimizelyError.sdkNotReady
+        }
+
+        try optimizely.track(eventKey: eventKey,
+                             userId: userId,
+                             attributes: attributes,
+                             eventTags: eventTags)
     }
+
 }
 
 extension OptimizelyUserContext {

@@ -157,31 +157,29 @@ extension UserAttribute {
             return try value!.isLessOrEqual(than: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
         // semantic versioning seems unique.  the comarison is to compare verion but the passed in version is the target version.
         case .semver_eq:
-            guard let targetValue = AttributeValue(value: rawAttributeValue) else {
-                throw OptimizelyError.evaluateAttributeInvalidCondition("attribute value \(nameFinal) invalid type")
-             }
+            let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
             return try targetValue.isSemanticVersionEqual(than: value!.stringValue)
         case .semver_lt:
-            guard let targetValue = AttributeValue(value: rawAttributeValue) else {
-                throw OptimizelyError.evaluateAttributeInvalidCondition("attribute value \(nameFinal) invalid type")
-             }
+            let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
             return try targetValue.isSemanticVersionLess(than: value!.stringValue)
         case .semver_le:
-            guard let targetValue = AttributeValue(value: rawAttributeValue) else {
-                throw OptimizelyError.evaluateAttributeInvalidCondition("attribute value \(nameFinal) invalid type")
-             }
+            let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
             return try targetValue.isSemanticVersionLessOrEqual(than: value!.stringValue)
         case .semver_gt:
-            guard let targetValue = AttributeValue(value: rawAttributeValue) else {
-                throw OptimizelyError.evaluateAttributeInvalidCondition("attribute value \(nameFinal) invalid type")
-             }
+            let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
             return try targetValue.isSemanticVersionGreater(than: value!.stringValue)
         case .semver_ge:
-            guard let targetValue = AttributeValue(value: rawAttributeValue) else {
-                throw OptimizelyError.evaluateAttributeInvalidCondition("attribute value \(nameFinal) invalid type")
-             }
+            let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
             return try targetValue.isSemanticVersionGreaterOrEqual(than: value!.stringValue)
         }
+    }
+    
+    private func targetAsAttributeValue(value:Any?, attribute:AttributeValue?, nameFinal:String) throws -> AttributeValue {
+        guard let targetValue = AttributeValue(value: value), targetValue.isComparable(with: attribute!) else {
+            throw OptimizelyError.evaluateAttributeInvalidCondition("attribute value \(nameFinal) invalid type")
+         }
+
+        return targetValue
     }
     
 }

@@ -67,7 +67,7 @@ struct Constants {
         static let variationKey = "variationKey"
         static let ruleKey = "ruleKey"
         static let reasons = "reasons"
-        static let sentEvent = "sentEvent"
+        static let decisionEventDispatched = "decisionEventDispatched"
     }
     
     struct ExperimentDecisionInfoKeys {

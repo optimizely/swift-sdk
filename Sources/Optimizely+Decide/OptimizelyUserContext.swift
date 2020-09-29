@@ -19,10 +19,20 @@ import Foundation
 
 /// A struct for user contexts that the SDK will use to make decisions for.
 public struct OptimizelyUserContext {
+    weak var optimizely: OptimizelyClient?
     var userId: String
     var attributes: [String: Any]
-
-    public init(userId: String, attributes: [String: Any]? = nil) {
+    
+    /// OptimizelyUserContext init
+    ///
+    /// - Parameters:
+    ///   - optimizely: an instance of OptimizelyClient to be used for decisions.
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: A map of attribute names to current user attribute values.
+    public init(optimizely: OptimizelyClient,
+                userId: String,
+                attributes: [String: Any]? = nil) {
+        self.optimizely = optimizely
         self.userId = userId
         self.attributes = attributes ?? [:]
     }
@@ -35,6 +45,20 @@ public struct OptimizelyUserContext {
         attributes[key] = value
     }
     
+    public func decide(key: String, options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
+        return OptimizelyDecision.errorDecision(key: key, user: nil, error: .sdkNotReady)
+    }
+
+    public func decideAll(keys: [String], options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+        return [:]
+    }
+
+    public func decideAll(options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+        return [:]
+    }
+
+    public func trackEvent(eventKey: String, eventTags:  [String: Any]? = nil) {
+    }
 }
 
 extension OptimizelyUserContext: Equatable {

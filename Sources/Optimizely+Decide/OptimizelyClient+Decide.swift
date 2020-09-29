@@ -30,18 +30,12 @@ extension OptimizelyClient {
     /// - If a user-context has not been set yet and decide APIs are called without a user-context parameter, SDK will return an error decision (__userNotSet__).
     ///
     /// - Parameters:
-    ///   - user: A user context.
-    public func setUserContext(_ user: OptimizelyUserContext) {        
-        userContext = user
-    }
-    
-    /// Set the default decide-options which are commonly applied to all following decide API calls.
-    ///
-    /// These options will be overridden when each decide-API call provides own options.
-    ///
-    /// - Parameter options: An array of default decision options.
-    public func setDefaultDecideOptions(_ options: [OptimizelyDecideOption]) {
-        defaultDecideOptions = options
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: A map of attribute names to current user attribute values.
+    /// - Returns: An OptimizelyUserContext associated with this OptimizelyClient
+    public func createUserContext(userId: String,
+                                  attributes: [String: Any]? = nil) -> OptimizelyUserContext {
+        return OptimizelyUserContext(optimizely: self, userId: userId, attributes: attributes)
     }
     
     /// Returns a decision result for a given flag key and a user context, which contains all data required to deliver the flag or experiment.

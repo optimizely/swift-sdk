@@ -34,68 +34,51 @@ class OptimizelyClientTests_Decide: XCTestCase {
         decisionService = (optimizely.decisionService as! DefaultDecisionService)
         try! optimizely.start(datafile: datafile)
     }
-    
-}
-
-// MARK: - setUserContext
-
-extension OptimizelyClientTests_Decide {
-    
-    func testSetUserContext() {
+   
+    func testCreateUserContext() {
+        let userId = "tester"
         let attributes: [String: Any] = [
             "country": "us",
             "age": 100,
             "old": true
         ]
-        let user = OptimizelyUserContext(userId: "tester", attributes: attributes)
         
-        optimizely.setUserContext(user)
-        XCTAssert(optimizely.userContext == user)
+        let user = optimizely.createUserContext(userId: "tester", attributes: attributes)
+        
+        XCTAssert(user.optimizely == optimizely)
+        XCTAssert(user.userId == userId)
+        XCTAssert(user.attributes["country"] as! String == "us")
+        XCTAssert(user.attributes["age"] as! Int == 100)
+        XCTAssert(user.attributes["old"] as! Bool == true)
     }
     
-    func testSetUserContext_replace() {
+    func testCreateUserContext_multiple() {
         let attributes: [String: Any] = [
             "country": "us",
             "age": 100,
             "old": true
         ]
-        let user1 = OptimizelyUserContext(userId: "tester1", attributes: attributes)
-        let user2 = OptimizelyUserContext(userId: "tester2", attributes: [:])
+        let user1 = optimizely.createUserContext(userId: "tester1", attributes: attributes)
+        let user2 = optimizely.createUserContext(userId: "tester2", attributes: [:])
         
-        optimizely.setUserContext(user1)
-        XCTAssert(optimizely.userContext == user1)
-        
-        optimizely.setUserContext(user2)
-        XCTAssert(optimizely.userContext == user2)
+        XCTAssert(user1.userId == "tester1")
+        XCTAssert(user2.userId == "tester2")
     }
     
-}
-    
-// MARK: - setDefaultDecideOptions
-
-extension OptimizelyClientTests_Decide {
-
-    func testSetDefaultDecideOptions() {
+    func testDefaultDecideOptions() {
         let expOptions: [OptimizelyDecideOption] = [.ignoreUPS,
                                                     .disableDecisionEvent,
                                                     .enabledOnly,
                                                     .includeReasons]
-        optimizely.setDefaultDecideOptions(expOptions)
         
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        XCTAssert(optimizely.defaultDecideOptions.count == 0)
+
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
+                                      defaultDecideOptions: expOptions)
         XCTAssert(optimizely.defaultDecideOptions == expOptions)
     }
     
-    func testSetDefaultDecideOptions_replace() {
-        let options1: [OptimizelyDecideOption] = [.ignoreUPS, .disableDecisionEvent]
-        let options2: [OptimizelyDecideOption] = [.enabledOnly]
-
-        optimizely.setDefaultDecideOptions(options1)
-        XCTAssert(optimizely.defaultDecideOptions == options1)
-        
-        optimizely.setDefaultDecideOptions(options2)
-        XCTAssert(optimizely.defaultDecideOptions == options2)
-    }
-
 }
 
 // MARK: - decide

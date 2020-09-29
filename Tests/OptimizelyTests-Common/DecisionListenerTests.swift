@@ -1107,9 +1107,10 @@ class FakeManager: OptimizelyClient {
                   logger: OPTLogger? = nil,
                   eventDispatcher: OPTEventDispatcher? = nil,
                   userProfileService: OPTUserProfileService? = nil,
-                  defaultLogLevel: OptimizelyLogLevel? = nil) {
+                  defaultLogLevel: OptimizelyLogLevel? = nil,
+                  defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
         
-        super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)
+        super.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel, defaultDecideOptions: defaultDecideOptions)
         HandlerRegistryService.shared.removeAll()
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()

@@ -123,7 +123,7 @@ public class OptimizelyUserContext {
                                   variationKey: decision?.variation?.key,
                                   ruleKey: nil,
                                   flagKey: feature.key,
-                                  user: self,
+                                  userContext: self,
                                   reasons: reasonsToReport)
     }
 

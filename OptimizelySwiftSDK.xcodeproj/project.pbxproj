@@ -2581,7 +2581,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1160;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
 					6E14CD622423F80B00010234 = {

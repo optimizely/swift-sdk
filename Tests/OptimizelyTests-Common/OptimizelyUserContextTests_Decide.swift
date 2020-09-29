@@ -99,7 +99,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
         
         XCTAssertEqual(decision.flagKey, featureKey)
-        XCTAssertEqual(decision.user, user)
+        XCTAssertEqual(decision.userContext, user)
         XCTAssert(decision.reasons.isEmpty)
     }
         
@@ -265,7 +265,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertNil(decision.enabled)
         XCTAssertNil(decision.variables)
         XCTAssertEqual(decision.flagKey, featureKey)
-        XCTAssertEqual(decision.user, user)
+        XCTAssertEqual(decision.userContext, user)
         
         XCTAssert(decision.reasons.count == 1)
         XCTAssert(decision.reasons.first == OptimizelyError.sdkNotReady.reason)

@@ -883,7 +883,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "a")  //exp = "exp_with_audience"
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey)
@@ -913,7 +913,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "a")  //exp = "exp_with_audience"
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey)
@@ -948,7 +948,7 @@ extension DecisionListenerTests {
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.variationKey])
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey)
@@ -985,7 +985,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "a")  //exp = "exp_with_audience"
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey)
@@ -1015,7 +1015,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "a")  //exp = "exp_with_audience"
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey)
@@ -1035,7 +1035,7 @@ extension DecisionListenerTests {
         
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey)
@@ -1047,7 +1047,7 @@ extension DecisionListenerTests {
 
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey, options: [.disableDecisionEvent])
@@ -1085,7 +1085,7 @@ extension DecisionListenerTests {
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.variationKey])
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
             exp.fulfill()
         }
         

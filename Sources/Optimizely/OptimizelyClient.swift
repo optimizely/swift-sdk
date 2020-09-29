@@ -979,7 +979,7 @@ extension OptimizelyClient {
             decisionInfo[Constants.DecisionInfoKeys.variationKey] = variation?.key
             decisionInfo[Constants.DecisionInfoKeys.ruleKey] = ruleKey
             decisionInfo[Constants.DecisionInfoKeys.reasons] = reasons
-            decisionInfo[Constants.DecisionInfoKeys.sentEvent] = sentEvent
+            decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] = sentEvent
         }
         
         return decisionInfo

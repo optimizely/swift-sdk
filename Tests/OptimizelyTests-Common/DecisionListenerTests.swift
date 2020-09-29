@@ -850,7 +850,7 @@ class DecisionListenerTests: XCTestCase {
 extension DecisionListenerTests {
     
     func testDecisionListenerDecideWithUserInExperiment() {
-        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
         
         // (1) experiment variation with feature-enabled
         
@@ -886,7 +886,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, true)
             exp.fulfill()
         }
-        _ = self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
         
         // (2) experiment variation with feature-disabled
@@ -916,14 +916,14 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, true)
             exp.fulfill()
         }
-        _ = self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
     }
     
     func testDecisionListenerDecideWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
         
-        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
 
         self.optimizely.setDecisionServiceData(experiment: nil, variation: nil)
         
@@ -951,13 +951,13 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
             exp.fulfill()
         }
-        _ = self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = user.decide(key: kFeatureKey)
 
         wait(for: [exp], timeout: 1)
     }
 
     func testDecisionListenerDecideWithUserInRollout() {
-        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
 
         // (1) rollout variation with feature-enabled
         
@@ -988,7 +988,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
             exp.fulfill()
         }
-        _ = self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
         
         // (2) rollout variation with feature-disabled
@@ -1018,12 +1018,12 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
             exp.fulfill()
         }
-        _ = self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
     }
     
     func testDecisionListenerDecideWithUserInExperiment_disableDecisionEvent() {
-        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
         
         // (1) default (send-decision-event)
         
@@ -1038,7 +1038,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, true)
             exp.fulfill()
         }
-        _ = self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
 
         // (2) disable-decision-event)
@@ -1050,14 +1050,14 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.sentEvent] as! Bool, false)
             exp.fulfill()
         }
-        _ = self.optimizely.decide(key: kFeatureKey, user: user, options: [.disableDecisionEvent])
+        _ = user.decide(key: kFeatureKey, options: [.disableDecisionEvent])
         wait(for: [exp], timeout: 1)
     }
 
     func testDecisionListenerDecideWithInvalidType() {
         let exp = expectation(description: "x")
         
-        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
 
         for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
             if featureFlag.key == kFeatureKey {
@@ -1089,7 +1089,7 @@ extension DecisionListenerTests {
             exp.fulfill()
         }
         
-        _ = self.optimizely.decide(key: kFeatureKey, user: user)
+        _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
     }
     

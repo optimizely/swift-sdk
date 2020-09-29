@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyClientTests_Decide_Reasons: XCTestCase {
+class OptimizelyUserContextTests_Decide_Reasons: XCTestCase {
     
     let kUserId = "tester"
     
@@ -28,9 +28,9 @@ class OptimizelyClientTests_Decide_Reasons: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        user = OptimizelyUserContext(userId: kUserId)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       userProfileService: OTUtils.createClearUserProfileService())
+        user = optimizely.createUserContext(userId: kUserId)
         decisionService = optimizely.decisionService as? DefaultDecisionService
         ups = decisionService.userProfileService
         try! optimizely.start(datafile: OTUtils.loadJSONDatafile("decide_datafile")!)
@@ -40,27 +40,22 @@ class OptimizelyClientTests_Decide_Reasons: XCTestCase {
 
 // MARK: - error reasons (always included)
 
-extension OptimizelyClientTests_Decide_Reasons {
-    
+extension OptimizelyUserContextTests_Decide_Reasons {
+
     func testDecideReasons_sdkNotReady() {
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       userProfileService: OTUtils.createClearUserProfileService())
         try? optimizely.start(datafile: OTUtils.loadJSONDatafile("unsupported_datafile")!)
-        
-        let decision = optimizely.decide(key: "any-key", user: user)
+        user = optimizely.createUserContext(userId: kUserId)
+
+        let decision = user.decide(key: "any-key")
         XCTAssert(decision.hasFailed)
         XCTAssertEqual(decision.reasons, [OptimizelyError.sdkNotReady.reason])
     }
     
-    func testDecideReasons_userNotSet() {
-        let decision = optimizely.decide(key: "any-key")
-        XCTAssert(decision.hasFailed)
-        XCTAssertEqual(decision.reasons, [OptimizelyError.userNotSet.reason])
-    }
-    
     func testDecideReasons_featureKeyInvalid() {
         let key = "invalid-key"
-        let decision = optimizely.decide(key: key, user: user)
+        let decision = user.decide(key: key)
         XCTAssert(decision.hasFailed)
         XCTAssertEqual(decision.reasons, [OptimizelyError.featureKeyInvalid(key).reason])
     }
@@ -79,7 +74,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         optimizely.config!.rolloutIdMap = [rolloutId: rollout]
         
         user.setAttribute(key: "country", value: "US")
-        let decision = optimizely.decide(key: featureKey, user: user)
+        let decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.contains(OptimizelyError.variableValueInvalid(integerVariableKey).reason))
     }
     
@@ -87,16 +82,16 @@ extension OptimizelyClientTests_Decide_Reasons {
 
 // MARK: - error messages (only with "includeReasons")
 
-extension OptimizelyClientTests_Decide_Reasons {
-    
+extension OptimizelyUserContextTests_Decide_Reasons {
+
     func testDecideReasons_conditionNoMatchingAudience() {
         let featureKey = "feature_1"
         let audienceId = "invalid_id"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
 
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.conditionNoMatchingAudience(audienceId).reason))
     }
     
@@ -105,9 +100,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let audienceId = "invalid_format"
         setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
 
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.conditionInvalidFormat("Empty condition array").reason))
     }
     
@@ -119,9 +114,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let condition = "{\"match\":\"gt\",\"value\":\"US\",\"name\":\"age\",\"type\":\"custom_attribute\"}"
         user.setAttribute(key: "age", value: 25)
 
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeInvalidCondition(condition).reason))
     }
     
@@ -135,9 +130,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let attributeValue = 25
         user.setAttribute(key: attributeKey, value: attributeValue)
         
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeInvalidType(condition, attributeValue, attributeKey).reason))
     }
     
@@ -149,9 +144,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let condition = "{\"match\":\"gt\",\"value\":18,\"name\":\"age\",\"type\":\"custom_attribute\"}"
         user.setAttribute(key: "age", value: pow(2,54) as Double)   // TOO-BIG value
         
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeValueOutOfRange(condition, "age").reason))
     }
     
@@ -163,9 +158,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let condition = "{\"match\":\"gt\",\"value\":18,\"name\":\"age\",\"type\":\"invalid\"}"
         user.setAttribute(key: "age", value: 25)
         
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidType(condition).reason))
     }
     
@@ -177,9 +172,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let condition = "{\"match\":\"invalid\",\"value\":18,\"name\":\"age\",\"type\":\"custom_attribute\"}"
         user.setAttribute(key: "age", value: 25)
         
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidMatch(condition).reason))
     }
     
@@ -191,9 +186,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let condition = "{\"name\":\"age\",\"type\":\"custom_attribute\",\"match\":\"gt\"}"
         user.setAttribute(key: "age", value: 25)
         
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeNilValue(condition).reason))
     }
     
@@ -205,9 +200,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let condition = "{\"type\":\"custom_attribute\",\"match\":\"gt\",\"value\":18}"
         user.setAttribute(key: "age", value: 25)
         
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidName(condition).reason))
     }
     
@@ -218,9 +213,9 @@ extension OptimizelyClientTests_Decide_Reasons {
                 
         let condition = "{\"match\":\"gt\",\"value\":18,\"name\":\"age\",\"type\":\"custom_attribute\"}"
         
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(OptimizelyError.missingAttributeValue(condition, "age").reason))
     }
      
@@ -228,16 +223,16 @@ extension OptimizelyClientTests_Decide_Reasons {
 
 // MARK: - log messages (only with "includeReasons")
 
-extension OptimizelyClientTests_Decide_Reasons {
+extension OptimizelyUserContextTests_Decide_Reasons {
 
     func testDecideReasons_experimentNotRunning() {
         let featureKey = "feature_1"
         let experimentKey = "exp_with_audience"
         setStatusForFeatureTest(featureKey: featureKey, status: .paused)
         
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.experimentNotRunning(experimentKey).reason))
     }
     
@@ -249,7 +244,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         let variationId2 = "10416523121"
 
         OTUtils.setVariationToUPS(ups: ups, userId: kUserId, experimentId: experimentId, variationId: variationId2)
-        let decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        let decision = user.decide(key: featureKey, options: [.includeReasons])
         
         XCTAssertEqual(decision.variationKey, variationKey2)
         XCTAssertEqual(decision.reasons,
@@ -261,7 +256,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         let variationKey = "b"
         setWhiteListForFeatureTest(featureKey: featureKey, userId: kUserId, variationKey: variationKey)
 
-        let decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        let decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssertEqual(decision.variationKey, variationKey)
         XCTAssertEqual(decision.reasons, [LogMessage.forcedVariationFound(variationKey, kUserId).reason])
     }
@@ -271,7 +266,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         let variationKey = "invalid-key"
         setWhiteListForFeatureTest(featureKey: featureKey, userId: kUserId, variationKey: variationKey)
 
-        let decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        let decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssertNotNil(decision.variationKey)
         XCTAssert(decision.reasons.contains(LogMessage.forcedVariationFoundButInvalid(variationKey, kUserId).reason))
     }
@@ -280,9 +275,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let key = "feature_1"
         
         user.setAttribute(key: "country", value: "US")
-        var decision = optimizely.decide(key: key, user: user)
+        var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        decision = user.decide(key: key, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userMeetsConditionsForTargetingRule(kUserId, 1).reason))
     }
     
@@ -290,9 +285,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let key = "feature_1"
         
         user.setAttribute(key: "country", value: "CA")
-        var decision = optimizely.decide(key: key, user: user)
+        var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        decision = user.decide(key: key, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userDoesntMeetConditionsForTargetingRule(kUserId, 1).reason))
     }
     
@@ -300,9 +295,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let key = "feature_1"
         
         user.setAttribute(key: "country", value: "US")
-        var decision = optimizely.decide(key: key, user: user)
+        var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        decision = user.decide(key: key, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoTargetingRule(kUserId, 1).reason))
     }
     
@@ -310,9 +305,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let key = "feature_1"
         
         user.setAttribute(key: "country", value: "KO")
-        var decision = optimizely.decide(key: key, user: user)
+        var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        decision = user.decide(key: key, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoEveryoneTargetingRule(kUserId).reason))
     }
     
@@ -320,9 +315,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let key = "feature_1"
         
         user.setAttribute(key: "browser", value: "safari")
-        var decision = optimizely.decide(key: key, user: user)
+        var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: key, user: user, options: [.includeReasons])
+        decision = user.decide(key: key, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoTargetingRule(kUserId, 2).reason))
     }
         
@@ -331,9 +326,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         let experimentKey = "exp_no_audience"
         let variationKey = "variation_with_traffic"
         
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.ignoreUPS, .includeReasons])
+        decision = user.decide(key: featureKey, options: [.ignoreUPS, .includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoVariationInExperiment(kUserId,
                                                                                              experimentKey,
                                                                                              variationKey).reason))
@@ -349,9 +344,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         experiment.trafficAllocation = [trafficAllocation]
         optimizely.config!.experimentIdMap = [experimentId: experiment]
 
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoVariation(kUserId).reason))
     }
     
@@ -368,9 +363,9 @@ extension OptimizelyClientTests_Decide_Reasons {
         experiment.variations = [variation]
         optimizely.config!.experimentIdMap = [experimentId: experiment]
 
-        var decision = optimizely.decide(key: featureKey, user: user)
+        var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoInvalidVariation(variationIdCorrect).reason))
     }
     
@@ -380,7 +375,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         let groupId = "13142870430"
         setExperimentForFeatureTest(featureKey: featureKey, experimentKey: experimentKey)
 
-        let decision = optimizely.decide(key: featureKey, user: user, options: [.ignoreUPS, .includeReasons])
+        let decision = user.decide(key: featureKey, options: [.ignoreUPS, .includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoExperimentInGroup(kUserId,
                                                                                          experimentKey,
                                                                                          groupId).reason))
@@ -392,7 +387,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         let groupId = "13142870430"
         setExperimentForFeatureTest(featureKey: featureKey, experimentKey: experimentKey)
 
-        let decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        let decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoExperimentInGroup(kUserId,
                                                                                             experimentKey,
                                                                                             groupId).reason))
@@ -408,7 +403,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         group.trafficAllocation = []
         optimizely.config!.project.groups = [group]
 
-        let decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        let decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoAnyExperimentInGroup(kUserId,
                                                                                                groupId).reason))
     }
@@ -427,7 +422,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         group.trafficAllocation = [trafficAllocation]
         optimizely.config!.project.groups = [group]
 
-        let decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        let decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoInvalidExperiment(experimentIdInvalid).reason))
     }
     
@@ -435,7 +430,7 @@ extension OptimizelyClientTests_Decide_Reasons {
         let featureKey = "feature_1"
         let experimentKey = "exp_with_audience"
         
-        let decision = optimizely.decide(key: featureKey, user: user, options: [.includeReasons])
+        let decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userNotInExperiment(kUserId, experimentKey).reason))
     }
         
@@ -443,8 +438,8 @@ extension OptimizelyClientTests_Decide_Reasons {
 
 // Utils
 
-extension OptimizelyClientTests_Decide_Reasons {
-    
+extension OptimizelyUserContextTests_Decide_Reasons {
+
     func setAudienceForFeatureTest(featureKey: String, audienceId: String) {
         let experimentId = "10390977673"    // "exp_with_audience"
         var experiment = optimizely.config!.getExperiment(id: experimentId)!

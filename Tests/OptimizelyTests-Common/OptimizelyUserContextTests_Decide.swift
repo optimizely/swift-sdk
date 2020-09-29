@@ -235,9 +235,8 @@ extension OptimizelyUserContextTests_Decide {
                                                                 reasons: []))
     }
     
-    func testDecideAll_nilKeys_enabledOnly() {
+    func testDecideAll_allFeatures_enabledOnly() {
         let featureKey1 = "feature_1"
-        let featureKey2 = "feature_2"
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
         
         let user = optimizely.createUserContext(userId: kUserId)
@@ -251,14 +250,6 @@ extension OptimizelyUserContextTests_Decide {
                                                                 ruleKey: nil,
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
-                                                                reasons: []))
-        
-        XCTAssert(decisions[featureKey2]! == OptimizelyDecision(enabled: true,
-                                                                variables: variablesExpected2,
-                                                                variationKey: "variation_with_traffic",
-                                                                ruleKey: nil,
-                                                                flagKey: featureKey2,
-                                                                user: user,
                                                                 reasons: []))
     }
 

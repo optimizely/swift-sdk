@@ -36,17 +36,20 @@ class OptimizelyUserContextTests: XCTestCase {
 
     let expUserId = "1234"
     let expUserId2 = "3456"
+    let expOptimizely = OptimizelyClient(sdkKey: "any")
 
     func testOptimizelyUserContext_userId() {
-        let user = OptimizelyUserContext(userId: expUserId)
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId)
         
+        XCTAssert(user.optimizely == expOptimizely)
         XCTAssert(user.userId == expUserId)
         XCTAssert(user.attributes.count == 0)
     }
     
     func testOptimizelyUserContext_nilAttributes() {
-        let user = OptimizelyUserContext(userId: expUserId, attributes: nil)
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: nil)
         
+        XCTAssert(user.optimizely == expOptimizely)
         XCTAssert(user.userId == expUserId)
         XCTAssert(user.attributes.count == 0)
     }
@@ -57,8 +60,9 @@ class OptimizelyUserContextTests: XCTestCase {
             "age": 100,
             "old": true
         ]
-        let user = OptimizelyUserContext(userId: expUserId, attributes: attributes)
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
         
+        XCTAssert(user.optimizely == expOptimizely)
         XCTAssert(user.userId == expUserId)
         XCTAssert(user.attributes["country"] as! String == "us")
         XCTAssert(user.attributes["age"] as! Int == 100)
@@ -66,11 +70,12 @@ class OptimizelyUserContextTests: XCTestCase {
     }
 
     func testOptimizelyUserContext_setAttribute() {
-        var user = OptimizelyUserContext(userId: expUserId, attributes: nil)
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: nil)
         user.setAttribute(key: "state", value: "ca")
         user.setAttribute(key: "num", value: 200)
         user.setAttribute(key: "many", value: false)
 
+        XCTAssert(user.optimizely == expOptimizely)
         XCTAssert(user.userId == expUserId)
         XCTAssert(user.attributes["state"] as! String == "ca")
         XCTAssert(user.attributes["num"] as! Int == 200)
@@ -83,9 +88,10 @@ class OptimizelyUserContextTests: XCTestCase {
             "age": 100,
             "old": true
         ]
-        var user = OptimizelyUserContext(userId: expUserId, attributes: attributes)
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
         user.setAttribute(key: "state", value: "ca")
 
+        XCTAssert(user.optimizely == expOptimizely)
         XCTAssert(user.userId == expUserId)
         XCTAssert(user.attributes["country"] as! String == "us")
         XCTAssert(user.attributes["age"] as! Int == 100)
@@ -94,33 +100,4 @@ class OptimizelyUserContextTests: XCTestCase {
     }
 
 }
-    
-// Mark: - Utils
 
-extension OptimizelyUserContextTests {
-    
-    func setUserContextForUPSTest(_ user: OptimizelyUserContext) -> OPTUserProfileService {
-        let ups = DefaultUserProfileService()
-        ups.reset()
-
-        let optimizely = OptimizelyClient(sdkKey: String(arc4random()),   // random to avoid ups conflicts
-                                          userProfileService: ups)
-        try! optimizely.start(datafile: OTUtils.loadJSONDatafile("api_datafile")!)
-        try! optimizely.setUserContext(user)
-        
-        return ups
-    }
-    
-    var uuidKey: String {
-        return "optimizely-uuid"
-    }
-    
-    func getOptimizelyUUID() -> String? {
-        return UserDefaults.standard.string(forKey: uuidKey)
-    }
-    
-    func clearOptimizelyUUID() {
-        UserDefaults.standard.removeObject(forKey: uuidKey)
-    }
-    
-}

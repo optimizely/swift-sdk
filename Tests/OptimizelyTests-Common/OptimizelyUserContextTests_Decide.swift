@@ -138,7 +138,8 @@ extension OptimizelyUserContextTests_Decide {
         
         optimizely.eventLock.sync{}
 
-        XCTAssertNotNil(decision.variationKey)   // rollout variation
+        XCTAssertNil(decision.enabled)
+        XCTAssertNil(decision.variationKey)
         XCTAssertNil(eventDispatcher.eventSent)
     }
     
@@ -177,7 +178,7 @@ extension OptimizelyUserContextTests_Decide {
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
         let variablesExpected2 = try! optimizely.getAllFeatureVariables(featureKey: featureKey2, userId: kUserId)
         
-        let user = optimizely.createUserContext(userId: kUserId)
+        let user = optimizely.createUserContext(userId: kUserId, attributes: ["gender": "f"])
         let decisions = user.decideAll(keys: featureKeys)
         
         XCTAssert(decisions.count == 2)
@@ -207,7 +208,7 @@ extension OptimizelyUserContextTests_Decide {
         let variablesExpected2 = try! optimizely.getAllFeatureVariables(featureKey: featureKey2, userId: kUserId)
         let variablesExpected3 = OptimizelyJSON(map: [:])
         
-        let user = optimizely.createUserContext(userId: kUserId)
+        let user = optimizely.createUserContext(userId: kUserId, attributes: ["gender": "f"])
         let decisions = user.decideAll()
         
         XCTAssert(decisions.count == 3)
@@ -239,7 +240,7 @@ extension OptimizelyUserContextTests_Decide {
         let featureKey1 = "feature_1"
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
         
-        let user = optimizely.createUserContext(userId: kUserId)
+        let user = optimizely.createUserContext(userId: kUserId, attributes: ["gender": "f"])
         let decisions = user.decideAll(options: [.enabledOnly])
         
         XCTAssert(decisions.count == 2)
@@ -270,7 +271,7 @@ extension OptimizelyUserContextTests_Decide {
 extension OptimizelyUserContextTests_Decide {
     
     func testDecide_sendImpression_disbleTracking() {
-        let featureKey = "feature_1"
+        let featureKey = "feature_2"
 
         let user = optimizely.createUserContext(userId: kUserId)
         let decision = user.decide(key: featureKey, options: [.disableDecisionEvent])
@@ -343,7 +344,6 @@ extension OptimizelyUserContextTests_Decide {
     }
     
     func testDecide_defaultDecideOption() {
-        
         let featureKey = "feature_1"
         let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
 

@@ -139,7 +139,7 @@ public class OptimizelyUserContext {
     public func decideAll(keys: [String],
                           options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         
-        guard let optimizely = self.optimizely, let config = optimizely.config else {
+        guard let optimizely = self.optimizely, let _ = optimizely.config else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
         }

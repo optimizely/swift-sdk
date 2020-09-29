@@ -1096,7 +1096,7 @@ extension DecisionListenerTests {
     // MARK: - decide-all api
     
     func testDecisionListenerDecideAll() {
-        let user = OptimizelyUserContext(userId: kUserId, attributes:["country": "US"])
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
 
         var count = 0
         notificationCenter.clearAllNotificationListeners()
@@ -1110,7 +1110,7 @@ extension DecisionListenerTests {
             count += 1
         }
         
-        _ = self.optimizely.decideAll(keys: nil, user: user)
+        _ = user.decideAll()
         sleep(1)
         
         XCTAssertEqual(count, 2)

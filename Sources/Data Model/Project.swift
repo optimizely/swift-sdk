@@ -42,6 +42,7 @@ struct Project: Codable, Equatable {
     var typedAudiences: [Audience]?
     var featureFlags: [FeatureFlag]
     var botFiltering: Bool?
+    var sendFlagDecisions: Bool?
     
     let logger = OPTLoggerFactory.getLogger()
     
@@ -52,13 +53,13 @@ struct Project: Codable, Equatable {
         // V3
         case anonymizeIP
         // V4
-        case rollouts, typedAudiences, featureFlags, botFiltering
+        case rollouts, typedAudiences, featureFlags, botFiltering, sendFlagDecisions
     }
     
     // Required since logger in not equatable
     static func ==(lhs: Project, rhs: Project) -> Bool {
         return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments &&
-            lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes && lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision && lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts && lhs.typedAudiences == rhs.typedAudiences && lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering
+            lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes && lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision && lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts && lhs.typedAudiences == rhs.typedAudiences && lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && lhs.sendFlagDecisions == rhs.sendFlagDecisions
     }
 }
 

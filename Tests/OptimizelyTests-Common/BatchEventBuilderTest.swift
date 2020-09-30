@@ -50,21 +50,4 @@ class BatchEventBuilderTests: XCTestCase {
         
     }
 
-    func testImpressionEventWithNoExperiment() {
-        let experiment = optimizely?.config?.project.experiments.filter({$0.key == featureExperimentKey}).first
-        let variation = experiment?.variations[0]
-        
-        let impression = BatchEventBuilder.createImpressionEvent(config: (optimizely?.config)!, experiment: experiment!, varionation: variation!, userId: userId, attributes: ["customattr": "yes" ])
-        
-        XCTAssertNotNil(impression)
-        let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: impression!)
-        
-        XCTAssertNotNil(batchEvent)
-        
-        XCTAssert((batchEvent?.enrichDecisions)! == true)
-        
-        XCTAssert(batchEvent?.visitors[0].attributes[0].key == "customattr")
-        //XCTAssert(batchEvent?.visitors[0].attributes[0].value == .string)
-    }
-
 }

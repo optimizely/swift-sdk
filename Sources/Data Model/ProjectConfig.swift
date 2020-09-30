@@ -178,6 +178,13 @@ extension ProjectConfig {
 extension ProjectConfig {
     
     /**
+     * Determines whether impressions events are sent for ALL decision types.
+     */
+    func sendFlagDecisions() -> Bool {
+        return project.sendFlagDecisions ?? false
+    }
+    
+    /**
      * Get an Experiment object for a key.
      */
     func getExperiment(key: String) -> Experiment? {

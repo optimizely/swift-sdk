@@ -262,7 +262,7 @@ extension DecisionServiceTests_Features {
                                                                          featureFlag: featureFlag,
                                                                          userId: kUserId,
                                                                          attributes: kAttributesCountryMatch)
-        XCTAssert(pair!.experiment!.key == kExperimentKey)
+        XCTAssert(pair!.experiment.key == kExperimentKey)
         XCTAssert(pair!.variation!.key == kVariationKeyD)
     }
     
@@ -299,11 +299,13 @@ extension DecisionServiceTests_Features {
         featureFlag.rolloutId = kRolloutId
         self.config.project.featureFlags = [featureFlag]
         
-        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+        let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesRolloutAge1Match)
-        XCTAssert(variation!.key == kRolloutVariationKeyA)
+        
+        XCTAssert(pair?.experiment.id == kRolloutExperimentId)
+        XCTAssert(pair?.variation!.key == kRolloutVariationKeyA)
     }
     
     func testGetVariationForFeatureRolloutEmpty() {
@@ -348,11 +350,12 @@ extension DecisionServiceTests_Features {
         featureFlag.rolloutId = kRolloutId
         self.config.project.featureFlags = [featureFlag]
         
-        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+        let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesRolloutAge1Match)
-        XCTAssert(variation!.key == kRolloutVariationKeyC)
+        XCTAssert(pair?.experiment.id == kRolloutExperimentId3)
+        XCTAssert(pair?.variation!.key == kRolloutVariationKeyC)
     }
     
     func testGetVariationForFeatureRolloutEvaluatesNextIfAudienceEvaluationFails() {
@@ -361,11 +364,12 @@ extension DecisionServiceTests_Features {
         featureFlag.rolloutId = kRolloutId
         self.config.project.featureFlags = [featureFlag]
         
-        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+        let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesRolloutAge2Match)
-        XCTAssert(variation!.key == kRolloutVariationKeyB)
+        XCTAssert(pair?.experiment.id == kRolloutExperimentId2)
+        XCTAssert(pair?.variation!.key == kRolloutVariationKeyB)
     }
     
     func testGetVariationForFeatureRolloutWithSameAudiencesReturnsFirstVariation() {
@@ -375,11 +379,12 @@ extension DecisionServiceTests_Features {
         featureFlag.rolloutId = kRolloutId
         self.config.project.featureFlags = [featureFlag]
         
-        let variation = self.decisionService.getVariationForFeatureRollout(config: config,
+        let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesRolloutAge1Match)
-        XCTAssert(variation!.key == kRolloutVariationKeyA)
+        XCTAssert(pair?.experiment.id == kRolloutExperimentId)
+        XCTAssert(pair?.variation!.key == kRolloutVariationKeyA)
     }
     
     func testGetVariationForFeatureRolloutReturnsNilIfAudienceEvaluationFailsForFallback() {
@@ -424,7 +429,7 @@ extension DecisionServiceTests_Features {
                                                                userId: kUserId,
                                                                attributes: kAttributesCountryMatch)
         XCTAssertNotNil(pair)
-        XCTAssert(pair!.experiment!.key == kExperimentKey)
+        XCTAssert(pair!.experiment.key == kExperimentKey)
         XCTAssert(pair!.variation!.key == kVariationKeyD)
     }
     
@@ -447,7 +452,7 @@ extension DecisionServiceTests_Features {
                                                                userId: kUserId,
                                                                attributes: kAttributesCountryNotMatch)
         XCTAssertNotNil(pair)
-        XCTAssertNil(pair!.experiment)
+        XCTAssert(pair!.experiment.id == kRolloutExperimentId3)
         XCTAssert(pair!.variation!.key == kRolloutVariationKeyC)
     }
     

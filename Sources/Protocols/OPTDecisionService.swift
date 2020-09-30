@@ -44,6 +44,6 @@ protocol OPTDecisionService {
      - Parameter attributes: User attributes
      - Returns: The variation assigned to the specified user ID for a feature flag.
      */
-    func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment?, variation: Variation?)?
+    func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment, variation: Variation?, source: String)?
     
 }

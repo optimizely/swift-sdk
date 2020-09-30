@@ -79,15 +79,29 @@ struct Snapshot: Codable, Equatable {
     let events: [DispatchEvent]
 }
 
+struct DecisionMetadata: Codable, Equatable {
+    let flagType: String
+    let flagKey: String
+    let variationKey: String
+    
+    enum CodingKeys: String, CodingKey {
+        case flagType = "flag_type"
+        case flagKey = "flag_key"
+        case variationKey = "variation_key"
+    }
+}
+
 struct Decision: Codable, Equatable {
     let variationID: String
     let campaignID: String
     let experimentID: String
+    let metaData: DecisionMetadata
     
     enum CodingKeys: String, CodingKey {
         case variationID = "variation_id"
         case campaignID = "campaign_id"
         case experimentID = "experiment_id"
+        case metaData = "metadata"
     }
 }
 

@@ -25,13 +25,29 @@ class BatchEventBuilder {
     
     static func createImpressionEvent(config: ProjectConfig,
                                       experiment: Experiment,
-                                      varionation: Variation,
+                                      variation: Variation?,
                                       userId: String,
-                                      attributes: OptimizelyAttributes?) -> Data? {
+                                      attributes: OptimizelyAttributes?,
+                                      flagKey: String,
+                                      flagType: String) -> Data? {
         
-        let decision = Decision(variationID: varionation.id,
+        if (flagType == Constants.DecisionSource.rollout.rawValue || variation == nil) && !config.sendFlagDecisions() {
+            return nil
+        }
+
+        var variationId = ""
+        var variationKey = ""
+        if let tmpVariation = variation {
+            variationKey = tmpVariation.key
+            variationId = tmpVariation.id
+        }
+        
+        let metaData = DecisionMetadata(flagType: flagType, flagKey: flagKey, variationKey: variationKey)
+        
+        let decision = Decision(variationID: variationId,
                                 campaignID: experiment.layerId,
-                                experimentID: experiment.id)
+                                experimentID: experiment.id,
+                                metaData: metaData)
         
         let dispatchEvent = DispatchEvent(timestamp: timestampSince1970,
                                           key: DispatchEvent.activateEventKey,

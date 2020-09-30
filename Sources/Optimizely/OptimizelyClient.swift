@@ -258,7 +258,9 @@ open class OptimizelyClient: NSObject {
         sendImpressionEvent(experiment: experiment,
                             variation: variation,
                             userId: userId,
-                            attributes: attributes)
+                            attributes: attributes,
+                            flagKey: experimentKey,
+                            flagType: "experiment")
         
         return variation.key
     }
@@ -376,12 +378,12 @@ open class OptimizelyClient: NSObject {
                                                           featureFlag: featureFlag,
                                                           userId: userId,
                                                           attributes: attributes ?? OptimizelyAttributes())
-        
         guard let variation = pair?.variation else {
             logger.i(.variationUnknown(userId, featureKey))
             sendDecisionNotification(decisionType: .feature,
                                      userId: userId,
                                      attributes: attributes,
+                                     source: Constants.DecisionSource.rollout.rawValue,
                                      feature: featureFlag,
                                      featureEnabled: false)
             return false
@@ -393,17 +395,15 @@ open class OptimizelyClient: NSObject {
         } else {
             logger.i(.featureNotEnabledForUser(featureKey, userId))
         }
-
-        let experiment = pair?.experiment
-        if let eventExperiment = experiment {
-            sendImpressionEvent(experiment: eventExperiment, variation: variation, userId: userId, attributes: attributes)
-        }
+        
+        sendImpressionEvent(experiment: pair!.experiment, variation: variation, userId: userId, attributes: attributes, flagKey: featureKey, flagType: pair!.source)
 
         sendDecisionNotification(decisionType: .feature,
                                  userId: userId,
                                  attributes: attributes,
-                                 experiment: experiment,
+                                 experiment: pair!.experiment,
                                  variation: variation,
+                                 source: pair!.source,
                                  feature: featureFlag,
                                  featureEnabled: featureEnabled)
         
@@ -590,6 +590,7 @@ open class OptimizelyClient: NSObject {
                                  attributes: attributes,
                                  experiment: experiment,
                                  variation: variation,
+                                 source: decision?.source,
                                  feature: featureFlag,
                                  featureEnabled: featureEnabled,
                                  variableKey: variableKey,
@@ -676,6 +677,7 @@ open class OptimizelyClient: NSObject {
                                  attributes: attributes,
                                  experiment: decision?.experiment,
                                  variation: decision?.variation,
+                                 source: decision?.source,
                                  feature: featureFlag,
                                  featureEnabled: enabled,
                                  variableValues: variableMap)
@@ -748,9 +750,11 @@ open class OptimizelyClient: NSObject {
 extension OptimizelyClient {
     
     func sendImpressionEvent(experiment: Experiment,
-                             variation: Variation,
+                             variation: Variation?,
                              userId: String,
-                             attributes: OptimizelyAttributes? = nil) {
+                             attributes: OptimizelyAttributes? = nil,
+                             flagKey: String,
+                             flagType: String) {
         
         // non-blocking (event data serialization takes time)
         eventLock.async {
@@ -758,9 +762,11 @@ extension OptimizelyClient {
 
             guard let body = BatchEventBuilder.createImpressionEvent(config: config,
                                                                      experiment: experiment,
-                                                                     varionation: variation,
+                                                                     variation: variation,
                                                                      userId: userId,
-                                                                     attributes: attributes) else {
+                                                                     attributes: attributes,
+                                                                     flagKey: flagKey,
+                                                                     flagType: flagType) else {
                                                                         self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
                                                                         return
             }
@@ -771,12 +777,14 @@ extension OptimizelyClient {
             // send notification in sync mode (functionally same as async here since it's already in background thread),
             // but this will make testing simpler (timing control)
 
-            self.sendActivateNotification(experiment: experiment,
-                                          variation: variation,
-                                          userId: userId,
-                                          attributes: attributes,
-                                          event: event,
-                                          async: false)
+            if let tmpVariation = variation {
+                self.sendActivateNotification(experiment: experiment,
+                                              variation: tmpVariation,
+                                              userId: userId,
+                                              attributes: attributes,
+                                              event: event,
+                                              async: false)
+            }
         }
 
     }
@@ -863,6 +871,7 @@ extension OptimizelyClient {
                                   attributes: OptimizelyAttributes?,
                                   experiment: Experiment? = nil,
                                   variation: Variation? = nil,
+                                  source: String? = nil,
                                   feature: FeatureFlag? = nil,
                                   featureEnabled: Bool? = nil,
                                   variableKey: String? = nil,
@@ -877,6 +886,7 @@ extension OptimizelyClient {
                                      self.makeDecisionInfo(decisionType: decisionType,
                                                            experiment: experiment,
                                                            variation: variation,
+                                                           source: source,
                                                            feature: feature,
                                                            featureEnabled: featureEnabled,
                                                            variableKey: variableKey,
@@ -893,6 +903,7 @@ extension OptimizelyClient {
     func makeDecisionInfo(decisionType: Constants.DecisionType,
                           experiment: Experiment? = nil,
                           variation: Variation? = nil,
+                          source: String? = nil,
                           feature: FeatureFlag? = nil,
                           featureEnabled: Bool? = nil,
                           variableKey: String? = nil,
@@ -916,7 +927,8 @@ extension OptimizelyClient {
             decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
             
             let decisionSource: Constants.DecisionSource = experiment != nil ? .featureTest : .rollout
-            decisionInfo[Constants.DecisionInfoKeys.source] = decisionSource.rawValue
+            decisionInfo[Constants.DecisionInfoKeys.source] = source ?? decisionSource.rawValue
+            
             
             var sourceInfo = [String: Any]()
             if let experiment = experiment, let variation = variation {

@@ -68,9 +68,9 @@ import Foundation
 
 @objc(OptimizelyDecision)
 @objcMembers public class ObjcOptimizelyDecision: NSObject {
-    public let enabled: NSNumber?
-    public let variables: OptimizelyJSON?
     public let variationKey: String?
+    public let enabled: Bool
+    public let variables: OptimizelyJSON?
     public let ruleKey: String?
 
     public let flagKey: String
@@ -78,14 +78,9 @@ import Foundation
     public let reasons: [String]
     
     init(decision: OptimizelyDecision) {
-        if let en = decision.enabled {
-            enabled = NSNumber(value: en)
-        } else {
-            enabled = nil
-        }
-        
-        variables = decision.variables
         variationKey = decision.variationKey
+        variables = decision.variables
+        enabled = decision.enabled
         ruleKey = decision.ruleKey
         
         flagKey = decision.flagKey

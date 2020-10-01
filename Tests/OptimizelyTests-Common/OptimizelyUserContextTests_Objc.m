@@ -84,12 +84,11 @@ static NSString * datafile;
     NSString *featureKey = @"feature_2";
     OptimizelyDecision *decision = [user decideWithKey:featureKey options:nil];
 
-    XCTAssertNotNil(decision.enabled);
-    XCTAssertTrue(decision.enabled.boolValue);   // enabled is NSNumber type
+    XCTAssert([decision.variationKey isEqualToString:@"variation_with_traffic"]);
+    XCTAssertTrue(decision.enabled);
     XCTAssertNotNil(decision.variables);
     NSDictionary *variables = [decision.variables toMap];
     XCTAssert([variables[@"i_42"] intValue] == 42);
-    XCTAssert([decision.variationKey isEqualToString:@"variation_with_traffic"]);
     XCTAssertNil(decision.ruleKey);
     XCTAssert([decision.flagKey isEqualToString:featureKey]);
     XCTAssert([decision.userContext.userId isEqualToString:kUserId]);
@@ -105,8 +104,8 @@ static NSString * datafile;
     NSString *featureKey = @"feature_2";
     OptimizelyDecision *decision = [user decideWithKey:featureKey options:nil];
 
-    XCTAssertNil(decision.enabled);
     XCTAssertNil(decision.variationKey);
+    XCTAssertFalse(decision.enabled);
     XCTAssertNil(decision.variables);
     XCTAssertNil(decision.ruleKey);
     XCTAssert([decision.flagKey isEqualToString:featureKey]);
@@ -127,10 +126,8 @@ static NSString * datafile;
     decisions = [user decideAllWithKeys:@[featureKey1, featureKey2] options:nil];
     
     XCTAssert(decisions.count == 2);
-    XCTAssertNotNil(decisions[featureKey1].enabled);
-    XCTAssertNotNil(decisions[featureKey2].enabled);
-    XCTAssertTrue(decisions[featureKey1].enabled.boolValue);
-    XCTAssertTrue(decisions[featureKey2].enabled.boolValue);
+    XCTAssertTrue(decisions[featureKey1].enabled);
+    XCTAssertTrue(decisions[featureKey2].enabled);
 }
 
 - (void)testDecideAll_allFeatures {
@@ -143,12 +140,9 @@ static NSString * datafile;
     NSDictionary<NSString*,OptimizelyDecision*> *decisions = [user decideAllWithOptions:nil];
             
     XCTAssert(decisions.count == 3);
-    XCTAssertNotNil(decisions[featureKey1].enabled);
-    XCTAssertNotNil(decisions[featureKey2].enabled);
-    XCTAssertNotNil(decisions[featureKey3].enabled);
-    XCTAssertTrue(decisions[featureKey1].enabled.boolValue);
-    XCTAssertTrue(decisions[featureKey2].enabled.boolValue);
-    XCTAssertFalse(decisions[featureKey3].enabled.boolValue);
+    XCTAssertTrue(decisions[featureKey1].enabled);
+    XCTAssertTrue(decisions[featureKey2].enabled);
+    XCTAssertFalse(decisions[featureKey3].enabled);
 }
 
 // MARK: - OptimizelyDecideOptions
@@ -161,17 +155,14 @@ static NSString * datafile;
     NSDictionary<NSString*,OptimizelyDecision*> *decisions1 = [user decideAllWithOptions:nil];
     
     XCTAssert(decisions1.count == 3);
-    XCTAssertNotNil(decisions1[@"feature_1"].enabled);
-    XCTAssertNotNil(decisions1[@"feature_2"].enabled);
-    XCTAssertNotNil(decisions1[@"feature_3"].enabled);
-    XCTAssertTrue(decisions1[@"feature_1"].enabled.boolValue);
-    XCTAssertTrue(decisions1[@"feature_2"].enabled.boolValue);
-    XCTAssertFalse(decisions1[@"feature_3"].enabled.boolValue);
+    XCTAssertTrue(decisions1[@"feature_1"].enabled);
+    XCTAssertTrue(decisions1[@"feature_2"].enabled);
+    XCTAssertFalse(decisions1[@"feature_3"].enabled);
 
     NSDictionary<NSString*,OptimizelyDecision*> *decisions2 = [user decideAllWithOptions:optionsInObjcFormat];
     XCTAssert(decisions2.count == 2);
-    XCTAssertNotNil(decisions2[@"feature_1"].enabled);
-    XCTAssertNotNil(decisions2[@"feature_2"].enabled);
+    XCTAssertTrue(decisions2[@"feature_1"].enabled);
+    XCTAssertTrue(decisions2[@"feature_2"].enabled);
 }
 
 - (void)testDecide_defaultOptions {
@@ -179,12 +170,9 @@ static NSString * datafile;
     NSDictionary<NSString*,OptimizelyDecision*> *decisions1 = [user decideAllWithOptions:nil];
     
     XCTAssert(decisions1.count == 3);
-    XCTAssertNotNil(decisions1[@"feature_1"].enabled);
-    XCTAssertNotNil(decisions1[@"feature_2"].enabled);
-    XCTAssertNotNil(decisions1[@"feature_3"].enabled);
-    XCTAssertTrue(decisions1[@"feature_1"].enabled.boolValue);
-    XCTAssertTrue(decisions1[@"feature_2"].enabled.boolValue);
-    XCTAssertFalse(decisions1[@"feature_3"].enabled.boolValue);
+    XCTAssertTrue(decisions1[@"feature_1"].enabled);
+    XCTAssertTrue(decisions1[@"feature_2"].enabled);
+    XCTAssertFalse(decisions1[@"feature_3"].enabled);
 
     // array of NSNumber for OptimizelyDecideOption objc type (do not use integer directly since it may change)
     NSArray *defaultOptionsInObjcFormat = @[@(OptimizelyDecideOptionEnabledOnly)];
@@ -201,8 +189,8 @@ static NSString * datafile;
     NSDictionary<NSString*,OptimizelyDecision*> *decisions2 = [user decideAllWithOptions:nil];
     
     XCTAssert(decisions2.count == 2);
-    XCTAssertNotNil(decisions2[@"feature_1"].enabled);
-    XCTAssertNotNil(decisions2[@"feature_2"].enabled);
+    XCTAssertTrue(decisions2[@"feature_1"].enabled);
+    XCTAssertTrue(decisions2[@"feature_2"].enabled);
 }
 
 // MARK: - legacy APIs with UserContext
@@ -213,7 +201,6 @@ static NSString * datafile;
                                         completionHandler:nil]);
 
     OptimizelyUserContext *user = [self.optimizely createUserContextWithUserId:kUserId attributes:@{@"gender": @"f"}];
-    NSDictionary<NSString*,OptimizelyDecision*> *decisions1 = [user decideAllWithOptions:nil];
 
     NSError *error = nil;
     BOOL status = [user trackEventWithEventKey:@"event1" eventTags:nil error:&error];

@@ -125,6 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
             //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
+            //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
         }
     }
     

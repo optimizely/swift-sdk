@@ -134,6 +134,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
         
         // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
         //[SamplesForAPI checkOptimizelyConfig:self.optimizely];
+        //[SamplesForAPI checkOptimizelyUserContext:self.optimizely];
     }];
 }
 

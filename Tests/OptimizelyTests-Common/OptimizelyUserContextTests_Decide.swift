@@ -94,7 +94,7 @@ extension OptimizelyUserContextTests_Decide {
         let decision = user.decide(key: featureKey)
         
         XCTAssertEqual(decision.variationKey, "a")
-        XCTAssertEqual(decision.enabled, true)
+        XCTAssertTrue(decision.enabled)
         let variables = decision.variables!
         XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
         
@@ -121,7 +121,7 @@ extension OptimizelyUserContextTests_Decide {
         optimizely.eventLock.sync{}
 
         XCTAssertEqual(decision.variationKey, "a")
-        XCTAssertNotNil(decision.enabled)
+        XCTAssertTrue(decision.enabled)
         XCTAssertNotNil(eventDispatcher.eventSent)
         
         let desc = eventDispatcher.eventSent!.description
@@ -137,7 +137,7 @@ extension OptimizelyUserContextTests_Decide {
         optimizely.eventLock.sync{}
 
         XCTAssertNil(decision.variationKey)
-        XCTAssertNotNil(decision.enabled)
+        XCTAssertFalse(decision.enabled)
         XCTAssertNil(eventDispatcher.eventSent)
     }
     
@@ -155,7 +155,7 @@ extension OptimizelyUserContextTests_Decide {
         
         optimizely.eventLock.sync{}
 
-        XCTAssertNotNil(decision.enabled)
+        XCTAssertTrue(decision.enabled)
         XCTAssertNil(eventDispatcher.eventSent)
     }
     
@@ -262,7 +262,7 @@ extension OptimizelyUserContextTests_Decide {
         let decision = user.decide(key: featureKey)
         
         XCTAssertNil(decision.variationKey)
-        XCTAssertNil(decision.enabled)
+        XCTAssertFalse(decision.enabled)
         XCTAssertNil(decision.variables)
         XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.userContext, user)
@@ -279,7 +279,7 @@ extension OptimizelyUserContextTests_Decide {
         let decision = user.decide(key: featureKey)
 
         XCTAssertNil(decision.variationKey)
-        XCTAssertNil(decision.enabled)
+        XCTAssertFalse(decision.enabled)
         XCTAssert(decision.reasons.count == 1)
         XCTAssert(decision.reasons.first == OptimizelyError.featureKeyInvalid(featureKey).reason)
     }

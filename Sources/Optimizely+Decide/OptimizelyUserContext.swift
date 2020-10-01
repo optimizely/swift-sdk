@@ -118,9 +118,9 @@ public class OptimizelyUserContext {
                                             reasons: reasonsToReport,
                                             sentEvent: sentEvent)
         
-        return OptimizelyDecision(enabled: enabled,
+        return OptimizelyDecision(variationKey: decision?.variation?.key,
+                                  enabled: enabled,
                                   variables: optimizelyJSON,
-                                  variationKey: decision?.variation?.key,
                                   ruleKey: nil,
                                   flagKey: feature.key,
                                   userContext: self,

@@ -119,9 +119,9 @@ public class OptimizelyUserContext {
                                             reasons: reasonsToReport,
                                             sentEvent: sentEvent)
         
-        return OptimizelyDecision(enabled: enabled,
+        return OptimizelyDecision(variationKey: decision?.variation?.key,
+                                  enabled: enabled,
                                   variables: optimizelyJSON,
-                                  variationKey: decision?.variation?.key,
                                   ruleKey: nil,
                                   flagKey: feature.key,
                                   userContext: self,
@@ -153,7 +153,7 @@ public class OptimizelyUserContext {
         
         keys.forEach { key in
             let decision = decide(key: key, options: options)
-            if !allOptions.contains(.enabledOnly) || (decision.enabled != nil && decision.enabled!) {
+            if !allOptions.contains(.enabledOnly) || decision.enabled {
                 decisions[key] = decision
             }
         }

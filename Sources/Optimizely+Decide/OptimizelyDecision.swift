@@ -19,14 +19,14 @@ import Foundation
 /// A decision struct that the SDK makes for a flag key and a user context.
 public struct OptimizelyDecision {
     
+    /// A variation key of the decision. This value will be nil when decision making fails.
+    public let variationKey: String?
+    
     /// A boolean value indicating the flag is enabled or not.
-    public let enabled: Bool?
+    public let enabled: Bool
     
     /// A collection of variables assocaited with the decision.
     public let variables: OptimizelyJSON?
-    
-    /// A variation key of the decision.
-    public let variationKey: String?
     
     /// A rule key of the decision.
     public let ruleKey: String?
@@ -44,9 +44,9 @@ public struct OptimizelyDecision {
 extension OptimizelyDecision {
     
     static func errorDecision(key: String, user: OptimizelyUserContext?, error: OptimizelyError) -> OptimizelyDecision {
-        return OptimizelyDecision(enabled: nil,
+        return OptimizelyDecision(variationKey: nil,
+                                  enabled: false,
                                   variables: nil,
-                                  variationKey: nil,
                                   ruleKey: nil,
                                   flagKey: key,
                                   userContext: user,

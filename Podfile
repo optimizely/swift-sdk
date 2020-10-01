@@ -49,8 +49,15 @@ target 'DemoObjctvOS' do
   #pod 'OptimizelySwiftSDK','3.0.0'
 end
 
-target 'OptimizelyTests-APIs-iOS' do
+target 'OptimizelyTests-Common-iOS' do
   project 'OptimizelySwiftSDK.xcodeproj/'
-  platform :ios, '8.0'
+  platform :ios, '10.0'
   common_test_pods
 end
+
+target 'OptimizelyTests-Common-tvOS' do
+  project 'OptimizelySwiftSDK.xcodeproj/'
+  platform :ios, '10.0'
+  common_test_pods
+end
+

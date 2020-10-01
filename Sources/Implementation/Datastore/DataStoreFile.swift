@@ -29,7 +29,7 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
         self.async = async
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
-        #if os(tvOS)
+        #if os(tvOS) || os(macOS)
         let directory = FileManager.SearchPathDirectory.cachesDirectory
         #else
         let directory = FileManager.SearchPathDirectory.documentDirectory

@@ -22,7 +22,7 @@ import Foundation
     /// disable decision event tracking.
     case disableDecisionEvent
     
-    /// returns decisions only for flags which are enabled.
+    /// returns decisions only for flags which are enabled (decideAll only).
     case enabledOnly
     
     /// skip user profile service for decision.
@@ -30,4 +30,7 @@ import Foundation
     
     /// include info and debug messages in the decision reasons.
     case includeReasons
+    
+    /// exclude variable values from the decision result.
+    case excludeVariables
 }

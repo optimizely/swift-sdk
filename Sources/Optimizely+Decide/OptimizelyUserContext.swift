@@ -152,7 +152,7 @@ public class OptimizelyUserContext {
         
         keys.forEach { key in
             let decision = decide(key: key, options: options)
-            if !allOptions.contains(.enabledOnly) || (decision.enabled != nil && decision.enabled!) {
+            if !allOptions.contains(.enabledOnly) || decision.enabled {
                 decisions[key] = decision
             }
         }

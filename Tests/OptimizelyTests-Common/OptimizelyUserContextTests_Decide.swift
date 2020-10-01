@@ -158,9 +158,9 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssert(decisions.count == 1)
         let decision = decisions[featureKey]!
         
-        let expDecision = OptimizelyDecision(enabled: true,
+        let expDecision = OptimizelyDecision(variationKey: "a",
+                                             enabled: true,
                                              variables: variablesExpected,
-                                             variationKey: "a",
                                              ruleKey: nil,
                                              flagKey: featureKey,
                                              userContext: user,
@@ -181,16 +181,16 @@ extension OptimizelyUserContextTests_Decide {
         
         XCTAssert(decisions.count == 2)
         
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(enabled: true,
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
+                                                                enabled: true,
                                                                 variables: variablesExpected1,
-                                                                variationKey: "a",
                                                                 ruleKey: nil,
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))
-        XCTAssert(decisions[featureKey2]! == OptimizelyDecision(enabled: false,
+        XCTAssert(decisions[featureKey2]! == OptimizelyDecision(variationKey: nil,
+                                                                enabled: false,
                                                                 variables: variablesExpected2,
-                                                                variationKey: nil,
                                                                 ruleKey: nil,
                                                                 flagKey: featureKey2,
                                                                 userContext: user,
@@ -211,23 +211,23 @@ extension OptimizelyUserContextTests_Decide {
         
         XCTAssert(decisions.count == 3)
         
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(enabled: true,
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
+                                                                enabled: true,
                                                                 variables: variablesExpected1,
-                                                                variationKey: "a",
                                                                 ruleKey: nil,
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))
-        XCTAssert(decisions[featureKey2]! == OptimizelyDecision(enabled: false,
+        XCTAssert(decisions[featureKey2]! == OptimizelyDecision(variationKey: nil,
+                                                                enabled: false,
                                                                 variables: variablesExpected2,
-                                                                variationKey: nil,
                                                                 ruleKey: nil,
                                                                 flagKey: featureKey2,
                                                                 userContext: user,
                                                                 reasons: []))
-        XCTAssert(decisions[featureKey3]! == OptimizelyDecision(enabled: false,
+        XCTAssert(decisions[featureKey3]! == OptimizelyDecision(variationKey: nil,
+                                                                enabled: false,
                                                                 variables: variablesExpected3,
-                                                                variationKey: nil,
                                                                 ruleKey: nil,
                                                                 flagKey: featureKey3,
                                                                 userContext: user,
@@ -244,9 +244,9 @@ extension OptimizelyUserContextTests_Decide {
         
         XCTAssert(decisions.count == 1)
         
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(enabled: true,
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
+                                                                enabled: true,
                                                                 variables: variablesExpected1,
-                                                                variationKey: "a",
                                                                 ruleKey: nil,
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
@@ -432,9 +432,9 @@ extension OptimizelyUserContextTests_Decide {
         
         XCTAssert(decisions.count == 2)
         
-        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(enabled: true,
+        XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
+                                                                enabled: true,
                                                                 variables: variablesExpected1,
-                                                                variationKey: "a",
                                                                 ruleKey: nil,
                                                                 flagKey: featureKey1,
                                                                 userContext: user,

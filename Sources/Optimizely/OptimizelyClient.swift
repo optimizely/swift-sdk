@@ -374,12 +374,10 @@ open class OptimizelyClient: NSObject {
             return false
         }
         
-        let pair = decisionService.getVariationForFeature(config: config,
+        guard let pair = decisionService.getVariationForFeature(config: config,
                                                           featureFlag: featureFlag,
                                                           userId: userId,
-                                                          attributes: attributes ?? OptimizelyAttributes())
-        guard let variation = pair?.variation else {
-            logger.i(.variationUnknown(userId, featureKey))
+                                                          attributes: attributes ?? OptimizelyAttributes()) else {
             sendDecisionNotification(decisionType: .feature,
                                      userId: userId,
                                      attributes: attributes,
@@ -389,21 +387,21 @@ open class OptimizelyClient: NSObject {
             return false
         }
 
-        let featureEnabled = variation.featureEnabled ?? false
+        let featureEnabled = pair.variation?.featureEnabled ?? false
         if featureEnabled {
             logger.i(.featureEnabledForUser(featureKey, userId))
         } else {
             logger.i(.featureNotEnabledForUser(featureKey, userId))
         }
         
-        sendImpressionEvent(experiment: pair!.experiment, variation: variation, userId: userId, attributes: attributes, flagKey: featureKey, flagType: pair!.source)
+        sendImpressionEvent(experiment: pair.experiment, variation: pair.variation, userId: userId, attributes: attributes, flagKey: featureKey, flagType: pair.source)
 
         sendDecisionNotification(decisionType: .feature,
                                  userId: userId,
                                  attributes: attributes,
-                                 experiment: pair!.experiment,
-                                 variation: variation,
-                                 source: pair!.source,
+                                 experiment: pair.experiment,
+                                 variation: pair.variation,
+                                 source: pair.source,
                                  feature: featureFlag,
                                  featureEnabled: featureEnabled)
         

@@ -38,6 +38,7 @@ class DecisionListenerTests: XCTestCase {
     
     var datafile: Data!
     var optimizely: FakeManager!
+    let eventDispatcher = FakeEventDispatcher()
     var notificationCenter: OPTNotificationCenter!
     
     // MARK: - SetUp
@@ -48,6 +49,7 @@ class DecisionListenerTests: XCTestCase {
         self.datafile = OTUtils.loadJSONDatafile("api_datafile")
         
         self.optimizely = FakeManager(sdkKey: "12345",
+                                      eventDispatcher: eventDispatcher,
                                       userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.start(datafile: datafile)
         self.notificationCenter = self.optimizely.notificationCenter!
@@ -780,6 +782,8 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerWithUserInRollout() {
         var exp = expectation(description: "x")
+        eventDispatcher.events.removeAll()
+        self.optimizely.config!.project!.sendFlagDecisions = true
 
         let experiment: Experiment = self.optimizely.config!.allExperiments.first!
         var variation: Variation = (experiment.variations.first)!
@@ -795,6 +799,16 @@ class DecisionListenerTests: XCTestCase {
         }
         _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         wait(for: [exp], timeout: 1)
+        
+        let event = getFirstEventJSON()!
+        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+        
+        let metaData = decision["metadata"] as! Dictionary<String, Any>
+        XCTAssertEqual(metaData["flag_type"] as! String, Constants.DecisionSource.rollout.rawValue)
+        XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
+        XCTAssertEqual(metaData["variation_key"] as! String, "a")
 
         exp = expectation(description: "x")
 
@@ -810,10 +824,12 @@ class DecisionListenerTests: XCTestCase {
         }
         _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         wait(for: [exp], timeout: 1)
+        self.optimizely.config!.project!.sendFlagDecisions = nil
     }
     
     func testDecisionListenerWithUserInExperiment() {
         var exp = expectation(description: "x")
+        eventDispatcher.events.removeAll()
 
         let experiment: Experiment = (self.optimizely.config?.allExperiments.first!)!
         var variation: Variation = (experiment.variations.first)!
@@ -831,6 +847,16 @@ class DecisionListenerTests: XCTestCase {
         }
         _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         wait(for: [exp], timeout: 1)
+        
+        let event = getFirstEventJSON()!
+        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+        
+        let metaData = decision["metadata"] as! Dictionary<String, Any>
+        XCTAssertEqual(metaData["flag_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+        XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
+        XCTAssertEqual(metaData["variation_key"] as! String, "a")
 
         exp = expectation(description: "x")
 
@@ -906,4 +932,22 @@ fileprivate extension HandlerRegistryService {
     func removeAll() {
         self.binders.property?.removeAll()
     }
+}
+
+// MARK: - Utils
+
+extension DecisionListenerTests {
+    
+    func getFirstEvent() -> EventForDispatch? {
+        optimizely.eventLock.sync{}
+        return eventDispatcher.events.first
+    }
+    
+    func getFirstEventJSON() -> [String: Any]? {
+        guard let event = getFirstEvent() else { return nil }
+        
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! [String: Any]
+        return json
+    }
+    
 }

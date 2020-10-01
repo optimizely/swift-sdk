@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -76,6 +76,11 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(decision["campaign_id"] as! String, expCampaignId)
         XCTAssertEqual(decision["experiment_id"] as! String, expExperimentId)
         
+        let metaData = decision["metadata"] as! Dictionary<String, Any>
+        XCTAssertEqual(metaData["flag_type"] as! String, "experiment")
+        XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
+        XCTAssertEqual(metaData["variation_key"] as! String, "all_traffic_variation")
+        
         let de = (snapshot["events"]  as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(de["entity_id"] as! String, expCampaignId)
@@ -91,6 +96,66 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertNil(de["value"])
     }
 
+    func testCreateImpressionEventWithSendFlagDecisions() {
+        let scenarios: [String: Bool] = [
+            "experiment": true,
+            "anything-else": true,
+            Constants.DecisionSource.featureTest.rawValue: true,
+            Constants.DecisionSource.rollout.rawValue: false
+        ]
+        let attributes: [String: Any] = [
+            "s_foo": "foo",
+            "b_true": true,
+            "i_42": 42,
+            "d_4_2": 4.2
+        ]
+        let experiment = optimizely.config?.getExperiment(id: "10390977714")
+        let variation = experiment?.getVariation(id: "10416523162")
+        
+        for scenario in scenarios {
+            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: variation, userId: userId, attributes: attributes, flagKey: experiment!.key, flagType: scenario.key)
+            scenario.value ? XCTAssertNotNil(event): XCTAssertNil(event)
+        }
+        
+        // nil variation should always return nil
+        for scenario in scenarios {
+            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, flagType: scenario.key)
+            XCTAssertNil(event)
+        }
+        
+        // should always return a event if sendFlagDecisions is set
+        optimizely.config?.project.sendFlagDecisions = true
+        for scenario in scenarios {
+            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, flagType: scenario.key)
+            XCTAssertNotNil(event)
+        }
+        optimizely.config?.project.sendFlagDecisions = nil
+    }
+    
+    func testCreateImpressionEventWithoutVariation() {
+        let attributes: [String: Any] = [
+            "s_foo": "foo",
+            "b_true": true,
+            "i_42": 42,
+            "d_4_2": 4.2
+        ]
+        let experiment = optimizely.config?.getExperiment(id: "10390977714")
+        
+        optimizely.config?.project.sendFlagDecisions = true
+        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, flagType: Constants.DecisionSource.featureTest.rawValue)
+        XCTAssertNotNil(event)
+        
+        let visitor = (getEventJSON(data: event!)!["visitors"] as! Array<Dictionary<String, Any>>)[0]
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+        
+        let metaData = decision["metadata"] as! Dictionary<String, Any>
+        XCTAssertEqual(metaData["flag_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+        XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
+        XCTAssertEqual(metaData["variation_key"] as! String, "")
+        optimizely.config?.project.sendFlagDecisions = nil
+    }
+    
     func testCreateConversionEvent() {
         let eventKey = "event_single_targeted_exp"
         let eventId = "10404198135"
@@ -177,6 +242,11 @@ extension BatchEventBuilderTests_Events {
         guard let event = getFirstEvent() else { return nil }
         
         let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! [String: Any]
+        return json
+    }
+    
+    func  getEventJSON(data: Data) -> [String: Any]? {
+        let json = try! JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: Any]
         return json
     }
     

@@ -478,10 +478,23 @@ class DatafileHandlerTests: XCTestCase {
         XCTAssert(count == 9)
     }
 
+    class TimoutDatafileHandler : DefaultDatafileHandler {
+        var localFileUrl:URL?
+        // override getSession to return our own session.
+        override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
+            var session = MockUrlSession(failureCode: 200, withError: false)
+            session.downloadCacheUrl = localFileUrl
+            // will return 500
+            if let _ = resourceTimeoutInterval {
+                session = MockUrlSession(failureCode: 408, withError: true)
+            }
+            
+            return session
+        }
+    }
 
     func testDownloadTimeout() {
-        let handler = DefaultDatafileHandler()
-        handler.endPointStringFormat = "https://httpstat.us/200?sleep=5000&datafile=%@"
+        let handler = TimoutDatafileHandler()
         
         let expectation = XCTestExpectation(description: "should fail before 10")
         handler.downloadDatafile(sdkKey: "invalidKey1212121", resourceTimeoutInterval: 3) { (result) in
@@ -498,9 +511,12 @@ class DatafileHandlerTests: XCTestCase {
     }
     
     func testDownloadWithoutTimeout() {
-        let handler = DefaultDatafileHandler()
-        handler.endPointStringFormat = "https://httpstat.us/200?sleep=3000&datafile=%@"
-        
+
+        let handler = TimoutDatafileHandler()
+        // create a dummy file at a url to use as or datafile cdn location
+        let localUrl = OTUtils.saveAFile(name: "invalidKeyXXXXX", data: "{}".data(using: .utf8)!)
+        handler.localFileUrl = localUrl
+
         let expectation = XCTestExpectation(description: "will wait for response.")
         handler.downloadDatafile(sdkKey: "invalidKeyXXXXX") { (result) in
             
@@ -508,6 +524,7 @@ class DatafileHandlerTests: XCTestCase {
                 print(data ?? "")
                 XCTAssert(true)
                 expectation.fulfill()
+                OTUtils.removeAFile(name: "invalidKeyXXXXX")
             }
         }
 

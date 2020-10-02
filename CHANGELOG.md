@@ -1,7 +1,7 @@
 # Optimizely Swift SDK Changelog
 
 ## 3.5.0
-October 1, 2020
+October 2, 2020
 
 ### New Features
 * Add versioning that follows semantic version types and tests. ([#333](https://github.com/optimizely/swift-sdk/pull/333))

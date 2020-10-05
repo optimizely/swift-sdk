@@ -23,7 +23,7 @@ public enum OptimizelyDecideOption {
     case disableDecisionEvent
     
     /// returns decisions only for flags which are enabled.
-    case enabledOnly
+    case enabledFlagsOnly
     
     /// skip user profile service for decision.
     case ignoreUPS

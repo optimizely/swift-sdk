@@ -176,7 +176,7 @@ extension BucketTests_Others {
 extension BucketTests_Others {
 
     func testBucketExperimentInMutexGroup() {        
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketer_test", clearUserProfileService: true)!
         let group = optimizely.config!.getGroup(id: "1886780721")!
 
         let bucketer = DefaultBucketer()
@@ -200,7 +200,7 @@ extension BucketTests_Others {
      }
 
     func testBucketReturnsNilWhenExperimentIsExcludedFromMutex() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketer_test", clearUserProfileService: true)!
         let config = optimizely.config!
         let bucketer = DefaultBucketer()
 
@@ -237,7 +237,7 @@ extension BucketTests_Others {
     }
 
     func testBucketExperimentWithMutexDoesNotChangeExperimentReference() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketer_test", clearUserProfileService: true)!
         let config = optimizely.config!
         let bucketer = DefaultBucketer()
 
@@ -248,7 +248,7 @@ extension BucketTests_Others {
     }
 
     func testBucketWithBucketingId() {
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketer_test2", clearUserProfileService: true)!
         let config = optimizely.config!
         let bucketer = DefaultBucketer()
         
@@ -269,7 +269,7 @@ extension BucketTests_Others {
     func testBucketVariationGroupedExperimentsWithBucketingId() {
         // make sure that bucketing works with experiments in group
         
-        let optimizely = OTUtils.createOptimizely(datafileName: "BucketerTestsDatafile2", clearUserProfileService: true)!
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketer_test2", clearUserProfileService: true)!
         let config = optimizely.config!
         let bucketer = DefaultBucketer()
 
@@ -296,4 +296,16 @@ extension BucketTests_Others {
         XCTAssertNil(variation)
     }
 
+    func testBucketVariationAtBoundaries() {
+        // testing #OASIS-7150
+        // userId(2113143589306368718) + experId(18513703488) = “211314358930636871818513703488” creates a hash value of 0
+        
+        let optimizely = OTUtils.createOptimizely(datafileName: "bucketer_test3", clearUserProfileService: true)!
+        
+        XCTAssertFalse(optimizely.isFeatureEnabled(featureKey: "async_payments", userId: "2113143589306368718"))
+        XCTAssertFalse(optimizely.isFeatureEnabled(featureKey: "async_payments", userId: "2113143589306368719"))
+        XCTAssertFalse(optimizely.isFeatureEnabled(featureKey: "async_payments", userId: "2113143589306368710"))
+        XCTAssertFalse(optimizely.isFeatureEnabled(featureKey: "async_payments", userId: "2113143589306368711"))
+        XCTAssertFalse(optimizely.isFeatureEnabled(featureKey: "async_payments", userId: "2113143589306368712"))
+    }
 }

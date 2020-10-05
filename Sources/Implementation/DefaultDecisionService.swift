@@ -358,7 +358,7 @@ extension DefaultDecisionService {
                                    experimentId: String,
                                    options: [OptimizelyDecideOption]? = nil,
                                    reasons: DecisionReasons? = nil) -> String? {
-        if (options ?? []).contains(.ignoreUPS) { return nil }
+        if (options ?? []).contains(.ignoreUserProfileService) { return nil }
         
         if let profile = userProfileService.lookup(userId: userId),
             let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
@@ -375,7 +375,7 @@ extension DefaultDecisionService {
                      variationId: String,
                      options: [OptimizelyDecideOption]? = nil,
                      reasons: DecisionReasons? = nil) {
-        if (options ?? []).contains(.ignoreUPS) { return }
+        if (options ?? []).contains(.ignoreUserProfileService) { return }
         
         var profile = userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
         

@@ -106,10 +106,7 @@ class DefaultBucketer: OPTBucketer {
             return nil
         }
         
-        for trafficAllocation in group.trafficAllocation where bucketValue <= trafficAllocation.endOfRange {
-            let experimentId = trafficAllocation.entityId
-            
-            // propagate errors and logs for unknown experiment
+        if let experimentId = allocateTraffic(trafficAllocation: group.trafficAllocation, bucketValue: bucketValue) {
             if let experiment = config.getExperiment(id: experimentId) {
                 return experiment
             } else {
@@ -137,11 +134,8 @@ class DefaultBucketer: OPTBucketer {
             reasons?.addInfo(info)
             return nil
         }
-        
-        for trafficAllocation in experiment.trafficAllocation where bucketValue <= trafficAllocation.endOfRange {
-            let variationId = trafficAllocation.entityId
-            
-            // propagate errors and logs for unknown variation
+
+        if let variationId = allocateTraffic(trafficAllocation: experiment.trafficAllocation, bucketValue: bucketValue) {
             if let variation = experiment.getVariation(id: variationId) {
                 return variation
             } else {
@@ -149,6 +143,16 @@ class DefaultBucketer: OPTBucketer {
                 logger.e(info)
                 reasons?.addInfo(info)
                 return nil
+            }
+        } else {
+            return nil
+        }
+    }
+    
+    func allocateTraffic(trafficAllocation: [TrafficAllocation], bucketValue: Int) -> String? {
+        for bucket in trafficAllocation {
+            if bucketValue < bucket.endOfRange {
+                return bucket.entityId
             }
         }
         

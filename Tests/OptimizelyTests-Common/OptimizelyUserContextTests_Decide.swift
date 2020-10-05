@@ -66,9 +66,9 @@ class OptimizelyUserContextTests_Decide: XCTestCase {
     }
     
     func testDefaultDecideOptions() {
-        let expOptions: [OptimizelyDecideOption] = [.ignoreUPS,
+        let expOptions: [OptimizelyDecideOption] = [.ignoreUserProfileService,
                                                     .disableDecisionEvent,
-                                                    .enabledOnly,
+                                                    .enabledFlagsOnly,
                                                     .includeReasons,
                                                     .excludeVariables]
         
@@ -305,7 +305,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertNil(getProfileVariation(userId: kUserId, experimentId: experimentId))
 
         // this will not set UPS because of bypassUPS option
-        _ = user.decide(key: featureKey, options: [.ignoreUPS])
+        _ = user.decide(key: featureKey, options: [.ignoreUserProfileService])
         
         XCTAssertNil(getProfileVariation(userId: kUserId, experimentId: experimentId))
     }
@@ -323,7 +323,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssert(getProfileVariation(userId: kUserId, experimentId: experimentId) == variationId2)
 
         let decision1 = user.decide(key: featureKey)
-        let decision2 = user.decide(key: featureKey, options: [.ignoreUPS])
+        let decision2 = user.decide(key: featureKey, options: [.ignoreUserProfileService])
 
         XCTAssert(decision1.variationKey == variationKey2)
         XCTAssert(decision2.variationKey == variationKey1)

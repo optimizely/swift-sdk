@@ -328,7 +328,7 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         
         var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
-        decision = user.decide(key: featureKey, options: [.ignoreUPS, .includeReasons])
+        decision = user.decide(key: featureKey, options: [.ignoreUserProfileService, .includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoVariationInExperiment(kUserId,
                                                                                              experimentKey,
                                                                                              variationKey).reason))
@@ -375,7 +375,7 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         let groupId = "13142870430"
         setExperimentForFeatureTest(featureKey: featureKey, experimentKey: experimentKey)
 
-        let decision = user.decide(key: featureKey, options: [.ignoreUPS, .includeReasons])
+        let decision = user.decide(key: featureKey, options: [.ignoreUserProfileService, .includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoExperimentInGroup(kUserId,
                                                                                          experimentKey,
                                                                                          groupId).reason))

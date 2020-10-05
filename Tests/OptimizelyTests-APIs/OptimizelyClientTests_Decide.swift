@@ -59,9 +59,9 @@ class OptimizelyClientTests_Decide: XCTestCase {
     }
     
     func testDefaultDecideOptions() {
-        let expOptions: [OptimizelyDecideOption] = [.ignoreUPS,
+        let expOptions: [OptimizelyDecideOption] = [.ignoreUserProfileService,
                                                     .disableDecisionEvent,
-                                                    .enabledOnly,
+                                                    .enabledFlagsOnly,
                                                     .includeReasons]
         
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)

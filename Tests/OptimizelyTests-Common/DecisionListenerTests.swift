@@ -849,13 +849,10 @@ class DecisionListenerTests: XCTestCase {
     
 extension DecisionListenerTests {
     
-    func testDecisionListenerDecideWithUserInExperiment() {
-        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
-        
-        // (1) experiment variation with feature-enabled
-        
-        var exp = expectation(description: "x")
+    func testDecisionListenerDecideWithUserInExperiment_featureEnabled() {
+        let exp = expectation(description: "x")
 
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
         let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
@@ -886,13 +883,17 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
         }
+        
         _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
-        
-        // (2) experiment variation with feature-disabled
+    }
+    
+    func testDecisionListenerDecideWithUserInExperiment_featureDisabled() {
+        let exp = expectation(description: "x")
 
-        exp = expectation(description: "x")
-        
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
+        let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
+        var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = false
         self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation)
         
@@ -916,6 +917,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
         }
+        
         _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
     }
@@ -956,13 +958,10 @@ extension DecisionListenerTests {
         wait(for: [exp], timeout: 1)
     }
 
-    func testDecisionListenerDecideWithUserInRollout() {
+    func testDecisionListenerDecideWithUserInRollout_featureEnabled() {
+        let exp = expectation(description: "x")
+        
         let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
-
-        // (1) rollout variation with feature-enabled
-        
-        var exp = expectation(description: "x")
-        
         var variation: Variation = (self.optimizely.config?.allExperiments.first!.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2696150066", value: "123"))
@@ -991,10 +990,13 @@ extension DecisionListenerTests {
         _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
         
-        // (2) rollout variation with feature-disabled
-
-        exp = expectation(description: "x")
+    }
+    
+    func testDecisionListenerDecideWithUserInRollout_featureDisabled() {
+        let exp = expectation(description: "x")
         
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
+        var variation: Variation = (self.optimizely.config?.allExperiments.first!.variations.first)!
         variation.featureEnabled = false
         self.optimizely.setDecisionServiceData(experiment: nil, variation: variation)
         

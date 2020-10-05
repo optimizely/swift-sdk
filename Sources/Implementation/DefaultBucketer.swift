@@ -77,10 +77,7 @@ class DefaultBucketer: OPTBucketer {
             return nil
         }
         
-        for trafficAllocation in group.trafficAllocation where bucketValue <= trafficAllocation.endOfRange {
-            let experimentId = trafficAllocation.entityId
-            
-            // propagate errors and logs for unknown experiment
+        if let experimentId = allocateTraffic(trafficAllocation: group.trafficAllocation, bucketValue: bucketValue) {
             if let experiment = config.getExperiment(id: experimentId) {
                 return experiment
             } else {
@@ -91,7 +88,7 @@ class DefaultBucketer: OPTBucketer {
         
         return nil
     }
-    
+
     func bucketToVariation(experiment: Experiment, bucketingId: String) -> Variation? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)
@@ -101,16 +98,23 @@ class DefaultBucketer: OPTBucketer {
             logger.e(.experimentHasNoTrafficAllocation(experiment.key))
             return nil
         }
-        
-        for trafficAllocation in experiment.trafficAllocation where bucketValue <= trafficAllocation.endOfRange {
-            let variationId = trafficAllocation.entityId
-            
-            // propagate errors and logs for unknown variation
+
+        if let variationId = allocateTraffic(trafficAllocation: experiment.trafficAllocation, bucketValue: bucketValue) {
             if let variation = experiment.getVariation(id: variationId) {
                 return variation
             } else {
                 logger.e(.userBucketedIntoInvalidVariation(variationId))
                 return nil
+            }
+        } else {
+            return nil
+        }
+    }
+    
+    func allocateTraffic(trafficAllocation: [TrafficAllocation], bucketValue: Int) -> String? {
+        for bucket in trafficAllocation {
+            if bucketValue < bucket.endOfRange {
+                return bucket.entityId
             }
         }
         

@@ -26,7 +26,7 @@ public struct OptimizelyUserContext {
     /// OptimizelyUserContext init
     ///
     /// - Parameters:
-    ///   - optimizely: an instance of OptimizelyClient to be used for decisions.
+    ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
     public init(optimizely: OptimizelyClient,

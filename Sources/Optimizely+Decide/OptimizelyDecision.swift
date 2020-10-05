@@ -19,7 +19,7 @@ import Foundation
 /// A decision struct that the SDK makes for a flag key and a user context.
 public struct OptimizelyDecision {
     
-    /// A variation key of the decision. This value will be nil when decision making fails.
+    /// Variation key of the decision. This value will be nil when decision making fails.
     public let variationKey: String?
     
     /// A boolean value indicating the flag is enabled or not.

@@ -241,7 +241,7 @@ extension OptimizelyUserContextTests_Decide {
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
         
         let user = optimizely.createUserContext(userId: kUserId, attributes: ["gender": "f"])
-        let decisions = user.decideAll(options: [.enabledOnly])
+        let decisions = user.decideAll(options: [.enabledFlagsOnly])
         
         XCTAssert(decisions.count == 2)
         

@@ -26,7 +26,7 @@ public enum OptimizelyDecideOption {
     case enabledFlagsOnly
     
     /// skip user profile service for decision.
-    case ignoreUPS
+    case ignoreUserProfileService
     
     /// include info and debug messages in the decision reasons.
     case includeReasons

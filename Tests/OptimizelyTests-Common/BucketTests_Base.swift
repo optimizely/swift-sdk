@@ -41,4 +41,59 @@ class BucketTests_Base: XCTestCase {
         }
     }
     
+    func testAllocateExperimentTraffic() {
+        var experimentData: [String: Any] { return
+            [
+                "status": "Running",
+                "id": "12345",
+                "key": "experimentA",
+                "layerId": "10420273888",
+                "trafficAllocation": [
+                    [
+                        "entityId": "1000",
+                        "endOfRange": 0
+                    ],
+                    [
+                        "entityId": "1001",
+                        "endOfRange": 3000
+                    ],
+                    [
+                        "entityId": "1002",
+                        "endOfRange": 6000
+                    ]
+                ],
+                "audienceIds": [],
+                "variations": [
+                    [
+                        "variables": [],
+                        "id": "1000",
+                        "key": "a"
+                    ],
+                    [
+                        "variables": [],
+                        "id": "1001",
+                        "key": "b"
+                    ],
+                    [
+                        "variables": [],
+                        "id": "1002",
+                        "key": "c"
+                    ]
+                ],
+                "forcedVariations": [:]
+            ]
+        }
+        
+        let bucketer = DefaultBucketer()
+        let experiment: Experiment = try! OTUtils.model(from: experimentData)
+        let trafficAllocation = experiment.trafficAllocation
+        
+        XCTAssert(bucketer.allocateTraffic(trafficAllocation: trafficAllocation, bucketValue: 0) == "1001")
+        XCTAssert(bucketer.allocateTraffic(trafficAllocation: trafficAllocation, bucketValue: 2999) == "1001")
+        XCTAssert(bucketer.allocateTraffic(trafficAllocation: trafficAllocation, bucketValue: 3000) == "1002")
+        XCTAssert(bucketer.allocateTraffic(trafficAllocation: trafficAllocation, bucketValue: 5999) == "1002")
+        XCTAssertNil(bucketer.allocateTraffic(trafficAllocation: trafficAllocation, bucketValue: 6000))
+        XCTAssertNil(bucketer.allocateTraffic(trafficAllocation: trafficAllocation, bucketValue: 7000))
+    }
+    
 }

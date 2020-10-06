@@ -20,7 +20,6 @@
 
 static NSString * const kUserId = @"tester";
 static NSString * const kSdkKey = @"12345";
-static NSString * const kErrorMessageUserNotSet = @"User not set properly yet";
 static NSString * datafile;
 
 @interface OptimizelyUserContextTests_Objc : XCTestCase

@@ -21,7 +21,7 @@ public enum OptimizelyError: Error {
     // MARK: - SDK
     
     case sdkNotReady
-    case userNotSet
+    case userContextInvalid
     
     // MARK: - Experiment
     
@@ -99,18 +99,18 @@ extension OptimizelyError: CustomStringConvertible, Reasonable {
         var message: String
         
         switch self {
-        case .generic:                                      message = "Unknown reason"
-        case .sdkNotReady:                                  message = "Optimizely SDK not configured properly yet"
-        case .userNotSet:                                   message = "User not set properly yet"
+        case .generic:                                      message = "Unknown reason."
+        case .sdkNotReady:                                  message = "Optimizely SDK not configured properly yet."
+        case .userContextInvalid:                           message = "User context is not valid."
         case .experimentKeyInvalid(let key):                message = "Experiment key (\(key)) is not in datafile. It is either invalid, paused, or archived."
         case .experimentIdInvalid(let id):                  message = "Experiment ID (\(id)) is not in datafile."
         case .experimentHasNoTrafficAllocation(let key):    message = "No traffic allocation rules are defined for experiement (\(key))."
-        case .featureKeyInvalid(let key):                   message = "Feature key (\(key)) is not in datafile."
+        case .featureKeyInvalid(let key):                   message = "No flag was found for key \"\(key)\"."
         case .variationKeyInvalid(let expKey, let varKey):  message = "No variation key (\(varKey)) defined in datafile for experiment (\(expKey))."
         case .variationIdInvalid(let expKey, let varId):    message = "No variation ID (\(varId)) defined in datafile for experiment (\(expKey))."
         case .variationUnknown(let userId, let key):        message = "User (\(userId)) does not meet conditions to be in experiment/feature (\(key))."
         case .variableKeyInvalid(let varKey, let feature):  message = "Variable with key (\(varKey)) associated with feature with key (\(feature)) is not in datafile."
-        case .variableValueInvalid(let key):                message = "Variable value for key (\(key)) is invalid or wrong type"
+        case .variableValueInvalid(let key):                message = "Variable value for key (\(key)) is invalid or wrong type."
         case .eventKeyInvalid(let key):                     message = "Event key (\(key)) is not in datafile."
         case .eventBuildFailure(let key):                   message = "Failed to create a dispatch event (\(key))"
         case .eventTagsFormatInvalid:                       message = "Provided event tags are in an invalid format."
@@ -118,16 +118,16 @@ extension OptimizelyError: CustomStringConvertible, Reasonable {
         case .attributeValueInvalid(let key):               message = "Attribute value for (\(key)) is invalid."
         case .attributeFormatInvalid:                       message = "Provided attributes are in an invalid format."
         case .groupIdInvalid(let id):                       message = "Group ID (\(id)) is not in datafile."
-        case .groupHasNoTrafficAllocation(let id):          message = "No traffic allocation rules are defined for group (\(id))"
-        case .rolloutIdInvalid(let id, let feature):        message = "Invalid rollout ID (\(id)) attached to feature (\(feature))"
+        case .groupHasNoTrafficAllocation(let id):          message = "No traffic allocation rules are defined for group (\(id))."
+        case .rolloutIdInvalid(let id, let feature):        message = "Invalid rollout ID (\(id)) attached to feature (\(feature))."
             
         case .conditionNoMatchingAudience(let id):          message = "Audience (\(id)) is not in datafile."
-        case .conditionInvalidFormat(let hint):             message = "Condition has an invalid format (\(hint))"
-        case .conditionCannotBeEvaluated(let hint):         message = "Condition cannot be evaluated (\(hint))"
+        case .conditionInvalidFormat(let hint):             message = "Condition has an invalid format (\(hint))."
+        case .conditionCannotBeEvaluated(let hint):         message = "Condition cannot be evaluated (\(hint))."
         case .evaluateAttributeInvalidCondition(let condition): message = "Audience condition (\(condition)) has an unsupported condition value. You may need to upgrade to a newer release of the Optimizely SDK."
         case .evaluateAttributeInvalidType(let condition, let value, let key):       message = "Audience condition (\(condition)) evaluated to UNKNOWN because a value of type (\(value)) was passed for user attribute (\(key))."
         case .evaluateAttributeValueOutOfRange(let condition, let key):   message = "Audience condition (\(condition)) evaluated to UNKNOWN because the number value for user attribute (\(key)) is not in the range [-2^53, +2^53]."
-        case .evaluateAttributeInvalidFormat(let hint):     message = "Evaluation attribute has an invalid format (\(hint))"
+        case .evaluateAttributeInvalidFormat(let hint):     message = "Evaluation attribute has an invalid format (\(hint))."
         case .userAttributeInvalidType(let condition):      message = "Audience condition (\(condition)) uses an unknown condition type. You may need to upgrade to a newer release of the Optimizely SDK."
         case .userAttributeInvalidMatch(let condition):     message = "Audience condition (\(condition)) uses an unknown match type. You may need to upgrade to a newer release of the Optimizely SDK."
         case .userAttributeNilValue(let condition):         message = "Audience condition (\(condition)) evaluated to UNKNOWN because of null value."
@@ -135,17 +135,17 @@ extension OptimizelyError: CustomStringConvertible, Reasonable {
         case .nilAttributeValue(let condition, let key):    message = "Audience condition (\(condition)) evaluated to UNKNOWN because a null value was passed for user attribute (\(key))."
         case .missingAttributeValue(let condition, let key):    message = "Audience condition (\(condition)) evaluated to UNKNOWN because no value was passed for user attribute (\(key))."
         case .userIdInvalid:                                message = "Provided user ID is in an invalid format."
-        case .bucketingIdInvalid (let id):                  message = "Invalid bucketing ID (\(id))"
+        case .bucketingIdInvalid (let id):                  message = "Invalid bucketing ID (\(id))."
         case .userProfileInvalid:                           message = "Provided user profile object is invalid."
             
-        case .datafileDownloadFailed(let hint):             message = "Datafile download failed (\(hint))"
+        case .datafileDownloadFailed(let hint):             message = "Datafile download failed (\(hint))."
         case .dataFileInvalid:                              message = "Provided datafile is in an invalid format."
         case .dataFileVersionInvalid (let version):         message = "Provided datafile version (\(version)) is not supported."
-        case .datafileSavingFailed(let hint):               message = "Datafile save failed (\(hint))"
-        case .datafileLoadingFailed(let hint):              message = "Datafile load failed (\(hint))"
+        case .datafileSavingFailed(let hint):               message = "Datafile save failed (\(hint))."
+        case .datafileLoadingFailed(let hint):              message = "Datafile load failed (\(hint))."
             
-        case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))"
-        case .eventDispatcherConfigError(let hint):         message = "EventDispatcher config error (\(hint))"
+        case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))."
+        case .eventDispatcherConfigError(let hint):         message = "EventDispatcher config error (\(hint))."
         case .invalidJSONVariable:                          message = "Unable to initialize OptimizelyJSON with the provided dictionary."
         }
         

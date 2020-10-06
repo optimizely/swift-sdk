@@ -34,14 +34,14 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 ```
 dependencies: [
 	.package(url: "https://github.com/optimizely/swift-sdk.git", 
-    .upToNextMinor(from: “3.4.1”))
+    .upToNextMinor(from: “3.5.0”))
 ]
 ```
 
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 ```use_frameworks!```
-```pod 'OptimizelySwiftSDK', '~> 3.4.1'```
+```pod 'OptimizelySwiftSDK', '~> 3.5.0'```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -49,7 +49,7 @@ dependencies: [
 Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.4.1```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.5.0```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 

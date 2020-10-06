@@ -381,7 +381,6 @@ open class OptimizelyClient: NSObject {
             sendDecisionNotification(decisionType: .feature,
                                      userId: userId,
                                      attributes: attributes,
-                                     source: Constants.DecisionSource.rollout.rawValue,
                                      feature: featureFlag,
                                      featureEnabled: false)
             return false

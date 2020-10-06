@@ -178,7 +178,7 @@ extension ProjectConfig {
 extension ProjectConfig {
     
     /**
-     * Determines whether impressions events are sent for ALL decision types.
+     * Get sendFlagDecisions value.
      */
     func sendFlagDecisions() -> Bool {
         return project.sendFlagDecisions ?? false

@@ -18,22 +18,23 @@ import Foundation
 public enum OptimizelyError: Error {
     case generic
 
-    // MARK: - SDK
+    // MARK: - Decision errors
     
     case sdkNotReady
     case userContextInvalid
-    
+    case featureKeyInvalid(_ key: String)
+    case variableValueInvalid(_ key: String)
+    case invalidJSONVariable
+
     // MARK: - Experiment
     
     case experimentKeyInvalid(_ key: String)
     case experimentIdInvalid(_ id: String)
     case experimentHasNoTrafficAllocation(_ key: String)
-    case featureKeyInvalid(_ key: String)
     case variationKeyInvalid(_ expKey: String, _ varKey: String)
     case variationIdInvalid(_ expKey: String, _ varKey: String)
     case variationUnknown(_ userId: String, _ key: String)
     case variableKeyInvalid(_ varKey: String, _ feature: String)
-    case variableValueInvalid(_ key: String)
     case eventKeyInvalid(_ key: String)
     case eventBuildFailure(_ key: String)
     case eventTagsFormatInvalid
@@ -79,9 +80,6 @@ public enum OptimizelyError: Error {
     case eventDispatchFailed(_ reason: String)
     case eventDispatcherConfigError(_ reason: String)
     
-    // MARK: - OptimizelyJSON Errors
-    
-    case invalidJSONVariable
 }
 
 // MARK: - CustomStringConvertible
@@ -100,17 +98,20 @@ extension OptimizelyError: CustomStringConvertible, Reasonable {
         
         switch self {
         case .generic:                                      message = "Unknown reason."
+            
         case .sdkNotReady:                                  message = "Optimizely SDK not configured properly yet."
         case .userContextInvalid:                           message = "User context is not valid."
+        case .featureKeyInvalid(let key):                   message = "No flag was found for key \"\(key)\"."
+        case .variableValueInvalid(let key):                message = "Variable value for key \"\(key)\" is invalid or wrong type."
+        case .invalidJSONVariable:                          message = "Invalid variables for OptimizelyJSON."
+
         case .experimentKeyInvalid(let key):                message = "Experiment key (\(key)) is not in datafile. It is either invalid, paused, or archived."
         case .experimentIdInvalid(let id):                  message = "Experiment ID (\(id)) is not in datafile."
         case .experimentHasNoTrafficAllocation(let key):    message = "No traffic allocation rules are defined for experiement (\(key))."
-        case .featureKeyInvalid(let key):                   message = "No flag was found for key \"\(key)\"."
         case .variationKeyInvalid(let expKey, let varKey):  message = "No variation key (\(varKey)) defined in datafile for experiment (\(expKey))."
         case .variationIdInvalid(let expKey, let varId):    message = "No variation ID (\(varId)) defined in datafile for experiment (\(expKey))."
         case .variationUnknown(let userId, let key):        message = "User (\(userId)) does not meet conditions to be in experiment/feature (\(key))."
         case .variableKeyInvalid(let varKey, let feature):  message = "Variable with key (\(varKey)) associated with feature with key (\(feature)) is not in datafile."
-        case .variableValueInvalid(let key):                message = "Variable value for key (\(key)) is invalid or wrong type."
         case .eventKeyInvalid(let key):                     message = "Event key (\(key)) is not in datafile."
         case .eventBuildFailure(let key):                   message = "Failed to create a dispatch event (\(key))"
         case .eventTagsFormatInvalid:                       message = "Provided event tags are in an invalid format."
@@ -146,7 +147,6 @@ extension OptimizelyError: CustomStringConvertible, Reasonable {
             
         case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))."
         case .eventDispatcherConfigError(let hint):         message = "EventDispatcher config error (\(hint))."
-        case .invalidJSONVariable:                          message = "Unable to initialize OptimizelyJSON with the provided dictionary."
         }
         
         return message

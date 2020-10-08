@@ -77,7 +77,8 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(decision["experiment_id"] as! String, expExperimentId)
         
         let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["flag_type"] as! String, "experiment")
+        XCTAssertEqual(metaData["rule_type"] as! String, "experiment")
+        XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["variation_key"] as! String, "all_traffic_variation")
         
@@ -113,20 +114,20 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let variation = experiment?.getVariation(id: "10416523162")
         
         for scenario in scenarios {
-            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: variation, userId: userId, attributes: attributes, flagKey: experiment!.key, flagType: scenario.key)
+            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: variation, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key)
             scenario.value ? XCTAssertNotNil(event): XCTAssertNil(event)
         }
         
         // nil variation should always return nil
         for scenario in scenarios {
-            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, flagType: scenario.key)
+            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key)
             XCTAssertNil(event)
         }
         
         // should always return a event if sendFlagDecisions is set
         optimizely.config?.project.sendFlagDecisions = true
         for scenario in scenarios {
-            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, flagType: scenario.key)
+            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key)
             XCTAssertNotNil(event)
         }
         optimizely.config?.project.sendFlagDecisions = nil
@@ -142,7 +143,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let experiment = optimizely.config?.getExperiment(id: "10390977714")
         
         optimizely.config?.project.sendFlagDecisions = true
-        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, flagType: Constants.DecisionSource.featureTest.rawValue)
+        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: Constants.DecisionSource.featureTest.rawValue)
         XCTAssertNotNil(event)
         
         let visitor = (getEventJSON(data: event!)!["visitors"] as! Array<Dictionary<String, Any>>)[0]
@@ -150,7 +151,8 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
         
         let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["flag_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+        XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+        XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["variation_key"] as! String, "")
         optimizely.config?.project.sendFlagDecisions = nil

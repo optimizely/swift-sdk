@@ -806,7 +806,8 @@ class DecisionListenerTests: XCTestCase {
         let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
         
         let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["flag_type"] as! String, Constants.DecisionSource.rollout.rawValue)
+        XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.rollout.rawValue)
+        XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
         XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
         XCTAssertEqual(metaData["variation_key"] as! String, "a")
 
@@ -854,7 +855,8 @@ class DecisionListenerTests: XCTestCase {
         let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
         
         let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["flag_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+        XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+        XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
         XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
         XCTAssertEqual(metaData["variation_key"] as! String, "a")
 

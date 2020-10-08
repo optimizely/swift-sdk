@@ -260,7 +260,7 @@ open class OptimizelyClient: NSObject {
                             userId: userId,
                             attributes: attributes,
                             flagKey: experimentKey,
-                            flagType: "experiment")
+                            ruleType: "experiment")
         
         return variation.key
     }
@@ -393,7 +393,7 @@ open class OptimizelyClient: NSObject {
             logger.i(.featureNotEnabledForUser(featureKey, userId))
         }
         
-        sendImpressionEvent(experiment: pair.experiment, variation: pair.variation, userId: userId, attributes: attributes, flagKey: featureKey, flagType: pair.source)
+        sendImpressionEvent(experiment: pair.experiment, variation: pair.variation, userId: userId, attributes: attributes, flagKey: featureKey, ruleType: pair.source)
 
         sendDecisionNotification(decisionType: .feature,
                                  userId: userId,
@@ -751,7 +751,7 @@ extension OptimizelyClient {
                              userId: String,
                              attributes: OptimizelyAttributes? = nil,
                              flagKey: String,
-                             flagType: String) {
+                             ruleType: String) {
         
         // non-blocking (event data serialization takes time)
         eventLock.async {
@@ -763,7 +763,7 @@ extension OptimizelyClient {
                                                                      userId: userId,
                                                                      attributes: attributes,
                                                                      flagKey: flagKey,
-                                                                     flagType: flagType) else {
+                                                                     ruleType: ruleType) else {
                                                                         self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
                                                                         return
             }

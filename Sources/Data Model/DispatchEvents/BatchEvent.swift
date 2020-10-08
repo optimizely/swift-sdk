@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -80,12 +80,14 @@ struct Snapshot: Codable, Equatable {
 }
 
 struct DecisionMetadata: Codable, Equatable {
-    let flagType: String
+    let ruleType: String
+    let ruleKey: String
     let flagKey: String
     let variationKey: String
     
     enum CodingKeys: String, CodingKey {
-        case flagType = "flag_type"
+        case ruleType = "rule_type"
+        case ruleKey = "rule_key"
         case flagKey = "flag_key"
         case variationKey = "variation_key"
     }
@@ -118,7 +120,7 @@ struct DispatchEvent: Codable, Equatable {
     var tags: [String: AttributeValue]?
     var revenue: AttributeValue?
     var value: AttributeValue?
-
+    
     enum CodingKeys: String, CodingKey {
         case entityID = "entity_id"
         case key
@@ -138,7 +140,7 @@ struct DispatchEvent: Codable, Equatable {
          revenue: AttributeValue? = nil) {
         
         // TODO: add validation and throw here for invalid value (int, double) and revenue (int) types
-
+        
         self.timestamp = timestamp
         self.key = key
         self.entityID = entityID

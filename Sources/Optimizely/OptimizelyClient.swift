@@ -259,7 +259,7 @@ open class OptimizelyClient: NSObject {
                             variation: variation,
                             userId: userId,
                             attributes: attributes,
-                            flagKey: experimentKey,
+                            flagKey: "",
                             ruleType: "experiment")
         
         return variation.key

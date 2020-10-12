@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -21,7 +21,7 @@ class DefaultDecisionService: OPTDecisionService {
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
     lazy var logger = OPTLoggerFactory.getLogger()
-
+    
     init(userProfileService: OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
@@ -41,7 +41,7 @@ class DefaultDecisionService: OPTDecisionService {
         
         // ---- check if the user is forced into a variation ----
         if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
-            let variation = experiment.getVariation(id: variationId) {
+           let variation = experiment.getVariation(id: variationId) {
             return variation
         }
         
@@ -58,7 +58,7 @@ class DefaultDecisionService: OPTDecisionService {
         
         // ---- check if a valid variation is stored in the user profile ----
         if let variationId = self.getVariationIdFromProfile(userId: userId, experimentId: experimentId),
-            let variation = experiment.getVariation(id: variationId) {
+           let variation = experiment.getVariation(id: variationId) {
             logger.i(.gotVariationFromUserProfile(variation.key, experiment.key, userId))
             return variation
         }
@@ -152,7 +152,7 @@ class DefaultDecisionService: OPTDecisionService {
     func getVariationForFeatureExperiment(config: ProjectConfig,
                                           featureFlag: FeatureFlag,
                                           userId: String,
-                                          attributes: OptimizelyAttributes) -> (experiment: Experiment, variation: Variation?, source: String)? {
+                                          attributes: OptimizelyAttributes) -> (experiment: Experiment, variation: Variation, source: String)? {
         
         let experimentIds = featureFlag.experimentIds
         if experimentIds.isEmpty {
@@ -163,7 +163,7 @@ class DefaultDecisionService: OPTDecisionService {
         // Evaluate each experiment ID and return the first bucketed experiment variation
         for experimentId in experimentIds {
             if let experiment = config.getExperiment(id: experimentId),
-                let variation = getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes) {
+               let variation = getVariation(config: config, userId: userId, experiment: experiment, attributes: attributes) {
                 return (experiment, variation, Constants.DecisionSource.featureTest.rawValue)
             }
         }
@@ -194,7 +194,7 @@ class DefaultDecisionService: OPTDecisionService {
             logger.e(.rolloutHasNoExperiments(rolloutId))
             return nil
         }
-
+        
         // Evaluate all rollout rules except for last one
         for index in 0..<rolloutRules.count.advanced(by: -1) {
             let loggingKey = index + 1
@@ -220,6 +220,7 @@ class DefaultDecisionService: OPTDecisionService {
                 
                 return (experiment, variation, Constants.DecisionSource.rollout.rawValue)
             }
+            return (experiment, nil, Constants.DecisionSource.rollout.rawValue)
         }
         
         return nil
@@ -246,9 +247,9 @@ extension DefaultDecisionService {
     
     func getVariationIdFromProfile(userId: String, experimentId: String) -> String? {
         if let profile = userProfileService.lookup(userId: userId),
-            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
-            let experimentMap = bucketMap[experimentId],
-            let variationId = experimentMap[UserProfileKeys.kVariationId] {
+           let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+           let experimentMap = bucketMap[experimentId],
+           let variationId = experimentMap[UserProfileKeys.kVariationId] {
             return variationId
         } else {
             return nil

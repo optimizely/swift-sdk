@@ -31,18 +31,19 @@ class BatchEventBuilder {
                                       flagKey: String,
                                       ruleType: String) -> Data? {
         
-        if (ruleType == Constants.DecisionSource.rollout.rawValue || variation == nil) && !config.sendFlagDecisions() {
+        if (ruleType == Constants.DecisionSource.rollout.rawValue || variation == nil) && !config.sendFlagDecisions {
             return nil
         }
         
-        var variationId = ""
-        var variationKey = ""
+        var variationId = "", variationKey = "", ruleKey = "", finalRuleType = ""
         if let tmpVariation = variation {
-            variationKey = tmpVariation.key
             variationId = tmpVariation.id
+            variationKey = tmpVariation.key
+            ruleKey = experiment.key
+            finalRuleType = ruleType
         }
         
-        let metaData = DecisionMetadata(ruleType: ruleType,ruleKey: experiment.key, flagKey: flagKey, variationKey: variationKey)
+        let metaData = DecisionMetadata(ruleType: finalRuleType, ruleKey: ruleKey, flagKey: flagKey, variationKey: variationKey)
         
         let decision = Decision(variationID: variationId,
                                 campaignID: experiment.layerId,

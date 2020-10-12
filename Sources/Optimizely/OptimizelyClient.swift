@@ -259,7 +259,7 @@ open class OptimizelyClient: NSObject {
                             variation: variation,
                             userId: userId,
                             attributes: attributes,
-                            flagKey: "",
+                            flagKey: experimentKey,
                             ruleType: "experiment")
         
         return variation.key
@@ -385,7 +385,6 @@ open class OptimizelyClient: NSObject {
                                      featureEnabled: false)
             return false
         }
-
         let featureEnabled = pair.variation?.featureEnabled ?? false
         if featureEnabled {
             logger.i(.featureEnabledForUser(featureKey, userId))

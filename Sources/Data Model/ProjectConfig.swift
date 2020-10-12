@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -34,13 +34,13 @@ class ProjectConfig {
         }
         return map
     }()
-
+    
     lazy var experimentIdMap: [String: Experiment] = {
         var map = [String: Experiment]()
         allExperiments.forEach { map[$0.id] = $0 }
         return map
     }()
-
+    
     lazy var experimentFeatureMap: [String: [String]] = {
         var experimentFeatureMap = [String: [String]]()
         project.featureFlags.forEach { (ff) in
@@ -67,25 +67,25 @@ class ProjectConfig {
         project.attributes.forEach { map[$0.key] = $0 }
         return map
     }()
-
+    
     lazy var featureFlagKeyMap: [String: FeatureFlag] = {
         var map = [String: FeatureFlag]()
         project.featureFlags.forEach { map[$0.key] = $0 }
         return map
     }()
-
+    
     lazy var rolloutIdMap: [String: Rollout] = {
         var map = [String: Rollout]()
         project.rollouts.forEach { map[$0.id] = $0 }
         return map
     }()
-
+    
     lazy var allExperiments: [Experiment] = {
         return project.experiments + project.groups.map { $0.experiments }.flatMap({$0})
     }()
     
     // MARK: - Init
-
+    
     init(datafile: Data) throws {
         do {
             self.project = try JSONDecoder().decode(Project.self, from: datafile)
@@ -142,7 +142,7 @@ extension ProjectConfig {
     }
     
     static var observer = ProjectObserver()
-
+    
 }
 
 // MARK: - Persistent Data
@@ -180,7 +180,7 @@ extension ProjectConfig {
     /**
      * Get sendFlagDecisions value.
      */
-    func sendFlagDecisions() -> Bool {
+    var sendFlagDecisions: Bool {
         return project.sendFlagDecisions ?? false
     }
     
@@ -313,12 +313,12 @@ extension ProjectConfig {
         
         // TODO: common function to trim all keys
         variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
-
+        
         guard !variationKey.isEmpty else {
             logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
-
+        
         guard let variation = experiment.getVariation(key: variationKey) else {
             logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false

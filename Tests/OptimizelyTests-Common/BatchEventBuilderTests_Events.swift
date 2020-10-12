@@ -79,7 +79,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let metaData = decision["metadata"] as! Dictionary<String, Any>
         XCTAssertEqual(metaData["rule_type"] as! String, "experiment")
         XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
-        XCTAssertEqual(metaData["flag_key"] as! String, "")
+        XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["variation_key"] as! String, "all_traffic_variation")
         
         let de = (snapshot["events"]  as! Array<Dictionary<String, Any>>)[0]
@@ -151,8 +151,8 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
         
         let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
-        XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
+        XCTAssertEqual(metaData["rule_type"] as! String, "")
+        XCTAssertEqual(metaData["rule_key"] as! String, "")
         XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["variation_key"] as! String, "")
         optimizely.config?.project.sendFlagDecisions = nil

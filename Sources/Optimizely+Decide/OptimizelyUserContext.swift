@@ -119,10 +119,13 @@ public class OptimizelyUserContext {
                                             reasons: reasonsToReport,
                                             sentEvent: sentEvent)
         
+        // TODO: add ruleKey values when available later. use a copy of experimentKey until then.
+        let ruleKey = decision?.experiment?.key
+
         return OptimizelyDecision(variationKey: decision?.variation?.key,
                                   enabled: enabled,
                                   variables: optimizelyJSON,
-                                  ruleKey: nil,
+                                  ruleKey: ruleKey,
                                   flagKey: feature.key,
                                   userContext: self,
                                   reasons: reasonsToReport)

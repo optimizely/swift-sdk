@@ -88,7 +88,7 @@ static NSString * datafile;
     XCTAssertNotNil(decision.variables);
     NSDictionary *variables = [decision.variables toMap];
     XCTAssert([variables[@"i_42"] intValue] == 42);
-    XCTAssertNil(decision.ruleKey);
+    XCTAssert([decision.ruleKey isEqualToString:@"exp_no_audience"]);
     XCTAssert([decision.flagKey isEqualToString:featureKey]);
     XCTAssert([decision.userContext.userId isEqualToString:kUserId]);
     XCTAssert(decision.reasons.count == 0);
@@ -110,7 +110,7 @@ static NSString * datafile;
     XCTAssert([decision.flagKey isEqualToString:featureKey]);
     XCTAssert([decision.userContext.userId isEqualToString:kUserId]);
     XCTAssert(decision.reasons.count == 1);
-    XCTAssert([decision.reasons[0] isEqualToString:@"Optimizely SDK not configured properly yet"]);
+    XCTAssert([decision.reasons[0] isEqualToString:@"Optimizely SDK not configured properly yet."]);
 }
 
 //// MARK: - decideAll
@@ -150,7 +150,7 @@ static NSString * datafile;
     OptimizelyUserContext *user = [self.optimizely createUserContextWithUserId:kUserId attributes:@{@"gender": @"f"}];
 
     // array of NSNumber for OptimizelyDecideOption objc type (do not use integer directly since it may change)
-    NSArray *optionsInObjcFormat = @[@(OptimizelyDecideOptionEnabledOnly)];
+    NSArray *optionsInObjcFormat = @[@(OptimizelyDecideOptionEnabledFlagsOnly)];
     NSDictionary<NSString*,OptimizelyDecision*> *decisions1 = [user decideAllWithOptions:nil];
     
     XCTAssert(decisions1.count == 3);
@@ -174,7 +174,7 @@ static NSString * datafile;
     XCTAssertFalse(decisions1[@"feature_3"].enabled);
 
     // array of NSNumber for OptimizelyDecideOption objc type (do not use integer directly since it may change)
-    NSArray *defaultOptionsInObjcFormat = @[@(OptimizelyDecideOptionEnabledOnly)];
+    NSArray *defaultOptionsInObjcFormat = @[@(OptimizelyDecideOptionEnabledFlagsOnly)];
     OptimizelyClient *newOtimizely = [[OptimizelyClient alloc] initWithSdkKey:kSdkKey
                                                                        logger:nil
                                                               eventDispatcher:nil

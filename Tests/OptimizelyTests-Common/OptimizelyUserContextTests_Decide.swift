@@ -99,7 +99,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertTrue(decision.enabled)
         let variables = decision.variables!
         XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
-        
+        XCTAssertEqual(decision.ruleKey, "exp_with_audience")
         XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.userContext, user)
         XCTAssert(decision.reasons.isEmpty)
@@ -163,7 +163,7 @@ extension OptimizelyUserContextTests_Decide {
         let expDecision = OptimizelyDecision(variationKey: "variation_with_traffic",
                                              enabled: true,
                                              variables: variablesExpected,
-                                             ruleKey: nil,
+                                             ruleKey: "exp_with_audience",
                                              flagKey: featureKey,
                                              userContext: user,
                                              reasons: [])
@@ -186,7 +186,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
                                                                 enabled: true,
                                                                 variables: variablesExpected1,
-                                                                ruleKey: nil,
+                                                                ruleKey: "exp_with_audience",
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))
@@ -216,7 +216,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
                                                                 enabled: true,
                                                                 variables: variablesExpected1,
-                                                                ruleKey: nil,
+                                                                ruleKey: "exp_with_audience",
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))
@@ -248,7 +248,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "a",
                                                                 enabled: true,
                                                                 variables: variablesExpected1,
-                                                                ruleKey: nil,
+                                                                ruleKey: "exp_with_audience",
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))
@@ -386,6 +386,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertNil(decision.variationKey)
         XCTAssertFalse(decision.enabled)
         XCTAssertNil(decision.variables)
+        XCTAssertNil(decision.ruleKey)
         XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.userContext, user)
         
@@ -402,6 +403,8 @@ extension OptimizelyUserContextTests_Decide {
 
         XCTAssertNil(decision.variationKey)
         XCTAssertFalse(decision.enabled)
+        XCTAssertNil(decision.variables)
+        XCTAssertNil(decision.ruleKey)
         XCTAssert(decision.reasons.count == 1)
         XCTAssert(decision.reasons.first == OptimizelyError.featureKeyInvalid(featureKey).reason)
     }
@@ -435,7 +438,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssert(decisions[featureKey1]! == OptimizelyDecision(variationKey: "variation_with_traffic",
                                                                 enabled: true,
                                                                 variables: variablesExpected1,
-                                                                ruleKey: nil,
+                                                                ruleKey: "exp_with_audience",
                                                                 flagKey: featureKey1,
                                                                 userContext: user,
                                                                 reasons: []))

@@ -131,7 +131,7 @@ class DefaultDecisionService: OPTDecisionService {
         return result
     }
     
-    func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment, variation: Variation?, source: String)? {
+    func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment, variation: Variation, source: String)? {
         //Evaluate in this order:
         
         //1. Attempt to bucket user into experiment using feature flag.
@@ -173,7 +173,7 @@ class DefaultDecisionService: OPTDecisionService {
     func getVariationForFeatureRollout(config: ProjectConfig,
                                        featureFlag: FeatureFlag,
                                        userId: String,
-                                       attributes: OptimizelyAttributes) -> (experiment: Experiment, variation: Variation?, source: String)? {
+                                       attributes: OptimizelyAttributes) -> (experiment: Experiment, variation: Variation, source: String)? {
         
         let bucketingId = getBucketingId(userId: userId, attributes: attributes)
         
@@ -220,7 +220,6 @@ class DefaultDecisionService: OPTDecisionService {
                 
                 return (experiment, variation, Constants.DecisionSource.rollout.rawValue)
             }
-            return (experiment, nil, Constants.DecisionSource.rollout.rawValue)
         }
         
         return nil

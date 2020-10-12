@@ -780,36 +780,6 @@ class DecisionListenerTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    func testDecisionListenerWhenBucketingForFallbackRuleFails() {
-        let exp = expectation(description: "x")
-        eventDispatcher.events.removeAll()
-        self.optimizely.config!.project!.sendFlagDecisions = true
-
-        let experiment: Experiment = self.optimizely.config!.allExperiments.first!
-        self.optimizely.setDecisionServiceData(experiment: experiment, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
-        notificationCenter.clearAllNotificationListeners()
-        _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.rollout.rawValue)
-            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
-            XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.variation])
-            exp.fulfill()
-        }
-        _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
-        wait(for: [exp], timeout: 1)
-        
-        let event = getFirstEventJSON()!
-        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
-        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
-        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
-        
-        let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["rule_type"] as! String, "")
-        XCTAssertEqual(metaData["rule_key"] as! String, "")
-        XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
-        XCTAssertEqual(metaData["variation_key"] as! String, "")
-    }
-    
     func testDecisionListenerWithUserInRollout() {
         var exp = expectation(description: "x")
         eventDispatcher.events.removeAll()
@@ -952,11 +922,11 @@ class FakeDecisionService: DefaultDecisionService {
         super.init(userProfileService: DefaultUserProfileService())
     }
     
-    override func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment, variation: Variation?, source: String)? {
-        guard let experiment = self.experiment else {
+    override func getVariationForFeature(config: ProjectConfig, featureFlag: FeatureFlag, userId: String, attributes: OptimizelyAttributes) -> (experiment: Experiment, variation: Variation, source: String)? {
+        guard let experiment = self.experiment, let tmpVariation = self.variation else {
             return nil
         }
-        return (experiment, self.variation, self.source)
+        return (experiment, tmpVariation, self.source)
     }
 }
 

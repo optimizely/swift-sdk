@@ -385,7 +385,7 @@ open class OptimizelyClient: NSObject {
                                      featureEnabled: false)
             return false
         }
-        let featureEnabled = pair.variation?.featureEnabled ?? false
+        let featureEnabled = pair.variation.featureEnabled ?? false
         if featureEnabled {
             logger.i(.featureEnabledForUser(featureKey, userId))
         } else {
@@ -528,8 +528,8 @@ open class OptimizelyClient: NSObject {
                                                                    userId: userId,
                                                                    attributes: attributes ?? OptimizelyAttributes())
         if let decision = decision {
-            if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
-                if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
+            if let featureVariable = decision.variation.variables?.filter({$0.id == variable.id}).first {
+                if let featureEnabled = decision.variation.featureEnabled, featureEnabled {
                     featureValue = featureVariable.value
                     logger.i(.userReceivedVariableValue(featureValue, variableKey, featureKey))
                 } else {
@@ -619,7 +619,7 @@ open class OptimizelyClient: NSObject {
                                                                    featureFlag: featureFlag,
                                                                    userId: userId,
                                                                    attributes: attributes ?? OptimizelyAttributes())
-        if let featureEnabled = decision?.variation?.featureEnabled {
+        if let featureEnabled = decision?.variation.featureEnabled {
             enabled = featureEnabled
             if featureEnabled {
                 logger.i(.featureEnabledForUser(featureKey, userId))
@@ -632,7 +632,7 @@ open class OptimizelyClient: NSObject {
         
         for (_, v) in featureFlag.variablesMap {
             var featureValue = v.value
-            if enabled, let variable = decision?.variation?.getVariable(id: v.id) {
+            if enabled, let variable = decision?.variation.getVariable(id: v.id) {
                 featureValue = variable.value
             }
             

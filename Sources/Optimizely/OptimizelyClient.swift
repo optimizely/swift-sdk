@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -34,7 +34,7 @@ open class OptimizelyClient: NSObject {
             atomicConfig.property = newValue
         }
     }
-
+    
     public var version: String {
         return Utils.sdkVersion
     }
@@ -48,7 +48,7 @@ open class OptimizelyClient: NSObject {
             return false
         }
     }
-
+    
     // MARK: - Customizable Services
     
     lazy var logger = OPTLoggerFactory.getLogger()
@@ -70,7 +70,7 @@ open class OptimizelyClient: NSObject {
     public var notificationCenter: OPTNotificationCenter? {
         return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
     }
-
+    
     // MARK: - Public interfaces
     
     /// OptimizelyClient init
@@ -184,7 +184,7 @@ open class OptimizelyClient: NSObject {
     func configSDK(datafile: Data) throws {
         do {
             self.config = try ProjectConfig(datafile: datafile)
-
+            
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
                 self.updateConfigFromBackgroundFetch(data: data)
@@ -223,10 +223,10 @@ open class OptimizelyClient: NSObject {
         for component in HandlerRegistryService.shared.lookupComponents(sdkKey: self.sdkKey) ?? [] {
             HandlerRegistryService.shared.reInitializeComponent(service: component, sdkKey: self.sdkKey)
         }
-
+        
         self.sendDatafileChangeNotification(data: data)
     }
-        
+    
     /**
      * Use the activate method to start an experiment.
      *
@@ -259,7 +259,7 @@ open class OptimizelyClient: NSObject {
                             variation: variation,
                             userId: userId,
                             attributes: attributes,
-                            flagKey: experimentKey,
+                            flagKey: "",
                             ruleType: "experiment")
         
         return variation.key
@@ -374,32 +374,30 @@ open class OptimizelyClient: NSObject {
             return false
         }
         
-        guard let pair = decisionService.getVariationForFeature(config: config,
+        let pair = decisionService.getVariationForFeature(config: config,
                                                           featureFlag: featureFlag,
                                                           userId: userId,
-                                                          attributes: attributes ?? OptimizelyAttributes()) else {
-            sendDecisionNotification(decisionType: .feature,
-                                     userId: userId,
-                                     attributes: attributes,
-                                     feature: featureFlag,
-                                     featureEnabled: false)
-            return false
+                                                          attributes: attributes ?? OptimizelyAttributes())
+        
+        var source = Constants.DecisionSource.rollout.rawValue
+        if let tmpPair = pair {
+            source = tmpPair.source
         }
-        let featureEnabled = pair.variation.featureEnabled ?? false
+        let featureEnabled = pair?.variation.featureEnabled ?? false
         if featureEnabled {
             logger.i(.featureEnabledForUser(featureKey, userId))
         } else {
             logger.i(.featureNotEnabledForUser(featureKey, userId))
         }
         
-        sendImpressionEvent(experiment: pair.experiment, variation: pair.variation, userId: userId, attributes: attributes, flagKey: featureKey, ruleType: pair.source)
-
+        sendImpressionEvent(experiment: pair?.experiment, variation: pair?.variation, userId: userId, attributes: attributes, flagKey: featureKey, ruleType: source)
+        
         sendDecisionNotification(decisionType: .feature,
                                  userId: userId,
                                  attributes: attributes,
-                                 experiment: pair.experiment,
-                                 variation: pair.variation,
-                                 source: pair.source,
+                                 experiment: pair?.experiment,
+                                 variation: pair?.variation,
+                                 source: source,
                                  feature: featureFlag,
                                  featureEnabled: featureEnabled)
         
@@ -479,7 +477,7 @@ open class OptimizelyClient: NSObject {
                                          variableKey: String,
                                          userId: String,
                                          attributes: OptimizelyAttributes? = nil) throws -> String {
-
+        
         return try getFeatureVariable(featureKey: featureKey,
                                       variableKey: variableKey,
                                       userId: userId,
@@ -571,8 +569,8 @@ open class OptimizelyClient: NSObject {
         }
         
         guard let value = valueParsed,
-            type?.rawValue == variable.type else {
-                throw OptimizelyError.variableValueInvalid(variableKey)
+              type?.rawValue == variable.type else {
+            throw OptimizelyError.variableValueInvalid(variableKey)
         }
         
         // Decision Notification
@@ -656,7 +654,7 @@ open class OptimizelyClient: NSObject {
                     break
                 }
             }
-
+            
             if let value = valueParsed {
                 variableMap[v.key] = value
             } else {
@@ -723,7 +721,7 @@ open class OptimizelyClient: NSObject {
         
         sendConversionEvent(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
     }
-        
+    
     /// Read a copy of project configuration data model.
     ///
     /// This call returns a snapshot of the current project configuration.
@@ -736,7 +734,7 @@ open class OptimizelyClient: NSObject {
     /// - Throws: `OptimizelyError` if SDK is not ready
     public func getOptimizelyConfig() throws -> OptimizelyConfig {
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
-
+        
         return OptimizelyConfigImp(projectConfig: config)
     }
 }
@@ -745,7 +743,7 @@ open class OptimizelyClient: NSObject {
 
 extension OptimizelyClient {
     
-    func sendImpressionEvent(experiment: Experiment,
+    func sendImpressionEvent(experiment: Experiment?,
                              variation: Variation?,
                              userId: String,
                              attributes: OptimizelyAttributes? = nil,
@@ -755,7 +753,7 @@ extension OptimizelyClient {
         // non-blocking (event data serialization takes time)
         eventLock.async {
             guard let config = self.config else { return }
-
+            
             guard let body = BatchEventBuilder.createImpressionEvent(config: config,
                                                                      experiment: experiment,
                                                                      variation: variation,
@@ -763,8 +761,8 @@ extension OptimizelyClient {
                                                                      attributes: attributes,
                                                                      flagKey: flagKey,
                                                                      ruleType: ruleType) else {
-                                                                        self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
-                                                                        return
+                self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
+                return
             }
             
             let event = EventForDispatch(body: body)
@@ -772,9 +770,9 @@ extension OptimizelyClient {
             
             // send notification in sync mode (functionally same as async here since it's already in background thread),
             // but this will make testing simpler (timing control)
-
-            if let tmpVariation = variation {
-                self.sendActivateNotification(experiment: experiment,
+            
+            if let tmpExperiment = experiment, let tmpVariation = variation {
+                self.sendActivateNotification(experiment: tmpExperiment,
                                               variation: tmpVariation,
                                               userId: userId,
                                               attributes: attributes,
@@ -782,7 +780,7 @@ extension OptimizelyClient {
                                               async: false)
             }
         }
-
+        
     }
     
     func sendConversionEvent(eventKey: String,
@@ -793,14 +791,14 @@ extension OptimizelyClient {
         // non-blocking (event data serialization takes time)
         eventLock.async {
             guard let config = self.config else { return }
-
+            
             guard let body = BatchEventBuilder.createConversionEvent(config: config,
                                                                      eventKey: eventKey,
                                                                      userId: userId,
                                                                      attributes: attributes,
                                                                      eventTags: eventTags) else {
-                                                                        self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
-                                                                        return
+                self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
+                return
             }
             
             let event = EventForDispatch(body: body)
@@ -808,7 +806,7 @@ extension OptimizelyClient {
             
             // send notification in sync mode (functionally same as async here since it's already in background thread),
             // but this will make testing simpler (timing control)
-
+            
             self.sendTrackNotification(eventKey: eventKey,
                                        userId: userId,
                                        attributes: attributes,
@@ -968,7 +966,7 @@ extension OptimizelyClient {
             notify()
         }
     }
-
+    
 }
 
 // MARK: - For test support

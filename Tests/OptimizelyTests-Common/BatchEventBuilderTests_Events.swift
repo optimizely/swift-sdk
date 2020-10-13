@@ -1,26 +1,26 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import XCTest
 
 class BatchEventBuilderTests_Events: XCTestCase {
-
+    
     let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2"
     let userId = "test_user_1"
-
+    
     var optimizely: OptimizelyClient!
     var eventDispatcher: FakeEventDispatcher!
     var project: Project!
@@ -29,8 +29,8 @@ class BatchEventBuilderTests_Events: XCTestCase {
         eventDispatcher = FakeEventDispatcher()
         
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
-                                                  clearUserProfileService: true,
-                                                  eventDispatcher: eventDispatcher)!
+                                              clearUserProfileService: true,
+                                              eventDispatcher: eventDispatcher)!
         project = optimizely.config!.project!
     }
     
@@ -51,7 +51,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
                                      attributes: attributes)
         
         let event = getFirstEventJSON()!
-
+        
         XCTAssertEqual((event["revision"] as! String), project.revision)
         XCTAssertEqual((event["account_id"] as! String), project.accountId)
         XCTAssertEqual(event["client_version"] as! String, Utils.sdkVersion)
@@ -63,13 +63,13 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(visitor["visitor_id"] as! String, userId)
-
+        
         let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
         
         // attributes contents are tested separately in "BatchEventBuilder_Attributes.swift"
         let eventAttributes = visitor["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssertEqual(eventAttributes.count, attributes.count)
-
+        
         let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(decision["variation_id"] as! String, expVariationId)
@@ -79,7 +79,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let metaData = decision["metadata"] as! Dictionary<String, Any>
         XCTAssertEqual(metaData["rule_type"] as! String, "experiment")
         XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
-        XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
+        XCTAssertEqual(metaData["flag_key"] as! String, "")
         XCTAssertEqual(metaData["variation_key"] as! String, "all_traffic_variation")
         
         let de = (snapshot["events"]  as! Array<Dictionary<String, Any>>)[0]
@@ -96,7 +96,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertNil(de["revenue"])
         XCTAssertNil(de["value"])
     }
-
+    
     func testCreateImpressionEventWithSendFlagDecisions() {
         let scenarios: [String: Bool] = [
             "experiment": true,
@@ -151,9 +151,27 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
         
         let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["rule_type"] as! String, "")
-        XCTAssertEqual(metaData["rule_key"] as! String, "")
+        XCTAssertEqual(metaData["rule_type"] as! String, "feature-test")
+        XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
+        XCTAssertEqual(metaData["variation_key"] as! String, "")
+        optimizely.config?.project.sendFlagDecisions = nil
+    }
+    
+    func testCreateImpressionEventWithoutExperimentAndVariation() {
+        
+        optimizely.config?.project.sendFlagDecisions = true
+        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: nil, variation: nil, userId: userId, attributes: [String: Any](), flagKey: "feature_1", ruleType: Constants.DecisionSource.rollout.rawValue)
+        XCTAssertNotNil(event)
+        
+        let visitor = (getEventJSON(data: event!)!["visitors"] as! Array<Dictionary<String, Any>>)[0]
+        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+        
+        let metaData = decision["metadata"] as! Dictionary<String, Any>
+        XCTAssertEqual(metaData["rule_type"] as! String, "rollout")
+        XCTAssertEqual(metaData["rule_key"] as! String, "")
+        XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
         XCTAssertEqual(metaData["variation_key"] as! String, "")
         optimizely.config?.project.sendFlagDecisions = nil
     }
@@ -161,7 +179,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
     func testCreateConversionEvent() {
         let eventKey = "event_single_targeted_exp"
         let eventId = "10404198135"
-
+        
         let attributes: [String: Any] = ["s_foo": "bar"]
         let eventTags: [String: Any] = ["browser": "chrome"]
         
@@ -190,7 +208,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let eventAttributes = visitor["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssertEqual(eventAttributes[0]["key"] as! String, "s_foo")
         XCTAssertEqual(eventAttributes[0]["value"] as! String, "bar")
-
+        
         let decisions = snapshot["decisions"]
         
         XCTAssertNil(decisions)
@@ -228,7 +246,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let eventForDispatch = eventDispatcher.events.first
         XCTAssertNil(eventForDispatch)
     }
-
+    
 }
 
 // MARK: - Utils

@@ -878,7 +878,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(jsonMap["value"] as! Int, 1)
 
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "a")  //exp = "exp_with_audience"
-            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.ruleKey] as! String, "exp_with_audience")
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
@@ -912,7 +912,7 @@ extension DecisionListenerTests {
             XCTAssertEqual(jsonMap["value"] as! Int, 1)
 
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "a")  //exp = "exp_with_audience"
-            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.ruleKey] as! String, "exp_with_audience")
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()

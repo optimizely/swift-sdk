@@ -888,6 +888,7 @@ extension OptimizelyClient {
                                   variableType: String? = nil,
                                   variableValue: Any? = nil,
                                   variableValues: [String: Any]? = nil,
+                                  ruleKey: String? = nil,
                                   reasons: [String]? = nil,
                                   sentEvent: Bool = false,
                                   async: Bool = true) {
@@ -904,6 +905,7 @@ extension OptimizelyClient {
                                                            variableType: variableType,
                                                            variableValue: variableValue,
                                                            variableValues: variableValues,
+                                                           ruleKey: ruleKey,
                                                            reasons: reasons,
                                                            sentEvent: sentEvent)],
                               async: async)

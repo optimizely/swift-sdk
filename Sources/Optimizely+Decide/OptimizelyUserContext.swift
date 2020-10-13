@@ -107,6 +107,9 @@ public class OptimizelyUserContext {
             }
         }
         
+        // TODO: add ruleKey values when available later. use a copy of experimentKey until then.
+        let ruleKey = decision?.experiment?.key
+        
         optimizely.sendDecisionNotification(decisionType: .flag,
                                             userId: userId,
                                             attributes: attributes,
@@ -115,12 +118,10 @@ public class OptimizelyUserContext {
                                             feature: feature,
                                             featureEnabled: enabled,
                                             variableValues: variableMap,
+                                            ruleKey: ruleKey,
                                             reasons: reasonsToReport,
                                             sentEvent: sentEvent)
         
-        // TODO: add ruleKey values when available later. use a copy of experimentKey until then.
-        let ruleKey = decision?.experiment?.key
-
         return OptimizelyDecision(variationKey: decision?.variation?.key,
                                   enabled: enabled,
                                   variables: optimizelyJSON,

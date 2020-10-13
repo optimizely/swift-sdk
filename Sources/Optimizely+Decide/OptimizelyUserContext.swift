@@ -49,7 +49,7 @@ public class OptimizelyUserContext {
     
     /// Returns a decision result for a given flag key and a user context, which contains all data required to deliver the flag or experiment.
     ///
-    /// If the SDK finds an error (__sdkNotReady__, __userContextInvalid__, etc), it’ll return a decision with `nil` for `enabled` and `variationKey`. The decision will include an error message in `reasons` (regardless of the __includeReasons__ option).
+    /// If the SDK finds an error (__sdkNotReady__, etc), it’ll return a decision with `nil` for `enabled` and `variationKey`. The decision will include an error message in `reasons` (regardless of the __includeReasons__ option).
     ///
     /// - Parameters:
     ///   - key: A flag key for which a decision will be made.
@@ -108,6 +108,9 @@ public class OptimizelyUserContext {
             }
         }
         
+        // TODO: add ruleKey values when available later. use a copy of experimentKey until then.
+        let ruleKey = decision?.experiment?.key
+        
         optimizely.sendDecisionNotification(decisionType: .flag,
                                             userId: userId,
                                             attributes: attributes,
@@ -116,12 +119,10 @@ public class OptimizelyUserContext {
                                             feature: feature,
                                             featureEnabled: enabled,
                                             variableValues: variableMap,
+                                            ruleKey: ruleKey,
                                             reasons: reasonsToReport,
                                             sentEvent: sentEvent)
         
-        // TODO: add ruleKey values when available later. use a copy of experimentKey until then.
-        let ruleKey = decision?.experiment?.key
-
         return OptimizelyDecision(variationKey: decision?.variation?.key,
                                   enabled: enabled,
                                   variables: optimizelyJSON,

@@ -34,11 +34,13 @@ class ProjectConfig {
         }
         return map
     }()
+    
     lazy var experimentIdMap: [String: Experiment] = {
         var map = [String: Experiment]()
         allExperiments.forEach { map[$0.id] = $0 }
         return map
     }()
+    
     lazy var experimentFeatureMap: [String: [String]] = {
         var experimentFeatureMap = [String: [String]]()
         project.featureFlags.forEach { (ff) in
@@ -65,21 +67,25 @@ class ProjectConfig {
         project.attributes.forEach { map[$0.key] = $0 }
         return map
     }()
+    
     lazy var featureFlagKeyMap: [String: FeatureFlag] = {
         var map = [String: FeatureFlag]()
         project.featureFlags.forEach { map[$0.key] = $0 }
         return map
     }()
+    
     lazy var rolloutIdMap: [String: Rollout] = {
         var map = [String: Rollout]()
         project.rollouts.forEach { map[$0.id] = $0 }
         return map
     }()
+    
     lazy var allExperiments: [Experiment] = {
         return project.experiments + project.groups.map { $0.experiments }.flatMap({$0})
     }()
     
     // MARK: - Init
+    
     init(datafile: Data) throws {
         do {
             self.project = try JSONDecoder().decode(Project.self, from: datafile)
@@ -136,6 +142,7 @@ extension ProjectConfig {
     }
     
     static var observer = ProjectObserver()
+    
 }
 
 // MARK: - Persistent Data
@@ -306,10 +313,12 @@ extension ProjectConfig {
         
         // TODO: common function to trim all keys
         variationKey = variationKey.trimmingCharacters(in: NSCharacterSet.whitespaces)
+        
         guard !variationKey.isEmpty else {
             logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false
         }
+        
         guard let variation = experiment.getVariation(key: variationKey) else {
             logger.e(.variationKeyInvalid(experimentKey, variationKey))
             return false

@@ -108,6 +108,7 @@ class BatchEventBuilder {
         
         return try? JSONEncoder().encode(batchEvent)
     }
+    
     // MARK: - Event Tags
     
     static func filterEventTags(_ eventTags: [String: Any]?) -> ([String: AttributeValue], AttributeValue?, AttributeValue?) {

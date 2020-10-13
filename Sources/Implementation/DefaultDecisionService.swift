@@ -21,7 +21,6 @@ class DefaultDecisionService: OPTDecisionService {
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
     lazy var logger = OPTLoggerFactory.getLogger()
-    
     init(userProfileService: OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
@@ -194,7 +193,6 @@ class DefaultDecisionService: OPTDecisionService {
             logger.e(.rolloutHasNoExperiments(rolloutId))
             return nil
         }
-        
         // Evaluate all rollout rules except for last one
         for index in 0..<rolloutRules.count.advanced(by: -1) {
             let loggingKey = index + 1

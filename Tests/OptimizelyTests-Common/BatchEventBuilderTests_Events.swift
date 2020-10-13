@@ -17,10 +17,8 @@
 import XCTest
 
 class BatchEventBuilderTests_Events: XCTestCase {
-    
     let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2"
     let userId = "test_user_1"
-    
     var optimizely: OptimizelyClient!
     var eventDispatcher: FakeEventDispatcher!
     var project: Project!
@@ -51,7 +49,6 @@ class BatchEventBuilderTests_Events: XCTestCase {
                                      attributes: attributes)
         
         let event = getFirstEventJSON()!
-        
         XCTAssertEqual((event["revision"] as! String), project.revision)
         XCTAssertEqual((event["account_id"] as! String), project.accountId)
         XCTAssertEqual(event["client_version"] as! String, Utils.sdkVersion)
@@ -63,13 +60,11 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(visitor["visitor_id"] as! String, userId)
-        
         let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
         
         // attributes contents are tested separately in "BatchEventBuilder_Attributes.swift"
         let eventAttributes = visitor["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssertEqual(eventAttributes.count, attributes.count)
-        
         let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
         
         XCTAssertEqual(decision["variation_id"] as! String, expVariationId)
@@ -179,7 +174,6 @@ class BatchEventBuilderTests_Events: XCTestCase {
     func testCreateConversionEvent() {
         let eventKey = "event_single_targeted_exp"
         let eventId = "10404198135"
-        
         let attributes: [String: Any] = ["s_foo": "bar"]
         let eventTags: [String: Any] = ["browser": "chrome"]
         
@@ -208,7 +202,6 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let eventAttributes = visitor["attributes"] as! Array<Dictionary<String, Any>>
         XCTAssertEqual(eventAttributes[0]["key"] as! String, "s_foo")
         XCTAssertEqual(eventAttributes[0]["value"] as! String, "bar")
-        
         let decisions = snapshot["decisions"]
         
         XCTAssertNil(decisions)
@@ -246,7 +239,6 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let eventForDispatch = eventDispatcher.events.first
         XCTAssertNil(eventForDispatch)
     }
-    
 }
 
 // MARK: - Utils

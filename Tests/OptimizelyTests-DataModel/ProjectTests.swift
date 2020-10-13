@@ -85,7 +85,6 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-    
     func testDecodeFailWithMissingAudiences() {
         var data: [String: Any] = ProjectTests.sampleData
         data["audiences"] = nil
@@ -93,7 +92,6 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-    
     func testDecodeFailWithMissingGroups() {
         var data: [String: Any] = ProjectTests.sampleData
         data["groups"] = nil
@@ -109,7 +107,6 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-    
     func testDecodeFailWithMissingAccountId() {
         var data: [String: Any] = ProjectTests.sampleData
         data["accountId"] = nil
@@ -117,7 +114,6 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-    
     func testDecodeFailWithMissingEvents() {
         var data: [String: Any] = ProjectTests.sampleData
         data["events"] = nil
@@ -125,7 +121,6 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-    
     func testDecodeFailWithMissingRevision() {
         var data: [String: Any] = ProjectTests.sampleData
         data["revision"] = nil
@@ -141,7 +136,6 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-    
     func testDecodeFailWithMissingRollouts() {
         var data: [String: Any] = ProjectTests.sampleData
         data["rollouts"] = nil
@@ -159,7 +153,6 @@ extension ProjectTests {
     }
     
     // MARK: - Optional Fields
-    
     func testDecodeSuccessWithMissingTypedAudiences() {
         var data: [String: Any] = ProjectTests.sampleData
         data["typedAudiences"] = nil

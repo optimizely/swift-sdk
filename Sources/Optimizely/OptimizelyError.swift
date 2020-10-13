@@ -21,7 +21,6 @@ public enum OptimizelyError: Error {
     // MARK: - Decision errors
     
     case sdkNotReady
-    case userContextInvalid
     case featureKeyInvalid(_ key: String)
     case variableValueInvalid(_ key: String)
     case invalidJSONVariable
@@ -100,7 +99,6 @@ extension OptimizelyError: CustomStringConvertible, Reasonable {
         case .generic:                                      message = "Unknown reason."
             
         case .sdkNotReady:                                  message = "Optimizely SDK not configured properly yet."
-        case .userContextInvalid:                           message = "User context is not valid."
         case .featureKeyInvalid(let key):                   message = "No flag was found for key \"\(key)\"."
         case .variableValueInvalid(let key):                message = "Variable value for key \"\(key)\" is invalid or wrong type."
         case .invalidJSONVariable:                          message = "Invalid variables for OptimizelyJSON."

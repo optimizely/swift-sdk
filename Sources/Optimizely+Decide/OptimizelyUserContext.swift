@@ -49,7 +49,7 @@ public class OptimizelyUserContext {
     
     /// Returns a decision result for a given flag key and a user context, which contains all data required to deliver the flag or experiment.
     ///
-    /// If the SDK finds an error (__sdkNotReady__, __userNotSet__, etc), it’ll return a decision with `nil` for `enabled` and `variationKey`. The decision will include an error message in `reasons` (regardless of the __includeReasons__ option).
+    /// If the SDK finds an error (__sdkNotReady__, etc), it’ll return a decision with `nil` for `enabled` and `variationKey`. The decision will include an error message in `reasons` (regardless of the __includeReasons__ option).
     ///
     /// - Parameters:
     ///   - key: A flag key for which a decision will be made.

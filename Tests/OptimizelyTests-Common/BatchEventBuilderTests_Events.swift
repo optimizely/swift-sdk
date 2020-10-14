@@ -20,14 +20,15 @@ class BatchEventBuilderTests_Events: XCTestCase {
     
     let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2"
     let userId = "test_user_1"
+    let featureKey = "feature_1"
     
     var optimizely: OptimizelyClient!
     var eventDispatcher: FakeEventDispatcher!
     var project: Project!
+    let datafile = OTUtils.loadJSONDatafile("api_datafile")!
     
     override func setUp() {
         eventDispatcher = FakeEventDispatcher()
-        
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
                                               eventDispatcher: eventDispatcher)!
@@ -50,7 +51,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
                                      userId: userId,
                                      attributes: attributes)
         
-        let event = getFirstEventJSON()!
+        let event = getFirstEventJSON(dispatcher: eventDispatcher)!
         
         XCTAssertEqual((event["revision"] as! String), project.revision)
         XCTAssertEqual((event["account_id"] as! String), project.accountId)
@@ -77,7 +78,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(decision["experiment_id"] as! String, expExperimentId)
         
         let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["rule_type"] as! String, "experiment")
+        XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.experiment.rawValue)
         XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["flag_key"] as! String, "")
         XCTAssertEqual(metaData["variation_key"] as! String, "all_traffic_variation")
@@ -188,7 +189,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
                               attributes: attributes,
                               eventTags: eventTags)
         
-        let event = getFirstEventJSON()!
+        let event = getFirstEventJSON(dispatcher: eventDispatcher)!
         
         XCTAssertEqual(event["revision"] as! String, project.revision)
         XCTAssertEqual(event["account_id"] as! String, project.accountId)
@@ -249,17 +250,119 @@ class BatchEventBuilderTests_Events: XCTestCase {
     
 }
 
+// MARK: - API Tests
+
+extension BatchEventBuilderTests_Events {
+    
+    func testImpressionEventWithUserNotInExperimentAndRollout() {
+        let eventDispatcher2 = FakeEventDispatcher()
+        let fakeOptimizelyManager = FakeManager(sdkKey: "12345",
+                                            eventDispatcher: eventDispatcher2)
+        try! fakeOptimizelyManager.start(datafile: datafile)
+        
+        let exp = expectation(description: "Wait for event to dispatch")
+        fakeOptimizelyManager.config!.project!.sendFlagDecisions = true
+        fakeOptimizelyManager.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+        _ = fakeOptimizelyManager.isFeatureEnabled(featureKey: featureKey, userId: userId)
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
+         if result == XCTWaiter.Result.timedOut {
+            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+            let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+            let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+            let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+            
+            let metaData = decision["metadata"] as! Dictionary<String, Any>
+            XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.rollout.rawValue)
+            XCTAssertEqual(metaData["rule_key"] as! String, "")
+            XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
+            XCTAssertEqual(metaData["variation_key"] as! String, "")
+         } else {
+             XCTFail("No event found")
+         }
+        fakeOptimizelyManager.config!.project!.sendFlagDecisions = nil
+    }
+    
+    func testImpressionEventWithWithUserInRollout() {
+        let eventDispatcher2 = FakeEventDispatcher()
+        let fakeOptimizelyManager = FakeManager(sdkKey: "12345",
+                                            eventDispatcher: eventDispatcher2)
+        try! fakeOptimizelyManager.start(datafile: datafile)
+        
+        let exp = expectation(description: "Wait for event to dispatch")
+        fakeOptimizelyManager.config!.project!.sendFlagDecisions = true
+
+        let experiment: Experiment = fakeOptimizelyManager.config!.allExperiments.first!
+        var variation: Variation = (experiment.variations.first)!
+        variation.featureEnabled = true
+        fakeOptimizelyManager.setDecisionServiceData(experiment: experiment, variation: variation, source: Constants.DecisionSource.rollout.rawValue)
+        _ = fakeOptimizelyManager.isFeatureEnabled(featureKey: featureKey, userId: userId)
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
+         if result == XCTWaiter.Result.timedOut {
+            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+            let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+            let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+            let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+            
+            let metaData = decision["metadata"] as! Dictionary<String, Any>
+            XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.rollout.rawValue)
+            XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
+            XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
+            XCTAssertEqual(metaData["variation_key"] as! String, "a")
+         } else {
+             XCTFail("No event found")
+         }
+        variation.featureEnabled = false
+        fakeOptimizelyManager.config!.project!.sendFlagDecisions = nil
+    }
+    
+    func testImpressionEventWithUserInExperiment() {
+        let eventDispatcher2 = FakeEventDispatcher()
+        let fakeOptimizelyManager = FakeManager(sdkKey: "12345",
+                                            eventDispatcher: eventDispatcher2)
+        try! fakeOptimizelyManager.start(datafile: datafile)
+        
+        let exp = expectation(description: "Wait for event to dispatch")
+        fakeOptimizelyManager.config!.project!.sendFlagDecisions = true
+
+        let experiment: Experiment = (fakeOptimizelyManager.config?.allExperiments.first!)!
+        var variation: Variation = (experiment.variations.first)!
+        variation.featureEnabled = true
+        fakeOptimizelyManager.setDecisionServiceData(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
+        _ = fakeOptimizelyManager.isFeatureEnabled(featureKey: featureKey, userId: userId)
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
+         if result == XCTWaiter.Result.timedOut {
+            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+            let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+            let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+            let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+            
+            let metaData = decision["metadata"] as! Dictionary<String, Any>
+            XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+            XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
+            XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
+            XCTAssertEqual(metaData["variation_key"] as! String, "a")
+         } else {
+             XCTFail("No event found")
+         }
+        variation.featureEnabled = false
+        fakeOptimizelyManager.config!.project!.sendFlagDecisions = nil
+    }
+}
+
 // MARK: - Utils
 
 extension BatchEventBuilderTests_Events {
     
-    func getFirstEvent() -> EventForDispatch? {
+    func getFirstEvent(dispatcher: FakeEventDispatcher) -> EventForDispatch? {
         optimizely.eventLock.sync{}
-        return eventDispatcher.events.first
+        return dispatcher.events.first
     }
     
-    func getFirstEventJSON() -> [String: Any]? {
-        guard let event = getFirstEvent() else { return nil }
+    func getFirstEventJSON(dispatcher: FakeEventDispatcher) -> [String: Any]? {
+        guard let event = getFirstEvent(dispatcher: dispatcher) else { return nil }
         
         let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! [String: Any]
         return json

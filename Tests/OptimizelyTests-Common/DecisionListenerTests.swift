@@ -765,9 +765,6 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
-        eventDispatcher.events.removeAll()
-        self.optimizely.config!.project!.sendFlagDecisions = true
-        
         self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
@@ -780,26 +777,11 @@ class DecisionListenerTests: XCTestCase {
         
         _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         wait(for: [exp], timeout: 1)
-        
-        let event = getFirstEventJSON()!
-        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
-        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
-        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
-        
-        let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.rollout.rawValue)
-        XCTAssertEqual(metaData["rule_key"] as! String, "")
-        XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
-        XCTAssertEqual(metaData["variation_key"] as! String, "")
-        
-        self.optimizely.config!.project!.sendFlagDecisions = nil
     }
     
     func testDecisionListenerWithUserInRollout() {
         var exp = expectation(description: "x")
-        eventDispatcher.events.removeAll()
-        self.optimizely.config!.project!.sendFlagDecisions = true
-
+        
         let experiment: Experiment = self.optimizely.config!.allExperiments.first!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
@@ -814,17 +796,6 @@ class DecisionListenerTests: XCTestCase {
         }
         _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         wait(for: [exp], timeout: 1)
-        
-        let event = getFirstEventJSON()!
-        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
-        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
-        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
-        
-        let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.rollout.rawValue)
-        XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
-        XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
-        XCTAssertEqual(metaData["variation_key"] as! String, "a")
 
         exp = expectation(description: "x")
 
@@ -840,12 +811,10 @@ class DecisionListenerTests: XCTestCase {
         }
         _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         wait(for: [exp], timeout: 1)
-        self.optimizely.config!.project!.sendFlagDecisions = nil
     }
     
     func testDecisionListenerWithUserInExperiment() {
         var exp = expectation(description: "x")
-        eventDispatcher.events.removeAll()
 
         let experiment: Experiment = (self.optimizely.config?.allExperiments.first!)!
         var variation: Variation = (experiment.variations.first)!
@@ -864,17 +833,6 @@ class DecisionListenerTests: XCTestCase {
         _ = self.optimizely.isFeatureEnabled(featureKey: kFeatureKey, userId: kUserId)
         wait(for: [exp], timeout: 1)
         
-        let event = getFirstEventJSON()!
-        let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
-        let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
-        let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
-        
-        let metaData = decision["metadata"] as! Dictionary<String, Any>
-        XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
-        XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
-        XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
-        XCTAssertEqual(metaData["variation_key"] as! String, "a")
-
         exp = expectation(description: "x")
 
         variation.featureEnabled = false
@@ -949,22 +907,4 @@ fileprivate extension HandlerRegistryService {
     func removeAll() {
         self.binders.property?.removeAll()
     }
-}
-
-// MARK: - Utils
-
-extension DecisionListenerTests {
-    
-    func getFirstEvent() -> EventForDispatch? {
-        optimizely.eventLock.sync{}
-        return eventDispatcher.events.first
-    }
-    
-    func getFirstEventJSON() -> [String: Any]? {
-        guard let event = getFirstEvent() else { return nil }
-        
-        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! [String: Any]
-        return json
-    }
-    
 }

@@ -257,7 +257,7 @@ extension BatchEventBuilderTests_Events {
     func testImpressionEventWithUserNotInExperimentAndRollout() {
         let eventDispatcher2 = FakeEventDispatcher()
         let fakeOptimizelyManager = FakeManager(sdkKey: "12345",
-                                            eventDispatcher: eventDispatcher2)
+                                                eventDispatcher: eventDispatcher2)
         try! fakeOptimizelyManager.start(datafile: datafile)
         
         let exp = expectation(description: "Wait for event to dispatch")
@@ -266,7 +266,7 @@ extension BatchEventBuilderTests_Events {
         _ = fakeOptimizelyManager.isFeatureEnabled(featureKey: featureKey, userId: userId)
         
         let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
-         if result == XCTWaiter.Result.timedOut {
+        if result == XCTWaiter.Result.timedOut {
             let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
@@ -277,21 +277,21 @@ extension BatchEventBuilderTests_Events {
             XCTAssertEqual(metaData["rule_key"] as! String, "")
             XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
             XCTAssertEqual(metaData["variation_key"] as! String, "")
-         } else {
-             XCTFail("No event found")
-         }
+        } else {
+            XCTFail("No event found")
+        }
         fakeOptimizelyManager.config!.project!.sendFlagDecisions = nil
     }
     
     func testImpressionEventWithWithUserInRollout() {
         let eventDispatcher2 = FakeEventDispatcher()
         let fakeOptimizelyManager = FakeManager(sdkKey: "12345",
-                                            eventDispatcher: eventDispatcher2)
+                                                eventDispatcher: eventDispatcher2)
         try! fakeOptimizelyManager.start(datafile: datafile)
         
         let exp = expectation(description: "Wait for event to dispatch")
         fakeOptimizelyManager.config!.project!.sendFlagDecisions = true
-
+        
         let experiment: Experiment = fakeOptimizelyManager.config!.allExperiments.first!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
@@ -299,7 +299,7 @@ extension BatchEventBuilderTests_Events {
         _ = fakeOptimizelyManager.isFeatureEnabled(featureKey: featureKey, userId: userId)
         
         let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
-         if result == XCTWaiter.Result.timedOut {
+        if result == XCTWaiter.Result.timedOut {
             let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
@@ -310,9 +310,9 @@ extension BatchEventBuilderTests_Events {
             XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
             XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
             XCTAssertEqual(metaData["variation_key"] as! String, "a")
-         } else {
-             XCTFail("No event found")
-         }
+        } else {
+            XCTFail("No event found")
+        }
         variation.featureEnabled = false
         fakeOptimizelyManager.config!.project!.sendFlagDecisions = nil
     }
@@ -320,12 +320,12 @@ extension BatchEventBuilderTests_Events {
     func testImpressionEventWithUserInExperiment() {
         let eventDispatcher2 = FakeEventDispatcher()
         let fakeOptimizelyManager = FakeManager(sdkKey: "12345",
-                                            eventDispatcher: eventDispatcher2)
+                                                eventDispatcher: eventDispatcher2)
         try! fakeOptimizelyManager.start(datafile: datafile)
         
         let exp = expectation(description: "Wait for event to dispatch")
         fakeOptimizelyManager.config!.project!.sendFlagDecisions = true
-
+        
         let experiment: Experiment = (fakeOptimizelyManager.config?.allExperiments.first!)!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
@@ -333,7 +333,7 @@ extension BatchEventBuilderTests_Events {
         _ = fakeOptimizelyManager.isFeatureEnabled(featureKey: featureKey, userId: userId)
         
         let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
-         if result == XCTWaiter.Result.timedOut {
+        if result == XCTWaiter.Result.timedOut {
             let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
@@ -344,9 +344,9 @@ extension BatchEventBuilderTests_Events {
             XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
             XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
             XCTAssertEqual(metaData["variation_key"] as! String, "a")
-         } else {
-             XCTFail("No event found")
-         }
+        } else {
+            XCTFail("No event found")
+        }
         variation.featureEnabled = false
         fakeOptimizelyManager.config!.project!.sendFlagDecisions = nil
     }

@@ -18,15 +18,9 @@ import Foundation
 
 extension OptimizelyClient {
     
-    /// Set a context of the user for which decision APIs will be called.
+    /// Create a context of the user for which decision APIs will be called.
     ///
-    /// The SDK will keep this context until it is called again with a different context data.
-    ///
-    /// - This API can be called after SDK initialization is completed (otherwise the __sdkNotReady__ error will be returned).
-    /// - Only one user outstanding. The user-context can be changed any time by calling the same method with a different user-context value.
-    /// - The SDK will copy the parameter value to create an internal user-context data atomically, so any further change in its caller copy after the API call is not reflected into the SDK state.
-    /// - Once this API is called, the following other API calls can be called without a user-context parameter to use the same user-context.
-    /// - Each Decide API call can contain an optional user-context parameter when the call targets a different user-context. This optional user-context parameter value will be used once only, instead of replacing the saved user-context. This call-based context control can be used to support multiple users at the same time.
+    /// A user context will be created successfully even when the SDK is not fully configured yet.
     ///
     /// - Parameters:
     ///   - userId: The user ID to be used for bucketing.

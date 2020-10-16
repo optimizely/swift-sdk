@@ -123,7 +123,7 @@ class SamplesForAPI {
         
         if let variationKey = decision.variationKey {
             print("[decide] flag decision to variation: \(variationKey)")
-            print("[decide] flag enabled: \(decision.enabled) with variables: \(decision.variables!.toMap())")
+            print("[decide] flag enabled: \(decision.enabled) with variables: \(decision.variables.toMap())")
             print("[decide] reasons: \(decision.reasons)")
         } else {
             print("[decide] error: \(decision.reasons)")

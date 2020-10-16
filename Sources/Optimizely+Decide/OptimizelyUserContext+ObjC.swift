@@ -36,8 +36,7 @@ import Foundation
         userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
     }
     
-    public init?(user: OptimizelyUserContext?) {
-        guard let user = user else { return nil }
+    public init(user: OptimizelyUserContext) {
         self.userContext = user
     }
 
@@ -70,11 +69,11 @@ import Foundation
 @objcMembers public class ObjcOptimizelyDecision: NSObject {
     public let variationKey: String?
     public let enabled: Bool
-    public let variables: OptimizelyJSON?
+    public let variables: OptimizelyJSON
     public let ruleKey: String?
 
     public let flagKey: String
-    public let userContext: ObjcOptimizelyUserContext?
+    public let userContext: ObjcOptimizelyUserContext
     public let reasons: [String]
     
     init(decision: OptimizelyDecision) {
@@ -95,7 +94,7 @@ extension OptimizelyClient {
     @objc(createUserContextWithUserId:attributes:)
     public func objcCreateUserContext(userId: String, attributes: [String: Any]? = nil) -> ObjcOptimizelyUserContext {
         let user = createUserContext(userId: userId, attributes: attributes)
-        return ObjcOptimizelyUserContext(user: user)!
+        return ObjcOptimizelyUserContext(user: user)
     }
     
     @available(swift, obsoleted: 1.0)

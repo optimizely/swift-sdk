@@ -97,8 +97,7 @@ extension OptimizelyUserContextTests_Decide {
         
         XCTAssertEqual(decision.variationKey, "variation_with_traffic")
         XCTAssertTrue(decision.enabled)
-        let variables = decision.variables!
-        XCTAssertTrue(NSDictionary(dictionary: variables.toMap()).isEqual(to: variablesExpected.toMap()))
+        XCTAssertTrue(NSDictionary(dictionary: decision.variables.toMap()).isEqual(to: variablesExpected.toMap()))
         XCTAssertEqual(decision.ruleKey, "exp_no_audience")
         XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.userContext, user)
@@ -206,7 +205,7 @@ extension OptimizelyUserContextTests_Decide {
         
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
         let variablesExpected2 = try! optimizely.getAllFeatureVariables(featureKey: featureKey2, userId: kUserId)
-        let variablesExpected3 = OptimizelyJSON(map: [:])
+        let variablesExpected3 = OptimizelyJSON.createEmpty()
         
         let user = optimizely.createUserContext(userId: kUserId, attributes: ["gender": "f"])
         let decisions = user.decideAll()
@@ -337,10 +336,10 @@ extension OptimizelyUserContextTests_Decide {
         let user = optimizely.createUserContext(userId: kUserId)
         
         var decision = user.decide(key: featureKey)
-        XCTAssertTrue(NSDictionary(dictionary: decision.variables!.toMap()).isEqual(to: variablesExpected.toMap()))
+        XCTAssertTrue(NSDictionary(dictionary: decision.variables.toMap()).isEqual(to: variablesExpected.toMap()))
         
         decision = user.decide(key: featureKey, options: [.excludeVariables])
-        XCTAssertTrue(decision.variables!.toMap().isEmpty)
+        XCTAssertTrue(decision.variables.isEmpty)
     }
     
     func testDecide_defaultDecideOption() {
@@ -349,7 +348,7 @@ extension OptimizelyUserContextTests_Decide {
 
         var user = optimizely.createUserContext(userId: kUserId)
         var decision = user.decide(key: featureKey)
-        XCTAssertTrue(NSDictionary(dictionary: decision.variables!.toMap()).isEqual(to: variablesExpected.toMap()))
+        XCTAssertTrue(NSDictionary(dictionary: decision.variables.toMap()).isEqual(to: variablesExpected.toMap()))
         
         // new optimizley instance with defaultDecideOptions and a new user-context
         
@@ -359,7 +358,7 @@ extension OptimizelyUserContextTests_Decide {
         try! optimizely.start(datafile: datafile)
         user = optimizely.createUserContext(userId: kUserId)
         decision = user.decide(key: featureKey)
-        XCTAssertTrue(decision.variables!.toMap().isEmpty)
+        XCTAssertTrue(decision.variables.isEmpty)
     }
 
 }
@@ -385,7 +384,7 @@ extension OptimizelyUserContextTests_Decide {
         
         XCTAssertNil(decision.variationKey)
         XCTAssertFalse(decision.enabled)
-        XCTAssertNil(decision.variables)
+        XCTAssertTrue(decision.variables.isEmpty)
         XCTAssertNil(decision.ruleKey)
         XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.userContext, user)
@@ -403,7 +402,7 @@ extension OptimizelyUserContextTests_Decide {
 
         XCTAssertNil(decision.variationKey)
         XCTAssertFalse(decision.enabled)
-        XCTAssertNil(decision.variables)
+        XCTAssertTrue(decision.variables.isEmpty)
         XCTAssertNil(decision.ruleKey)
         XCTAssert(decision.reasons.count == 1)
         XCTAssert(decision.reasons.first == OptimizelyError.featureKeyInvalid(featureKey).reason)

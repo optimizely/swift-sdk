@@ -105,7 +105,7 @@ static NSString * datafile;
 
     XCTAssertNil(decision.variationKey);
     XCTAssertFalse(decision.enabled);
-    XCTAssertNil(decision.variables);
+    XCTAssertTrue([decision.variables isEmpty]);
     XCTAssertNil(decision.ruleKey);
     XCTAssert([decision.flagKey isEqualToString:featureKey]);
     XCTAssert([decision.userContext.userId isEqualToString:kUserId]);

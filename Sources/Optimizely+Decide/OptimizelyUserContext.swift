@@ -91,9 +91,12 @@ public class OptimizelyUserContext {
                                                  reasons: decisionReasons)
         }
         
-        let optimizelyJSON = OptimizelyJSON(map: variableMap)
-        if optimizelyJSON == nil {
+        var optimizelyJSON: OptimizelyJSON
+        if let opt = OptimizelyJSON(map: variableMap) {
+            optimizelyJSON = opt
+        } else {
             decisionReasons.addError(OptimizelyError.invalidJSONVariable)
+            optimizelyJSON = OptimizelyJSON.createEmpty()
         }
         
         let reasonsToReport = decisionReasons.getReasonsToReport(options: allOptions)

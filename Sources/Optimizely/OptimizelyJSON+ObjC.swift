@@ -31,6 +31,13 @@ extension OptimizelyJSON {
     }
     
     @available(swift, obsoleted: 1.0)
+    @objc(isEmpty)
+    /// - Returns: true when one or more variables are included.
+    public func objcIsEmpty() -> Bool {
+        return self.isEmpty
+    }
+
+    @available(swift, obsoleted: 1.0)
     @objc(toString)
     /// - Returns: The string representation of json
     public func objcToString() -> String? {

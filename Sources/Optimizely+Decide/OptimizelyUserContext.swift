@@ -131,7 +131,7 @@ public class OptimizelyUserContext {
                                   reasons: reasonsToReport)
     }
 
-    public func decideAll(keys: [String], options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+    public func decide(keys: [String], options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         return [:]
     }
 

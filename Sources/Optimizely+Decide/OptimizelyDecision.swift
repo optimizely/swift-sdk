@@ -26,7 +26,7 @@ public struct OptimizelyDecision {
     public let enabled: Bool
     
     /// The collection of variables assocaited with the decision.
-    public let variables: OptimizelyJSON?
+    public let variables: OptimizelyJSON
     
     /// The rule key of the decision.
     public let ruleKey: String?
@@ -35,7 +35,7 @@ public struct OptimizelyDecision {
     public let flagKey: String
     
     /// The user context for which the decision has been made for.
-    public let userContext: OptimizelyUserContext?
+    public let userContext: OptimizelyUserContext
     
     /// An array of error/info/debug messages describing why the decision has been made.
     public let reasons: [String]
@@ -43,10 +43,10 @@ public struct OptimizelyDecision {
 
 extension OptimizelyDecision {
     
-    static func errorDecision(key: String, user: OptimizelyUserContext?, error: OptimizelyError) -> OptimizelyDecision {
+    static func errorDecision(key: String, user: OptimizelyUserContext, error: OptimizelyError) -> OptimizelyDecision {
         return OptimizelyDecision(variationKey: nil,
                                   enabled: false,
-                                  variables: nil,
+                                  variables: OptimizelyJSON.createEmpty(),
                                   ruleKey: nil,
                                   flagKey: key,
                                   userContext: user,

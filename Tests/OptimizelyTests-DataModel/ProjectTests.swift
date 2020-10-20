@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import XCTest
 
@@ -32,7 +32,8 @@ class ProjectTests: XCTestCase {
                                             "rollouts": [RolloutTests.sampleData],
                                             "typedAudiences": [AudienceTests.sampleData],
                                             "featureFlags": [FeatureFlagTests.sampleData],
-                                            "botFiltering": false]
+                                            "botFiltering": false,
+                                            "sendFlagDecisions": true]
 }
 
 // MARK: - Decode
@@ -58,6 +59,7 @@ extension ProjectTests {
         XCTAssert(model.typedAudiences == [try! OTUtils.model(from: AudienceTests.sampleData)])
         XCTAssert(model.featureFlags == [try OTUtils.model(from: FeatureFlagTests.sampleData)])
         XCTAssert(model.botFiltering == false)
+        XCTAssert(model.sendFlagDecisions == true)
     }
     
     func testDecodeFailWithMissingVersion() {
@@ -83,7 +85,7 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-
+    
     func testDecodeFailWithMissingAudiences() {
         var data: [String: Any] = ProjectTests.sampleData
         data["audiences"] = nil
@@ -91,7 +93,7 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-
+    
     func testDecodeFailWithMissingGroups() {
         var data: [String: Any] = ProjectTests.sampleData
         data["groups"] = nil
@@ -107,7 +109,7 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-
+    
     func testDecodeFailWithMissingAccountId() {
         var data: [String: Any] = ProjectTests.sampleData
         data["accountId"] = nil
@@ -115,7 +117,7 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-
+    
     func testDecodeFailWithMissingEvents() {
         var data: [String: Any] = ProjectTests.sampleData
         data["events"] = nil
@@ -123,7 +125,7 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-
+    
     func testDecodeFailWithMissingRevision() {
         var data: [String: Any] = ProjectTests.sampleData
         data["revision"] = nil
@@ -139,7 +141,7 @@ extension ProjectTests {
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertNil(model)
     }
-        
+    
     func testDecodeFailWithMissingRollouts() {
         var data: [String: Any] = ProjectTests.sampleData
         data["rollouts"] = nil
@@ -157,7 +159,7 @@ extension ProjectTests {
     }
     
     // MARK: - Optional Fields
-
+    
     func testDecodeSuccessWithMissingTypedAudiences() {
         var data: [String: Any] = ProjectTests.sampleData
         data["typedAudiences"] = nil
@@ -166,9 +168,17 @@ extension ProjectTests {
         XCTAssert(model.projectId == "11111")
     }
     
-    func testDecodeFailWithMissingBotFiltering() {
+    func testDecodeSuccessWithMissingBotFiltering() {
         var data: [String: Any] = ProjectTests.sampleData
         data["botFiltering"] = nil
+        
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssert(model.projectId == "11111")
+    }
+    
+    func testDecodeSuccessWithMissingSendFlagDecisions() {
+        var data: [String: Any] = ProjectTests.sampleData
+        data["sendFlagDecisions"] = nil
         
         let model: Project = try! OTUtils.model(from: data)
         XCTAssert(model.projectId == "11111")

@@ -290,7 +290,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         // set invalid (infinity) to attribute values, which will cause JSONEncoder.encode exception
         let attributes = ["testvar": Double.infinity]
         
-        optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId, attributes: attributes)
+        optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId, attributes: attributes, flagKey: "", ruleType: Constants.DecisionSource.rollout.rawValue)
         XCTAssert(eventDispatcher.events.count == 0)
     }
     
@@ -322,7 +322,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         // force condition for sdk-not-ready
         optimizely.config = nil
         
-        optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId)
+        optimizely.sendImpressionEvent(experiment: experiment, variation: variation, userId: kUserId, flagKey: experiment.key, ruleType: Constants.DecisionSource.rollout.rawValue)
         XCTAssert(eventDispatcher.events.isEmpty, "event should not be sent out sdk is not configured properly")
 
         optimizely.sendConversionEvent(eventKey: kEventKey, userId: kUserId)

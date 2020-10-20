@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -24,18 +24,27 @@ class BatchEventBuilder {
     // MARK: - Impression Event
     
     static func createImpressionEvent(config: ProjectConfig,
-                                      experiment: Experiment,
-                                      varionation: Variation,
+                                      experiment: Experiment?,
+                                      variation: Variation?,
                                       userId: String,
-                                      attributes: OptimizelyAttributes?) -> Data? {
+                                      attributes: OptimizelyAttributes?,
+                                      flagKey: String,
+                                      ruleType: String) -> Data? {
         
-        let decision = Decision(variationID: varionation.id,
-                                campaignID: experiment.layerId,
-                                experimentID: experiment.id)
+        if (ruleType == Constants.DecisionSource.rollout.rawValue || variation == nil) && !config.sendFlagDecisions {
+            return nil
+        }
+        
+        let metaData = DecisionMetadata(ruleType: ruleType, ruleKey: experiment?.key ?? "", flagKey: flagKey, variationKey: variation?.key ?? "")
+        
+        let decision = Decision(variationID: variation?.id ?? "",
+                                campaignID: experiment?.layerId ?? "",
+                                experimentID: experiment?.id ?? "",
+                                metaData: metaData)
         
         let dispatchEvent = DispatchEvent(timestamp: timestampSince1970,
                                           key: DispatchEvent.activateEventKey,
-                                          entityID: experiment.layerId,
+                                          entityID: experiment?.layerId ?? "",
                                           uuid: uuid)
         
         return createBatchEvent(config: config,
@@ -99,7 +108,7 @@ class BatchEventBuilder {
         
         return try? JSONEncoder().encode(batchEvent)
     }
-            
+    
     // MARK: - Event Tags
     
     static func filterEventTags(_ eventTags: [String: Any]?) -> ([String: AttributeValue], AttributeValue?, AttributeValue?) {

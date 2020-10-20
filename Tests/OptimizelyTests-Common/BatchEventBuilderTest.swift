@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -48,23 +48,6 @@ class BatchEventBuilderTests: XCTestCase {
         
         XCTAssert((batchEvent?.enrichDecisions)! == true)
         
-    }
-
-    func testImpressionEventWithNoExperiment() {
-        let experiment = optimizely?.config?.project.experiments.filter({$0.key == featureExperimentKey}).first
-        let variation = experiment?.variations[0]
-        
-        let impression = BatchEventBuilder.createImpressionEvent(config: (optimizely?.config)!, experiment: experiment!, varionation: variation!, userId: userId, attributes: ["customattr": "yes" ])
-        
-        XCTAssertNotNil(impression)
-        let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: impression!)
-        
-        XCTAssertNotNil(batchEvent)
-        
-        XCTAssert((batchEvent?.enrichDecisions)! == true)
-        
-        XCTAssert(batchEvent?.visitors[0].attributes[0].key == "customattr")
-        //XCTAssert(batchEvent?.visitors[0].attributes[0].value == .string)
     }
 
 }

@@ -35,16 +35,6 @@ open class OptimizelyClient: NSObject {
         }
     }
     
-    private var atomicUserContext = AtomicProperty<OptimizelyUserContext>()
-    var userContext: OptimizelyUserContext? {
-        get {
-            return atomicUserContext.property
-        }
-        set {
-            atomicUserContext.property = newValue
-        }
-    }
-    
     var defaultDecideOptions: [OptimizelyDecideOption]
 
     public var version: String {

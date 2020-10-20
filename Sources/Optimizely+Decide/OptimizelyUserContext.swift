@@ -46,10 +46,10 @@ public struct OptimizelyUserContext {
     }
     
     public func decide(key: String, options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
-        return OptimizelyDecision.errorDecision(key: key, user: nil, error: .sdkNotReady)
+        return OptimizelyDecision.errorDecision(key: key, user: self, error: .sdkNotReady)
     }
 
-    public func decideAll(keys: [String], options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+    public func decide(keys: [String], options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         return [:]
     }
 

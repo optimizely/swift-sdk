@@ -14,7 +14,6 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-
 import Foundation
 
 /// An object for user contexts that the SDK will use to make decisions for.
@@ -59,76 +58,11 @@ public class OptimizelyUserContext {
     public func decide(key: String,
                        options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
         
-        guard let optimizely = self.optimizely, let config = optimizely.config else {
+        guard let optimizely = self.optimizely else {
             return OptimizelyDecision.errorDecision(key: key, user: self, error: .sdkNotReady)
         }
         
-        guard let feature = config.getFeatureFlag(key: key) else {
-            return OptimizelyDecision.errorDecision(key: key, user: self, error: .featureKeyInvalid(key))
-        }
-        
-        let allOptions = getAllOptions(with: options)
-        let decisionReasons = DecisionReasons()
-        var sentEvent = false
-        var enabled = false
-    
-        let decision = optimizely.decisionService.getVariationForFeature(config: config,
-                                                                         featureFlag: feature,
-                                                                         userId: userId,
-                                                                         attributes: attributes,
-                                                                         options: allOptions)
-        
-        if let featureEnabled = decision?.variation?.featureEnabled {
-            enabled = featureEnabled
-        }
-        
-        var variableMap = [String : Any]()
-        if !allOptions.contains(.excludeVariables) {
-            variableMap = getDecisionVariableMap(feature: feature,
-                                                 variation: decision?.variation,
-                                                 enabled: enabled,
-                                                 reasons: decisionReasons)
-        }
-        
-        let optimizelyJSON = OptimizelyJSON(map: variableMap)
-        if optimizelyJSON == nil {
-            decisionReasons.addError(OptimizelyError.invalidDictionary)
-        }
-        
-        let reasonsToReport = decisionReasons.getReasonsToReport(options: allOptions)
-        
-        if let experimentDecision = decision?.experiment, let variationDecision = decision?.variation {
-            if !allOptions.contains(.disableDecisionEvent) {
-                optimizely.sendImpressionEvent(experiment: experimentDecision,
-                                               variation: variationDecision,
-                                               userId: userId,
-                                               attributes: attributes)
-                sentEvent = true
-            }
-        }
-        
-        // TODO: add ruleKey values when available later. use a copy of experimentKey until then.
-        let ruleKey = decision?.experiment?.key
-        
-        optimizely.sendDecisionNotification(decisionType: .flag,
-                                            userId: userId,
-                                            attributes: attributes,
-                                            experiment: decision?.experiment,
-                                            variation: decision?.variation,
-                                            feature: feature,
-                                            featureEnabled: enabled,
-                                            variableValues: variableMap,
-                                            ruleKey: ruleKey,
-                                            reasons: reasonsToReport,
-                                            sentEvent: sentEvent)
-        
-        return OptimizelyDecision(variationKey: decision?.variation?.key,
-                                  enabled: enabled,
-                                  variables: optimizelyJSON,
-                                  ruleKey: ruleKey,
-                                  flagKey: feature.key,
-                                  userContext: self,
-                                  reasons: reasonsToReport)
+        return optimizely.decide(user: self, key: key, options: options)
     }
 
     /// Returns a key-map of decision results for multiple flag keys and a user context.
@@ -140,28 +74,15 @@ public class OptimizelyUserContext {
     ///   - keys: An array of flag keys for which decisions will be made. When set to `nil`, the SDK will return decisions for all active flag keys.
     ///   - options: An array of options for decision-making.
     /// - Returns: A dictionary of all decision results, mapped by flag keys.
-    public func decideAll(keys: [String],
-                          options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        
-        guard let optimizely = self.optimizely, let _ = optimizely.config else {
+    public func decide(keys: [String],
+                       options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+
+        guard let optimizely = self.optimizely else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
         }
         
-        guard keys.count > 0 else { return [:] }
-        
-        let allOptions = getAllOptions(with: options)
-        
-        var decisions = [String: OptimizelyDecision]()
-        
-        keys.forEach { key in
-            let decision = decide(key: key, options: options)
-            if !allOptions.contains(.enabledFlagsOnly) || decision.enabled {
-                decisions[key] = decision
-            }
-        }
-                
-        return decisions
+        return optimizely.decide(user: self, keys: keys, options: options)
     }
     
     /// Returns a key-map of decision results for all active flag keys.
@@ -170,67 +91,16 @@ public class OptimizelyUserContext {
     ///   - options: An array of options for decision-making.
     /// - Returns: A dictionary of all decision results, mapped by flag keys.
     public func decideAll(options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        guard let optimizely = self.optimizely, let config = optimizely.config else {
+        guard let optimizely = self.optimizely else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
         }
 
-        let keys = config.getFeatureFlags().map{ $0.key }
-
-        return decideAll(keys: keys, options: options)
+        return optimizely.decideAll(user: self, options: options)
     }
 
     public func trackEvent(eventKey: String, eventTags:  [String: Any]? = nil) {
     }
-}
-
-extension OptimizelyUserContext {
-    
-    func getDecisionVariableMap(feature: FeatureFlag,
-                                variation: Variation?,
-                                enabled: Bool,
-                                reasons: DecisionReasons) -> [String: Any] {
-        var variableMap = [String: Any]()
-        
-        for (_, v) in feature.variablesMap {
-            var featureValue = v.value
-            if enabled, let variable = variation?.getVariable(id: v.id) {
-                featureValue = variable.value
-            }
-            
-            var valueParsed: Any? = featureValue
-            
-            if let valueType = Constants.VariableValueType(rawValue: v.type) {
-                switch valueType {
-                case .string:
-                    break
-                case .integer:
-                    valueParsed = Int(featureValue)
-                case .double:
-                    valueParsed = Double(featureValue)
-                case .boolean:
-                    valueParsed = Bool(featureValue)
-                case .json:
-                    valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
-                }
-            }
-            
-            if let value = valueParsed {
-                variableMap[v.key] = value
-            } else {
-                let info = OptimizelyError.variableValueInvalid(v.key)
-                logger.e(info)
-                reasons.addError(info)
-            }
-        }
-        
-        return variableMap
-    }
-    
-    func getAllOptions(with options: [OptimizelyDecideOption]?) -> [OptimizelyDecideOption] {
-        return (optimizely?.defaultDecideOptions ?? []) + (options ?? [])
-    }
-    
 }
 
 extension OptimizelyUserContext: Equatable {

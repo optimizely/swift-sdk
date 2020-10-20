@@ -126,7 +126,7 @@ extension LogMessage: CustomStringConvertible {
     }
 }
 
-extension LogMessage: Reasonable {
+extension LogMessage: ReasonProtocol {
     var reason: String {
         return description
     }

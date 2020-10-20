@@ -26,7 +26,7 @@ public struct OptimizelyDecision {
     public let enabled: Bool
     
     /// The collection of variables assocaited with the decision.
-    public let variables: OptimizelyJSON?
+    public let variables: OptimizelyJSON
     
     /// The rule key of the decision.
     public let ruleKey: String?
@@ -35,17 +35,17 @@ public struct OptimizelyDecision {
     public let flagKey: String
     
     /// The user context for which the decision has been made for.
-    public let userContext: OptimizelyUserContext?
+    public let userContext: OptimizelyUserContext
     
     /// An array of error/info/debug messages describing why the decision has been made.
     public let reasons: [String]
 }
 
 extension OptimizelyDecision {
-    static func errorDecision(key: String, user: OptimizelyUserContext?, error: OptimizelyError) -> OptimizelyDecision {
+    static func errorDecision(key: String, user: OptimizelyUserContext, error: OptimizelyError) -> OptimizelyDecision {
         return OptimizelyDecision(variationKey: nil,
                                   enabled: false,
-                                  variables: nil,
+                                  variables: OptimizelyJSON.createEmpty(),
                                   ruleKey: nil,
                                   flagKey: key,
                                   userContext: user,
@@ -55,16 +55,12 @@ extension OptimizelyDecision {
 
 extension OptimizelyDecision: Equatable {
     public static func ==(lhs: OptimizelyDecision, rhs: OptimizelyDecision) -> Bool {
-        if !(lhs.enabled == rhs.enabled &&
-            lhs.variationKey == rhs.variationKey &&
+        return lhs.variationKey == rhs.variationKey &&
+            lhs.enabled == rhs.enabled &&
+            lhs.variables == rhs.variables &&
             lhs.ruleKey == rhs.ruleKey &&
             lhs.flagKey == rhs.flagKey &&
             lhs.userContext == rhs.userContext &&
-            lhs.reasons == rhs.reasons) {
-            return false
-        }
-        
-        return (lhs.variables == nil && rhs.variables == nil) ||
-            (lhs.variables != nil && rhs.variables != nil && lhs.variables! == rhs.variables!)
+            lhs.reasons == rhs.reasons;
     }
 }

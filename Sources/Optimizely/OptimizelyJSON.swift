@@ -45,6 +45,14 @@ public class OptimizelyJSON: NSObject {
         self.map = map
     }
     
+    static func createEmpty() -> OptimizelyJSON {
+        return OptimizelyJSON(map: [:])!
+    }
+    
+    public var isEmpty: Bool {
+        return map.isEmpty
+    }
+    
     // MARK: - OptimizelyJSON Implementation
     
     /// - Returns: The string representation of json

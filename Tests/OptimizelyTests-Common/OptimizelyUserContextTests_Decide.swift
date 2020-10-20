@@ -270,7 +270,25 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssert(decision.reasons.count == 1)
         XCTAssert(decision.reasons.first == OptimizelyError.sdkNotReady.reason)
     }
+    
+    func testDecide_sdkNotReady_optimizelyReleased() {
+        let featureKey = "feature_1"
+
+        var optimizelyClient: OptimizelyClient! = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
+        try! optimizelyClient.start(datafile: datafile)
+
+        let user = optimizelyClient.createUserContext(userId: kUserId)
         
+        // optimizelyClient released and the weak ref in userContext will become nil
+        optimizelyClient = nil
+        let decision = user.decide(key: featureKey)
+        
+        XCTAssertNil(decision.variationKey)
+        XCTAssert(decision.reasons.count == 1)
+        XCTAssert(decision.reasons.first == OptimizelyError.sdkNotReady.reason)
+    }
+
     func testDecide_invalidFeatureKey() {
         let featureKey = "invalid_key"
 

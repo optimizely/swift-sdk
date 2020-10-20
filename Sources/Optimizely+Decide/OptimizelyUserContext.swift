@@ -90,11 +90,14 @@ public class OptimizelyUserContext {
                                                  reasons: decisionReasons)
         }
         
-        let optimizelyJSON = OptimizelyJSON(map: variableMap)
-        if optimizelyJSON == nil {
-            decisionReasons.addError(OptimizelyError.invalidDictionary)
+        var optimizelyJSON: OptimizelyJSON
+        if let opt = OptimizelyJSON(map: variableMap) {
+            optimizelyJSON = opt
+        } else {
+            decisionReasons.addError(OptimizelyError.invalidJSONVariable)
+            optimizelyJSON = OptimizelyJSON.createEmpty()
         }
-        
+
         let reasonsToReport = decisionReasons.getReasonsToReport(options: allOptions)
         
         if let experimentDecision = decision?.experiment, let variationDecision = decision?.variation {

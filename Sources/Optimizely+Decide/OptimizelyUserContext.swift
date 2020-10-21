@@ -20,7 +20,11 @@ import Foundation
 public class OptimizelyUserContext {
     weak var optimizely: OptimizelyClient?
     var userId: String
-    var attributes: [String: Any]
+    
+    var atomicAttributes: AtomicProperty<[String: Any]>
+    var attributes: [String: Any] {
+        return atomicAttributes.property ?? [:]
+    }
     
     lazy var logger = OPTLoggerFactory.getLogger()
     
@@ -35,7 +39,7 @@ public class OptimizelyUserContext {
                 attributes: [String: Any]? = nil) {
         self.optimizely = optimizely
         self.userId = userId
-        self.attributes = attributes ?? [:]
+        self.atomicAttributes = AtomicProperty(property: attributes ?? [:])
     }
     
     /// Set an attribute for a given key.
@@ -43,7 +47,9 @@ public class OptimizelyUserContext {
     ///   - key: An attribute key
     ///   - value: An attribute value
     public func setAttribute(key: String, value: Any) {
-        attributes[key] = value
+        atomicAttributes.performAtomic { attributes in
+            attributes[key] = value
+        }
     }
     
     /// Returns a decision result for a given flag key and a user context, which contains all data required to deliver the flag or experiment.

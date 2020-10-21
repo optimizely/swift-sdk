@@ -98,6 +98,35 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.attributes["state"] as! String == "ca")
     }
     
+    func testOptimizelyUserContext_setAttribute_concurrent() {
+        var user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId)
+        
+        user.setAttribute(key: "state", value: "ca")
+        user.setAttribute(key: "age", value: 18)
+
+        let expWrite = expectation(description: "write")
+        DispatchQueue.global().async {
+            for _ in 0..<10000 {
+                user.setAttribute(key: "state", value: "ca")
+                user.setAttribute(key: "age", value: 18)
+            }
+            expWrite.fulfill()
+        }
+        
+        let expRead = expectation(description: "read")
+        var attributes: [String: Any]?
+        DispatchQueue.global().async {
+            for _ in 0..<10000 {
+                attributes = user.attributes
+                XCTAssert(attributes!["state"] as! String == "ca")
+                XCTAssert(attributes!["age"] as! Int == 18)
+            }
+            expRead.fulfill()
+        }
+
+        wait(for: [expWrite, expRead], timeout: 10)
+    }
+    
     func testOptimizelyUserContext_equal() {
         let userId1 = "user1"
         let userId2 = "user2"

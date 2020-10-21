@@ -21,7 +21,11 @@ import Foundation
 public struct OptimizelyUserContext {
     weak var optimizely: OptimizelyClient?
     var userId: String
-    var attributes: [String: Any]
+    
+    var atomicAttributes: AtomicProperty<[String: Any]>
+    var attributes: [String: Any] {
+        return atomicAttributes.property ?? [:]
+    }
     
     /// OptimizelyUserContext init
     ///
@@ -34,7 +38,7 @@ public struct OptimizelyUserContext {
                 attributes: [String: Any]? = nil) {
         self.optimizely = optimizely
         self.userId = userId
-        self.attributes = attributes ?? [:]
+        self.atomicAttributes = AtomicProperty(property: attributes ?? [:])
     }
     
     /// Set an attribute for a given key.
@@ -42,7 +46,9 @@ public struct OptimizelyUserContext {
     ///   - key: An attribute key
     ///   - value: An attribute value
     public mutating func setAttribute(key: String, value: Any) {
-        attributes[key] = value
+        atomicAttributes.performAtomic { attributes in
+            attributes[key] = value
+        }
     }
     
     public func decide(key: String, options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {

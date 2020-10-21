@@ -191,7 +191,9 @@ public class OptimizelyJSON: NSObject {
 }
 
 extension OptimizelyJSON {
+    
     public static func ==(lhs: OptimizelyJSON, rhs: OptimizelyJSON) -> Bool {
         return NSDictionary(dictionary: lhs.toMap()).isEqual(to: rhs.toMap())
     }
+    
 }

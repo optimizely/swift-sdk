@@ -191,6 +191,41 @@ extension OptimizelyClientTests_OptimizelyJSON {
         XCTAssertEqual(optimizelyJSONToString, self.payload)
     }
     
+    func testEqual() {
+        let map1: [String: Any] = [
+            "v1": 1,
+            "v2": "three",
+            "v3": [
+                "v31": 3.0,
+                "v32": ["1","2",3.01,4.23,true]
+            ],
+            "v4": true
+        ]
+        
+        var map2 = map1
+        XCTAssertEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+        
+        map2 = map1
+        map2["v1"] = 2
+        XCTAssertNotEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+        
+        map2 = map1
+        map2["v4"] = false
+        XCTAssertNotEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+
+        map2 = map1
+        map2["v3"] = ["v31": 10.0, "v32": ["1","2",3.01,4.23,true]]
+        XCTAssertNotEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+
+        map2 = map1
+        map2["v3"] = ["v31": 3.0, "v32": ["1","2",3.01,4.23,false]]
+        XCTAssertNotEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+
+        map2 = map1
+        map2["v3"] = ["v31": 3.000, "v32": ["1", "2", 3.010, 4.230, true]]
+        XCTAssertEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+    }
+    
     func testGetValueForInvalidJSONKeyAndEmptyDecodableStruct() {
         let value: EmptyDecodableStruct? = self.optimizelyJSON.getValue(jsonPath: "field4.")
         XCTAssertNil(value)

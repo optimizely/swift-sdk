@@ -142,17 +142,16 @@ extension OptimizelyUserContextTests_Decide {
     
 }
 
-// MARK: - decideAll API
+// MARK: - decideForKeys API
 
 extension OptimizelyUserContextTests_Decide {
 
-    func testDecideAll_oneFeature() {
+    func testDecideForKeys_oneFeature() {
         let featureKey = "feature_1"
         let featureKeys = [featureKey]
         let variablesExpected = try! optimizely.getAllFeatureVariables(featureKey: featureKey, userId: kUserId)
-        
         let user = optimizely.createUserContext(userId: kUserId)
-        let decisions = user.decideAll(keys: featureKeys)
+        let decisions = user.decide(keys: featureKeys)
         
         XCTAssert(decisions.count == 1)
         let decision = decisions[featureKey]!
@@ -167,16 +166,16 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertEqual(decision, expDecision)
     }
     
-    func testDecideAll_twoFeatures() {
+    func testDecideForKeys_twoFeatures() {
         let featureKey1 = "feature_1"
         let featureKey2 = "feature_2"
         
         let featureKeys = [featureKey1, featureKey2]
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
-        let variablesExpected2 = OptimizelyJSON(map: [:])
+        let variablesExpected2 = OptimizelyJSON.createEmpty()
         
         let user = optimizely.createUserContext(userId: kUserId)
-        let decisions = user.decideAll(keys: featureKeys)
+        let decisions = user.decide(keys: featureKeys)
         
         XCTAssert(decisions.count == 2)
         
@@ -196,14 +195,29 @@ extension OptimizelyUserContextTests_Decide {
                                                                 reasons: []))
     }
     
-    func testDecideAll_allFeatures() {
+    func testDecideForKeys_emptyKeys() {
+        let featureKeys = [String]()
+        
+        let user = optimizely.createUserContext(userId: kUserId)
+        let decisions = user.decide(keys: featureKeys)
+        
+        XCTAssert(decisions.count == 0)
+    }
+        
+}
+
+// MARK: - decideAll API
+
+extension OptimizelyUserContextTests_Decide {
+    
+    func testDecideAll() {
         let featureKey1 = "feature_1"
         let featureKey2 = "feature_2"
         let featureKey3 = "common_name"
         
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
-        let variablesExpected2 = OptimizelyJSON(map: [:])
-        let variablesExpected3 = OptimizelyJSON(map: [:])
+        let variablesExpected2 = OptimizelyJSON.createEmpty()
+        let variablesExpected3 = OptimizelyJSON.createEmpty()
         
         let user = optimizely.createUserContext(userId: kUserId)
         let decisions = user.decideAll()
@@ -233,7 +247,7 @@ extension OptimizelyUserContextTests_Decide {
                                                                 reasons: []))
     }
     
-    func testDecideAll_nilKeys_enabledOnly() {
+    func testDecideAll_enabledOnly() {
         let featureKey1 = "feature_1"
         
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
@@ -252,16 +266,6 @@ extension OptimizelyUserContextTests_Decide {
                                                                 reasons: []))
     }
 
-    
-    func testDecideAll_emptyKeys() {
-        let featureKeys = [String]()
-        
-        let user = optimizely.createUserContext(userId: kUserId)
-        let decisions = user.decideAll(keys: featureKeys)
-        
-        XCTAssert(decisions.count == 0)
-    }
-        
 }
 
 // MARK: - options
@@ -426,21 +430,37 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssert(decision.reasons.first == OptimizelyError.featureKeyInvalid(featureKey).reason)
     }
         
-    // decideAll
+    // decideForKeys
     
-    func testDecideAll_sdkNotReady() {
+    func testDecideForKeys_sdkNotReady() {
         let featureKeys = ["feature_1"]
         
         self.optimizely = OptimizelyClient(sdkKey: "12345",
                                            userProfileService: OTUtils.createClearUserProfileService())
         
         let user = optimizely.createUserContext(userId: kUserId)
-        let decisions = user.decideAll(keys: featureKeys)
+        let decisions = user.decide(keys: featureKeys)
         
         XCTAssert(decisions.count == 0)
     }
     
-    func testDecideAll_errorDecisionIncluded() {
+    func testDecideForKeys_sdkNotReady_optimizelyReleased() {
+        let featureKeys = ["feature_1"]
+
+        var optimizelyClient: OptimizelyClient! = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
+        try! optimizelyClient.start(datafile: datafile)
+
+        let user = optimizelyClient.createUserContext(userId: kUserId)
+        
+        // optimizelyClient released and the weak ref in userContext will become nil
+        optimizelyClient = nil
+        let decisions = user.decide(keys: featureKeys)
+        
+        XCTAssert(decisions.count == 0)
+    }
+    
+    func testDecideForKeys_errorDecisionIncluded() {
         let featureKey1 = "feature_1"
         let featureKey2 = "invalid_key"
 
@@ -448,7 +468,7 @@ extension OptimizelyUserContextTests_Decide {
         let variablesExpected1 = try! optimizely.getAllFeatureVariables(featureKey: featureKey1, userId: kUserId)
         
         let user = optimizely.createUserContext(userId: kUserId)
-        let decisions = user.decideAll(keys: featureKeys)
+        let decisions = user.decide(keys: featureKeys)
         
         XCTAssert(decisions.count == 2)
         

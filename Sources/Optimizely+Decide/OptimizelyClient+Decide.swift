@@ -140,9 +140,7 @@ extension OptimizelyClient {
             return [:]
         }
 
-        let keys = config.getFeatureFlags().map { $0.key }
-
-        return decide(user: user, keys: keys, options: options)
+        return decide(user: user, keys: config.featureFlagKeys, options: options)
     }
 
 }

@@ -304,8 +304,8 @@ open class OptimizelyClient: NSObject {
         }
         
         let variation = decisionService.getVariation(config: config,
-                                                     userId: userId,
                                                      experiment: experiment,
+                                                     userId: userId,
                                                      attributes: attributes ?? OptimizelyAttributes(),
                                                      options: nil,
                                                      reasons: nil)

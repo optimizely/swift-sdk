@@ -28,8 +28,8 @@ class DefaultDecisionService: OPTDecisionService {
     }
     
     func getVariation(config: ProjectConfig,
-                      userId: String,
                       experiment: Experiment,
+                      userId: String,
                       attributes: OptimizelyAttributes,
                       options: [OptimizelyDecideOption]? = nil,
                       reasons: DecisionReasons? = nil) -> Variation? {
@@ -229,8 +229,8 @@ class DefaultDecisionService: OPTDecisionService {
         for experimentId in experimentIds {
             if let experiment = config.getExperiment(id: experimentId),
                 let variation = getVariation(config: config,
-                                             userId: userId,
                                              experiment: experiment,
+                                             userId: userId,
                                              attributes: attributes,
                                              options: options,
                                              reasons: reasons) {

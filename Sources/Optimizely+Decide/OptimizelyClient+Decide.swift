@@ -46,7 +46,7 @@ extension OptimizelyClient {
         let userId = user.userId
         let attributes = user.attributes
         let allOptions = defaultDecideOptions + (options ?? [])
-        let decisionReasons = DecisionReasons()
+        let decisionReasons = DecisionReasons(options: allOptions)
         var sentEvent = false
         var enabled = false
     
@@ -77,8 +77,6 @@ extension OptimizelyClient {
             optimizelyJSON = OptimizelyJSON.createEmpty()
         }
 
-        let reasonsToReport = decisionReasons.getReasonsToReport(options: allOptions)
-        
         if let experimentDecision = decision?.experiment, let variationDecision = decision?.variation {
             if !allOptions.contains(.disableDecisionEvent) {
                 sendImpressionEvent(experiment: experimentDecision,
@@ -91,7 +89,8 @@ extension OptimizelyClient {
         
         // TODO: add ruleKey values when available later. Use a copy of experimentKey for now.
         let ruleKey = decision?.experiment?.key
-        
+        let reasonsToReport = decisionReasons.toReport()
+
         sendDecisionNotification(userId: userId,
                                  attributes: attributes,
                                  decisionInfo: DecisionInfo(decisionType: .flag,

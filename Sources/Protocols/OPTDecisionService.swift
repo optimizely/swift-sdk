@@ -36,8 +36,8 @@ protocol OPTDecisionService {
      - Returns: The variation assigned to the specified user ID for an experiment.
      */
     func getVariation(config: ProjectConfig,
-                      userId: String,
                       experiment: Experiment,
+                      userId: String,
                       attributes: OptimizelyAttributes,
                       options: [OptimizelyDecideOption]?,
                       reasons: DecisionReasons?) -> Variation?

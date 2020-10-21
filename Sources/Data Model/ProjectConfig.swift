@@ -73,6 +73,10 @@ class ProjectConfig {
         project.featureFlags.forEach { map[$0.key] = $0 }
         return map
     }()
+    
+    lazy var featureFlagKeys: [String] = {
+        return project.featureFlags.map { $0.key }
+    }()
 
     lazy var rolloutIdMap: [String: Rollout] = {
         var map = [String: Rollout]()

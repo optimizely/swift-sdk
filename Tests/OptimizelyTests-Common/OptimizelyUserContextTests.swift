@@ -97,5 +97,31 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.attributes["old"] as! Bool == true)
         XCTAssert(user.attributes["state"] as! String == "ca")
     }
+    
+    func testOptimizelyUserContext_equal() {
+        let userId1 = "user1"
+        let userId2 = "user2"
+
+        let attributes1: [String: Any] = [
+            "country": "us",
+            "old": true
+        ]
+        
+        let attributes2: [String: Any] = [
+            "country": "ca",
+            "old": true
+        ]
+
+        let attributes3: [String: Any] = [
+            "country": "us",
+            "old": false
+        ]
+
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: userId1, attributes: attributes1)
+        XCTAssertEqual(user, OptimizelyUserContext(optimizely: expOptimizely, userId: userId1, attributes: attributes1))
+        XCTAssertNotEqual(user, OptimizelyUserContext(optimizely: expOptimizely, userId: userId2, attributes: attributes1))
+        XCTAssertNotEqual(user, OptimizelyUserContext(optimizely: expOptimizely, userId: userId1, attributes: attributes2))
+        XCTAssertNotEqual(user, OptimizelyUserContext(optimizely: expOptimizely, userId: userId1, attributes: attributes3))
+    }
 
 }

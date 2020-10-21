@@ -16,24 +16,24 @@
 
 import Foundation
 
-protocol Reasonable {
+protocol ReasonProtocol {
     var reason: String { get }
 }
 
 class DecisionReasons {
-    var errors: [Reasonable]
-    var logs: [Reasonable]
+    var errors: [ReasonProtocol]
+    var logs: [ReasonProtocol]
     
     init() {
         errors = []
         logs = []
     }
     
-    func addError(_ error: Reasonable) {
+    func addError(_ error: ReasonProtocol) {
         errors.append(error)
     }
     
-    func addInfo(_ info: Reasonable) {
+    func addInfo(_ info: ReasonProtocol) {
         logs.append(info)
     }
     

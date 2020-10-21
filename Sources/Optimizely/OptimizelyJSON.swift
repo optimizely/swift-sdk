@@ -45,6 +45,14 @@ public class OptimizelyJSON: NSObject {
         self.map = map
     }
     
+    static func createEmpty() -> OptimizelyJSON {
+        return OptimizelyJSON(map: [:])!
+    }
+    
+    public var isEmpty: Bool {
+        return map.isEmpty
+    }
+    
     // MARK: - OptimizelyJSON Implementation
     
     /// - Returns: The string representation of json
@@ -183,7 +191,11 @@ public class OptimizelyJSON: NSObject {
 }
 
 extension OptimizelyJSON {
-    public static func ==(lhs: OptimizelyJSON, rhs: OptimizelyJSON) -> Bool {
-        return NSDictionary(dictionary: lhs.toMap()).isEqual(to: rhs.toMap())
+    
+    // override NSObject Equatable ('==' overriding not working for NSObject)
+    override public func isEqual(_ object: Any?) -> Bool {
+        guard let object = object as? OptimizelyJSON else { return false }
+        return NSDictionary(dictionary: map).isEqual(to: object.toMap())
     }
+    
 }

@@ -14,7 +14,6 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-
 import Foundation
 
 /// Options controlling flag decisions.

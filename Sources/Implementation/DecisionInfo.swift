@@ -15,7 +15,6 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-
 import Foundation
 
 struct DecisionInfo {
@@ -54,7 +53,34 @@ struct DecisionInfo {
     var reasons: [String]?
     
     /// The boolean value indicating an decision event has been sent for the decision (for .flag type only).
-    var sentEvent: Bool = false
+    var sentEvent: Bool
+    
+    init(decisionType: Constants.DecisionType,
+         experiment: Experiment? = nil,
+         variation: Variation? = nil,
+         feature: FeatureFlag? = nil,
+         featureEnabled: Bool? = nil,
+         variableKey: String? = nil,
+         variableType: String? = nil,
+         variableValue: Any? = nil,
+         variableValues: [String: Any]? = nil,
+         ruleKey: String? = nil,
+         reasons: [String]? = nil,
+         sentEvent: Bool = false) {
+        
+        self.decisionType = decisionType
+        self.experiment = experiment
+        self.variation = variation
+        self.feature = feature
+        self.featureEnabled = featureEnabled
+        self.variableKey = variableKey
+        self.variableType = variableType
+        self.variableValue = variableValue
+        self.variableValues = variableValues
+        self.ruleKey = ruleKey
+        self.reasons = reasons
+        self.sentEvent = sentEvent
+    }
     
     var toMap: [String: Any] {
         var decisionInfo = [String: Any]()

@@ -14,7 +14,6 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-
 import Foundation
 
 /// An object for user contexts that the SDK will use to make decisions for.

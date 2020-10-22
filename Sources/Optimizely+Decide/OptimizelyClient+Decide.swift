@@ -60,7 +60,7 @@ extension OptimizelyClient {
             enabled = featureEnabled
         }
         
-        var variableMap = [String : Any]()
+        var variableMap = [String: Any]()
         if !allOptions.contains(.excludeVariables) {
             variableMap = getDecisionVariableMap(feature: feature,
                                                  variation: decision?.variation,

@@ -98,6 +98,15 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.attributes["state"] as! String == "ca")
     }
     
+    func testOptimizelyUserContext_setAttribute3() {
+        let attributes: [String: Any] = ["country": "us"]
+        var user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
+        XCTAssert(user.attributes["country"] as! String == "us")
+
+        user.setAttribute(key: "country", value: "fr")
+        XCTAssert(user.attributes["country"] as! String == "fr")
+    }
+    
     func testOptimizelyUserContext_setAttribute_concurrent() {
         var user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId)
         
@@ -125,6 +134,13 @@ class OptimizelyUserContextTests: XCTestCase {
         }
 
         wait(for: [expWrite, expRead], timeout: 10)
+    }
+    
+    func testOptimizelyUserContext_callerAttributesChangeShouldNotBeReflected() {
+        var attributes: [String: Any] = ["country": "us"]
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
+        attributes["country"] = "fr"
+        XCTAssert(user.attributes["country"] as! String == "us")
     }
     
     func testOptimizelyUserContext_equal() {

@@ -24,8 +24,8 @@ open class OptimizelyClient: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
-    
-    private var atomicConfig: AtomicProperty<ProjectConfig> = AtomicProperty<ProjectConfig>()
+
+    private var atomicConfig = AtomicProperty<ProjectConfig>()
     var config: ProjectConfig? {
         get {
             return atomicConfig.property
@@ -34,6 +34,8 @@ open class OptimizelyClient: NSObject {
             atomicConfig.property = newValue
         }
     }
+    
+    var defaultDecideOptions: [OptimizelyDecideOption]
 
     public var version: String {
         return Utils.sdkVersion
@@ -81,13 +83,16 @@ open class OptimizelyClient: NSObject {
     ///   - eventDispatcher: custom EventDispatcher (optional)
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
+    ///   - defaultDecisionOptions: default decision optiopns (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
-                defaultLogLevel: OptimizelyLogLevel? = nil) {
+                defaultLogLevel: OptimizelyLogLevel? = nil,
+                defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
         
         self.sdkKey = sdkKey
+        self.defaultDecideOptions = defaultDecideOptions ?? []
         
         super.init()
         

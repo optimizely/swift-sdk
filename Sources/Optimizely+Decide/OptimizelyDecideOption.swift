@@ -13,41 +13,24 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
+    
 
 import Foundation
 
-extension OptimizelyJSON {
+/// Options controlling flag decisions.
+public enum OptimizelyDecideOption {
+    /// disable decision event tracking.
+    case disableDecisionEvent
     
-    @available(swift, obsoleted: 1.0)
-    @objc(initWithPayload:)
-    convenience init?(p: String) {
-        self.init(payload: p)
-    }
+    /// return decisions only for flags which are enabled.
+    case enabledFlagsOnly
     
-    @available(swift, obsoleted: 1.0)
-    @objc(initWithMap:)
-    convenience init?(m: [String: Any]) {
-        self.init(map: m)
-    }
+    /// skip user profile service for decision.
+    case ignoreUserProfileService
     
-    @available(swift, obsoleted: 1.0)
-    @objc(isEmpty)
-    /// - Returns: true when one or more variables are included.
-    public func objcIsEmpty() -> Bool {
-        return self.isEmpty
-    }
-
-    @available(swift, obsoleted: 1.0)
-    @objc(toString)
-    /// - Returns: The string representation of json
-    public func objcToString() -> String? {
-        return self.toString()
-    }
+    /// include info and debug messages in the decision reasons.
+    case includeReasons
     
-    @available(swift, obsoleted: 1.0)
-    @objc(toMap)
-    /// - Returns: The json dictionary
-    public func objcToMap() -> [String: Any] {
-        return self.toMap()
-    }
+    /// exclude variable values from the decision result.
+    case excludeVariables
 }

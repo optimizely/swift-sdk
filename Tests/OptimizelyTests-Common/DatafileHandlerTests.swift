@@ -507,11 +507,9 @@ class DatafileHandlerTests: XCTestCase {
         }
         
         wait(for: [expectation], timeout: 5.0)
-
     }
     
     func testDownloadWithoutTimeout() {
-
         let handler = TimoutDatafileHandler()
         // create a dummy file at a url to use as or datafile cdn location
         let localUrl = OTUtils.saveAFile(name: "invalidKeyXXXXX", data: "{}".data(using: .utf8)!)
@@ -524,12 +522,11 @@ class DatafileHandlerTests: XCTestCase {
                 print(data ?? "")
                 XCTAssert(true)
                 expectation.fulfill()
-                OTUtils.removeAFile(name: "invalidKeyXXXXX")
+                _ = OTUtils.removeAFile(name: "invalidKeyXXXXX")
             }
         }
 
         wait(for: [expectation], timeout: 10.0)
-        
     }
     
     func testDatafileCacheFormatCompatibilty() {

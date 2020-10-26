@@ -1,4 +1,4 @@
-/****************************************************************************
+/***************************************************************************
 * Copyright 2020, Optimizely, Inc. and contributors                        *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
@@ -16,38 +16,19 @@
 
 import Foundation
 
-extension OptimizelyJSON {
+extension OptimizelyClient {
     
-    @available(swift, obsoleted: 1.0)
-    @objc(initWithPayload:)
-    convenience init?(p: String) {
-        self.init(payload: p)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(initWithMap:)
-    convenience init?(m: [String: Any]) {
-        self.init(map: m)
-    }
-    
-    @available(swift, obsoleted: 1.0)
-    @objc(isEmpty)
-    /// - Returns: true when one or more variables are included.
-    public func objcIsEmpty() -> Bool {
-        return self.isEmpty
-    }
-
-    @available(swift, obsoleted: 1.0)
-    @objc(toString)
-    /// - Returns: The string representation of json
-    public func objcToString() -> String? {
-        return self.toString()
+    /// Create a context of the user for which decision APIs will be called.
+    ///
+    /// A user context will be created successfully even when the SDK is not fully configured yet.
+    ///
+    /// - Parameters:
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: A map of attribute names to current user attribute values.
+    /// - Returns: An OptimizelyUserContext associated with this OptimizelyClient
+    public func createUserContext(userId: String,
+                                  attributes: [String: Any]? = nil) -> OptimizelyUserContext {
+        return OptimizelyUserContext(optimizely: self, userId: userId, attributes: attributes)
     }
     
-    @available(swift, obsoleted: 1.0)
-    @objc(toMap)
-    /// - Returns: The json dictionary
-    public func objcToMap() -> [String: Any] {
-        return self.toMap()
-    }
 }

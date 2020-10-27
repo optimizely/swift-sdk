@@ -1095,6 +1095,29 @@ extension DecisionListenerTests {
         wait(for: [exp], timeout: 1)
     }
     
+    // MARK: - decide-all api
+    
+    func testDecisionListenerDecideAll() {
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
+
+        var count = 0
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(type, Constants.DecisionType.flag.rawValue)
+            XCTAssertEqual(userId, user.userId)
+            XCTAssertEqual(attributes!["country"] as! String, "US")
+
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.flagKey])
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.enabled])
+            count += 1
+        }
+        
+        _ = user.decideAll()
+        sleep(1)
+        
+        XCTAssertEqual(count, 2)
+    }
+    
 }
 
 class FakeManager: OptimizelyClient {

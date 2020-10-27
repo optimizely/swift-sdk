@@ -113,11 +113,34 @@ extension OptimizelyClient {
     }
     
     func decide(user: OptimizelyUserContext, keys: [String], options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        return [:]
+        guard config != nil else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return [:]
+        }
+        
+        guard keys.count > 0 else { return [:] }
+        
+        let allOptions = defaultDecideOptions + (options ?? [])
+
+        var decisions = [String: OptimizelyDecision]()
+        
+        keys.forEach { key in
+            let decision = decide(user: user, key: key, options: options)
+            if !allOptions.contains(.enabledFlagsOnly) || decision.enabled {
+                decisions[key] = decision
+            }
+        }
+                
+        return decisions
     }
 
     func decideAll(user: OptimizelyUserContext, options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        return [:]
+        guard let config = self.config else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return [:]
+        }
+
+        return decide(user: user, keys: config.featureFlagKeys, options: options)
     }
 
 }

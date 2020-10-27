@@ -71,12 +71,38 @@ public class OptimizelyUserContext {
         return optimizely.decide(user: self, key: key, options: options)
     }
 
-    public func decide(keys: [String], options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        return [:]
-    }
+    /// Returns a key-map of decision results for multiple flag keys and a user context.
+    ///
+    /// - If the SDK finds an error (__flagKeyInvalid__, etc) for a key, the response will include a decision for the key showing `reasons` for the error (regardless of __includeReasons__ in options).
+    /// - The SDK will always return key-mapped decisions. When it can not process requests (on __sdkNotReady__ or __userContextInvalid__ errors), it’ll return an empty map after logging the errors.
+    ///
+    /// - Parameters:
+    ///   - keys: An array of flag keys for which decisions will be made. When set to `nil`, the SDK will return decisions for all active flag keys.
+    ///   - options: An array of options for decision-making.
+    /// - Returns: A dictionary of all decision results, mapped by flag keys.
+    public func decide(keys: [String],
+                       options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
 
+        guard let optimizely = self.optimizely else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return [:]
+        }
+        
+        return optimizely.decide(user: self, keys: keys, options: options)
+    }
+    
+    /// Returns a key-map of decision results for all active flag keys.
+    ///
+    /// - Parameters:
+    ///   - options: An array of options for decision-making.
+    /// - Returns: A dictionary of all decision results, mapped by flag keys.
     public func decideAll(options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        return [:]
+        guard let optimizely = self.optimizely else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return [:]
+        }
+
+        return optimizely.decideAll(user: self, options: options)
     }
 
     public func trackEvent(eventKey: String, eventTags:  [String: Any]? = nil) {

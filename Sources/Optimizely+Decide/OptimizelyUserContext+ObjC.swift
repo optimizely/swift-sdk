@@ -49,8 +49,8 @@ import Foundation
         return ObjcOptimizelyDecision(decision: decision)
     }
     
-    public func decideAll(keys: [String], options: [Int]? = nil) -> [String: ObjcOptimizelyDecision] {
-        let decisionsMap = userContext.decideAll(keys: keys, options: mapOptionsObjcToSwift(options))
+    public func decide(keys: [String], options: [Int]? = nil) -> [String: ObjcOptimizelyDecision] {
+        let decisionsMap = userContext.decide(keys: keys, options: mapOptionsObjcToSwift(options))
         return decisionsMap.mapValues { ObjcOptimizelyDecision(decision: $0) }
     }
     

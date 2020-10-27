@@ -115,20 +115,6 @@ static NSString * datafile;
 
 //// MARK: - decideAll
 
-- (void)testDecideAll_twoFeatures {
-    NSString *featureKey1 = @"feature_1";
-    NSString *featureKey2 = @"feature_2";
-
-    OptimizelyUserContext *user = [self.optimizely createUserContextWithUserId:kUserId attributes:@{@"gender": @"f"}];
-
-    NSDictionary<NSString*,OptimizelyDecision*> *decisions;
-    decisions = [user decideAllWithKeys:@[featureKey1, featureKey2] options:nil];
-    
-    XCTAssert(decisions.count == 2);
-    XCTAssertTrue(decisions[featureKey1].enabled);
-    XCTAssertTrue(decisions[featureKey2].enabled);
-}
-
 - (void)testDecideAll_allFeatures {
     NSString *featureKey1 = @"feature_1";
     NSString *featureKey2 = @"feature_2";
@@ -143,6 +129,23 @@ static NSString * datafile;
     XCTAssertTrue(decisions[featureKey2].enabled);
     XCTAssertFalse(decisions[featureKey3].enabled);
 }
+
+//// MARK: - decideForKeys
+
+- (void)testDecideAll_twoFeatures {
+    NSString *featureKey1 = @"feature_1";
+    NSString *featureKey2 = @"feature_2";
+
+    OptimizelyUserContext *user = [self.optimizely createUserContextWithUserId:kUserId attributes:@{@"gender": @"f"}];
+
+    NSDictionary<NSString*,OptimizelyDecision*> *decisions;
+    decisions = [user decideWithKeys:@[featureKey1, featureKey2] options:nil];
+    
+    XCTAssert(decisions.count == 2);
+    XCTAssertTrue(decisions[featureKey1].enabled);
+    XCTAssertTrue(decisions[featureKey2].enabled);
+}
+
 
 // MARK: - OptimizelyDecideOptions
 

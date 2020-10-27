@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SamplesForAPI: NSObject
 +(void)checkAPIs:(OptimizelyClient*)optimizely;
 +(void)checkOptimizelyConfig:(OptimizelyClient*)optimizely;
++(void)checkOptimizelyUserContext:(OptimizelyClient*)optimizely;
 @end
 
 NS_ASSUME_NONNULL_END

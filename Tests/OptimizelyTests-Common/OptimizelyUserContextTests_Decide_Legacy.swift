@@ -57,7 +57,7 @@ class OptimizelyUserContextTests_Decide_Legacy: XCTestCase {
 
 extension OptimizelyUserContextTests_Decide_Legacy {
     
-    func testTrackWithUserContext() {
+    func testTrackEventWithUserContext() {
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributes)
         try! user.trackEvent(eventKey: kEventKey, eventTags: kEventTags)
         

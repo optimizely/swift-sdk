@@ -135,7 +135,7 @@
                   "id": "2687470095",
                   "key": "i_42",
                   "type": "integer"
-              },
+              }
           ]
       },
       {
@@ -144,7 +144,7 @@
           "key": "feature_3",
           "rolloutId": "",
           "variables": []
-      },
+      }
   ],
   "experiments": [
     {
@@ -253,7 +253,7 @@
           "id": "invalid_name",
           "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"type\": \"custom_attribute\", \"value\": 18}]]]",
           "name": "invalid_name"
-      },
+      }
   ],
   "groups": [
       {
@@ -308,7 +308,7 @@
                   ],
                   "forcedVariations": {},
                   "id": "10420843432"
-              },
+              }
           ],
           "id": "13142870430"
       }
@@ -339,3 +339,4 @@
   ],
   "revision": "241"
 }
+

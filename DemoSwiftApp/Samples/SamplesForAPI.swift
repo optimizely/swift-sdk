@@ -103,6 +103,40 @@ class SamplesForAPI {
         
     }
     
+    // MARK: - OptimizelyUserContext
+    
+    static func checkOptimizelyUserContext(optimizely: OptimizelyClient) {
+        let attributes: [String: Any] = [
+            "location": "NY",
+            "device": "iPhone",
+            "lifetime": 24738388,
+            "is_logged_in": true
+            ]
+        let tags: [String: Any] = [
+            "category": "shoes",
+            "count": 2
+            ]
+
+        let user = optimizely.createUserContext(userId: "user_123", attributes: attributes)
+        
+        let decision = user.decide(key: "show_coupon", options: [.includeReasons])
+        
+        if let variationKey = decision.variationKey {
+            print("[decide] flag decision to variation: \(variationKey)")
+            print("[decide] flag enabled: \(decision.enabled) with variables: \(decision.variables.toMap())")
+            print("[decide] reasons: \(decision.reasons)")
+        } else {
+            print("[decide] error: \(decision.reasons)")
+        }
+        
+        do {
+            try user.trackEvent(eventKey: "my_purchase_event_key", eventTags: tags)
+            print("[track] success")
+        } catch {
+            print("[track] error: \(error)")
+        }
+    }
+    
     // MARK: - OptimizelyConfig
     
     static func checkOptimizelyConfig(optimizely: OptimizelyClient) {

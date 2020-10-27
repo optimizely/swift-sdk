@@ -343,7 +343,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertTrue(NSDictionary(dictionary: decision.variables.toMap()).isEqual(to: variablesExpected.toMap()))
         
         decision = user.decide(key: featureKey, options: [.excludeVariables])
-        XCTAssertTrue(decision.variables.toMap().isEmpty)
+        XCTAssertTrue(decision.variables.isEmpty)
     }
     
     func testDecide_defaultDecideOption() {
@@ -362,7 +362,7 @@ extension OptimizelyUserContextTests_Decide {
         try! optimizely.start(datafile: datafile)
         user = optimizely.createUserContext(userId: kUserId)
         decision = user.decide(key: featureKey)
-        XCTAssertTrue(decision.variables.toMap().isEmpty)
+        XCTAssertTrue(decision.variables.isEmpty)
     }
 
 }

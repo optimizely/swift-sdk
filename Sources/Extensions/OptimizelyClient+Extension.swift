@@ -56,15 +56,22 @@ extension OptimizelyClient {
     ///         The recommended value is 10 * 60 secs (you can also set this to nil to use the recommended value).
     ///         Set this to 0 to disable periodic downloading.
     ///   - defaultLogLevel: default log level (optional. default = .info)
+    ///   - defaultDecisionOptions: default decision optiopns (optional)
     public convenience init(sdkKey: String,
                             logger: OPTLogger? = nil,
                             eventDispatcher: OPTEventDispatcher? = nil,
                             userProfileService: OPTUserProfileService? = nil,
                             periodicDownloadInterval: Int?,
-                            defaultLogLevel: OptimizelyLogLevel? = nil) {
+                            defaultLogLevel: OptimizelyLogLevel? = nil,
+                            defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
         let interval = periodicDownloadInterval ?? 10 * 60
         
-        self.init(sdkKey: sdkKey, logger: logger, eventDispatcher: eventDispatcher, userProfileService: userProfileService, defaultLogLevel: defaultLogLevel)
+        self.init(sdkKey: sdkKey,
+                  logger: logger,
+                  eventDispatcher: eventDispatcher,
+                  userProfileService: userProfileService,
+                  defaultLogLevel: defaultLogLevel,
+                  defaultDecideOptions: defaultDecideOptions)
         
         if let handler = datafileHandler as? DefaultDatafileHandler, interval > 0 {
             handler.setTimer(sdkKey: sdkKey, interval: interval)

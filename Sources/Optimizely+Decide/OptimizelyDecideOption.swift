@@ -17,7 +17,7 @@
 import Foundation
 
 /// Options controlling flag decisions.
-public enum OptimizelyDecideOption {
+@objc public enum OptimizelyDecideOption: Int {
     /// disable decision event tracking.
     case disableDecisionEvent
     

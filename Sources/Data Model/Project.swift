@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -42,23 +42,24 @@ struct Project: Codable, Equatable {
     var typedAudiences: [Audience]?
     var featureFlags: [FeatureFlag]
     var botFiltering: Bool?
+    var sendFlagDecisions: Bool?
     
     let logger = OPTLoggerFactory.getLogger()
     
-    // Required since logger in not decodable
+    // Required since logger is not decodable
     enum CodingKeys: String, CodingKey {
         // V2
         case version, projectId, experiments, audiences, groups, attributes, accountId, events, revision
         // V3
         case anonymizeIP
         // V4
-        case rollouts, typedAudiences, featureFlags, botFiltering
+        case rollouts, typedAudiences, featureFlags, botFiltering, sendFlagDecisions
     }
     
-    // Required since logger in not equatable
+    // Required since logger is not equatable
     static func ==(lhs: Project, rhs: Project) -> Bool {
         return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments &&
-            lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes && lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision && lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts && lhs.typedAudiences == rhs.typedAudiences && lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering
+            lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes && lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision && lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts && lhs.typedAudiences == rhs.typedAudiences && lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && lhs.sendFlagDecisions == rhs.sendFlagDecisions
     }
 }
 

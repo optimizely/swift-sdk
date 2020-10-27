@@ -28,6 +28,9 @@ struct DecisionInfo {
     /// The variation selected by the decision.
     var variation: Variation?
     
+    // The source of the decision
+    var source: String?
+    
     /// The flag for which the decision has been made.
     var feature: FeatureFlag?
     
@@ -58,6 +61,7 @@ struct DecisionInfo {
     init(decisionType: Constants.DecisionType,
          experiment: Experiment? = nil,
          variation: Variation? = nil,
+         source: String? = nil,
          feature: FeatureFlag? = nil,
          featureEnabled: Bool? = nil,
          variableKey: String? = nil,
@@ -71,6 +75,7 @@ struct DecisionInfo {
         self.decisionType = decisionType
         self.experiment = experiment
         self.variation = variation
+        self.source = source
         self.feature = feature
         self.featureEnabled = featureEnabled
         self.variableKey = variableKey
@@ -99,7 +104,7 @@ struct DecisionInfo {
             decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
             
             let decisionSource: Constants.DecisionSource = experiment != nil ? .featureTest : .rollout
-            decisionInfo[Constants.DecisionInfoKeys.source] = decisionSource.rawValue
+            decisionInfo[Constants.DecisionInfoKeys.source] = source ?? decisionSource.rawValue
             
             var sourceInfo = [String: Any]()
             if let experiment = experiment, let variation = variation {

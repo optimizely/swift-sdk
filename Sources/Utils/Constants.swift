@@ -47,6 +47,7 @@ struct Constants {
     }
         
     enum DecisionSource: String {
+        case experiment = "experiment"
         case featureTest = "feature-test"
         case rollout = "rollout"
     }

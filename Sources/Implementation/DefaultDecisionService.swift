@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -48,7 +48,7 @@ class DefaultDecisionService: OPTDecisionService {
         
         // ---- check if the user is forced into a variation ----
         if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
-            let variation = experiment.getVariation(id: variationId) {
+           let variation = experiment.getVariation(id: variationId) {
             return variation
         }
         
@@ -181,7 +181,7 @@ class DefaultDecisionService: OPTDecisionService {
                                 userId: String,
                                 attributes: OptimizelyAttributes,
                                 options: [OptimizelyDecideOption]? = nil,
-                                reasons: DecisionReasons? = nil) -> (experiment: Experiment?, variation: Variation?)? {
+                                reasons: DecisionReasons? = nil) -> (experiment: Experiment, variation: Variation, source: String)? {
         //Evaluate in this order:
         
         //1. Attempt to bucket user into experiment using feature flag.
@@ -197,13 +197,13 @@ class DefaultDecisionService: OPTDecisionService {
         
         //2. Attempt to bucket user into rollout using the feature flag.
         // Check if the feature flag has rollout and the user is bucketed into one of it's rules
-        if let variation = getVariationForFeatureRollout(config: config,
+        if let pair = getVariationForFeatureRollout(config: config,
                                                          featureFlag: featureFlag,
                                                          userId: userId,
                                                          attributes: attributes,
                                                          options: options,
                                                          reasons: reasons) {
-            return (nil, variation)
+            return pair
         }
         
         return nil
@@ -215,7 +215,7 @@ class DefaultDecisionService: OPTDecisionService {
                                           userId: String,
                                           attributes: OptimizelyAttributes,
                                           options: [OptimizelyDecideOption]? = nil,
-                                          reasons: DecisionReasons? = nil) -> (experiment: Experiment?, variation: Variation?)? {
+                                          reasons: DecisionReasons? = nil) -> (experiment: Experiment, variation: Variation, source: String)? {
         
         let experimentIds = featureFlag.experimentIds
         if experimentIds.isEmpty {
@@ -234,7 +234,7 @@ class DefaultDecisionService: OPTDecisionService {
                                              attributes: attributes,
                                              options: options,
                                              reasons: reasons) {
-                return (experiment, variation)
+                return (experiment, variation, Constants.DecisionSource.featureTest.rawValue)
             }
         }
         return nil
@@ -245,7 +245,7 @@ class DefaultDecisionService: OPTDecisionService {
                                        userId: String,
                                        attributes: OptimizelyAttributes,
                                        options: [OptimizelyDecideOption]? = nil,
-                                       reasons: DecisionReasons? = nil) -> Variation? {
+                                       reasons: DecisionReasons? = nil) -> (experiment: Experiment, variation: Variation, source: String)? {
         
         let bucketingId = getBucketingId(userId: userId, attributes: attributes)
         
@@ -296,7 +296,7 @@ class DefaultDecisionService: OPTDecisionService {
                     info = LogMessage.userBucketedIntoTargetingRule(userId, loggingKey)
                     logger.d(info)
                     reasons?.addInfo(info)
-                    return variation
+                    return (experiment, variation, Constants.DecisionSource.rollout.rawValue)
                 }
                 info = LogMessage.userNotBucketedIntoTargetingRule(userId, loggingKey)
                 logger.d(info)
@@ -328,7 +328,7 @@ class DefaultDecisionService: OPTDecisionService {
                 logger.d(info)
                 reasons?.addInfo(info)
                 
-                return variation
+                return (experiment, variation, Constants.DecisionSource.rollout.rawValue)
             }
         }
         
@@ -361,9 +361,9 @@ extension DefaultDecisionService {
         if (options ?? []).contains(.ignoreUserProfileService) { return nil }
         
         if let profile = userProfileService.lookup(userId: userId),
-            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
-            let experimentMap = bucketMap[experimentId],
-            let variationId = experimentMap[UserProfileKeys.kVariationId] {
+           let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+           let experimentMap = bucketMap[experimentId],
+           let variationId = experimentMap[UserProfileKeys.kVariationId] {
             return variationId
         } else {
             return nil

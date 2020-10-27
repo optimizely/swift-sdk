@@ -31,8 +31,12 @@ protocol OPTDecisionService {
      b. Is the experiment that the user bucketed into NOT mutually excluded?
      c. Does traffic allocation exclude the user?
      
-     - Parameter userId: The ID of the user.
+     - Parameter config: The project configuration.
      - Parameter experiment: The experiment in which to bucket the user.
+     - Parameter userId: The ID of the user.
+     - Parameter attributes: User attributes
+     - Parameter options: An array of decision options
+     - Parameter reasons: A struct to collect decision reasons
      - Returns: The variation assigned to the specified user ID for an experiment.
      */
     func getVariation(config: ProjectConfig,
@@ -44,9 +48,12 @@ protocol OPTDecisionService {
     
     /**
      Get a variation the user is bucketed into for the given FeatureFlag
+     - Parameter config: The project configuration.
      - Parameter featureFlag: The feature flag the user wants to access.
      - Parameter userId: The ID of the user.
      - Parameter attributes: User attributes
+     - Parameter options: An array of decision options
+     - Parameter reasons: A struct to collect decision reasons
      - Returns: The variation assigned to the specified user ID for a feature flag.
      */
     func getVariationForFeature(config: ProjectConfig,
@@ -54,6 +61,6 @@ protocol OPTDecisionService {
                                 userId: String,
                                 attributes: OptimizelyAttributes,
                                 options: [OptimizelyDecideOption]?,
-                                reasons: DecisionReasons?) -> (experiment: Experiment?, variation: Variation?)?
+                                reasons: DecisionReasons?) -> (experiment: Experiment, variation: Variation, source: String)?
     
 }

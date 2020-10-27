@@ -57,10 +57,20 @@ extension OptimizelyClient {
                                                               options: allOptions,
                                                               reasons: decisionReasons)
         
-        if let featureEnabled = decision?.variation?.featureEnabled {
+        if let featureEnabled = decision?.variation.featureEnabled {
             enabled = featureEnabled
         }
         
+        if !allOptions.contains(.disableDecisionEvent) {
+            sendImpressionEvent(experiment: decision?.experiment,
+                                variation: decision?.variation,
+                                userId: userId,
+                                attributes: attributes,
+                                flagKey: feature.key,
+                                ruleType: decision?.source ?? Constants.DecisionSource.rollout.rawValue)
+            decisionEventDispatched = true
+        }
+
         var variableMap = [String: Any]()
         if !allOptions.contains(.excludeVariables) {
             variableMap = getDecisionVariableMap(feature: feature,
@@ -77,18 +87,8 @@ extension OptimizelyClient {
             optimizelyJSON = OptimizelyJSON.createEmpty()
         }
 
-        if let experimentDecision = decision?.experiment, let variationDecision = decision?.variation {
-            if !allOptions.contains(.disableDecisionEvent) {
-                sendImpressionEvent(experiment: experimentDecision,
-                                    variation: variationDecision,
-                                    userId: userId,
-                                    attributes: attributes)
-                decisionEventDispatched = true
-            }
-        }
-        
         // TODO: add ruleKey values when available later. Use a copy of experimentKey for now.
-        let ruleKey = decision?.experiment?.key
+        let ruleKey = decision?.experiment.key
         let reasonsToReport = decisionReasons.toReport()
 
         sendDecisionNotification(userId: userId,
@@ -103,7 +103,7 @@ extension OptimizelyClient {
                                                             reasons: reasonsToReport,
                                                             decisionEventDispatched: decisionEventDispatched))
         
-        return OptimizelyDecision(variationKey: decision?.variation?.key,
+        return OptimizelyDecision(variationKey: decision?.variation.key,
                                   enabled: enabled,
                                   variables: optimizelyJSON,
                                   ruleKey: ruleKey,

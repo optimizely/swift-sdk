@@ -53,7 +53,7 @@ struct DecisionInfo {
     var reasons: [String]?
     
     /// The boolean value indicating an decision event has been sent for the decision (for .flag type only).
-    var sentEvent: Bool
+    var decisionEventDispatched: Bool
     
     init(decisionType: Constants.DecisionType,
          experiment: Experiment? = nil,
@@ -66,7 +66,7 @@ struct DecisionInfo {
          variableValues: [String: Any]? = nil,
          ruleKey: String? = nil,
          reasons: [String]? = nil,
-         sentEvent: Bool = false) {
+         decisionEventDispatched: Bool = false) {
         
         self.decisionType = decisionType
         self.experiment = experiment
@@ -79,7 +79,7 @@ struct DecisionInfo {
         self.variableValues = variableValues
         self.ruleKey = ruleKey
         self.reasons = reasons
-        self.sentEvent = sentEvent
+        self.decisionEventDispatched = decisionEventDispatched
     }
     
     var toMap: [String: Any] {
@@ -136,7 +136,7 @@ struct DecisionInfo {
             decisionInfo[Constants.DecisionInfoKeys.variationKey] = variation?.key
             decisionInfo[Constants.DecisionInfoKeys.ruleKey] = ruleKey
             decisionInfo[Constants.DecisionInfoKeys.reasons] = reasons
-            decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] = sentEvent
+            decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] = decisionEventDispatched
         }
         
         return decisionInfo

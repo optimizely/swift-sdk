@@ -47,7 +47,7 @@ extension OptimizelyClient {
         let attributes = user.attributes
         let allOptions = defaultDecideOptions + (options ?? [])
         let decisionReasons = DecisionReasons()
-        var sentEvent = false
+        var decisionEventDispatched = false
         var enabled = false
     
         let decision = decisionService.getVariationForFeature(config: config,
@@ -84,7 +84,7 @@ extension OptimizelyClient {
                                     variation: variationDecision,
                                     userId: userId,
                                     attributes: attributes)
-                sentEvent = true
+                decisionEventDispatched = true
             }
         }
         
@@ -101,7 +101,7 @@ extension OptimizelyClient {
                                                             variableValues: variableMap,
                                                             ruleKey: ruleKey,
                                                             reasons: reasonsToReport,
-                                                            sentEvent: sentEvent))
+                                                            decisionEventDispatched: decisionEventDispatched))
         
         return OptimizelyDecision(variationKey: decision?.variation?.key,
                                   enabled: enabled,

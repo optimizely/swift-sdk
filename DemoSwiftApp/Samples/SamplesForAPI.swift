@@ -199,7 +199,7 @@ class SamplesForAPI {
 
     }
     
-    // MARK: - OptimizelyConfig
+    // MARK: - Initializations
 
     static func samplesForInitialization() {
         

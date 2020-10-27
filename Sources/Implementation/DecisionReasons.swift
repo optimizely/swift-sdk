@@ -23,8 +23,10 @@ protocol ReasonProtocol {
 class DecisionReasons {
     var errors: [ReasonProtocol]
     var logs: [ReasonProtocol]
+    let includeReasons: Bool
     
-    init() {
+    init(options: [OptimizelyDecideOption]) {
+        includeReasons = options.contains(.includeReasons)
         errors = []
         logs = []
     }
@@ -34,18 +36,12 @@ class DecisionReasons {
     }
     
     func addInfo(_ info: ReasonProtocol) {
-        logs.append(info)
+        if includeReasons {
+            logs.append(info)
+        }
     }
     
-    var reasonsRequired: [String] {
-        return errors.map{ $0.reason }
-    }
-    
-    var reasonsOptional: [String] {
-        return logs.map{ $0.reason }
-    }
-    
-    func getReasonsToReport(options: [OptimizelyDecideOption]) -> [String] {
-        return reasonsRequired + (options.contains(.includeReasons) ? reasonsOptional : [])
+    func toReport() -> [String] {
+        return errors.map { $0.reason } + logs.map { $0.reason }
     }
 }

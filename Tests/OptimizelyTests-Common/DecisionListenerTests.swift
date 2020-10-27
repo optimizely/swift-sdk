@@ -1166,7 +1166,8 @@ class FakeDecisionService: DefaultDecisionService {
                                          featureFlag: FeatureFlag,
                                          userId: String,
                                          attributes: OptimizelyAttributes,
-                                         options: [OptimizelyDecideOption]? = nil) -> (experiment: Experiment?, variation: Variation?)? {
+                                         options: [OptimizelyDecideOption]? = nil,
+                                         reasons: DecisionReasons? = nil) -> (experiment: Experiment?, variation: Variation?)? {
         return (self.experiment, self.variation)
     }
 }

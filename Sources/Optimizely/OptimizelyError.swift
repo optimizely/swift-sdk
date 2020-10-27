@@ -78,7 +78,6 @@ public enum OptimizelyError: Error {
     
     case eventDispatchFailed(_ reason: String)
     case eventDispatcherConfigError(_ reason: String)
-    
 }
 
 // MARK: - CustomStringConvertible

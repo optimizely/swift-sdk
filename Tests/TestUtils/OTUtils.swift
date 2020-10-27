@@ -137,6 +137,31 @@ class OTUtils {
             return nil
         }
     }
+    
+    // MARK: - UPS
+    
+    static func getVariationFromUPS(ups: OPTUserProfileService, userId: String, experimentId: String) -> String? {
+        if let profile = ups.lookup(userId: userId),
+            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+            let experimentMap = bucketMap[experimentId],
+            let variationId = experimentMap[UserProfileKeys.kVariationId] {
+            return variationId
+        } else {
+            return nil
+        }
+    }
+    
+    static func setVariationToUPS(ups: OPTUserProfileService, userId: String, experimentId: String, variationId: String){
+        var profile = ups.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
+        
+        var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
+        bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
+        
+        profile[UserProfileKeys.kBucketMap] = bucketMap
+        profile[UserProfileKeys.kUserId] = userId
+        
+        ups.save(userProfile: profile)
+    }
 
     // MARK: - big numbers
     

@@ -430,6 +430,8 @@
 		6E34A647231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
 		6E34A648231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
 		6E34A649231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E34A63D231ED28600BAE302 /* empty_datafile_new_account_id.json */; };
+		6E3E4B8D2523E48300AE01EC /* OptimizelyUserContextTests_Decide_Reasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E814D0E24C20DFF00191597 /* OptimizelyUserContextTests_Decide_Reasons.swift */; };
+		6E3E4BAA2523E48500AE01EC /* OptimizelyUserContextTests_Decide_Reasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E814D0E24C20DFF00191597 /* OptimizelyUserContextTests_Decide_Reasons.swift */; };
 		6E5AB69323F6130D007A82B1 /* OptimizelyClientTests_Init_Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */; };
 		6E5AB69423F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */; };
 		6E614DD621E3F38A005982A1 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
@@ -1738,6 +1740,7 @@
 		6E7519C622C5211100B2B157 /* OptimizelyClientTests_ObjcOthers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OptimizelyClientTests_ObjcOthers.m; sourceTree = "<group>"; };
 		6E7519C822C5211100B2B157 /* OtherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherTests.swift; sourceTree = "<group>"; };
 		6E7519C922C5211100B2B157 /* ThrowableConditionListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrowableConditionListTest.swift; sourceTree = "<group>"; };
+		6E814D0E24C20DFF00191597 /* OptimizelyUserContextTests_Decide_Reasons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_Reasons.swift; sourceTree = "<group>"; };
 		6E981FC1232C363300FADDD6 /* DecisionListenerTests_Datafile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionListenerTests_Datafile.swift; sourceTree = "<group>"; };
 		6EA0FB1E251A5AEC00EC002D /* bucketer_test3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bucketer_test3.json; sourceTree = "<group>"; };
 		6EA2CC232345618E001E7531 /* OptimizelyConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyConfig.swift; sourceTree = "<group>"; };
@@ -1983,7 +1986,6 @@
 			isa = PBXGroup;
 			children = (
 				6E75166D22C520D400B2B157 /* Constants.swift */,
-				6EF8DE3024BF7D69008B9488 /* DecisionReasons.swift */,
 				6E34A6162319EBB700BAE302 /* Notifications.swift */,
 				6E75166E22C520D400B2B157 /* MurmurHash3.swift */,
 				6E75166F22C520D400B2B157 /* HandlerRegistryService.swift */,
@@ -2023,6 +2025,7 @@
 				6E75167E22C520D400B2B157 /* DefaultBucketer.swift */,
 				6E75167F22C520D400B2B157 /* DefaultNotificationCenter.swift */,
 				6E75168022C520D400B2B157 /* DefaultDecisionService.swift */,
+				6EF8DE3024BF7D69008B9488 /* DecisionReasons.swift */,
 				6E75168122C520D400B2B157 /* Datastore */,
 				6E75168622C520D400B2B157 /* Events */,
 			);
@@ -2202,6 +2205,7 @@
 				6E75199822C5211100B2B157 /* DataStoreTests.swift */,
 				6EC6DD6824AE94820017D296 /* OptimizelyUserContextTests.swift */,
 				6E2D34B8250AD14000A0CDFE /* OptimizelyUserContextTests_Decide.swift */,
+				6E814D0E24C20DFF00191597 /* OptimizelyUserContextTests_Decide_Reasons.swift */,
 			);
 			path = "OptimizelyTests-Common";
 			sourceTree = "<group>";
@@ -3556,6 +3560,7 @@
 				6E75178722C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E9B117522C5487100C22D81 /* DecisionServiceTests.swift in Sources */,
 				6E75179F22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
+				6E3E4BAA2523E48500AE01EC /* OptimizelyUserContextTests_Decide_Reasons.swift in Sources */,
 				6E7516BB22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E75184922C520D400B2B157 /* Event.swift in Sources */,
 				0B97DDA4249D4A27003DE606 /* SemanticVersion.swift in Sources */,
@@ -3764,6 +3769,7 @@
 				6E75172D22C520D400B2B157 /* Constants.swift in Sources */,
 				6E9B115B22C5486E00C22D81 /* DecisionServiceTests.swift in Sources */,
 				6E75172122C520D400B2B157 /* OptimizelyResult.swift in Sources */,
+				6E3E4B8D2523E48300AE01EC /* OptimizelyUserContextTests_Decide_Reasons.swift in Sources */,
 				6E75186722C520D400B2B157 /* Rollout.swift in Sources */,
 				6E7518A322C520D400B2B157 /* FeatureFlag.swift in Sources */,
 				0B97DD9E249D4A22003DE606 /* SemanticVersion.swift in Sources */,

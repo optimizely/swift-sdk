@@ -242,8 +242,8 @@ extension DecisionServiceTests_Experiments {
         // (0) initial - no variation mapped for invalid audience id
         
         variation = self.decisionService.getVariation(config: config,
-                                                      userId: kUserId,
                                                       experiment: experiment,
+                                                      userId: kUserId,
                                                       attributes: kAttributesCountryMatch)
         XCTAssertNil(variation, "no matching audience should return nil")
         
@@ -253,8 +253,8 @@ extension DecisionServiceTests_Experiments {
         self.config.project.experiments = [experiment]
         
         variation = self.decisionService.getVariation(config: config,
-                                                      userId: kUserId,
                                                       experiment: experiment,
+                                                      userId: kUserId,
                                                       attributes: kAttributesCountryMatch)
         XCTAssertNil(variation, "not running experiments return nil")
         
@@ -275,8 +275,8 @@ extension DecisionServiceTests_Experiments {
         
         // local forcedVariation wins
         variation = self.decisionService.getVariation(config: config,
-                                                      userId: kUserId,
                                                       experiment: experiment,
+                                                      userId: kUserId,
                                                       attributes: kAttributesCountryMatch)
         XCTAssert(variation!.key == kVariationKeyA, "local forcedVariation should override")
         
@@ -289,8 +289,8 @@ extension DecisionServiceTests_Experiments {
         
         // no local variation, so now remote variation works
         variation = self.decisionService.getVariation(config: config,
-                                                      userId: kUserId,
                                                       experiment: experiment,
+                                                      userId: kUserId,
                                                       attributes: kAttributesCountryMatch)
         XCTAssert(variation!.key == kVariationKeyB, "remote forcedVariation should override")
         
@@ -306,8 +306,8 @@ extension DecisionServiceTests_Experiments {
         
         // no variation mapped for invalid audience id
         variation = self.decisionService.getVariation(config: config,
-                                                      userId: kUserId,
                                                       experiment: experiment,
+                                                      userId: kUserId,
                                                       attributes: kAttributesCountryMatch)
         XCTAssertNil(variation, "no matching audience should return nil")
         
@@ -322,8 +322,8 @@ extension DecisionServiceTests_Experiments {
         // (0) no forcedVariation + no UserProfileService (reset), no attributes -> decision returns nil
         
         variation = self.decisionService.getVariation(config: config,
-                                                      userId: kUserId,
                                                       experiment: experiment,
+                                                      userId: kUserId,
                                                       attributes: kAttributesEmpty)
         XCTAssertNil(variation, "bucketing should return nil")
         
@@ -332,8 +332,8 @@ extension DecisionServiceTests_Experiments {
         // no forced variations + no UserProfileService, so local decision + bucketing should return valid variation
         
         variation = self.decisionService.getVariation(config: config,
-                                                      userId: kUserId,
                                                       experiment: experiment,
+                                                      userId: kUserId,
                                                       attributes: kAttributesCountryMatch)
         XCTAssert(variation!.key == kVariationKeyD, "bucketing should work")
         
@@ -342,8 +342,8 @@ extension DecisionServiceTests_Experiments {
         // no attributes, but UserProfile data by (1) will return valid variatin
         
         variation = self.decisionService.getVariation(config: config,
-                                                      userId: kUserId,
                                                       experiment: experiment,
+                                                      userId: kUserId,
                                                       attributes: kAttributesEmpty)
         XCTAssert(variation!.key == kVariationKeyD, "bucketing should work")
     }
@@ -360,8 +360,8 @@ extension DecisionServiceTests_Experiments {
         
         // no local variation, so now remote variation works
         variation = self.decisionService.getVariation(config: config,
-                                                      userId: kUserId,
                                                       experiment: experiment,
+                                                      userId: kUserId,
                                                       attributes: kAttributesCountryMatch)
         XCTAssert(variation!.key == kVariationKeyD, "invalid forced variation should be skipped")
     }

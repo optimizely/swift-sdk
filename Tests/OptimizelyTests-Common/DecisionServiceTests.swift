@@ -37,7 +37,7 @@ class DecisionServiceTests: XCTestCase {
         
         let experiment = config.project.experiments.filter({$0.key == "typed_audience_experiment"}).first
         let attr = ["integerKey": 1, "doubleKey": 99.0, "booleanKey": true, "nationality": "English"] as [String: Any]
-        let variation = decisionService.getVariation(config: config, userId: "1234", experiment: experiment!, attributes: attr)
+        let variation = decisionService.getVariation(config: config, experiment: experiment!, userId: "1234", attributes: attr)
         
         XCTAssertNotNil(variation)
         

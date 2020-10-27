@@ -119,7 +119,14 @@ open class OptimizelyClient: NSObject {
     ///   - resourceTimeout: timeout for datafile download (optional)
     ///   - completion: callback when initialization is completed
     public func start(resourceTimeout: Double? = nil, completion: ((OptimizelyResult<Data>) -> Void)? = nil) {
-        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: true, resourceTimeoutInterval: resourceTimeout) { result in
+        datafileHandler?.downloadDatafile(sdkKey: sdkKey,
+                                          returnCacheIfNoChange: true,
+                                          resourceTimeoutInterval: resourceTimeout) { [weak self] result in
+            guard let self = self else {
+                completion?(.failure(.sdkNotReady))
+                return
+            }
+            
             switch result {
             case .success(let datafile):
                 guard let datafile = datafile else {
@@ -174,7 +181,9 @@ open class OptimizelyClient: NSObject {
         
         if !doFetchDatafileBackground { return }
         
-        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false) { result in
+        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false) { [weak self] result in
+            guard let self = self else { return }
+
             // override to update always if periodic datafile polling is enabled
             // this is necessary for the case that the first cache download gets the updated datafile
             guard doUpdateConfigOnNewDatafile || self.isPeriodicPollingEnabled else { return }
@@ -297,14 +306,15 @@ open class OptimizelyClient: NSObject {
         let variation = decisionService.getVariation(config: config,
                                                      userId: userId,
                                                      experiment: experiment,
-                                                     attributes: attributes ?? OptimizelyAttributes())
+                                                     attributes: attributes ?? OptimizelyAttributes(),
+                                                     options: nil)
         
         let decisionType: Constants.DecisionType = config.isFeatureExperiment(id: experiment.id) ? .featureTest : .abTest
-        sendDecisionNotification(decisionType: decisionType,
-                                 userId: userId,
+        sendDecisionNotification(userId: userId,
                                  attributes: attributes,
-                                 experiment: experiment,
-                                 variation: variation)
+                                 decisionInfo: DecisionInfo(decisionType: decisionType,
+                                                            experiment: experiment,
+                                                            variation: variation))
         
         if let variation = variation {
             return variation
@@ -380,15 +390,16 @@ open class OptimizelyClient: NSObject {
         let pair = decisionService.getVariationForFeature(config: config,
                                                           featureFlag: featureFlag,
                                                           userId: userId,
-                                                          attributes: attributes ?? OptimizelyAttributes())
+                                                          attributes: attributes ?? OptimizelyAttributes(),
+                                                          options: nil)
         
         guard let variation = pair?.variation else {
             logger.i(.variationUnknown(userId, featureKey))
-            sendDecisionNotification(decisionType: .feature,
-                                     userId: userId,
+            sendDecisionNotification(userId: userId,
                                      attributes: attributes,
-                                     feature: featureFlag,
-                                     featureEnabled: false)
+                                     decisionInfo: DecisionInfo(decisionType: .feature,
+                                                                feature: featureFlag,
+                                                                featureEnabled: false))
             return false
         }
 
@@ -404,14 +415,13 @@ open class OptimizelyClient: NSObject {
             sendImpressionEvent(experiment: eventExperiment, variation: variation, userId: userId, attributes: attributes)
         }
 
-        sendDecisionNotification(decisionType: .feature,
-                                 userId: userId,
+        sendDecisionNotification(userId: userId,
                                  attributes: attributes,
-                                 experiment: experiment,
-                                 variation: variation,
-                                 feature: featureFlag,
-                                 featureEnabled: featureEnabled)
-        
+                                 decisionInfo: DecisionInfo(decisionType: .feature,
+                                                            experiment: experiment,
+                                                            variation: variation,
+                                                            feature: featureFlag,
+                                                            featureEnabled: featureEnabled))
         return featureEnabled
     }
     
@@ -535,7 +545,8 @@ open class OptimizelyClient: NSObject {
         let decision = self.decisionService.getVariationForFeature(config: config,
                                                                    featureFlag: featureFlag,
                                                                    userId: userId,
-                                                                   attributes: attributes ?? OptimizelyAttributes())
+                                                                   attributes: attributes ?? OptimizelyAttributes(),
+                                                                   options: nil)
         if let decision = decision {
             if let featureVariable = decision.variation?.variables?.filter({$0.id == variable.id}).first {
                 if let featureEnabled = decision.variation?.featureEnabled, featureEnabled {
@@ -590,17 +601,16 @@ open class OptimizelyClient: NSObject {
         let variation = decision?.variation
         let featureEnabled = variation?.featureEnabled ?? false
         
-        sendDecisionNotification(decisionType: .featureVariable,
-                                 userId: userId,
+        sendDecisionNotification(userId: userId,
                                  attributes: attributes,
-                                 experiment: experiment,
-                                 variation: variation,
-                                 feature: featureFlag,
-                                 featureEnabled: featureEnabled,
-                                 variableKey: variableKey,
-                                 variableType: variable.type,
-                                 variableValue: notificationValue)
-        
+                                 decisionInfo: DecisionInfo(decisionType: .featureVariable,
+                                                            experiment: experiment,
+                                                            variation: variation,
+                                                            feature: featureFlag,
+                                                            featureEnabled: featureEnabled,
+                                                            variableKey: variableKey,
+                                                            variableType: variable.type,
+                                                            variableValue: notificationValue))
         return value
     }
     
@@ -626,7 +636,8 @@ open class OptimizelyClient: NSObject {
         let decision = self.decisionService.getVariationForFeature(config: config,
                                                                    featureFlag: featureFlag,
                                                                    userId: userId,
-                                                                   attributes: attributes ?? OptimizelyAttributes())
+                                                                   attributes: attributes ?? OptimizelyAttributes(),
+                                                                   options: nil)
         if let featureEnabled = decision?.variation?.featureEnabled {
             enabled = featureEnabled
             if featureEnabled {
@@ -673,17 +684,17 @@ open class OptimizelyClient: NSObject {
         }
         
         guard let optimizelyJSON = OptimizelyJSON(map: variableMap) else {
-            throw OptimizelyError.invalidDictionary
+            throw OptimizelyError.invalidJSONVariable
         }
         
-        sendDecisionNotification(decisionType: .allFeatureVariables,
-                                 userId: userId,
+        sendDecisionNotification(userId: userId,
                                  attributes: attributes,
-                                 experiment: decision?.experiment,
-                                 variation: decision?.variation,
-                                 feature: featureFlag,
-                                 featureEnabled: enabled,
-                                 variableValues: variableMap)
+                                 decisionInfo: DecisionInfo(decisionType: .allFeatureVariables,
+                                                            experiment: decision?.experiment,
+                                                            variation: decision?.variation,
+                                                            feature: featureFlag,
+                                                            featureEnabled: enabled,
+                                                            variableValues: variableMap))
         return optimizelyJSON
     }
     
@@ -863,94 +874,22 @@ extension OptimizelyClient {
                               async: async)
     }
     
-    func sendDecisionNotification(decisionType: Constants.DecisionType,
-                                  userId: String,
+    func sendDecisionNotification(userId: String,
                                   attributes: OptimizelyAttributes?,
-                                  experiment: Experiment? = nil,
-                                  variation: Variation? = nil,
-                                  feature: FeatureFlag? = nil,
-                                  featureEnabled: Bool? = nil,
-                                  variableKey: String? = nil,
-                                  variableType: String? = nil,
-                                  variableValue: Any? = nil,
-                                  variableValues: [String: Any]? = nil,
+                                  decisionInfo: DecisionInfo,
                                   async: Bool = true) {
         self.sendNotification(type: .decision,
-                              args: [decisionType.rawValue,
+                              args: [decisionInfo.decisionType.rawValue,
                                      userId,
                                      attributes ?? OptimizelyAttributes(),
-                                     self.makeDecisionInfo(decisionType: decisionType,
-                                                           experiment: experiment,
-                                                           variation: variation,
-                                                           feature: feature,
-                                                           featureEnabled: featureEnabled,
-                                                           variableKey: variableKey,
-                                                           variableType: variableType,
-                                                           variableValue: variableValue,
-                                                           variableValues: variableValues)],
+                                     decisionInfo.toMap],
                               async: async)
     }
-    
+        
     func sendDatafileChangeNotification(data: Data, async: Bool = true) {
         self.sendNotification(type: .datafileChange, args: [data], async: async)
     }
-    
-    func makeDecisionInfo(decisionType: Constants.DecisionType,
-                          experiment: Experiment? = nil,
-                          variation: Variation? = nil,
-                          feature: FeatureFlag? = nil,
-                          featureEnabled: Bool? = nil,
-                          variableKey: String? = nil,
-                          variableType: String? = nil,
-                          variableValue: Any? = nil,
-                          variableValues: [String: Any]? = nil) -> [String: Any] {
         
-        var decisionInfo = [String: Any]()
-        
-        switch decisionType {
-        case .featureTest, .abTest:
-            guard let experiment = experiment else { return decisionInfo }
-            
-            decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
-            decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation?.key ?? NSNull()
-            
-        case .feature, .featureVariable, .allFeatureVariables:
-            guard let feature = feature, let featureEnabled = featureEnabled else { return decisionInfo }
-            
-            decisionInfo[Constants.DecisionInfoKeys.feature] = feature.key
-            decisionInfo[Constants.DecisionInfoKeys.featureEnabled] = featureEnabled
-            
-            let decisionSource: Constants.DecisionSource = experiment != nil ? .featureTest : .rollout
-            decisionInfo[Constants.DecisionInfoKeys.source] = decisionSource.rawValue
-            
-            var sourceInfo = [String: Any]()
-            if let experiment = experiment, let variation = variation {
-                sourceInfo[Constants.ExperimentDecisionInfoKeys.experiment] = experiment.key
-                sourceInfo[Constants.ExperimentDecisionInfoKeys.variation] = variation.key
-            }
-            decisionInfo[Constants.DecisionInfoKeys.sourceInfo] = sourceInfo
-            
-            // featureVariable
-            
-            if decisionType == .featureVariable {
-                guard let variableKey = variableKey, let variableType = variableType, let variableValue = variableValue else {
-                    return decisionInfo
-                }
-                
-                decisionInfo[Constants.DecisionInfoKeys.variable] = variableKey
-                decisionInfo[Constants.DecisionInfoKeys.variableType] = variableType
-                decisionInfo[Constants.DecisionInfoKeys.variableValue] = variableValue
-            } else if  decisionType == .allFeatureVariables {
-                guard let variableValues = variableValues else {
-                    return decisionInfo
-                }
-                decisionInfo[Constants.DecisionInfoKeys.variableValues] = variableValues
-            }
-        }
-        
-        return decisionInfo
-    }
-    
     func sendNotification(type: NotificationType, args: [Any?], async: Bool = true) {
         let notify = {
             // make sure that notificationCenter is not-nil (still registered when async notification is called)

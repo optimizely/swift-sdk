@@ -14,11 +14,10 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-
 import Foundation
 
-/// A struct for user contexts that the SDK will use to make decisions for.
-public struct OptimizelyUserContext {
+/// An object for user contexts that the SDK will use to make decisions for.
+public class OptimizelyUserContext {
     weak var optimizely: OptimizelyClient?
     var userId: String
     
@@ -26,6 +25,8 @@ public struct OptimizelyUserContext {
     var attributes: [String: Any] {
         return atomicAttributes.property ?? [:]
     }
+    
+    lazy var logger = OPTLoggerFactory.getLogger()
     
     /// OptimizelyUserContext init
     ///
@@ -45,14 +46,29 @@ public struct OptimizelyUserContext {
     /// - Parameters:
     ///   - key: An attribute key
     ///   - value: An attribute value
-    public mutating func setAttribute(key: String, value: Any) {
+    public func setAttribute(key: String, value: Any) {
         atomicAttributes.performAtomic { attributes in
             attributes[key] = value
         }
     }
     
-    public func decide(key: String, options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
-        return OptimizelyDecision.errorDecision(key: key, user: self, error: .sdkNotReady)
+    /// Returns a decision result for a given flag key and a user context, which contains all data required to deliver the flag or experiment.
+    ///
+    /// If the SDK finds an error (__sdkNotReady__, etc), it’ll return a decision with `nil` for `enabled` and `variationKey`. The decision will include an error message in `reasons` (regardless of the __includeReasons__ option).
+    ///
+    /// - Parameters:
+    ///   - key: A flag key for which a decision will be made.
+    ///   - user: A user context. This is optional when a user context has been set before.
+    ///   - options: An array of options for decision-making.
+    /// - Returns: A decision result.
+    public func decide(key: String,
+                       options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
+        
+        guard let optimizely = self.optimizely else {
+            return OptimizelyDecision.errorDecision(key: key, user: self, error: .sdkNotReady)
+        }
+        
+        return optimizely.decide(user: self, key: key, options: options)
     }
 
     public func decide(keys: [String], options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {

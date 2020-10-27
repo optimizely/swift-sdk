@@ -13,23 +13,39 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
+
 import Foundation
 
-/// Options controlling flag decisions.
-public enum OptimizelyDecideOption {
-    /// disable decision event tracking.
-    case disableDecisionEvent
+protocol ReasonProtocol {
+    var reason: String { get }
+}
+
+class DecisionReasons {
+    var errors: [ReasonProtocol]
+    var logs: [ReasonProtocol]
     
-    /// return decisions only for flags which are enabled (decideAll only).
-    case enabledFlagsOnly
+    init() {
+        errors = []
+        logs = []
+    }
     
-    /// skip user profile service for decision.
-    case ignoreUserProfileService
+    func addError(_ error: ReasonProtocol) {
+        errors.append(error)
+    }
     
-    /// include info and debug messages in the decision reasons.
-    case includeReasons
+    func addInfo(_ info: ReasonProtocol) {
+        logs.append(info)
+    }
     
-    /// exclude variable values from the decision result.
-    case excludeVariables
+    var reasonsRequired: [String] {
+        return errors.map{ $0.reason }
+    }
+    
+    var reasonsOptional: [String] {
+        return logs.map{ $0.reason }
+    }
+    
+    func getReasonsToReport(options: [OptimizelyDecideOption]) -> [String] {
+        return reasonsRequired + (options.contains(.includeReasons) ? reasonsOptional : [])
+    }
 }

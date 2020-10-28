@@ -57,7 +57,7 @@ end
 
 target 'OptimizelyTests-Common-tvOS' do
   project 'OptimizelySwiftSDK.xcodeproj/'
-  platform :ios, '10.0'
+  platform :tvos, '10.0'
   common_test_pods
 end
 

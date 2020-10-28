@@ -57,9 +57,12 @@ struct Project: Codable, Equatable {
     }
     
     // Required since logger is not equatable
-    static func ==(lhs: Project, rhs: Project) -> Bool {
+    static func == (lhs: Project, rhs: Project) -> Bool {
         return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments &&
-            lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes && lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision && lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts && lhs.typedAudiences == rhs.typedAudiences && lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && lhs.sendFlagDecisions == rhs.sendFlagDecisions
+            lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes &&
+            lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision &&
+            lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts && lhs.typedAudiences == rhs.typedAudiences &&
+            lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && lhs.sendFlagDecisions == rhs.sendFlagDecisions
     }
 }
 

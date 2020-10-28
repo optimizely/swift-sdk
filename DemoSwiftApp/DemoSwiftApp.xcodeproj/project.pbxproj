@@ -11,7 +11,6 @@
 		25C6F3B721C95D1800C2EBDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE21E55313B00931399 /* AppDelegate.swift */; };
 		25C6F3BC21C95D2100C2EBDD /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE51E55313B00931399 /* VariationViewController.swift */; };
 		25C6F3BD21C95D2100C2EBDD /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE51E55313B00931399 /* VariationViewController.swift */; };
-		25C6F3BF21C95D4800C2EBDD /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA299EDD1E55312200931399 /* iOSMain.storyboard */; };
 		5015D17687408F548F31F1A6 /* Pods_DemoSwifttvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC404BE4046CDA1D3A9C26B /* Pods_DemoSwifttvOS.framework */; };
 		6E4D2FDF22C5455400062EB3 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4D2FC822C5454400062EB3 /* Optimizely.framework */; };
 		6E4D2FE022C5455400062EB3 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4D2FC822C5454400062EB3 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -25,6 +24,7 @@
 		6E96819E21EEA391009B7FEC /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E96819421EEA391009B7FEC /* ProximaNova-Regular.otf */; };
 		6E96819F21EEA3B3009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E96819021EEA391009B7FEC /* Assets.xcassets */; };
 		6E9681A021EEA3B7009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E96818E21EEA391009B7FEC /* Assets.xcassets */; };
+		6E9FC9BA2548E1B7006AD345 /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA299EDD1E55312200931399 /* iOSMain.storyboard */; };
 		6EDBCE0022710E87009DF724 /* CustomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDBCDF522710E87009DF724 /* CustomLogger.swift */; };
 		6EDBCE0122710E87009DF724 /* CustomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDBCDF522710E87009DF724 /* CustomLogger.swift */; };
 		6EF2CF1D21E4158A00A5D78D /* tvOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EF2CF1B21E4158A00A5D78D /* tvOSMain.storyboard */; };
@@ -565,8 +565,8 @@
 			files = (
 				6E96819B21EEA391009B7FEC /* demoTestDatafile.json in Resources */,
 				6E96819921EEA391009B7FEC /* Roboto-Medium.ttf in Resources */,
-				25C6F3BF21C95D4800C2EBDD /* iOSMain.storyboard in Resources */,
 				6E96819F21EEA3B3009B7FEC /* Assets.xcassets in Resources */,
+				6E9FC9BA2548E1B7006AD345 /* iOSMain.storyboard in Resources */,
 				6E96819D21EEA391009B7FEC /* ProximaNova-Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

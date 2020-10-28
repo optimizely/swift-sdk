@@ -23,14 +23,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     let sdkKey = "FCnSegiEkRry9rhVMroit4"
     let datafileName = "demoTestDatafile"
-    let experimentKey = "background_experiment"
+    let featureKey = "decide_demo"
+    let experimentKey = "background_experiment_decide"
     let eventKey = "sample_conversion"
 
     let userId = String(Int.random(in: 0..<100000))
-    let attributes: [String: Any?] = ["browser_type": "safari", "bool_attr": false]
+    let attributes: [String: Any] = ["location": "TX",
+                                     "bool_attr": false,
+                                     "semanticVersioning": "1.2"]
 
     var window: UIWindow?
     var optimizely: OptimizelyClient!
+    var user: OptimizelyUserContext!
+    
     var storyboard: UIStoryboard {
         #if os(iOS)
         return UIStoryboard(name: "iOSMain", bundle: nil)
@@ -141,7 +146,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Received track notification: \(eventKey) \(userId) \(String(describing: attributes)) \(String(describing: eventTags)) \(event)")
         })
 
-        _ = notificationCenter.addDatafileChangeNotificationListener(datafileListener: { (_) in
+        _ = notificationCenter.addDatafileChangeNotificationListener(datafileListener: { _ in
             DispatchQueue.main.async {
                 #if os(iOS)
                 if let controller = self.window?.rootViewController {
@@ -154,9 +159,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 #endif
 
                 if let controller = self.window?.rootViewController as? VariationViewController {
-                    //controller.showCoupon = toggle == FeatureFlagToggle.on ? true : false;
-                    controller.showCoupon = self.optimizely.isFeatureEnabled(featureKey: "show_coupon",
-                                                                             userId: self.userId)
+                    let decision = self.user.decide(key: "show_coupon")
+                    controller.showCoupon = decision.enabled
                 }
             }
             
@@ -174,16 +178,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func startWithRootViewController() {
         DispatchQueue.main.async {
-            do {
-                let variationKey = try self.optimizely.activate(experimentKey: self.experimentKey,
-                                                           userId: self.userId,
-                                                           attributes: self.attributes)
+            self.user = self.optimizely.createUserContext(userId: self.userId,
+                                                          attributes: self.attributes)
+            let decision = self.user.decide(key: self.featureKey, options: [.includeReasons])
+            if let variationKey = decision.variationKey {
                 self.openVariationView(variationKey: variationKey)
-            } catch OptimizelyError.variationUnknown(self.userId, self.experimentKey) {
-                print("Optimizely SDK activation cannot map this user to experiemnt")
-                self.openVariationView(variationKey: nil)
-            } catch {
-                print("Optimizely SDK activation failed: \(error)")
+            } else {
+                print("Optimizely SDK decision failed: \(decision.reasons)")
                 self.openFailureView()
             }
         }
@@ -193,8 +194,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let variationViewController = storyboard.instantiateViewController(withIdentifier: "VariationViewController")
             as? VariationViewController {
 
-            variationViewController.showCoupon = optimizely.isFeatureEnabled(featureKey: "show_coupon",
-                                                                         userId: userId)
+            let decision = self.user.decide(key: "show_coupon")
+            variationViewController.showCoupon = decision.enabled
+
             variationViewController.optimizely = optimizely
             variationViewController.userId = userId
             variationViewController.variationKey = variationKey

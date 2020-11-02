@@ -107,6 +107,32 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.attributes["country"] as! String == "fr")
     }
     
+    func testOptimizelyUserContext_nilAttributeValue()  {
+        let attributes: [String: Any?] = [
+            "country": "us",
+            "age": nil,
+        ]
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
+
+        XCTAssert(user.attributes["country"] as! String == "us")
+        XCTAssert(user.attributes["age"] as! Any? == nil)
+    }
+    
+    func testOptimizelyUserContext_nilAttributeValue2()  {
+        let attributes: [String: Any?] = [
+            "country": "us",
+            "age": nil,
+        ]
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
+        user.setAttribute(key: "country", value: nil)
+        user.setAttribute(key: "age", value: 18)
+        user.setAttribute(key: "old", value: nil)
+
+        XCTAssert(user.attributes["country"] as! Any? == nil)
+        XCTAssert(user.attributes["age"] as! Int == 18)
+        XCTAssert(user.attributes["old"] as! Any? == nil)
+    }
+
     func testOptimizelyUserContext_setAttribute_concurrent() {
         let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId)
         

@@ -21,8 +21,8 @@ public class OptimizelyUserContext {
     weak var optimizely: OptimizelyClient?
     var userId: String
     
-    var atomicAttributes: AtomicProperty<[String: Any]>
-    var attributes: [String: Any] {
+    var atomicAttributes: AtomicProperty<[String: Any?]>
+    var attributes: [String: Any?] {
         return atomicAttributes.property ?? [:]
     }
     
@@ -36,7 +36,7 @@ public class OptimizelyUserContext {
     ///   - attributes: A map of attribute names to current user attribute values.
     public init(optimizely: OptimizelyClient,
                 userId: String,
-                attributes: [String: Any]? = nil) {
+                attributes: [String: Any?]? = nil) {
         self.optimizely = optimizely
         self.userId = userId
         self.atomicAttributes = AtomicProperty(property: attributes ?? [:])
@@ -46,7 +46,7 @@ public class OptimizelyUserContext {
     /// - Parameters:
     ///   - key: An attribute key
     ///   - value: An attribute value
-    public func setAttribute(key: String, value: Any) {
+    public func setAttribute(key: String, value: Any?) {
         atomicAttributes.performAtomic { attributes in
             attributes[key] = value
         }

@@ -31,7 +31,6 @@ class DefaultBucketer: OPTBucketer {
     func bucketExperiment(config: ProjectConfig,
                           experiment: Experiment,
                           bucketingId: String,
-                          options: [OptimizelyDecideOption]? = nil,
                           reasons: DecisionReasons? = nil) -> Variation? {
         var mutexAllowed = true
         
@@ -47,7 +46,6 @@ class DefaultBucketer: OPTBucketer {
                 let mutexExperiment = bucketToExperiment(config: config,
                                                          group: group,
                                                          bucketingId: bucketingId,
-                                                         options: options,
                                                          reasons: reasons)
                 if let mutexExperiment = mutexExperiment {
                     if mutexExperiment.id == experiment.id {
@@ -79,7 +77,6 @@ class DefaultBucketer: OPTBucketer {
 
         if let variation = bucketToVariation(experiment: experiment,
                                              bucketingId: bucketingId,
-                                             options: options,
                                              reasons: reasons) {
             return variation
         } else {
@@ -90,7 +87,6 @@ class DefaultBucketer: OPTBucketer {
     func bucketToExperiment(config: ProjectConfig,
                             group: Group,
                             bucketingId: String,
-                            options: [OptimizelyDecideOption]? = nil,
                             reasons: DecisionReasons? = nil) -> Experiment? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
@@ -122,7 +118,6 @@ class DefaultBucketer: OPTBucketer {
     
     func bucketToVariation(experiment: Experiment,
                            bucketingId: String,
-                           options: [OptimizelyDecideOption]? = nil,
                            reasons: DecisionReasons? = nil) -> Variation? {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)

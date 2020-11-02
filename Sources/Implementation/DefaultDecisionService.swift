@@ -68,10 +68,11 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         // ---- check if a valid variation is stored in the user profile ----
-        if let variationId = self.getVariationIdFromProfile(userId: userId,
-                                                            experimentId: experimentId,
-                                                            options: options),
-            let variation = experiment.getVariation(id: variationId) {
+        let ignoreUPS = (options ?? []).contains(.ignoreUserProfileService)
+
+        if !ignoreUPS,
+           let variationId = self.getVariationIdFromProfile(userId: userId, experimentId: experimentId),
+           let variation = experiment.getVariation(id: variationId) {
             
             let info = LogMessage.gotVariationFromUserProfile(variation.key, experiment.key, userId)
             logger.i(info)
@@ -85,13 +86,11 @@ class DefaultDecisionService: OPTDecisionService {
                                       experiment: experiment,
                                       userId: userId,
                                       attributes: attributes,
-                                      options: options,
                                       reasons: reasons) {
             // bucket user into a variation
             bucketedVariation = bucketer.bucketExperiment(config: config,
                                                           experiment: experiment,
                                                           bucketingId: bucketingId,
-                                                          options: options,
                                                           reasons: reasons)
             
             if let bucketedVariation = bucketedVariation {
@@ -100,10 +99,9 @@ class DefaultDecisionService: OPTDecisionService {
                 logger.i(info)
                 reasons?.addInfo(info)
                 // save to user profile
-                self.saveProfile(userId: userId,
-                                 experimentId: experimentId,
-                                 variationId: bucketedVariation.id,
-                                 options: options)
+                if !ignoreUPS {
+                    self.saveProfile(userId: userId, experimentId: experimentId, variationId: bucketedVariation.id)
+                }
             } else {
                 let info = LogMessage.userNotBucketedIntoVariation(userId)
                 logger.i(info)
@@ -125,7 +123,6 @@ class DefaultDecisionService: OPTDecisionService {
                                     attributes: OptimizelyAttributes,
                                     logType: Constants.EvaluationLogType = .experiment,
                                     loggingKey: String? = nil,
-                                    options: [OptimizelyDecideOption]? = nil,
                                     reasons: DecisionReasons? = nil) -> Bool {
         
         var result = true   // success as default (no condition, etc)
@@ -201,7 +198,6 @@ class DefaultDecisionService: OPTDecisionService {
                                                          featureFlag: featureFlag,
                                                          userId: userId,
                                                          attributes: attributes,
-                                                         options: options,
                                                          reasons: reasons) {
             return pair
         }
@@ -244,7 +240,6 @@ class DefaultDecisionService: OPTDecisionService {
                                        featureFlag: FeatureFlag,
                                        userId: String,
                                        attributes: OptimizelyAttributes,
-                                       options: [OptimizelyDecideOption]? = nil,
                                        reasons: DecisionReasons? = nil) -> (experiment: Experiment, variation: Variation, source: String)? {
         
         let bucketingId = getBucketingId(userId: userId, attributes: attributes)
@@ -283,7 +278,6 @@ class DefaultDecisionService: OPTDecisionService {
                                           attributes: attributes,
                                           logType: .rolloutRule,
                                           loggingKey: String(loggingKey),
-                                          options: options,
                                           reasons: reasons) {
                 var info = LogMessage.userMeetsConditionsForTargetingRule(userId, loggingKey)
                 logger.d(info)
@@ -291,7 +285,6 @@ class DefaultDecisionService: OPTDecisionService {
                 if let variation = bucketer.bucketExperiment(config: config,
                                                              experiment: experiment,
                                                              bucketingId: bucketingId,
-                                                             options: options,
                                                              reasons: reasons) {
                     info = LogMessage.userBucketedIntoTargetingRule(userId, loggingKey)
                     logger.d(info)
@@ -317,12 +310,10 @@ class DefaultDecisionService: OPTDecisionService {
                                       attributes: attributes,
                                       logType: .rolloutRule,
                                       loggingKey: "Everyone Else",
-                                      options: options,
                                       reasons: reasons) {
             if let variation = bucketer.bucketExperiment(config: config,
                                                          experiment: experiment,
                                                          bucketingId: bucketingId,
-                                                         options: options,
                                                          reasons: reasons) {
                 let info = LogMessage.userBucketedIntoEveryoneTargetingRule(userId)
                 logger.d(info)
@@ -356,10 +347,7 @@ extension DefaultDecisionService {
     
     func getVariationIdFromProfile(userId: String,
                                    experimentId: String,
-                                   options: [OptimizelyDecideOption]? = nil,
                                    reasons: DecisionReasons? = nil) -> String? {
-        if (options ?? []).contains(.ignoreUserProfileService) { return nil }
-        
         if let profile = userProfileService.lookup(userId: userId),
            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
            let experimentMap = bucketMap[experimentId],
@@ -373,10 +361,7 @@ extension DefaultDecisionService {
     func saveProfile(userId: String,
                      experimentId: String,
                      variationId: String,
-                     options: [OptimizelyDecideOption]? = nil,
                      reasons: DecisionReasons? = nil) {
-        if (options ?? []).contains(.ignoreUserProfileService) { return }
-        
         var profile = userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
         
         var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()

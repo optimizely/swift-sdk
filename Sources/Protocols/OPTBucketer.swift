@@ -26,7 +26,6 @@ protocol OPTBucketer {
     func bucketToExperiment(config: ProjectConfig,
                             group: Group,
                             bucketingId: String,
-                            options: [OptimizelyDecideOption]?,
                             reasons: DecisionReasons?) -> Experiment?
     
     /**
@@ -38,7 +37,6 @@ protocol OPTBucketer {
     func bucketExperiment(config: ProjectConfig,
                           experiment: Experiment,
                           bucketingId: String,
-                          options: [OptimizelyDecideOption]?,
                           reasons: DecisionReasons?) -> Variation?
 
     /**

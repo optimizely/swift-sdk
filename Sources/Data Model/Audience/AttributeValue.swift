@@ -266,7 +266,7 @@ extension AttributeValue {
     }
     
     func isValidForExactMatcher() -> Bool {
-        switch (self) {
+        switch self {
         case (.string): return true
         case (.int): return true
         case (.double): return true

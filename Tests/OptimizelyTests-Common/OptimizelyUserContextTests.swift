@@ -107,32 +107,6 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.attributes["country"] as! String == "fr")
     }
     
-    func testOptimizelyUserContext_nilAttributeValue()  {
-        let attributes: [String: Any?] = [
-            "country": "us",
-            "age": nil,
-        ]
-        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
-
-        XCTAssert(user.attributes["country"] as! String == "us")
-        XCTAssert(user.attributes["age"] as! Any? == nil)
-    }
-    
-    func testOptimizelyUserContext_nilAttributeValue2()  {
-        let attributes: [String: Any?] = [
-            "country": "us",
-            "age": nil,
-        ]
-        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
-        user.setAttribute(key: "country", value: nil)
-        user.setAttribute(key: "age", value: 18)
-        user.setAttribute(key: "old", value: nil)
-
-        XCTAssert(user.attributes["country"] as! Any? == nil)
-        XCTAssert(user.attributes["age"] as! Int == 18)
-        XCTAssert(user.attributes["old"] as! Any? == nil)
-    }
-
     func testOptimizelyUserContext_setAttribute_concurrent() {
         let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId)
         
@@ -149,7 +123,7 @@ class OptimizelyUserContextTests: XCTestCase {
         }
         
         let expRead = expectation(description: "read")
-        var attributes: [String: Any]?
+        var attributes: [String: Any?]?
         DispatchQueue.global().async {
             for _ in 0..<10000 {
                 attributes = user.attributes
@@ -169,23 +143,58 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssert(user.attributes["country"] as! String == "us")
     }
     
+    func testOptimizelyUserContext_nilAttributeValue()  {
+        let attributes: [String: Any?] = [
+            "country": "us",
+            "age": nil,
+        ]
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
+
+        XCTAssert(user.attributes["country"] as! String == "us")
+        XCTAssert(user.attributes["age"]! == nil)
+    }
+    
+    func testOptimizelyUserContext_nilAttributeValue2()  {
+        let attributes: [String: Any?] = [
+            "country": "us",
+            "age": nil,
+        ]
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: expUserId, attributes: attributes)
+        user.setAttribute(key: "country", value: nil)
+        user.setAttribute(key: "age", value: 18)
+        user.setAttribute(key: "old", value: nil)
+
+        XCTAssert(user.attributes["country"]! == nil)
+        XCTAssert(user.attributes["age"] as! Int == 18)
+        XCTAssert(user.attributes["old"]! == nil)
+    }
+
     func testOptimizelyUserContext_equal() {
         let userId1 = "user1"
         let userId2 = "user2"
 
-        let attributes1: [String: Any] = [
+        let attributes1: [String: Any?] = [
             "country": "us",
+            "age": nil,
             "old": true
         ]
         
-        let attributes2: [String: Any] = [
+        let attributes2: [String: Any?] = [
             "country": "ca",
+            "age": nil,
             "old": true
         ]
 
-        let attributes3: [String: Any] = [
+        let attributes3: [String: Any?] = [
             "country": "us",
+            "age": nil,
             "old": false
+        ]
+        
+        let attributes4: [String: Any?] = [
+            "country": "us",
+            "age": 18,
+            "old": true
         ]
 
         let user = OptimizelyUserContext(optimizely: expOptimizely, userId: userId1, attributes: attributes1)
@@ -193,6 +202,7 @@ class OptimizelyUserContextTests: XCTestCase {
         XCTAssertNotEqual(user, OptimizelyUserContext(optimizely: expOptimizely, userId: userId2, attributes: attributes1))
         XCTAssertNotEqual(user, OptimizelyUserContext(optimizely: expOptimizely, userId: userId1, attributes: attributes2))
         XCTAssertNotEqual(user, OptimizelyUserContext(optimizely: expOptimizely, userId: userId1, attributes: attributes3))
+        XCTAssertNotEqual(user, OptimizelyUserContext(optimizely: expOptimizely, userId: userId1, attributes: attributes4))
     }
 
 }

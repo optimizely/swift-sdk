@@ -29,11 +29,11 @@ struct Constants {
     }
     
     enum VariableValueType: String {
-        case string = "string"
-        case integer  = "integer"
-        case double  = "double"
-        case boolean = "boolean"
-        case json = "json"
+        case string
+        case integer
+        case double
+        case boolean
+        case json
     }
     
     enum DecisionType: String {

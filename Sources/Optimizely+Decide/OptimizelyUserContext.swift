@@ -114,7 +114,7 @@ public class OptimizelyUserContext {
     public func trackEvent(eventKey: String,
                            eventTags: OptimizelyEventTags? = nil) throws {
         
-        guard let optimizely = self.optimizely, let _ = optimizely.config else {
+        guard let optimizely = self.optimizely, optimizely.config != nil else {
             throw OptimizelyError.sdkNotReady
         }
 
@@ -128,9 +128,9 @@ public class OptimizelyUserContext {
 
 extension OptimizelyUserContext: Equatable {
     
-    public static func ==(lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
+    public static func == (lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
         return lhs.userId == rhs.userId &&
-            (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes)
+            (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes as [AnyHashable: Any])
     }
     
 }

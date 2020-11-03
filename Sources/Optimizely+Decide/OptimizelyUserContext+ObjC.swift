@@ -25,7 +25,7 @@ import Foundation
     }
     
     public var attributes: [String: Any] {
-        return userContext.attributes
+        return userContext.attributes as [String : Any]
     }
     
     public var optimizely: OptimizelyClient? {

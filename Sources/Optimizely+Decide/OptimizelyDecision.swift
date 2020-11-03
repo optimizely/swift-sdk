@@ -58,13 +58,13 @@ extension OptimizelyDecision {
 }
 
 extension OptimizelyDecision: Equatable {
-    public static func ==(lhs: OptimizelyDecision, rhs: OptimizelyDecision) -> Bool {
+    public static func == (lhs: OptimizelyDecision, rhs: OptimizelyDecision) -> Bool {
         return lhs.variationKey == rhs.variationKey &&
             lhs.enabled == rhs.enabled &&
             lhs.variables == rhs.variables &&
             lhs.ruleKey == rhs.ruleKey &&
             lhs.flagKey == rhs.flagKey &&
             lhs.userContext == rhs.userContext &&
-            lhs.reasons == rhs.reasons;
+            lhs.reasons == rhs.reasons
     }
 }

@@ -664,16 +664,12 @@ open class OptimizelyClient: NSObject {
                     break
                 case .integer:
                     valueParsed = Int(featureValue)
-                    break
                 case .double:
                     valueParsed = Double(featureValue)
-                    break
                 case .boolean:
                     valueParsed = Bool(featureValue)
-                    break
                 case .json:
                     valueParsed = OptimizelyJSON(payload: featureValue)?.toMap()
-                    break
                 }
             }
             

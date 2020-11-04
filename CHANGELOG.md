@@ -1,5 +1,11 @@
 # Optimizely Swift SDK Changelog
 
+## 3.6.0
+November 4, 2020
+
+### New Features
+* Add support for upcoming application-controlled introduction of tracking for non-experiment Flag decisions. ([#370](https://github.com/optimizely/swift-sdk/pull/370))
+
 ## 3.5.0
 October 2, 2020
 

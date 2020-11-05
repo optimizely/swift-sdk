@@ -13,16 +13,16 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-    
+
 import Foundation
 
 /// An object for user contexts that the SDK will use to make decisions for.
 public class OptimizelyUserContext {
     weak var optimizely: OptimizelyClient?
-    var userId: String
+    public var userId: String
     
     var atomicAttributes: AtomicProperty<[String: Any?]>
-    var attributes: [String: Any?] {
+    public var attributes: [String: Any?] {
         return atomicAttributes.property ?? [:]
     }
     

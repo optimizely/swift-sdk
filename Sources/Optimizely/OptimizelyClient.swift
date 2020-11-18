@@ -274,7 +274,8 @@ open class OptimizelyClient: NSObject {
                             userId: userId,
                             attributes: attributes,
                             flagKey: "",
-                            ruleType: Constants.DecisionSource.experiment.rawValue)
+                            ruleType: Constants.DecisionSource.experiment.rawValue,
+                            enabled: true)
         
         return variation.key
     }
@@ -410,7 +411,8 @@ open class OptimizelyClient: NSObject {
                             userId: userId,
                             attributes: attributes,
                             flagKey: featureKey,
-                            ruleType: source)
+                            ruleType: source,
+                            enabled: featureEnabled)
         
         sendDecisionNotification(userId: userId,
                                  attributes: attributes,
@@ -767,7 +769,8 @@ extension OptimizelyClient {
                              userId: String,
                              attributes: OptimizelyAttributes? = nil,
                              flagKey: String,
-                             ruleType: String) {
+                             ruleType: String,
+                             enabled: Bool) {
         
         // non-blocking (event data serialization takes time)
         eventLock.async {
@@ -779,7 +782,8 @@ extension OptimizelyClient {
                                                                      userId: userId,
                                                                      attributes: attributes,
                                                                      flagKey: flagKey,
-                                                                     ruleType: ruleType) else {
+                                                                     ruleType: ruleType,
+                                                                     enabled: enabled) else {
                 self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
                 return
             }

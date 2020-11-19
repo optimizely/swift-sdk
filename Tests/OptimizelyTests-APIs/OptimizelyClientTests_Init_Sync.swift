@@ -158,6 +158,61 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
         let optConfig = try! optimizely.getOptimizelyConfig()
         XCTAssertEqual(optConfig.revision, kRevisionUpdated)
     }
+
+    func testInitSync_multi() {
+        let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
+        
+        let handler = FakeDatafileHandler(mode: .successWithData)
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          periodicDownloadInterval: 10)
+
+        try! optimizely.start(datafile: datafile,
+                              doUpdateConfigOnNewDatafile: false)
+
+        try! optimizely.start(datafile: datafile,
+                              doUpdateConfigOnNewDatafile: false)
+
+        try! optimizely.start(datafile: datafile,
+                              doUpdateConfigOnNewDatafile: false)
+
+        let optConfig = try! optimizely.getOptimizelyConfig()
+        XCTAssertEqual(optConfig.revision, kRevisionUpdated)
+    }
+
+    func testInitSync_asnync() {
+        let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
+        
+        let handler = FakeDatafileHandler(mode: .successWithData)
+        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          periodicDownloadInterval: 10)
+
+        try! optimizely.start(datafile: datafile,
+                              doUpdateConfigOnNewDatafile: false)
+
+        let exp = expectation(description: "x")
+        optimizely.start { result in
+            if case .success = result {
+                XCTAssert(true)
+            } else {
+                XCTAssert(false)
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 10)
+
+        let enabled = optimizely.isFeatureEnabled(featureKey: "no_key", userId: "userId")
+        
+        XCTAssertEqual(enabled, false)
+        
+        let optConfig = try! optimizely.getOptimizelyConfig()
+        XCTAssertEqual(optConfig.revision, kRevisionUpdated)
+    }
+
 }
 
 extension OptimizelyClientTests_Init_Sync {

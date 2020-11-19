@@ -82,6 +82,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["flag_key"] as! String, "")
         XCTAssertEqual(metaData["variation_key"] as! String, "all_traffic_variation")
+        XCTAssertTrue(metaData["enabled"] as! Bool)
         
         let de = (snapshot["events"]  as! Array<Dictionary<String, Any>>)[0]
         
@@ -115,20 +116,20 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let variation = experiment?.getVariation(id: "10416523162")
         
         for scenario in scenarios {
-            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: variation, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key)
+            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: variation, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key, enabled: true)
             scenario.value ? XCTAssertNotNil(event): XCTAssertNil(event)
         }
         
         // nil variation should always return nil
         for scenario in scenarios {
-            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key)
+            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key, enabled: true)
             XCTAssertNil(event)
         }
         
         // should always return a event if sendFlagDecisions is set
         optimizely.config?.project.sendFlagDecisions = true
         for scenario in scenarios {
-            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key)
+            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key, enabled: true)
             XCTAssertNotNil(event)
         }
         optimizely.config?.project.sendFlagDecisions = nil
@@ -144,7 +145,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         let experiment = optimizely.config?.getExperiment(id: "10390977714")
         
         optimizely.config?.project.sendFlagDecisions = true
-        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: Constants.DecisionSource.featureTest.rawValue)
+        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: Constants.DecisionSource.featureTest.rawValue, enabled: false)
         XCTAssertNotNil(event)
         
         let visitor = (getEventJSON(data: event!)!["visitors"] as! Array<Dictionary<String, Any>>)[0]
@@ -156,13 +157,14 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(metaData["rule_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["flag_key"] as! String, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(metaData["variation_key"] as! String, "")
+        XCTAssertFalse(metaData["enabled"] as! Bool)
         optimizely.config?.project.sendFlagDecisions = nil
     }
     
     func testCreateImpressionEventWithoutExperimentAndVariation() {
         
         optimizely.config?.project.sendFlagDecisions = true
-        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: nil, variation: nil, userId: userId, attributes: [String: Any](), flagKey: "feature_1", ruleType: Constants.DecisionSource.rollout.rawValue)
+        let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: nil, variation: nil, userId: userId, attributes: [String: Any](), flagKey: "feature_1", ruleType: Constants.DecisionSource.rollout.rawValue, enabled: true)
         XCTAssertNotNil(event)
         
         let visitor = (getEventJSON(data: event!)!["visitors"] as! Array<Dictionary<String, Any>>)[0]
@@ -174,6 +176,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertEqual(metaData["rule_key"] as! String, "")
         XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
         XCTAssertEqual(metaData["variation_key"] as! String, "")
+        XCTAssertTrue(metaData["enabled"] as! Bool)
         optimizely.config?.project.sendFlagDecisions = nil
     }
     
@@ -277,6 +280,7 @@ extension BatchEventBuilderTests_Events {
             XCTAssertEqual(metaData["rule_key"] as! String, "")
             XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
             XCTAssertEqual(metaData["variation_key"] as! String, "")
+            XCTAssertFalse(metaData["enabled"] as! Bool)
         } else {
             XCTFail("No event found")
         }
@@ -310,6 +314,7 @@ extension BatchEventBuilderTests_Events {
             XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
             XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
             XCTAssertEqual(metaData["variation_key"] as! String, "a")
+            XCTAssertTrue(metaData["enabled"] as! Bool)
         } else {
             XCTFail("No event found")
         }
@@ -344,6 +349,7 @@ extension BatchEventBuilderTests_Events {
             XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
             XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
             XCTAssertEqual(metaData["variation_key"] as! String, "a")
+            XCTAssertTrue(metaData["enabled"] as! Bool)
         } else {
             XCTFail("No event found")
         }

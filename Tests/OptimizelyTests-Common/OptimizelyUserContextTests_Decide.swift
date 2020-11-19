@@ -125,12 +125,54 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertTrue(decision.enabled)
         XCTAssertNotNil(eventDispatcher.eventSent)
         
+        let eventSent = eventDispatcher.eventSent!
+        let event = try! JSONDecoder().decode(BatchEvent.self, from: eventSent.body)
+        let eventDecision: Decision = event.visitors[0].snapshots[0].decisions![0]
+        let metadata = eventDecision.metaData
+
         let desc = eventDispatcher.eventSent!.description
         XCTAssert(desc.contains("campaign_activated"))
+        
+        XCTAssertEqual(eventDecision.experimentID, "10420810910")
+        XCTAssertEqual(eventDecision.variationID, "10418551353")
+
+        XCTAssertEqual(metadata.flagKey, "feature_2")
+        XCTAssertEqual(metadata.ruleKey, "exp_no_audience")
+        XCTAssertEqual(metadata.ruleType, "feature-test")
+        XCTAssertEqual(metadata.variationKey, "variation_with_traffic")
+        XCTAssertEqual(metadata.enabled, true)
     }
     
+    func testDecide_sendImpressionForNullVariation() {
+        let featureKey = "feature_3"
+
+        let user = optimizely.createUserContext(userId: kUserId)
+        _ = user.decide(key: featureKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(eventDispatcher.eventSent)
+        
+        let eventSent = eventDispatcher.eventSent!
+        let event = try! JSONDecoder().decode(BatchEvent.self, from: eventSent.body)
+        let eventDecision: Decision = event.visitors[0].snapshots[0].decisions![0]
+        let metadata = eventDecision.metaData
+        
+        let desc = eventDispatcher.eventSent!.description
+        XCTAssert(desc.contains("campaign_activated"))
+        
+        XCTAssertEqual(eventDecision.variationID, "")
+        XCTAssertEqual(eventDecision.experimentID, "")
+
+        XCTAssertEqual(metadata.flagKey, "feature_3")
+        XCTAssertEqual(metadata.ruleKey, "")
+        XCTAssertEqual(metadata.ruleType, "rollout")
+        XCTAssertEqual(metadata.variationKey, "")
+        XCTAssertEqual(metadata.enabled, false)
+    }
+
     func testDecide_doNotSendImpression() {
-        let featureKey = "common_name"   // no experiment (so no impression event)
+        let featureKey = "invalid"   // invalid flag
 
         let user = optimizely.createUserContext(userId: kUserId)
         let decision = user.decide(key: featureKey)

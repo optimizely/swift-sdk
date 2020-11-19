@@ -67,7 +67,8 @@ extension OptimizelyClient {
                                 userId: userId,
                                 attributes: attributes,
                                 flagKey: feature.key,
-                                ruleType: decision?.source ?? Constants.DecisionSource.rollout.rawValue)
+                                ruleType: decision?.source ?? Constants.DecisionSource.rollout.rawValue,
+                                enabled: enabled)
             decisionEventDispatched = true
         }
 

@@ -1,5 +1,6 @@
 {
   "version": "4",
+  "sendFlagDecisions": true,
   "rollouts": [
     {
       "experiments": [
@@ -315,6 +316,10 @@
   ],
   "attributes": [
       {
+          "id": "10401066117",
+          "key": "gender"
+      },
+      {
           "id": "10401066170",
           "key": "testvar"
       }
@@ -339,4 +344,3 @@
   ],
   "revision": "241"
 }
-

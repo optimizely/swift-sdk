@@ -1,5 +1,11 @@
 # Optimizely Swift SDK Changelog
 
+## 3.6.1
+November 19, 2020
+
+### New Features
+* Add "enabled" field to decision metadata structure. ([#376](https://github.com/optimizely/swift-sdk/pull/376))
+
 ## 3.6.0
 November 4, 2020
 

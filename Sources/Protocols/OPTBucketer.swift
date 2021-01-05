@@ -25,8 +25,7 @@ protocol OPTBucketer {
      */
     func bucketToExperiment(config: ProjectConfig,
                             group: Group,
-                            bucketingId: String,
-                            reasons: DecisionReasons?) -> Experiment?
+                            bucketingId: String) -> DecisionResponse<Experiment>
     
     /**
      Bucket a bucketingId into an experiment.
@@ -36,8 +35,7 @@ protocol OPTBucketer {
      */
     func bucketExperiment(config: ProjectConfig,
                           experiment: Experiment,
-                          bucketingId: String,
-                          reasons: DecisionReasons?) -> Variation?
+                          bucketingId: String) -> DecisionResponse<Variation>
 
     /**
      Hash the bucketing ID and map it to the range [0, 10000).

@@ -43,8 +43,7 @@ protocol OPTDecisionService {
                       experiment: Experiment,
                       userId: String,
                       attributes: OptimizelyAttributes,
-                      options: [OptimizelyDecideOption]?,
-                      reasons: DecisionReasons?) -> Variation?
+                      options: [OptimizelyDecideOption]?) -> DecisionResponse<Variation>
     
     /**
      Get a variation the user is bucketed into for the given FeatureFlag
@@ -60,7 +59,6 @@ protocol OPTDecisionService {
                                 featureFlag: FeatureFlag,
                                 userId: String,
                                 attributes: OptimizelyAttributes,
-                                options: [OptimizelyDecideOption]?,
-                                reasons: DecisionReasons?) -> (experiment: Experiment, variation: Variation, source: String)?
+                                options: [OptimizelyDecideOption]?) -> DecisionResponse<FeatureDecision>
     
 }

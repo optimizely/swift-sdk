@@ -79,7 +79,7 @@ extension BucketTests_Others {
         let group = config?.getGroup(id: groupId)
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(config: config!, group: group!, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: config!, group: group!, bucketingId: test["userId"]!).result
             XCTAssertEqual(test["expect"]!, experiment?.key)
         }
     }
@@ -97,7 +97,7 @@ extension BucketTests_Others {
         let group = config?.getGroup(id: groupId)
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(config: config!, group: group!, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: config!, group: group!, bucketingId: test["userId"]!).result
             XCTAssertNil(experiment)
         }
     }
@@ -164,7 +164,7 @@ extension BucketTests_Others {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": "Variation_B"]]
 
         for test in tests {
-            let variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)!
+            let variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!).result!
             XCTAssert(variation.key == test["expect"])
         }
     }
@@ -189,7 +189,7 @@ extension BucketTests_Others {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": "null"]]
 
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(config: optimizely.config!, group: group, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: optimizely.config!, group: group, bucketingId: test["userId"]!).result
             let expected = test["expect"]
             if expected != "null" {
                 XCTAssert(experiment!.key == expected)
@@ -216,21 +216,21 @@ extension BucketTests_Others {
 
         for test in tests {
             if test["experiment"] == "experiment1" {
-                var variation = bucketer.bucketExperiment(config: config, experiment: experiment1, bucketingId: test["userId"]!)
+                var variation = bucketer.bucketExperiment(config: config, experiment: experiment1, bucketingId: test["userId"]!).result
                 XCTAssertNotNil(variation)
                 XCTAssert(variation!.key == test["expect"])
-                variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!)
+                variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!).result
                 XCTAssertNil(variation)
             } else if test["experiment"] == "experiment2" {
-                var variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!)
+                var variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!).result
                 XCTAssertNotNil(variation)
                 XCTAssert(variation!.key == test["expect"])
-                variation = bucketer.bucketExperiment(config: config, experiment: experiment1, bucketingId: test["userId"]!)
+                variation = bucketer.bucketExperiment(config: config, experiment: experiment1, bucketingId: test["userId"]!).result
                 XCTAssertNil(variation)
             } else {
-                var variation = bucketer.bucketExperiment(config: config, experiment: experiment1, bucketingId: test["userId"]!)
+                var variation = bucketer.bucketExperiment(config: config, experiment: experiment1, bucketingId: test["userId"]!).result
                 XCTAssertNil(variation)
-                variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!)
+                variation = bucketer.bucketExperiment(config: config, experiment: experiment2, bucketingId: test["userId"]!).result
                 XCTAssertNil(variation)
             }
         }
@@ -243,7 +243,7 @@ extension BucketTests_Others {
 
         let experiment = config.getExperiment(key: "experiment2")!
         XCTAssertNotNil(experiment)
-        let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: "user")
+        let variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: "user").result
         XCTAssertNil(variation)
     }
 
@@ -256,12 +256,12 @@ extension BucketTests_Others {
         XCTAssertNotNil(experiment)
     
         // check testBucketingIdControl is bucketed into "control" variation
-        var variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdControl)
+        var variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdControl).result
         XCTAssertNotNil(variation)
         XCTAssert(variation!.key == "control", "Unexpected variationKey")
         
         // check testBucketingIdVariation is bucketed into "variation" variation
-        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation)
+        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation).result
         XCTAssertNotNil(variation)
         XCTAssert(variation!.key == "variation", "Unexpected variationKey")
     }
@@ -275,24 +275,24 @@ extension BucketTests_Others {
 
         var experiment = config.getExperiment(key: "group_experiment_2")!
         XCTAssertNotNil(experiment)
-        var variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation)
+        var variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation).result
         XCTAssertNotNil(variation)
         XCTAssert(variation!.key == "group_exp_2_var_2")
     
         experiment = config.getExperiment(key: "group_experiment_1")!
         XCTAssertNotNil(experiment)
-        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation)
+        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: testBucketingIdVariation).result
         XCTAssertNil(variation)
 
         experiment = config.getExperiment(key: "group_experiment_2")!
         XCTAssertNotNil(experiment)
-        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: "testUserId")
+        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: "testUserId").result
         XCTAssertNotNil(variation)
         XCTAssert(variation!.key == "group_exp_2_var_1")
 
         experiment = config.getExperiment(key: "group_experiment_1")!
         XCTAssertNotNil(experiment)
-        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: "testUserId")
+        variation = bucketer.bucketExperiment(config: config, experiment: experiment, bucketingId: "testUserId").result
         XCTAssertNil(variation)
     }
 

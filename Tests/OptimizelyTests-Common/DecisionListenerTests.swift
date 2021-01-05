@@ -1178,12 +1178,13 @@ class FakeDecisionService: DefaultDecisionService {
                                          featureFlag: FeatureFlag,
                                          userId: String,
                                          attributes: OptimizelyAttributes,
-                                         options: [OptimizelyDecideOption]? = nil,
-                                         reasons: DecisionReasons? = nil) -> (experiment: Experiment, variation: Variation, source: String)? {
+                                         options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         guard let experiment = self.experiment, let tmpVariation = self.variation else {
-            return nil
+            return DecisionResponse.nilNoReasons()
         }
-        return (experiment, tmpVariation, self.source)
+        
+        let featureDecision = FeatureDecision(experiment: experiment, variation: tmpVariation, source: source)
+        return DecisionResponse.responseNoReasons(result: featureDecision)
     }
 }
 

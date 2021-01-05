@@ -261,7 +261,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeatureExperiment(config: config,
                                                                          featureFlag: featureFlag,
                                                                          userId: kUserId,
-                                                                         attributes: kAttributesCountryMatch)
+                                                                         attributes: kAttributesCountryMatch).result
         XCTAssert(pair!.experiment.key == kExperimentKey)
         XCTAssert(pair!.variation.key == kVariationKeyD)
         XCTAssert(pair!.source == Constants.DecisionSource.featureTest.rawValue)
@@ -271,7 +271,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeatureExperiment(config: config,
                                                                          featureFlag: featureFlag,
                                                                          userId: kUserId,
-                                                                         attributes: kAttributesCountryNotMatch)
+                                                                         attributes: kAttributesCountryNotMatch).result
         XCTAssertNil(pair)
     }
     
@@ -283,7 +283,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeatureExperiment(config: config,
                                                                          featureFlag: featureFlag,
                                                                          userId: kUserId,
-                                                                         attributes: kAttributesCountryMatch)
+                                                                         attributes: kAttributesCountryMatch).result
         XCTAssertNil(pair)
     }
     
@@ -303,7 +303,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match)
+                                                                           attributes: kAttributesRolloutAge1Match).result
         
         XCTAssert(pair?.experiment.id == kRolloutExperimentId)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyA)
@@ -314,7 +314,7 @@ extension DecisionServiceTests_Features {
         let variation = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesEmpty)
+                                                                           attributes: kAttributesEmpty).result
         XCTAssertNil(variation)
     }
     
@@ -327,7 +327,7 @@ extension DecisionServiceTests_Features {
         let variation = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesEmpty)
+                                                                           attributes: kAttributesEmpty).result
         XCTAssertNil(variation)
     }
     
@@ -341,7 +341,7 @@ extension DecisionServiceTests_Features {
         let variation = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match)
+                                                                           attributes: kAttributesRolloutAge1Match).result
         XCTAssertNil(variation)
     }
     
@@ -355,7 +355,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match)
+                                                                           attributes: kAttributesRolloutAge1Match).result
         XCTAssert(pair?.experiment.id == kRolloutExperimentId3)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyC)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
@@ -370,7 +370,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge2Match)
+                                                                           attributes: kAttributesRolloutAge2Match).result
         XCTAssert(pair?.experiment.id == kRolloutExperimentId2)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyB)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
@@ -386,7 +386,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match)
+                                                                           attributes: kAttributesRolloutAge1Match).result
         XCTAssert(pair?.experiment.id == kRolloutExperimentId)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyA)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
@@ -404,7 +404,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge2Match)
+                                                                           attributes: kAttributesRolloutAge2Match).result
         XCTAssertNil(pair)
     }
     
@@ -419,7 +419,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match)
+                                                                           attributes: kAttributesRolloutAge1Match).result
         XCTAssertNil(pair?.variation)
     }
 }
@@ -432,7 +432,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeature(config: config,
                                                                featureFlag: featureFlag,
                                                                userId: kUserId,
-                                                               attributes: kAttributesCountryMatch)
+                                                               attributes: kAttributesCountryMatch).result
         XCTAssertNotNil(pair)
         XCTAssert(pair!.experiment.key == kExperimentKey)
         XCTAssert(pair!.variation.key == kVariationKeyD)
@@ -442,7 +442,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeature(config: config,
                                                                featureFlag: featureFlag,
                                                                userId: kUserId,
-                                                               attributes: kAttributesCountryNotMatch)
+                                                               attributes: kAttributesCountryNotMatch).result
         XCTAssertNil(pair)
     }
     
@@ -455,7 +455,7 @@ extension DecisionServiceTests_Features {
         let pair = self.decisionService.getVariationForFeature(config: config,
                                                                featureFlag: featureFlag,
                                                                userId: kUserId,
-                                                               attributes: kAttributesCountryNotMatch)
+                                                               attributes: kAttributesCountryNotMatch).result
         XCTAssertNotNil(pair)
         XCTAssert(pair!.experiment.id == kRolloutExperimentId3)
         XCTAssert(pair!.variation.key == kRolloutVariationKeyC)

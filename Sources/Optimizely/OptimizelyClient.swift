@@ -310,8 +310,7 @@ open class OptimizelyClient: NSObject {
                                                      experiment: experiment,
                                                      userId: userId,
                                                      attributes: attributes ?? OptimizelyAttributes(),
-                                                     options: nil,
-                                                     reasons: nil)
+                                                     options: nil).result
         
         let decisionType: Constants.DecisionType = config.isFeatureExperiment(id: experiment.id) ? .featureTest : .abTest
         sendDecisionNotification(userId: userId,
@@ -395,8 +394,7 @@ open class OptimizelyClient: NSObject {
                                                           featureFlag: featureFlag,
                                                           userId: userId,
                                                           attributes: attributes ?? OptimizelyAttributes(),
-                                                          options: nil,
-                                                          reasons: nil)
+                                                          options: nil).result
         
         let source = pair?.source ?? Constants.DecisionSource.rollout.rawValue
         let featureEnabled = pair?.variation.featureEnabled ?? false
@@ -542,12 +540,11 @@ open class OptimizelyClient: NSObject {
         
         var featureValue = variable.defaultValue ?? ""
         
-        let decision = self.decisionService.getVariationForFeature(config: config,
+        let decision = decisionService.getVariationForFeature(config: config,
                                                                    featureFlag: featureFlag,
                                                                    userId: userId,
                                                                    attributes: attributes ?? OptimizelyAttributes(),
-                                                                   options: nil,
-                                                                   reasons: nil)
+                                                                   options: nil).result
         if let decision = decision {
             if let featureVariable = decision.variation.variables?.filter({$0.id == variable.id}).first {
                 if let featureEnabled = decision.variation.featureEnabled, featureEnabled {
@@ -635,12 +632,11 @@ open class OptimizelyClient: NSObject {
             throw OptimizelyError.featureKeyInvalid(featureKey)
         }
         
-        let decision = self.decisionService.getVariationForFeature(config: config,
+        let decision = decisionService.getVariationForFeature(config: config,
                                                                    featureFlag: featureFlag,
                                                                    userId: userId,
                                                                    attributes: attributes ?? OptimizelyAttributes(),
-                                                                   options: nil,
-                                                                   reasons: nil)
+                                                                   options: nil).result
         if let featureEnabled = decision?.variation.featureEnabled {
             enabled = featureEnabled
             if featureEnabled {

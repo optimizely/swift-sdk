@@ -244,7 +244,7 @@ extension DecisionServiceTests_Experiments {
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
                                                       userId: kUserId,
-                                                      attributes: kAttributesCountryMatch)
+                                                      attributes: kAttributesCountryMatch).result
         XCTAssertNil(variation, "no matching audience should return nil")
         
         // (1) non-running experiement should return nil
@@ -255,7 +255,7 @@ extension DecisionServiceTests_Experiments {
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
                                                       userId: kUserId,
-                                                      attributes: kAttributesCountryMatch)
+                                                      attributes: kAttributesCountryMatch).result
         XCTAssertNil(variation, "not running experiments return nil")
         
         // recover to running state for following tests
@@ -277,7 +277,7 @@ extension DecisionServiceTests_Experiments {
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
                                                       userId: kUserId,
-                                                      attributes: kAttributesCountryMatch)
+                                                      attributes: kAttributesCountryMatch).result
         XCTAssert(variation!.key == kVariationKeyA, "local forcedVariation should override")
         
         // (3) remote whitelisting overrides
@@ -291,7 +291,7 @@ extension DecisionServiceTests_Experiments {
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
                                                       userId: kUserId,
-                                                      attributes: kAttributesCountryMatch)
+                                                      attributes: kAttributesCountryMatch).result
         XCTAssert(variation!.key == kVariationKeyB, "remote forcedVariation should override")
         
         // reset remote forcedVariations as well
@@ -308,7 +308,7 @@ extension DecisionServiceTests_Experiments {
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
                                                       userId: kUserId,
-                                                      attributes: kAttributesCountryMatch)
+                                                      attributes: kAttributesCountryMatch).result
         XCTAssertNil(variation, "no matching audience should return nil")
         
     }
@@ -324,7 +324,7 @@ extension DecisionServiceTests_Experiments {
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
                                                       userId: kUserId,
-                                                      attributes: kAttributesEmpty)
+                                                      attributes: kAttributesEmpty).result
         XCTAssertNil(variation, "bucketing should return nil")
         
         // (1) desicion + bucketing
@@ -334,7 +334,7 @@ extension DecisionServiceTests_Experiments {
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
                                                       userId: kUserId,
-                                                      attributes: kAttributesCountryMatch)
+                                                      attributes: kAttributesCountryMatch).result
         XCTAssert(variation!.key == kVariationKeyD, "bucketing should work")
         
         // (2) UserProfileService updated by previous decisions
@@ -344,7 +344,7 @@ extension DecisionServiceTests_Experiments {
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
                                                       userId: kUserId,
-                                                      attributes: kAttributesEmpty)
+                                                      attributes: kAttributesEmpty).result
         XCTAssert(variation!.key == kVariationKeyD, "bucketing should work")
     }
     
@@ -362,7 +362,7 @@ extension DecisionServiceTests_Experiments {
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
                                                       userId: kUserId,
-                                                      attributes: kAttributesCountryMatch)
+                                                      attributes: kAttributesCountryMatch).result
         XCTAssert(variation!.key == kVariationKeyD, "invalid forced variation should be skipped")
     }
     
@@ -385,21 +385,21 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch)
+                                                                 attributes: kAttributesCountryMatch).result
         XCTAssert(result, "attribute should be matched to audienceConditions")
         
         // (2) matching false
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryNotMatch)
+                                                                 attributes: kAttributesCountryNotMatch).result
         XCTAssertFalse(result, "attribute should be matched to audienceConditions")
         
         // (3) other attribute
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         XCTAssertFalse(result, "no matching attribute provided")
     }
     
@@ -416,21 +416,21 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch)
+                                                                 attributes: kAttributesCountryMatch).result
         XCTAssert(result, "attribute should be matched to audienceConditions")
         
         // (2) matching false
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryNotMatch)
+                                                                 attributes: kAttributesCountryNotMatch).result
         XCTAssertFalse(result, "attribute should be matched to audienceConditions")
         
         // (3) other attribute
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         XCTAssertFalse(result, "no matching attribute provided")
     }
     
@@ -444,7 +444,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch)
+                                                                 attributes: kAttributesCountryMatch).result
         XCTAssert(result, "empty conditions is true always")
     }
     
@@ -458,7 +458,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch)
+                                                                 attributes: kAttributesCountryMatch).result
         XCTAssert(result, "empty conditions is true always")
     }
     
@@ -477,13 +477,13 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch)
+                                                                 attributes: kAttributesCountryMatch).result
         XCTAssert(result)
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesEmpty)
+                                                                 attributes: kAttributesEmpty).result
         XCTAssertFalse(result)
         
         // (2) invalid string in "audienceConditions"
@@ -494,7 +494,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch)
+                                                                 attributes: kAttributesCountryMatch).result
         XCTAssert(result)
         
         // (2) invalid string in "audienceConditions"
@@ -505,7 +505,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch)
+                                                                 attributes: kAttributesCountryMatch).result
         XCTAssert(result)
     }
     
@@ -526,7 +526,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -543,7 +543,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -560,7 +560,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -577,7 +577,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch)
+                                                                 attributes: kAttributesCountryMatch).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -594,7 +594,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -611,7 +611,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: ["age": nil])
+                                                                 attributes: ["age": nil]).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -628,7 +628,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -645,7 +645,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: ["country": ["invalid"]])
+                                                                 attributes: ["country": ["invalid"]]).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -662,7 +662,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: ["age": Double.infinity])
+                                                                 attributes: ["age": Double.infinity]).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -679,7 +679,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -696,7 +696,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: ["age": ["invalid"]])
+                                                                 attributes: ["age": ["invalid"]]).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -713,7 +713,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -730,7 +730,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: ["age": ["invalid"]])
+                                                                 attributes: ["age": ["invalid"]]).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -747,7 +747,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch)
+                                                                 attributes: kAttributesAgeMatch).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -764,7 +764,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  userId: kUserId,
-                                                                 attributes: ["age": ["invalid"]])
+                                                                 attributes: ["age": ["invalid"]]).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)

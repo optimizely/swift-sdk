@@ -1,4 +1,4 @@
-/****************************************************************************
+/***************************************************************************
 * Copyright 2020, Optimizely, Inc. and contributors                        *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
@@ -16,40 +16,20 @@
 
 import Foundation
 
-protocol ReasonProtocol {
-    var reason: String { get }
-}
-
-class DecisionReasons {
-    var errors: [ReasonProtocol]
-    var infos: [ReasonProtocol]?
+class DecisionResponse<T> {
+    var result: T?
+    var reasons: DecisionReasons
     
-    init(includeInfos: Bool = true) {
-        errors = []
-        if includeInfos {
-            infos = []
-        }
-    }
-
-    convenience init(options: [OptimizelyDecideOption]?) {
-        // include infos if options is not provided (default)
-        self.init(includeInfos: options?.contains(.includeReasons) ?? true)
+    init(result: T?, reasons: DecisionReasons) {
+        self.result = result
+        self.reasons = reasons
     }
     
-    func addError(_ error: ReasonProtocol) {
-        errors.append(error)
+    static func responseNoReasons(result: T?) -> DecisionResponse {
+        return DecisionResponse(result: result, reasons: DecisionReasons(includeInfos: false))
     }
     
-    func addInfo(_ info: ReasonProtocol) {
-        infos?.append(info)
-    }
-    
-    func merge(_ reasons: DecisionReasons) {
-        errors.append(contentsOf: reasons.errors)
-        infos?.append(contentsOf: reasons.infos ?? [])
-    }
-    
-    func toReport() -> [String] {
-        return (errors + (infos ?? [])).map { $0.reason }
+    static func nilNoReasons() -> DecisionResponse {
+        return DecisionResponse(result: nil, reasons: DecisionReasons(includeInfos: false))
     }
 }

@@ -282,23 +282,31 @@ extension ProjectConfig {
     /**
      * Get forced variation for a given experiment key and user id.
      */
-    func getForcedVariation(experimentKey: String, userId: String) -> Variation? {
+    func getForcedVariation(experimentKey: String, userId: String) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons()
+        
         guard let experiment = getExperiment(key: experimentKey) else {
-            return nil
+            return DecisionResponse(result: nil, reasons: reasons)
         }
         
         if let id = getWhitelistedVariationId(userId: userId, experimentId: experiment.id) {
             if let variation = experiment.getVariation(id: id) {
-                logger.d(.userHasForcedVariation(userId, experiment.key, variation.key))
-                return variation
+                let info = LogMessage.userHasForcedVariation(userId, experiment.key, variation.key)
+                logger.d(info)
+                reasons.addInfo(info)
+
+                return DecisionResponse(result: variation, reasons: reasons)
             }
             
-            logger.d(.userHasForcedVariationButInvalid(userId, experiment.key))
-            return nil
+            let info = LogMessage.userHasForcedVariationButInvalid(userId, experiment.key)
+            logger.d(info)
+            reasons.addInfo(info)
+
+            return DecisionResponse(result: nil, reasons: reasons)
         }
         
         logger.d(.userHasNoForcedVariationForExperiment(userId, experiment.key))
-        return nil
+        return DecisionResponse(result: nil, reasons: reasons)
     }
     
     /**

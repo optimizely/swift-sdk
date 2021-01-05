@@ -254,6 +254,28 @@ extension OptimizelyUserContextTests_Decide_Reasons {
     func testDecideReasons_forcedVariationFound() {
         let featureKey = "feature_1"
         let variationKey = "b"
+        let experimentKey = setForcedVariationForFeatureTest(featureKey: featureKey, userId: kUserId, variationKey: variationKey)
+
+        let decision = user.decide(key: featureKey, options: [.includeReasons])
+        XCTAssertEqual(decision.variationKey, variationKey)
+        XCTAssertEqual(decision.reasons, [LogMessage.userHasForcedVariation(kUserId, experimentKey, variationKey).reason])
+    }
+    
+    func testDecideReasons_forcedVariationFoundButInvalid() {
+        let featureKey = "feature_1"
+        let variationKey = "b"
+        let experimentKey = setForcedVariationForFeatureTest(featureKey: featureKey, userId: kUserId, variationKey: variationKey)
+        // remove all variations after setting forced variations
+        removeVariationsForFeatureTest(featureKey: featureKey, userId: kUserId, variationKey: variationKey)
+        
+        let decision = user.decide(key: featureKey, options: [.includeReasons])
+        XCTAssertNotEqual(decision.variationKey, variationKey)
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedVariationButInvalid(kUserId, experimentKey).reason))
+    }
+    
+    func testDecideReasons_whiteListVariationFound() {
+        let featureKey = "feature_1"
+        let variationKey = "b"
         setWhiteListForFeatureTest(featureKey: featureKey, userId: kUserId, variationKey: variationKey)
 
         let decision = user.decide(key: featureKey, options: [.includeReasons])
@@ -261,13 +283,13 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         XCTAssertEqual(decision.reasons, [LogMessage.forcedVariationFound(variationKey, kUserId).reason])
     }
     
-    func testDecideReasons_forcedVariationFoundButInvalid() {
+    func testDecideReasons_whiteListVariationFoundButInvalid() {
         let featureKey = "feature_1"
         let variationKey = "invalid-key"
         setWhiteListForFeatureTest(featureKey: featureKey, userId: kUserId, variationKey: variationKey)
 
         let decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssertNotNil(decision.variationKey)
+        XCTAssertNotEqual(decision.variationKey, variationKey)
         XCTAssert(decision.reasons.contains(LogMessage.forcedVariationFoundButInvalid(variationKey, kUserId).reason))
     }
 
@@ -454,6 +476,21 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         optimizely.config!.experimentIdMap = [experimentId: experiment]
     }
     
+    func setForcedVariationForFeatureTest(featureKey: String, userId: String, variationKey: String) -> String {
+        let experimentId = "10390977673"    // "exp_with_audience"
+        let experiment = optimizely.config!.getExperiment(id: experimentId)!
+        _ = optimizely.setForcedVariation(experimentKey: experiment.key, userId: userId, variationKey: variationKey)
+        return experiment.key
+    }
+
+    func removeVariationsForFeatureTest(featureKey: String, userId: String, variationKey: String) {
+        let experimentId = "10390977673"    // "exp_with_audience"
+        var experiment = optimizely.config!.getExperiment(id: experimentId)!
+        experiment.variations = []
+        optimizely.config!.experimentIdMap = [experimentId: experiment]
+        optimizely.config!.experimentKeyMap = [experiment.key: experiment]
+    }
+
     func setWhiteListForFeatureTest(featureKey: String, userId: String, variationKey: String) {
         let experimentId = "10390977673"    // "exp_with_audience"
         var experiment = optimizely.config!.getExperiment(id: experimentId)!

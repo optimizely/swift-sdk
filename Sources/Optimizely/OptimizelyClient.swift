@@ -346,7 +346,7 @@ open class OptimizelyClient: NSObject {
     public func getForcedVariation(experimentKey: String, userId: String) -> String? {
         guard let config = self.config else { return nil }
         
-        let variaion = config.getForcedVariation(experimentKey: experimentKey, userId: userId)
+        let variaion = config.getForcedVariation(experimentKey: experimentKey, userId: userId).result
         return variaion?.key
     }
     

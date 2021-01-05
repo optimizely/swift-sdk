@@ -90,7 +90,7 @@ extension ProjectConfigTests {
     
     
     func testGetForcedVariation_InvalidExperimentKey() {
-        let variationKey = config.getForcedVariation(experimentKey: "invalid_key", userId: "user")
+        let variationKey = config.getForcedVariation(experimentKey: "invalid_key", userId: "user").result
         XCTAssertNil(variationKey)
     }
     
@@ -109,7 +109,7 @@ extension ProjectConfigTests {
         config.experimentKeyMap[experimentKey] = experiment
         
         // forced variation finds variation which is not valid any more
-        let variationKey = config.getForcedVariation(experimentKey: experimentKey, userId: userId)
+        let variationKey = config.getForcedVariation(experimentKey: experimentKey, userId: userId).result
         XCTAssertNil(variationKey)
     }
 
@@ -134,12 +134,12 @@ extension ProjectConfigTests {
 
         var result = config.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: "a")
         XCTAssert(result)
-        var variation = config.getForcedVariation(experimentKey: experimentKey, userId: userId)!
+        var variation = config.getForcedVariation(experimentKey: experimentKey, userId: userId).result!
         XCTAssertEqual(variation.key, "a")
 
         result = config.setForcedVariation(experimentKey: experimentKey, userId: userId, variationKey: "b")
         XCTAssert(result)
-        variation = config.getForcedVariation(experimentKey: experimentKey, userId: userId)!
+        variation = config.getForcedVariation(experimentKey: experimentKey, userId: userId).result!
         XCTAssertEqual(variation.key, "b")
     }
 

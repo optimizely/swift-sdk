@@ -49,12 +49,12 @@ extension OptimizelyClient {
         let reasons = DecisionReasons(options: allOptions)
         var decisionEventDispatched = false
         var enabled = false
-    
+        
         let decisionResponse = decisionService.getVariationForFeature(config: config,
-                                                              featureFlag: feature,
-                                                              userId: userId,
-                                                              attributes: attributes,
-                                                              options: allOptions)
+                                                                      featureFlag: feature,
+                                                                      userId: userId,
+                                                                      attributes: attributes,
+                                                                      options: allOptions)
         reasons.merge(decisionResponse.reasons)
         let decision = decisionResponse.result
         if let featureEnabled = decision?.variation.featureEnabled {
@@ -71,7 +71,7 @@ extension OptimizelyClient {
                                 enabled: enabled)
             decisionEventDispatched = true
         }
-
+        
         var variableMap = [String: Any]()
         if !allOptions.contains(.excludeVariables) {
             let decisionResponse = getDecisionVariableMap(feature: feature,
@@ -88,11 +88,11 @@ extension OptimizelyClient {
             reasons.addError(OptimizelyError.invalidJSONVariable)
             optimizelyJSON = OptimizelyJSON.createEmpty()
         }
-
+        
         // TODO: add ruleKey values when available later. Use a copy of experimentKey for now.
         let ruleKey = decision?.experiment.key
         let reasonsToReport = reasons.toReport()
-
+        
         sendDecisionNotification(userId: userId,
                                  attributes: attributes,
                                  decisionInfo: DecisionInfo(decisionType: .flag,
@@ -125,7 +125,7 @@ extension OptimizelyClient {
         guard keys.count > 0 else { return [:] }
         
         let allOptions = defaultDecideOptions + (options ?? [])
-
+        
         var decisions = [String: OptimizelyDecision]()
         
         keys.forEach { key in
@@ -134,26 +134,26 @@ extension OptimizelyClient {
                 decisions[key] = decision
             }
         }
-                
+        
         return decisions
     }
-
+    
     func decideAll(user: OptimizelyUserContext,
                    options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         guard let config = self.config else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
         }
-
+        
         return decide(user: user, keys: config.featureFlagKeys, options: options)
     }
-
+    
 }
 
 // MARK: - Utils
 
 extension OptimizelyClient {
-
+    
     func getDecisionVariableMap(feature: FeatureFlag,
                                 variation: Variation?,
                                 enabled: Bool) -> DecisionResponse<[String: Any]> {
@@ -166,7 +166,7 @@ extension OptimizelyClient {
             if enabled, let variable = variation?.getVariable(id: v.id) {
                 featureValue = variable.value
             }
-                                    
+            
             if let value = parseFeatureVaraible(value: featureValue, type: v.type) {
                 variableMap[v.key] = value
             } else {

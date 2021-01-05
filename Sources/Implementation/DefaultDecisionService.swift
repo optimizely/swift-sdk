@@ -54,7 +54,9 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         // ---- check if the user is forced into a variation ----
-        if let variationId = config.getForcedVariation(experimentKey: experiment.key, userId: userId)?.id,
+        let decisionResponse = config.getForcedVariation(experimentKey: experiment.key, userId: userId)
+        reasons.merge(decisionResponse.reasons)
+        if let variationId = decisionResponse.result?.id,
            let variation = experiment.getVariation(id: variationId) {
             return DecisionResponse(result: variation, reasons: reasons)
         }
@@ -78,7 +80,7 @@ class DefaultDecisionService: OPTDecisionService {
         let ignoreUPS = (options ?? []).contains(.ignoreUserProfileService)
         
         if !ignoreUPS,
-           let variationId = self.getVariationIdFromProfile(userId: userId, experimentId: experimentId),
+           let variationId = getVariationIdFromProfile(userId: userId, experimentId: experimentId),
            let variation = experiment.getVariation(id: variationId) {
             
             let info = LogMessage.gotVariationFromUserProfile(variation.key, experiment.key, userId)
@@ -89,12 +91,12 @@ class DefaultDecisionService: OPTDecisionService {
         
         var bucketedVariation: Variation?
         // ---- check if the user passes audience targeting before bucketing ----
-        let decisionResponse = doesMeetAudienceConditions(config: config,
+        let audienceResponse = doesMeetAudienceConditions(config: config,
                                                           experiment: experiment,
                                                           userId: userId,
                                                           attributes: attributes)
-        reasons.merge(decisionResponse.reasons)
-        if decisionResponse.result ?? false {
+        reasons.merge(audienceResponse.reasons)
+        if audienceResponse.result ?? false {
             // bucket user into a variation
             let decisionResponse = bucketer.bucketExperiment(config: config,
                                                              experiment: experiment,
@@ -103,9 +105,7 @@ class DefaultDecisionService: OPTDecisionService {
             bucketedVariation = decisionResponse.result
             
             if let variation = bucketedVariation {
-                let info = LogMessage.userBucketedIntoVariationInExperiment(userId,
-                                                                            experiment.key,
-                                                                            variation.key)
+                let info = LogMessage.userBucketedIntoVariationInExperiment(userId, experiment.key, variation.key)
                 logger.i(info)
                 reasons.addInfo(info)
                 // save to user profile

@@ -34,7 +34,7 @@ public struct OptimizelyDecision {
     /// The flag key for which the decision has been made for.
     public let flagKey: String
     
-    /// The user context for which the decision has been made for.
+    /// A copy of the user context for which the decision has been made for.
     public let userContext: OptimizelyUserContext
     
     /// An array of error/info/debug messages describing why the decision has been made.

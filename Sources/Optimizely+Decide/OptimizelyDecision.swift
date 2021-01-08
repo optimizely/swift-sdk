@@ -25,7 +25,7 @@ public struct OptimizelyDecision {
     /// The boolean value indicating if the flag is enabled or not.
     public let enabled: Bool
     
-    /// The collection of variables assocaited with the decision.
+    /// The collection of variables associated with the decision.
     public let variables: OptimizelyJSON
     
     /// The rule key of the decision.
@@ -37,7 +37,7 @@ public struct OptimizelyDecision {
     /// A copy of the user context for which the decision has been made for.
     public let userContext: OptimizelyUserContext
     
-    /// An array of error/info/debug messages describing why the decision has been made.
+    /// An array of error/info messages describing why the decision has been made.
     public let reasons: [String]
 }
 

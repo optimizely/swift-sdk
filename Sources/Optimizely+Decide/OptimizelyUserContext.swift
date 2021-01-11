@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2020, Optimizely, Inc. and contributors                        *
+* Copyright 2020-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -24,6 +24,11 @@ public class OptimizelyUserContext {
     var atomicAttributes: AtomicProperty<[String: Any?]>
     public var attributes: [String: Any?] {
         return atomicAttributes.property ?? [:]
+    }
+    
+    var clone: OptimizelyUserContext? {
+        guard let optimizely = self.optimizely else { return nil }
+        return OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
     }
     
     lazy var logger = OPTLoggerFactory.getLogger()
@@ -64,11 +69,11 @@ public class OptimizelyUserContext {
     public func decide(key: String,
                        options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
         
-        guard let optimizely = self.optimizely else {
+        guard let optimizely = self.optimizely, let clone = self.clone else {
             return OptimizelyDecision.errorDecision(key: key, user: self, error: .sdkNotReady)
         }
         
-        return optimizely.decide(user: self, key: key, options: options)
+        return optimizely.decide(user: clone, key: key, options: options)
     }
 
     /// Returns a key-map of decision results for multiple flag keys and a user context.
@@ -83,12 +88,12 @@ public class OptimizelyUserContext {
     public func decide(keys: [String],
                        options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
 
-        guard let optimizely = self.optimizely else {
+        guard let optimizely = self.optimizely, let clone = self.clone else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
         }
         
-        return optimizely.decide(user: self, keys: keys, options: options)
+        return optimizely.decide(user: clone, keys: keys, options: options)
     }
     
     /// Returns a key-map of decision results for all active flag keys.
@@ -97,12 +102,12 @@ public class OptimizelyUserContext {
     ///   - options: An array of options for decision-making.
     /// - Returns: A dictionary of all decision results, mapped by flag keys.
     public func decideAll(options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        guard let optimizely = self.optimizely else {
+        guard let optimizely = self.optimizely, let clone = self.clone else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
         }
 
-        return optimizely.decideAll(user: self, options: options)
+        return optimizely.decideAll(user: clone, options: options)
     }
 
     /// Track an event.

@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2020, Optimizely, Inc. and contributors                        *
+* Copyright 2020-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -25,7 +25,7 @@ public struct OptimizelyDecision {
     /// The boolean value indicating if the flag is enabled or not.
     public let enabled: Bool
     
-    /// The collection of variables assocaited with the decision.
+    /// The collection of variables associated with the decision.
     public let variables: OptimizelyJSON
     
     /// The rule key of the decision.
@@ -34,10 +34,10 @@ public struct OptimizelyDecision {
     /// The flag key for which the decision has been made for.
     public let flagKey: String
     
-    /// The user context for which the decision has been made for.
+    /// A copy of the user context for which the decision has been made for.
     public let userContext: OptimizelyUserContext
     
-    /// An array of error/info/debug messages describing why the decision has been made.
+    /// An array of error/info messages describing why the decision has been made.
     public let reasons: [String]
 }
 

@@ -103,7 +103,7 @@ class SamplesForAPI {
         
     }
     
-    // MARK: - OptimizelyUserContext
+    // MARK: - OptimizelyUserContext (Decide API)
     
     static func checkOptimizelyUserContext(optimizely: OptimizelyClient) {
         let attributes: [String: Any] = [

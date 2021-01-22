@@ -128,9 +128,10 @@ extension OptimizelyClient {
         
         var decisions = [String: OptimizelyDecision]()
         
+        let enabledFlagsOnly = allOptions.contains(.enabledFlagsOnly)
         keys.forEach { key in
             let decision = decide(user: user, key: key, options: options)
-            if !allOptions.contains(.enabledFlagsOnly) || decision.enabled {
+            if !enabledFlagsOnly || decision.enabled {
                 decisions[key] = decision
             }
         }

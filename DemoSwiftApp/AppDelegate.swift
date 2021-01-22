@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let eventKey = "sample_conversion"
 
     let userId = String(Int.random(in: 0..<100000))
-    let attributes: [String: Any] = ["location": "TX",
+    let attributes: [String: Any] = ["location": "NY",
                                      "bool_attr": false,
                                      "semanticVersioning": "1.2"]
 

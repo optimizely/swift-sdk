@@ -1,6 +1,5 @@
-//
 /****************************************************************************
-* Copyright 2019,2021, Optimizely, Inc. and contributors                   *
+* Copyright 2021, Optimizely, Inc. and contributors                        *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -15,17 +14,22 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
+import Foundation
 
-#import <Foundation/Foundation.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@class OptimizelyClient;
-
-@interface SamplesForAPI: NSObject
-+(void)checkAPIs:(OptimizelyClient*)optimizely;
-+(void)checkOptimizelyConfig:(OptimizelyClient*)optimizely;
-+(void)checkOptimizelyUserContext:(OptimizelyClient*)optimizely;
-@end
-
-NS_ASSUME_NONNULL_END
+/// Options controlling flag decisions.
+@objc public enum OptimizelyDecideOption: Int {
+    /// disable decision event tracking.
+    case disableDecisionEvent
+    
+    /// return decisions only for flags which are enabled (decideAll only).
+    case enabledFlagsOnly
+    
+    /// skip user profile service for decision.
+    case ignoreUserProfileService
+    
+    /// include info and debug messages in the decision reasons.
+    case includeReasons
+    
+    /// exclude variable values from the decision result.
+    case excludeVariables
+}

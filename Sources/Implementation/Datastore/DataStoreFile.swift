@@ -64,8 +64,7 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
                     if isArray() {
                         let item = try JSONDecoder().decode(T.self, from: contents)
                         returnItem = item
-                    }
-                    else {
+                    } else {
                         let item = try JSONDecoder().decode([T].self, from: contents)
                         returnItem = item.first
                     }
@@ -97,15 +96,16 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
             do {
                 if let value = value as? T {
                     var data: Data?
+                    
                     // don't bother to convert... otherwise, do
                     if let value = value as? Data {
                         data = value
                     } else if (value as? NSArray) != nil {
                         data = try JSONEncoder().encode(value)
-                    }
-                    else {
+                    } else {
                         data = try JSONEncoder().encode([value])
                     }
+                    
                     if let data = data {
                         try data.write(to: self.url, options: .atomic)
                     }

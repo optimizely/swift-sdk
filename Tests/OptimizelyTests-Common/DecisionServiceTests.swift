@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019,2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -37,7 +37,7 @@ class DecisionServiceTests: XCTestCase {
         
         let experiment = config.project.experiments.filter({$0.key == "typed_audience_experiment"}).first
         let attr = ["integerKey": 1, "doubleKey": 99.0, "booleanKey": true, "nationality": "English"] as [String: Any]
-        let variation = decisionService.getVariation(config: config, userId: "1234", experiment: experiment!, attributes: attr)
+        let variation = decisionService.getVariation(config: config, experiment: experiment!, userId: "1234", attributes: attr)
         
         XCTAssertNotNil(variation)
         

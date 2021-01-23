@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+* Copyright 2019-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -266,7 +266,7 @@ extension AttributeValue {
     }
     
     func isValidForExactMatcher() -> Bool {
-        switch (self) {
+        switch self {
         case (.string): return true
         case (.int): return true
         case (.double): return true

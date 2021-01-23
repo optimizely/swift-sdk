@@ -174,7 +174,7 @@ extension UserAttribute {
         }
     }
     
-    private func targetAsAttributeValue(value:Any?, attribute:AttributeValue?, nameFinal:String) throws -> AttributeValue {
+    private func targetAsAttributeValue(value: Any?, attribute: AttributeValue?, nameFinal: String) throws -> AttributeValue {
         guard let targetValue = AttributeValue(value: value), targetValue.isComparable(with: attribute!) else {
             throw OptimizelyError.evaluateAttributeInvalidCondition("attribute value \(nameFinal) invalid type")
          }

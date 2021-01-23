@@ -1,6 +1,5 @@
-//
-/****************************************************************************
-* Copyright 2019,2021, Optimizely, Inc. and contributors                   *
+/***************************************************************************
+* Copyright 2021, Optimizely, Inc. and contributors                        *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -14,18 +13,23 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
+
+import Foundation
+
+class DecisionResponse<T> {
+    var result: T?
+    var reasons: DecisionReasons
     
-
-#import <Foundation/Foundation.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@class OptimizelyClient;
-
-@interface SamplesForAPI: NSObject
-+(void)checkAPIs:(OptimizelyClient*)optimizely;
-+(void)checkOptimizelyConfig:(OptimizelyClient*)optimizely;
-+(void)checkOptimizelyUserContext:(OptimizelyClient*)optimizely;
-@end
-
-NS_ASSUME_NONNULL_END
+    init(result: T?, reasons: DecisionReasons) {
+        self.result = result
+        self.reasons = reasons
+    }
+    
+    static func responseNoReasons(result: T?) -> DecisionResponse {
+        return DecisionResponse(result: result, reasons: DecisionReasons(includeInfos: false))
+    }
+    
+    static func nilNoReasons() -> DecisionResponse {
+        return DecisionResponse(result: nil, reasons: DecisionReasons(includeInfos: false))
+    }
+}

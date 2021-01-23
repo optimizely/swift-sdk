@@ -1,6 +1,6 @@
 //
 /****************************************************************************
- * Copyright 2019, Optimizely, Inc. and contributors                        *
+ * Copyright 2019,2021, Optimizely, Inc. and contributors                   *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -128,6 +128,45 @@
         } else {
             NSLog(@"[track]");
         }
+    }
+}
+
+// MARK: - OptimizelyUserContext
+
++(void)checkOptimizelyUserContext:(OptimizelyClient*)optimizely {
+    NSDictionary *attributes = @{
+                                 @"location": @"NY",
+                                 @"device": @"iPhone",
+                                 @"lifetime": @24738388,
+                                 @"is_logged_in": @true
+                                 };
+    
+    NSDictionary *tags = @{
+                           @"category" : @"shoes",
+                           @"count": @5
+                           };
+
+    OptimizelyUserContext *user = [optimizely createUserContextWithUserId:@"user_123" attributes:attributes];
+    
+    OptimizelyDecision *decision = [user decideWithKey:@"show_coupon" options:@[@(OptimizelyDecideOptionIncludeReasons)]];
+    
+    if (decision.variationKey != nil) {
+        NSLog(@"[decide] flag decision to variation: %@", decision.variationKey);
+        NSLog(@"[decide] flag enabled: %d with variables: %@)", decision.enabled, [decision.variables toMap]);
+        NSLog(@"[decide] reasons: %@", decision.reasons);
+    } else {
+        NSLog(@"[decide] error: %@", decision.reasons);
+    }
+    
+    NSError *error = nil;
+    BOOL success = [user trackEventWithEventKey:@"my_purchase_event_key"
+                                      eventTags:tags
+                                          error:&error];
+    if (success) {
+        NSLog(@"Error: %@", error);
+        NSLog(@"[track] success");
+    } else {
+        NSLog(@"[decide] error: %@", error.localizedDescription);
     }
 }
 

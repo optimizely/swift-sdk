@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2020, Optimizely, Inc. and contributors                        *
+* Copyright 2020-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -43,6 +43,14 @@ public class OptimizelyJSON: NSObject {
             return nil
         }
         self.map = map
+    }
+    
+    static func createEmpty() -> OptimizelyJSON {
+        return OptimizelyJSON(map: [:])!
+    }
+    
+    public var isEmpty: Bool {
+        return map.isEmpty
     }
     
     // MARK: - OptimizelyJSON Implementation
@@ -180,4 +188,14 @@ public class OptimizelyJSON: NSObject {
         }
         return nil
     }
+}
+
+extension OptimizelyJSON {
+    
+    // override NSObject Equatable ('==' overriding not working for NSObject)
+    override public func isEqual(_ object: Any?) -> Bool {
+        guard let object = object as? OptimizelyJSON else { return false }
+        return NSDictionary(dictionary: map).isEqual(to: object.toMap())
+    }
+    
 }

@@ -28,46 +28,44 @@ extension SemanticVersion {
             return 0
           }
         
-
         let targetedVersionParts = try targetedVersion.splitSemanticVersion()
         let versionParts = try self.splitSemanticVersion()
 
         // Up to the precision of targetedVersion, expect version to match exactly.
-        for (idx, _) in targetedVersionParts.enumerated() {
+        for idx in targetedVersionParts.indices {
             if versionParts.count <= idx {
                 // even if they are equal at this point. if the target is a prerelease then it must be greater than the pre release.
                 return targetedVersion.isPreRelease ?  1 : -1
             } else if !versionParts[idx].isNumber {
                 //Compare strings
                 if versionParts[idx] < targetedVersionParts[idx] {
-                    return targetedVersion.isPreRelease && !self.isPreRelease ? 1: -1;
-                }
-                else if versionParts[idx] > targetedVersionParts[idx] {
-                    return !targetedVersion.isPreRelease && self.isPreRelease ? -1: 1;
+                    return targetedVersion.isPreRelease && !self.isPreRelease ? 1 : -1
+                } else if versionParts[idx] > targetedVersionParts[idx] {
+                    return !targetedVersion.isPreRelease && self.isPreRelease ? -1 : 1
                 }
                 
-            } else if let part = Int(versionParts[idx]), let target = Int(targetedVersionParts[idx]){
-                if (part < target) {
-                  return -1;
+            } else if let part = Int(versionParts[idx]), let target = Int(targetedVersionParts[idx]) {
+                if part < target {
+                  return -1
                 } else if part > target {
-                  return 1;
+                  return 1
                 }
             } else {
-                return -1;
+                return -1
             }
         }
         
         if self.isPreRelease && !targetedVersion.isPreRelease {
-            return -1;
+            return -1
         }
     
-        return 0;
+        return 0
     }
     
     func splitSemanticVersion() throws -> [Substring] {
-        var targetParts:[Substring]?
+        var targetParts: [Substring]?
         var targetPrefix = self
-        var targetSuffix:ArraySlice<Substring>?
+        var targetSuffix: ArraySlice<Substring>?
         
         if hasWhiteSpace {
             throw OptimizelyError.attributeFormatInvalid
@@ -114,10 +112,10 @@ extension SemanticVersion {
         return firstIndex(of: "+")?.utf16Offset(in: self) ?? Int.max < firstIndex(of: "-")?.utf16Offset(in: self) ?? Int.max
     }
     
-    var buildSeperator:Character {
+    var buildSeperator: Character {
         return "+"
     }
-    var preReleaseSeperator:Character {
+    var preReleaseSeperator: Character {
         return "-"
     }
 }

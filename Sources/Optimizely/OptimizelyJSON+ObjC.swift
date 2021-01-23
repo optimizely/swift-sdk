@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2020, Optimizely, Inc. and contributors                        *
+* Copyright 2020-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -30,6 +30,13 @@ extension OptimizelyJSON {
         self.init(map: m)
     }
     
+    @available(swift, obsoleted: 1.0)
+    @objc(isEmpty)
+    /// - Returns: true when one or more variables are included.
+    public func objcIsEmpty() -> Bool {
+        return self.isEmpty
+    }
+
     @available(swift, obsoleted: 1.0)
     @objc(toString)
     /// - Returns: The string representation of json

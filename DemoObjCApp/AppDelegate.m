@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+* Copyright 2019-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -24,13 +24,15 @@
 
 static NSString * const kOptimizelySdkKey = @"FCnSegiEkRry9rhVMroit4";
 static NSString * const kOptimizelyDatafileName = @"demoTestDatafile";
-static NSString * const kOptimizelyExperimentKey = @"background_experiment";
+static NSString * const kOptimizelyFeatureKey = @"decide_demo";
+static NSString * const kOptimizelyExperimentKey = @"background_experiment_decide";
 static NSString * const kOptimizelyEventKey = @"sample_conversion";
 
 @interface AppDelegate ()
 @property(nonnull, strong, nonatomic) NSString *userId;
 @property(nonnull, strong, nonatomic) NSDictionary *attributes;
 @property(nullable, strong, nonatomic) OptimizelyClient *optimizely;
+@property(nullable, strong, nonatomic) OptimizelyUserContext *user;
 @end
 
 @implementation AppDelegate
@@ -38,7 +40,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     self.userId = [NSString stringWithFormat:@"%d", arc4random_uniform(300000)];
-    self.attributes = @{ @"browser_type": @"safari" };
+    self.attributes = @{ @"location": @"CA", @"semanticVersioning": @"1.2"};
 
     // initialize SDK in one of these two ways:
     // (1) asynchronous SDK initialization (RECOMMENDED)
@@ -134,6 +136,7 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
         
         // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
         //[SamplesForAPI checkOptimizelyConfig:self.optimizely];
+        //[SamplesForAPI checkOptimizelyUserContext:self.optimizely];
     }];
 }
 
@@ -166,16 +169,16 @@ static NSString * const kOptimizelyEventKey = @"sample_conversion";
     dispatch_async(dispatch_get_main_queue(), ^{
         // For sample codes for other APIs, see "Samples/SamplesForAPI.m"
 
-        NSError *error;
-        NSString *variationKey = [self.optimizely activateWithExperimentKey:kOptimizelyExperimentKey
-                                                                     userId:self.userId
-                                                                 attributes:self.attributes
-                                                                      error:&error];
+        self.user = [self.optimizely createUserContextWithUserId:self.userId
+                                                      attributes:self.attributes];
+        
+        OptimizelyDecision *decision = [self.user decideWithKey:kOptimizelyFeatureKey
+                                                        options:@[@(OptimizelyDecideOptionIncludeReasons)]];
 
-        if (variationKey != nil) {
-            [self openVariationViewWithVariationKey:variationKey];
+        if (decision.variationKey != nil) {
+            [self openVariationViewWithVariationKey:decision.variationKey];
         } else {
-            NSLog(@"Optimizely SDK activation failed: %@", error.localizedDescription);
+            NSLog(@"Optimizely SDK activation failed: %@", decision.reasons);
             [self openFailureView];
         }
     });

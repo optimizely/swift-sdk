@@ -1,6 +1,5 @@
-//
 /****************************************************************************
-* Copyright 2019,2021, Optimizely, Inc. and contributors                   *
+* Copyright 2021, Optimizely, Inc. and contributors                        *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -14,18 +13,43 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
+
+import Foundation
+
+protocol ReasonProtocol {
+    var reason: String { get }
+}
+
+class DecisionReasons {
+    var errors: [ReasonProtocol]
+    var infos: [ReasonProtocol]?
     
+    init(includeInfos: Bool = true) {
+        errors = []
+        if includeInfos {
+            infos = []
+        }
+    }
 
-#import <Foundation/Foundation.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
-@class OptimizelyClient;
-
-@interface SamplesForAPI: NSObject
-+(void)checkAPIs:(OptimizelyClient*)optimizely;
-+(void)checkOptimizelyConfig:(OptimizelyClient*)optimizely;
-+(void)checkOptimizelyUserContext:(OptimizelyClient*)optimizely;
-@end
-
-NS_ASSUME_NONNULL_END
+    convenience init(options: [OptimizelyDecideOption]?) {
+        // include infos if options is not provided (default)
+        self.init(includeInfos: options?.contains(.includeReasons) ?? true)
+    }
+    
+    func addError(_ error: ReasonProtocol) {
+        errors.append(error)
+    }
+    
+    func addInfo(_ info: ReasonProtocol) {
+        infos?.append(info)
+    }
+    
+    func merge(_ reasons: DecisionReasons) {
+        errors.append(contentsOf: reasons.errors)
+        infos?.append(contentsOf: reasons.infos ?? [])
+    }
+    
+    func toReport() -> [String] {
+        return (errors + (infos ?? [])).map { $0.reason }
+    }
+}

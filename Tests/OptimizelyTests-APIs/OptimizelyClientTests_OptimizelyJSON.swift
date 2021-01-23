@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020, Optimizely, Inc. and contributors                        *
+ * Copyright 2020-2021, Optimizely, Inc. and contributors                   *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -189,6 +189,41 @@ extension OptimizelyClientTests_OptimizelyJSON {
     func testToString() {
         let optimizelyJSONToString = self.optimizelyJSON.toString()
         XCTAssertEqual(optimizelyJSONToString, self.payload)
+    }
+    
+    func testEqual() {
+        let map1: [String: Any] = [
+            "v1": 1,
+            "v2": "three",
+            "v3": [
+                "v31": 3.0,
+                "v32": ["1","2",3.01,4.23,true]
+            ],
+            "v4": true
+        ]
+        
+        var map2 = map1
+        XCTAssertEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+        
+        map2 = map1
+        map2["v1"] = 2
+        XCTAssertNotEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+        
+        map2 = map1
+        map2["v4"] = false
+        XCTAssertNotEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+
+        map2 = map1
+        map2["v3"] = ["v31": 10.0, "v32": ["1","2",3.01,4.23,true]]
+        XCTAssertNotEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+
+        map2 = map1
+        map2["v3"] = ["v31": 3.0, "v32": ["1","2",3.01,4.23,false]]
+        XCTAssertNotEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
+
+        map2 = map1
+        map2["v3"] = ["v31": 3.000, "v32": ["1", "2", 3.010, 4.230, true]]
+        XCTAssertEqual(OptimizelyJSON(map: map1)!, OptimizelyJSON(map: map2)!)
     }
     
     func testGetValueForInvalidJSONKeyAndEmptyDecodableStruct() {

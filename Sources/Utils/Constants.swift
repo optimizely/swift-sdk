@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -29,11 +29,11 @@ struct Constants {
     }
     
     enum VariableValueType: String {
-        case string = "string"
-        case integer  = "integer"
-        case double  = "double"
-        case boolean = "boolean"
-        case json = "json"
+        case string
+        case integer
+        case double
+        case boolean
+        case json
     }
     
     enum DecisionType: String {
@@ -42,8 +42,10 @@ struct Constants {
         case featureVariable  = "feature-variable"
         case allFeatureVariables = "all-feature-variables"
         case featureTest = "feature-test"
+        // Decide-APIs
+        case flag = "flag"
     }
-    
+        
     enum DecisionSource: String {
         case experiment = "experiment"
         case featureTest = "feature-test"
@@ -59,6 +61,23 @@ struct Constants {
         static let variableType = "variableType"
         static let variableValue = "variableValue"
         static let variableValues = "variableValues"
+        
+        // Decide-API
+        
+        /// The flag key for which the decision has been made for.
+        static let flagKey = "flagKey"
+        /// The boolean value indicating if the flag is enabled or not.
+        static let enabled = "enabled"
+        /// The collection of variables assocaited with the decision.
+        static let variables = "variables"
+        /// The variation key of the decision. This value will be nil when decision making fails.
+        static let variationKey = "variationKey"
+        /// The rule key of the decision.
+        static let ruleKey = "ruleKey"
+        /// An array of error/info/debug messages describing why the decision has been made.
+        static let reasons = "reasons"
+        /// The boolean value indicating an decision event has been sent for the decision.
+        static let decisionEventDispatched = "decisionEventDispatched"
     }
     
     struct ExperimentDecisionInfoKeys {

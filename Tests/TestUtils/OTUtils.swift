@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019,2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -136,6 +136,31 @@ class OTUtils {
         } catch {
             return nil
         }
+    }
+    
+    // MARK: - UPS
+    
+    static func getVariationFromUPS(ups: OPTUserProfileService, userId: String, experimentId: String) -> String? {
+        if let profile = ups.lookup(userId: userId),
+            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+            let experimentMap = bucketMap[experimentId],
+            let variationId = experimentMap[UserProfileKeys.kVariationId] {
+            return variationId
+        } else {
+            return nil
+        }
+    }
+    
+    static func setVariationToUPS(ups: OPTUserProfileService, userId: String, experimentId: String, variationId: String){
+        var profile = ups.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
+        
+        var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
+        bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
+        
+        profile[UserProfileKeys.kBucketMap] = bucketMap
+        profile[UserProfileKeys.kUserId] = userId
+        
+        ups.save(userProfile: profile)
     }
 
     // MARK: - big numbers

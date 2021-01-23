@@ -11,7 +11,6 @@
 		25C6F3B721C95D1800C2EBDD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE21E55313B00931399 /* AppDelegate.swift */; };
 		25C6F3BC21C95D2100C2EBDD /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE51E55313B00931399 /* VariationViewController.swift */; };
 		25C6F3BD21C95D2100C2EBDD /* VariationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA299EE51E55313B00931399 /* VariationViewController.swift */; };
-		25C6F3BF21C95D4800C2EBDD /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA299EDD1E55312200931399 /* iOSMain.storyboard */; };
 		5015D17687408F548F31F1A6 /* Pods_DemoSwifttvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC404BE4046CDA1D3A9C26B /* Pods_DemoSwifttvOS.framework */; };
 		6E4D2FDF22C5455400062EB3 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4D2FC822C5454400062EB3 /* Optimizely.framework */; };
 		6E4D2FE022C5455400062EB3 /* Optimizely.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4D2FC822C5454400062EB3 /* Optimizely.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -25,6 +24,7 @@
 		6E96819E21EEA391009B7FEC /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E96819421EEA391009B7FEC /* ProximaNova-Regular.otf */; };
 		6E96819F21EEA3B3009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E96819021EEA391009B7FEC /* Assets.xcassets */; };
 		6E9681A021EEA3B7009B7FEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E96818E21EEA391009B7FEC /* Assets.xcassets */; };
+		6E9FC9BA2548E1B7006AD345 /* iOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA299EDD1E55312200931399 /* iOSMain.storyboard */; };
 		6EDBCE0022710E87009DF724 /* CustomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDBCDF522710E87009DF724 /* CustomLogger.swift */; };
 		6EDBCE0122710E87009DF724 /* CustomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDBCDF522710E87009DF724 /* CustomLogger.swift */; };
 		6EF2CF1D21E4158A00A5D78D /* tvOSMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EF2CF1B21E4158A00A5D78D /* tvOSMain.storyboard */; };
@@ -132,6 +132,20 @@
 			remoteGlobalIDString = 6E614DCC21E3F389005982A1;
 			remoteInfo = "OptimizelySwiftSDK-tvOS";
 		};
+		6EF41A892523D22C00EAADF1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BD6485812491474500F30986;
+			remoteInfo = "OptimizelySwiftSDK-macOS";
+		};
+		6EF41A8B2523D22C00EAADF1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E14CD632423F80B00010234;
+			remoteInfo = "OptimizelyTests-Batch-iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -222,8 +236,10 @@
 			children = (
 				6E4D2FC822C5454400062EB3 /* Optimizely.framework */,
 				6E4D2FCA22C5454400062EB3 /* Optimizely.framework */,
+				6EF41A8A2523D22C00EAADF1 /* Optimizely.framework */,
 				6E4D2FCC22C5454400062EB3 /* OptimizelyTests-iOS.xctest */,
 				6E4D2FCE22C5454400062EB3 /* OptimizelyTests-Common-iOS.xctest */,
+				6EF41A8C2523D22C00EAADF1 /* OptimizelyTests-Batch-iOS.xctest */,
 				6E4D2FD022C5454400062EB3 /* OptimizelyTests-APIs-iOS.xctest */,
 				6E4D2FD222C5454400062EB3 /* OptimizelyTests-DataModel-iOS.xctest */,
 				6E4D2FD422C5454400062EB3 /* OptimizelyTests-Others-iOS.xctest */,
@@ -393,7 +409,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1010;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
 					252D7DEC21C8800800134A7A = {
@@ -526,6 +542,20 @@
 			remoteRef = 6E4D2FDD22C5454400062EB3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		6EF41A8A2523D22C00EAADF1 /* Optimizely.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Optimizely.framework;
+			remoteRef = 6EF41A892523D22C00EAADF1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6EF41A8C2523D22C00EAADF1 /* OptimizelyTests-Batch-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-Batch-iOS.xctest";
+			remoteRef = 6EF41A8B2523D22C00EAADF1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -535,8 +565,8 @@
 			files = (
 				6E96819B21EEA391009B7FEC /* demoTestDatafile.json in Resources */,
 				6E96819921EEA391009B7FEC /* Roboto-Medium.ttf in Resources */,
-				25C6F3BF21C95D4800C2EBDD /* iOSMain.storyboard in Resources */,
 				6E96819F21EEA3B3009B7FEC /* Assets.xcassets in Resources */,
+				6E9FC9BA2548E1B7006AD345 /* iOSMain.storyboard in Resources */,
 				6E96819D21EEA391009B7FEC /* ProximaNova-Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019,2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -116,7 +116,7 @@ extension BucketTests_ExpToVariation {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string", "expect": kVariationKeyC]]
         
         for (idx, test) in tests.enumerated() {
-            variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)
+            variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!).result
             XCTAssertEqual(test["expect"], variation?.key, "test[\(idx)] failed")
         }
     }
@@ -131,7 +131,7 @@ extension BucketTests_ExpToVariation {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
 
         for test in tests {
-            variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)
+            variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!).result
             XCTAssertNil(variation)
         }
     }
@@ -147,7 +147,7 @@ extension BucketTests_ExpToVariation {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
 
         for test in tests {
-            variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)
+            variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!).result
             XCTAssertNil(variation)
         }
     }
@@ -165,7 +165,7 @@ extension BucketTests_ExpToVariation {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
 
         for test in tests {
-            variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!)
+            variation = bucketer.bucketToVariation(experiment: experiment, bucketingId: test["userId"]!).result
             XCTAssertNil(variation)
         }
     }

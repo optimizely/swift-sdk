@@ -1,18 +1,18 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+ * Copyright 2019-2021, Optimizely, Inc. and contributors                   *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *    http://www.apache.org/licenses/LICENSE-2.0                            *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ ***************************************************************************/
 
 import Foundation
 
@@ -27,8 +27,12 @@ class DefaultBucketer: OPTBucketer {
     init() {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
     }
-
-    func bucketExperiment(config: ProjectConfig, experiment: Experiment, bucketingId: String) -> Variation? {
+    
+    func bucketExperiment(config: ProjectConfig,
+                          experiment: Experiment,
+                          bucketingId: String) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons()
+        
         var mutexAllowed = true
         
         // check for mutex
@@ -40,82 +44,110 @@ class DefaultBucketer: OPTBucketer {
             case .overlapping:
                 break
             case .random:
-                let mutexExperiment = bucketToExperiment(config: config, group: group, bucketingId: bucketingId)
-                if let mutexExperiment = mutexExperiment {
+                let decisionResponse = bucketToExperiment(config: config,
+                                                          group: group,
+                                                          bucketingId: bucketingId)
+                reasons.merge(decisionResponse.reasons)
+                if let mutexExperiment = decisionResponse.result {
                     if mutexExperiment.id == experiment.id {
                         mutexAllowed = true
-                        logger.i(.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
+                        
+                        let info = LogMessage.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
+                        logger.i(info)
+                        reasons.addInfo(info)
                     } else {
                         mutexAllowed = false
-                        logger.i(.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id))
+                        
+                        let info = LogMessage.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
+                        logger.i(info)
+                        reasons.addInfo(info)
                     }
                 } else {
                     mutexAllowed = false
-                    logger.i(.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id))
+                    
+                    let info = LogMessage.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id)
+                    logger.i(info)
+                    reasons.addInfo(info)
                 }
             }
         }
         
-        if !mutexAllowed { return nil }
+        if !mutexAllowed { return DecisionResponse(result: nil, reasons: reasons) }
         
         // bucket to variation only if experiment passes Mutex check
-
-        if let variation = bucketToVariation(experiment: experiment, bucketingId: bucketingId) {
-            return variation
-        } else {
-            return nil
-        }
+        
+        let decisionResponse = bucketToVariation(experiment: experiment,
+                                                 bucketingId: bucketingId)
+        reasons.merge(decisionResponse.reasons)
+        let variation = decisionResponse.result
+        return DecisionResponse(result: variation, reasons: reasons)
     }
     
-    func bucketToExperiment(config: ProjectConfig, group: Group, bucketingId: String) -> Experiment? {
+    func bucketToExperiment(config: ProjectConfig,
+                            group: Group,
+                            bucketingId: String) -> DecisionResponse<Experiment> {
+        let reasons = DecisionReasons()
+        
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
         let bucketValue = self.generateBucketValue(bucketingId: hashId)
-        logger.d(.userAssignedToBucketValue(bucketValue, bucketingId))
+        
+        let info = LogMessage.userAssignedToBucketValue(bucketValue, bucketingId)
+        logger.d(info)
+        reasons.addInfo(info)
         
         if group.trafficAllocation.count == 0 {
-            logger.e(.groupHasNoTrafficAllocation(group.id))
-            return nil
+            let info = OptimizelyError.groupHasNoTrafficAllocation(group.id)
+            logger.e(info)
+            reasons.addInfo(info)
+            return DecisionResponse(result: nil, reasons: reasons)
         }
         
         if let experimentId = allocateTraffic(trafficAllocation: group.trafficAllocation, bucketValue: bucketValue) {
             if let experiment = config.getExperiment(id: experimentId) {
-                return experiment
+                return DecisionResponse(result: experiment, reasons: reasons)
             } else {
-                logger.e(.userBucketedIntoInvalidExperiment(experimentId))
-                return nil
+                let info = LogMessage.userBucketedIntoInvalidExperiment(experimentId)
+                logger.e(info)
+                reasons.addInfo(info)
+                return DecisionResponse(result: nil, reasons: reasons)
             }
         }
         
-        return nil
+        return DecisionResponse(result: nil, reasons: reasons)
     }
-
-    func bucketToVariation(experiment: Experiment, bucketingId: String) -> Variation? {
+    
+    func bucketToVariation(experiment: Experiment,
+                           bucketingId: String) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons()
+        
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
         let bucketValue = generateBucketValue(bucketingId: hashId)
         logger.d(.userAssignedToBucketValue(bucketValue, bucketingId))
-
+        
         if experiment.trafficAllocation.count == 0 {
-            logger.e(.experimentHasNoTrafficAllocation(experiment.key))
-            return nil
+            let info = OptimizelyError.experimentHasNoTrafficAllocation(experiment.key)
+            logger.e(info)
+            reasons.addInfo(info)
+            return DecisionResponse(result: nil, reasons: reasons)
         }
-
+        
         if let variationId = allocateTraffic(trafficAllocation: experiment.trafficAllocation, bucketValue: bucketValue) {
             if let variation = experiment.getVariation(id: variationId) {
-                return variation
+                return DecisionResponse(result: variation, reasons: reasons)
             } else {
-                logger.e(.userBucketedIntoInvalidVariation(variationId))
-                return nil
+                let info = LogMessage.userBucketedIntoInvalidVariation(variationId)
+                logger.e(info)
+                reasons.addInfo(info)
+                return DecisionResponse(result: nil, reasons: reasons)
             }
         } else {
-            return nil
+            return DecisionResponse(result: nil, reasons: reasons)
         }
     }
     
     func allocateTraffic(trafficAllocation: [TrafficAllocation], bucketValue: Int) -> String? {
-        for bucket in trafficAllocation {
-            if bucketValue < bucket.endOfRange {
-                return bucket.entityId
-            }
+        for bucket in trafficAllocation where bucketValue < bucket.endOfRange {
+            return bucket.entityId
         }
         
         return nil

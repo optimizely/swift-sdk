@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019,2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -507,11 +507,9 @@ class DatafileHandlerTests: XCTestCase {
         }
         
         wait(for: [expectation], timeout: 5.0)
-
     }
     
     func testDownloadWithoutTimeout() {
-
         let handler = TimoutDatafileHandler()
         // create a dummy file at a url to use as or datafile cdn location
         let localUrl = OTUtils.saveAFile(name: "invalidKeyXXXXX", data: "{}".data(using: .utf8)!)
@@ -524,12 +522,11 @@ class DatafileHandlerTests: XCTestCase {
                 print(data ?? "")
                 XCTAssert(true)
                 expectation.fulfill()
-                OTUtils.removeAFile(name: "invalidKeyXXXXX")
+                _ = OTUtils.removeAFile(name: "invalidKeyXXXXX")
             }
         }
 
         wait(for: [expectation], timeout: 10.0)
-        
     }
     
     func testDatafileCacheFormatCompatibilty() {

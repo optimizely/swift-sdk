@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -20,7 +20,7 @@ class BucketTests_GroupToExp: XCTestCase {
 
     var optimizely: OptimizelyClient!
     var config: ProjectConfig!
-    var bucketer: OPTBucketer!
+    var bucketer: DefaultBucketer!
     
     var kUserId = "12345"
     var kGroupId = "333333"
@@ -126,7 +126,7 @@ extension BucketTests_GroupToExp {
         let group = self.config.getGroup(id: kGroupId)
         
         for (idx, test) in tests.enumerated() {
-            let experiment = bucketer.bucketToExperiment(config: self.config, group: group!, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: self.config, group: group!, bucketingId: test["userId"]!).result
             XCTAssertEqual(test["expect"], experiment?.key, "test[\(idx)] failed")
         }
     }
@@ -142,7 +142,7 @@ extension BucketTests_GroupToExp {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!).result
             XCTAssertNil(experiment)
         }
     }
@@ -159,7 +159,7 @@ extension BucketTests_GroupToExp {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!).result
             XCTAssertNil(experiment)
         }
     }
@@ -177,7 +177,7 @@ extension BucketTests_GroupToExp {
                      ["userId": "a very very very very very very very very very very very very very very very long ppd string"]]
         
         for test in tests {
-            let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!)
+            let experiment = bucketer.bucketToExperiment(config: self.config, group: group, bucketingId: test["userId"]!).result
             XCTAssertNil(experiment)
         }
     }

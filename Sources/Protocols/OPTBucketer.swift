@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+* Copyright 2019-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -23,7 +23,9 @@ protocol OPTBucketer {
      - Parameter bucketingId: Id to be used for bucketing the user.
      - Returns: experiment which represent Experiment.
      */
-    func bucketToExperiment(config: ProjectConfig, group: Group, bucketingId: String) -> Experiment?
+    func bucketToExperiment(config: ProjectConfig,
+                            group: Group,
+                            bucketingId: String) -> DecisionResponse<Experiment>
     
     /**
      Bucket a bucketingId into an experiment.
@@ -31,7 +33,9 @@ protocol OPTBucketer {
      - Parameter bucketingId: The ID to bucket. This must be a non-null, non-empty string.
      - Returns: The variation the bucketingId was bucketed into.
      */
-    func bucketExperiment(config: ProjectConfig, experiment: Experiment, bucketingId: String) -> Variation?
+    func bucketExperiment(config: ProjectConfig,
+                          experiment: Experiment,
+                          bucketingId: String) -> DecisionResponse<Variation>
 
     /**
      Hash the bucketing ID and map it to the range [0, 10000).

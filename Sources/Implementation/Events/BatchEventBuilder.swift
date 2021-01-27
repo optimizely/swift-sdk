@@ -32,10 +32,6 @@ class BatchEventBuilder {
                                       ruleType: String,
                                       enabled: Bool) -> Data? {
         
-        if (ruleType == Constants.DecisionSource.rollout.rawValue || variation == nil) && !config.sendFlagDecisions {
-            return nil
-        }
-        
         let metaData = DecisionMetadata(ruleType: ruleType, ruleKey: experiment?.key ?? "", flagKey: flagKey, variationKey: variation?.key ?? "", enabled: enabled)
         
         let decision = Decision(variationID: variation?.id ?? "",

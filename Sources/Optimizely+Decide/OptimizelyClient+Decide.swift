@@ -62,14 +62,17 @@ extension OptimizelyClient {
         }
         
         if !allOptions.contains(.disableDecisionEvent) {
-            sendImpressionEvent(experiment: decision?.experiment,
-                                variation: decision?.variation,
-                                userId: userId,
-                                attributes: attributes,
-                                flagKey: feature.key,
-                                ruleType: decision?.source ?? Constants.DecisionSource.rollout.rawValue,
-                                enabled: enabled)
-            decisionEventDispatched = true
+            let ruleType = decision?.source ?? Constants.DecisionSource.rollout.rawValue
+            if (ruleType == Constants.DecisionSource.featureTest.rawValue && decision?.variation != nil) || config.sendFlagDecisions {
+                sendImpressionEvent(experiment: decision?.experiment,
+                                    variation: decision?.variation,
+                                    userId: userId,
+                                    attributes: attributes,
+                                    flagKey: feature.key,
+                                    ruleType: ruleType,
+                                    enabled: enabled)
+                decisionEventDispatched = true
+            }
         }
         
         var variableMap = [String: Any]()

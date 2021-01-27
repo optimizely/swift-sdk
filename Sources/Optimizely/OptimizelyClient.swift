@@ -404,13 +404,15 @@ open class OptimizelyClient: NSObject {
             logger.i(.featureNotEnabledForUser(featureKey, userId))
         }
 
-        sendImpressionEvent(experiment: pair?.experiment,
-                            variation: pair?.variation,
-                            userId: userId,
-                            attributes: attributes,
-                            flagKey: featureKey,
-                            ruleType: source,
-                            enabled: featureEnabled)
+        if (source == Constants.DecisionSource.featureTest.rawValue && pair?.variation != nil) || config.sendFlagDecisions {
+            sendImpressionEvent(experiment: pair?.experiment,
+                                variation: pair?.variation,
+                                userId: userId,
+                                attributes: attributes,
+                                flagKey: featureKey,
+                                ruleType: source,
+                                enabled: featureEnabled)
+        }
         
         sendDecisionNotification(userId: userId,
                                  attributes: attributes,
@@ -798,6 +800,8 @@ extension OptimizelyClient {
                                               event: event,
                                               async: false)
             }
+            
+            return
         }
         
     }

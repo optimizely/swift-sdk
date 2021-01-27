@@ -958,11 +958,79 @@ extension DecisionListenerTests {
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.variationKey])
             XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey)
 
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func testDecisionListener_DecisionEventDispatched_withSendFlagDecisions() {
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
+        
+        // set for feature-test
+        
+        let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
+        var variation: Variation = (experiment.variations.first)!
+        variation.featureEnabled = true
+        variation.variables?.append(Variable(id: "2696150066", value: "123"))
+        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: "")
+        
+        // (1) sendFlagDecision = false. feature-test.
+        
+        optimizely.config?.project.sendFlagDecisions = false
+        
+        var exp = expectation(description: "x")
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
+            exp.fulfill()
+        }
+        _ = user.decide(key: kFeatureKey)
+        wait(for: [exp], timeout: 1)
+        
+        // (2) sendFlagDecision = true. feature-test.
+
+        optimizely.config?.project.sendFlagDecisions = true
+
+        exp = expectation(description: "x")
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
+            exp.fulfill()
+        }
+        _ = user.decide(key: kFeatureKey)
+        wait(for: [exp], timeout: 1)
+
+        // set for rollout (null variation)
+        
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+
+        // (3) sendFlagDecisions = false. rollout.
+        
+        optimizely.config?.project.sendFlagDecisions = false
+
+        exp = expectation(description: "x")
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
+            exp.fulfill()
+        }
+        _ = user.decide(key: kFeatureKey)
+        wait(for: [exp], timeout: 1)
+
+        // (3) sendFlagDecisions = true. rollout.
+        
+        optimizely.config?.project.sendFlagDecisions = true
+
+        exp = expectation(description: "x")
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
+            exp.fulfill()
+        }
+        _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
     }
 

@@ -84,12 +84,14 @@ open class OptimizelyClient: NSObject {
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision optiopns (optional)
+    ///   - defaultDatafileHandler: default data file handler (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
-                defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
+                defaultDecideOptions: [OptimizelyDecideOption]? = nil,
+                defaultDatafileHandler: OPTDatafileHandler? = nil) {
         
         self.sdkKey = sdkKey
         self.defaultDecideOptions = defaultDecideOptions ?? []
@@ -103,7 +105,7 @@ open class OptimizelyClient: NSObject {
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
-                              datafileHandler: DefaultDatafileHandler(),
+                              datafileHandler: defaultDatafileHandler ?? DefaultDatafileHandler(),
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         

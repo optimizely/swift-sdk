@@ -805,8 +805,6 @@ extension OptimizelyClient {
                                               event: event,
                                               async: false)
             }
-            
-            return
         }
         
     }

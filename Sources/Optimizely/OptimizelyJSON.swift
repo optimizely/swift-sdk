@@ -199,3 +199,9 @@ extension OptimizelyJSON {
     }
     
 }
+
+extension OptimizelyJSON {
+    public override var description: String {
+        return "\(map)"
+    }
+}

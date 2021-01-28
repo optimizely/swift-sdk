@@ -181,6 +181,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.user = self.optimizely.createUserContext(userId: self.userId,
                                                           attributes: self.attributes)
             let decision = self.user.decide(key: self.featureKey, options: [.includeReasons])
+            print("DECISION = \(decision)")
             if let variationKey = decision.variationKey {
                 self.openVariationView(variationKey: variationKey)
             } else {

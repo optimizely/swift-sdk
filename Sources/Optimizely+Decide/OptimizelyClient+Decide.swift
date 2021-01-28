@@ -63,7 +63,7 @@ extension OptimizelyClient {
         
         if !allOptions.contains(.disableDecisionEvent) {
             let ruleType = decision?.source ?? Constants.DecisionSource.rollout.rawValue
-            if (ruleType == Constants.DecisionSource.featureTest.rawValue && decision?.variation != nil) || config.sendFlagDecisions {
+            if shouldSendDecisionEvent(source: ruleType, decision: decision) {
                 sendImpressionEvent(experiment: decision?.experiment,
                                     variation: decision?.variation,
                                     userId: userId,

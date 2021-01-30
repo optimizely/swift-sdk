@@ -139,3 +139,9 @@ extension OptimizelyUserContext: Equatable {
     }
     
 }
+
+extension OptimizelyUserContext: CustomStringConvertible {
+    public var description: String {
+        return "{ userId: \(userId), attributes: \(attributes) }"
+    }
+}

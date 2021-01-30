@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ * Copyright 2019-2021, Optimizely, Inc. and contributors                   *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -97,42 +97,6 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssert((de["tags"] as! Dictionary<String, Any>).count==0)
         XCTAssertNil(de["revenue"])
         XCTAssertNil(de["value"])
-    }
-    
-    func testCreateImpressionEventWithSendFlagDecisions() {
-        let scenarios: [String: Bool] = [
-            "experiment": true,
-            "anything-else": true,
-            Constants.DecisionSource.featureTest.rawValue: true,
-            Constants.DecisionSource.rollout.rawValue: false
-        ]
-        let attributes: [String: Any] = [
-            "s_foo": "foo",
-            "b_true": true,
-            "i_42": 42,
-            "d_4_2": 4.2
-        ]
-        let experiment = optimizely.config?.getExperiment(id: "10390977714")
-        let variation = experiment?.getVariation(id: "10416523162")
-        
-        for scenario in scenarios {
-            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: variation, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key, enabled: true)
-            scenario.value ? XCTAssertNotNil(event): XCTAssertNil(event)
-        }
-        
-        // nil variation should always return nil
-        for scenario in scenarios {
-            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key, enabled: true)
-            XCTAssertNil(event)
-        }
-        
-        // should always return a event if sendFlagDecisions is set
-        optimizely.config?.project.sendFlagDecisions = true
-        for scenario in scenarios {
-            let event = BatchEventBuilder.createImpressionEvent(config: optimizely.config!, experiment: experiment!, variation: nil, userId: userId, attributes: attributes, flagKey: experiment!.key, ruleType: scenario.key, enabled: true)
-            XCTAssertNotNil(event)
-        }
-        optimizely.config?.project.sendFlagDecisions = nil
     }
     
     func testCreateImpressionEventWithoutVariation() {

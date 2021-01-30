@@ -79,7 +79,7 @@ class DecisionListenerTests: XCTestCase {
     func testDecisionListenerGetFeatureVariableBooleanWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
         
-        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
@@ -98,7 +98,7 @@ class DecisionListenerTests: XCTestCase {
     func testDecisionListenerGetFeatureVariableDoubleWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
 
-        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
@@ -117,7 +117,7 @@ class DecisionListenerTests: XCTestCase {
     func testDecisionListenerGetFeatureVariableIntegerWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
 
-        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
@@ -136,7 +136,7 @@ class DecisionListenerTests: XCTestCase {
     func testDecisionListenerGetFeatureVariableStringWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
 
-        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
@@ -155,7 +155,7 @@ class DecisionListenerTests: XCTestCase {
     func testDecisionListenerGetFeatureVariableJSONWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
 
-        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
@@ -174,7 +174,7 @@ class DecisionListenerTests: XCTestCase {
     func testDecisionListenerGetAllFeatureVariablesWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
         
-        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (type, _, _, decisionInfo) in
             XCTAssertEqual(type, Constants.DecisionType.allFeatureVariables.rawValue)
@@ -765,7 +765,7 @@ class DecisionListenerTests: XCTestCase {
     
     func testDecisionListenerWithUserNotInExperimentAndRollout() {
         let exp = expectation(description: "x")
-        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.featureEnabled] as! Bool, false)
@@ -865,7 +865,7 @@ extension DecisionListenerTests {
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2696150066", value: "123"))
-        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: "")
+        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
         
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
@@ -903,7 +903,7 @@ extension DecisionListenerTests {
         let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = false
-        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: "")
+        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
         
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
@@ -935,7 +935,7 @@ extension DecisionListenerTests {
         
         let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
 
-        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: "")
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
         
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
@@ -958,11 +958,79 @@ extension DecisionListenerTests {
             XCTAssert(decisionInfo[Constants.DecisionInfoKeys.variationKey] is NSNull)
             XCTAssert(decisionInfo[Constants.DecisionInfoKeys.ruleKey] is NSNull)
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey)
 
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func testDecisionListener_DecisionEventDispatched_withSendFlagDecisions() {
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
+        
+        // set for feature-test
+        
+        let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
+        var variation: Variation = (experiment.variations.first)!
+        variation.featureEnabled = true
+        variation.variables?.append(Variable(id: "2696150066", value: "123"))
+        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
+        
+        // (1) sendFlagDecision = false. feature-test.
+        
+        optimizely.config?.project.sendFlagDecisions = false
+        
+        var exp = expectation(description: "x")
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
+            exp.fulfill()
+        }
+        _ = user.decide(key: kFeatureKey)
+        wait(for: [exp], timeout: 1)
+        
+        // (2) sendFlagDecision = true. feature-test.
+
+        optimizely.config?.project.sendFlagDecisions = true
+
+        exp = expectation(description: "x")
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
+            exp.fulfill()
+        }
+        _ = user.decide(key: kFeatureKey)
+        wait(for: [exp], timeout: 1)
+
+        // set for rollout (null variation)
+        
+        self.optimizely.setDecisionServiceData(experiment: nil, variation: nil, source: Constants.DecisionSource.rollout.rawValue)
+
+        // (3) sendFlagDecisions = false. rollout.
+        
+        optimizely.config?.project.sendFlagDecisions = false
+
+        exp = expectation(description: "x")
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
+            exp.fulfill()
+        }
+        _ = user.decide(key: kFeatureKey)
+        wait(for: [exp], timeout: 1)
+
+        // (3) sendFlagDecisions = true. rollout.
+        
+        optimizely.config?.project.sendFlagDecisions = true
+
+        exp = expectation(description: "x")
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
+            exp.fulfill()
+        }
+        _ = user.decide(key: kFeatureKey)
         wait(for: [exp], timeout: 1)
     }
 
@@ -974,7 +1042,7 @@ extension DecisionListenerTests {
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = true
         variation.variables?.append(Variable(id: "2696150066", value: "123"))
-        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: "")
+        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
         
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
@@ -1008,7 +1076,7 @@ extension DecisionListenerTests {
         let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
         var variation: Variation = (experiment.variations.first)!
         variation.featureEnabled = false
-        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: "")
+        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
         
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (_, _, _, decisionInfo) in
@@ -1043,7 +1111,7 @@ extension DecisionListenerTests {
 
         let experiment: Experiment = (self.optimizely.config?.allExperiments.first)!
         let variation: Variation = (experiment.variations.first)!
-        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: "")
+        self.optimizely.setDecisionServiceData(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
         
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
@@ -1097,7 +1165,7 @@ extension DecisionListenerTests {
             XCTAssert(decisionInfo[Constants.DecisionInfoKeys.variationKey] is NSNull)
             XCTAssert(decisionInfo[Constants.DecisionInfoKeys.ruleKey] is NSNull)
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
             exp.fulfill()
         }
         

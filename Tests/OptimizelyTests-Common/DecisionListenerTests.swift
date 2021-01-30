@@ -955,8 +955,8 @@ extension DecisionListenerTests {
             let jsonMap = (variableValues[self.kVariableKeyJSON] as! [String: Any])
             XCTAssertEqual(jsonMap["value"] as! Int, 1)
 
-            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.variationKey])
-            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
+            XCTAssert(decisionInfo[Constants.DecisionInfoKeys.variationKey] is NSNull)
+            XCTAssert(decisionInfo[Constants.DecisionInfoKeys.ruleKey] is NSNull)
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
@@ -1094,8 +1094,8 @@ extension DecisionListenerTests {
             let jsonMap = (variableValues[self.kVariableKeyJSON] as! [String: Any])
             XCTAssertEqual(jsonMap["value"] as! Int, 1)
 
-            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.variationKey])
-            XCTAssertNil(decisionInfo[Constants.DecisionInfoKeys.ruleKey])
+            XCTAssert(decisionInfo[Constants.DecisionInfoKeys.variationKey] is NSNull)
+            XCTAssert(decisionInfo[Constants.DecisionInfoKeys.ruleKey] is NSNull)
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()

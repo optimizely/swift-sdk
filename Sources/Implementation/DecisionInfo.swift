@@ -138,8 +138,8 @@ struct DecisionInfo {
             decisionInfo[Constants.DecisionInfoKeys.flagKey] = flagKey
             decisionInfo[Constants.DecisionInfoKeys.enabled] = enabled
             decisionInfo[Constants.DecisionInfoKeys.variables] = variableValues
-            decisionInfo[Constants.DecisionInfoKeys.variationKey] = variation?.key
-            decisionInfo[Constants.DecisionInfoKeys.ruleKey] = ruleKey
+            decisionInfo[Constants.DecisionInfoKeys.variationKey] = variation?.key ?? NSNull()      // keep key in the map even with nil value
+            decisionInfo[Constants.DecisionInfoKeys.ruleKey] = ruleKey ?? NSNull()                  //
             decisionInfo[Constants.DecisionInfoKeys.reasons] = reasons
             decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] = decisionEventDispatched
         }

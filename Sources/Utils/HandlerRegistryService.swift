@@ -59,6 +59,9 @@ class HandlerRegistryService {
             } else if let inst = binder.instance, binder.isSingleton {
                 result = inst
             } else {
+                if !binder.isSingleton {
+                    return binder.factory()
+                }
                 let inst = binder.factory()
                 binder.instance = inst
                 result = inst

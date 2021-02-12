@@ -52,10 +52,19 @@ class HandlerRegistryService {
         
         let binderToUse = binders.property?[skLocal] ?? binders.property?[skGlobal]
         
+        func updateBinder(b : BinderProtocol) {
+            if binders.property?[skLocal] != nil {
+                binders.property?[skLocal] = b
+            } else {
+                binders.property?[skGlobal] = b
+            }
+        }
+        
         if var binder = binderToUse {
             if isReintialize && binder.strategy == .reCreate {
                 binder.instance = binder.factory()
                 result = binder.instance
+                updateBinder(b: binder)
             } else if let inst = binder.instance, binder.isSingleton {
                 result = inst
             } else {
@@ -65,11 +74,7 @@ class HandlerRegistryService {
                 let inst = binder.factory()
                 binder.instance = inst
                 result = inst
-                if binders.property?[skLocal] != nil {
-                    binders.property?[skLocal] = binder
-                } else {
-                    binders.property?[skGlobal] = binder
-                }
+                updateBinder(b: binder)
             }
         }
         return result

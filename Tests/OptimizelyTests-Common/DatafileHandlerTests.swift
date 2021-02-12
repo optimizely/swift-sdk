@@ -423,7 +423,7 @@ class DatafileHandlerTests: XCTestCase {
         
         let handler = FakeDatafileHandler()
 
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "testPeriodicDownloadWithOptimizlyClient_SameRevision").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
+        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: "testPeriodicDownloadWithOptimizlyClient_SameRevision", service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
         
         let optimizely = OptimizelyClient(sdkKey: "testPeriodicDownloadWithOptimizlyClient_SameRevision", periodicDownloadInterval: 1)
         
@@ -457,8 +457,8 @@ class DatafileHandlerTests: XCTestCase {
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
         let handler = FakeDatafileHandler()
 
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: "testPeriodicDownloadWithOptimizlyClient_DifferentRevision").using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
+        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: "testPeriodicDownloadWithOptimizlyClient_DifferentRevision", service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
+
         let optimizely = OptimizelyClient(sdkKey: "testPeriodicDownloadWithOptimizlyClient_DifferentRevision", periodicDownloadInterval: 1)
         
         var count = 0

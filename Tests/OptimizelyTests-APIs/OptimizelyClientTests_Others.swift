@@ -342,12 +342,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         }
         
         let handler = FakeDatafileHandler()
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
-            .sdkKey(key: "testFetchedDatafileInvalid")
-            .using(instance: handler)
-            .to(factory: FakeDatafileHandler.init)
-            .reInitializeStrategy(strategy: .reUse)
-            .singetlon())
+        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: "testFetchedDatafileInvalid", service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
         
         let optimizely = OptimizelyClient(sdkKey: "testFetchedDatafileInvalid")
         
@@ -378,13 +373,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         }
 
         let handler = FakeDatafileHandler()
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
-            .sdkKey(key: "testHandlerReinitializeOnBackgroundDatafileUpdate")
-            .using(instance: handler)
-            .to(factory: FakeDatafileHandler.init)
-            .reInitializeStrategy(strategy: .reUse)
-            .singetlon())
-
+        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: "testHandlerReinitializeOnBackgroundDatafileUpdate", service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
         
         let optimizely = OptimizelyClient(sdkKey: "testHandlerReinitializeOnBackgroundDatafileUpdate")
 

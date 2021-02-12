@@ -212,9 +212,10 @@ class DecisionServiceTests_Experiments: XCTestCase {
         super.setUp()
         
         HandlerRegistryService.shared.binders.property?.removeAll()
-        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self).to { () -> OPTLogger? in
+        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self, factory: { () -> OPTLogger? in
             return self.mockLogger
-        }
+        })
+
         HandlerRegistryService.shared.registerBinding(binder: binder)
         
         MockLogger.logFound = false

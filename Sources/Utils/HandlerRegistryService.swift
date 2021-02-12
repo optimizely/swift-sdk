@@ -65,6 +65,11 @@ class HandlerRegistryService {
                 let inst = binder.factory()
                 binder.instance = inst
                 result = inst
+                if binders.property?[skLocal] != nil {
+                    binders.property?[skLocal] = binder
+                } else {
+                    binders.property?[skGlobal] = binder
+                }
             }
         }
         return result
@@ -100,7 +105,7 @@ protocol BinderProtocol {
     var instance: Any? { get set }
     
 }
-class Binder<T>: BinderProtocol {
+struct Binder<T>: BinderProtocol {
     var sdkKey: String?
     var service: Any
     var strategy: ReInitializeStrategy = .reCreate
@@ -120,34 +125,13 @@ class Binder<T>: BinderProtocol {
         }
     }
     
-    init(service: Any) {
+    init(sdkKey: String? = nil, service: Any, strategy: ReInitializeStrategy = .reCreate, factory: @escaping (() -> Any?) = { ()->Any? in { return nil as Any? }}, isSingleton: Bool = false, inst: T? = nil) {
+        self.sdkKey = sdkKey
         self.service = service
-    }
-    
-    func sdkKey(key: String) -> Binder {
-        self.sdkKey = key
-        return self
-    }
-    
-    func singetlon() -> Binder {
-        isSingleton = true
-        return self
-    }
-    
-    func reInitializeStrategy(strategy: ReInitializeStrategy) -> Binder {
         self.strategy = strategy
-        
-        return self
-    }
-    
-    func using(instance: T) -> Binder {
-        self.inst = instance
-        return self
-    }
-    
-    func to(factory:@escaping () -> T?) -> Binder {
         self.factory = factory
-        return self
+        self.isSingleton = isSingleton
+        self.inst = inst
     }
 }
 

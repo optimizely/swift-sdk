@@ -399,5 +399,28 @@ class OptimizelyClientTests_Others: XCTestCase {
         XCTAssertEqual(newHandlersCount, oldHandlersCount! - 1, "nil handlers should be filtered out")
     }
     
+    func testGettingLoggerAfterMultiInit() {
+        
+        let exp = expectation(description: "a")
 
+        var optimizely = OptimizelyClient(sdkKey: "a")
+         for i in 0..<1000 {
+             DispatchQueue.global().async {
+                 if i == 10 {
+                     optimizely = OptimizelyClient(sdkKey: "b")
+                 }
+                 for k in 0..<10 {
+                     let logger = OPTLoggerFactory.getLogger()
+                     logger.log(level: .info, message: "[LOGGER] [\(i)] \(k)")
+                 }
+                if i == 999 {
+                    exp.fulfill()
+                }
+            }
+            // need to let the main global queue run otherwise some remained queued.
+            Thread.sleep(forTimeInterval: 0.02)
+        }
+        
+        wait(for: [exp], timeout: 10)
+    }
 }

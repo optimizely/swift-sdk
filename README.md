@@ -21,12 +21,12 @@ See the [Mobile developer documentation](https://docs.developers.optimizely.com/
 up an Optimizely X project and start using the SDK.
 
 ### Requirements
-* iOS 10.0+ / tvOS 10.0+
+* iOS 10.0+ / tvOS 10.0+ / watchOS 3.0+
 * Swift 5+
 
 ### Installing the SDK
  
-Please note below that _\<platform\>_ is used to represent the platform on which you are building your app. Currently, we support ```iOS``` and ```tvOS``` platforms.
+Please note below that _\<platform\>_ is used to represent the platform on which you are building your app. Currently, we support ```iOS```, ```tvOS```, and ```watchOS``` platforms.
 
 #### Swift Package Manager
  Add the following line to the dependencies value of your _Package.swift_:

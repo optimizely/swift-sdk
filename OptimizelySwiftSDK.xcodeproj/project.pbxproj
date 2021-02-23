@@ -2076,14 +2076,8 @@
 		6E75165D22C520D400B2B157 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				6E75166622C520D400B2B157 /* Optimizely */,
-				6EC6DD3F24ABF8180017D296 /* Optimizely+Decide */,
-				6E75165E22C520D400B2B157 /* Customization */,
-				6E75167C22C520D400B2B157 /* Implementation */,
-				6E75168822C520D400B2B157 /* Data Model */,
-				6E75169E22C520D400B2B157 /* Protocols */,
-				6E75167422C520D400B2B157 /* Extensions */,
-				6E75166C22C520D400B2B157 /* Utils */,
+				75C720AF25E5561E0084187E /* watchOS */,
+				75C720AE25E556180084187E /* Shared */,
 				6E75167922C520D400B2B157 /* Supporting Files */,
 			);
 			path = Sources;
@@ -2137,7 +2131,6 @@
 				6E75167122C520D400B2B157 /* AtomicProperty.swift */,
 				6E75167222C520D400B2B157 /* Utils.swift */,
 				6E75167322C520D400B2B157 /* SDKVersion.swift */,
-				75C71C3825E45A2B0084187E /* WatchBackgroundNotifier.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2465,6 +2458,29 @@
 				6EF8DE0524B8DA58008B9488 /* decide_datafile.json */,
 			);
 			path = decide;
+			sourceTree = "<group>";
+		};
+		75C720AE25E556180084187E /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				6E75166622C520D400B2B157 /* Optimizely */,
+				6EC6DD3F24ABF8180017D296 /* Optimizely+Decide */,
+				6E75165E22C520D400B2B157 /* Customization */,
+				6E75167C22C520D400B2B157 /* Implementation */,
+				6E75168822C520D400B2B157 /* Data Model */,
+				6E75169E22C520D400B2B157 /* Protocols */,
+				6E75167422C520D400B2B157 /* Extensions */,
+				6E75166C22C520D400B2B157 /* Utils */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		75C720AF25E5561E0084187E /* watchOS */ = {
+			isa = PBXGroup;
+			children = (
+				75C71C3825E45A2B0084187E /* WatchBackgroundNotifier.swift */,
+			);
+			path = watchOS;
 			sourceTree = "<group>";
 		};
 		87DE4DE091B80D1F13BBD781 /* Frameworks */ = {

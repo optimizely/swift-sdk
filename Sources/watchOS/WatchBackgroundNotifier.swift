@@ -15,6 +15,7 @@
 * limitations under the License.                                           *
 ***************************************************************************/
 
+#if os(watchOS)
 import Foundation
 
 /// watchOS adds support for background notifications in watchOS 7.0 with `WKExtension.applicationDidEnterBackgroundNotification`
@@ -42,3 +43,4 @@ public extension WatchBackgroundNotifier {
         rawValue: "com.optimizely.watchAppDidEnterBackgroundNotification"
     )
 }
+#endif

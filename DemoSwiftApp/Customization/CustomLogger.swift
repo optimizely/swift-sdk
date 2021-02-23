@@ -9,7 +9,7 @@
 import Foundation
 import Optimizely
 
-class CustomLogger: OPTLogger {
+private final class CustomLogger: OPTLogger {
     public static var logLevel: OptimizelyLogLevel = .info
 
     required init() {

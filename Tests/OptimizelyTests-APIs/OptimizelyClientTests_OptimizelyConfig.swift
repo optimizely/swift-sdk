@@ -73,12 +73,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         
         let badUniqueSdkKey = "badUniqueSdkKey"
 
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
-            .sdkKey(key: badUniqueSdkKey)
-            .using(instance: FakeDatafileHandler())
-            .to(factory: FakeDatafileHandler.init)
-            .reInitializeStrategy(strategy: .reUse)
-            .singetlon())
+        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: badUniqueSdkKey, service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: FakeDatafileHandler()))
         
         var optimizelyConfig: OptimizelyConfig?
         let optimizely = OptimizelyClient(sdkKey: badUniqueSdkKey, periodicDownloadInterval: 1)

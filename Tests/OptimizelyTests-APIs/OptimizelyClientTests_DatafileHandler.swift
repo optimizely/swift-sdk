@@ -64,7 +64,7 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         // set the url to use as our datafile download url
         handler.localFileUrl = fileUrl
         
-        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).using(instance: handler).singetlon().sdkKey(key: sdkKey).reInitializeStrategy(strategy: .reUse))
+        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(sdkKey: sdkKey, service: OPTDatafileHandler.self, strategy: .reUse, isSingleton: true, inst: handler))
         
         let client = OptimizelyClient(sdkKey: sdkKey)
         

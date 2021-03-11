@@ -14,8 +14,7 @@ Pod::Spec.new do |s|
     :git => "https://github.com/optimizely/swift-sdk.git",
     :tag => "v"+s.version.to_s
   }
-  s.source_files            = "Sources/Shared/**/*.swift"
-  s.watchos.source_files    = "Sources/watchOS/**/*.swift"
+  s.source_files            = "Sources/**/*.swift"
   s.swift_version           = ["5.0", "5.1"]
   s.framework               = "Foundation"
   s.requires_arc            = true

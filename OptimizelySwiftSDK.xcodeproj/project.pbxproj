@@ -25,6 +25,7 @@
 		0B97DDA5249D4A28003DE606 /* SemanticVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B97DD93249D327F003DE606 /* SemanticVersion.swift */; };
 		0BAB9B0122567E34000DC388 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		3D8E460B7007B5B46630E046 /* libPods-OptimizelyTests-Common-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBBAD25A1207AF13647873E /* libPods-OptimizelyTests-Common-tvOS.a */; };
+		42C9F57F462DE308D5AAABA4 /* libPods-OptimizelyTests-Common-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBBAD25A1207AF13647873E /* libPods-OptimizelyTests-Common-tvOS.a */; };
 		6E12B1CA22C55A250005E9E6 /* optimizely_6372300739_v4.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */; };
 		6E12B1CB22C55A250005E9E6 /* feature_rollout_toggle_on.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */; };
 		6E12B1CC22C55A250005E9E6 /* feature_rollout_toggle_off.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */; };
@@ -1683,7 +1684,9 @@
 		1BBBAD25A1207AF13647873E /* libPods-OptimizelyTests-Common-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OptimizelyTests-Common-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		33BE1D8564FE425132F728C0 /* libPods-OptimizelyTests-Common-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OptimizelyTests-Common-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		38128F75B12FAAEAA393A591 /* Pods-OptimizelyTests-Common-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Common-iOS.debug.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Common-iOS/Pods-OptimizelyTests-Common-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		456ABB3BBED880347915C4E4 /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Common-tvOS.release.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Common-tvOS/Pods-OptimizelyTests-Common-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		5151BD9C826F9B112DC548AB /* Pods-OptimizelyTests-Common-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Common-iOS.release.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Common-iOS/Pods-OptimizelyTests-Common-iOS.release.xcconfig"; sourceTree = "<group>"; };
+		5F38B9FBC88543893307E7F4 /* Pods-OptimizelyTests-Common-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Common-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Common-tvOS/Pods-OptimizelyTests-Common-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		6E14CD632423F80B00010234 /* OptimizelyTests-Batch-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Batch-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E2D34B8250AD14000A0CDFE /* OptimizelyUserContextTests_Decide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide.swift; sourceTree = "<group>"; };
 		6E34A6162319EBB700BAE302 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
@@ -1857,6 +1860,8 @@
 		6E86CEA124FDC836005DAFED /* OptimizelyUserContext+ObjC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "OptimizelyUserContext+ObjC.swift"; sourceTree = "<group>"; };
 		6E86CEB224FF20DE005DAFED /* OptimizelyUserContextTests_Objc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptimizelyUserContextTests_Objc.m; sourceTree = "<group>"; };
 		6E981FC1232C363300FADDD6 /* DecisionListenerTests_Datafile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionListenerTests_Datafile.swift; sourceTree = "<group>"; };
+		6E98E96C25F9784D00986EF5 /* OptimizelyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyTests.swift; sourceTree = "<group>"; };
+		6E98E96E25F9784D00986EF5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E994B3325A3E6EA00999262 /* DecisionResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionResponse.swift; sourceTree = "<group>"; };
 		6EA0FB1E251A5AEC00EC002D /* bucketer_test3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bucketer_test3.json; sourceTree = "<group>"; };
 		6EA2CC232345618E001E7531 /* OptimizelyConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyConfig.swift; sourceTree = "<group>"; };
@@ -1881,8 +1886,6 @@
 		6EF8DE3024BF7D69008B9488 /* DecisionReasons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionReasons.swift; sourceTree = "<group>"; };
 		75C719BB25E4519B0084187E /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		75C71C3825E45A2B0084187E /* WatchBackgroundNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchBackgroundNotifier.swift; sourceTree = "<group>"; };
-		7630EFE42299849B51CF35AD /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Common-tvOS.release.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Common-tvOS/Pods-OptimizelyTests-Common-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		86CB89E3655313193F1C893D /* Pods-OptimizelyTests-Common-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptimizelyTests-Common-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-OptimizelyTests-Common-tvOS/Pods-OptimizelyTests-Common-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		BD6485812491474500F30986 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C78CAF572445AD8D009FE876 /* OptimizelyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyJSON.swift; sourceTree = "<group>"; };
 		C78CAF652446DB91009FE876 /* OptimizelyClientTests_OptimizelyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_OptimizelyJSON.swift; sourceTree = "<group>"; };
@@ -1944,6 +1947,7 @@
 			files = (
 				6EA4250D2218E41600B074B5 /* Optimizely.framework in Frameworks */,
 				3D8E460B7007B5B46630E046 /* libPods-OptimizelyTests-Common-tvOS.a in Frameworks */,
+				42C9F57F462DE308D5AAABA4 /* libPods-OptimizelyTests-Common-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2017,6 +2021,7 @@
 			children = (
 				6E75165D22C520D400B2B157 /* Sources */,
 				6E75196022C5211100B2B157 /* Tests */,
+				6E98E96B25F9784D00986EF5 /* OptimizelyTests */,
 				0B7CB0C321AC5FE2007B77E5 /* Products */,
 				5793E12CFD024A5E8594F535 /* Pods */,
 				87DE4DE091B80D1F13BBD781 /* Frameworks */,
@@ -2050,8 +2055,8 @@
 			children = (
 				38128F75B12FAAEAA393A591 /* Pods-OptimizelyTests-Common-iOS.debug.xcconfig */,
 				5151BD9C826F9B112DC548AB /* Pods-OptimizelyTests-Common-iOS.release.xcconfig */,
-				86CB89E3655313193F1C893D /* Pods-OptimizelyTests-Common-tvOS.debug.xcconfig */,
-				7630EFE42299849B51CF35AD /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */,
+				5F38B9FBC88543893307E7F4 /* Pods-OptimizelyTests-Common-tvOS.debug.xcconfig */,
+				456ABB3BBED880347915C4E4 /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -2076,8 +2081,15 @@
 		6E75165D22C520D400B2B157 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				6E75166622C520D400B2B157 /* Optimizely */,
+				6EC6DD3F24ABF8180017D296 /* Optimizely+Decide */,
+				6E75165E22C520D400B2B157 /* Customization */,
+				6E75167C22C520D400B2B157 /* Implementation */,
+				6E75168822C520D400B2B157 /* Data Model */,
+				6E75169E22C520D400B2B157 /* Protocols */,
+				6E75167422C520D400B2B157 /* Extensions */,
 				75C720AF25E5561E0084187E /* watchOS */,
-				75C720AE25E556180084187E /* Shared */,
+				6E75166C22C520D400B2B157 /* Utils */,
 				6E75167922C520D400B2B157 /* Supporting Files */,
 			);
 			path = Sources;
@@ -2440,6 +2452,15 @@
 			path = "OptimizelyTests-Others";
 			sourceTree = "<group>";
 		};
+		6E98E96B25F9784D00986EF5 /* OptimizelyTests */ = {
+			isa = PBXGroup;
+			children = (
+				6E98E96C25F9784D00986EF5 /* OptimizelyTests.swift */,
+				6E98E96E25F9784D00986EF5 /* Info.plist */,
+			);
+			path = OptimizelyTests;
+			sourceTree = "<group>";
+		};
 		6EC6DD3F24ABF8180017D296 /* Optimizely+Decide */ = {
 			isa = PBXGroup;
 			children = (
@@ -2458,21 +2479,6 @@
 				6EF8DE0524B8DA58008B9488 /* decide_datafile.json */,
 			);
 			path = decide;
-			sourceTree = "<group>";
-		};
-		75C720AE25E556180084187E /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				6E75166622C520D400B2B157 /* Optimizely */,
-				6EC6DD3F24ABF8180017D296 /* Optimizely+Decide */,
-				6E75165E22C520D400B2B157 /* Customization */,
-				6E75167C22C520D400B2B157 /* Implementation */,
-				6E75168822C520D400B2B157 /* Data Model */,
-				6E75169E22C520D400B2B157 /* Protocols */,
-				6E75167422C520D400B2B157 /* Extensions */,
-				6E75166C22C520D400B2B157 /* Utils */,
-			);
-			path = Shared;
 			sourceTree = "<group>";
 		};
 		75C720AF25E5561E0084187E /* watchOS */ = {
@@ -2808,7 +2814,7 @@
 		0B7CB0B921AC5FE2007B77E5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1130;
+				LastSwiftUpdateCheck = 1230;
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
@@ -5124,7 +5130,7 @@
 		};
 		6EA425112218E41600B074B5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 86CB89E3655313193F1C893D /* Pods-OptimizelyTests-Common-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 5F38B9FBC88543893307E7F4 /* Pods-OptimizelyTests-Common-tvOS.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Tests/Info.plist;
@@ -5145,7 +5151,7 @@
 		};
 		6EA425122218E41600B074B5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7630EFE42299849B51CF35AD /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */;
+			baseConfigurationReference = 456ABB3BBED880347915C4E4 /* Pods-OptimizelyTests-Common-tvOS.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Tests/Info.plist;

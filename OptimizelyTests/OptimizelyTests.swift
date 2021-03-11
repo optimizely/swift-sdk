@@ -1,5 +1,6 @@
+//
 /****************************************************************************
-* Copyright 2021, Optimizely, Inc. and contributors                        *
+* Copyright 2020, Optimizely, Inc. and contributors                        *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -15,22 +16,28 @@
 ***************************************************************************/
     
 
-import WatchKit
-import Foundation
+import XCTest
 
+class OptimizelyTests: XCTestCase {
 
-class InterfaceController: WKInterfaceController {
-
-    override func awake(withContext context: Any?) {
-        // Configure interface objects here.
+    override func setUpWithError() throws {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-    
-    override func willActivate() {
-        // This method is called when watch view controller is about to be visible to user
+
+    override func tearDownWithError() throws {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    
-    override func didDeactivate() {
-        // This method is called when watch view controller is no longer visible
+
+    func testExample() throws {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    }
+
+    func testPerformanceExample() throws {
+        // This is an example of a performance test case.
+        measure {
+            // Put the code you want to measure the time of here.
+        }
     }
 
 }

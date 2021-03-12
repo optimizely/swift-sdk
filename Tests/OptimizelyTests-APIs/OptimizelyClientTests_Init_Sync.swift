@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2020, Optimizely, Inc. and contributors                        *
+* Copyright 2020-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -70,9 +70,8 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .successWithData)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
-        let optimizely = OptimizelyClient(sdkKey: testSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler)
 
         try! optimizely.start(datafile: datafile,
                               doUpdateConfigOnNewDatafile: true)
@@ -85,9 +84,8 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .successWithNil)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
-        let optimizely = OptimizelyClient(sdkKey: testSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler)
 
         try! optimizely.start(datafile: datafile,
                               doUpdateConfigOnNewDatafile: true)
@@ -100,9 +98,8 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .failure)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
-        let optimizely = OptimizelyClient(sdkKey: testSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler)
 
         try! optimizely.start(datafile: datafile,
                               doUpdateConfigOnNewDatafile: true)
@@ -115,9 +112,8 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .successWithData)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
-        let optimizely = OptimizelyClient(sdkKey: testSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler)
 
         try! optimizely.start(datafile: datafile,
                               doUpdateConfigOnNewDatafile: false)
@@ -130,9 +126,8 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .successWithData)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
-        let optimizely = OptimizelyClient(sdkKey: testSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler)
 
         try! optimizely.start(datafile: datafile,
                               doUpdateConfigOnNewDatafile: true,
@@ -147,9 +142,8 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .successWithData)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
         let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler,
                                           periodicDownloadInterval: 10)
 
         try! optimizely.start(datafile: datafile,
@@ -163,9 +157,8 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .successWithData)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
         let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler,
                                           periodicDownloadInterval: 10)
 
         try! optimizely.start(datafile: datafile,
@@ -185,9 +178,8 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .successWithData)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self).sdkKey(key: testSdkKey).using(instance: handler).to(factory: FakeDatafileHandler.init).reInitializeStrategy(strategy: .reUse).singetlon())
-        
         let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler,
                                           periodicDownloadInterval: 10)
 
         try! optimizely.start(datafile: datafile,

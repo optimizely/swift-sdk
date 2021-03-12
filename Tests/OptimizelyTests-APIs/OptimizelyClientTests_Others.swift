@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+* Copyright 2019-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -342,14 +342,8 @@ class OptimizelyClientTests_Others: XCTestCase {
         }
         
         let handler = FakeDatafileHandler()
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
-            .sdkKey(key: "testFetchedDatafileInvalid")
-            .using(instance: handler)
-            .to(factory: FakeDatafileHandler.init)
-            .reInitializeStrategy(strategy: .reUse)
-            .singetlon())
-        
-        let optimizely = OptimizelyClient(sdkKey: "testFetchedDatafileInvalid")
+        let optimizely = OptimizelyClient(sdkKey: "testFetchedDatafileInvalid",
+                                          datafileHandler: handler)
         
         let exp = expectation(description: "a")
         var failureOccured = false
@@ -378,15 +372,8 @@ class OptimizelyClientTests_Others: XCTestCase {
         }
 
         let handler = FakeDatafileHandler()
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
-            .sdkKey(key: "testHandlerReinitializeOnBackgroundDatafileUpdate")
-            .using(instance: handler)
-            .to(factory: FakeDatafileHandler.init)
-            .reInitializeStrategy(strategy: .reUse)
-            .singetlon())
-
-        
-        let optimizely = OptimizelyClient(sdkKey: "testHandlerReinitializeOnBackgroundDatafileUpdate")
+        let optimizely = OptimizelyClient(sdkKey: "testHandlerReinitializeOnBackgroundDatafileUpdate",
+                                          datafileHandler: handler)
 
         // all handlers before transfer
         

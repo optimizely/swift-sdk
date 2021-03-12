@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+* Copyright 2019-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -25,11 +25,27 @@ public protocol OPTDatafileHandler {
     init()
     
     var endPointStringFormat: String { get set }
+    
+    /**
+     Save an interval for periodic polling
+     
+     - Parameter sdkKey: sdk key of the datafile to download
+     - Parameter interval: interval in secs (> 0)
+     */
+    func setPeriodicInterval(sdkKey: String, interval: Int)
+    
+    /**
+     Check if periodic polling has been set
+     
+     - Parameter sdkKey: sdk key of the datafile to download
+     - Returns: true if set
+     */
+    func hasPeriodicInterval(sdkKey: String) -> Bool
+    
     /**
     Synchronous call to download the datafile.
 
     - Parameter sdkKey: sdk key of the datafile to download
-    - Parameter datafileConfig: DatafileConfig for the datafile
     - Returns: a valid datafile or null
      */
     func downloadDatafile(sdkKey: String) -> Data?
@@ -37,6 +53,7 @@ public protocol OPTDatafileHandler {
     /**
      Asynchronous download data file.
      - Parameter sdkKey: application context for download
+     - Parameter returnCacheIfNoChange: include a cached datafile in result when datafile not changed.
      - Parameter resourceTimeoutInterval: timeout in seconds to wait for resource.
      - Parameter completionHhandler:  listener to call when datafile download complete
      */

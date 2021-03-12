@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2019,2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -72,16 +72,10 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         }
         
         let badUniqueSdkKey = "badUniqueSdkKey"
-
-        HandlerRegistryService.shared.registerBinding(binder: Binder(service: OPTDatafileHandler.self)
-            .sdkKey(key: badUniqueSdkKey)
-            .using(instance: FakeDatafileHandler())
-            .to(factory: FakeDatafileHandler.init)
-            .reInitializeStrategy(strategy: .reUse)
-            .singetlon())
-        
         var optimizelyConfig: OptimizelyConfig?
-        let optimizely = OptimizelyClient(sdkKey: badUniqueSdkKey, periodicDownloadInterval: 1)
+        let optimizely = OptimizelyClient(sdkKey: badUniqueSdkKey,
+                                          datafileHandler: FakeDatafileHandler(),
+                                          periodicDownloadInterval: 1)
         
         var exp: XCTestExpectation? = expectation(description: "datafile update event")
         _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { _ in

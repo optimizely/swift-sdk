@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ * Copyright 2019-2021, Optimizely, Inc. and contributors                   *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -30,12 +30,11 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     // and our download queue to speed things up.
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
 
-    
     public required init() {
 
     }
     
-    func setTimer(sdkKey: String, interval: Int) {
+    public func setPeriodicInterval(sdkKey: String, interval: Int) {
         timers.performAtomic { (timers) in
             if timers[sdkKey] == nil {
                 timers[sdkKey] = (nil, interval)
@@ -44,6 +43,17 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
         }
     }
     
+    public func hasPeriodicInterval(sdkKey: String) -> Bool {
+        var result = true
+        self.timers.performAtomic(atomicOperation: { (timers) in
+            if !timers.contains(where: { $0.key == sdkKey}) {
+                result = false
+            }
+        })
+        
+        return result
+    }
+        
     public func downloadDatafile(sdkKey: String) -> Data? {
         
         var datafile: Data?
@@ -184,17 +194,6 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
         }
     }
     
-    func hasPeriodUpdates(sdkKey: String) -> Bool {
-        var restart = true
-        self.timers.performAtomic(atomicOperation: { (timers) in
-            if !timers.contains(where: { $0.key == sdkKey}) {
-                restart = false
-            }
-        })
-        
-        return restart
-    }
-    
     func performPerodicDownload(sdkKey: String,
                                 startTime: Date,
                                 updateInterval: Int,
@@ -211,7 +210,7 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                 self.logger.e(error.reason)
             }
             
-            if self.hasPeriodUpdates(sdkKey: sdkKey) {
+            if self.hasPeriodicInterval(sdkKey: sdkKey) {
                 // adjust the next fire time so that events will be fired at fixed interval regardless of the download latency
                 // if latency is too big (or returning from background mode), fire the next event immediately once
                 

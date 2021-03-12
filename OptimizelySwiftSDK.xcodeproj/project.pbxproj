@@ -2012,6 +2012,7 @@
 				6E75165F22C520D400B2B157 /* DefaultLogger.swift */,
 				6E75166022C520D400B2B157 /* DefaultUserProfileService.swift */,
 				6E75166122C520D400B2B157 /* DefaultEventDispatcher.swift */,
+				6E75167D22C520D400B2B157 /* DefaultDatafileHandler.swift */,
 				6E75166222C520D400B2B157 /* Protocols */,
 			);
 			path = Customization;
@@ -2023,6 +2024,7 @@
 				6E75166322C520D400B2B157 /* OPTLogger.swift */,
 				6E75166422C520D400B2B157 /* OPTUserProfileService.swift */,
 				6E75166522C520D400B2B157 /* OPTEventDispatcher.swift */,
+				6E7516A422C520D400B2B157 /* OPTDatafileHandler.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -2081,7 +2083,6 @@
 		6E75167C22C520D400B2B157 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				6E75167D22C520D400B2B157 /* DefaultDatafileHandler.swift */,
 				6E623F01253F9045000617D0 /* DecisionInfo.swift */,
 				6E75167E22C520D400B2B157 /* DefaultBucketer.swift */,
 				6E75167F22C520D400B2B157 /* DefaultNotificationCenter.swift */,
@@ -2164,7 +2165,6 @@
 				6E7516A122C520D400B2B157 /* DataStoreQueueStack.swift */,
 				6E7516A222C520D400B2B157 /* OPTDataStore.swift */,
 				6E7516A322C520D400B2B157 /* OPTDecisionService.swift */,
-				6E7516A422C520D400B2B157 /* OPTDatafileHandler.swift */,
 				6E7516A522C520D400B2B157 /* OPTBucketer.swift */,
 			);
 			path = Protocols;

@@ -68,3 +68,26 @@ extension OptimizelyDecision: Equatable {
             lhs.reasons == rhs.reasons
     }
 }
+
+extension OptimizelyDecision: CustomStringConvertible {
+    public var description: String {
+        let variationKey = self.variationKey == nil ? "nil" : ("\"" + self.variationKey! + "\"")
+        let ruleKey = self.ruleKey == nil ? "nil" : ("\"" + self.ruleKey! + "\"")
+        
+        return """
+        {
+          variationKey: \(variationKey)
+          enabled: \(enabled)
+          variables: \(variables)
+          ruleKey: \(ruleKey)
+          flagKey: "\(flagKey)"
+          userContext: \(userContext)
+          reasons: [
+        """
+            + (reasons.isEmpty ? ""  : reasons.reduce("\n") {$0 +  "    - \($1)\n"}) +
+        """
+          ]
+        }
+        """
+    }
+}

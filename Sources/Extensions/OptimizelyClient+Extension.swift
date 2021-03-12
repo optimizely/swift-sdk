@@ -25,24 +25,24 @@ extension OptimizelyClient {
                           notificationCenter: OPTNotificationCenter) {
         // bind it as a non-singleton.  so, we will create an instance anytime injected.
         // we don't associate the logger with a sdkKey at this time because not all components are sdkKey specific.
-        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self).to(factory: type(of: logger).init)
+        var binder: Binder = Binder<OPTLogger>(service: OPTLogger.self, factory: type(of: logger).init)
+        
         //Register my logger service.
         HandlerRegistryService.shared.registerBinding(binder: binder)
         
         // this is bound a reusable singleton. so, if we re-initalize, we will keep this.
-        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTNotificationCenter>(service: OPTNotificationCenter.self).singetlon().reInitializeStrategy(strategy: .reUse).using(instance: notificationCenter).sdkKey(key: sdkKey))
-        
+        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTNotificationCenter>(sdkKey: sdkKey, service: OPTNotificationCenter.self, strategy: .reUse, isSingleton: true, inst: notificationCenter))
         // the decision service is also a singleton that will reCreate on re-initalize
-        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDecisionService>(service: OPTDecisionService.self).singetlon().using(instance: decisionService).reInitializeStrategy(strategy: .reUse).sdkKey(key: sdkKey))
+        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDecisionService>(sdkKey: sdkKey, service: OPTDecisionService.self,  strategy: .reUse, isSingleton: true, inst: decisionService))
         
         // An event dispatcher.  We use a singleton and use the same Event dispatcher for all
         // projects.  If you change the event dispatcher, you can potentially lose data if you
         // don't use the same backingstore.
-        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTEventDispatcher>(service: OPTEventDispatcher.self).singetlon().reInitializeStrategy(strategy: .reUse).using(instance: eventDispatcher).sdkKey(key: sdkKey))
+        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTEventDispatcher>(sdkKey: sdkKey, service: OPTEventDispatcher.self, strategy: .reUse, isSingleton: true, inst: eventDispatcher))
         
         // This is a singleton and might be a good candidate for reuse.  The handler supports mulitple
         // sdk keys without having to be created for every key.
-        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(service: OPTDatafileHandler.self).singetlon().reInitializeStrategy(strategy: .reUse).to(factory: type(of: datafileHandler).init).using(instance: datafileHandler).sdkKey(key: sdkKey))
+        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(sdkKey: sdkKey, service: OPTDatafileHandler.self, strategy: .reUse, isSingleton: true, inst: datafileHandler))
     }
     
     /// OptimizelyClient init

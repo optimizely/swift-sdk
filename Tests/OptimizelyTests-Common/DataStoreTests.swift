@@ -213,9 +213,9 @@ class DataStoreTests: XCTestCase {
         }
         let logger = Logger()
         
-        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self).to { () -> OPTLogger? in
+        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self, factory: { () -> OPTLogger? in
             return logger
-        }
+        })
 
         HandlerRegistryService.shared.registerBinding(binder: binder)
         

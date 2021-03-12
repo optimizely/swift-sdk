@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ * Copyright 2019-2021, Optimizely, Inc. and contributors                   *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -31,10 +31,6 @@ class BatchEventBuilder {
                                       flagKey: String,
                                       ruleType: String,
                                       enabled: Bool) -> Data? {
-        
-        if (ruleType == Constants.DecisionSource.rollout.rawValue || variation == nil) && !config.sendFlagDecisions {
-            return nil
-        }
         
         let metaData = DecisionMetadata(ruleType: ruleType, ruleKey: experiment?.key ?? "", flagKey: flagKey, variationKey: variation?.key ?? "", enabled: enabled)
         

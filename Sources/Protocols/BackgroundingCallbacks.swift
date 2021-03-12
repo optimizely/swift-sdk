@@ -30,9 +30,12 @@ private extension NSNotification.Name {
     #if os(macOS)
     static let didEnterBackground = NSApplication.didResignActiveNotification
     static let didBecomeActive = NSApplication.didBecomeActiveNotification
-    #else // iOS, tvOS
+    #elseif os(iOS) || os(tvOS)
     static let didEnterBackground = UIApplication.didEnterBackgroundNotification
     static let didBecomeActive = UIApplication.didBecomeActiveNotification
+    #elseif os(watchOS)
+    static let didEnterBackground = WatchBackgroundNotifier.watchAppDidEnterBackgroundNotification
+    static let didBecomeActive = WatchBackgroundNotifier.watchAppDidBecomeActiveNotification
     #endif
 }
 

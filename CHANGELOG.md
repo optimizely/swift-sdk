@@ -1,5 +1,23 @@
 # Optimizely Swift SDK Changelog
 
+## 3.7.0
+February 23, 2021
+
+### New Features
+* Introducing a new primary interface for retrieving feature flag status, configuration and associated experiment decisions for users ([#373](https://github.com/optimizely/swift-sdk/pull/373), [#386](https://github.com/optimizely/swift-sdk/pull/386)). The new `OptimizelyUserContext` class is instantiated with `createUserContext` and exposes the following APIs to get `OptimizelyDecision`:
+
+	- setAttribute
+	- decide
+	- decideAll
+	- decideForKeys
+	- trackEvent
+
+* For details, refer to our documentation page: [https://docs.developers.optimizely.com/full-stack/v4.0/docs/swift-sdk](https://docs.developers.optimizely.com/full-stack/v4.0/docs/swift-sdk).
+
+### Bug Fixes
+* Fix a synchronization bug with logger injection (the binder is being updated every inject), which caused rare app crashes. ([#387](https://github.com/optimizely/swift-sdk/pull/387))
+
+
 ## 3.6.1
 November 19, 2020
 

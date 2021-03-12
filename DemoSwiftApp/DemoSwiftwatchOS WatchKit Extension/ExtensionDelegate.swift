@@ -1,6 +1,5 @@
-//
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2021, Optimizely, Inc. and contributors                        *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -15,7 +14,31 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-/// Do not edit this field.
-/// - It is auto updated (Scripts/updated_version.sh) to reflect the current version
-/// - Do not put underscores in the name (Swiftlint can modify unexpectedly)
-let OPTIMIZELYSDKVERSION = "3.7.0"
+import Optimizely
+import WatchKit
+
+class ExtensionDelegate: NSObject, WKExtensionDelegate {
+    let logLevel = OptimizelyLogLevel.debug
+    let sdkKey = "FCnSegiEkRry9rhVMroit4"
+    var optimizely: OptimizelyClient!
+
+    func applicationDidFinishLaunching() {
+        optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
+        optimizely.start { result in
+            switch result {
+            case .failure(let error):
+                print("Optimizely SDK initiliazation failed: \(error)")
+            case .success:
+                print("Optimizely SDK initialized successfully!")
+            }
+        }
+    }
+
+    func applicationDidBecomeActive() {
+        WatchBackgroundNotifier.applicationDidBecomeActive()
+    }
+
+    func applicationDidEnterBackground() {
+        WatchBackgroundNotifier.applicationDidEnterBackground()
+    }
+}

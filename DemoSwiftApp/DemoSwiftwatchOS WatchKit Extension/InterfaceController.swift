@@ -1,6 +1,5 @@
-//
 /****************************************************************************
-* Copyright 2019, Optimizely, Inc. and contributors                        *
+* Copyright 2021, Optimizely, Inc. and contributors                        *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -15,7 +14,23 @@
 * limitations under the License.                                           *
 ***************************************************************************/
     
-/// Do not edit this field.
-/// - It is auto updated (Scripts/updated_version.sh) to reflect the current version
-/// - Do not put underscores in the name (Swiftlint can modify unexpectedly)
-let OPTIMIZELYSDKVERSION = "3.7.0"
+
+import WatchKit
+import Foundation
+
+
+class InterfaceController: WKInterfaceController {
+
+    override func awake(withContext context: Any?) {
+        // Configure interface objects here.
+    }
+    
+    override func willActivate() {
+        // This method is called when watch view controller is about to be visible to user
+    }
+    
+    override func didDeactivate() {
+        // This method is called when watch view controller is no longer visible
+    }
+
+}

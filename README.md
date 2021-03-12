@@ -21,12 +21,12 @@ See the [Mobile developer documentation](https://docs.developers.optimizely.com/
 up an Optimizely X project and start using the SDK.
 
 ### Requirements
-* iOS 10.0+ / tvOS 10.0+
+* iOS 10.0+ / tvOS 10.0+ / watchOS 3.0+
 * Swift 5+
 
 ### Installing the SDK
  
-Please note below that _\<platform\>_ is used to represent the platform on which you are building your app. Currently, we support ```iOS``` and ```tvOS``` platforms.
+Please note below that _\<platform\>_ is used to represent the platform on which you are building your app. Currently, we support ```iOS```, ```tvOS```, and ```watchOS``` platforms.
 
 #### Swift Package Manager
  Add the following line to the dependencies value of your _Package.swift_:
@@ -34,14 +34,14 @@ Please note below that _\<platform\>_ is used to represent the platform on which
 ```
 dependencies: [
 	.package(url: "https://github.com/optimizely/swift-sdk.git", 
-    .upToNextMinor(from: “3.6.1”))
+    .upToNextMinor(from: “3.7.0”))
 ]
 ```
 
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 ```use_frameworks!```
-```pod 'OptimizelySwiftSDK', '~> 3.6.1'```
+```pod 'OptimizelySwiftSDK', '~> 3.7.0'```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -49,7 +49,7 @@ dependencies: [
 Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.6.1```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.7.0```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 

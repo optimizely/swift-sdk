@@ -170,8 +170,8 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertEqual(metadata.variationKey, "")
         XCTAssertEqual(metadata.enabled, false)
     }
-
-    func testDecide_doNotSendImpression() {
+    
+    func testDecideError_doNotSendImpression() {
         let featureKey = "invalid"   // invalid flag
 
         let user = optimizely.createUserContext(userId: kUserId)
@@ -183,7 +183,34 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertFalse(decision.enabled)
         XCTAssertNil(eventDispatcher.eventSent)
     }
+
+    // sendFlagDecisions = false
     
+    func testDecide_sendImpression_withSendFlagDecisionsOff() {
+        optimizely.config?.project.sendFlagDecisions = false
+
+        let featureKey = "feature_2"
+
+        let user = optimizely.createUserContext(userId: kUserId)
+        let decision = user.decide(key: featureKey)
+        
+        optimizely.eventLock.sync{}
+
+        XCTAssertNotNil(eventDispatcher.eventSent)
+    }
+
+    func testDecide_shouldNotSendImpressionForRollout_withSendFlagDecisionsOff() {
+        optimizely.config?.project.sendFlagDecisions = false
+        
+        let featureKey = "feature_3"
+        let user = optimizely.createUserContext(userId: kUserId)
+        _ = user.decide(key: featureKey)
+        
+        optimizely.eventLock.sync{}
+        
+        XCTAssertNil(eventDispatcher.eventSent)
+    }
+
 }
 
 // MARK: - decideForKeys API

@@ -97,11 +97,13 @@ extension OptimizelyError: CustomStringConvertible, ReasonProtocol {
         switch self {
         case .generic:                                      message = "Unknown reason."
             
+        // DO NOT CHANGE these critical error messages - FSC will validate exact-wordings of these messages.
         case .sdkNotReady:                                  message = "Optimizely SDK not configured properly yet."
         case .featureKeyInvalid(let key):                   message = "No flag was found for key \"\(key)\"."
         case .variableValueInvalid(let key):                message = "Variable value for key \"\(key)\" is invalid or wrong type."
         case .invalidJSONVariable:                          message = "Invalid variables for OptimizelyJSON."
 
+        // These error messages not validated by FSC
         case .experimentKeyInvalid(let key):                message = "Experiment key (\(key)) is not in datafile. It is either invalid, paused, or archived."
         case .experimentIdInvalid(let id):                  message = "Experiment ID (\(id)) is not in datafile."
         case .experimentHasNoTrafficAllocation(let key):    message = "No traffic allocation rules are defined for experiement (\(key))."

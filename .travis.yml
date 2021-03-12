@@ -42,7 +42,7 @@ jobs:
     - stage: 'Lint'
       language: swift
       os: osx
-      osx_image: xcode11.3
+      osx_image: xcode11.6
       install:
         - gem install cocoapods -v '1.8.0'
       script:
@@ -64,7 +64,7 @@ jobs:
       stage: 'Unit Tests'
       language: swift
       os: osx
-      osx_image: xcode11.3
+      osx_image: xcode11.6
       branches:
         only:
           - master
@@ -73,7 +73,6 @@ jobs:
       install:
         - gem install slather --no-document --quiet
         - gem install cocoapods -v '1.9.3'
-        - pod --version
         - pod repo update
         - pod install
         # install jq without cleaning up
@@ -105,7 +104,7 @@ jobs:
       name: Prepare for release
       language: swift
       os: osx
-      osx_image: xcode11.3
+      osx_image: xcode11.6
       env:
         - VERSION=3.7.0
       install:
@@ -122,7 +121,7 @@ jobs:
       name: Push to cocoapods.org
       language: minimal
       os: osx
-      osx_image: xcode11.3
+      osx_image: xcode11.6
       env:
         - VERSION=3.7.0
       install:

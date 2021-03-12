@@ -55,7 +55,7 @@ public protocol OPTDatafileHandler {
      - Parameter sdkKey: application context for download
      - Parameter returnCacheIfNoChange: include a cached datafile in result when datafile not changed.
      - Parameter resourceTimeoutInterval: timeout in seconds to wait for resource.
-     - Parameter completionHhandler:  listener to call when datafile download complete
+     - Parameter completionHandler:  listener to call when datafile download is completed.
      */
     func downloadDatafile(sdkKey: String,
                           returnCacheIfNoChange: Bool,

@@ -72,7 +72,8 @@ jobs:
       name: PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
       install:
         - gem install slather --no-document --quiet
-        - gem install cocoapods -v '1.8.0'
+        - gem install cocoapods -v '1.9.3'
+        - pod --version
         - pod repo update
         - pod install
         # install jq without cleaning up

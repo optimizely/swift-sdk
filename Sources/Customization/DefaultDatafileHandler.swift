@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+ * Copyright 2019-2021, Optimizely, Inc. and contributors                   *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -15,7 +15,7 @@
  ***************************************************************************/
 import Foundation
 
-class DefaultDatafileHandler: OPTDatafileHandler {
+open class DefaultDatafileHandler: OPTDatafileHandler {
     // endpoint used to get the datafile.  This is settable after you create a OptimizelyClient instance.
     public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     
@@ -29,12 +29,12 @@ class DefaultDatafileHandler: OPTDatafileHandler {
     var datafileCache = [String: OPTDataStore]()
     // and our download queue to speed things up.
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
-    
-    required init() {
-        
+
+    public required init() {
+
     }
     
-    func setTimer(sdkKey: String, interval: Int) {
+    public func setPeriodicInterval(sdkKey: String, interval: Int) {
         timers.performAtomic { (timers) in
             if timers[sdkKey] == nil {
                 timers[sdkKey] = (nil, interval)
@@ -43,7 +43,18 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         }
     }
     
-    func downloadDatafile(sdkKey: String) -> Data? {
+    public func hasPeriodicInterval(sdkKey: String) -> Bool {
+        var result = true
+        self.timers.performAtomic(atomicOperation: { (timers) in
+            if !timers.contains(where: { $0.key == sdkKey}) {
+                result = false
+            }
+        })
+        
+        return result
+    }
+        
+    public func downloadDatafile(sdkKey: String) -> Data? {
         
         var datafile: Data?
         let group = DispatchGroup()
@@ -152,6 +163,10 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         }
     }
     
+    open func createDataStore(sdkKey: String) -> OPTDataStore {
+        return DataStoreFile<Data>(storeName: sdkKey)
+    }
+
     func startPeriodicUpdates(sdkKey: String, updateInterval: Int, datafileChangeNotification: ((Data) -> Void)?) {
         
         let now = Date()
@@ -179,17 +194,6 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         }
     }
     
-    func hasPeriodUpdates(sdkKey: String) -> Bool {
-        var restart = true
-        self.timers.performAtomic(atomicOperation: { (timers) in
-            if !timers.contains(where: { $0.key == sdkKey}) {
-                restart = false
-            }
-        })
-        
-        return restart
-    }
-    
     func performPerodicDownload(sdkKey: String,
                                 startTime: Date,
                                 updateInterval: Int,
@@ -206,7 +210,7 @@ class DefaultDatafileHandler: OPTDatafileHandler {
                 self.logger.e(error.reason)
             }
             
-            if self.hasPeriodUpdates(sdkKey: sdkKey) {
+            if self.hasPeriodicInterval(sdkKey: sdkKey) {
                 // adjust the next fire time so that events will be fired at fixed interval regardless of the download latency
                 // if latency is too big (or returning from background mode), fire the next event immediately once
                 
@@ -242,17 +246,17 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         
     }
     
-    func startUpdates(sdkKey: String, datafileChangeNotification: ((Data) -> Void)?) {
+    public func startUpdates(sdkKey: String, datafileChangeNotification: ((Data) -> Void)?) {
         if let value = timers.property?[sdkKey], !(value.timer?.isValid ?? false) {
             startPeriodicUpdates(sdkKey: sdkKey, updateInterval: value.interval, datafileChangeNotification: datafileChangeNotification)
         }
     }
     
-    func stopUpdates(sdkKey: String) {
+    public func stopUpdates(sdkKey: String) {
         stopPeriodicUpdates(sdkKey: sdkKey)
     }
     
-    func stopAllUpdates() {
+    public func stopAllUpdates() {
         stopPeriodicUpdates()
     }
     
@@ -260,27 +264,28 @@ class DefaultDatafileHandler: OPTDatafileHandler {
         if let cache = datafileCache[sdkKey] {
             return cache
         } else {
-            let store = DataStoreFile<Data>(storeName: sdkKey)
+            let store = createDataStore(sdkKey: sdkKey)
             datafileCache[sdkKey] = store
             return store
         }
     }
     
-    func saveDatafile(sdkKey: String, dataFile: Data) {
+    public func saveDatafile(sdkKey: String, dataFile: Data) {
         getDatafileCache(sdkKey: sdkKey).saveItem(forKey: sdkKey, value: dataFile)
     }
     
-    func loadSavedDatafile(sdkKey: String) -> Data? {
+    public func loadSavedDatafile(sdkKey: String) -> Data? {
         return getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey) as? Data
     }
     
-    func isDatafileSaved(sdkKey: String) -> Bool {
+    public func isDatafileSaved(sdkKey: String) -> Bool {
         return getDatafileCache(sdkKey: sdkKey).getItem(forKey: sdkKey) as? Data != nil
     }
     
-    func removeSavedDatafile(sdkKey: String) {
+    public func removeSavedDatafile(sdkKey: String) {
         getDatafileCache(sdkKey: sdkKey).removeItem(forKey: sdkKey)
     }
+
 }
 
 extension DataStoreUserDefaults {

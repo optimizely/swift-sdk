@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2019-2020, Optimizely, Inc. and contributors                   *
+* Copyright 2019-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -18,14 +18,14 @@ import Foundation
 
 /// Implementation of OPTDataStore as a generic for per type storeage in a flat file.
 /// This class should be used as a singleton per storeName and type (T)
-public class DataStoreFile<T>: OPTDataStore where T: Codable {
+open class DataStoreFile<T>: OPTDataStore where T: Codable {
     let dataStoreName: String
     let lock: DispatchQueue
     let async: Bool
     public let url: URL
     lazy var logger: OPTLogger? = OPTLoggerFactory.getLogger()
     
-    init(storeName: String, async: Bool = true) {
+    public init(storeName: String, async: Bool = true) {
         self.async = async
         dataStoreName = storeName
         lock = DispatchQueue(label: storeName)
@@ -56,7 +56,7 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
                     return
                 }
                 
-                let contents = try Data(contentsOf: self.url)
+                let contents = try self.readData()
 
                 if type(of: T.self) == type(of: Data.self) {
                     returnItem = contents as? T
@@ -107,7 +107,7 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
                     }
                     
                     if let data = data {
-                        try data.write(to: self.url, options: .atomic)
+                        try self.writeData(data)
                     }
                 }
             } catch let e {
@@ -125,5 +125,15 @@ public class DataStoreFile<T>: OPTDataStore where T: Codable {
             }
         }
 
+    }
+
+    // Read Data contents from the URL
+    open func readData() throws -> Data {
+        return try Data(contentsOf: self.url)
+    }
+
+    // Write Data to the URL
+    open func writeData(_ data: Data) throws {
+        try data.write(to: self.url, options: .atomic)
     }
 }

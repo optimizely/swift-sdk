@@ -51,8 +51,9 @@ extension OptimizelyClient {
     ///   - sdkKey: sdk key
     ///   - logger: custom Logger
     ///   - eventDispatcher: custom EventDispatcher (optional)
+    ///   - datafileHandler: custom datafile handler (optional)
     ///   - userProfileService: custom UserProfileService (optional)
-    ///   - periodicDownloadInterval: custom interval for periodic background datafile download.
+    ///   - periodicDownloadInterval: interval in secs for periodic background datafile download.
     ///         The recommended value is 10 * 60 secs (you can also set this to nil to use the recommended value).
     ///         Set this to 0 to disable periodic downloading.
     ///   - defaultLogLevel: default log level (optional. default = .info)
@@ -60,23 +61,24 @@ extension OptimizelyClient {
     public convenience init(sdkKey: String,
                             logger: OPTLogger? = nil,
                             eventDispatcher: OPTEventDispatcher? = nil,
+                            datafileHandler: OPTDatafileHandler? = nil,
                             userProfileService: OPTUserProfileService? = nil,
                             periodicDownloadInterval: Int?,
                             defaultLogLevel: OptimizelyLogLevel? = nil,
                             defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
-        let interval = periodicDownloadInterval ?? 10 * 60
         
         self.init(sdkKey: sdkKey,
                   logger: logger,
                   eventDispatcher: eventDispatcher,
+                  datafileHandler: datafileHandler,
                   userProfileService: userProfileService,
                   defaultLogLevel: defaultLogLevel,
                   defaultDecideOptions: defaultDecideOptions)
         
-        if let handler = datafileHandler as? DefaultDatafileHandler, interval > 0 {
-            handler.setTimer(sdkKey: sdkKey, interval: interval)
+        let interval = periodicDownloadInterval ?? 10 * 60
+        if interval > 0 {
+            self.currentDatafileHandler?.setPeriodicInterval(sdkKey: sdkKey, interval: interval)
         }
-        
     }
 
 }

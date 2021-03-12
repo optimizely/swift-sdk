@@ -303,6 +303,22 @@ class DatafileHandlerTests: XCTestCase {
         // finally remove the datafile when complete.
         try? FileManager.default.removeItem(at: fileUrl!)
     }
+    
+    func testSetPeriodicInterval() {
+        let handler = DefaultDatafileHandler()
+        XCTAssert(handler.timers.property!.keys.isEmpty)
+        
+        handler.setPeriodicInterval(sdkKey: "abc", interval: 123)
+        XCTAssert(handler.timers.property!.keys.contains("abc"))
+        XCTAssert(handler.timers.property!["abc"]!.interval == 123)
+    }
+    
+    func testHasPeriodicInterval() {
+        let handler = DefaultDatafileHandler()
+        handler.setPeriodicInterval(sdkKey: "abc", interval: 123)
+        XCTAssertFalse(handler.hasPeriodicInterval(sdkKey: "x"))
+        XCTAssertTrue(handler.hasPeriodicInterval(sdkKey: "abc"))
+    }
 
     func testPeriodicDownload() {
         class FakeDatafileHandler: DefaultDatafileHandler {
@@ -422,10 +438,9 @@ class DatafileHandlerTests: XCTestCase {
         expection.isInverted = true
         
         let handler = FakeDatafileHandler()
-
-        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: "testPeriodicDownloadWithOptimizlyClient_SameRevision", service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
-        
-        let optimizely = OptimizelyClient(sdkKey: "testPeriodicDownloadWithOptimizlyClient_SameRevision", periodicDownloadInterval: 1)
+        let optimizely = OptimizelyClient(sdkKey: "testPeriodicDownloadWithOptimizlyClient_SameRevision",
+                                          datafileHandler: handler,
+                                          periodicDownloadInterval: 1)
         
         _ = optimizely.notificationCenter!.addDatafileChangeNotificationListener { _ in
             optimizely.datafileHandler?.stopAllUpdates()
@@ -456,10 +471,9 @@ class DatafileHandlerTests: XCTestCase {
         }
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
         let handler = FakeDatafileHandler()
-
-        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: "testPeriodicDownloadWithOptimizlyClient_DifferentRevision", service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
-
-        let optimizely = OptimizelyClient(sdkKey: "testPeriodicDownloadWithOptimizlyClient_DifferentRevision", periodicDownloadInterval: 1)
+        let optimizely = OptimizelyClient(sdkKey: "testPeriodicDownloadWithOptimizlyClient_DifferentRevision",
+                                          datafileHandler: handler,
+                                          periodicDownloadInterval: 1)
         
         var count = 0
 

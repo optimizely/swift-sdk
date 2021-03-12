@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2020, Optimizely, Inc. and contributors                        *
+* Copyright 2020-2021, Optimizely, Inc. and contributors                   *
 *                                                                          *
 * Licensed under the Apache License, Version 2.0 (the "License");          *
 * you may not use this file except in compliance with the License.         *
@@ -56,11 +56,8 @@ class OptimizelyClientTests_Init_Async: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .successWithData)
-        
-        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: testSdkKey, service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
-
-        
-        let optimizely = OptimizelyClient(sdkKey: testSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler)
 
         let exp = expectation(description: "x")
         optimizely.start { result in
@@ -76,9 +73,8 @@ class OptimizelyClientTests_Init_Async: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .failure)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: testSdkKey, service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
-        
-        let optimizely = OptimizelyClient(sdkKey: testSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler)
 
         let exp = expectation(description: "x")
         optimizely.start { result in
@@ -97,9 +93,8 @@ class OptimizelyClientTests_Init_Async: XCTestCase {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
         let handler = FakeDatafileHandler(mode: .failedToLoadFromCache)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: testSdkKey, service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
-
-        let optimizely = OptimizelyClient(sdkKey: testSdkKey)
+        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler)
 
         let exp = expectation(description: "x")
         optimizely.start { result in
@@ -117,10 +112,9 @@ class OptimizelyClientTests_Init_Async: XCTestCase {
     func testInitAsync_enablePeriodicPolling() {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
         
-        let handler = FakeDatafileHandler(mode: .successWithData)
-        HandlerRegistryService.shared.registerBinding(binder: Binder(sdkKey: testSdkKey, service: OPTDatafileHandler.self, strategy: .reUse, factory: FakeDatafileHandler.init, isSingleton: true, inst: handler))
-        
+        let handler = FakeDatafileHandler(mode: .successWithData)        
         let optimizely = OptimizelyClient(sdkKey: testSdkKey,
+                                          datafileHandler: handler,
                                           periodicDownloadInterval: 1)
         
         let exp = expectation(description: "x")

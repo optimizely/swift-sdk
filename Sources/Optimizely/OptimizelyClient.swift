@@ -43,14 +43,6 @@ open class OptimizelyClient: NSObject {
     
     let eventLock = DispatchQueue(label: "com.optimizely.client")
     
-    private var isPeriodicPollingEnabled: Bool {
-        if let handler = datafileHandler as? DefaultDatafileHandler {
-            return handler.hasPeriodUpdates(sdkKey: sdkKey)
-        } else {
-            return false
-        }
-    }
-    
     // MARK: - Customizable Services
     
     lazy var logger = OPTLoggerFactory.getLogger()
@@ -68,6 +60,7 @@ open class OptimizelyClient: NSObject {
     public var datafileHandler: OPTDatafileHandler? {
         return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
     }
+    lazy var currentDatafileHandler = datafileHandler
     
     public var notificationCenter: OPTNotificationCenter? {
         return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
@@ -81,12 +74,14 @@ open class OptimizelyClient: NSObject {
     ///   - sdkKey: sdk key
     ///   - logger: custom Logger
     ///   - eventDispatcher: custom EventDispatcher (optional)
+    ///   - datafileHandler: custom datafile handler (optional)
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision optiopns (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
+                datafileHandler: OPTDatafileHandler? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
                 defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
@@ -103,7 +98,7 @@ open class OptimizelyClient: NSObject {
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
-                              datafileHandler: DefaultDatafileHandler(),
+                              datafileHandler: datafileHandler ?? DefaultDatafileHandler(),
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
@@ -181,12 +176,14 @@ open class OptimizelyClient: NSObject {
         
         if !doFetchDatafileBackground { return }
         
-        datafileHandler?.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false) { [weak self] result in
+        guard let datafileHandler = datafileHandler else { return }
+        
+        datafileHandler.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false) { [weak self] result in
             guard let self = self else { return }
 
             // override to update always if periodic datafile polling is enabled
             // this is necessary for the case that the first cache download gets the updated datafile
-            guard doUpdateConfigOnNewDatafile || self.isPeriodicPollingEnabled else { return }
+            guard doUpdateConfigOnNewDatafile || datafileHandler.hasPeriodicInterval(sdkKey: self.sdkKey) else { return }
             
             if case .success(let data) = result, let datafile = data {
                 // new datafile came in

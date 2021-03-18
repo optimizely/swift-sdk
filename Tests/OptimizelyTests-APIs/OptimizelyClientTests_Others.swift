@@ -400,11 +400,11 @@ class OptimizelyClientTests_Others: XCTestCase {
         
         let exp = expectation(description: "a")
 
-        var optimizely = OptimizelyClient(sdkKey: "a")
+        _ = OptimizelyClient(sdkKey: "a")
          for i in 0..<1000 {
              DispatchQueue.global().async {
                  if i == 10 {
-                     optimizely = OptimizelyClient(sdkKey: "b")
+                     _ = OptimizelyClient(sdkKey: "b")
                  }
                  for k in 0..<10 {
                      let logger = OPTLoggerFactory.getLogger()

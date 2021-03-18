@@ -192,7 +192,7 @@ extension OptimizelyUserContextTests_Decide {
         let featureKey = "feature_2"
 
         let user = optimizely.createUserContext(userId: kUserId)
-        let decision = user.decide(key: featureKey)
+        _ = user.decide(key: featureKey)
         
         optimizely.eventLock.sync{}
 

@@ -1,18 +1,18 @@
-/****************************************************************************
- * Copyright 2019-2021, Optimizely, Inc. and contributors                   *
- *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
- * you may not use this file except in compliance with the License.         *
- * You may obtain a copy of the License at                                  *
- *                                                                          *
- *    http://www.apache.org/licenses/LICENSE-2.0                            *
- *                                                                          *
- * Unless required by applicable law or agreed to in writing, software      *
- * distributed under the License is distributed on an "AS IS" BASIS,        *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- * See the License for the specific language governing permissions and      *
- * limitations under the License.                                           *
- ***************************************************************************/
+//
+// Copyright 2019-2021, Optimizely, Inc. and contributors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 import Foundation
 
@@ -190,9 +190,9 @@ class DefaultDecisionService: OPTDecisionService {
                                 options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
         
-        //Evaluate in this order:
+        // Evaluate in this order:
         
-        //1. Attempt to bucket user into experiment using feature flag.
+        // 1. Attempt to bucket user into experiment using feature flag.
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
         var decisionResponse = getVariationForFeatureExperiment(config: config,
                                                                 featureFlag: featureFlag,
@@ -204,7 +204,7 @@ class DefaultDecisionService: OPTDecisionService {
             return DecisionResponse(result: decision, reasons: reasons)
         }
         
-        //2. Attempt to bucket user into rollout using the feature flag.
+        // 2. Attempt to bucket user into rollout using the feature flag.
         // Check if the feature flag has rollout and the user is bucketed into one of it's rules
         decisionResponse = getVariationForFeatureRollout(config: config,
                                                          featureFlag: featureFlag,

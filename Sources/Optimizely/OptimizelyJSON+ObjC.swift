@@ -13,7 +13,6 @@
 * See the License for the specific language governing permissions and      *
 * limitations under the License.                                           *
 ***************************************************************************/
-
 import Foundation
 
 extension OptimizelyJSON {
@@ -30,9 +29,9 @@ extension OptimizelyJSON {
         self.init(map: m)
     }
     
+    /// - Returns: true when one or more variables are included.
     @available(swift, obsoleted: 1.0)
     @objc(isEmpty)
-    /// - Returns: true when one or more variables are included.
     public func objcIsEmpty() -> Bool {
         return self.isEmpty
     }

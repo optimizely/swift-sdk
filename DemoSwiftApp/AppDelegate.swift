@@ -17,18 +17,6 @@
 import UIKit
 import Optimizely
 
-private final class CustomLogger: OPTLogger {
-    public static var logLevel: OptimizelyLogLevel = .info
-
-    required init() {
-    }
-
-    public func log(level: OptimizelyLogLevel, message: String) {
-        if level.rawValue <= CustomLogger.logLevel.rawValue {
-            print("🐱 - [\(level.name)] Kitty - \(message)")
-        }
-    }
-}
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let logLevel = OptimizelyLogLevel.debug

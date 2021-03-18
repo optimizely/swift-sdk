@@ -15,6 +15,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@import Optimizely;
 
 NS_ASSUME_NONNULL_BEGIN
 

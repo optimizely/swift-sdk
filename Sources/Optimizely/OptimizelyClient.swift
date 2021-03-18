@@ -237,9 +237,6 @@ open class OptimizelyClient: NSObject {
         
         self.sendDatafileChangeNotification(data: data)
     }
-}
-
-extension OptimizelyClient {
     
     /**
      * Use the activate method to start an experiment.

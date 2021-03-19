@@ -70,6 +70,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Optimizely SDK initiliazation failed: \(error)")
             case .success:
                 print("Optimizely SDK initialized successfully!")
+            #if !os(iOS)
+            @unknown default:
+                print("Optimizely SDK initiliazation failed with unknown result")
+            #endif
             }
 
             self.startWithRootViewController()
@@ -125,6 +129,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("Optimizely SDK initiliazation failed: \(error)")
             case .success:
                 print("Optimizely SDK initialized successfully!")
+            #if !os(iOS)
+            @unknown default:
+                print("Optimizely SDK initiliazation failed with unknown result")
+            #endif
             }
             self.startWithRootViewController()
             

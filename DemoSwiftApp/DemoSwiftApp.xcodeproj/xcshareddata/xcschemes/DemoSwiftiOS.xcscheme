@@ -37,16 +37,6 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "252D7DFF21C8800900134A7A"
-               BuildableName = "OptimizelyiOSDemoAppUITests.xctest"
-               BlueprintName = "OptimizelyiOSDemoAppUITests"
-               ReferencedContainer = "container:DemoSwiftApp.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

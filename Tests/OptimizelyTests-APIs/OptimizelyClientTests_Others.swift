@@ -401,7 +401,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         let exp = expectation(description: "a")
 
         _ = OptimizelyClient(sdkKey: "a")
-         for i in 0..<1000 {
+         for i in 0..<100 {
              DispatchQueue.global().async {
                  if i == 10 {
                      _ = OptimizelyClient(sdkKey: "b")

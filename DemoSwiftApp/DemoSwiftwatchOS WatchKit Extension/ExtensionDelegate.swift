@@ -19,17 +19,32 @@ import WatchKit
 
 class ExtensionDelegate: NSObject, WKExtensionDelegate {
     let logLevel = OptimizelyLogLevel.debug
-    let sdkKey = "FCnSegiEkRry9rhVMroit4"
     var optimizely: OptimizelyClient!
+
+    let sdkKey = "FCnSegiEkRry9rhVMroit4"
+    let featureKey = "decide_demo"
+    let eventKey = "sample_conversion"
+    let userId = String(Int.random(in: 0..<100000))
+    let attributes: [String: Any] = ["location": "NY",
+                                     "bool_attr": false,
+                                     "semanticVersioning": "1.2"]
 
     func applicationDidFinishLaunching() {
         optimizely = OptimizelyClient(sdkKey: sdkKey, defaultLogLevel: logLevel)
+        
         optimizely.start { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
             case .success:
                 print("Optimizely SDK initialized successfully!")
+                
+                let user = self.optimizely.createUserContext(userId: self.userId, attributes: self.attributes)
+                let decision = user.decide(key: self.featureKey, options: [.includeReasons])
+                print("[DECISION] \(decision)")
+                try? user.trackEvent(eventKey: self.eventKey)
+            @unknown default:
+                print("Optimizely SDK initiliazation failed with unknown result")
             }
         }
     }

@@ -399,18 +399,20 @@ class OptimizelyClientTests_Others: XCTestCase {
     func testGettingLoggerAfterMultiInit() {
         
         let exp = expectation(description: "a")
-
+        
         _ = OptimizelyClient(sdkKey: "a")
-         for i in 0..<100 {
-             DispatchQueue.global().async {
-                 if i == 10 {
-                     _ = OptimizelyClient(sdkKey: "b")
-                 }
-                 for k in 0..<10 {
-                     let logger = OPTLoggerFactory.getLogger()
-                     logger.log(level: .info, message: "[LOGGER] [\(i)] \(k)")
-                 }
-                if i == 999 {
+        
+        let maxNum = 100
+        for i in 0..<maxNum {
+            DispatchQueue.global().async {
+                if i == 10 {
+                    _ = OptimizelyClient(sdkKey: "b")
+                }
+                for k in 0..<10 {
+                    let logger = OPTLoggerFactory.getLogger()
+                    logger.log(level: .info, message: "[LOGGER] [\(i)] \(k)")
+                }
+                if i == maxNum - 1 {
                     exp.fulfill()
                 }
             }

@@ -29,8 +29,6 @@
 	<array>
 		<string>fetch</string>
 	</array>
-	<key>UILaunchStoryboardName</key>
-	<string>iOSMain</string>
 	<key>UIMainStoryboardFile</key>
 	<string>iOSMain</string>
 	<key>UIRequiredDeviceCapabilities</key>

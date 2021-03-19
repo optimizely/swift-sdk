@@ -134,6 +134,13 @@
 			remoteGlobalIDString = 6E614DCC21E3F389005982A1;
 			remoteInfo = "OptimizelySwiftSDK-tvOS";
 		};
+		6EAAB6D42602892A00294B8A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 75C719BB25E4519B0084187E;
+			remoteInfo = "OptimizelySwiftSDK-watchOS";
+		};
 		6EF41A992523D23E00EAADF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E4D2FE722C5457F00062EB3 /* OptimizelySwiftSDK.xcodeproj */;
@@ -233,6 +240,7 @@
 				6E4D2FF722C5457F00062EB3 /* Optimizely.framework */,
 				6E4D2FF922C5457F00062EB3 /* Optimizely.framework */,
 				6EF41A9A2523D23E00EAADF1 /* Optimizely.framework */,
+				6EAAB6D52602892A00294B8A /* Optimizely.framework */,
 				6E4D2FFB22C5457F00062EB3 /* OptimizelyTests-iOS.xctest */,
 				6E4D2FFD22C5457F00062EB3 /* OptimizelyTests-Common-iOS.xctest */,
 				6EF41A9C2523D23E00EAADF1 /* OptimizelyTests-Batch-iOS.xctest */,
@@ -419,7 +427,7 @@
 		6EF7496721E40467008B22A0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1230;
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
 					6EF7498D21E404BB008B22A0 = {
@@ -543,6 +551,13 @@
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-Others-tvOS.xctest";
 			remoteRef = 6E4D300C22C5457F00062EB3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6EAAB6D52602892A00294B8A /* Optimizely.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Optimizely.framework;
+			remoteRef = 6EAAB6D42602892A00294B8A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6EF41A9A2523D23E00EAADF1 /* Optimizely.framework */ = {
@@ -722,6 +737,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -783,6 +799,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -817,7 +834,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ../DemoSwiftApp/DemoSwiftiOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -836,7 +853,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ../DemoSwiftApp/DemoSwiftiOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -855,7 +872,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ../DemoSwiftApp/DemoSwifttvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -875,7 +892,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ../DemoSwiftApp/DemoSwifttvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

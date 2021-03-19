@@ -4,6 +4,8 @@ disabled_rules:
 - empty_count
 - todo
 - implicit_getter
+- private_over_fileprivate
+- inclusive_language
 opt_in_rules:
 - empty_string
 excluded:
@@ -21,17 +23,17 @@ function_body_length:
     warning: 300
     error: 500
 function_parameter_count:
-    warning: 6
-    error: 8
+    warning: 10
+    error: 10
 type_body_length:
-    warning: 300
+    warning: 500
     error: 500
 file_length:
     warning: 1000
     error: 1500
     ignore_comment_only_lines: true
 cyclomatic_complexity:
-    warning: 15
+    warning: 20
     error: 25
 type_name:
     min_length: 1

@@ -1,18 +1,18 @@
-/****************************************************************************
-* Copyright 2019-2021, Optimizely, Inc. and contributors                   *
-*                                                                          *
-* Licensed under the Apache License, Version 2.0 (the "License");          *
-* you may not use this file except in compliance with the License.         *
-* You may obtain a copy of the License at                                  *
-*                                                                          *
-*    http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                          *
-* Unless required by applicable law or agreed to in writing, software      *
-* distributed under the License is distributed on an "AS IS" BASIS,        *
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
-* See the License for the specific language governing permissions and      *
-* limitations under the License.                                           *
-***************************************************************************/
+//
+// Copyright 2019-2021, Optimizely, Inc. and contributors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 import Foundation
 
@@ -25,15 +25,15 @@ extension OptimizelyClient {
                           notificationCenter: OPTNotificationCenter) {
         // bind it as a non-singleton.  so, we will create an instance anytime injected.
         // we don't associate the logger with a sdkKey at this time because not all components are sdkKey specific.
-        var binder: Binder = Binder<OPTLogger>(service: OPTLogger.self, factory: type(of: logger).init)
+        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self, factory: type(of: logger).init)
         
-        //Register my logger service.
+        // Register my logger service.
         HandlerRegistryService.shared.registerBinding(binder: binder)
         
         // this is bound a reusable singleton. so, if we re-initalize, we will keep this.
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTNotificationCenter>(sdkKey: sdkKey, service: OPTNotificationCenter.self, strategy: .reUse, isSingleton: true, inst: notificationCenter))
         // the decision service is also a singleton that will reCreate on re-initalize
-        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDecisionService>(sdkKey: sdkKey, service: OPTDecisionService.self,  strategy: .reUse, isSingleton: true, inst: decisionService))
+        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDecisionService>(sdkKey: sdkKey, service: OPTDecisionService.self, strategy: .reUse, isSingleton: true, inst: decisionService))
         
         // An event dispatcher.  We use a singleton and use the same Event dispatcher for all
         // projects.  If you change the event dispatcher, you can potentially lose data if you

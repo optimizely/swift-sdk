@@ -161,6 +161,8 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
             }
             
             task.resume()
+
+            session.finishTasksAndInvalidate()
         }
     }
     

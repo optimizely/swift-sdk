@@ -1,5 +1,16 @@
 # Optimizely Swift SDK Changelog
 
+## 3.7.1
+April 14, 2021
+
+### New Features
+* DatafileHandler can be customized and set when OptimizelyClient is instantiated. ([#384](https://github.com/optimizely/swift-sdk/pull/384))
+* Add watchOS Compatibility. ([#390](https://github.com/optimizely/swift-sdk/pull/390))
+
+### Bug Fixes
+* Clean up build and lint warnings. ([#397](https://github.com/optimizely/swift-sdk/pull/397))
+
+
 ## 3.7.0
 February 23, 2021
 

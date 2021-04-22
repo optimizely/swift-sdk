@@ -81,14 +81,14 @@ class DatafileHandlerTests: XCTestCase {
 
     func testDatafileDownload500() {
         
-        var localUrl:URL?
+        var localUrl: URL?
         
         // create a dummy file at a url to use as or datafile cdn location
         localUrl = OTUtils.saveAFile(name: sdkKey, data: "{}".data(using: .utf8)!)
 
         // default datafile handler
         class InnerDatafileHandler : DefaultDatafileHandler {
-            var localFileUrl:URL?
+            var localFileUrl: URL?
             // override getSession to return our own session.
             override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
             

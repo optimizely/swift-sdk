@@ -138,6 +138,23 @@ class OTUtils {
         }
     }
     
+    // MARK: - HandlerRegistryService
+    
+    static func bindLoggerForTest(_ level: OptimizelyLogLevel? = nil) {
+        if let level = level {
+            DefaultLogger.logLevel = level
+        }
+        let logger = DefaultLogger()
+
+        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self, factory: type(of: logger).init)
+        HandlerRegistryService.shared.registerBinding(binder: binder)
+    }
+    
+    static func removeAllBinders() {
+        HandlerRegistryService.shared.binders.property?.removeAll()
+    }
+
+    
     // MARK: - UPS
     
     static func getVariationFromUPS(ups: OPTUserProfileService, userId: String, experimentId: String) -> String? {
@@ -181,6 +198,8 @@ class OTUtils {
         return negativeMaxValueAllowed * 2.0
     }
     
+    // MARK: - files
+    
     static func saveAFile(name:String, data:Data) -> URL? {
         let ds = DataStoreFile<Data>(storeName: name, async: false)
         ds.saveItem(forKey: name, value: data)
@@ -193,6 +212,43 @@ class OTUtils {
         ds.removeItem(forKey: name)
         
         return ds.url
+    }
+    
+    static func removeAllFiles(including: String) {
+        removeAllFiles(including: including, in: .documentDirectory)
+        removeAllFiles(including: including, in: .cachesDirectory)
+    }
+    
+    static func removeAllFiles(including: String, in directory: FileManager.SearchPathDirectory) {
+        if let docUrl = FileManager.default.urls(for: directory, in: .userDomainMask).first {
+            if let names = try? FileManager.default.contentsOfDirectory(atPath: docUrl.path) {
+                names.forEach{ name in
+                    if name.contains(including) {
+                        let fileUrl = docUrl.appendingPathComponent(name)
+                        do {
+                            try FileManager.default.removeItem(at: fileUrl)
+                            //print("[OTUtils] removed file: '\(name)' from '\(directory)' directory")
+                        } catch {
+                            //print("[OTUtils] removing file failed for '\(name)' from '\(directory)' directory: \(error)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static func createDocumentDirectoryIfNotAvailable() {
+        // documentDirectory may not exist for simulator unit test (iOS11+). create it if not found.
+        
+        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            if (!FileManager.default.fileExists(atPath: url.path)) {
+                do {
+                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
+                } catch {
+                    print(error)
+                }
+            }
+        }
     }
 
     // MARK: - others

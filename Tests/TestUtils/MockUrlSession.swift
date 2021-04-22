@@ -22,15 +22,15 @@ import Foundation
 // and returns that.
 // the response also includes the url for the data download.
 // the cdn url is used to get the datafile if the datafile is not in cache
-class MockUrlSession : URLSession {
-    var downloadCacheUrl:URL?
-    let failureCode:Int
-    let passError:Bool
-    class MockDownloadTask : URLSessionDownloadTask {
+class MockUrlSession: URLSession {
+    var downloadCacheUrl: URL?
+    let failureCode: Int
+    let passError: Bool
+    
+    class MockDownloadTask: URLSessionDownloadTask {
+        var task: () -> Void
         
-        var task:()->Void
-        
-        init(_ task:@escaping ()->Void) {
+        init(_ task: @escaping () -> Void) {
             self.task = task
         }
         
@@ -39,13 +39,19 @@ class MockUrlSession : URLSession {
         }
     }
 
-    init (failureCode:Int, withError:Bool) {
+    init(failureCode: Int, withError: Bool) {
         self.failureCode = failureCode
         self.passError = withError
     }
     
+    init(failureCode: Int, withError: Bool, localUrl: URL?) {
+        self.failureCode = failureCode
+        self.passError = withError
+        self.downloadCacheUrl = localUrl
+    }
+
     convenience override init() {
-        self.init(failureCode:0, withError:false)
+        self.init(failureCode: 0, withError: false)
     }
     
     override func downloadTask(with request: URLRequest, completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionDownloadTask {
@@ -55,12 +61,11 @@ class MockUrlSession : URLSession {
 
             if (self.passError) {
                 let error = OptimizelyError.datafileDownloadFailed("failure")
-                completionHandler(self.downloadCacheUrl, nil, error )
+                completionHandler(self.downloadCacheUrl, nil, error)
             }
             else {
                 let response = HTTPURLResponse(url: request.url!, statusCode: statusCode, httpVersion: nil, headerFields: nil)
-                
-                completionHandler(self.downloadCacheUrl, response, nil )
+                completionHandler(self.downloadCacheUrl, response, nil)
             }
         }
         

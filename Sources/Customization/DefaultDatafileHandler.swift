@@ -24,10 +24,12 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     lazy var logger = OPTLoggerFactory.getLogger()
     // the timers for all sdk keys are atomic to allow for thread access.
     var timers = AtomicProperty(property: [String: (timer: Timer?, interval: Int)]())
+    
     // we will use a simple user defaults datastore
     let dataStore = DataStoreUserDefaults()
     // datastore for Datafile downloads
-    var datafileCache = [String: OPTDataStore]()
+    var datafileCache = AtomicDictionary<String, OPTDataStore>()
+    
     // and our download queue to speed things up.
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
 

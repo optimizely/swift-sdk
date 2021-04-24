@@ -39,6 +39,7 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
         } else {
             self.url = URL(fileURLWithPath: storeName)
         }
+        
     }
     
     func isArray() -> Bool {

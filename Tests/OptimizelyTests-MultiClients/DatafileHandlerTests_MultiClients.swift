@@ -17,7 +17,7 @@
 
 import XCTest
 
-class MultiClientsTests_DatafileHandler: XCTestCase {
+class DatafileHandlerTests_MultiClients: XCTestCase {
 
     let testSdkKeyBasename = "testSdkKey"
     var sdkKeys = [String]()
@@ -55,17 +55,16 @@ class MultiClientsTests_DatafileHandler: XCTestCase {
     func testConcurrentAccessDatafileCaches() {
         makeSdkKeys(100)
         
-        let result = runConcurrent(for: sdkKeys) { _, _ in
-            let maxCnt = 100
+        let result = runConcurrent(for: sdkKeys) { sdkKey, idx in
+            let maxCnt = 10
             for _ in 0..<maxCnt {
-                let testKey = String(Int.random(in: 0..<maxCnt))
-                let data = testKey.data(using: .utf8)!
+                let data = sdkKey.data(using: .utf8)!
                 
-                self.handler.saveDatafile(sdkKey: testKey, dataFile: data)
-                if self.handler.isDatafileSaved(sdkKey: testKey) {
-                    let loadData = self.handler.loadSavedDatafile(sdkKey: testKey)
-                    XCTAssertEqual(loadData, data)
-                    self.handler.removeSavedDatafile(sdkKey: testKey)
+                self.handler.saveDatafile(sdkKey: sdkKey, dataFile: data)
+                if self.handler.isDatafileSaved(sdkKey: sdkKey) {
+                    let loadData = self.handler.loadSavedDatafile(sdkKey: sdkKey)
+                    XCTAssertEqual(String(bytes: loadData ?? Data(), encoding: .utf8)!, sdkKey)
+                    self.handler.removeSavedDatafile(sdkKey: sdkKey)
                 }
             }
         }
@@ -75,14 +74,13 @@ class MultiClientsTests_DatafileHandler: XCTestCase {
     
     func testConcurrentDownloadDatafiles() {
         makeSdkKeys(100)
-
+        
         let result = runConcurrent(for: sdkKeys, timeoutInSecs: 10) { sdkKey, _ in
             let mockHandler = MockDatafileHandler(failureCode: 0, passError: false, sdkKey: sdkKey, strData: sdkKey)
             
             let group = DispatchGroup()
             
             group.enter()
-            print("[MultiClientTest] requesting datafile: \(String(describing: sdkKey))")
             mockHandler.downloadDatafile(sdkKey: sdkKey,
                                          returnCacheIfNoChange: false,
                                          resourceTimeoutInterval: 10) { result in
@@ -90,7 +88,6 @@ class MultiClientsTests_DatafileHandler: XCTestCase {
                 case .success(let data):
                     if let data = data {
                         let str = String(data: data, encoding: .utf8)
-                        print("[MultiClientTest] got datafile: \(String(describing: str))")
                         XCTAssert(str == sdkKey)
                     } else {
                         XCTAssert(false)
@@ -148,7 +145,6 @@ class MultiClientsTests_DatafileHandler: XCTestCase {
             let group = DispatchGroup()
             
             group.enter()
-            print("[MultiClientTest] requesting datafile: \(String(describing: sdkKey))")
             mockHandler.downloadDatafile(sdkKey: sdkKey,
                                          returnCacheIfNoChange: false,
                                          resourceTimeoutInterval: 10) { result in
@@ -158,11 +154,9 @@ class MultiClientsTests_DatafileHandler: XCTestCase {
                         recvSuccess.performAtomic{ $0 += 1 }
 
                         let str = String(data: data, encoding: .utf8)
-                        print("[MultiClientTest] got datafile: \(String(describing: str))")
                         XCTAssert(str == sdkKey)
                     } else if statusCode == 304 {
                         recv304.performAtomic{ $0 += 1 }
-                        print("[MultiClientTest] got 304 for \(String(describing: sdkKey))")
                     }
                 default:
                     // DefaultDatafileHandler will return .success (cached datafile) on any error
@@ -184,17 +178,17 @@ class MultiClientsTests_DatafileHandler: XCTestCase {
 
 // MARK: - Utils
     
-extension MultiClientsTests_DatafileHandler {
+extension DatafileHandlerTests_MultiClients {
     
     func runConcurrent(for items: [String], timeoutInSecs: Int = 10, task: @escaping (String, Int) -> Void) -> Bool {
         let group = DispatchGroup()
         
         for (idx, item) in items.enumerated() {
             group.enter()
-            DispatchQueue.global().async {
-                //print("[MultiClientsTest] starting for \(sdkKey)")
+            
+            // NOTE: do not use DispatchQueue.global(), which looks like a deadlock because of too many threads
+            DispatchQueue(label: item).async {
                 task(item, idx)
-                //print("[MultiClientsTest] ending for \(sdkKey)")
                 group.leave()
             }
         }

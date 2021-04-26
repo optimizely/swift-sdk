@@ -14,10 +14,9 @@
 // limitations under the License.
 //
     
-
 import Foundation
 
-class AtomicDictionary<K, V>: AtomicCollection where K: Hashable {
+class AtomicDictionary<K, V>: AtomicWrapper where K: Hashable {
     private var _property: [K: V]
          
     init(_ property: [K: V] = [:]) {
@@ -26,19 +25,19 @@ class AtomicDictionary<K, V>: AtomicCollection where K: Hashable {
     
     subscript(key: K) -> V? {
         get {
-            returnWithLock {
+            returnAtomic {
                 _property[key]
             }
         }
         set {
-            performWithLock {
+            performAtomic {
                 self._property[key] = newValue
             }
         }
     }
     
     var count: Int {
-        returnWithLock {
+        returnAtomic {
             _property.count
         }!
     }

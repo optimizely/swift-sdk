@@ -13,11 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-    
 
 import Foundation
 
-class AtomicArray<T>: AtomicCollection {
+class AtomicArray<T>: AtomicWrapper {
     private var _property: [T]
          
     init(_ property: [T] = []) {
@@ -26,12 +25,12 @@ class AtomicArray<T>: AtomicCollection {
     
     subscript(index: Int) -> T? {
         get {
-            returnWithLock {
+            returnAtomic {
                 _property[index]
             }
         }
         set {
-            performWithLock {
+            performAtomic {
                 if let value = newValue {
                     self._property[index] = value
                 }
@@ -40,33 +39,33 @@ class AtomicArray<T>: AtomicCollection {
     }
     
     var count: Int {
-        returnWithLock {
+        returnAtomic {
             _property.count
         }!
     }
     
     func append(_ item: T) {
-        performWithLock {
+        performAtomic {
             self._property.append(item)
         }
     }
     
     func append(contentsOf items: [T]) {
-        performWithLock {
+        performAtomic {
             self._property.append(contentsOf: items)
         }
     }
 }
 
-// MARK: - AtomicCollection
+// MARK: - AtomicWrapper
 
-class AtomicCollection {
+class AtomicWrapper {
     var lock: DispatchQueue = {
         let name = "AtomicCollection" + String(Int.random(in: 0..<100000))
         return DispatchQueue(label: name, attributes: .concurrent)
     }()
 
-    func returnWithLock<E>(_ action: () throws -> E?) -> E? {
+    func returnAtomic<E>(_ action: () throws -> E?) -> E? {
         var result: E?
         lock.sync {
             result = try? action()
@@ -74,10 +73,9 @@ class AtomicCollection {
         return result
     }
     
-    func performWithLock(_ action: @escaping () throws -> Void) {
+    func performAtomic(_ action: @escaping () throws -> Void) {
         lock.async(flags: .barrier) {
             try? action()
         }
     }
 }
-

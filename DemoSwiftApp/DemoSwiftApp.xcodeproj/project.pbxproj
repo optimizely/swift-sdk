@@ -140,6 +140,13 @@
 			remoteGlobalIDString = 6E614DCC21E3F389005982A1;
 			remoteInfo = "OptimizelySwiftSDK-tvOS";
 		};
+		6E8A3D1A26373B3A00DAEA13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E424C3C263249620081004A;
+			remoteInfo = "OptimizelyTests-MultiClients-iOS";
+		};
 		6EF41A892523D22C00EAADF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E4D2FB822C5454400062EB3 /* OptimizelySwiftSDK.xcodeproj */;
@@ -315,6 +322,7 @@
 				75C71C8125E45A980084187E /* Optimizely.framework */,
 				6E4D2FCC22C5454400062EB3 /* OptimizelyTests-iOS.xctest */,
 				6E4D2FCE22C5454400062EB3 /* OptimizelyTests-Common-iOS.xctest */,
+				6E8A3D1B26373B3A00DAEA13 /* OptimizelyTests-MultiClients-iOS.xctest */,
 				6EF41A8C2523D22C00EAADF1 /* OptimizelyTests-Batch-iOS.xctest */,
 				6E4D2FD022C5454400062EB3 /* OptimizelyTests-APIs-iOS.xctest */,
 				6E4D2FD222C5454400062EB3 /* OptimizelyTests-DataModel-iOS.xctest */,
@@ -547,7 +555,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1230;
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
 					252D7DEC21C8800800134A7A = {
@@ -690,6 +698,13 @@
 			fileType = wrapper.cfbundle;
 			path = "OptimizelyTests-Others-tvOS.xctest";
 			remoteRef = 6E4D2FDD22C5454400062EB3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E8A3D1B26373B3A00DAEA13 /* OptimizelyTests-MultiClients-iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "OptimizelyTests-MultiClients-iOS.xctest";
+			remoteRef = 6E8A3D1A26373B3A00DAEA13 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6EF41A8A2523D22C00EAADF1 /* Optimizely.framework */ = {

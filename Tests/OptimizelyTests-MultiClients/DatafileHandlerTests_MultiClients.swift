@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-    
 
 import XCTest
 
@@ -31,52 +30,20 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     }
 
     override func tearDown() {
-        OTUtils.removeAllBinders()
-        OTUtils.removeAllFiles(including: testSdkKeyBasename)
+        OTUtils.clearAllBinders()
+        OTUtils.clearAllTestStorage(including: testSdkKeyBasename)
     }
     
-    func testConcurrentAccessPeriodicInterval() {
-        makeSdkKeys(100)
-
-        let result = runConcurrent(for: sdkKeys) { _, _ in
-            let maxCnt = 100
-            for _ in 0..<maxCnt {
-                let writeKey = String(Int.random(in: 0..<maxCnt))
-                self.handler.setPeriodicInterval(sdkKey: writeKey, interval: 60)
-                
-                let readKey = String(Int.random(in: 0..<maxCnt))
-                _ = self.handler.hasPeriodicInterval(sdkKey: readKey)
-            }
-        }
-        
-        XCTAssertTrue(result, "Concurrent tasks timed out")
-    }
-    
-    func testConcurrentAccessDatafileCaches() {
-        makeSdkKeys(100)
-        
-        let result = runConcurrent(for: sdkKeys) { sdkKey, idx in
-            let maxCnt = 10
-            for _ in 0..<maxCnt {
-                let data = sdkKey.data(using: .utf8)!
-                
-                self.handler.saveDatafile(sdkKey: sdkKey, dataFile: data)
-                if self.handler.isDatafileSaved(sdkKey: sdkKey) {
-                    let loadData = self.handler.loadSavedDatafile(sdkKey: sdkKey)
-                    XCTAssertEqual(String(bytes: loadData ?? Data(), encoding: .utf8)!, sdkKey)
-                    self.handler.removeSavedDatafile(sdkKey: sdkKey)
-                }
-            }
-        }
-        
-        XCTAssertTrue(result, "Concurrent tasks timed out")
-    }
+    // MARK: - downloadDatafile
     
     func testConcurrentDownloadDatafiles() {
         makeSdkKeys(100)
         
         let result = runConcurrent(for: sdkKeys, timeoutInSecs: 10) { sdkKey, _ in
-            let mockHandler = MockDatafileHandler(failureCode: 0, passError: false, sdkKey: sdkKey, strData: sdkKey)
+            let mockHandler = MockDatafileHandler(failureCode: 0,
+                                                  passError: false,
+                                                  sdkKey: sdkKey,
+                                                  strData: sdkKey)
             
             let group = DispatchGroup()
             
@@ -174,6 +141,136 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         XCTAssertEqual(recv304.property, num304)
     }
     
+    func testConcurrentAccessLastModified() {
+        makeSdkKeys(100)
+        
+        let result = runConcurrent(for: sdkKeys, timeoutInSecs: 10) { sdkKey, _ in
+            let expectedLastModified = "date-for-\(sdkKey)"
+            
+            let mockHandler = MockDatafileHandler(failureCode: 0,
+                                                  passError: false,
+                                                  sdkKey: sdkKey,
+                                                  strData: sdkKey,
+                                                  lastModified: expectedLastModified)
+            
+            let group = DispatchGroup()
+            
+            group.enter()
+            mockHandler.downloadDatafile(sdkKey: sdkKey,
+                                         returnCacheIfNoChange: false,
+                                         resourceTimeoutInterval: 10) { result in
+                // validate lastModified saved and read ok concurrently for multiple sdkKeys
+                XCTAssertEqual(mockHandler.getRequest(sdkKey: sdkKey)?.getLastModified(), expectedLastModified)
+                group.leave()
+            }
+            
+            group.wait()
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+    
+    // MARK: - Periodic Interval
+    
+    func testConcurrentAccessPeriodicInterval() {
+        makeSdkKeys(100)
+
+        let result = runConcurrent(for: sdkKeys) { _, _ in
+            let maxCnt = 100
+            for _ in 0..<maxCnt {
+                let writeKey = String(Int.random(in: 0..<maxCnt))
+                self.handler.setPeriodicInterval(sdkKey: writeKey, interval: 60)
+                
+                let readKey = String(Int.random(in: 0..<maxCnt))
+                _ = self.handler.hasPeriodicInterval(sdkKey: readKey)
+            }
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+    
+    // MARK: - Datafile Caches
+    
+    func testConcurrentAccessDatafileCaches() {
+        makeSdkKeys(100)
+        
+        let result = runConcurrent(for: sdkKeys) { sdkKey, idx in
+            let maxCnt = 10
+            for _ in 0..<maxCnt {
+                let data = sdkKey.data(using: .utf8)!
+                
+                self.handler.saveDatafile(sdkKey: sdkKey, dataFile: data)
+                if self.handler.isDatafileSaved(sdkKey: sdkKey) {
+                    let loadData = self.handler.loadSavedDatafile(sdkKey: sdkKey)
+                    XCTAssertEqual(String(bytes: loadData ?? Data(), encoding: .utf8)!, sdkKey)
+                    self.handler.removeSavedDatafile(sdkKey: sdkKey)
+                }
+            }
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+    
+
+    // MARK: - Periodic Updates
+    
+    func testConcurrentControlPeriodicUpdates() {
+        
+        struct Periodics {
+            let sdkKey: String
+            var exp: XCTestExpectation
+            var count: Int = 5
+
+            init(sdkKey: String, exp: XCTestExpectation) {
+                self.sdkKey = sdkKey
+                self.exp = exp
+            }
+
+            mutating func notify() {
+                count -= 1
+                if count == 0 {
+                    self.exp.fulfill()
+                }
+            }
+        }
+        
+        let numSdks = 10
+        makeSdkKeys(numSdks)
+        var exps = [XCTestExpectation]()
+        var periodics = [Periodics]()
+        
+        for i in 0..<numSdks {
+            exps.append(expectation(description: "\(i)"))
+            periodics.append(Periodics(sdkKey: sdkKeys[i], exp: exps[i]))
+        }
+        
+        for var p in periodics {
+            let sdkKey = p.sdkKey
+            
+            let mockHandler = MockDatafileHandler(failureCode: 0,
+                                                  passError: false,
+                                                  sdkKey: sdkKey,
+                                                  strData: sdkKey)
+            mockHandler.setPeriodicInterval(sdkKey: sdkKey, interval: 1)
+            
+            //print("[MultiClientsTest] datafile backgroup update started for: \(sdkKey)")
+            mockHandler.startUpdates(sdkKey: sdkKey, datafileChangeNotification: { data in
+                //print("[MultiClientsTest] datafile change notification called for: \(sdkKey)")
+                let str = String(data: data, encoding: .utf8)
+                XCTAssert(str == sdkKey)
+                p.notify()
+                
+                // random inteference with other sdkKeys
+                for _ in 0..<100 {
+                    mockHandler.setPeriodicInterval(sdkKey: String(Int.random(in: 0..<1000000)), interval: 60)
+                    _ = mockHandler.hasPeriodicInterval(sdkKey: String(Int.random(in: 0..<1000000)))
+                }
+            })
+        }
+        
+        wait(for: exps, timeout: 10)
+    }
+
 }
 
 // MARK: - Utils
@@ -205,28 +302,6 @@ extension DatafileHandlerTests_MultiClients {
             sdkKeys.append("\(testSdkKeyBasename)-\(i)-\(randId)")
         }
     }
-    
-    class MockDatafileHandler: DefaultDatafileHandler {
-        let failureCode: Int
-        let passError: Bool
-        let sdkKey: String
-        let localUrl: URL?
-
-        init(failureCode: Int = 0, passError: Bool = false, sdkKey: String, strData: String = "{}") {
-            self.failureCode = failureCode
-            self.passError = passError
-            self.sdkKey = sdkKey
-            self.localUrl = OTUtils.saveAFile(name: sdkKey, data: strData.data(using: .utf8)!)
-        }
         
-        public required init() {
-            fatalError("init() has not been implemented")
-        }
-        
-        override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
-            return MockUrlSession(failureCode: failureCode, withError: passError, localUrl: localUrl)
-        }
-    }
-    
 }
 

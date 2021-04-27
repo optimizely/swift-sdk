@@ -271,7 +271,7 @@ class DatafileHandlerTests: XCTestCase {
         let handler = InnerDatafileHandler()
         //save the cached datafile..
         handler.saveDatafile(sdkKey: sdkKey, dataFile: "{}".data(using: .utf8)!)
-        handler.dataStore.setLastModified(sdkKey: sdkKey, lastModified: "1234")
+        handler.sharedDataStore.setLastModified(sdkKey: sdkKey, lastModified: "1234")
         // set the url to use as our datafile download url
         handler.localFileUrl = fileUrl
         

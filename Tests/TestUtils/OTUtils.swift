@@ -150,7 +150,7 @@ class OTUtils {
         HandlerRegistryService.shared.registerBinding(binder: binder)
     }
     
-    static func removeAllBinders() {
+    static func clearAllBinders() {
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
 
@@ -180,24 +180,6 @@ class OTUtils {
         ups.save(userProfile: profile)
     }
 
-    // MARK: - big numbers
-    
-    static var positiveMaxValueAllowed: Double {
-        return pow(2, 53)
-    }
-    
-    static var negativeMaxValueAllowed: Double {
-        return -pow(2, 53)
-    }
-    
-    static var positiveTooBigValue: Double {
-        return positiveMaxValueAllowed * 2.0
-    }
-    
-    static var negativeTooBigValue: Double {
-        return negativeMaxValueAllowed * 2.0
-    }
-    
     // MARK: - files
     
     static func saveAFile(name:String, data:Data) -> URL? {
@@ -214,9 +196,22 @@ class OTUtils {
         return ds.url
     }
     
+    static func clearAllTestStorage(including: String) {
+        removeAllFiles(including: including)
+        removeAllUserDefaults(including: including)
+    }
+    
     static func removeAllFiles(including: String) {
         removeAllFiles(including: including, in: .documentDirectory)
         removeAllFiles(including: including, in: .cachesDirectory)
+    }
+    
+    static func removeAllUserDefaults(including: String) {
+        let allKeys = UserDefaults.standard.dictionaryRepresentation().keys
+        allKeys.filter{ $0.contains(including) }.forEach{ itemKey in
+            UserDefaults.standard.removeObject(forKey: itemKey)
+            //print("[OTUtils] removed UserDefaults: '\(itemKey)'")
+        }
     }
     
     static func removeAllFiles(including: String, in directory: FileManager.SearchPathDirectory) {
@@ -250,6 +245,25 @@ class OTUtils {
             }
         }
     }
+    
+    // MARK: - big numbers
+    
+    static var positiveMaxValueAllowed: Double {
+        return pow(2, 53)
+    }
+    
+    static var negativeMaxValueAllowed: Double {
+        return -pow(2, 53)
+    }
+    
+    static var positiveTooBigValue: Double {
+        return positiveMaxValueAllowed * 2.0
+    }
+    
+    static var negativeTooBigValue: Double {
+        return negativeMaxValueAllowed * 2.0
+    }
+    
 
     // MARK: - others
     

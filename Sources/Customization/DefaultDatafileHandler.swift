@@ -25,56 +25,17 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     // the timers for all sdk keys are atomic to allow for thread access.
     var timers = AtomicProperty(property: [String: (timer: Timer?, interval: Int)]())
     
-    // we will use a simple user defaults datastore
-    let dataStore = DataStoreUserDefaults()
+    // a shared user defaults datastore for lastModified storage
+    let sharedDataStore = DataStoreUserDefaults()
     // datastore for Datafile downloads
     var datafileCache = AtomicDictionary<String, OPTDataStore>()
     
     // and our download queue to speed things up.
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
 
-    public required init() {
-
-    }
+    public required init() {}
     
-    public func setPeriodicInterval(sdkKey: String, interval: Int) {
-        timers.performAtomic { timers in
-            if timers[sdkKey] == nil {
-                timers[sdkKey] = (nil, interval)
-                return
-            }
-        }
-    }
-    
-    public func hasPeriodicInterval(sdkKey: String) -> Bool {
-        var result = true
-        timers.performAtomic { timers in
-            result = timers[sdkKey] != nil
-        }
-        
-        return result
-    }
-     
-    public func downloadDatafile(sdkKey: String) -> Data? {
-        var datafile: Data?
-        let group = DispatchGroup()
-        
-        group.enter()
-        
-        downloadDatafile(sdkKey: sdkKey) { (result) in
-            switch result {
-            case .success(let data):
-                datafile = data
-            case .failure(let error):
-                self.logger.e(error.reason)
-            }
-            group.leave()
-        }
-        
-        group.wait()
-        
-        return datafile
-    }
+    // MARK: - download datafile
     
     open func downloadDatafile(sdkKey: String,
                                returnCacheIfNoChange: Bool,
@@ -128,6 +89,27 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
         }
     }
     
+    public func downloadDatafile(sdkKey: String) -> Data? {
+        var datafile: Data?
+        let group = DispatchGroup()
+        
+        group.enter()
+        
+        downloadDatafile(sdkKey: sdkKey) { (result) in
+            switch result {
+            case .success(let data):
+                datafile = data
+            case .failure(let error):
+                self.logger.e(error.reason)
+            }
+            group.leave()
+        }
+        
+        group.wait()
+        
+        return datafile
+    }
+    
     open func getSession(resourceTimeoutInterval: Double?) -> URLSession {
         let config = URLSessionConfiguration.ephemeral
         if let resourceTimeoutInterval = resourceTimeoutInterval,
@@ -143,7 +125,7 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
         
         var request = URLRequest(url: url)
         
-        if let lastModified = dataStore.getLastModified(sdkKey: sdkKey), isDatafileSaved(sdkKey: sdkKey) {
+        if let lastModified = sharedDataStore.getLastModified(sdkKey: sdkKey), isDatafileSaved(sdkKey: sdkKey) {
             request.setLastModified(lastModified: lastModified)
         }
         
@@ -155,7 +137,8 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
             self.logger.d { String(data: data, encoding: .utf8) ?? "" }
             self.saveDatafile(sdkKey: sdkKey, dataFile: data)
             if let lastModified = response.getLastModified() {
-                self.dataStore.setLastModified(sdkKey: sdkKey, lastModified: lastModified)            }
+                self.sharedDataStore.setLastModified(sdkKey: sdkKey, lastModified: lastModified)
+            }
             
             return data
         }
@@ -163,6 +146,26 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
         return nil
     }
     
+    // MARK: - periodic updates
+    
+    public func setPeriodicInterval(sdkKey: String, interval: Int) {
+        timers.performAtomic { timers in
+            if timers[sdkKey] == nil {
+                timers[sdkKey] = (nil, interval)
+                return
+            }
+        }
+    }
+    
+    public func hasPeriodicInterval(sdkKey: String) -> Bool {
+        var result = true
+        timers.performAtomic { timers in
+            result = timers[sdkKey] != nil
+        }
+        
+        return result
+    }
+     
     public func startUpdates(sdkKey: String, datafileChangeNotification: ((Data) -> Void)?) {
         if let value = timers.property?[sdkKey], !(value.timer?.isValid ?? false) {
             startPeriodicUpdates(sdkKey: sdkKey, updateInterval: value.interval, datafileChangeNotification: datafileChangeNotification)
@@ -176,6 +179,8 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     public func stopAllUpdates() {
         stopPeriodicUpdates()
     }
+    
+    // MARK: - datafile store
     
     open func createDataStore(sdkKey: String) -> OPTDataStore {
         return DataStoreFile<Data>(storeName: sdkKey)
@@ -212,7 +217,6 @@ extension DefaultDatafileHandler {
             }
             
             let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(updateInterval), repeats: false) { (timer) in
-                
                 self.performPerodicDownload(sdkKey: sdkKey,
                                             startTime: now,
                                             updateInterval: updateInterval,
@@ -220,6 +224,7 @@ extension DefaultDatafileHandler {
                 
                 timer.invalidate()
             }
+            
             self.timers.performAtomic(atomicOperation: { (timers) in
                 if let interval = timers[sdkKey]?.interval {
                     timers[sdkKey] = (timer, interval)

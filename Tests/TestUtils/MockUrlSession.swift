@@ -23,9 +23,10 @@ import Foundation
 // the response also includes the url for the data download.
 // the cdn url is used to get the datafile if the datafile is not in cache
 class MockUrlSession: URLSession {
-    var downloadCacheUrl: URL?
     let failureCode: Int
     let passError: Bool
+    var downloadCacheUrl: URL?
+    var lastModified: String?
     
     class MockDownloadTask: URLSessionDownloadTask {
         var task: () -> Void
@@ -44,10 +45,11 @@ class MockUrlSession: URLSession {
         self.passError = withError
     }
     
-    init(failureCode: Int, withError: Bool, localUrl: URL?) {
+    init(failureCode: Int, withError: Bool, localUrl: URL?, lastModified: String?) {
         self.failureCode = failureCode
         self.passError = withError
         self.downloadCacheUrl = localUrl
+        self.lastModified = lastModified
     }
 
     convenience override init() {
@@ -64,7 +66,15 @@ class MockUrlSession: URLSession {
                 completionHandler(self.downloadCacheUrl, nil, error)
             }
             else {
-                let response = HTTPURLResponse(url: request.url!, statusCode: statusCode, httpVersion: nil, headerFields: nil)
+                var headers = [String: String]()
+                if let lastModified = self.lastModified {
+                    headers["Last-Modified"] = lastModified
+                }
+                
+                let response = HTTPURLResponse(url: request.url!,
+                                               statusCode: statusCode,
+                                               httpVersion: nil,
+                                               headerFields: headers)
                 completionHandler(self.downloadCacheUrl, response, nil)
             }
         }

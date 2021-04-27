@@ -58,7 +58,7 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         let data = OTUtils.loadJSONDatafile("api_datafile")
 
         handler.saveDatafile(sdkKey: sdkKey, dataFile: data!)
-        handler.dataStore.setLastModified(sdkKey: sdkKey, lastModified: "1234")
+        handler.sharedDataStore.setLastModified(sdkKey: sdkKey, lastModified: "1234")
         // set the url to use as our datafile download url
         handler.localFileUrl = fileUrl
         

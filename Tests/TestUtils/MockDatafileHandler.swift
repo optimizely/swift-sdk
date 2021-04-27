@@ -38,4 +38,5 @@ class MockDatafileHandler: DefaultDatafileHandler {
     override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
         return MockUrlSession(failureCode: failureCode, withError: passError, localUrl: localUrl, lastModified: lastModified)
     }
+    
 }

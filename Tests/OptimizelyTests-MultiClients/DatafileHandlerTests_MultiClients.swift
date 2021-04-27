@@ -40,6 +40,9 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         makeSdkKeys(100)
         
         let result = runConcurrent(for: sdkKeys, timeoutInSecs: 10) { sdkKey, _ in
+            
+            // NOTE: using multiple DatafileHandler instances
+            
             let mockHandler = MockDatafileHandler(failureCode: 0,
                                                   passError: false,
                                                   sdkKey: sdkKey,
@@ -104,6 +107,8 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
                 passError = false
             }
             
+            // NOTE: using multiple DatafileHandler instances
+
             let mockHandler = MockDatafileHandler(failureCode: statusCode,
                                                   passError: passError,
                                                   sdkKey: sdkKey,
@@ -147,6 +152,8 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         let result = runConcurrent(for: sdkKeys, timeoutInSecs: 10) { sdkKey, _ in
             let expectedLastModified = "date-for-\(sdkKey)"
             
+            // NOTE: using multiple DatafileHandler instances
+
             let mockHandler = MockDatafileHandler(failureCode: 0,
                                                   passError: false,
                                                   sdkKey: sdkKey,
@@ -170,31 +177,15 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         XCTAssertTrue(result, "Concurrent tasks timed out")
     }
     
-    // MARK: - Periodic Interval
-    
-    func testConcurrentAccessPeriodicInterval() {
-        makeSdkKeys(100)
-
-        let result = runConcurrent(for: sdkKeys) { _, _ in
-            let maxCnt = 100
-            for _ in 0..<maxCnt {
-                let writeKey = String(Int.random(in: 0..<maxCnt))
-                self.handler.setPeriodicInterval(sdkKey: writeKey, interval: 60)
-                
-                let readKey = String(Int.random(in: 0..<maxCnt))
-                _ = self.handler.hasPeriodicInterval(sdkKey: readKey)
-            }
-        }
-        
-        XCTAssertTrue(result, "Concurrent tasks timed out")
-    }
-    
     // MARK: - Datafile Caches
     
     func testConcurrentAccessDatafileCaches() {
         makeSdkKeys(100)
         
         let result = runConcurrent(for: sdkKeys) { sdkKey, idx in
+            
+            // NOTE: using a single DatafileHandler instance
+
             let maxCnt = 10
             for _ in 0..<maxCnt {
                 let data = sdkKey.data(using: .utf8)!
@@ -211,7 +202,28 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         XCTAssertTrue(result, "Concurrent tasks timed out")
     }
     
+    // MARK: - Periodic Interval
+    
+    func testConcurrentAccessPeriodicInterval() {
+        makeSdkKeys(100)
 
+        let result = runConcurrent(for: sdkKeys) { _, _ in
+            
+            // NOTE: using a single DatafileHandler instance
+
+            let maxCnt = 100
+            for _ in 0..<maxCnt {
+                let writeKey = String(Int.random(in: 0..<maxCnt))
+                self.handler.setPeriodicInterval(sdkKey: writeKey, interval: 60)
+                
+                let readKey = String(Int.random(in: 0..<maxCnt))
+                _ = self.handler.hasPeriodicInterval(sdkKey: readKey)
+            }
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+    
     // MARK: - Periodic Updates
     
     func testConcurrentControlPeriodicUpdates() {
@@ -247,6 +259,8 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         for var p in periodics {
             let sdkKey = p.sdkKey
             
+            // NOTE: using multiple DatafileHandler instances
+
             let mockHandler = MockDatafileHandler(failureCode: 0,
                                                   passError: false,
                                                   sdkKey: sdkKey,

@@ -106,6 +106,11 @@ class OTUtils {
         }
     }
     
+    static func loadJSONDatafileString(_ filename: String) -> String? {
+        guard let data = loadJSONDatafile(filename) else { return nil }
+        return String(bytes: data, encoding: .utf8)
+    }
+    
     static func loadJSONFile(_ filename: String) -> Data? {
         return loadJSONDatafile(filename)
     }
@@ -182,18 +187,23 @@ class OTUtils {
 
     // MARK: - files
     
-    static func saveAFile(name:String, data:Data) -> URL? {
+    static func saveAFile(name: String, data: Data) -> URL? {
         let ds = DataStoreFile<Data>(storeName: name, async: false)
         ds.saveItem(forKey: name, value: data)
         
         return ds.url
     }
 
-    static func removeAFile(name:String) -> URL? {
+    static func removeAFile(name: String) -> URL? {
         let ds = DataStoreFile<Data>(storeName: name, async: false)
         ds.removeItem(forKey: name)
         
         return ds.url
+    }
+    
+    static func createDatafileCache(sdkKey: String, contents: String? = nil) {
+        let data = (contents ?? "datafile-for-\(sdkKey)").data(using: .utf8)!
+        _ = saveAFile(name: sdkKey, data: data)
     }
     
     static func clearAllTestStorage(including: String) {

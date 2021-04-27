@@ -17,26 +17,39 @@
 import Foundation
 
 class MockDatafileHandler: DefaultDatafileHandler {
-    let failureCode: Int
-    let passError: Bool
-    let sdkKey: String
-    let localUrl: URL?
-    let lastModified: String?
+    var statusCode: Int = 0
+    var passError: Bool = false
+    var localResponseData: String?
+    var settingsMap: [String: (Int, Bool)]?
 
-    init(failureCode: Int = 0, passError: Bool = false, sdkKey: String, strData: String = "{}", lastModified: String? = nil) {
-        self.failureCode = failureCode
+    init(statusCode: Int = 0, passError: Bool = false, localResponseData: String? = nil) {
+        self.statusCode = statusCode
         self.passError = passError
-        self.sdkKey = sdkKey
-        self.localUrl = OTUtils.saveAFile(name: sdkKey, data: strData.data(using: .utf8)!)
-        self.lastModified = lastModified
+        self.localResponseData = localResponseData
     }
     
-    public required init() {
-        fatalError("init() has not been implemented")
+    init(settingsMap: [String: (Int, Bool)]) {
+        self.settingsMap = settingsMap
     }
+    
+    public required init() {}
     
     override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
-        return MockUrlSession(failureCode: failureCode, withError: passError, localUrl: localUrl, lastModified: lastModified)
+        if let settingsMap = settingsMap {
+            return MockUrlSession(settingsMap: settingsMap)
+        } else {
+            return MockUrlSession(failureCode: statusCode, withError: passError, localResponseData: localResponseData)
+        }
+    }
+    
+    // MARK: - helpers
+    
+    static func getDatafile(sdkKey: String) -> String {
+        return "datafile-for-\(sdkKey)"
+    }
+    
+    static func getLastModified(sdkKey: String) -> String {
+        return "date-for-\(sdkKey)"
     }
     
 }

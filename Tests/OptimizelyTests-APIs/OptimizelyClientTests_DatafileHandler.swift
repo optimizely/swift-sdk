@@ -21,46 +21,23 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
     let sdkKey = "localcdnTestSDKKey"
     
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        HandlerRegistryService.shared.binders.property?.removeAll()
+        OTUtils.bindLoggerForTest(.info)
+        OTUtils.createDocumentDirectoryIfNotAvailable()
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        _ = OTUtils.removeAFile(name: sdkKey)
-        
-        HandlerRegistryService.shared.binders.property?.removeAll()
-
+        OTUtils.clearAllBinders()
+        OTUtils.clearAllTestStorage(including: sdkKey)
     }
 
     func testOptimizelyClientWithCachedDatafile() {
-        var fileUrl:URL?
-        
-        // create a dummy file at a url to use as our datafile local download
-        fileUrl = OTUtils.saveAFile(name: "localcdn", data: OTUtils.loadJSONDatafile("api_datafile")!)
-        
-        // default datafile handler
-        class InnerDatafileHandler : DefaultDatafileHandler {
-            var localFileUrl:URL?
-            // override getSession to return our own session.
-            override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
-                
-                let session = MockUrlSession()
-                session.downloadCacheUrl = localFileUrl
-                
-                return session
-            }
-        }
-        
         // create test datafile handler
-        let handler = InnerDatafileHandler()
+        let handler = MockDatafileHandler(statusCode: 0, passError: false, localResponseData: OTUtils.loadJSONDatafileString("api_datafile"))
         //save the cached datafile..
         let data = OTUtils.loadJSONDatafile("api_datafile")
 
         handler.saveDatafile(sdkKey: sdkKey, dataFile: data!)
         handler.sharedDataStore.setLastModified(sdkKey: sdkKey, lastModified: "1234")
-        // set the url to use as our datafile download url
-        handler.localFileUrl = fileUrl
         
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDatafileHandler>(sdkKey: sdkKey, service: OPTDatafileHandler.self, strategy: .reUse, isSingleton: true, inst: handler))
         
@@ -76,9 +53,7 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
         }
         
         wait(for: [expectation], timeout: 3)
-        
-        try? FileManager.default.removeItem(at: fileUrl!)
-        
+                
         client.datafileHandler?.stopAllUpdates()
         
         HandlerRegistryService.shared.binders.property?.removeAll()

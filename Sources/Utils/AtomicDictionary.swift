@@ -25,7 +25,7 @@ class AtomicDictionary<K, V>: AtomicWrapper where K: Hashable {
     
     subscript(key: K) -> V? {
         get {
-            returnAtomic {
+            return getAtomic {
                 _property[key]
             }
         }
@@ -37,7 +37,7 @@ class AtomicDictionary<K, V>: AtomicWrapper where K: Hashable {
     }
     
     var count: Int {
-        returnAtomic {
+        return getAtomic {
             _property.count
         }!
     }

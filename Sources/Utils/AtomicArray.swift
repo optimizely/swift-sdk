@@ -25,7 +25,7 @@ class AtomicArray<T>: AtomicWrapper {
     
     subscript(index: Int) -> T? {
         get {
-            returnAtomic {
+            return getAtomic {
                 _property[index]
             }
         }
@@ -39,7 +39,7 @@ class AtomicArray<T>: AtomicWrapper {
     }
     
     var count: Int {
-        returnAtomic {
+        return getAtomic {
             _property.count
         }!
     }
@@ -65,7 +65,7 @@ class AtomicWrapper {
         return DispatchQueue(label: name, attributes: .concurrent)
     }()
 
-    func returnAtomic<E>(_ action: () throws -> E?) -> E? {
+    func getAtomic<E>(_ action: () throws -> E?) -> E? {
         var result: E?
         lock.sync {
             result = try? action()

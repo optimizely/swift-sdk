@@ -61,7 +61,7 @@ class AtomicArray<T>: AtomicWrapper {
 
 class AtomicWrapper {
     var lock: DispatchQueue = {
-        let name = "AtomicCollection" + String(Int.random(in: 0..<100000))
+        let name = "AtomicWrapper" + String(Int.random(in: 0..<100000))
         return DispatchQueue(label: name, attributes: .concurrent)
     }()
 

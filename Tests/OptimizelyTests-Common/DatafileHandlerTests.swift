@@ -229,7 +229,7 @@ class DatafileHandlerTests: XCTestCase {
     }
     
     func testPeriodicDownload_PollingPeriodAdjustedByDelay() {
-        class FakeDatafileHandler: DefaultDatafileHandler {
+        class LocalDatafileHandler: DefaultDatafileHandler {
             let data = Data()
             override func downloadDatafile(sdkKey: String,
                                            returnCacheIfNoChange: Bool,
@@ -241,7 +241,7 @@ class DatafileHandlerTests: XCTestCase {
         }
         
         let expectation = XCTestExpectation(description: "polling")
-        let handler = FakeDatafileHandler()
+        let handler = LocalDatafileHandler()
         let now = Date()
         
         let updateInterval = 2
@@ -286,7 +286,7 @@ class DatafileHandlerTests: XCTestCase {
     }
     
     func testPeriodicDownloadWithOptimizlyClient_DifferentRevision() {
-        class FakeDatafileHandler: DefaultDatafileHandler {
+        class LocalDatafileHandler: DefaultDatafileHandler {
             let data1 = OTUtils.loadJSONDatafile("typed_audience_datafile")
             let data2 = OTUtils.loadJSONDatafile("api_datafile")
             var flag = false
@@ -300,8 +300,9 @@ class DatafileHandlerTests: XCTestCase {
                 flag.toggle()
             }
         }
+        
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
-        let handler = FakeDatafileHandler()
+        let handler = LocalDatafileHandler()
         let optimizely = OptimizelyClient(sdkKey: "testPeriodicDownloadWithOptimizlyClient_DifferentRevision",
                                           datafileHandler: handler,
                                           periodicDownloadInterval: 1)

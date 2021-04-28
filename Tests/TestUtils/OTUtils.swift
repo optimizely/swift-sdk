@@ -245,7 +245,13 @@ class OTUtils {
     static func createDocumentDirectoryIfNotAvailable() {
         // documentDirectory may not exist for simulator unit test (iOS11+). create it if not found.
         
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+        #if os(tvOS)
+        let directory = FileManager.SearchPathDirectory.cachesDirectory
+        #else
+        let directory = FileManager.SearchPathDirectory.documentDirectory
+        #endif
+        
+        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)

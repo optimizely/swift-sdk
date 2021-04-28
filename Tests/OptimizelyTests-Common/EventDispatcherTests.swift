@@ -21,35 +21,14 @@ class EventDispatcherTests: XCTestCase {
     var eventDispatcher: DefaultEventDispatcher?
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        #if os(tvOS)
-        let directory = FileManager.SearchPathDirectory.cachesDirectory
-        #else
-        let directory = FileManager.SearchPathDirectory.documentDirectory
-        #endif
-        
-        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
-            if (!FileManager.default.fileExists(atPath: url.path)) {
-                do {
-                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-                } catch {
-                    print(error)
-                }
-                
-            }
-        }
+        OTUtils.createDocumentDirectoryIfNotAvailable()
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         if let dispatcher = eventDispatcher {
             dispatcher.flushEvents()
-            dispatcher.dispatcher.sync {
-            }
+            dispatcher.dispatcher.sync {}
         }
-        
-        eventDispatcher = nil
-        
     }
 
     func testDefaultDispatcher() {
@@ -58,19 +37,16 @@ class EventDispatcherTests: XCTestCase {
 
         pEventD.flushEvents()
         
-        eventDispatcher?.dispatcher.sync {
-        }
+        eventDispatcher?.dispatcher.sync {}
         
         pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
         
-        eventDispatcher?.dispatcher.sync {
-        }
+        eventDispatcher?.dispatcher.sync {}
  
         XCTAssert(eventDispatcher?.dataStore.count == 1)
         eventDispatcher?.flushEvents()
         
-        eventDispatcher?.dispatcher.sync {
-        }
+        eventDispatcher?.dispatcher.sync {}
         
         XCTAssert(eventDispatcher?.dataStore.count == 0)
         
@@ -98,8 +74,7 @@ class EventDispatcherTests: XCTestCase {
         dispatcher.dataStore.save(item: EventForDispatch(body: Data()))
         dispatcher.flushEvents()
         
-        dispatcher.dispatcher.sync {
-        }
+        dispatcher.dispatcher.sync {}
         
         XCTAssert(dispatcher.events.count == 2)
     }
@@ -109,16 +84,13 @@ class EventDispatcherTests: XCTestCase {
         let pEventD: OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
         let wait = {() in
-            self.eventDispatcher?.dispatcher.sync {
-            }
+            self.eventDispatcher?.dispatcher.sync {}
         }
 
         pEventD.flushEvents()
         wait()
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
-            
-        }
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
         wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 1)
@@ -136,17 +108,14 @@ class EventDispatcherTests: XCTestCase {
         eventDispatcher = DefaultEventDispatcher( backingStore: .userDefaults)
         let pEventD: OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
-        let wait = {() in
-            self.eventDispatcher?.dispatcher.sync {
-            }
+        let wait = {
+            self.eventDispatcher?.dispatcher.sync {}
         }
 
         pEventD.flushEvents()
         wait()
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
-            
-        }
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
         wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 1)
@@ -164,16 +133,14 @@ class EventDispatcherTests: XCTestCase {
         eventDispatcher = DefaultEventDispatcher( backingStore: .memory)
         let pEventD: OPTEventDispatcher = eventDispatcher!
         eventDispatcher?.timerInterval = 1
-        let wait = {() in
-            self.eventDispatcher?.dispatcher.sync {
-            }
+        let wait = {
+            self.eventDispatcher?.dispatcher.sync {}
         }
 
         pEventD.flushEvents()
         wait()
         
-        pEventD.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
-        }
+        pEventD.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
         wait()
         
         XCTAssert(eventDispatcher?.dataStore.count == 1)
@@ -190,9 +157,7 @@ class EventDispatcherTests: XCTestCase {
     func testDispatcherCustom() {
         let dispatcher = MockEventDispatcher()
         
-        dispatcher.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
-            
-        }
+        dispatcher.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
         
         XCTAssert(dispatcher.events.count == 1)
         
@@ -205,14 +170,11 @@ class EventDispatcherTests: XCTestCase {
         eventDispatcher = DefaultEventDispatcher(timerInterval: 1)
         
         eventDispatcher?.flushEvents()
-        eventDispatcher?.dispatcher.sync {
-        }
+        eventDispatcher?.dispatcher.sync {}
         
-        eventDispatcher?.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
-        }
+        eventDispatcher?.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
         
-        eventDispatcher?.dispatcher.sync {
-        }
+        eventDispatcher?.dispatcher.sync {}
         
         eventDispatcher?.applicationDidBecomeActive()
         eventDispatcher?.applicationDidEnterBackground()
@@ -224,7 +186,7 @@ class EventDispatcherTests: XCTestCase {
         
         group.enter()
         
-        eventDispatcher?.sendEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
+        eventDispatcher?.sendEvent(event: EventForDispatch(body: Data())) { _ in
             sent = true
             group.leave()
         }

@@ -188,7 +188,7 @@ class EventDispatcherTests: XCTestCase {
     }
 
     func testDispatcherCustom() {
-        let dispatcher = FakeEventDispatcher()
+        let dispatcher = MockEventDispatcher()
         
         dispatcher.dispatchEvent(event: EventForDispatch(body: Data())) { (_) -> Void in
             
@@ -282,7 +282,7 @@ class EventDispatcherTests: XCTestCase {
     }
     
     func testEventQueueFormatCompatibilty() {
-        class MockEventDispatcher: DefaultEventDispatcher {
+        class LocalEventDispatcher: DefaultEventDispatcher {
             override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
                 completionHandler(.success(Data()))
             }
@@ -308,7 +308,7 @@ class EventDispatcherTests: XCTestCase {
         
         // verify that a new dataStore can read an existing queue items
         
-        let dispatcher = MockEventDispatcher()
+        let dispatcher = LocalEventDispatcher()
         
         XCTAssert(dispatcher.dataStore.count == 2)
         dispatcher.flushEvents()

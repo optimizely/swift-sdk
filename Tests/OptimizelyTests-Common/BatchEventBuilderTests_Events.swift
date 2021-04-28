@@ -23,12 +23,12 @@ class BatchEventBuilderTests_Events: XCTestCase {
     let featureKey = "feature_1"
     
     var optimizely: OptimizelyClient!
-    var eventDispatcher: FakeEventDispatcher!
+    var eventDispatcher: MockEventDispatcher!
     var project: Project!
     let datafile = OTUtils.loadJSONDatafile("api_datafile")!
     
     override func setUp() {
-        eventDispatcher = FakeEventDispatcher()
+        eventDispatcher = MockEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
                                               eventDispatcher: eventDispatcher)!
@@ -222,7 +222,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
 extension BatchEventBuilderTests_Events {
     
     func testImpressionEventWithUserNotInExperimentAndRollout() {
-        let eventDispatcher2 = FakeEventDispatcher()
+        let eventDispatcher2 = MockEventDispatcher()
         let fakeOptimizelyManager = FakeManager(sdkKey: "12345",
                                                 eventDispatcher: eventDispatcher2)
         try! fakeOptimizelyManager.start(datafile: datafile)
@@ -252,7 +252,7 @@ extension BatchEventBuilderTests_Events {
     }
     
     func testImpressionEventWithWithUserInRollout() {
-        let eventDispatcher2 = FakeEventDispatcher()
+        let eventDispatcher2 = MockEventDispatcher()
         let fakeOptimizelyManager = FakeManager(sdkKey: "12345",
                                                 eventDispatcher: eventDispatcher2)
         try! fakeOptimizelyManager.start(datafile: datafile)
@@ -287,7 +287,7 @@ extension BatchEventBuilderTests_Events {
     }
     
     func testImpressionEventWithUserInExperiment() {
-        let eventDispatcher2 = FakeEventDispatcher()
+        let eventDispatcher2 = MockEventDispatcher()
         let fakeOptimizelyManager = FakeManager(sdkKey: "12345",
                                                 eventDispatcher: eventDispatcher2)
         try! fakeOptimizelyManager.start(datafile: datafile)
@@ -326,12 +326,12 @@ extension BatchEventBuilderTests_Events {
 
 extension BatchEventBuilderTests_Events {
     
-    func getFirstEvent(dispatcher: FakeEventDispatcher) -> EventForDispatch? {
+    func getFirstEvent(dispatcher: MockEventDispatcher) -> EventForDispatch? {
         optimizely.eventLock.sync{}
         return dispatcher.events.first
     }
     
-    func getFirstEventJSON(dispatcher: FakeEventDispatcher) -> [String: Any]? {
+    func getFirstEventJSON(dispatcher: MockEventDispatcher) -> [String: Any]? {
         guard let event = getFirstEvent(dispatcher: dispatcher) else { return nil }
         
         let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! [String: Any]

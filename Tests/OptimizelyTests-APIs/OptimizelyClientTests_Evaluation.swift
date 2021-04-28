@@ -22,7 +22,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     
     var datafile: Data?
     var optimizely: OptimizelyClient?
-    var eventDispatcher: FakeEventDispatcher?
+    var eventDispatcher: MockEventDispatcher?
     
     // MARK: - Attribute Value Range
     
@@ -210,7 +210,7 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
     }
 
     func testActivateDispatchWithAttributeValues() {
-        let eventDispatcher = FakeEventDispatcher()
+        let eventDispatcher = MockEventDispatcher()
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true,
                                                   eventDispatcher: eventDispatcher)!

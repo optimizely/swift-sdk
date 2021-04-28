@@ -123,14 +123,14 @@ extension OptimizelyUserContextTests_Decide {
 
         XCTAssertEqual(decision.variationKey, "variation_with_traffic")
         XCTAssertTrue(decision.enabled)
-        XCTAssertNotNil(eventDispatcher.eventSent)
+        XCTAssertFalse(eventDispatcher.events.isEmpty)
         
-        let eventSent = eventDispatcher.eventSent!
+        let eventSent = eventDispatcher.events.first!
         let event = try! JSONDecoder().decode(BatchEvent.self, from: eventSent.body)
         let eventDecision: Decision = event.visitors[0].snapshots[0].decisions![0]
         let metadata = eventDecision.metaData
 
-        let desc = eventDispatcher.eventSent!.description
+        let desc = eventSent.description
         XCTAssert(desc.contains("campaign_activated"))
         
         XCTAssertEqual(eventDecision.experimentID, "10420810910")
@@ -151,14 +151,14 @@ extension OptimizelyUserContextTests_Decide {
         
         optimizely.eventLock.sync{}
 
-        XCTAssertNotNil(eventDispatcher.eventSent)
+        XCTAssertFalse(eventDispatcher.events.isEmpty)
         
-        let eventSent = eventDispatcher.eventSent!
+        let eventSent = eventDispatcher.events.first!
         let event = try! JSONDecoder().decode(BatchEvent.self, from: eventSent.body)
         let eventDecision: Decision = event.visitors[0].snapshots[0].decisions![0]
         let metadata = eventDecision.metaData
         
-        let desc = eventDispatcher.eventSent!.description
+        let desc = eventSent.description
         XCTAssert(desc.contains("campaign_activated"))
         
         XCTAssertEqual(eventDecision.variationID, "")
@@ -181,7 +181,7 @@ extension OptimizelyUserContextTests_Decide {
 
         XCTAssertNil(decision.variationKey)
         XCTAssertFalse(decision.enabled)
-        XCTAssertNil(eventDispatcher.eventSent)
+        XCTAssert(eventDispatcher.events.isEmpty)
     }
 
     // sendFlagDecisions = false
@@ -196,7 +196,7 @@ extension OptimizelyUserContextTests_Decide {
         
         optimizely.eventLock.sync{}
 
-        XCTAssertNotNil(eventDispatcher.eventSent)
+        XCTAssertFalse(eventDispatcher.events.isEmpty)
     }
 
     func testDecide_shouldNotSendImpressionForRollout_withSendFlagDecisionsOff() {
@@ -208,7 +208,7 @@ extension OptimizelyUserContextTests_Decide {
         
         optimizely.eventLock.sync{}
         
-        XCTAssertNil(eventDispatcher.eventSent)
+        XCTAssert(eventDispatcher.events.isEmpty)
     }
 
 }
@@ -351,7 +351,7 @@ extension OptimizelyUserContextTests_Decide {
         optimizely.eventLock.sync{}
 
         XCTAssertTrue(decision.enabled)
-        XCTAssertNil(eventDispatcher.eventSent)
+        XCTAssert(eventDispatcher.events.isEmpty)
     }
     
     func testDecideOptions_useUPSbyDefault() {
@@ -581,15 +581,4 @@ extension OptimizelyUserContextTests_Decide {
         decisionService.userProfileService.save(userProfile: profile)
     }
 }
-    
-class MockEventDispatcher: OPTEventDispatcher {
-    var eventSent: EventForDispatch?
-    
-    func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        eventSent = event
-    }
-    
-    func flushEvents() {
-        
-    }
-}
+

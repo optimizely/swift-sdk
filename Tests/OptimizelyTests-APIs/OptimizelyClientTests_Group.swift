@@ -23,7 +23,7 @@ class OptimizelyClientTests_Group: XCTestCase {
     
     var datafile: Data?
     var optimizely: OptimizelyClient?
-    var eventDispatcher: FakeEventDispatcher?
+    var eventDispatcher: MockEventDispatcher?
     
     // MARK: - Attribute Value Range
     

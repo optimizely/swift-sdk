@@ -39,7 +39,7 @@ class OptimizelyClientTests_Others: XCTestCase {
     let kUserId = "user"
     
     var optimizely: OptimizelyClient!
-    let eventDispatcher = FakeEventDispatcher()
+    let eventDispatcher = MockEventDispatcher()
 
     override func setUp() {
         super.setUp()

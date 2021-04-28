@@ -543,6 +543,19 @@
 		6E593FB625BB9C5500EC72BC /* OptimizelyClientTests_Decide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E593FB425BB9C5500EC72BC /* OptimizelyClientTests_Decide.swift */; };
 		6E5AB69323F6130D007A82B1 /* OptimizelyClientTests_Init_Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */; };
 		6E5AB69423F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */; };
+		6E5D120D2638DCE1000ABFC3 /* EventDispatcherTests_MultiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D120C2638DCE1000ABFC3 /* EventDispatcherTests_MultiClients.swift */; };
+		6E5D121F2638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12202638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12212638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12222638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12232638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12242638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12252638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12262638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12272638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12282638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D12292638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
+		6E5D122A2638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */; };
 		6E614DD621E3F38A005982A1 /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E614DCD21E3F389005982A1 /* Optimizely.framework */; };
 		6E623F02253F9045000617D0 /* DecisionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E623F01253F9045000617D0 /* DecisionInfo.swift */; };
 		6E623F03253F9045000617D0 /* DecisionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E623F01253F9045000617D0 /* DecisionInfo.swift */; };
@@ -1828,6 +1841,8 @@
 		6E593FB425BB9C5500EC72BC /* OptimizelyClientTests_Decide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Decide.swift; sourceTree = "<group>"; };
 		6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Init_Sync.swift; sourceTree = "<group>"; };
 		6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_Init_Async.swift; sourceTree = "<group>"; };
+		6E5D120C2638DCE1000ABFC3 /* EventDispatcherTests_MultiClients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDispatcherTests_MultiClients.swift; sourceTree = "<group>"; };
+		6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEventDispatcher.swift; sourceTree = "<group>"; };
 		6E614DCD21E3F389005982A1 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E614DD521E3F38A005982A1 /* OptimizelyTests-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E623F01253F9045000617D0 /* DecisionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionInfo.swift; sourceTree = "<group>"; };
@@ -2214,6 +2229,7 @@
 				6EA641F2262F4E6900E29532 /* DatafileHandlerTests_MultiClients.swift */,
 				6E424D7526324DBD0081004A /* AtomicArrayTests.swift */,
 				6E2D5DAD26338CA00002077F /* AtomicDictionaryTests.swift */,
+				6E5D120C2638DCE1000ABFC3 /* EventDispatcherTests_MultiClients.swift */,
 			);
 			path = "OptimizelyTests-MultiClients";
 			sourceTree = "<group>";
@@ -2566,6 +2582,7 @@
 				6E7519B822C5211100B2B157 /* OTUtils.swift */,
 				6E8A3D472637408500DAEA13 /* MockDatafileHandler.swift */,
 				6E7519B722C5211100B2B157 /* MockUrlSession.swift */,
+				6E5D121E2638DDF4000ABFC3 /* MockEventDispatcher.swift */,
 			);
 			path = TestUtils;
 			sourceTree = "<group>";
@@ -3615,6 +3632,7 @@
 				C78CAF5C2445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E14CDA52423F9C300010234 /* MurmurHash3.swift in Sources */,
 				6E86CEA824FDC847005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
+				6E5D12222638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E14CD912423F9A700010234 /* TrafficAllocation.swift in Sources */,
 				6E14CD6F2423F93E00010234 /* OptimizelyError.swift in Sources */,
 				6EC6DD3624ABF6990017D296 /* OptimizelyClient+Decide.swift in Sources */,
@@ -3668,6 +3686,7 @@
 				6E424D2E26324BBA0081004A /* MockUrlSession.swift in Sources */,
 				6E424CF326324B620081004A /* OPTDatafileHandler.swift in Sources */,
 				6E424CF426324B620081004A /* DecisionInfo.swift in Sources */,
+				6E5D120D2638DCE1000ABFC3 /* EventDispatcherTests_MultiClients.swift in Sources */,
 				6E424CF526324B620081004A /* DefaultBucketer.swift in Sources */,
 				6E424D5426324C4D0081004A /* OptimizelyUserContext.swift in Sources */,
 				6E424CF626324B620081004A /* DefaultNotificationCenter.swift in Sources */,
@@ -3734,6 +3753,7 @@
 				6E424CBE26324B1D0081004A /* AtomicProperty.swift in Sources */,
 				6E424CBF26324B1D0081004A /* AtomicArray.swift in Sources */,
 				6E424CC026324B1D0081004A /* AtomicDictionary.swift in Sources */,
+				6E5D12212638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E424CC126324B1D0081004A /* Utils.swift in Sources */,
 				6E424CC226324B1D0081004A /* SDKVersion.swift in Sources */,
 				6E424C88263249B80081004A /* DatafileHandlerTests_MultiClients.swift in Sources */,
@@ -3865,6 +3885,7 @@
 				C78CAF612445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E7516D222C520D400B2B157 /* OPTLogger.swift in Sources */,
 				6E86CEAC24FDC849005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
+				6E5D12272638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E75186022C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E7517E822C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6EC6DD3B24ABF6990017D296 /* OptimizelyClient+Decide.swift in Sources */,
@@ -3959,6 +3980,7 @@
 				6E75183822C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E75175222C520D400B2B157 /* LogMessage.swift in Sources */,
 				6E9B11DB22C548A200C22D81 /* OptimizelyClientTests_Variables.swift in Sources */,
+				6E5D12232638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6ECB60C6234D329500016D41 /* OptimizelyClientTests_OptimizelyConfig.swift in Sources */,
 				6EA2CC282345618E001E7531 /* OptimizelyConfig.swift in Sources */,
 				6E75189822C520D400B2B157 /* Experiment.swift in Sources */,
@@ -4072,6 +4094,7 @@
 				6E424C06263228FD0081004A /* AtomicDictionary.swift in Sources */,
 				6E75174922C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
 				6E7516F522C520D400B2B157 /* OptimizelyError.swift in Sources */,
+				6E5D12262638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E75188322C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E86CEAB24FDC849005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E7517CF22C520D400B2B157 /* DefaultBucketer.swift in Sources */,
@@ -4117,6 +4140,7 @@
 				6E75170F22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6EC6DD4C24ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				6E7517E922C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
+				6E5D12282638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E9B116A22C5487100C22D81 /* BucketTests_Base.swift in Sources */,
 				6E9B115F22C5487100C22D81 /* MurmurTests.swift in Sources */,
 				6E9B116022C5487100C22D81 /* DecisionServiceTests_Experiments.swift in Sources */,
@@ -4254,6 +4278,7 @@
 				6E7516E022C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E34A6212319EBB800BAE302 /* Notifications.swift in Sources */,
 				6E9B119D22C5488300C22D81 /* UserAttributeTests.swift in Sources */,
+				6E5D12292638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E75183E22C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E9B11A022C5488300C22D81 /* ExperimentTests.swift in Sources */,
 				6E7516EC22C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
@@ -4338,6 +4363,7 @@
 				6E75178122C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6EC6DD4524ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				6E7517CB22C520D400B2B157 /* DefaultBucketer.swift in Sources */,
+				6E5D12202638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E9B115022C5486E00C22D81 /* BucketTests_Base.swift in Sources */,
 				6E9B114522C5486E00C22D81 /* MurmurTests.swift in Sources */,
 				6E9B114622C5486E00C22D81 /* DecisionServiceTests_Experiments.swift in Sources */,
@@ -4475,6 +4501,7 @@
 				6E7516DB22C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E34A61C2319EBB800BAE302 /* Notifications.swift in Sources */,
 				6E9B118722C5488100C22D81 /* UserAttributeTests.swift in Sources */,
+				6E5D12242638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E75183922C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E9B118A22C5488100C22D81 /* ExperimentTests.swift in Sources */,
 				6E7516E722C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
@@ -4556,6 +4583,7 @@
 				6E424C05263228FD0081004A /* AtomicDictionary.swift in Sources */,
 				6EC6DD4924ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				6E75188222C520D400B2B157 /* TrafficAllocation.swift in Sources */,
+				6E5D12252638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6ECB60D0234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
 				6E9B11E322C548AF00C22D81 /* ThrowableConditionListTest.swift in Sources */,
 				6E75176022C520D400B2B157 /* AtomicProperty.swift in Sources */,
@@ -4641,6 +4669,7 @@
 				6E424C0A263228FD0081004A /* AtomicDictionary.swift in Sources */,
 				6EC6DD4E24ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				6E75188722C520D400B2B157 /* TrafficAllocation.swift in Sources */,
+				6E5D122A2638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6ECB60D5234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
 				6E9B11E522C548B100C22D81 /* ThrowableConditionListTest.swift in Sources */,
 				6E75176522C520D400B2B157 /* AtomicProperty.swift in Sources */,
@@ -4827,6 +4856,7 @@
 				C78CAF5A2445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E75194A22C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E86CEA724FDC846005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
+				6E5D121F2638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E7516CC22C520D400B2B157 /* OPTLogger.swift in Sources */,
 				6E75185A22C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6EC6DD3424ABF6990017D296 /* OptimizelyClient+Decide.swift in Sources */,

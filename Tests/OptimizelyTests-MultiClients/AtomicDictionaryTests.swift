@@ -38,4 +38,25 @@ class AtomicDictionaryTests: XCTestCase {
         XCTAssert(a["k2"] == 2)
     }
     
+    func testConcurrentReadWrite() {
+        let a = AtomicDictionary<Int, Int>()
+
+        let numConcurrency = 100
+        let numIterations = 10000
+        let result = OTUtils.runConcurrent(count: numConcurrency) { idx in
+            for i in 0..<numIterations {
+                a[i] = i + 1234
+            }
+
+            for i in 0..<numIterations {
+                XCTAssertEqual(a[i], i + 1234)
+            }
+            
+            XCTAssertEqual(a.count, numIterations)
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+        XCTAssertEqual(a.count, numIterations)
+    }
+    
 }

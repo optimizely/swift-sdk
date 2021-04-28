@@ -42,7 +42,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         
         makeSdkKeys(100)
         
-        let result = runConcurrent(for: sdkKeys, timeoutInSecs: 10) { sdkKey, _ in
+        let result = OTUtils.runConcurrent(for: sdkKeys, timeoutInSecs: 10) { _, sdkKey in
             let group = DispatchGroup()
             
             group.enter()
@@ -115,7 +115,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         let recv304 = AtomicProperty<Int>(property: 0)
         let recvSuccess = AtomicProperty<Int>(property: 0)
 
-        let result = runConcurrent(for: sdkKeys, timeoutInSecs: 10) { sdkKey, idx in
+        let result = OTUtils.runConcurrent(for: sdkKeys, timeoutInSecs: 10) { idx, sdkKey in
             let group = DispatchGroup()
             
             group.enter()
@@ -156,9 +156,8 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
 
         makeSdkKeys(100)
         
-        let result = runConcurrent(for: sdkKeys, timeoutInSecs: 10) { sdkKey, _ in
+        let result = OTUtils.runConcurrent(for: sdkKeys, timeoutInSecs: 10) { _, sdkKey in
             let expectedLastModified = MockDatafileHandler.getLastModified(sdkKey: sdkKey)
-            
             
             let group = DispatchGroup()
             
@@ -182,7 +181,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     func testConcurrentAccessDatafileCaches() {
         makeSdkKeys(100)
         
-        let result = runConcurrent(for: sdkKeys) { sdkKey, idx in
+        let result = OTUtils.runConcurrent(for: sdkKeys) { idx, sdkKey in
             let maxCnt = 10
             for _ in 0..<maxCnt {
                 let data = sdkKey.data(using: .utf8)!
@@ -204,7 +203,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     func testConcurrentAccessPeriodicInterval() {
         makeSdkKeys(100)
 
-        let result = runConcurrent(for: sdkKeys) { _, _ in
+        let result = OTUtils.runConcurrent(for: sdkKeys) { _, _ in
             let maxCnt = 100
             for _ in 0..<maxCnt {
                 let writeKey = String(Int.random(in: 0..<maxCnt))
@@ -276,24 +275,6 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
 // MARK: - Utils
     
 extension DatafileHandlerTests_MultiClients {
-    
-    func runConcurrent(for items: [String], timeoutInSecs: Int = 10, task: @escaping (String, Int) -> Void) -> Bool {
-        let group = DispatchGroup()
-        
-        for (idx, item) in items.enumerated() {
-            group.enter()
-            
-            // NOTE: do not use DispatchQueue.global(), which looks like a deadlock because of too many threads
-            DispatchQueue(label: item).async {
-                task(item, idx)
-                group.leave()
-            }
-        }
-        
-        let timeout = DispatchTime.now() + .seconds(timeoutInSecs)
-        let result = group.wait(timeout: timeout)
-        return result == .success
-    }
     
     func makeSdkKeys(_ num: Int) {
         sdkKeys = []

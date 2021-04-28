@@ -256,6 +256,38 @@ class OTUtils {
         }
     }
     
+    // MARK: - concurrency
+    
+    static func runConcurrent(for items: [String],
+                              timeoutInSecs: Int = 10,
+                              task: @escaping (Int, String) -> Void) -> Bool {
+        let group = DispatchGroup()
+        
+        for (idx, item) in items.enumerated() {
+            group.enter()
+            
+            // NOTE: do not use DispatchQueue.global(), which looks like a deadlock because of too many threads
+            DispatchQueue(label: item).async {
+                task(idx, item)
+                group.leave()
+            }
+        }
+        
+        let timeout = DispatchTime.now() + .seconds(timeoutInSecs)
+        let result = group.wait(timeout: timeout)
+        return result == .success
+    }
+    
+    static func runConcurrent(count: Int,
+                              timeoutInSecs: Int = 10,
+                              task: @escaping (Int) -> Void) -> Bool {
+        let items = (0..<count).map{ String($0) }
+
+        return runConcurrent(for: items) { (idx, item) in
+            task(idx)
+        }
+    }
+    
     // MARK: - big numbers
     
     static var positiveMaxValueAllowed: Double {

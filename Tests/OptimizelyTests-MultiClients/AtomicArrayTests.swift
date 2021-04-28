@@ -45,4 +45,36 @@ class AtomicArrayTests: XCTestCase {
         XCTAssert(b[8] == 30)
     }
     
+    func testConcurrentReadWrite() {
+        let num = 10000
+        let a = AtomicArray<Int>()
+        (0..<num).forEach{ a.append($0) }
+
+        let result = OTUtils.runConcurrent(count: 100) { idx in
+            for i in 0..<a.count {
+                a[i] = i + 1234
+            }
+
+            for i in 0..<a.count {
+                XCTAssertEqual(a[i], i + 1234)
+            }
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+
+    func testConcurrentAppend() {
+        let a = AtomicArray<Int>()
+
+        let numConcurrency = 100
+        let numIterations = 10000
+        let result = OTUtils.runConcurrent(count: numConcurrency) { idx in
+            (0..<numIterations).forEach{ a.append($0) }
+            (0..<numIterations).forEach{ a.append(contentsOf: [$0+1000, $0+2000]) }
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+        XCTAssertEqual(a.count, 3 * numIterations * numConcurrency)
+    }
+    
 }

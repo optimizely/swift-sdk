@@ -21,9 +21,7 @@ public enum DataStoreType {
 }
 
 open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
-    
-    static let sharedInstance =
-                DefaultEventDispatcher()
+    static let sharedInstance = DefaultEventDispatcher()
     
     // timer-interval for batching (0 = no batching, negative = use default)
     var timerInterval: TimeInterval
@@ -38,19 +36,15 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         static public let maxQueueSize = 10000
         static let maxFailureCount = 3
     }
-    
-    // the max failure count.  there is no backoff timer.
-    
+        
     lazy var logger = OPTLoggerFactory.getLogger()
-    var backingStore: DataStoreType
-    var backingStoreName: String
     
     // for dispatching events
-    let dispatcher = DispatchQueue(label: "DefaultEventDispatcherQueue")
+    let lock = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
-    let dataStore: DataStoreQueueStackImpl<EventForDispatch>
+    let queue: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
-    var timer: AtomicProperty<Timer> = AtomicProperty<Timer>()
+    var timer = AtomicProperty<Timer>()
     
     var observerProjectId: NSObjectProtocol?
     var observerRevision: NSObjectProtocol?
@@ -64,19 +58,16 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         self.timerInterval = timerInterval >= 0 ? timerInterval : DefaultValues.timeInterval
         self.maxQueueSize = maxQueueSize >= 100 ? maxQueueSize : DefaultValues.maxQueueSize
         
-        self.backingStore = backingStore
-        self.backingStoreName = dataStoreName
-
         switch backingStore {
         case .file:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
-                                                                       dataStore: DataStoreFile<[Data]>(storeName: backingStoreName))
+            self.queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                   dataStore: DataStoreFile<[Data]>(storeName: dataStoreName))
         case .memory:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
-                                                                       dataStore: DataStoreMemory<[Data]>(storeName: backingStoreName))
+            self.queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                   dataStore: DataStoreMemory<[Data]>(storeName: dataStoreName))
         case .userDefaults:
-            self.dataStore = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
-                                                                       dataStore: DataStoreUserDefaults())
+            self.queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                   dataStore: DataStoreUserDefaults())
         }
         
         if self.maxQueueSize < self.batchSize {
@@ -98,16 +89,16 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        guard dataStore.count < maxQueueSize else {
+        guard queue.count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
             self.logger.e(error)
             completionHandler?(.failure(error))
             return
         }
         
-        dataStore.save(item: event)
+        queue.save(item: event)
         
-        if dataStore.count >= batchSize {
+        if queue.count >= batchSize {
             flushEvents()
         } else {
             startTimer()
@@ -121,12 +112,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     let notify = DispatchGroup()
     
     open func flushEvents() {
-        dispatcher.async {
+        lock.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
             
             func removeStoredEvents(num: Int) {
-                if let removedItem = self.dataStore.removeFirstItems(count: num), removedItem.count > 0 {
+                if let removedItem = self.queue.removeFirstItems(count: num), removedItem.count > 0 {
                     // avoid event-log-message preparation overheads with closure-logging
                     self.logger.d({ "Removed stored \(num) events starting with \(removedItem.first!)" })
                 } else {
@@ -134,7 +125,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 }
             }
             
-            while let eventsToSend: [EventForDispatch] = self.dataStore.getFirstItems(count: self.batchSize) {
+            while let eventsToSend: [EventForDispatch] = self.queue.getFirstItems(count: self.batchSize) {
                 let (numEvents, batched) = eventsToSend.batch()
                 
                 guard numEvents > 0 else { break }
@@ -200,8 +191,13 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         }
         
         task.resume()
-        
     }
+    
+}
+
+// MARK: - internals
+
+extension DefaultEventDispatcher {
     
     func applicationDidEnterBackground() {
         stopTimer()
@@ -210,7 +206,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func applicationDidBecomeActive() {
-        if dataStore.count > 0 {
+        if queue.count > 0 {
             startTimer()
         }
     }
@@ -222,15 +218,15 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             return
         }
         
-        guard self.timer.property == nil else { return }
+        guard timer.property == nil else { return }
         
         DispatchQueue.main.async {
             // should check here again
             guard self.timer.property == nil else { return }
             
             self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { _ in
-                self.dispatcher.async {
-                    if self.dataStore.count > 0 {
+                self.lock.async {
+                    if self.queue.count > 0 {
                         self.flushEvents()
                     } else {
                         self.stopTimer()
@@ -241,11 +237,19 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     func stopTimer() {
-        timer.performAtomic { (timer) in
+        timer.performAtomic { timer in
             timer.invalidate()
         }
         timer.property = nil
     }
+    
+    // MARK: - Tests
+
+    open func close() {
+        self.flushEvents()
+        self.lock.sync {}
+    }
+    
 }
 
 // MARK: - Notification Observers
@@ -253,12 +257,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
 extension DefaultEventDispatcher {
     
     func addProjectChangeNotificationObservers() {
-        observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] (_) in
+        observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] _ in
             self?.logger.d("Event flush triggered by datafile projectId change")
             self?.flushEvents()
         }
         
-        observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] (_) in
+        observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] _ in
             self?.logger.d("Event flush triggered by datafile revision change")
             self?.flushEvents()
         }
@@ -271,13 +275,6 @@ extension DefaultEventDispatcher {
         if let observer = observerRevision {
             NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyRevisionChange, object: nil)
         }
-    }
-    
-    // MARK: - Tests
-
-    open func close() {
-        self.flushEvents()
-        self.dispatcher.sync {}
     }
     
 }

@@ -211,6 +211,10 @@ class OTUtils {
         removeAllUserDefaults(including: including)
     }
     
+    static func clearAllEventQueues() {
+        removeAllFiles(including: "OPTEventQueue")
+    }
+    
     static func removeAllFiles(including: String) {
         removeAllFiles(including: including, in: .documentDirectory)
         removeAllFiles(including: including, in: .cachesDirectory)
@@ -289,7 +293,7 @@ class OTUtils {
                               task: @escaping (Int) -> Void) -> Bool {
         let items = (0..<count).map{ String($0) }
 
-        return runConcurrent(for: items) { (idx, item) in
+        return runConcurrent(for: items, timeoutInSecs: timeoutInSecs) { (idx, item) in
             task(idx)
         }
     }

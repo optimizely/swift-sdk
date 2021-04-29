@@ -17,11 +17,14 @@
 import XCTest
 
 class EventDispatcherTests_MultiClients: XCTestCase {
+    var dispatcher = DefaultEventDispatcher()
 
     override func setUpWithError() throws {
+        OTUtils.createDocumentDirectoryIfNotAvailable()
     }
 
     override func tearDownWithError() throws {
+        OTUtils.clearAllEventQueues()
     }
 
     func testConcurrentDispatchEvents() {
@@ -36,4 +39,27 @@ class EventDispatcherTests_MultiClients: XCTestCase {
         
     }
     
+    func testConcurrentStartTimer() {
+        let result = OTUtils.runConcurrent(count: 5, timeoutInSecs: 30) { idx in
+            (0..<1).forEach { _ in
+                self.dispatcher.startTimer()
+                print("MultiClients] before sleep: \(idx)")
+                
+                let group = DispatchGroup()
+                group.enter()
+                DispatchQueue.main.async {
+                    group.leave()
+                }
+                group.wait()
+                print("MultiClients] end sleep: \(idx)")
+                self.dispatcher.stopTimer()
+            }
+            
+            print("MultiClients] end of each")
+
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+
 }

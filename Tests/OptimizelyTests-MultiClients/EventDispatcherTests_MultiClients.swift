@@ -17,7 +17,7 @@
 import XCTest
 
 class EventDispatcherTests_MultiClients: XCTestCase {
-    let stressFactor = 1    // increase this (10?) to give more stress testing with longer running time
+    let stressFactor = 1    // increase this (10) to give more stress with longer running time
 
     override func setUpWithError() throws {
         OTUtils.bindLoggerForTest(.info)
@@ -42,9 +42,7 @@ class EventDispatcherTests_MultiClients: XCTestCase {
 
         let exp = expectation(description: "delay")
         DispatchQueue.global().async {
-            while dispatcher.totalEventsSent < numEvents || dispatcher.timer.property != nil {
-                sleep(1)
-            }
+            while dispatcher.totalEventsSent < numEvents || dispatcher.timer.property != nil { sleep(1) }
             exp.fulfill()
         }
         
@@ -54,8 +52,6 @@ class EventDispatcherTests_MultiClients: XCTestCase {
                     usleep(UInt32.random(in: 0..<1000000))
                     dispatcher.dispatchEvent(event: OTUtils.makeEventForDispatch(), completionHandler: nil)
                 }
-                NotificationCenter.default.post(name: .didReceiveOptimizelyProjectIdChange, object: nil)
-                NotificationCenter.default.post(name: .didReceiveOptimizelyRevisionChange, object: nil)
             }
         }
                 
@@ -89,6 +85,12 @@ class EventDispatcherTests_MultiClients: XCTestCase {
                     usleep(UInt32.random(in: 0..<1000))
                     dispatcher.dispatchEvent(event: OTUtils.makeEventForDispatch(), completionHandler: nil)
                 }
+                
+                // more stress with notifications
+                if Bool.random() {
+                    NotificationCenter.default.post(name: .didReceiveOptimizelyProjectIdChange, object: nil)
+                    NotificationCenter.default.post(name: .didReceiveOptimizelyRevisionChange, object: nil)
+                }
             }
         }
                 
@@ -120,39 +122,6 @@ class EventDispatcherTests_MultiClients: XCTestCase {
             dispatcher.startTimer()
         }
                 
-        // test should wait until all startTimers done, events flushed, and then timer stopped eventually
-        wait(for: [exp], timeout: 10)
-    }
-
-    func testConcurrentNotifications() {
-        let numThreads = 100
-        let numEvents = 10
-
-        let dispatcher = DumpEventDispatcher()
-        dispatcher.timerInterval = 999999999   // disable flush by timer
-        dispatcher.batchSize = 999999999       // avoid early-fire by batch-filled
-
-        // keep the test running until all events flushed and timer stopped
-
-        let exp = expectation(description: "delay")
-        DispatchQueue.global().async {
-            while dispatcher.totalEventsSent < numEvents {
-                print("[MultiClients] totalEventSent: \(dispatcher.totalEventsSent)")
-                sleep(1)
-            }
-            exp.fulfill()
-        }
-        
-        (0..<numEvents).forEach{ e in
-            dispatcher.dispatchEvent(event: OTUtils.makeEventForDispatch(), completionHandler: nil)
-        }
-
-        let result = OTUtils.runConcurrent(count: numThreads) { idx in
-            NotificationCenter.default.post(name: .didReceiveOptimizelyProjectIdChange, object: nil)
-        }
-            
-        XCTAssertTrue(result, "Concurrent tasks timed out")
-
         // test should wait until all startTimers done, events flushed, and then timer stopped eventually
         wait(for: [exp], timeout: 10)
     }

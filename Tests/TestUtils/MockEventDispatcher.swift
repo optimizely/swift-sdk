@@ -18,16 +18,35 @@ import Foundation
 
 class MockEventDispatcher: OPTEventDispatcher {
     public var events = [EventForDispatch]()
+    public var totalEventsFlushed: Int
     
-    required init() {}
+    required init() {
+        totalEventsFlushed = 0
+    }
     
     func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
         events.append(event)
     }
     
-    /// Attempts to flush the event queue if there are any events to process.
     func flushEvents() {
+        totalEventsFlushed += events.count
         events.removeAll()
     }
-    
 }
+
+class DumpEventDispatcher: DefaultEventDispatcher {
+    public var totalEventsSent: Int
+
+    required init() {
+        totalEventsSent = 0
+    }
+
+    override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+        if let decodedEvent = try? JSONDecoder().decode(BatchEvent.self, from: event.body) {
+            totalEventsSent += decodedEvent.visitors.count
+        }
+    
+        completionHandler(.success(Data()))
+    }
+}
+

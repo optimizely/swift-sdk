@@ -241,11 +241,6 @@ class EventDispatcherTests: XCTestCase {
     }
     
     func testEventQueueFormatCompatibilty() {
-        class LocalEventDispatcher: DefaultEventDispatcher {
-            override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
-                completionHandler(.success(Data()))
-            }
-        }
         let queueName = "OPTEventQueue"
         
         // pre-store multiple events in a queue (expected format)
@@ -267,7 +262,7 @@ class EventDispatcherTests: XCTestCase {
         
         // verify that a new dataStore can read an existing queue items
         
-        let dispatcher = LocalEventDispatcher()
+        let dispatcher = DumpEventDispatcher()
         
         XCTAssert(dispatcher.queue.count == 2)
         dispatcher.flushEvents()

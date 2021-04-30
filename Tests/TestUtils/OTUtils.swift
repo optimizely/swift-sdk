@@ -159,7 +159,6 @@ class OTUtils {
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
 
-    
     // MARK: - UPS
     
     static func getVariationFromUPS(ups: OPTUserProfileService, userId: String, experimentId: String) -> String? {
@@ -184,6 +183,30 @@ class OTUtils {
         
         ups.save(userProfile: profile)
     }
+    
+    // MARK: - events
+    
+    static func makeEventForDispatch(url: String? = nil, event: BatchEvent? = nil) -> EventForDispatch {
+        let targetUrl = URL(string: url ?? "https://a.b.c")
+        let data = try! JSONEncoder().encode(event ?? makeTestBatchEvent())
+        return EventForDispatch(url: targetUrl, body: data)
+    }
+    
+    static func makeTestBatchEvent(projectId: String? = nil, revision: String? = nil, visitor: Visitor? = nil) -> BatchEvent {
+        let testProjectId = projectId ?? "12345"
+        let testVisitor = visitor ?? Visitor(attributes: [], snapshots: [], visitorID: "tester")
+        let testRevision = revision ?? "101"
+        
+        return BatchEvent(revision: testRevision,
+                          accountID: "1234",
+                          clientVersion: "1.0.0",
+                          visitors: [testVisitor],
+                          projectID: testProjectId,
+                          clientName: "test",
+                          anonymizeIP: true,
+                          enrichDecisions: true)
+    }
+
 
     // MARK: - files
     

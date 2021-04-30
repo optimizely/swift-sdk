@@ -207,7 +207,6 @@ class OTUtils {
                           enrichDecisions: true)
     }
 
-
     // MARK: - files
     
     static func saveAFile(name: String, data: Data) -> URL? {
@@ -339,7 +338,6 @@ class OTUtils {
         return negativeMaxValueAllowed * 2.0
     }
     
-
     // MARK: - others
     
     static var randomSdkKey: String {

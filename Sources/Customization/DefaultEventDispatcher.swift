@@ -38,16 +38,13 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
         
     lazy var logger = OPTLoggerFactory.getLogger()
-    
     // for dispatching events
     let lock = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
     let queue: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
     var timer = AtomicProperty<Timer>()
-    
-    var observerProjectId: NSObjectProtocol?
-    var observerRevision: NSObjectProtocol?
+    var observers = [NSObjectProtocol]()
     
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
@@ -89,7 +86,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        guard queue.count < maxQueueSize else {
+        let count = queue.count
+        guard count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
             self.logger.e(error)
             completionHandler?(.failure(error))
@@ -98,7 +96,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         
         queue.save(item: event)
         
-        if queue.count >= batchSize {
+        if count + 1 >= batchSize {
             flushEvents()
         } else {
             startTimer()
@@ -257,23 +255,24 @@ extension DefaultEventDispatcher {
 extension DefaultEventDispatcher {
     
     func addProjectChangeNotificationObservers() {
-        observerProjectId = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] _ in
-            self?.logger.d("Event flush triggered by datafile projectId change")
-            self?.flushEvents()
-        }
+        observers.append(
+            NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] _ in
+                self?.logger.d("Event flush triggered by datafile projectId change")
+                self?.flushEvents()
+            }
+        )
         
-        observerRevision = NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] _ in
-            self?.logger.d("Event flush triggered by datafile revision change")
-            self?.flushEvents()
-        }
+        observers.append(
+            NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] _ in
+                self?.logger.d("Event flush triggered by datafile revision change")
+                self?.flushEvents()
+            }
+        )
     }
     
     func removeProjectChangeNotificationObservers() {
-        if let observer = observerProjectId {
-            NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyProjectIdChange, object: nil)
-        }
-        if let observer = observerRevision {
-            NotificationCenter.default.removeObserver(observer, name: .didReceiveOptimizelyRevisionChange, object: nil)
+        observers.forEach{
+            NotificationCenter.default.removeObserver($0)
         }
     }
     

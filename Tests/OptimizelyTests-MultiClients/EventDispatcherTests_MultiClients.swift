@@ -30,74 +30,56 @@ class EventDispatcherTests_MultiClients: XCTestCase {
     }
 
     func testConcurrentDispatchEvents() {
-        let numThreads = 100
-        let numEventsPerThread = 10 * stressFactor
-        let numEvents = numThreads * numEventsPerThread
-
         let dispatcher = DumpEventDispatcher()
         dispatcher.timerInterval = 1
         dispatcher.batchSize = 999999999       // avoid early-fire by batch-filled
 
-        // keep the test running until all events flushed and timer stopped
-
-        let exp = expectation(description: "delay")
-        DispatchQueue.global().async {
-            while dispatcher.totalEventsSent < numEvents || dispatcher.timer.property != nil { sleep(1) }
-            exp.fulfill()
-        }
-        
-        (0..<numThreads).forEach{ idx in
-            DispatchQueue(label:"\(idx)").async {
-                (0..<numEventsPerThread).forEach{ e in
-                    usleep(UInt32.random(in: 0..<1000000))
-                    dispatcher.dispatchEvent(event: OTUtils.makeEventForDispatch(), completionHandler: nil)
-                }
-            }
-        }
-                
-        // test should wait until all startTimers done, events flushed, and then timer stopped eventually
+        let exp = dispatchEventsConcurrently(dispatcher: dispatcher,
+                                             numThreads: 100,
+                                             numEventsPerThread: (10 * stressFactor),
+                                             maxRandomIntervalInUsecs: 1000000)
         wait(for: [exp], timeout: Double(30 * stressFactor))
     }
     
     func testConcurrentDispatchEvents_2() {
+        let dispatcher = DumpEventDispatcher()
+        dispatcher.timerInterval = 0           // no batch
+
+        let exp = dispatchEventsConcurrently(dispatcher: dispatcher,
+                                             numThreads: 100,
+                                             numEventsPerThread: (10 * stressFactor),
+                                             maxRandomIntervalInUsecs: 1000000)
+        wait(for: [exp], timeout: Double(30 * stressFactor))
+    }
+    
+    func testConcurrentDispatchEvents_3() {
         // same tests as above, but with more events with less gaps between them
         // timer (with short interval) will not work periodically with those frequent events dispatch, but this can be a good stress testing.
-        
-        let numThreads = 10
-        let numEventsPerThread = 1000 * stressFactor
-        let numEvents = numThreads * numEventsPerThread
 
         let dispatcher = DumpEventDispatcher()
         dispatcher.timerInterval = 1
         dispatcher.batchSize = 999999999       // avoid early-fire by batch-filled
 
-        // keep the test running until all events flushed and timer stopped
-
-        let exp = expectation(description: "delay")
-        DispatchQueue.global().async {
-            while dispatcher.totalEventsSent < numEvents || dispatcher.timer.property != nil { sleep(1) }
-            exp.fulfill()
-        }
-        
-        (0..<numThreads).forEach{ idx in
-            DispatchQueue(label:"\(idx)").async {
-                (0..<numEventsPerThread).forEach{ e in
-                    usleep(UInt32.random(in: 0..<1000))
-                    dispatcher.dispatchEvent(event: OTUtils.makeEventForDispatch(), completionHandler: nil)
-                }
-                
-                // more stress with notifications
-                if Bool.random() {
-                    NotificationCenter.default.post(name: .didReceiveOptimizelyProjectIdChange, object: nil)
-                    NotificationCenter.default.post(name: .didReceiveOptimizelyRevisionChange, object: nil)
-                }
-            }
-        }
-                
-        // test should wait until all startTimers done, events flushed, and then timer stopped eventually
+        let exp = dispatchEventsConcurrently(dispatcher: dispatcher,
+                                             numThreads: 10,
+                                             numEventsPerThread: (1000 * stressFactor),
+                                             maxRandomIntervalInUsecs: 1000)
         wait(for: [exp], timeout: Double(30 * stressFactor))
     }
     
+    func testConcurrentDispatchEvents_withNotifications() {
+        let dispatcher = DumpEventDispatcher()
+        dispatcher.timerInterval = 1
+        dispatcher.batchSize = 999999999       // avoid early-fire by batch-filled
+
+        let exp = dispatchEventsConcurrently(dispatcher: dispatcher,
+                                             numThreads: 10,
+                                             numEventsPerThread: (1000 * stressFactor),
+                                             maxRandomIntervalInUsecs: 1000,
+                                             injectNotifications: true)
+        wait(for: [exp], timeout: Double(30 * stressFactor))
+    }
+        
     func testConcurrentStartTimer() {
         let numThreads = 100
 
@@ -125,5 +107,43 @@ class EventDispatcherTests_MultiClients: XCTestCase {
         // test should wait until all startTimers done, events flushed, and then timer stopped eventually
         wait(for: [exp], timeout: 10)
     }
+}
 
+// MARK: - utils
+
+extension EventDispatcherTests_MultiClients {
+
+    func dispatchEventsConcurrently(dispatcher: DumpEventDispatcher,
+                                    numThreads: Int,
+                                    numEventsPerThread: Int,
+                                    maxRandomIntervalInUsecs: Int,
+                                    injectNotifications: Bool = false) -> XCTestExpectation {
+        let numEvents = numThreads * numEventsPerThread
+        
+        // keep the test running until all events flushed and timer stopped
+
+        let exp = expectation(description: "delay")
+        DispatchQueue.global().async {
+            while dispatcher.totalEventsSent < numEvents || dispatcher.timer.property != nil { sleep(1) }
+            exp.fulfill()
+        }
+        
+        (0..<numThreads).forEach{ idx in
+            DispatchQueue(label:"\(idx)").async {
+                (0..<numEventsPerThread).forEach{ e in
+                    usleep(UInt32.random(in: 0..<UInt32(maxRandomIntervalInUsecs)))
+                    dispatcher.dispatchEvent(event: OTUtils.makeEventForDispatch(), completionHandler: nil)
+                }
+                
+                // more stress with notifications
+                if injectNotifications, Bool.random() {
+                    NotificationCenter.default.post(name: .didReceiveOptimizelyProjectIdChange, object: nil)
+                    NotificationCenter.default.post(name: .didReceiveOptimizelyRevisionChange, object: nil)
+                }
+            }
+        }
+        
+        return exp
+    }
+    
 }

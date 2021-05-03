@@ -29,11 +29,11 @@ up an Optimizely X project and start using the SDK.
 Please note below that _\<platform\>_ is used to represent the platform on which you are building your app. Currently, we support ```iOS```, ```tvOS```, and ```watchOS``` platforms.
 
 #### Swift Package Manager
-Add the dependency on the Optimizely Swift SDK with Swift Package Manager
+Add the dependency on the Optimizely Swift SDK with Swift Package Manager in `Xcode`
 
-1. File -> Swift Packages -> Add Package Dependency
-2. Enter 'https://github.com/optimizely/swift-sdk'.
-3. Accept the default rules (Version: 'Up to Next Major').
+1. `File` -> `Swift Packages` -> `Add Package Dependency`
+2. Enter `https://github.com/optimizely/swift-sdk`.
+3. Accept the default rules (`Version: 'Up to Next Major'`).
 
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>

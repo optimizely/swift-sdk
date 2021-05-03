@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1230"
+   LastUpgradeVersion = "1240"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -17,6 +17,20 @@
                BlueprintIdentifier = "6EBAEB6B21E3FEF800D13AA9"
                BuildableName = "Optimizely.framework"
                BlueprintName = "OptimizelySwiftSDK-iOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6E424C3B263249620081004A"
+               BuildableName = "OptimizelyTests-MultiClients-iOS.xctest"
+               BlueprintName = "OptimizelyTests-MultiClients-iOS"
                ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -156,6 +170,16 @@
                BlueprintIdentifier = "6E636B9A2236C96700AF3CEF"
                BuildableName = "OptimizelyTests-Legacy-iOS.xctest"
                BlueprintName = "OptimizelyTests-Legacy-iOS"
+               ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6E424C3B263249620081004A"
+               BuildableName = "OptimizelyTests-MultiClients-iOS.xctest"
+               BlueprintName = "OptimizelyTests-MultiClients-iOS"
                ReferencedContainer = "container:OptimizelySwiftSDK.xcodeproj">
             </BuildableReference>
          </TestableReference>

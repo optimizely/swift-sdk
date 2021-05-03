@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>FILEHEADER</key>
-    <string>
+//
 // Copyright 2021, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
@@ -17,7 +12,33 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//</string>
-</dict>
-</plist>
+//
+    
+import Foundation
 
+class AtomicDictionary<K, V>: AtomicWrapper where K: Hashable {
+    private var _property: [K: V]
+         
+    init(_ property: [K: V] = [:]) {
+        self._property = property
+    }
+    
+    subscript(key: K) -> V? {
+        get {
+            return getAtomic {
+                _property[key]
+            }
+        }
+        set {
+            performAtomic {
+                self._property[key] = newValue
+            }
+        }
+    }
+    
+    var count: Int {
+        return getAtomic {
+            _property.count
+        }!
+    }
+}

@@ -106,6 +106,11 @@ class OTUtils {
         }
     }
     
+    static func loadJSONDatafileString(_ filename: String) -> String? {
+        guard let data = loadJSONDatafile(filename) else { return nil }
+        return String(bytes: data, encoding: .utf8)
+    }
+    
     static func loadJSONFile(_ filename: String) -> Data? {
         return loadJSONDatafile(filename)
     }
@@ -138,6 +143,23 @@ class OTUtils {
         }
     }
     
+    // MARK: - HandlerRegistryService
+    
+    static func bindLoggerForTest(_ level: OptimizelyLogLevel? = nil) {
+        if let level = level {
+            DefaultLogger.logLevel = level
+        }
+        let logger = DefaultLogger()
+
+        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self, factory: type(of: logger).init)
+        HandlerRegistryService.shared.registerBinding(binder: binder)
+    }
+    
+    static func clearAllBinders() {
+        HandlerRegistryService.shared.binders.property?.removeAll()
+    }
+
+    
     // MARK: - UPS
     
     static func getVariationFromUPS(ups: OPTUserProfileService, userId: String, experimentId: String) -> String? {
@@ -163,6 +185,109 @@ class OTUtils {
         ups.save(userProfile: profile)
     }
 
+    // MARK: - files
+    
+    static func saveAFile(name: String, data: Data) -> URL? {
+        let ds = DataStoreFile<Data>(storeName: name, async: false)
+        ds.saveItem(forKey: name, value: data)
+        
+        return ds.url
+    }
+
+    static func removeAFile(name: String) -> URL? {
+        let ds = DataStoreFile<Data>(storeName: name, async: false)
+        ds.removeItem(forKey: name)
+        
+        return ds.url
+    }
+    
+    static func createDatafileCache(sdkKey: String, contents: String? = nil) {
+        let data = (contents ?? "datafile-for-\(sdkKey)").data(using: .utf8)!
+        _ = saveAFile(name: sdkKey, data: data)
+    }
+    
+    static func clearAllTestStorage(including: String) {
+        removeAllFiles(including: including)
+        removeAllUserDefaults(including: including)
+    }
+    
+    static func removeAllFiles(including: String) {
+        removeAllFiles(including: including, in: .documentDirectory)
+        removeAllFiles(including: including, in: .cachesDirectory)
+    }
+    
+    static func removeAllUserDefaults(including: String) {
+        let allKeys = UserDefaults.standard.dictionaryRepresentation().keys
+        allKeys.filter{ $0.contains(including) }.forEach{ itemKey in
+            UserDefaults.standard.removeObject(forKey: itemKey)
+            //print("[OTUtils] removed UserDefaults: '\(itemKey)'")
+        }
+    }
+    
+    static func removeAllFiles(including: String, in directory: FileManager.SearchPathDirectory) {
+        if let docUrl = FileManager.default.urls(for: directory, in: .userDomainMask).first {
+            if let names = try? FileManager.default.contentsOfDirectory(atPath: docUrl.path) {
+                names.forEach{ name in
+                    if name.contains(including) {
+                        let fileUrl = docUrl.appendingPathComponent(name)
+                        do {
+                            try FileManager.default.removeItem(at: fileUrl)
+                            //print("[OTUtils] removed file: '\(name)' from '\(directory)' directory")
+                        } catch {
+                            //print("[OTUtils] removing file failed for '\(name)' from '\(directory)' directory: \(error)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static func createDocumentDirectoryIfNotAvailable() {
+        // documentDirectory may not exist for simulator unit test (iOS11+). create it if not found.
+        
+        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            if (!FileManager.default.fileExists(atPath: url.path)) {
+                do {
+                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
+                } catch {
+                    print(error)
+                }
+            }
+        }
+    }
+    
+    // MARK: - concurrency
+    
+    static func runConcurrent(for items: [String],
+                              timeoutInSecs: Int = 10,
+                              task: @escaping (Int, String) -> Void) -> Bool {
+        let group = DispatchGroup()
+        
+        for (idx, item) in items.enumerated() {
+            group.enter()
+            
+            // NOTE: do not use DispatchQueue.global(), which looks like a deadlock because of too many threads
+            DispatchQueue(label: item).async {
+                task(idx, item)
+                group.leave()
+            }
+        }
+        
+        let timeout = DispatchTime.now() + .seconds(timeoutInSecs)
+        let result = group.wait(timeout: timeout)
+        return result == .success
+    }
+    
+    static func runConcurrent(count: Int,
+                              timeoutInSecs: Int = 10,
+                              task: @escaping (Int) -> Void) -> Bool {
+        let items = (0..<count).map{ String($0) }
+
+        return runConcurrent(for: items) { (idx, item) in
+            task(idx)
+        }
+    }
+    
     // MARK: - big numbers
     
     static var positiveMaxValueAllowed: Double {
@@ -181,19 +306,6 @@ class OTUtils {
         return negativeMaxValueAllowed * 2.0
     }
     
-    static func saveAFile(name:String, data:Data) -> URL? {
-        let ds = DataStoreFile<Data>(storeName: name, async: false)
-        ds.saveItem(forKey: name, value: data)
-        
-        return ds.url
-    }
-
-    static func removeAFile(name:String) -> URL? {
-        let ds = DataStoreFile<Data>(storeName: name, async: false)
-        ds.removeItem(forKey: name)
-        
-        return ds.url
-    }
 
     // MARK: - others
     

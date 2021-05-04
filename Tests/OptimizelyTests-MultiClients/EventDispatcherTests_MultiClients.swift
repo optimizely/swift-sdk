@@ -86,13 +86,13 @@ class EventDispatcherTests_MultiClients: XCTestCase {
         let dispatcher = DumpEventDispatcher()
         dispatcher.timerInterval = 1
         // one event in the queue
-        dispatcher.queue.save(item: EventForDispatch(body: Data()))
+        dispatcher.eventQueue.save(item: EventForDispatch(body: Data()))
                 
         // keep the test running until all events flushed and timer stopped
 
         let exp = expectation(description: "delay")
         DispatchQueue.global().async {
-            while dispatcher.queue.count > 0 || dispatcher.timer.property != nil { sleep(1) }
+            while dispatcher.eventQueue.count > 0 || dispatcher.timer.property != nil { sleep(1) }
             exp.fulfill()
         }
         

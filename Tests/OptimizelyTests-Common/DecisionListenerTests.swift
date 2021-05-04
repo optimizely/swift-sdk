@@ -38,7 +38,7 @@ class DecisionListenerTests: XCTestCase {
     
     var datafile: Data!
     var optimizely: FakeManager!
-    let eventDispatcher = FakeEventDispatcher()
+    let eventDispatcher = MockEventDispatcher()
     var notificationCenter: OPTNotificationCenter!
     
     // MARK: - SetUp

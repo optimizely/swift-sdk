@@ -159,7 +159,6 @@ class OTUtils {
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
 
-    
     // MARK: - UPS
     
     static func getVariationFromUPS(ups: OPTUserProfileService, userId: String, experimentId: String) -> String? {
@@ -183,6 +182,29 @@ class OTUtils {
         profile[UserProfileKeys.kUserId] = userId
         
         ups.save(userProfile: profile)
+    }
+    
+    // MARK: - events
+    
+    static func makeEventForDispatch(url: String? = nil, event: BatchEvent? = nil) -> EventForDispatch {
+        let targetUrl = URL(string: url ?? "https://a.b.c")
+        let data = try! JSONEncoder().encode(event ?? makeTestBatchEvent())
+        return EventForDispatch(url: targetUrl, body: data)
+    }
+    
+    static func makeTestBatchEvent(projectId: String? = nil, revision: String? = nil, visitor: Visitor? = nil) -> BatchEvent {
+        let testProjectId = projectId ?? "12345"
+        let testVisitor = visitor ?? Visitor(attributes: [], snapshots: [], visitorID: "tester")
+        let testRevision = revision ?? "101"
+        
+        return BatchEvent(revision: testRevision,
+                          accountID: "1234",
+                          clientVersion: "1.0.0",
+                          visitors: [testVisitor],
+                          projectID: testProjectId,
+                          clientName: "test",
+                          anonymizeIP: true,
+                          enrichDecisions: true)
     }
 
     // MARK: - files
@@ -209,6 +231,10 @@ class OTUtils {
     static func clearAllTestStorage(including: String) {
         removeAllFiles(including: including)
         removeAllUserDefaults(including: including)
+    }
+    
+    static func clearAllEventQueues() {
+        removeAllFiles(including: "OPTEventQueue")
     }
     
     static func removeAllFiles(including: String) {
@@ -245,7 +271,13 @@ class OTUtils {
     static func createDocumentDirectoryIfNotAvailable() {
         // documentDirectory may not exist for simulator unit test (iOS11+). create it if not found.
         
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+        #if os(tvOS)
+        let directory = FileManager.SearchPathDirectory.cachesDirectory
+        #else
+        let directory = FileManager.SearchPathDirectory.documentDirectory
+        #endif
+        
+        if let url = FileManager.default.urls(for: directory, in: .userDomainMask).first {
             if (!FileManager.default.fileExists(atPath: url.path)) {
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
@@ -283,7 +315,7 @@ class OTUtils {
                               task: @escaping (Int) -> Void) -> Bool {
         let items = (0..<count).map{ String($0) }
 
-        return runConcurrent(for: items) { (idx, item) in
+        return runConcurrent(for: items, timeoutInSecs: timeoutInSecs) { (idx, item) in
             task(idx)
         }
     }
@@ -306,7 +338,6 @@ class OTUtils {
         return negativeMaxValueAllowed * 2.0
     }
     
-
     // MARK: - others
     
     static var randomSdkKey: String {
@@ -315,19 +346,3 @@ class OTUtils {
 
 }
 
-class FakeEventDispatcher: OPTEventDispatcher {
-    
-    public var events: [EventForDispatch] = [EventForDispatch]()
-    required init() {
-        
-    }
-    
-    func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        events.append(event)
-    }
-    
-    /// Attempts to flush the event queue if there are any events to process.
-    func flushEvents() {
-        events.removeAll()
-    }
-}

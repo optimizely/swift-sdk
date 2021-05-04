@@ -324,7 +324,7 @@ extension EventDispatcherTests_Batch {
             XCTAssertEqual($0, visitorA)
         }
 
-        XCTAssertEqual(eventDispatcher.queue.count, 0)
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 0)
     }
 }
 
@@ -356,7 +356,7 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[1], visitorB)
         XCTAssertEqual(batchedEvents.visitors[2], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 3)
-        XCTAssertEqual(eventDispatcher.queue.count, 0)
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 0)
         
         XCTAssert(eventDispatcher.batchSize == 10)
 
@@ -403,7 +403,7 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[0], visitorB)
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
-        XCTAssertEqual(eventDispatcher.queue.count, 0)
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 0)
     }
     
     func testFlushEventsWhenBatchFailsWithInvalidEvent() {
@@ -450,7 +450,7 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[0], visitorA)
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
-        XCTAssertEqual(eventDispatcher.queue.count, 0)
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 0)
     }
 
     
@@ -480,7 +480,7 @@ extension EventDispatcherTests_Batch {
             XCTAssertEqual(eventDispatcher.sendRequestedEvents[i], eventDispatcher.sendRequestedEvents[0])
         }
         
-        XCTAssertEqual(eventDispatcher.queue.count, 2, "all failed to transmit, so should keep all original events")
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 2, "all failed to transmit, so should keep all original events")
         
         // (2) error removed - now events sent out successfully
         
@@ -492,7 +492,7 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount + 1, "only one more since succeeded")
         XCTAssertEqual(eventDispatcher.sendRequestedEvents[3], eventDispatcher.sendRequestedEvents[0])
         
-        XCTAssertEqual(eventDispatcher.queue.count, 0, "all expected to get transmitted successfully")
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 0, "all expected to get transmitted successfully")
     }
 
 }
@@ -548,7 +548,7 @@ extension EventDispatcherTests_Batch {
                                 (self.kUrlB, self.batchEventB),
                                 (self.kUrlC, self.batchEventC)])
 
-        eventDispatcher.lock.sync {}
+        eventDispatcher.queueLock.sync {}
         
         continueAfterFailure = false   // stop on XCTAssertEqual failure instead of array out-of-bound exception
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 3)
@@ -571,7 +571,7 @@ extension EventDispatcherTests_Batch {
         XCTAssertEqual(batchedEvents.visitors[0], visitorC)
         XCTAssertEqual(batchedEvents.visitors.count, 1)
         
-        XCTAssertEqual(eventDispatcher.queue.count, 0)
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 0)
     }
     
     func testEventBatchedOnTimer_CheckNoRedundantSend() {
@@ -591,7 +591,7 @@ extension EventDispatcherTests_Batch {
         // check if we have only one batched event transmitted
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
 
-        XCTAssertEqual(eventDispatcher.queue.count, 0, "all expected to get transmitted successfully")
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 0, "all expected to get transmitted successfully")
     }
 
     func testEventBatchedAndErrorRecoveredOnTimer() {
@@ -609,7 +609,7 @@ extension EventDispatcherTests_Batch {
         // wait for the first timer-fire
         wait(for: [eventDispatcher.exp!], timeout: 10)
         // tranmission is expected to fail
-        XCTAssertEqual(eventDispatcher.queue.count, 2, "all failed to transmit, so should keep all original events")
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 2, "all failed to transmit, so should keep all original events")
         
         // (2) remove error. check if events are transmitted successfully on next timer-fire
         sleep(3)   // wait all failure-retries (3 times) completed
@@ -619,7 +619,7 @@ extension EventDispatcherTests_Batch {
         // wait for the next timer-fire
         wait(for: [eventDispatcher.exp!], timeout: 10)
         
-        XCTAssertEqual(eventDispatcher.queue.count, 0, "all expected to get transmitted successfully")
+        XCTAssertEqual(eventDispatcher.eventQueue.count, 0, "all expected to get transmitted successfully")
     }
 }
 
@@ -809,7 +809,7 @@ extension EventDispatcherTests_Batch {
         try! optimizely.start(datafile: datafile)
         
         dispatchMultipleEvents([(kUrlA, batchEventA)])
-        eventDispatcher.lock.sync {}
+        eventDispatcher.queueLock.sync {}
         
         XCTAssertEqual(notifUrl, kUrlA)
         

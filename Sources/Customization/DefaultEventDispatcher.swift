@@ -39,9 +39,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         
     lazy var logger = OPTLoggerFactory.getLogger()
     // for dispatching events
-    let lock = DispatchQueue(label: "DefaultEventDispatcherQueue")
+    let queueLock = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file
-    let queue: DataStoreQueueStackImpl<EventForDispatch>
+    let eventQueue: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
     var timer = AtomicProperty<Timer>()
     var observers = [NSObjectProtocol]()
@@ -57,14 +57,14 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         
         switch backingStore {
         case .file:
-            self.queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
-                                                                   dataStore: DataStoreFile<[Data]>(storeName: dataStoreName))
+            self.eventQueue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                        dataStore: DataStoreFile<[Data]>(storeName: dataStoreName))
         case .memory:
-            self.queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
-                                                                   dataStore: DataStoreMemory<[Data]>(storeName: dataStoreName))
+            self.eventQueue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                        dataStore: DataStoreMemory<[Data]>(storeName: dataStoreName))
         case .userDefaults:
-            self.queue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
-                                                                   dataStore: DataStoreUserDefaults())
+            self.eventQueue = DataStoreQueueStackImpl<EventForDispatch>(queueStackName: "OPTEventQueue",
+                                                                        dataStore: DataStoreUserDefaults())
         }
         
         if self.maxQueueSize < self.batchSize {
@@ -86,7 +86,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     open func dispatchEvent(event: EventForDispatch, completionHandler: DispatchCompletionHandler?) {
-        let count = queue.count
+        let count = eventQueue.count
         guard count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("EventQueue is full")
             self.logger.e(error)
@@ -94,7 +94,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             return
         }
         
-        queue.save(item: event)
+        eventQueue.save(item: event)
         
         if count + 1 >= batchSize {
             flushEvents()
@@ -110,12 +110,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     let notify = DispatchGroup()
     
     open func flushEvents() {
-        lock.async {
+        queueLock.async {
             // we don't remove anthing off of the queue unless it is successfully sent.
             var failureCount = 0
             
             func removeStoredEvents(num: Int) {
-                if let removedItem = self.queue.removeFirstItems(count: num), removedItem.count > 0 {
+                if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
                     // avoid event-log-message preparation overheads with closure-logging
                     self.logger.d({ "Removed stored \(num) events starting with \(removedItem.first!)" })
                 } else {
@@ -123,7 +123,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 }
             }
             
-            while let eventsToSend: [EventForDispatch] = self.queue.getFirstItems(count: self.batchSize) {
+            while let eventsToSend: [EventForDispatch] = self.eventQueue.getFirstItems(count: self.batchSize) {
                 let (numEvents, batched) = eventsToSend.batch()
                 
                 guard numEvents > 0 else { break }
@@ -204,7 +204,7 @@ extension DefaultEventDispatcher {
     }
     
     func applicationDidBecomeActive() {
-        if queue.count > 0 {
+        if eventQueue.count > 0 {
             startTimer()
         }
     }
@@ -223,8 +223,8 @@ extension DefaultEventDispatcher {
             guard self.timer.property == nil else { return }
             
             self.timer.property = Timer.scheduledTimer(withTimeInterval: self.timerInterval, repeats: true) { _ in
-                self.lock.async {
-                    if self.queue.count > 0 {
+                self.queueLock.async {
+                    if self.eventQueue.count > 0 {
                         self.flushEvents()
                     } else {
                         self.stopTimer()
@@ -245,7 +245,7 @@ extension DefaultEventDispatcher {
 
     open func close() {
         self.flushEvents()
-        self.lock.sync {}
+        self.queueLock.sync {}
     }
     
 }
@@ -271,7 +271,7 @@ extension DefaultEventDispatcher {
     }
     
     func removeProjectChangeNotificationObservers() {
-        observers.forEach{
+        observers.forEach {
             NotificationCenter.default.removeObserver($0)
         }
     }

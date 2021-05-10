@@ -43,14 +43,4 @@ struct UserProfileKeys {
      **/
     func save(userProfile: UPProfile)
 
-    func getRMWLock() -> DispatchQueue?
-
-}
-
-public extension OPTUserProfileService {
-    
-    @objc func getRMWLock() -> DispatchQueue? {
-        return nil
-    }
-    
 }

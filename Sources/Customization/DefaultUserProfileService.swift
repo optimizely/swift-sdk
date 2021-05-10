@@ -77,8 +77,6 @@ open class DefaultUserProfileService: OPTUserProfileService {
     var profiles: UserProfileData?
     let lock = DispatchQueue(label: "com.optimizely.UserProfileService")
     let kStorageName = "user-profile-service"
-
-    let rmwLock = DispatchQueue(label: "com.optimizely.UserProfileService-RMW")
     
     public required init() {
         lock.async {
@@ -113,9 +111,6 @@ open class DefaultUserProfileService: OPTUserProfileService {
             defaults.synchronize()
         }
     }
-    
-//    open func getRMWLock() -> DispatchQueue? {
-//        return rmwLock
-//    }
+
 }
 

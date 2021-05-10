@@ -388,7 +388,7 @@ extension DefaultDecisionService {
     func saveProfile(userId: String,
                      experimentId: String,
                      variationId: String) {
-        let rmw = {
+        GlobalLocks.ups.sync {
             var profile = self.userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
             
             var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
@@ -400,12 +400,6 @@ extension DefaultDecisionService {
             self.userProfileService.save(userProfile: profile)
             
             self.logger.i(.savedVariationInUserProfile(variationId, experimentId, userId))
-        }
-        
-        if let lock = userProfileService.getRMWLock() {
-            lock.sync { rmw() }
-        } else {
-            rmw()
         }
     }
     

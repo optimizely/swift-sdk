@@ -77,10 +77,11 @@ open class DefaultUserProfileService: OPTUserProfileService {
     var profiles: UserProfileData?
     let lock = DispatchQueue(label: "com.optimizely.UserProfileService")
     let kStorageName = "user-profile-service"
-    
+
     public required init() {
         lock.async {
             self.profiles = UserDefaults.standard.dictionary(forKey: self.kStorageName) as? UserProfileData ?? UserProfileData()
+
         }
     }
 
@@ -102,7 +103,7 @@ open class DefaultUserProfileService: OPTUserProfileService {
             defaults.synchronize()
         }
     }
-        
+    
     open func reset(userProfiles: UserProfileData? = nil) {
         lock.async {
             self.profiles = userProfiles ?? UserProfileData()
@@ -111,6 +112,4 @@ open class DefaultUserProfileService: OPTUserProfileService {
             defaults.synchronize()
         }
     }
-
 }
-

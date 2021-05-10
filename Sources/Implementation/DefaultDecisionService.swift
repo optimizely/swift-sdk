@@ -28,6 +28,8 @@ class DefaultDecisionService: OPTDecisionService {
     let userProfileService: OPTUserProfileService
     lazy var logger = OPTLoggerFactory.getLogger()
     
+    static let upsRMWLock = DispatchQueue(label: "ups-rmw")
+
     init(userProfileService: OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
@@ -388,7 +390,7 @@ extension DefaultDecisionService {
     func saveProfile(userId: String,
                      experimentId: String,
                      variationId: String) {
-        GlobalLocks.ups.sync {
+        DefaultDecisionService.upsRMWLock.sync {
             var profile = self.userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
             
             var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()

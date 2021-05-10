@@ -42,5 +42,5 @@ struct UserProfileKeys {
      - Parameter userProfile: The user profile.
      **/
     func save(userProfile: UPProfile)
-
+    
 }

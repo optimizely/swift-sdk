@@ -76,25 +76,21 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
     func testConcurrentUpdateFromDecisionService() {
         // this test is validating thread-safety of read-modify-write UPS operations from decision-service
         
-        let ups = DefaultUserProfileService()
-        let ds = DefaultDecisionService(userProfileService: ups)
+        let ups = DefaultUserProfileService()   // shared instance
+        let ds = DefaultDecisionService(userProfileService: ups)    // shared instance
         let numThreads = 4
         let numUsers = 2
         let numEventsPerThread = 10
 
         let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 10) { thIdx in
-            print("[MultiClients] UpdateFromDecisionService starts: \(thIdx)")
             for userIdx in 0..<numUsers {
                 for eventIdx in 0..<numEventsPerThread {
                     let userId = String(userIdx)
                     let experimentId = String((thIdx * numEventsPerThread) + eventIdx)
                     let variationId = experimentId
                     ds.saveProfile(userId: userId, experimentId: experimentId, variationId: variationId)
-                    
-                    print("[MultiClients] saving: \(thIdx) \(userId) \(experimentId)")
                 }
             }
-            print("[MultiClients] UpdateFromDecisionService ends: \(thIdx)")
         }
         XCTAssertTrue(result, "Concurrent tasks timed out")
         
@@ -107,14 +103,13 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
                     XCTAssertEqual(variationId, experimentId, "UPS variation for {\(userId), \(experimentId)}: \(String(describing:variationId))")
                 }
             }
-            print("[MultiClients] UpdateFromDecisionService validated: \(thIdx)")
         }
     }
     
-    func testConcurrentUpdateFromDecisionService_2() {
+    func testConcurrentUpdateFromDecisionService_MultipleDecisionServiceInstances() {
         // this test is validating thread-safety of read-modify-write UPS operations from decision-service
         
-        let ups = DefaultUserProfileService()
+        let ups = DefaultUserProfileService()  // shared instance
         let numThreads = 4
         let numUsers = 2
         let numEventsPerThread = 10
@@ -127,18 +122,14 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
         let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 10) { thIdx in
             let ds = dss[thIdx]
 
-            print("[MultiClients] UpdateFromDecisionService starts: \(thIdx)")
             for userIdx in 0..<numUsers {
                 for eventIdx in 0..<numEventsPerThread {
                     let userId = String(userIdx)
                     let experimentId = String((thIdx * numEventsPerThread) + eventIdx)
                     let variationId = experimentId
                     ds.saveProfile(userId: userId, experimentId: experimentId, variationId: variationId)
-                    
-                    print("[MultiClients] saving: \(thIdx) \(userId) \(experimentId)")
                 }
             }
-            print("[MultiClients] UpdateFromDecisionService ends: \(thIdx)")
         }
         XCTAssertTrue(result, "Concurrent tasks timed out")
         
@@ -153,7 +144,6 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
                     XCTAssertEqual(variationId, experimentId, "UPS variation for {\(userId), \(experimentId)}: \(String(describing:variationId))")
                 }
             }
-            print("[MultiClients] UpdateFromDecisionService validated: \(thIdx)")
         }
     }
     

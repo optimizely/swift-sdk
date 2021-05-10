@@ -104,29 +104,7 @@ open class DefaultUserProfileService: OPTUserProfileService {
             defaults.synchronize()
         }
     }
-    
-    open func add(userProfile: UPProfile) {
-        guard let userId = userProfile[UserProfileKeys.kUserId] as? String else { return }
-            
-        lock.async {
-            var curProfile = self.profiles?[userId] ?? OPTUserProfileService.UPProfile()
-            
-            let curBucketMap = curProfile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
-            let addBucketMap = userProfile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ??
-                OPTUserProfileService.UPBucketMap()
-            let newBucketMap = curBucketMap.merging(addBucketMap) { _, new in new }
-            
-            curProfile[UserProfileKeys.kBucketMap] = newBucketMap
-            curProfile[UserProfileKeys.kUserId] = userId
-
-            self.profiles?[userId] = curProfile
-            let defaults = UserDefaults.standard
-            defaults.set(self.profiles, forKey: self.kStorageName)
-            defaults.synchronize()
-        }
-    }
-    
-    
+        
     open func reset(userProfiles: UserProfileData? = nil) {
         lock.async {
             self.profiles = userProfiles ?? UserProfileData()
@@ -135,5 +113,9 @@ open class DefaultUserProfileService: OPTUserProfileService {
             defaults.synchronize()
         }
     }
+    
+//    open func getRMWLock() -> DispatchQueue? {
+//        return rmwLock
+//    }
 }
 

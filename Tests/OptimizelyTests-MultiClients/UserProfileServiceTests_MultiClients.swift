@@ -156,6 +156,5 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
             print("[MultiClients] UpdateFromDecisionService validated: \(thIdx)")
         }
     }
-
     
 }

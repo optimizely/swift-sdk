@@ -42,15 +42,15 @@ struct UserProfileKeys {
      - Parameter userProfile: The user profile.
      **/
     func save(userProfile: UPProfile)
-    
-    func add(userProfile: UPProfile)
+
+    func getRMWLock() -> DispatchQueue?
 
 }
 
-extension OPTUserProfileService {
+public extension OPTUserProfileService {
     
-    func add(userProfile: UPProfile) {
-        save(userProfile: userProfile)
+    @objc func getRMWLock() -> DispatchQueue? {
+        return nil
     }
     
 }

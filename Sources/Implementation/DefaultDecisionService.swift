@@ -388,17 +388,25 @@ extension DefaultDecisionService {
     func saveProfile(userId: String,
                      experimentId: String,
                      variationId: String) {
-        var profile = userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
+        let rmw = {
+            var profile = self.userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
+            
+            var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
+            bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
+            
+            profile[UserProfileKeys.kBucketMap] = bucketMap
+            profile[UserProfileKeys.kUserId] = userId
+            
+            self.userProfileService.save(userProfile: profile)
+            
+            self.logger.i(.savedVariationInUserProfile(variationId, experimentId, userId))
+        }
         
-        var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
-        bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
-        
-        profile[UserProfileKeys.kBucketMap] = bucketMap
-        profile[UserProfileKeys.kUserId] = userId
-        
-        userProfileService.save(userProfile: profile)
-        
-        logger.i(.savedVariationInUserProfile(variationId, experimentId, userId))
+        if let lock = userProfileService.getRMWLock() {
+            lock.sync { rmw() }
+        } else {
+            rmw()
+        }
     }
     
 }

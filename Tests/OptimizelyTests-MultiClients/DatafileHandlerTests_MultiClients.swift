@@ -25,7 +25,8 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     override func setUp() {
         OTUtils.bindLoggerForTest(.info)
         OTUtils.createDocumentDirectoryIfNotAvailable()
-        
+        OTUtils.clearAllTestStorage(including: testSdkKeyBasename)
+
         makeSdkKeys(10)
     }
 

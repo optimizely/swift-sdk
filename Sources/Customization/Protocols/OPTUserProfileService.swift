@@ -43,4 +43,14 @@ struct UserProfileKeys {
      **/
     func save(userProfile: UPProfile)
     
+    func add(userProfile: UPProfile)
+
+}
+
+extension OPTUserProfileService {
+    
+    func add(userProfile: UPProfile) {
+        save(userProfile: userProfile)
+    }
+    
 }

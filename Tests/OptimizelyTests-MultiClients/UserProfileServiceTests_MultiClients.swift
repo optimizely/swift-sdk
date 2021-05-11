@@ -30,8 +30,8 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
         [
             "user_id": "1",
             "experiment_bucket_map": [
-                "1234": [
-                    "variation_id": "5678"
+                "12345": [
+                    "variation_id": "56789"
                 ]
             ]
         ]
@@ -60,13 +60,12 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
                 let up2 = ups.lookup(userId: userId2)!
                 
                 XCTAssertEqual(up1["user_id"] as? String, userId1)
-                if let a = up1["experiment_bucket_map"] as? [String: [String: String]], let variation = a["1234"]?["variation_id"] {
-                    XCTAssertEqual(variation, "5678")
-                }
+                let exp1 = up1["experiment_bucket_map"] as! [String: [String: String]]
+                XCTAssertEqual(exp1["1234"]!["variation_id"], "5678")
+                
                 XCTAssertEqual(up2["user_id"] as? String, userId2)
-                if let a = up2["experiment_bucket_map"] as? [String: [String: String]], let variation = a["1234"]?["variation_id"] {
-                    XCTAssertEqual(variation, "5678")
-                }
+                let exp2 = up2["experiment_bucket_map"] as! [String: [String: String]]
+                XCTAssertEqual(exp2["12345"]!["variation_id"], "56789")
             }
         }
         
@@ -77,7 +76,7 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
         // this test is validating thread-safety of read-modify-write UPS operations from decision-service
         
         let ups = DefaultUserProfileService()   // shared instance
-        let ds = DefaultDecisionService(userProfileService: ups)    // shared instance
+        let decisionService = DefaultDecisionService(userProfileService: ups)    // shared instance
         let numThreads = 4
         let numUsers = 2
         let numEventsPerThread = 10
@@ -88,7 +87,7 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
                     let userId = String(userIdx)
                     let experimentId = String((thIdx * numEventsPerThread) + eventIdx)
                     let variationId = experimentId
-                    ds.saveProfile(userId: userId, experimentId: experimentId, variationId: variationId)
+                    decisionService.saveProfile(userId: userId, experimentId: experimentId, variationId: variationId)
                 }
             }
         }
@@ -99,7 +98,7 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
                 for eventIdx in 0..<numEventsPerThread {
                     let userId = String(userIdx)
                     let experimentId = String((thIdx * numEventsPerThread) + eventIdx)
-                    let variationId = ds.getVariationIdFromProfile(userId: userId, experimentId: experimentId)
+                    let variationId = decisionService.getVariationIdFromProfile(userId: userId, experimentId: experimentId)
                     XCTAssertEqual(variationId, experimentId, "UPS variation for {\(userId), \(experimentId)}: \(String(describing:variationId))")
                 }
             }
@@ -114,33 +113,33 @@ class UserProfileServiceTests_MultiClients: XCTestCase {
         let numUsers = 2
         let numEventsPerThread = 10
         
-        var dss = [DefaultDecisionService]()
+        var decisionServices = [DefaultDecisionService]()
         (0..<numThreads).forEach { _ in
-            dss.append(DefaultDecisionService(userProfileService: ups))
+            decisionServices.append(DefaultDecisionService(userProfileService: ups))
         }
 
         let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 10) { thIdx in
-            let ds = dss[thIdx]
+            let decisionService = decisionServices[thIdx]
 
             for userIdx in 0..<numUsers {
                 for eventIdx in 0..<numEventsPerThread {
                     let userId = String(userIdx)
                     let experimentId = String((thIdx * numEventsPerThread) + eventIdx)
                     let variationId = experimentId
-                    ds.saveProfile(userId: userId, experimentId: experimentId, variationId: variationId)
+                    decisionService.saveProfile(userId: userId, experimentId: experimentId, variationId: variationId)
                 }
             }
         }
         XCTAssertTrue(result, "Concurrent tasks timed out")
         
         (0..<numThreads).forEach{ thIdx in
-            let ds = dss[thIdx]
+            let decisionService = decisionServices[thIdx]
 
             for userIdx in 0..<numUsers {
                 for eventIdx in 0..<numEventsPerThread {
                     let userId = String(userIdx)
                     let experimentId = String((thIdx * numEventsPerThread) + eventIdx)
-                    let variationId = ds.getVariationIdFromProfile(userId: userId, experimentId: experimentId)
+                    let variationId = decisionService.getVariationIdFromProfile(userId: userId, experimentId: experimentId)
                     XCTAssertEqual(variationId, experimentId, "UPS variation for {\(userId), \(experimentId)}: \(String(describing:variationId))")
                 }
             }

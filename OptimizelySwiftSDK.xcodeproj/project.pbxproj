@@ -1516,6 +1516,7 @@
 		6ECB60D5234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */; };
 		6ECB60D7234E601A00016D41 /* OptimizelyClientTests_OptimizelyConfig_Objc.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB60D6234E601A00016D41 /* OptimizelyClientTests_OptimizelyConfig_Objc.m */; };
 		6EE5911A2649CF640013AD66 /* LoggerTests_MultiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE591192649CF640013AD66 /* LoggerTests_MultiClients.swift */; };
+		6EE5918E264AF44B0013AD66 /* HandlerRegistryServiceTests_MultiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE5918D264AF44B0013AD66 /* HandlerRegistryServiceTests_MultiClients.swift */; };
 		6EF41A332522BE1900EAADF1 /* OptimizelyUserContextTests_Decide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D34B8250AD14000A0CDFE /* OptimizelyUserContextTests_Decide.swift */; };
 		6EF41A422522BE2100EAADF1 /* OptimizelyUserContextTests_Decide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D34B8250AD14000A0CDFE /* OptimizelyUserContextTests_Decide.swift */; };
 		6EF8DE0624B8DA58008B9488 /* decide_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EF8DE0524B8DA58008B9488 /* decide_datafile.json */; };
@@ -2028,6 +2029,7 @@
 		6ECB60C9234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "OptimizelyConfig+ObjC.swift"; sourceTree = "<group>"; };
 		6ECB60D6234E601A00016D41 /* OptimizelyClientTests_OptimizelyConfig_Objc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OptimizelyClientTests_OptimizelyConfig_Objc.m; sourceTree = "<group>"; };
 		6EE591192649CF640013AD66 /* LoggerTests_MultiClients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerTests_MultiClients.swift; sourceTree = "<group>"; };
+		6EE5918D264AF44B0013AD66 /* HandlerRegistryServiceTests_MultiClients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandlerRegistryServiceTests_MultiClients.swift; sourceTree = "<group>"; };
 		6EF8DE0524B8DA58008B9488 /* decide_datafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = decide_datafile.json; sourceTree = "<group>"; };
 		6EF8DE0A24BD1BB1008B9488 /* OptimizelyDecision.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyDecision.swift; sourceTree = "<group>"; };
 		6EF8DE0B24BD1BB2008B9488 /* OptimizelyDecideOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyDecideOption.swift; sourceTree = "<group>"; };
@@ -2233,6 +2235,7 @@
 				6E5D120C2638DCE1000ABFC3 /* EventDispatcherTests_MultiClients.swift */,
 				6E474C8C263C889E00ABDFF8 /* UserProfileServiceTests_MultiClients.swift */,
 				6EE591192649CF640013AD66 /* LoggerTests_MultiClients.swift */,
+				6EE5918D264AF44B0013AD66 /* HandlerRegistryServiceTests_MultiClients.swift */,
 			);
 			path = "OptimizelyTests-MultiClients";
 			sourceTree = "<group>";
@@ -3742,6 +3745,7 @@
 				6E424CD326324B270081004A /* OptimizelyError.swift in Sources */,
 				6E424D5326324C4D0081004A /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E424CD426324B270081004A /* OptimizelyLogLevel.swift in Sources */,
+				6EE5918E264AF44B0013AD66 /* HandlerRegistryServiceTests_MultiClients.swift in Sources */,
 				6E424CD526324B270081004A /* OptimizelyClient.swift in Sources */,
 				6E424CD626324B270081004A /* OptimizelyClient+ObjC.swift in Sources */,
 				6E424CD726324B270081004A /* OptimizelyResult.swift in Sources */,

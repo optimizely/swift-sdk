@@ -19,14 +19,14 @@ import XCTest
 class LoggerTests_MultiClients: XCTestCase {
 
     override func setUpWithError() throws {
+        DefaultLogger.logLevel = .debug
     }
 
     override func tearDownWithError() throws {
     }
 
     func testConcurrentLogging() {
-        OTUtils.bindLoggerForTest(.debug)
-        let logger = OPTLoggerFactory.getLogger()
+        let logger = DefaultLogger()
 
         let numThreads = 10
         let numEventsPerThread = 100
@@ -53,9 +53,8 @@ class LoggerTests_MultiClients: XCTestCase {
         let numThreads = 10
         let numEventsPerThread = 100
 
-        let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 300) { item in
-            OTUtils.bindLoggerForTest(.debug)
-            let logger = OPTLoggerFactory.getLogger()
+        let result = OTUtils.runConcurrent(count: numThreads) { item in
+            let logger = DefaultLogger()
 
             for _ in 0..<numEventsPerThread {
                 logger.e("error-level: \(item)")

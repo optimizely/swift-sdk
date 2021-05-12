@@ -24,4 +24,53 @@ class LoggerTests_MultiClients: XCTestCase {
     override func tearDownWithError() throws {
     }
 
+    func testConcurrentLogging() {
+        OTUtils.bindLoggerForTest(.debug)
+        let logger = OPTLoggerFactory.getLogger()
+
+        let numThreads = 10
+        let numEventsPerThread = 100
+        
+        let result = OTUtils.runConcurrent(count: numThreads) { item in
+            for _ in 0..<numEventsPerThread {
+                logger.e("error-level: \(item)")
+                logger.w("warning-level: \(item)")
+                logger.i("info-level: \(item)")
+                logger.d("debug-level: \(item)")
+                
+                logger.e(.attributeFormatInvalid, source: String(item))
+                logger.w(.attributeFormatInvalid, source: String(item))
+                logger.i(.attributeFormatInvalid, source: String(item))
+                logger.d(.attributeFormatInvalid, source: String(item))
+            }
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+    
+    func testConcurrentLogging_MultipleLoggerInstances() {
+
+        let numThreads = 10
+        let numEventsPerThread = 100
+
+        let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 300) { item in
+            OTUtils.bindLoggerForTest(.debug)
+            let logger = OPTLoggerFactory.getLogger()
+
+            for _ in 0..<numEventsPerThread {
+                logger.e("error-level: \(item)")
+                logger.w("warning-level: \(item)")
+                logger.i("info-level: \(item)")
+                logger.d("debug-level: \(item)")
+                
+                logger.e(.attributeFormatInvalid, source: String(item))
+                logger.w(.attributeFormatInvalid, source: String(item))
+                logger.i(.attributeFormatInvalid, source: String(item))
+                logger.d(.attributeFormatInvalid, source: String(item))
+            }
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+    
 }

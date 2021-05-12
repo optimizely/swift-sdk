@@ -26,21 +26,21 @@ open class DefaultLogger: OPTLogger {
         set (newLevel) {
             if _logLevel == nil {
                 _logLevel = newLevel
-                return
             }
         }
     }
-    
-    var osLogUsed = false
-    
-    required public init() {
-    }
+        
+    required public init() {}
     
     open func log(level: OptimizelyLogLevel, message: String) {
         if level > DefaultLogger.logLevel {
             return
         }
         
+        clog(level: level, message: message)
+    }
+        
+    func clog(level: OptimizelyLogLevel, message: String) {
         var osLogType: OSLogType
         
         switch level {
@@ -51,7 +51,12 @@ open class DefaultLogger: OPTLogger {
         }
         
         os_log("[%{public}@] %{public}@", log: .optimizely, type: osLogType, level.name, message)
-        osLogUsed = true
+    }
+    
+    // test support
+    
+    static func setLogLevel(_ level: OptimizelyLogLevel) {
+        _logLevel = level
     }
 }
 

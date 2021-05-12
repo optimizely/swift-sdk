@@ -32,11 +32,11 @@ class LoggerTests_MultiClients: XCTestCase {
         let numEventsPerThread = 100
         
         let result = OTUtils.runConcurrent(count: numThreads) { item in
-            for _ in 0..<numEventsPerThread {
-                logger.e("error-level: \(item)")
-                logger.w("warning-level: \(item)")
-                logger.i("info-level: \(item)")
-                logger.d("debug-level: \(item)")
+            for i in 0..<numEventsPerThread {
+                logger.e("error-level: \(item)-\(i)")
+                logger.w("warning-level: \(item)-\(i)")
+                logger.i("info-level: \(item)-\(i)")
+                logger.d("debug-level: \(item)-\(i)")
                 
                 logger.e(.attributeFormatInvalid, source: String(item))
                 logger.w(.attributeFormatInvalid, source: String(item))
@@ -56,11 +56,11 @@ class LoggerTests_MultiClients: XCTestCase {
         let result = OTUtils.runConcurrent(count: numThreads) { item in
             let logger = DefaultLogger()
 
-            for _ in 0..<numEventsPerThread {
-                logger.e("error-level: \(item)")
-                logger.w("warning-level: \(item)")
-                logger.i("info-level: \(item)")
-                logger.d("debug-level: \(item)")
+            for i in 0..<numEventsPerThread {
+                logger.e("error-level: \(item)-\(i)")
+                logger.w("warning-level: \(item)-\(i)")
+                logger.i("info-level: \(item)-\(i)")
+                logger.d("debug-level: \(item)-\(i)")
                 
                 logger.e(.attributeFormatInvalid, source: String(item))
                 logger.w(.attributeFormatInvalid, source: String(item))

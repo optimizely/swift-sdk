@@ -18,12 +18,6 @@ import XCTest
 
 class HandlerRegistryServiceTests_MultiClients: XCTestCase {
 
-    override func setUpWithError() throws {
-    }
-
-    override func tearDownWithError() throws {
-    }
-    
     func testConcurrentAccess_Singleton() {
         // this type used for all handlers except for logger
         

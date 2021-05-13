@@ -22,9 +22,6 @@ class LoggerTests_MultiClients: XCTestCase {
         DefaultLogger.logLevel = .debug
     }
 
-    override func tearDownWithError() throws {
-    }
-
     func testConcurrentLogging() {
         let logger = DefaultLogger()
 
@@ -71,5 +68,5 @@ class LoggerTests_MultiClients: XCTestCase {
         
         XCTAssertTrue(result, "Concurrent tasks timed out")
     }
-    
+
 }

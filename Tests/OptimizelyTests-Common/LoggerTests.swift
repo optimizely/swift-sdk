@@ -20,12 +20,6 @@ class LoggerTests: XCTestCase {
 
     let logger = TestLogger()
     
-    override func setUpWithError() throws {
-    }
-
-    override func tearDownWithError() throws {
-    }
-
     func testOPTLogger_DefaultMethods() {
         // String messages
         

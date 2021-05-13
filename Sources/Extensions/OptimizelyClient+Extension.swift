@@ -23,19 +23,17 @@ extension OptimizelyClient {
                           datafileHandler: OPTDatafileHandler,
                           decisionService: OPTDecisionService,
                           notificationCenter: OPTNotificationCenter) {
-        // bind it as a non-singleton.  so, we will create an instance anytime injected.
-        // we don't associate the logger with a sdkKey at this time because not all components are sdkKey specific.
-        let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self, factory: type(of: logger).init)
+        // Register my logger service. Bind it as a non-singleton. So, we will create an instance anytime injected.
+        //   we don't associate the logger with a sdkKey at this time because not all components are sdkKey specific.
+        HandlerRegistryService.shared.registerBinding(binder: Binder<OPTLogger>(service: OPTLogger.self, factory: type(of: logger).init))
         
-        // Register my logger service.
-        HandlerRegistryService.shared.registerBinding(binder: binder)
-        
-        // this is bound a reusable singleton. so, if we re-initalize, we will keep this.
+        // This is bound a reusable singleton. so, if we re-initalize, we will keep this.
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTNotificationCenter>(sdkKey: sdkKey, service: OPTNotificationCenter.self, strategy: .reUse, isSingleton: true, inst: notificationCenter))
-        // the decision service is also a singleton that will reCreate on re-initalize
+        
+        // The decision service is also a singleton that will reCreate on re-initalize
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTDecisionService>(sdkKey: sdkKey, service: OPTDecisionService.self, strategy: .reUse, isSingleton: true, inst: decisionService))
         
-        // An event dispatcher.  We use a singleton and use the same Event dispatcher for all
+        // An event dispatcher. We use a singleton and use the same Event dispatcher for all
         // projects.  If you change the event dispatcher, you can potentially lose data if you
         // don't use the same backingstore.
         HandlerRegistryService.shared.registerBinding(binder: Binder<OPTEventDispatcher>(sdkKey: sdkKey, service: OPTEventDispatcher.self, strategy: .reUse, isSingleton: true, inst: eventDispatcher))

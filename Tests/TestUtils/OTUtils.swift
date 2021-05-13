@@ -159,6 +159,15 @@ class OTUtils {
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
 
+    // MARK: - storage
+    
+    static func clearAllTestStorage(including: String) {
+        clearAllDataFiles(including: including)
+        clearAllEventQueues()
+        clearAllLastModifiedData()
+        clearAllUPS()
+    }
+
     // MARK: - UPS
     
     static func getVariationFromUPS(ups: OPTUserProfileService, userId: String, experimentId: String) -> String? {
@@ -184,6 +193,10 @@ class OTUtils {
         ups.save(userProfile: profile)
     }
     
+    static func clearAllUPS() {
+        UserDefaults.standard.removeObject(forKey: "user-profile-service")
+    }
+    
     // MARK: - events
     
     static func makeEventForDispatch(url: String? = nil, event: BatchEvent? = nil) -> EventForDispatch {
@@ -206,48 +219,22 @@ class OTUtils {
                           anonymizeIP: true,
                           enrichDecisions: true)
     }
-
-    // MARK: - files
     
-    static func saveAFile(name: String, data: Data) -> URL? {
-        let ds = DataStoreFile<Data>(storeName: name, async: false)
-        ds.saveItem(forKey: name, value: data)
-        
-        return ds.url
+    static func clearAllEventQueues() {
+        removeAllFiles(including: "OPTEventQueue", in: .documentDirectory)
+        removeAllFiles(including: "OPTEventQueue", in: .cachesDirectory)
     }
 
-    static func removeAFile(name: String) -> URL? {
-        let ds = DataStoreFile<Data>(storeName: name, async: false)
-        ds.removeItem(forKey: name)
-        
-        return ds.url
-    }
+    // MARK: - datafiles
     
     static func createDatafileCache(sdkKey: String, contents: String? = nil) {
         let data = (contents ?? "datafile-for-\(sdkKey)").data(using: .utf8)!
         _ = saveAFile(name: sdkKey, data: data)
     }
     
-    static func clearAllTestStorage(including: String) {
-        removeAllFiles(including: including)
-        removeAllUserDefaults(including: including)
-    }
-    
-    static func clearAllEventQueues() {
-        removeAllFiles(including: "OPTEventQueue")
-    }
-    
-    static func removeAllFiles(including: String) {
+    static func clearAllDataFiles(including: String) {
         removeAllFiles(including: including, in: .documentDirectory)
         removeAllFiles(including: including, in: .cachesDirectory)
-    }
-    
-    static func removeAllUserDefaults(including: String) {
-        let allKeys = UserDefaults.standard.dictionaryRepresentation().keys
-        allKeys.filter{ $0.contains(including) }.forEach{ itemKey in
-            UserDefaults.standard.removeObject(forKey: itemKey)
-            //print("[OTUtils] removed UserDefaults: '\(itemKey)'")
-        }
     }
     
     static func removeAllFiles(including: String, in directory: FileManager.SearchPathDirectory) {
@@ -268,6 +255,26 @@ class OTUtils {
         }
     }
     
+    static func clearAllLastModifiedData() {
+        removeAllUserDefaults(including: "LastModified")
+    }
+
+    // MARK: - files
+    
+    static func saveAFile(name: String, data: Data) -> URL? {
+        let ds = DataStoreFile<Data>(storeName: name, async: false)
+        ds.saveItem(forKey: name, value: data)
+        
+        return ds.url
+    }
+
+    static func removeAFile(name: String) -> URL? {
+        let ds = DataStoreFile<Data>(storeName: name, async: false)
+        ds.removeItem(forKey: name)
+        
+        return ds.url
+    }
+    
     static func createDocumentDirectoryIfNotAvailable() {
         // documentDirectory may not exist for simulator unit test (iOS11+). create it if not found.
         
@@ -286,6 +293,17 @@ class OTUtils {
                 }
             }
         }
+    }
+    
+    // MARK: - UserDefaults
+    
+    static func removeAllUserDefaults(including: String) {
+        let allKeys = UserDefaults.standard.dictionaryRepresentation().keys
+        allKeys.filter{ $0.contains(including) }.forEach{ itemKey in
+            UserDefaults.standard.removeObject(forKey: itemKey)
+            //print("[OTUtils] removed UserDefaults: '\(itemKey)'")
+        }
+        UserDefaults.standard.synchronize()
     }
     
     // MARK: - concurrency

@@ -51,16 +51,16 @@ open class OptimizelyClient: NSObject {
         return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
     }
     
+    public var datafileHandler: OPTDatafileHandler? {
+        return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
+    }
+    lazy var currentDatafileHandler = datafileHandler
+    
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService {
         return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
     }
-    
-    public var datafileHandler: OPTDatafileHandler? {
-        return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
-    }
-    lazy var currentDatafileHandler = datafileHandler
     
     public var notificationCenter: OPTNotificationCenter? {
         return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)

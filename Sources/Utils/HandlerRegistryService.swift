@@ -26,15 +26,12 @@ class HandlerRegistryService {
     }
     
     var binders: AtomicProperty<[ServiceKey: BinderProtocol]> = {
-        
         var binders = AtomicProperty<[ServiceKey: BinderProtocol]>()
         binders.property = [ServiceKey: BinderProtocol]()
         return binders
     }()
     
-    private init() {
-        
-    }
+    private init() {}
     
     func registerBinding(binder: BinderProtocol) {
         let sk = ServiceKey(service: "\(type(of: binder.service))", sdkKey: binder.sdkKey)
@@ -105,8 +102,7 @@ protocol BinderProtocol {
     var strategy: ReInitializeStrategy { get }
     var service: Any { get }
     var isSingleton: Bool { get }
-    var factory:()->Any? { get }
-    // var configure:(_ inst:Any?)->Any? { get }
+    var factory: () -> Any? { get }
     var instance: Any? { get set }
     
 }
@@ -114,8 +110,7 @@ struct Binder<T>: BinderProtocol {
     var sdkKey: String?
     var service: Any
     var strategy: ReInitializeStrategy = .reCreate
-    var factory: (() -> Any?) = { ()->Any? in { return nil as Any? }}
-    // var configure: ((Any?) -> Any?) = { (_)->Any? in { return nil as Any? }}
+    var factory: () -> Any? = { return nil as Any? }
     var isSingleton = false
     var inst: T?
     

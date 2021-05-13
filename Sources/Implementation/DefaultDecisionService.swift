@@ -28,6 +28,9 @@ class DefaultDecisionService: OPTDecisionService {
     let userProfileService: OPTUserProfileService
     lazy var logger = OPTLoggerFactory.getLogger()
     
+    // user-profile-service read-modify-write lock for supporting multiple clients
+    static let upsRMWLock = DispatchQueue(label: "ups-rmw")
+
     init(userProfileService: OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
@@ -388,17 +391,19 @@ extension DefaultDecisionService {
     func saveProfile(userId: String,
                      experimentId: String,
                      variationId: String) {
-        var profile = userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
-        
-        var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
-        bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
-        
-        profile[UserProfileKeys.kBucketMap] = bucketMap
-        profile[UserProfileKeys.kUserId] = userId
-        
-        userProfileService.save(userProfile: profile)
-        
-        logger.i(.savedVariationInUserProfile(variationId, experimentId, userId))
+        DefaultDecisionService.upsRMWLock.sync {
+            var profile = self.userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
+            
+            var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
+            bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
+            
+            profile[UserProfileKeys.kBucketMap] = bucketMap
+            profile[UserProfileKeys.kUserId] = userId
+            
+            self.userProfileService.save(userProfile: profile)
+            
+            self.logger.i(.savedVariationInUserProfile(variationId, experimentId, userId))
+        }
     }
     
 }

@@ -30,15 +30,18 @@ class MultiClientsTests: XCTestCase {
         OTUtils.clearAllTestStorage(including: testSdkKeyBasename)
     }
 
-    func testMultiClients() {        
-        sdkKeys = OTUtils.makeRandomSdkKeys(10)
+    func testMultiClients() {
+        let numThreads = 10
+        let numEventsPerThread = 100
+        
+        sdkKeys = OTUtils.makeRandomSdkKeys(numThreads)
 
         let datafile = OTUtils.loadJSONDatafileString("decide_datafile")
         
-        let result = OTUtils.runConcurrent(for: sdkKeys) { thIdx, sdkKey in
+        let result = OTUtils.runConcurrent(for: sdkKeys, timeoutInSecs: 10) { thIdx, sdkKey in
             let datafileHandler = MockDatafileHandler(statusCode: 200, localResponseData: datafile)
-
             let eventDispatcher = DumpEventDispatcher()
+            
             let client = OptimizelyClient(sdkKey: sdkKey,
                                           eventDispatcher: eventDispatcher,
                                           datafileHandler: datafileHandler,
@@ -58,6 +61,26 @@ class MultiClientsTests: XCTestCase {
                 default:
                     XCTAssert(false)
                 }
+                
+                for i in 0..<numEventsPerThread {
+                    let userId = String(i)
+                    let user = client.createUserContext(userId: userId)
+                    var decision = user.decide(key: "feature_2")
+                    
+                    XCTAssertEqual(decision.variationKey, "variation_with_traffic")
+                    XCTAssertTrue(decision.enabled)
+                    XCTAssertEqual(decision.ruleKey, "exp_no_audience")
+                    XCTAssertEqual(decision.userContext, user)
+                    XCTAssert(decision.reasons.isEmpty)
+                    
+                    decision = user.decide(key: "feature_3")
+                    
+                    XCTAssertNil(decision.variationKey)
+                    XCTAssertFalse(decision.enabled)
+                    XCTAssertNil(decision.ruleKey)
+                    XCTAssertEqual(decision.userContext, user)
+                    XCTAssert(decision.reasons.isEmpty)                }
+                
                 group.leave()
             }
             

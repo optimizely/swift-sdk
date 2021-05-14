@@ -33,12 +33,10 @@ class MultiClientsTests: XCTestCase {
     func testMultiClients() {        
         sdkKeys = OTUtils.makeRandomSdkKeys(10)
 
-        let datafile = OTUtils.loadJSONDatafileString("grouped_experiments")
+        let datafile = OTUtils.loadJSONDatafileString("decide_datafile")
         
         let result = OTUtils.runConcurrent(for: sdkKeys) { thIdx, sdkKey in
-            let datafileHandler = MockDatafileHandler(statusCode: 0,
-                                                      passError: false,
-                                                      localResponseData: datafile)
+            let datafileHandler = MockDatafileHandler(statusCode: 200, localResponseData: datafile)
 
             let eventDispatcher = DumpEventDispatcher()
             let client = OptimizelyClient(sdkKey: sdkKey,

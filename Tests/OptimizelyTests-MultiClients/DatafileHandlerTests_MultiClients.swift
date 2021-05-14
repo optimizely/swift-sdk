@@ -38,7 +38,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     
     func testConcurrentDownloadDatafiles() {
         // use a shared DatafileHandler instance
-        let mockHandler = MockDatafileHandler(statusCode: 0, passError: false)
+        let mockHandler = MockDatafileHandler(statusCode: 200)
         
         sdkKeys = OTUtils.makeRandomSdkKeys(100)
 
@@ -87,24 +87,24 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         var settingsMap = [String: (Int, Bool)]()
         for (idx, sdkKey) in sdkKeys.enumerated() {
             var statusCode: Int = 0
-            var passError: Bool = false
+            var withError: Bool = false
 
             switch idx {
             case 0..<num304:
                 statusCode = 304
-                passError = false
+                withError = false
             case (num304+1)..<(num304+num400):
                 statusCode = 400
-                passError = false
+                withError = false
             case (num304+num400+1)..<(num304+num400+numError):
                 statusCode = 999
-                passError = true
+                withError = true
             default:
                 statusCode = 200
-                passError = false
+                withError = false
             }
             
-            settingsMap[sdkKey] = (statusCode, passError)
+            settingsMap[sdkKey] = (statusCode, withError)
             
             OTUtils.createDatafileCache(sdkKey: sdkKey)
         }
@@ -152,7 +152,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     
     func testConcurrentAccessLastModified() {
         // use a shared DatafileHandler instance
-        let mockHandler = MockDatafileHandler(statusCode: 0, passError: false)
+        let mockHandler = MockDatafileHandler(statusCode: 200)
 
         sdkKeys = OTUtils.makeRandomSdkKeys(100)
 
@@ -240,7 +240,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         }
         
         // use a shared DatafileHandler instance
-        let mockHandler = MockDatafileHandler(statusCode: 200, passError: false)   // fix 200 statusCode to avoid 304
+        let mockHandler = MockDatafileHandler(statusCode: 200)
         
         let numSdks = 100
         sdkKeys = OTUtils.makeRandomSdkKeys(numSdks)

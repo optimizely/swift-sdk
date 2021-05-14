@@ -1549,6 +1549,7 @@
 		6EE592C2264DF4A70013AD66 /* 50_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196522C5211100B2B157 /* 50_entities.json */; };
 		6EE592C3264DF4A70013AD66 /* 10_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196422C5211100B2B157 /* 10_entities.json */; };
 		6EE592C4264DF4A70013AD66 /* 100_entities.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E75196622C5211100B2B157 /* 100_entities.json */; };
+		6EE592D5264EDAED0013AD66 /* decide_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EF8DE0524B8DA58008B9488 /* decide_datafile.json */; };
 		6EF41A332522BE1900EAADF1 /* OptimizelyUserContextTests_Decide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D34B8250AD14000A0CDFE /* OptimizelyUserContextTests_Decide.swift */; };
 		6EF41A422522BE2100EAADF1 /* OptimizelyUserContextTests_Decide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D34B8250AD14000A0CDFE /* OptimizelyUserContextTests_Decide.swift */; };
 		6EF8DE0624B8DA58008B9488 /* decide_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EF8DE0524B8DA58008B9488 /* decide_datafile.json */; };
@@ -3179,6 +3180,7 @@
 				6EE592A1264DF4990013AD66 /* typed_audience_datafile.json in Resources */,
 				6EE59297264DF4990013AD66 /* bot_filtering_enabled.json in Resources */,
 				6EE592AB264DF4990013AD66 /* empty_datafile_new_project_id.json in Resources */,
+				6EE592D5264EDAED0013AD66 /* decide_datafile.json in Resources */,
 				6EE592A2264DF4990013AD66 /* bucketer_test3.json in Resources */,
 				6EE59299264DF4990013AD66 /* bucketer_test2.json in Resources */,
 				6EE592AC264DF4990013AD66 /* unsupported_datafile.json in Resources */,

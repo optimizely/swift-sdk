@@ -22,8 +22,8 @@ import Foundation
 // the response also includes the url for the data download.
 // the cdn url is used to get the datafile if the datafile is not in cache
 class MockUrlSession: URLSession {
-    var failureCode: Int
-    var passError: Bool
+    var statusCode: Int
+    var withError: Bool
     var localResponseData: String?
     var settingsMap: [String: (Int, Bool)]?
     var handler: MockDatafileHandler?
@@ -40,17 +40,17 @@ class MockUrlSession: URLSession {
         }
     }
 
-    init(handler: MockDatafileHandler? = nil, failureCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
+    init(handler: MockDatafileHandler? = nil, statusCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
         self.handler = handler
-        self.failureCode = failureCode
-        self.passError = withError
+        self.statusCode = statusCode
+        self.withError = withError
         self.localResponseData = localResponseData
     }
    
     init(handler: MockDatafileHandler? = nil, settingsMap: [String: (Int, Bool)]) {
         self.handler = handler
-        self.failureCode = 0
-        self.passError = false
+        self.statusCode = 0
+        self.withError = false
         self.settingsMap = settingsMap
     }
     
@@ -59,7 +59,7 @@ class MockUrlSession: URLSession {
         let sdkKey = request.url!.path.split(separator: "/").last!.replacingOccurrences(of: ".json", with: "")
 
         if let settings = settingsMap?[sdkKey] {
-            (failureCode, passError) = settings
+            (statusCode, withError) = settings
         }
 
         let datafile = handler?.getDatafile(sdkKey: sdkKey) ?? "invalid-mock-handler"
@@ -72,9 +72,9 @@ class MockUrlSession: URLSession {
         let downloadCacheUrl = OTUtils.saveAFile(name: fileName, data: datafile.data(using: .utf8)!)
         
         return MockDownloadTask() {
-            let statusCode = self.failureCode != 0 ? self.failureCode : (request.getLastModified() != nil ? 304 : 200)
+            let statusCode = self.statusCode != 0 ? self.statusCode : 200
 
-            if (self.passError) {
+            if (self.withError) {
                 let error = OptimizelyError.datafileDownloadFailed("failure")
                 completionHandler(downloadCacheUrl, nil, error)
             } else {

@@ -16,7 +16,6 @@
 
 import Foundation
 
-
 // session returns a download task that noop for resume.
 // crafts a httpurlresponse with 304
 // and returns that.
@@ -27,6 +26,7 @@ class MockUrlSession: URLSession {
     var passError: Bool
     var localResponseData: String?
     var settingsMap: [String: (Int, Bool)]?
+    var handler: MockDatafileHandler?
     
     class MockDownloadTask: URLSessionDownloadTask {
         var task: () -> Void
@@ -40,13 +40,15 @@ class MockUrlSession: URLSession {
         }
     }
 
-    init(failureCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
+    init(handler: MockDatafileHandler? = nil, failureCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
+        self.handler = handler
         self.failureCode = failureCode
         self.passError = withError
         self.localResponseData = localResponseData
     }
    
-    init(settingsMap: [String: (Int, Bool)]) {
+    init(handler: MockDatafileHandler? = nil, settingsMap: [String: (Int, Bool)]) {
+        self.handler = handler
         self.failureCode = 0
         self.passError = false
         self.settingsMap = settingsMap
@@ -60,17 +62,14 @@ class MockUrlSession: URLSession {
             (failureCode, passError) = settings
         }
 
-        if localResponseData == nil {
-            let datafile = MockDatafileHandler.getDatafile(sdkKey: sdkKey)
-            let lastModifiedResponse = MockDatafileHandler.getLastModified(sdkKey: sdkKey)
+        let datafile = handler?.getDatafile(sdkKey: sdkKey) ?? "invalid-mock-handler"
+        let lastModifiedResponse = handler?.getLastModified(sdkKey: sdkKey) ?? "invalid-mock-handler"
 
-            localResponseData = datafile
-            headers["Last-Modified"] = lastModifiedResponse
-        }
+        headers["Last-Modified"] = lastModifiedResponse
         
         // this filename should be different from sdkKey (to avoid conflict with datafile cache)
         let fileName = "\(sdkKey)-for-response"
-        let downloadCacheUrl = OTUtils.saveAFile(name: fileName, data: localResponseData!.data(using: .utf8)!)
+        let downloadCacheUrl = OTUtils.saveAFile(name: fileName, data: datafile.data(using: .utf8)!)
         
         return MockDownloadTask() {
             let statusCode = self.failureCode != 0 ? self.failureCode : (request.getLastModified() != nil ? 304 : 200)
@@ -88,4 +87,5 @@ class MockUrlSession: URLSession {
         }
         
     }
+
 }

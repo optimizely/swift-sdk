@@ -36,19 +36,19 @@ class MockDatafileHandler: DefaultDatafileHandler {
     
     override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
         if let settingsMap = settingsMap {
-            return MockUrlSession(settingsMap: settingsMap)
+            return MockUrlSession(handler: self, settingsMap: settingsMap)
         } else {
-            return MockUrlSession(failureCode: statusCode, withError: passError, localResponseData: localResponseData)
+            return MockUrlSession(handler: self, failureCode: statusCode, withError: passError, localResponseData: localResponseData)
         }
     }
     
     // MARK: - helpers
     
-    static func getDatafile(sdkKey: String) -> String {
-        return "datafile-for-\(sdkKey)"
+    func getDatafile(sdkKey: String) -> String {
+        return localResponseData ?? "datafile-for-\(sdkKey)"
     }
     
-    static func getLastModified(sdkKey: String) -> String {
+    func getLastModified(sdkKey: String) -> String {
         return "date-for-\(sdkKey)"
     }
     

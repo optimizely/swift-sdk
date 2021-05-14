@@ -234,6 +234,11 @@ class OTUtils {
         _ = saveAFile(name: sdkKey, data: data)
     }
     
+    static func removeDatafileCache(sdkKey: String, contents: String? = nil) {
+        let data = (contents ?? "datafile-for-\(sdkKey)").data(using: .utf8)!
+        _ = removeAFile(name: sdkKey)
+    }
+    
     static func clearAllDataFiles(including: String? = nil) {
         removeAllFiles(including: including, in: .documentDirectory)
         removeAllFiles(including: including, in: .cachesDirectory)

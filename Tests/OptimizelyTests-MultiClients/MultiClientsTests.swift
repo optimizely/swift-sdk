@@ -84,7 +84,7 @@ class MultiClientsTests: XCTestCase {
                 }
                 
                 eventDispatcher.close()
-                print("[MultiClients] numEvents \(thIdx): \(eventDispatcher.totalEventsSent)")
+                sleep(1)
                 XCTAssertEqual(eventDispatcher.totalEventsSent, 2 * numEventsPerThread)
 
                 group.leave()
@@ -98,7 +98,7 @@ class MultiClientsTests: XCTestCase {
 
     func testMultiClients_sharedEventDispatcher() {
         let numThreads = 10
-        let numEventsPerThread = 100
+        let numEventsPerThread = 20
         
         sdkKeys = OTUtils.makeRandomSdkKeys(numThreads)
 
@@ -157,6 +157,7 @@ class MultiClientsTests: XCTestCase {
         XCTAssertTrue(result, "Concurrent tasks timed out")
         
         sharedEventDispatcher.close()
+        sleep(1)
         XCTAssertEqual(sharedEventDispatcher.totalEventsSent, 2 * numThreads * numEventsPerThread)
     }
 

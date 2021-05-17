@@ -23,7 +23,10 @@ open class OptimizelyClient: NSObject {
     
     // MARK: - Properties
     
-    var sdkKey: String
+    var _sdkKey: String
+    public var sdkKey: String {
+        return _sdkKey
+    }
 
     private var atomicConfig = AtomicProperty<ProjectConfig>()
     var config: ProjectConfig? {
@@ -86,7 +89,7 @@ open class OptimizelyClient: NSObject {
                 defaultLogLevel: OptimizelyLogLevel? = nil,
                 defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
         
-        self.sdkKey = sdkKey
+        self._sdkKey = sdkKey
         self.defaultDecideOptions = defaultDecideOptions ?? []
         
         super.init()

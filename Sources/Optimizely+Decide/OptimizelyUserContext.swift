@@ -131,10 +131,14 @@ public class OptimizelyUserContext {
     
     // MARK: - debug support
     
-    public var forcedVariations = [String: String]()
-    
-    public func setForcedVariation(key: String, variation: String?) {
-        forcedVariations[key] = variation
+    public var forcedFeatures = [String: String]()
+    public var forcedExperiments = [String: String]()
+
+    public func setForcedFeature(key: String, variation: String?) {
+        forcedFeatures[key] = variation
+    }
+    public func setForcedExperiment(key: String, variation: String?) {
+        forcedExperiments[key] = variation
     }
 
 }

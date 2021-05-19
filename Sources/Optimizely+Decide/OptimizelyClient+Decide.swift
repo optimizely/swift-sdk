@@ -218,7 +218,7 @@ extension OptimizelyClient {
     // debug support
     
     func getDecisionForDebug(user: OptimizelyUserContext, feature: FeatureFlag) -> DecisionResponse<FeatureDecision>? {
-        let forcedVariationKey = user.forcedVariations[feature.key]
+        let forcedVariationKey = user.forcedFeatures[feature.key]
         var forcedRule: Experiment?
         var forcedVariation: Variation?
         var forcedSource: Constants.DecisionSource?

@@ -28,7 +28,12 @@ public class OptimizelyUserContext {
     
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
-        return OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
+        let newUser = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
+        
+        newUser.forcedFeatures = self.forcedFeatures
+        newUser.forcedExperiments = self.forcedExperiments
+        
+        return newUser
     }
     
     lazy var logger = OPTLoggerFactory.getLogger()

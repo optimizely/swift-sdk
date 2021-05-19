@@ -50,11 +50,22 @@ extension OptimizelyClient {
         var decisionEventDispatched = false
         var enabled = false
         
-        let decisionResponse = decisionService.getVariationForFeature(config: config,
+        var decisionResponse = decisionService.getVariationForFeature(config: config,
                                                                       featureFlag: feature,
                                                                       userId: userId,
                                                                       attributes: attributes,
                                                                       options: allOptions)
+        
+        
+        
+        // debug support  >>
+        if let debugDecision = getDecisionForDebug(user: user, feature: feature) {
+            decisionResponse = debugDecision
+        }
+
+        
+        
+        
         reasons.merge(decisionResponse.reasons)
         let decision = decisionResponse.result
         if let featureEnabled = decision?.variation.featureEnabled {
@@ -202,6 +213,49 @@ extension OptimizelyClient {
         }
         
         return valueParsed
+    }
+    
+    // debug support
+    
+    func getDecisionForDebug(user: OptimizelyUserContext, feature: FeatureFlag) -> DecisionResponse<FeatureDecision>? {
+        let forcedVariationKey = user.forcedVariations[feature.key]
+        var forcedRule: Experiment?
+        var forcedVariation: Variation?
+        var forcedSource: Constants.DecisionSource?
+        if let variationKey = forcedVariationKey {
+            for exp in feature.experiments {
+                if let variation = exp.variations.filter({ $0.key == variationKey }).first {
+                    forcedRule = exp
+                    forcedVariation = variation
+                    forcedSource = .featureTest
+                    break
+                }
+            }
+            
+            if forcedRule == nil {
+                let rolloutId = feature.rolloutId
+                if let rollout = config?.getRollout(id: rolloutId) {
+                    for exp in rollout.experiments {
+                        if let variation = exp.variations.filter({ $0.key == variationKey }).first {
+                            forcedRule = exp
+                            forcedVariation = variation
+                            forcedSource = .rollout
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        
+        var decisionResponse: DecisionResponse<FeatureDecision>?
+        if let rule = forcedRule, let variation = forcedVariation, let source = forcedSource {
+            let featureDecision = FeatureDecision(experiment: rule,
+                                                  variation: variation,
+                                                  source: source.rawValue)
+            decisionResponse = DecisionResponse(result: featureDecision, reasons: DecisionReasons())
+        }
+
+        return decisionResponse
     }
     
 }

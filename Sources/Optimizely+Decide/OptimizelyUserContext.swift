@@ -128,6 +128,14 @@ public class OptimizelyUserContext {
                              attributes: attributes,
                              eventTags: eventTags)
     }
+    
+    // MARK: - debug support
+    
+    public var forcedVariations = [String: String]()
+    
+    public func setForcedVariation(key: String, variation: String?) {
+        forcedVariations[key] = variation
+    }
 
 }
 

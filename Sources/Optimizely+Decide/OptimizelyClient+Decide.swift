@@ -223,8 +223,9 @@ extension OptimizelyClient {
         var forcedVariation: Variation?
         var forcedSource: Constants.DecisionSource?
         if let variationKey = forcedVariationKey {
-            for exp in feature.experiments {
-                if let variation = exp.variations.filter({ $0.key == variationKey }).first {
+            for expId in feature.experimentIds {
+                if let exp = config?.getExperiment(id: expId),
+                   let variation = exp.variations.filter({ $0.key == variationKey }).first {
                     forcedRule = exp
                     forcedVariation = variation
                     forcedSource = .featureTest

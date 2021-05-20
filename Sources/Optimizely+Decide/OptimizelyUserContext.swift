@@ -145,6 +145,12 @@ public class OptimizelyUserContext {
     public func setForcedExperiment(key: String, variation: String?) {
         forcedExperiments[key] = variation
     }
+    
+    public func removeAttribute(key: String) {
+        atomicAttributes.performAtomic { attributes in
+            attributes.removeValue(forKey: key)
+        }
+    }
 
 }
 

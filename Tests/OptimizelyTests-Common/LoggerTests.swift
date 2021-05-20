@@ -18,36 +18,141 @@ import XCTest
 
 class LoggerTests: XCTestCase {
 
-    func testDebugLog() {
-        CustomLogger.logCount = 0
-        let logger = CustomLogger()
-        CustomLogger.logLevel = .debug
-        logger.d { () -> String in
-            return "Log Message"
-        }
-        XCTAssertTrue(CustomLogger.logCount == 1)
+    let logger = TestLogger()
+    
+    func testOPTLogger_DefaultMethods() {
+        // String messages
         
-        CustomLogger.logCount = 0
-        CustomLogger.logLevel = .info
+        let message = "Log Message"
+        
+        logger.e(message)
+        verifyLogger(.error, message)
+        logger.w(message)
+        verifyLogger(.warning, message)
+        logger.i(message)
+        verifyLogger(.info, message)
+        logger.d(message)
+        verifyLogger(.debug, message)
+        
+        // LogMessage
+        
+        let logMessage = LogMessage.experimentNotRunning("key")
+        
+        logger.e(logMessage)
+        verifyLogger(.error, logMessage.description)
+        logger.w(logMessage)
+        verifyLogger(.warning, logMessage.description)
+        logger.i(logMessage)
+        verifyLogger(.info, logMessage.description)
+        logger.d(logMessage)
+        verifyLogger(.debug, logMessage.description)
+
+        // OptimizelyError
+        
+        let error = OptimizelyError.sdkNotReady
+        let errorMessage = "(src) " + error.reason
+        
+        logger.e(error, source: "src")
+        verifyLogger(.error, errorMessage)
+        logger.w(error, source: "src")
+        verifyLogger(.warning, errorMessage)
+        logger.i(error, source: "src")
+        verifyLogger(.info, errorMessage)
+        logger.d(error, source: "src")
+        verifyLogger(.debug, errorMessage)
+    }
+
+    func testOPTLogger_DebugLog() {
+        TestLogger.logLevel = .debug
         logger.d { () -> String in
-            return "Log Message"
+            return "message"
         }
-        XCTAssertTrue(CustomLogger.logCount == 0)
+        XCTAssertTrue(logger.logCount == 1)
+        XCTAssertEqual(logger.getMessages(.debug), ["message"])
+        logger.clearMessages()
+
+        TestLogger.logLevel = .info
+        logger.d { () -> String in
+            return "message"
+        }
+        XCTAssertTrue(logger.logCount == 0)
     }
 
     // MARK: - DefaultLogger Tests
 
-    func testLog_UseOSLog() {
-        let logger = DefaultLogger()
-        logger.i("Log Message")
+    func testDefaultLogger_DebugLevel() {
+        let logger = TestDefaultLogger()
+        DefaultLogger.setLogLevel(.debug)
         
-        XCTAssertTrue(logger.osLogUsed)
+        logger.e("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+        logger.w("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+        logger.i("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+        logger.d("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+    }
+    
+    func testDefaultLogger_InfoLevel() {
+        let logger = TestDefaultLogger()
+        DefaultLogger.setLogLevel(.info)
+
+        logger.e("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+        logger.w("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+        logger.i("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+        logger.d("message")
+        XCTAssert(logger.logCount == 0)
+    }
+    
+    func testDefaultLogger_WarningLevel() {
+        let logger = TestDefaultLogger()
+        DefaultLogger.setLogLevel(.warning)
+
+        logger.e("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+        logger.w("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+        logger.i("message")
+        XCTAssert(logger.logCount == 0)
+        logger.d("message")
+        XCTAssert(logger.logCount == 0)
+    }
+ 
+    func testDefaultLogger_ErrorLevel() {
+        let logger = TestDefaultLogger()
+        DefaultLogger.setLogLevel(.error)
+
+        logger.e("message")
+        XCTAssert(logger.logCount > 0); logger.logCount = 0
+        logger.w("message")
+        XCTAssert(logger.logCount == 0)
+        logger.i("message")
+        XCTAssert(logger.logCount == 0)
+        logger.d("message")
+        XCTAssert(logger.logCount == 0)
+    }
+
+}
+
+// MARK: - Utils
+
+extension LoggerTests {
+
+    func verifyLogger(_ logLevel: OptimizelyLogLevel, _ message: String) {
+        XCTAssertTrue(logger.logCount == 1)
+        XCTAssertEqual(logger.getMessages(logLevel), [message])
+        logger.clearMessages()
     }
     
 }
 
-private class CustomLogger: OPTLogger {
-    public static var logCount = 0
+// MARK: - Mock Loggers
+
+class TestLogger: OPTLogger {
     private static var _logLevel: OptimizelyLogLevel?
     public static var logLevel: OptimizelyLogLevel {
         get {
@@ -59,10 +164,34 @@ private class CustomLogger: OPTLogger {
     }
     
     required public init() {
+        clearMessages()
     }
     
     func log(level: OptimizelyLogLevel, message: String) {
-        CustomLogger.logCount += 1
+        logMessages[level.rawValue].append(message)
+    }
+    
+    // Utils
+    
+    var logMessages = [[String]]()
+    var logCount: Int {
+        return logMessages.reduce(0) { $0 + $1.count }
+    }
+    
+    func getMessages(_ level: OptimizelyLogLevel) -> [String] {
+        return logMessages[level.rawValue]
+    }
+    
+    func clearMessages() {
+        logMessages = [[String]](repeating: [], count: OptimizelyLogLevel.debug.rawValue + 1)
     }
 }
+
+class TestDefaultLogger: DefaultLogger {
+    var logCount = 0
+    override func clog(level: OptimizelyLogLevel, message: String) {
+        logCount += 1
+    }
+}
+
 

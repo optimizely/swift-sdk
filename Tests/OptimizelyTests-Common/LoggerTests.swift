@@ -23,73 +23,43 @@ class LoggerTests: XCTestCase {
     func testOPTLogger_DefaultMethods() {
         // String messages
         
-        logger.e("Error Message")
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.error), ["Error Message"])
-        logger.clearMessages()
-
-        logger.w("Warning Message")
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.warning), ["Warning Message"])
-        logger.clearMessages()
-
-        logger.i("Info Message")
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.info), ["Info Message"])
-        logger.clearMessages()
-
-        logger.d("Debug Message")
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.debug), ["Debug Message"])
-        logger.clearMessages()
+        let message = "Log Message"
+        
+        logger.e(message)
+        verifyLogger(.error, message)
+        logger.w(message)
+        verifyLogger(.warning, message)
+        logger.i(message)
+        verifyLogger(.info, message)
+        logger.d(message)
+        verifyLogger(.debug, message)
         
         // LogMessage
         
         let logMessage = LogMessage.experimentNotRunning("key")
-        logger.e(logMessage)
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.error), [logMessage.description])
-        logger.clearMessages()
-
-        logger.w(logMessage)
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.warning), [logMessage.description])
-        logger.clearMessages()
-
-        logger.i(logMessage)
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.info), [logMessage.description])
-        logger.clearMessages()
-
-        logger.d(logMessage)
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.debug), [logMessage.description])
-        logger.clearMessages()
         
+        logger.e(logMessage)
+        verifyLogger(.error, logMessage.description)
+        logger.w(logMessage)
+        verifyLogger(.warning, logMessage.description)
+        logger.i(logMessage)
+        verifyLogger(.info, logMessage.description)
+        logger.d(logMessage)
+        verifyLogger(.debug, logMessage.description)
+
         // OptimizelyError
         
         let error = OptimizelyError.sdkNotReady
         let errorMessage = "(src) " + error.reason
         
         logger.e(error, source: "src")
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.error), [errorMessage])
-        logger.clearMessages()
-
+        verifyLogger(.error, errorMessage)
         logger.w(error, source: "src")
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.warning), [errorMessage])
-        logger.clearMessages()
-
+        verifyLogger(.warning, errorMessage)
         logger.i(error, source: "src")
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.info), [errorMessage])
-        logger.clearMessages()
-
+        verifyLogger(.info, errorMessage)
         logger.d(error, source: "src")
-        XCTAssertTrue(logger.logCount == 1)
-        XCTAssertEqual(logger.getMessages(.debug), [errorMessage])
-        logger.clearMessages()
+        verifyLogger(.debug, errorMessage)
     }
 
     func testOPTLogger_DebugLog() {
@@ -166,6 +136,18 @@ class LoggerTests: XCTestCase {
         XCTAssert(logger.logCount == 0)
     }
 
+}
+
+// MARK: - Utils
+
+extension LoggerTests {
+
+    func verifyLogger(_ logLevel: OptimizelyLogLevel, _ message: String) {
+        XCTAssertTrue(logger.logCount == 1)
+        XCTAssertEqual(logger.getMessages(logLevel), [message])
+        logger.clearMessages()
+    }
+    
 }
 
 // MARK: - Mock Loggers

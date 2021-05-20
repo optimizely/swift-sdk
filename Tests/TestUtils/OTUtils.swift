@@ -235,8 +235,7 @@ class OTUtils {
     }
     
     static func removeDatafileCache(sdkKey: String, contents: String? = nil) {
-        let data = (contents ?? "datafile-for-\(sdkKey)").data(using: .utf8)!
-        _ = removeAFile(name: sdkKey)
+        removeAFile(name: sdkKey)
     }
     
     static func clearAllDataFiles(including: String? = nil) {
@@ -275,11 +274,9 @@ class OTUtils {
         return ds.url
     }
 
-    static func removeAFile(name: String) -> URL? {
+    static func removeAFile(name: String) {
         let ds = DataStoreFile<Data>(storeName: name, async: false)
         ds.removeItem(forKey: name)
-        
-        return ds.url
     }
     
     static func createDocumentDirectoryIfNotAvailable() {

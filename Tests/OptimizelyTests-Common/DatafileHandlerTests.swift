@@ -368,7 +368,7 @@ class DatafileHandlerTests: XCTestCase {
                 print(data ?? "")
                 XCTAssert(true)
                 expectation.fulfill()
-                _ = OTUtils.removeAFile(name: "invalidKeyXXXXX")
+                OTUtils.removeAFile(name: "invalidKeyXXXXX")
             }
         }
 

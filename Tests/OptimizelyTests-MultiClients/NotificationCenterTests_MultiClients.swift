@@ -98,7 +98,9 @@ class NotificationCenterTests_MultiClients: XCTestCase {
                 let idLogEvent = self.addLogEventListener()
                 
                 self.notificationCenter.removeNotificationListener(notificationId: idDatafileChange!)
-                self.notificationCenter.removeNotificationListener(notificationId: idLogEvent!)
+                if idx % 2 == 0 {
+                    self.notificationCenter.removeNotificationListener(notificationId: idLogEvent!)
+                }
             }
         }
         
@@ -115,7 +117,7 @@ class NotificationCenterTests_MultiClients: XCTestCase {
         XCTAssertEqual(counter.track, numThreads * numEventsPerThread)
         XCTAssertEqual(counter.decision, numThreads * numEventsPerThread)
         XCTAssertEqual(counter.datafileChange, 0)
-        XCTAssertEqual(counter.logEvent, 0)
+        XCTAssertEqual(counter.logEvent, numThreads * numEventsPerThread / 2)
     }
     
     func testConcurrentAddClear() {

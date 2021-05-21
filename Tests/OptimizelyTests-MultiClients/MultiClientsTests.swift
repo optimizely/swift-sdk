@@ -29,19 +29,19 @@ class MultiClientsTests: XCTestCase {
     override func tearDown() {
         OTUtils.clearAllTestStorage(including: testSdkKeyBasename)
     }
-
+    
     func testMultiClients() {
         let numThreads = 10
         let numEventsPerThread = 100
         
         sdkKeys = OTUtils.makeRandomSdkKeys(numThreads)
 
-        let datafile = OTUtils.loadJSONDatafileString("decide_datafile")
-
         let result = OTUtils.runConcurrent(for: sdkKeys, timeoutInSecs: 10) { thIdx, sdkKey in
+            let useDecideDatafile = thIdx % 2 == 0
+            
+            let datafile = self.selectDatafile(useDecideDatafile)
             let datafileHandler = MockDatafileHandler(statusCode: 200, localResponseData: datafile)
-            let eventDispatcher = DumpEventDispatcher(dataStoreName: "OPTEventQueue-\(sdkKey)",
-                                                      timerInterval: 0)
+            let eventDispatcher = DumpEventDispatcher(dataStoreName: "OPTEventQueue-\(sdkKey)", timerInterval: 0)
 
             let client = OptimizelyClient(sdkKey: sdkKey,
                                           eventDispatcher: eventDispatcher,
@@ -64,28 +64,12 @@ class MultiClientsTests: XCTestCase {
                 }
                 
                 for i in 0..<numEventsPerThread {
-                    let userId = String(i)
-                    let user = client.createUserContext(userId: userId)
-                    var decision = user.decide(key: "feature_2")
-                    
-                    XCTAssertEqual(decision.variationKey, "variation_with_traffic")
-                    XCTAssertTrue(decision.enabled)
-                    XCTAssertEqual(decision.ruleKey, "exp_no_audience")
-                    XCTAssertEqual(decision.userContext, user)
-                    XCTAssert(decision.reasons.isEmpty)
-                    
-                    decision = user.decide(key: "feature_3")
-                    
-                    XCTAssertNil(decision.variationKey)
-                    XCTAssertFalse(decision.enabled)
-                    XCTAssertNil(decision.ruleKey)
-                    XCTAssertEqual(decision.userContext, user)
-                    XCTAssert(decision.reasons.isEmpty)
+                    self.verifyDecisionsForDecideDatafile(userId: String(i), client: client, useDecideDatafile: useDecideDatafile)
                 }
                 
                 eventDispatcher.close()
                 sleep(1)
-                XCTAssertEqual(eventDispatcher.totalEventsSent, 2 * numEventsPerThread)
+                XCTAssertEqual(eventDispatcher.totalEventsSent, 4 * numEventsPerThread)  // 4 events for each verifyDecisionsForDecideDatafile() call
 
                 group.leave()
             }
@@ -101,11 +85,12 @@ class MultiClientsTests: XCTestCase {
         let numEventsPerThread = 20
         
         sdkKeys = OTUtils.makeRandomSdkKeys(numThreads)
-
-        let datafile = OTUtils.loadJSONDatafileString("decide_datafile")
         let sharedEventDispatcher = DumpEventDispatcher(timerInterval: 0)
 
         let result = OTUtils.runConcurrent(for: sdkKeys, timeoutInSecs: 10) { thIdx, sdkKey in
+            let useDecideDatafile = thIdx % 2 == 0
+            
+            let datafile = self.selectDatafile(useDecideDatafile)
             let datafileHandler = MockDatafileHandler(statusCode: 200, localResponseData: datafile)
             
             let client = OptimizelyClient(sdkKey: sdkKey,
@@ -129,23 +114,7 @@ class MultiClientsTests: XCTestCase {
                 }
                 
                 for i in 0..<numEventsPerThread {
-                    let userId = String(i)
-                    let user = client.createUserContext(userId: userId)
-                    var decision = user.decide(key: "feature_2")
-                    
-                    XCTAssertEqual(decision.variationKey, "variation_with_traffic")
-                    XCTAssertTrue(decision.enabled)
-                    XCTAssertEqual(decision.ruleKey, "exp_no_audience")
-                    XCTAssertEqual(decision.userContext, user)
-                    XCTAssert(decision.reasons.isEmpty)
-                    
-                    decision = user.decide(key: "feature_3")
-                    
-                    XCTAssertNil(decision.variationKey)
-                    XCTAssertFalse(decision.enabled)
-                    XCTAssertNil(decision.ruleKey)
-                    XCTAssertEqual(decision.userContext, user)
-                    XCTAssert(decision.reasons.isEmpty)
+                    self.verifyDecisionsForDecideDatafile(userId: String(i), client: client, useDecideDatafile: useDecideDatafile)
                 }
                 
                 group.leave()
@@ -158,7 +127,63 @@ class MultiClientsTests: XCTestCase {
         
         sharedEventDispatcher.close()
         sleep(1)
-        XCTAssertEqual(sharedEventDispatcher.totalEventsSent, 2 * numThreads * numEventsPerThread)
+        XCTAssertEqual(sharedEventDispatcher.totalEventsSent, 4 * numThreads * numEventsPerThread)
+    }
+
+    // Utils
+    
+    func selectDatafile(_ useDecideDatafile: Bool) -> String? {
+        let datafileName = useDecideDatafile ? "decide_datafile" : "api_datafile"
+        return OTUtils.loadJSONDatafileString(datafileName)
+    }
+    
+    func verifyDecisionsForDecideDatafile(userId: String, client: OptimizelyClient, useDecideDatafile: Bool) {
+        let user = client.createUserContext(userId: userId)
+        
+        var decision: OptimizelyDecision
+        if useDecideDatafile {
+            decision = user.decide(key: "feature_2")
+            
+            XCTAssertEqual(decision.variationKey, "variation_with_traffic")
+            XCTAssertTrue(decision.enabled)
+            XCTAssertEqual(decision.ruleKey, "exp_no_audience")
+            XCTAssertEqual(decision.userContext, user)
+            XCTAssert(decision.reasons.isEmpty)
+            
+            decision = user.decide(key: "feature_3")
+            
+            XCTAssertNil(decision.variationKey)
+            XCTAssertFalse(decision.enabled)
+            XCTAssertNil(decision.ruleKey)
+            XCTAssertEqual(decision.userContext, user)
+            XCTAssert(decision.reasons.isEmpty)
+            
+            // legacy APIs
+            
+            XCTAssertTrue(client.isFeatureEnabled(featureKey: "feature_2", userId: userId))
+            XCTAssertFalse(client.isFeatureEnabled(featureKey: "feature_3", userId: userId))
+        } else {
+            decision = user.decide(key: "feature_1")
+            
+            XCTAssertEqual(decision.variationKey, "a")
+            XCTAssertTrue(decision.enabled)
+            XCTAssertEqual(decision.ruleKey, "exp_with_audience")
+            XCTAssertEqual(decision.userContext, user)
+            XCTAssert(decision.reasons.isEmpty)
+            
+            decision = user.decide(key: "feature_2")
+            
+            XCTAssertEqual(decision.variationKey, "variation_with_traffic")
+            XCTAssertFalse(decision.enabled)
+            XCTAssertEqual(decision.ruleKey, "exp_no_audience")
+            XCTAssertEqual(decision.userContext, user)
+            XCTAssert(decision.reasons.isEmpty)
+
+            // legacy APIs
+            
+            XCTAssertTrue(client.isFeatureEnabled(featureKey: "feature_1", userId: userId))
+            XCTAssertFalse(client.isFeatureEnabled(featureKey: "feature_2", userId: userId))
+        }
     }
 
 }

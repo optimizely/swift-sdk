@@ -10,7 +10,7 @@ end
 def linter_pods
   # ignore all warnings from all dependencies
   inhibit_all_warnings!
-  pod 'SwiftLint'
+  pod 'SwiftLint', '0.43.1'
 end
 
 def common_test_pods

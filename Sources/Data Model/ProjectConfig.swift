@@ -152,17 +152,17 @@ extension ProjectConfig {
 // MARK: - Persistent Data
 
 extension ProjectConfig {
-    private func whitelistUser(userId: String, experimentId: String, variationId: String) {
+    func whitelistUser(userId: String, experimentId: String, variationId: String) {
         var dic = whitelistUsers[userId] ?? [String: String]()
         dic[experimentId] = variationId
         whitelistUsers[userId] = dic
     }
     
-    private func removeFromWhitelist(userId: String, experimentId: String) {
+    func removeFromWhitelist(userId: String, experimentId: String) {
         self.whitelistUsers[userId]?.removeValue(forKey: experimentId)
     }
     
-    private func getWhitelistedVariationId(userId: String, experimentId: String) -> String? {
+    func getWhitelistedVariationId(userId: String, experimentId: String) -> String? {
         if let dic = whitelistUsers[userId] {
             return dic[experimentId]
         }
@@ -171,7 +171,7 @@ extension ProjectConfig {
         return nil
     }
     
-    private func isValidVersion(version: String) -> Bool {
+    func isValidVersion(version: String) -> Bool {
         // old versions (< 4) of datafiles not supported
         return ["4"].contains(version)
     }

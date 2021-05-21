@@ -25,7 +25,7 @@ class ProjectConfig {
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
     
-    var whitelistUsers = [String: [String: String]]()
+    var whitelistUsers = AtomicProperty(property: [String: [String: String]]())
     
     lazy var experimentKeyMap: [String: Experiment] = {
         var map = [String: Experiment]()
@@ -153,18 +153,22 @@ extension ProjectConfig {
 
 extension ProjectConfig {
     func whitelistUser(userId: String, experimentId: String, variationId: String) {
-        var dic = whitelistUsers[userId] ?? [String: String]()
-        dic[experimentId] = variationId
-        whitelistUsers[userId] = dic
+        whitelistUsers.performAtomic { whitelist in
+            var dict = whitelist[userId] ?? [String: String]()
+            dict[experimentId] = variationId
+            whitelist[userId] = dict
+        }
     }
     
     func removeFromWhitelist(userId: String, experimentId: String) {
-        self.whitelistUsers[userId]?.removeValue(forKey: experimentId)
+        whitelistUsers.performAtomic { whitelist in
+            whitelist[userId]?.removeValue(forKey: experimentId)
+        }
     }
     
     func getWhitelistedVariationId(userId: String, experimentId: String) -> String? {
-        if let dic = whitelistUsers[userId] {
-            return dic[experimentId]
+        if let dict = whitelistUsers.property?[userId] {
+            return dict[experimentId]
         }
         
         logger.d(.userHasNoForcedVariation(userId))

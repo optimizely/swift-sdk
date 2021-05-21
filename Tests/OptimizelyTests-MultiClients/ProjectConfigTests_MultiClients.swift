@@ -34,8 +34,12 @@ class ProjectConfigTests_MultiClients: XCTestCase {
                 let variationId = experimentId
 
                 self.config.whitelistUser(userId: userId, experimentId: experimentId, variationId: variationId)
-                let result = self.config.getWhitelistedVariationId(userId: userId, experimentId: experimentId)
+                var result = self.config.getWhitelistedVariationId(userId: userId, experimentId: experimentId)
                 XCTAssertEqual(result, variationId)
+                
+                self.config.removeFromWhitelist(userId: userId, experimentId: experimentId)
+                result = self.config.getWhitelistedVariationId(userId: userId, experimentId: experimentId)
+                XCTAssertNil(result)
             }
         }
         

@@ -56,63 +56,6 @@ class NotificationCenterTests: XCTestCase {
         super.tearDown()
     }
     
-    func sendActivate() {
-        notificationCenter.sendNotifications(type: NotificationType.activate.rawValue, args: [experiment!, "userId", nil, variation!, ["url": "https://url.com/", "body": Data()]])
-    }
-
-    func sendTrack() {
-        notificationCenter.sendNotifications(type: NotificationType.track.rawValue, args: ["eventKey", "userId", nil, nil, ["url": "https://url.com/", "body": Data()]])
-    }
-
-    func sendDecision() {
-        notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: [Constants.DecisionType.featureVariable.rawValue, "userId", nil, ["url": "https://url.com/", "body": Data()]])
-    }
-
-    func sendDatafileChange() {
-        notificationCenter.sendNotifications(type: NotificationType.datafileChange.rawValue, args: [Data()])
-    }
-    
-    func sendLogEvent() {
-        notificationCenter.sendNotifications(type: NotificationType.logEvent.rawValue, args: ["https://url.com/", [:]])
-    }
-    
-    func addActivateListener() -> Int? {
-        let id = notificationCenter.addActivateNotificationListener { (_, _, _, _, _) in
-            self.called = true
-        }
-        return id
-    }
-    
-    func addTrackListener() -> Int? {
-        let id = notificationCenter.addTrackNotificationListener { (_, _, _, _, _) in
-            self.called = true
-        }
-        return id
-    }
-    
-    func addDecisionListener() -> Int? {
-        let id = notificationCenter.addDecisionNotificationListener { (_, _, _, _) in
-            self.called = true
-        }
-        return id
-    }
-    
-    func addDatafileChangeListener() -> Int? {
-        let id = notificationCenter.addDatafileChangeNotificationListener { (_) in
-            self.called = true
-        }
-        return id
-    }
-    
-    func addLogEventListener() -> Int? {
-        let id = notificationCenter.addLogEventNotificationListener { (_, _) in
-            self.called = true
-        }
-        return id
-    }
-
-    
-
     func testNotificationCenterAddRemoveActivate() {
         called = false
         
@@ -365,4 +308,61 @@ class NotificationCenterTests: XCTestCase {
         XCTAssertFalse(called)
     }
     
+    // MARK: - Utils
+
+    func sendActivate() {
+        notificationCenter.sendNotifications(type: NotificationType.activate.rawValue, args: [experiment!, "userId", nil, variation!, ["url": "https://url.com/", "body": Data()]])
+    }
+
+    func sendTrack() {
+        notificationCenter.sendNotifications(type: NotificationType.track.rawValue, args: ["eventKey", "userId", nil, nil, ["url": "https://url.com/", "body": Data()]])
+    }
+
+    func sendDecision() {
+        notificationCenter.sendNotifications(type: NotificationType.decision.rawValue, args: [Constants.DecisionType.featureVariable.rawValue, "userId", nil, ["url": "https://url.com/", "body": Data()]])
+    }
+
+    func sendDatafileChange() {
+        notificationCenter.sendNotifications(type: NotificationType.datafileChange.rawValue, args: [Data()])
+    }
+    
+    func sendLogEvent() {
+        notificationCenter.sendNotifications(type: NotificationType.logEvent.rawValue, args: ["https://url.com/", [:]])
+    }
+    
+    func addActivateListener() -> Int? {
+        let id = notificationCenter.addActivateNotificationListener { (_, _, _, _, _) in
+            self.called = true
+        }
+        return id
+    }
+    
+    func addTrackListener() -> Int? {
+        let id = notificationCenter.addTrackNotificationListener { (_, _, _, _, _) in
+            self.called = true
+        }
+        return id
+    }
+    
+    func addDecisionListener() -> Int? {
+        let id = notificationCenter.addDecisionNotificationListener { (_, _, _, _) in
+            self.called = true
+        }
+        return id
+    }
+    
+    func addDatafileChangeListener() -> Int? {
+        let id = notificationCenter.addDatafileChangeNotificationListener { (_) in
+            self.called = true
+        }
+        return id
+    }
+    
+    func addLogEventListener() -> Int? {
+        let id = notificationCenter.addLogEventNotificationListener { (_, _) in
+            self.called = true
+        }
+        return id
+    }
+
 }

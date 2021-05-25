@@ -20,7 +20,7 @@ class ProjectConfigTests_MultiClients: XCTestCase {
     var config: ProjectConfig!
     
     override func setUpWithError() throws {
-        config = try! ProjectConfig()
+        config = ProjectConfig()
     }
 
     func testConcurrentAccess() {

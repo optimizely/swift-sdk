@@ -18,6 +18,10 @@ import XCTest
 
 class HandlerRegistryServiceTests_MultiClients: XCTestCase {
 
+    override func setUpWithError() throws {
+        OTUtils.clearAllBinders()
+    }
+
     func testConcurrentAccess_Singleton() {
         // this type used for all handlers except for logger
         

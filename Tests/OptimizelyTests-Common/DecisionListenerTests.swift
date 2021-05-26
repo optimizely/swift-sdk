@@ -449,7 +449,11 @@ class DecisionListenerTests: XCTestCase {
         for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
             if featureFlag.key == kFeatureKey {
                 var flag = featureFlag
-                flag.variables.append(FeatureVariable(id: "2689660112", key: "b_true", type: "invalid", subType: nil, defaultValue: "true"))
+                flag.variables.append(FeatureVariable(id: "2689660112",
+                                                      key: "b_true",
+                                                      type: "invalid",
+                                                      subType: nil,
+                                                      defaultValue: "true"))
                 self.optimizely.config?.project.featureFlags[index] = flag
                 break
             }
@@ -1142,7 +1146,11 @@ extension DecisionListenerTests {
         for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
             if featureFlag.key == kFeatureKey {
                 var flag = featureFlag
-                flag.variables.append(FeatureVariable(id: "2689660112", key: kVariableKeyBool, type: "invalid", subType: nil, defaultValue: "true"))
+                flag.variables.append(FeatureVariable(id: "2689660112",
+                                                      key: kVariableKeyBool,
+                                                      type: "invalid",
+                                                      subType: nil,
+                                                      defaultValue: "true"))
                 self.optimizely.config?.project.featureFlags[index] = flag
                 break
             }
@@ -1199,13 +1207,6 @@ extension DecisionListenerTests {
 }
 
 class FakeManager: OptimizelyClient {
-    
-    override var decisionService: OPTDecisionService {
-        get {
-            return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey, isReintialize: true)!
-        }
-    }
-    
     override init(sdkKey: String,
                   logger: OPTLogger? = nil,
                   eventDispatcher: OPTEventDispatcher? = nil,

@@ -32,7 +32,7 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
 
     func testOptimizelyClientWithCachedDatafile() {
         // create test datafile handler
-        let handler = MockDatafileHandler(statusCode: 0, passError: false, localResponseData: OTUtils.loadJSONDatafileString("api_datafile"))
+        let handler = MockDatafileHandler(statusCode: 200, localResponseData: OTUtils.loadJSONDatafileString("api_datafile"))
         //save the cached datafile..
         let data = OTUtils.loadJSONDatafile("api_datafile")
 

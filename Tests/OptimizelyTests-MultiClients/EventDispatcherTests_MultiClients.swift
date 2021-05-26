@@ -62,7 +62,7 @@ class EventDispatcherTests_MultiClients: XCTestCase {
 
         let exp = dispatchEventsConcurrently(dispatcher: dispatcher,
                                              numThreads: 10,
-                                             numEventsPerThread: (1000 * stressFactor),
+                                             numEventsPerThread: (100 * stressFactor),
                                              maxRandomIntervalInUsecs: 1000)
         wait(for: [exp], timeout: Double(30 * stressFactor))
     }
@@ -74,7 +74,7 @@ class EventDispatcherTests_MultiClients: XCTestCase {
 
         let exp = dispatchEventsConcurrently(dispatcher: dispatcher,
                                              numThreads: 10,
-                                             numEventsPerThread: (1000 * stressFactor),
+                                             numEventsPerThread: (100 * stressFactor),
                                              maxRandomIntervalInUsecs: 1000,
                                              injectNotifications: true)
         wait(for: [exp], timeout: Double(30 * stressFactor))

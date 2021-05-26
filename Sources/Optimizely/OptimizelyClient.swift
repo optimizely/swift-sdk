@@ -47,24 +47,23 @@ open class OptimizelyClient: NSObject {
     
     lazy var logger = OPTLoggerFactory.getLogger()
     
-    var eventDispatcher: OPTEventDispatcher? {
+    lazy var eventDispatcher: OPTEventDispatcher? = {
         return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
-    }
+    }()
     
-    public var datafileHandler: OPTDatafileHandler? {
+    public lazy var datafileHandler: OPTDatafileHandler? = {
         return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
-    }
-    lazy var currentDatafileHandler = datafileHandler
+    }()
     
     // MARK: - Default Services
     
-    var decisionService: OPTDecisionService {
-        return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)!
-    }
+    lazy var decisionService: OPTDecisionService! = {
+        return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
+    }()
     
-    public var notificationCenter: OPTNotificationCenter? {
+    public lazy var notificationCenter: OPTNotificationCenter? = {
         return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
-    }
+    }()
     
     // MARK: - Public interfaces
     

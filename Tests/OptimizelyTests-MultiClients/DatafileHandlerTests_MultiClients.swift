@@ -18,31 +18,30 @@ import XCTest
 
 class DatafileHandlerTests_MultiClients: XCTestCase {
 
-    let testSdkKeyBasename = "testSdkKey"
     var sdkKeys = [String]()
     var handler = DefaultDatafileHandler()
 
     override func setUp() {
         OTUtils.bindLoggerForTest(.info)
         OTUtils.createDocumentDirectoryIfNotAvailable()
-        OTUtils.clearAllTestStorage(including: testSdkKeyBasename)
+        OTUtils.clearAllTestStorage()
 
-        makeSdkKeys(10)
+        sdkKeys = OTUtils.makeRandomSdkKeys(10)
     }
 
     override func tearDown() {
         OTUtils.clearAllBinders()
-        OTUtils.clearAllTestStorage(including: testSdkKeyBasename)
+        OTUtils.clearAllTestStorage()
     }
     
     // MARK: - downloadDatafile
     
     func testConcurrentDownloadDatafiles() {
         // use a shared DatafileHandler instance
-        let mockHandler = MockDatafileHandler(statusCode: 0, passError: false)
+        let mockHandler = MockDatafileHandler(statusCode: 200)
         
-        makeSdkKeys(100)
-        
+        sdkKeys = OTUtils.makeRandomSdkKeys(100)
+
         let result = OTUtils.runConcurrent(for: sdkKeys, timeoutInSecs: 10) { _, sdkKey in
             let group = DispatchGroup()
             
@@ -50,7 +49,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
             mockHandler.downloadDatafile(sdkKey: sdkKey,
                                          returnCacheIfNoChange: false,
                                          resourceTimeoutInterval: 10) { result in
-                let expectedDatafile = MockDatafileHandler.getDatafile(sdkKey: sdkKey)
+                let expectedDatafile = mockHandler.getDatafile(sdkKey: sdkKey)
 
                 switch result {
                 case .success(let data):
@@ -75,7 +74,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     
     func testConcurrentDownloadDatafilesWithErrors() {
         let numSdkKeys = 100
-        makeSdkKeys(numSdkKeys)
+        sdkKeys = OTUtils.makeRandomSdkKeys(100)
 
         // set response code + error distribution
         
@@ -88,24 +87,24 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         var settingsMap = [String: (Int, Bool)]()
         for (idx, sdkKey) in sdkKeys.enumerated() {
             var statusCode: Int = 0
-            var passError: Bool = false
+            var withError: Bool = false
 
             switch idx {
             case 0..<num304:
                 statusCode = 304
-                passError = false
+                withError = false
             case (num304+1)..<(num304+num400):
                 statusCode = 400
-                passError = false
+                withError = false
             case (num304+num400+1)..<(num304+num400+numError):
                 statusCode = 999
-                passError = true
+                withError = true
             default:
                 statusCode = 200
-                passError = false
+                withError = false
             }
             
-            settingsMap[sdkKey] = (statusCode, passError)
+            settingsMap[sdkKey] = (statusCode, withError)
             
             OTUtils.createDatafileCache(sdkKey: sdkKey)
         }
@@ -123,7 +122,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
             mockHandler.downloadDatafile(sdkKey: sdkKey,
                                          returnCacheIfNoChange: false,
                                          resourceTimeoutInterval: 10) { result in
-                let expectedDatafile = MockDatafileHandler.getDatafile(sdkKey: sdkKey)
+                let expectedDatafile = mockHandler.getDatafile(sdkKey: sdkKey)
                 
                 switch result {
                 case .success(let data):
@@ -153,12 +152,12 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     
     func testConcurrentAccessLastModified() {
         // use a shared DatafileHandler instance
-        let mockHandler = MockDatafileHandler(statusCode: 0, passError: false)
+        let mockHandler = MockDatafileHandler(statusCode: 200)
 
-        makeSdkKeys(100)
-        
+        sdkKeys = OTUtils.makeRandomSdkKeys(100)
+
         let result = OTUtils.runConcurrent(for: sdkKeys, timeoutInSecs: 10) { _, sdkKey in
-            let expectedLastModified = MockDatafileHandler.getLastModified(sdkKey: sdkKey)
+            let expectedLastModified = mockHandler.getLastModified(sdkKey: sdkKey)
             
             let group = DispatchGroup()
             
@@ -180,8 +179,8 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     // MARK: - Datafile Caches
     
     func testConcurrentAccessDatafileCaches() {
-        makeSdkKeys(100)
-        
+        sdkKeys = OTUtils.makeRandomSdkKeys(100)
+
         let result = OTUtils.runConcurrent(for: sdkKeys) { idx, sdkKey in
             let maxCnt = 10
             for _ in 0..<maxCnt {
@@ -202,7 +201,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     // MARK: - Periodic Interval
     
     func testConcurrentAccessPeriodicInterval() {
-        makeSdkKeys(100)
+        sdkKeys = OTUtils.makeRandomSdkKeys(100)
 
         let result = OTUtils.runConcurrent(for: sdkKeys) { _, _ in
             let maxCnt = 100
@@ -241,10 +240,11 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         }
         
         // use a shared DatafileHandler instance
-        let mockHandler = MockDatafileHandler(statusCode: 200, passError: false)   // fix 200 statusCode to avoid 304
+        let mockHandler = MockDatafileHandler(statusCode: 200)
         
         let numSdks = 100
-        makeSdkKeys(numSdks)
+        sdkKeys = OTUtils.makeRandomSdkKeys(numSdks)
+        
         var exps = [XCTestExpectation]()
         var periodics = [Periodics]()
         
@@ -260,7 +260,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
             
             //print("[MultiClientsTest] datafile backgroup update started for: \(sdkKey)")
             mockHandler.startUpdates(sdkKey: sdkKey, datafileChangeNotification: { data in
-                let expectedDatafile = MockDatafileHandler.getDatafile(sdkKey: sdkKey)
+                let expectedDatafile = mockHandler.getDatafile(sdkKey: sdkKey)
 
                 let str = String(data: data, encoding: .utf8)
                 XCTAssert(str == expectedDatafile)
@@ -271,19 +271,5 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         wait(for: exps, timeout: 10)
     }
 
-}
-
-// MARK: - Utils
-    
-extension DatafileHandlerTests_MultiClients {
-    
-    func makeSdkKeys(_ num: Int) {
-        sdkKeys = []
-        for i in 0..<num {
-            let randId = Int.random(in: 0..<1000000)
-            sdkKeys.append("\(testSdkKeyBasename)-\(i)-\(randId)")
-        }
-    }
-        
 }
 

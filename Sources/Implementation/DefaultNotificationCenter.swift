@@ -19,39 +19,36 @@ import Foundation
 public class DefaultNotificationCenter: OPTNotificationCenter {
     public var notificationId: Int {
         get {
-            return notifications.notificationId
+            var id = 0
+            atomicListeners.performAtomic { listners in
+                id = listners.notificationId
+            }
+            return id
         }
         set {
             _ = newValue // no setter (for suppressing SwiftLint warning)
         }
     }
     
-    class Notifications {
+    class Listeners {
         var notificationId: Int = 1
         var notificationListeners = [Int: (Int, GenericListener)]()
-        func incrementNotificationId() -> Int {
+        
+        func add(type: Int, listener: @escaping GenericListener) -> Int {
+            notificationListeners[notificationId] = (type, listener)
+            
             let returnValue = notificationId
             notificationId += 1
             return returnValue
         }
     }
     
-    private var _listeners: AtomicProperty<Notifications> = AtomicProperty<Notifications>()
-    
-    var notifications: Notifications {
-        get {
-            return _listeners.property!
-        }
-        set {
-            _listeners.property = newValue
-        }
-    }
+    private var atomicListeners = AtomicProperty(property: Listeners())
     
     var observerLogEvent: NSObjectProtocol?
 
     required public init() {
         addInternalNotificationListners()
-        notifications = Notifications()
     }
     
     deinit {
@@ -59,12 +56,9 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     }
     
     public func addGenericNotificationListener(notificationType: Int, listener: @escaping GenericListener) -> Int? {
-        
         var id = 0
-        _listeners.performAtomic { (notifications) in
-            notifications.notificationListeners[notifications.notificationId] = (notificationType, listener)
-            
-            id = notifications.incrementNotificationId()
+        atomicListeners.performAtomic { listners in
+            id = listners.add(type: notificationType, listener: listener)
         }
         return id
     }
@@ -167,26 +161,26 @@ public class DefaultNotificationCenter: OPTNotificationCenter {
     }
     
     public func removeNotificationListener(notificationId: Int) {
-        _listeners.performAtomic { (listeners) in
+        atomicListeners.performAtomic { listeners in
             listeners.notificationListeners.removeValue(forKey: notificationId)
         }
     }
     
     public func clearNotificationListeners(type: NotificationType) {
-        _listeners.performAtomic { (listeners) in
+        atomicListeners.performAtomic { listeners in
             listeners.notificationListeners = listeners.notificationListeners.filter({$1.0 != type.rawValue})
         }
     }
     
     public func clearAllNotificationListeners() {
-        _listeners.performAtomic { (listeners) in
+        atomicListeners.performAtomic { listeners in
             listeners.notificationListeners.removeAll()
         }
     }
     
     public func sendNotifications(type: Int, args: [Any?]) {
         var selected = [GenericListener]()
-        _listeners.performAtomic { (listeners) in
+        atomicListeners.performAtomic { listeners in
             selected = listeners.notificationListeners.values.filter { $0.0 == type }.map { $0.1 }
         }
 

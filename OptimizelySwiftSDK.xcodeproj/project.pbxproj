@@ -574,6 +574,8 @@
 		6E623F0F253F9045000617D0 /* DecisionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E623F01253F9045000617D0 /* DecisionInfo.swift */; };
 		6E636B912236C91F00AF3CEF /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6E636BA02236C96700AF3CEF /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
+		6E6419FE265734C100C49555 /* ProjectConfigTests_MultiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6419FD265734C100C49555 /* ProjectConfigTests_MultiClients.swift */; };
+		6E6419DA2657059700C49555 /* NotificationCenterTests_MultiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6419D92657059700C49555 /* NotificationCenterTests_MultiClients.swift */; };
 		6E6BE00B237F547200FE8274 /* optimizely_config_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BE009237F547200FE8274 /* optimizely_config_datafile.json */; };
 		6E6BE00C237F547200FE8274 /* optimizely_config_expected.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BE00A237F547200FE8274 /* optimizely_config_expected.json */; };
 		6E7516A622C520D400B2B157 /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75165F22C520D400B2B157 /* DefaultLogger.swift */; };
@@ -1883,6 +1885,8 @@
 		6E623F01253F9045000617D0 /* DecisionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionInfo.swift; sourceTree = "<group>"; };
 		6E636B8C2236C91F00AF3CEF /* OptimizelyTests-APIs-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-APIs-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E636B9B2236C96700AF3CEF /* OptimizelyTests-Legacy-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Legacy-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E6419FD265734C100C49555 /* ProjectConfigTests_MultiClients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfigTests_MultiClients.swift; sourceTree = "<group>"; };
+		6E6419D92657059700C49555 /* NotificationCenterTests_MultiClients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterTests_MultiClients.swift; sourceTree = "<group>"; };
 		6E6BE009237F547200FE8274 /* optimizely_config_datafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_config_datafile.json; sourceTree = "<group>"; };
 		6E6BE00A237F547200FE8274 /* optimizely_config_expected.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_config_expected.json; sourceTree = "<group>"; };
 		6E75165F22C520D400B2B157 /* DefaultLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
@@ -2271,6 +2275,8 @@
 				6EE591192649CF640013AD66 /* LoggerTests_MultiClients.swift */,
 				6EE5918D264AF44B0013AD66 /* HandlerRegistryServiceTests_MultiClients.swift */,
 				6EE59284264DCD100013AD66 /* MultiClientsTests.swift */,
+				6E6419FD265734C100C49555 /* ProjectConfigTests_MultiClients.swift */,
+				6E6419D92657059700C49555 /* NotificationCenterTests_MultiClients.swift */,
 			);
 			path = "OptimizelyTests-MultiClients";
 			sourceTree = "<group>";
@@ -3749,6 +3755,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E424CEC26324B620081004A /* DefaultLogger.swift in Sources */,
+				6E6419FE265734C100C49555 /* ProjectConfigTests_MultiClients.swift in Sources */,
 				6E424CED26324B620081004A /* DefaultUserProfileService.swift in Sources */,
 				6E424CEE26324B620081004A /* DefaultEventDispatcher.swift in Sources */,
 				6E424CEF26324B620081004A /* DefaultDatafileHandler.swift in Sources */,
@@ -3785,6 +3792,7 @@
 				6E424D0726324B620081004A /* Event.swift in Sources */,
 				6E424D0826324B620081004A /* ProjectConfig.swift in Sources */,
 				6E424D0926324B620081004A /* FeatureVariable.swift in Sources */,
+				6E6419DA2657059700C49555 /* NotificationCenterTests_MultiClients.swift in Sources */,
 				6E424D0A26324B620081004A /* Rollout.swift in Sources */,
 				6E2D5DAE26338CA00002077F /* AtomicDictionaryTests.swift in Sources */,
 				6E424D0B26324B620081004A /* Variation.swift in Sources */,

@@ -1,7 +1,7 @@
 # Optimizely Swift SDK Changelog
 
 ## 3.8.0
-June 1, 2021
+June 2, 2021
 
 ### New Features
 * Fix to support multiple clients (sdkKeys). ([#401](https://github.com/optimizely/swift-sdk/pull/401), [#402](https://github.com/optimizely/swift-sdk/pull/402), [#405](https://github.com/optimizely/swift-sdk/pull/405), [#406](https://github.com/optimizely/swift-sdk/pull/406), [#407](https://github.com/optimizely/swift-sdk/pull/407), [#408](https://github.com/optimizely/swift-sdk/pull/408), [#409](https://github.com/optimizely/swift-sdk/pull/409), [#410](https://github.com/optimizely/swift-sdk/pull/410))

@@ -66,8 +66,27 @@ extension VariableTests {
 extension VariableTests {
     
     func testEncodeJSON() {
-        let model = Variable(id: "553339214", value: "100")
+        var model = Variable(id: "553339214", value: "100")
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(model))
+        
+        model = Variable(id: "553339214", value: "100", key: nil, type: nil)
+        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(model))
+
+        // optional types for code coverage
+        let key: String? = "test-key"
+        let type: String? = "boolean"
+        model = Variable(id: "553339214", value: "true", key: key, type: type)
+        XCTAssertEqual(model.id, "553339214")
+        XCTAssertEqual(model.value, "true")
+        XCTAssertEqual(model.key, key)
+        XCTAssertEqual(model.type, type)
+        
+        // code coverage
+        model = Variable(featureVariable: FeatureVariable(id: "553339214", key: "price", type: "string", subType: nil, defaultValue: nil))
+        XCTAssertEqual(model.id, "553339214")
+        XCTAssertEqual(model.value, "")
+        XCTAssertEqual(model.key, "price")
+        XCTAssertEqual(model.type, "string")
     }
     
 }

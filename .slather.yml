@@ -3,5 +3,14 @@ xcodeproj: OptimizelySwiftSDK.xcodeproj
 scheme: OptimizelySwiftSDK-iOS
 workspace: OptimizelySwiftSDK.xcworkspace
 configuration: Release
-ignore:
-  - Tests/*
+source_directory: Sources
+binary_basename:
+  - Optimizely
+#  - OptimizelyTests-MultiClients-iOS
+#  - OptimizelyTests-iOS
+#  - OptimizelyTests-Common-iOS
+#  - OptimizelyTests-DataModel-iOS
+#  - OptimizelyTests-Others-iOS
+#  - OptimizelyTests-APIs-iOS
+#  - OptimizelyTests-Batch-iOS
+#  - OptimizelyTests-Legacy-iOS

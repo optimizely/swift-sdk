@@ -20,7 +20,9 @@ import Foundation
 
 @objc(OptimizelyConfig)
 public protocol ObjcOptimizelyConfig {
+    var environment: String { get }
     var revision: String { get }
+    var sdkKey: String { get }
     var experimentsMap: [String: ObjcOptimizelyExperiment] { get }
     var featuresMap: [String: ObjcOptimizelyFeature] { get }
 }
@@ -59,12 +61,16 @@ public protocol ObjcOptimizelyVariable {
 // MARK: - Implementations for Objective-C support
 
 class ObjcOptimizelyConfigImp: NSObject, ObjcOptimizelyConfig {
+    public var environment: String
     public var revision: String
+    public var sdkKey: String
     public var experimentsMap: [String: ObjcOptimizelyExperiment]
     public var featuresMap: [String: ObjcOptimizelyFeature]
 
     public init(_ optimizelyConfig: OptimizelyConfig) {
+        self.environment = optimizelyConfig.environment
         self.revision = optimizelyConfig.revision
+        self.sdkKey = optimizelyConfig.sdkKey
         self.experimentsMap = optimizelyConfig.experimentsMap.mapValues { ObjcExperiment($0) }
         self.featuresMap = optimizelyConfig.featuresMap.mapValues { ObjcFeature($0) }
     }

@@ -19,7 +19,9 @@ import Foundation
 /// A data model of public project configuration
 
 public protocol OptimizelyConfig {
+    var environment: String { get }
     var revision: String { get }
+    var sdkKey: String { get }
     var experimentsMap: [String: OptimizelyExperiment] { get }
     var featuresMap: [String: OptimizelyFeature] { get }
 }
@@ -54,14 +56,18 @@ public protocol OptimizelyVariable {
 // MARK: - OptimizelyConfig Implementation
 
 struct OptimizelyConfigImp: OptimizelyConfig {
+    var environment: String = ""
     var revision: String = ""
+    var sdkKey: String = ""
     var experimentsMap: [String: OptimizelyExperiment] = [:]
     var featuresMap: [String: OptimizelyFeature] = [:]
     
     init(projectConfig: ProjectConfig) {
         guard let project = projectConfig.project else { return }
         
+        self.environment = project.environment ?? ""
         self.revision = project.revision
+        self.sdkKey = project.sdkKey ?? ""
 
         // copy feature's variable data to variables in all variations
         let updatedExperiments = projectConfig.allExperiments.map {

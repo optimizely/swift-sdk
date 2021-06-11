@@ -1,5 +1,5 @@
 {
-    "environment": "production",
+    "environmentKey": "production",
     "experimentsMap":{
         "all_traffic_experiment":{
             "id":"12198292375",

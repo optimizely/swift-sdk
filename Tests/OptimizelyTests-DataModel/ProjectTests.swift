@@ -61,17 +61,17 @@ extension ProjectTests {
         XCTAssert(model.botFiltering == false)
         XCTAssert(model.sendFlagDecisions == true)
         XCTAssert(model.sdkKey == nil)
-        XCTAssert(model.environment == nil)
+        XCTAssert(model.environmentKey == nil)
     }
     
-    func testDecodeWithSDKKeyAndEnvironment() {
+    func testDecodeWithSDKKeyAndEnvironmentKey() {
         var data: [String: Any] = ProjectTests.sampleData
         data["sdkKey"] = "123"
-        data["environment"] = "production"
+        data["environmentKey"] = "production"
         
         let model: Project? = try? OTUtils.model(from: data)
         XCTAssertEqual(model?.sdkKey, "123")
-        XCTAssertEqual(model?.environment, "production")
+        XCTAssertEqual(model?.environmentKey, "production")
     }
     
     func testDecodeFailWithMissingVersion() {

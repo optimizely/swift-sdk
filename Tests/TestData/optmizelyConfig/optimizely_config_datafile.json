@@ -249,5 +249,5 @@
     "events": [],
     "revision": "9",
     "sdkKey": "ValidProjectConfigV4",
-    "environment": "production"
+    "environmentKey": "production"
 }

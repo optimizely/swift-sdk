@@ -167,7 +167,7 @@
     return @{
         @"revision": optConfig.revision,
         @"sdkKey": optConfig.sdkKey,
-        @"environment": optConfig.environment,
+        @"environmentKey": optConfig.environmentKey,
         @"experimentsMap": expMap,
         @"featuresMap": featMap
     };

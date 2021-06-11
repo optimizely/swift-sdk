@@ -90,7 +90,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         optimizelyConfig = try! optimizely.getOptimizelyConfig()
         XCTAssert(optimizelyConfig!.revision == "100")
         XCTAssert(optimizelyConfig!.sdkKey == "")
-        XCTAssert(optimizelyConfig!.environment == "")
+        XCTAssert(optimizelyConfig!.environmentKey == "")
         
         wait(for: [exp!], timeout: 10)
         exp = nil // disregard following update notification
@@ -98,7 +98,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         // after datafile remote updated ("optimizely_config_datafile")
         XCTAssert(optimizelyConfig!.revision == "9")
         XCTAssert(optimizelyConfig!.sdkKey == "ValidProjectConfigV4")
-        XCTAssert(optimizelyConfig!.environment == "production")
+        XCTAssert(optimizelyConfig!.environmentKey == "production")
     }
 
     func testGetOptimizelyConfig_ExperimentsMap() {
@@ -193,7 +193,7 @@ extension OptimizelyConfig {
         let expected: [String: Any] = [
             "revision": self.revision,
             "sdkKey": self.sdkKey,
-            "environment": self.environment,
+            "environmentKey": self.environmentKey,
             "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
             "featuresMap": self.featuresMap.mapValues{ $0.dict }
         ]

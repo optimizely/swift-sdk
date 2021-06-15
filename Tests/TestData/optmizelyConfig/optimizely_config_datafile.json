@@ -318,6 +318,6 @@
   "botFiltering": false,
   "accountId": "8272261422",
   "sdkKey": "ValidProjectConfigV4",
-  "environmentKey": "production"
+  "environmentKey": "production",
   "revision": "9"
 }

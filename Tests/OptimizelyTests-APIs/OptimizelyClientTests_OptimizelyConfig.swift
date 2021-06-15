@@ -263,34 +263,5 @@ extension OptimizelyVariable {
         ]
     }
 }
-//
-//extension OptimizelyAttribute {
-//    var dict: [String: Any] {
-//        return [
-//            "key": self.key,
-//            "id": self.id
-//        ]
-//    }
-//}
-//
-//extension OptimizelyAudience {
-//    var dict: [String: Any] {
-//        return [
-//            "name": self.name,
-//            "id": self.id,
-//            "conditions": self.conditions
-//        ]
-//    }
-//}
-//
-//extension OptimizelyEvent {
-//    var dict: [String: Any] {
-//        return [
-//            "key": self.key,
-//            "id": self.id,
-//            "experimentIds": self.experimentIds
-//        ]
-//    }
-//}
 
 

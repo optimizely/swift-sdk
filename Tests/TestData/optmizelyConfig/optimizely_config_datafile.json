@@ -1,17 +1,10 @@
 {
-  "version": "4",
-  "rollouts": [],
-  "anonymizeIP": true,
-  "projectId": "12254210345",
-  "variables": [],
-  "featureFlags": [
-    {
-      "_comment": "trafficAllocation: 4000 and 8000, respectively",
-      "experimentIds": ["12198292373", "12198292374"],
-      "id": "4482920077",
-      "key": "mutex_group_feature",
-      "rolloutId": "",
-      "variables": [
+    "version": "4",
+    "rollouts": [],
+    "anonymizeIP": true,
+    "projectId": "12254210345",
+    "variables": [],
+    "featureFlags": [
         {
             "_comment": "trafficAllocation: 4000 and 8000, respectively",
             "experimentIds": ["12198292373", "12198292374"],
@@ -52,49 +45,8 @@
             "rolloutId": "",
             "variables": []
         }
-      ]
-    },
-    {
-      "experimentIds": ["12198292376"],
-      "id": "4482920079",
-      "key": "feature_exp_no_traffic",
-      "rolloutId": "",
-      "variables": []
-    }
-  ],
-  "experiments": [
-      {
-          "status": "Running",
-          "key": "exp_with_audience",
-          "layerId": "10420273888",
-          "trafficAllocation": [
-              {
-                  "entityId": "10389729780",
-                  "endOfRange": 10000
-              }
-          ],
-          "audienceIds": [],
-          "variations": [
-              {
-                  "variables": [],
-                  "featureEnabled": true,
-                  "id": "10389729780",
-                  "key": "a"
-              },
-              {
-                  "variables": [],
-                  "id": "10416523121",
-                  "key": "b"
-              }
-          ],
-          "forcedVariations": {},
-          "id": "10390977673"
-      }
-  ],
-  "groups": [
-    {
-      "policy": "random",
-      "trafficAllocation": [
+    ],
+    "experiments": [
         {
             "status": "Running",
             "key": "exp_with_audience",
@@ -123,7 +75,6 @@
             "id": "10390977673"
         }
     ],
-    "audiences": [],
     "groups": [
         {
             "policy": "random",
@@ -289,35 +240,32 @@
             ],
             "id": "12115595439"
         }
-      ],
-      "id": "12115595439"
-    }
-  ],
-  "typedAudiences": [
-    {"id": "20348452263", "conditions": ["and", ["or", ["or", {"value": 18, "type": "custom_attribute", "name": "age", "match": "gt"}]]], "name": "adult"},
-    {"id": "20348352569", "conditions": ["and", ["or", ["or", {"value": 18, "type": "custom_attribute", "name": "age", "match": "lt"}]]], "name": "kid"}
-  ],
-  "audiences": [
-      {"id": "20348780620", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"us\"}]]]", "name": "us"},
-      {"id": "20348780628", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"fr\"}]]]", "name": "fr"},
-      {"id": "20361762308", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"f\"}]]]", "name": "female"},
-      {"id": "20371020836", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"m\"}]]]", "name": "male"},
-      {"id": "20348452263", "conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "name": "adult"},
-      {"id": "20348352569", "conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "name": "kid"},
-      {"conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "id": "$opt_dummy_audience", "name": "Optimizely-Generated Audience for Backwards Compatibility"}
-  ],
-  "attributes": [
-    {"id": "20348392978", "key": "gender"},
-    {"id": "20350341229", "key": "age"},
-    {"id": "20368981170", "key": "country"}
-  ],
-  "events": [
-    {"experimentIds": [], "id": "20346042538", "key": "send"},
-    {"experimentIds": ["9300000005843"], "id": "20350371588", "key": "buy"}
-  ],
-  "botFiltering": false,
-  "accountId": "8272261422",
-  "sdkKey": "ValidProjectConfigV4",
-  "environmentKey": "production",
-  "revision": "9"
+    ],
+    "typedAudiences": [
+      {"id": "20348452263", "conditions": ["and", ["or", ["or", {"value": 18, "type": "custom_attribute", "name": "age", "match": "gt"}]]], "name": "adult"},
+      {"id": "20348352569", "conditions": ["and", ["or", ["or", {"value": 18, "type": "custom_attribute", "name": "age", "match": "lt"}]]], "name": "kid"}
+    ],
+    "audiences": [
+        {"id": "20348780620", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"us\"}]]]", "name": "us"},
+        {"id": "20348780628", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"fr\"}]]]", "name": "fr"},
+        {"id": "20361762308", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"f\"}]]]", "name": "female"},
+        {"id": "20371020836", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"m\"}]]]", "name": "male"},
+        {"id": "20348452263", "conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "name": "adult"},
+        {"id": "20348352569", "conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "name": "kid"},
+        {"conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "id": "$opt_dummy_audience", "name": "Optimizely-Generated Audience for Backwards Compatibility"}
+    ],
+    "attributes": [
+      {"id": "20348392978", "key": "gender"},
+      {"id": "20350341229", "key": "age"},
+      {"id": "20368981170", "key": "country"}
+    ],
+    "events": [
+      {"experimentIds": [], "id": "20346042538", "key": "send"},
+      {"experimentIds": ["9300000005843"], "id": "20350371588", "key": "buy"}
+    ],
+    "botFiltering": false,
+    "accountId": "8272261422",
+    "revision": "9",
+    "sdkKey": "ValidProjectConfigV4",
+    "environmentKey": "production"
 }

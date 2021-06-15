@@ -69,8 +69,9 @@ jobs:
       branches:
         only:
           - master
-      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
+      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
       name: PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
+      global: COVERAGE_DIR=./COVERAGE 
       install:
         #- gem install slather --no-document --quiet
         - gem install coveralls-lcov

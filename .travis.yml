@@ -69,9 +69,8 @@ jobs:
       branches:
         only:
           - master
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
       name: PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
-      global: COVERAGE_DIR=./COVERAGE 
       install:
         #- gem install slather --no-document --quiet
         - gem install coveralls-lcov
@@ -95,13 +94,13 @@ jobs:
         - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
         - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
       name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.1 NAME='iPad Air'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.1 NAME='iPad Air'
       name: PLATFORM='iOS Simulator' OS=11.1 NAME='iPad Air'
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
       name: PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
 
     - stage: 'Prepare for release'

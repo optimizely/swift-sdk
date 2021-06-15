@@ -43,6 +43,8 @@ struct Project: Codable, Equatable {
     var featureFlags: [FeatureFlag]
     var botFiltering: Bool?
     var sendFlagDecisions: Bool?
+    var sdkKey: String?
+    var environmentKey: String?
     
     let logger = OPTLoggerFactory.getLogger()
     
@@ -53,7 +55,7 @@ struct Project: Codable, Equatable {
         // V3
         case anonymizeIP
         // V4
-        case rollouts, typedAudiences, featureFlags, botFiltering, sendFlagDecisions
+        case rollouts, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey
     }
     
     // Required since logger is not equatable
@@ -62,7 +64,7 @@ struct Project: Codable, Equatable {
             lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes &&
             lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision &&
             lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts && lhs.typedAudiences == rhs.typedAudiences &&
-            lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && lhs.sendFlagDecisions == rhs.sendFlagDecisions
+            lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && lhs.sendFlagDecisions == rhs.sendFlagDecisions && lhs.sdkKey == rhs.sdkKey && lhs.environmentKey == rhs.environmentKey
     }
 }
 

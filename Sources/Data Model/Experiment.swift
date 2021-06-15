@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Experiment: Codable, Equatable {
+struct Experiment: Codable, Equatable, OptimizelyExperiment {
     enum Status: String, Codable {
         case running = "Running"
         case launched = "Launched"
@@ -35,11 +35,13 @@ struct Experiment: Codable, Equatable {
     var audienceConditions: ConditionHolder?
     // datafile spec defines this as [String: Any]. Supposed to be [ExperimentKey: VariationKey]
     var forcedVariations: [String: String]
-}
-
-// MARK: - OptimizelyConfig
     
-extension Experiment: OptimizelyExperiment {
+    enum CodingKeys: String, CodingKey {
+        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations
+    }
+
+    // MARK: - OptimizelyConfig
+    
     var variationsMap: [String: OptimizelyVariation] {
         var map = [String: Variation]()
         variations.forEach {
@@ -47,6 +49,16 @@ extension Experiment: OptimizelyExperiment {
         }
         return map
     }
+
+    // replace with serialized string representation with audience names when ProjectConfig is ready
+    var audiences: String = ""
+    
+    mutating func serializeAudiences(with globalAudiences: [Audience]) {
+        guard let conditions = audienceConditions else { return }
+        let serialized = conditions.serialized
+        
+    }
+    
 }
 
 // MARK: - Utils

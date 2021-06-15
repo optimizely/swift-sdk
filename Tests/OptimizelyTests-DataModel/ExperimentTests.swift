@@ -145,6 +145,68 @@ extension ExperimentTests {
     
 }
 
+// MARK: - audiences serialization
+
+extension ExperimentTests {
+
+    func testAudiencesToString() {
+        var model: Experiment
+        var data: [String: Any] = ["id": "11111",
+                                   "key": "background",
+                                   "status": "Running",
+                                   "layerId": "22222",
+                                   "variations": [VariationTests.sampleData],
+                                   "trafficAllocation": [TrafficAllocationTests.sampleData],
+                                   "audienceIds": [],
+                                   "audienceConditions": [],
+                                   "forcedVariations": ["12345": "1234567890"]]
+        let audiencesInput = [
+            ["or", "1", "2"],
+            ["and", "1", "2", "3"],
+            ["not", "1"],
+            ["or", "1"],
+            ["and", "1"],
+            ["1"],
+            ["1", "2"],
+            ["and", ["or", "1", "2"], "3"],
+            ["and", ["or", "1", ["and", "2", "3"]], ["and", "11", ["or", "12", "13"]]],
+            ["and", "and"]
+        ]
+//        let audiencesSerialized = [
+//        ]
+//
+//        
+//        data["audienceConditions"] = ["or", "1", "2"]
+//        model = try! OTUtils.model(from: data)
+//        model.serializeAudiences(with: audiencesMap)
+//        print("ConditionHolder: \(")
+
+//        model = try! OTUtils.model(from: ["or", "1", "2"])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["and", "1", "2", "3"])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["not", "1"])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["not", "1", "2"])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["or", "1"])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["and", "1"])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["1"])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["1", "2"])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["and", ["or", "1", "2"], "3"])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["and", ["or", "1", ["and", "2", "3"]], ["and", "11", ["or", "12", "13"]]])
+//        print("ConditionHolder: \(model.serialized)")
+//        model = try! OTUtils.model(from: ["and", "and"])
+//        print("ConditionHolder: \(model.serialized)")
+    }
+    
+}
+
 // MARK: - Test Utils
 
 extension ExperimentTests {

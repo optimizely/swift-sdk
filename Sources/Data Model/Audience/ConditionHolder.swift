@@ -71,6 +71,29 @@ enum ConditionHolder: Codable, Equatable {
             return try conditions.evaluate(project: project, attributes: attributes)
         }
     }
+    
+}
+
+// MARK: - serialization
+
+extension ConditionHolder {
+    var serialized: String {
+        switch self {
+        case .logicalOp:
+            return ""
+        case .leaf(.audienceId(let audienceId)):
+            return "AUDIENCE(\(audienceId))"
+        case .array(let conditions):
+            return "\(conditions.serialized)"
+        default:
+            return ""
+        }
+    }
+    
+    var isArray: Bool {
+        if case .array = self { return true }
+        else { return false }
+    }
 }
 
 // MARK: - [ConditionHolder]
@@ -118,4 +141,30 @@ extension Array where Element == ConditionHolder {
         }
     }
     
+    var serialized: String {
+        var result = ""
+        
+        guard let firstItem = self.first else {
+            return "\(result)"
+        }
+
+        switch firstItem {
+        case .logicalOp(.not):
+            result = (self.count < 2) ? "" : "NOT \(self[1].serialized)"
+        case .logicalOp(let op):
+            result = self.enumerated().filter{ $0.offset > 0 }
+                .map{
+                    let desc = $0.element.serialized
+                    return ($0.element.isArray) ? "(\(desc))" : desc
+                }
+                .joined(separator: " " + "\(op)".uppercased() + " ")
+        case .leaf(.audienceId):
+            result = "\([[ConditionHolder.logicalOp(.or)], self].flatMap({$0}).serialized)"
+        default:
+            result = ""
+        }
+        
+        return "\(result)"
+    }
+
 }

@@ -36,7 +36,12 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
             let optimizelyConfig = try! optimizely.getOptimizelyConfig()
             
             // compare dictionaries as strings (after key-sorted and remove all spaces)
-            let observedDict = optimizelyConfig.dict!
+            guard let dict = optimizelyConfig.dict else {
+                XCTAssert(false)
+                return
+            }
+            
+            let observedDict = dict
             let observedData = try! JSONSerialization.data(withJSONObject: observedDict, options: .sortedKeys)
             let observedJSON = String(bytes: observedData, encoding: .utf8)!
             let observed = observedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
@@ -195,7 +200,10 @@ extension OptimizelyConfig {
             "sdkKey": self.sdkKey,
             "environmentKey": self.environmentKey,
             "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
-            "featuresMap": self.featuresMap.mapValues{ $0.dict }
+            "featuresMap": self.featuresMap.mapValues{ $0.dict },
+            "attributes": self.attributes,
+            "audiences": self.audiences,
+            "events": self.events
         ]
                 
         if expected.count != Mirror(reflecting: self).children.count {
@@ -255,3 +263,34 @@ extension OptimizelyVariable {
         ]
     }
 }
+//
+//extension OptimizelyAttribute {
+//    var dict: [String: Any] {
+//        return [
+//            "key": self.key,
+//            "id": self.id
+//        ]
+//    }
+//}
+//
+//extension OptimizelyAudience {
+//    var dict: [String: Any] {
+//        return [
+//            "name": self.name,
+//            "id": self.id,
+//            "conditions": self.conditions
+//        ]
+//    }
+//}
+//
+//extension OptimizelyEvent {
+//    var dict: [String: Any] {
+//        return [
+//            "key": self.key,
+//            "id": self.id,
+//            "experimentIds": self.experimentIds
+//        ]
+//    }
+//}
+
+

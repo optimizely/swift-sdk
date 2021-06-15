@@ -24,11 +24,15 @@ public protocol OptimizelyConfig {
     var sdkKey: String { get }
     var experimentsMap: [String: OptimizelyExperiment] { get }
     var featuresMap: [String: OptimizelyFeature] { get }
+    var attributes: [OptimizelyAttribute] { get }
+    var audiences: [OptimizelyAudience] { get }
+    var events: [OptimizelyEvent] { get }
 }
 
 public protocol OptimizelyExperiment {
     var id: String { get }
     var key: String { get }
+    var audiences: String { get }
     var variationsMap: [String: OptimizelyVariation] { get }
 }
 
@@ -53,6 +57,23 @@ public protocol OptimizelyVariable {
     var value: String { get }
 }
 
+public protocol OptimizelyAttribute {
+    var id: String { get }
+    var key: String { get }
+}
+
+public protocol OptimizelyAudience {
+    var id: String { get }
+    var name: String { get }
+    var conditions: String { get }
+}
+
+public protocol OptimizelyEvent {
+    var id: String { get }
+    var key: String { get }
+    var experimentIds: [String] { get }
+}
+
 // MARK: - OptimizelyConfig Implementation
 
 struct OptimizelyConfigImp: OptimizelyConfig {
@@ -61,13 +82,19 @@ struct OptimizelyConfigImp: OptimizelyConfig {
     var sdkKey: String = ""
     var experimentsMap: [String: OptimizelyExperiment] = [:]
     var featuresMap: [String: OptimizelyFeature] = [:]
-    
+    var attributes: [OptimizelyAttribute] = []
+    var audiences: [OptimizelyAudience] = []
+    var events: [OptimizelyEvent] = []
+
     init(projectConfig: ProjectConfig) {
         guard let project = projectConfig.project else { return }
         
         self.environmentKey = project.environmentKey ?? ""
-        self.revision = project.revision
         self.sdkKey = project.sdkKey ?? ""
+        self.revision = project.revision
+        self.attributes = project.attributes
+        self.audiences = project.audiences
+        self.events = project.events
 
         // copy feature's variable data to variables in all variations
         let updatedExperiments = projectConfig.allExperiments.map {

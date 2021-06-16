@@ -36,17 +36,17 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
             let optimizelyConfig = try! optimizely.getOptimizelyConfig()
             
             // compare dictionaries as strings (after key-sorted and remove all spaces)
-            guard let dict = optimizelyConfig.dict else {
+            guard let observedDict = optimizelyConfig.dict else {
                 XCTAssert(false)
                 return
             }
             
-            let observedDict = dict
+            // compare dictionaries as strings (after key-sorted and remove all spaces)
             let observedData = try! JSONSerialization.data(withJSONObject: observedDict, options: .sortedKeys)
             let observedJSON = String(bytes: observedData, encoding: .utf8)!
             let observed = observedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
             
-            // pre-geneerated expected JSON string (sorted by keys)
+            // pre-geneerated expected JSON string (NOTE: all dicts must be sorted by keys)
             let expectedData = OTUtils.loadJSONFile("optimizely_config_expected")!
             let expectedJSON = String(bytes: expectedData, encoding: .utf8)!
             let expected = expectedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
@@ -201,9 +201,9 @@ extension OptimizelyConfig {
             "environmentKey": self.environmentKey,
             "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
             "featuresMap": self.featuresMap.mapValues{ $0.dict },
-            "attributes": self.attributes,
-            "audiences": self.audiences,
-            "events": self.events
+            "attributes": self.attributes.map{ $0.dict },
+            "audiences": self.audiences.map{ $0.dict },
+            "events": self.events.map{ $0.dict }
         ]
                 
         if expected.count != Mirror(reflecting: self).children.count {
@@ -264,4 +264,32 @@ extension OptimizelyVariable {
     }
 }
 
+extension OptimizelyAttribute {
+    var dict: [String: Any] {
+        return [
+            "key": self.key,
+            "id": self.id
+        ]
+    }
+}
+
+extension OptimizelyAudience {
+    var dict: [String: Any] {
+        return [
+            "name": self.name,
+            "id": self.id,
+            "conditions": self.conditions
+        ]
+    }
+}
+
+extension OptimizelyEvent {
+    var dict: [String: Any] {
+        return [
+            "key": self.key,
+            "id": self.id,
+            "experimentIds": self.experimentIds
+        ]
+    }
+}
 

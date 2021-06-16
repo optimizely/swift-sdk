@@ -93,8 +93,14 @@ struct OptimizelyConfigImp: OptimizelyConfig {
         self.sdkKey = project.sdkKey ?? ""
         self.revision = project.revision
         self.attributes = project.attributes
-        self.audiences = project.audiences
         self.events = project.events
+
+        var audiences = project.typedAudiences ?? []
+        project.audiences.forEach { audience in
+            guard audiences.filter{ item in audience.name == item.name }.isEmpty != false else { return }
+            audiences.append(audience)
+        }
+        self.audiences = audiences
 
         // copy feature's variable data to variables in all variations
         let updatedExperiments = projectConfig.allExperiments.map {

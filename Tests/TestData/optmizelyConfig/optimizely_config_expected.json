@@ -1,5 +1,23 @@
 {
+    "attributes": [
+      {"id": "20348392978", "key": "gender"},
+      {"id": "20350341229", "key": "age"},
+      {"id": "20368981170", "key": "country"}
+    ],
+    "audiences": [
+        {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"name\": \"age\", \"type\": \"custom_attribute\", \"value\": 18}]]]", "id": "20348452263", "name": "adult"},
+        {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"lt\", \"name\": \"age\", \"type\": \"custom_attribute\", \"value\": 18}]]]", "id": "20348352569", "name": "kid"},
+        {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"us\"}]]]", "id": "20348780620", "name": "us"},
+        {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"fr\"}]]]", "id": "20348780628", "name": "fr"},
+        {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"f\"}]]]", "id": "20361762308", "name": "female"},
+        {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"m\"}]]]", "id": "20371020836", "name": "male"},
+        {"conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "id": "$opt_dummy_audience", "name": "Optimizely-Generated Audience for Backwards Compatibility"}
+    ],
     "environmentKey": "production",
+    "events": [
+      {"experimentIds": [], "id": "20346042538", "key": "send"},
+      {"experimentIds": ["9300000005843"], "id": "20350371588", "key": "buy"}
+    ],
     "experimentsMap":{
         "all_traffic_experiment":{
             "id":"12198292375",

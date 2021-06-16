@@ -50,7 +50,13 @@ struct Audience: Codable, Equatable, OptimizelyAudience {
             self.conditions = value
         } else if let value = try? container.decode(ConditionHolder.self, forKey: .conditions) {
             self.conditionHolder = value
-            let data = try JSONEncoder().encode(value)
+            
+            // sort by keys to compare strings in tests
+            let sortEncoder = JSONEncoder()
+            if #available(iOS 11.0, *) {
+                sortEncoder.outputFormatting = .sortedKeys
+            }
+            let data = try sortEncoder.encode(value)
             self.conditions = String(bytes: data, encoding: .utf8) ?? ""
         } else {
             throw decodeError

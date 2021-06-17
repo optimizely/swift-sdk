@@ -53,7 +53,7 @@ struct Audience: Codable, Equatable, OptimizelyAudience {
             
             // sort by keys to compare strings in tests
             let sortEncoder = JSONEncoder()
-            if #available(iOS 11.0, *) {
+            if #available(iOS 11.0, tvOS 11.0, *) {
                 sortEncoder.outputFormatting = .sortedKeys
             }
             let data = try sortEncoder.encode(value)

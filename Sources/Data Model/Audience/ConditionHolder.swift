@@ -91,8 +91,11 @@ extension ConditionHolder {
     }
     
     var isArray: Bool {
-        if case .array = self { return true }
-        else { return false }
+        if case .array = self {
+            return true
+        } else {
+            return false
+        }
     }
 }
 
@@ -152,8 +155,9 @@ extension Array where Element == ConditionHolder {
         case .logicalOp(.not):
             result = (self.count < 2) ? "" : "NOT \(self[1].serialized)"
         case .logicalOp(let op):
-            result = self.enumerated().filter{ $0.offset > 0 }
-                .map{
+            result = self.enumerated()
+                .filter { $0.offset > 0 }
+                .map {
                     let desc = $0.element.serialized
                     return ($0.element.isArray) ? "(\(desc))" : desc
                 }

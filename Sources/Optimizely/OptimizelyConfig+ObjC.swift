@@ -86,7 +86,6 @@ public protocol ObjcOptimizelyEvent {
     var experimentIds: [String] { get }
 }
 
-
 // MARK: - Implementations for Objective-C support
 
 class ObjcOptimizelyConfigImp: NSObject, ObjcOptimizelyConfig {
@@ -136,8 +135,8 @@ class ObjcFeature: NSObject, ObjcOptimizelyFeature {
     init(_ feature: OptimizelyFeature) {
         self.id = feature.id
         self.key = feature.key
-        self.experimentRules = feature.experimentRules.map{ ObjcExperiment($0) }
-        self.deliveryRules = feature.deliveryRules.map{ ObjcExperiment($0) }
+        self.experimentRules = feature.experimentRules.map { ObjcExperiment($0) }
+        self.deliveryRules = feature.deliveryRules.map { ObjcExperiment($0) }
         self.experimentsMap = feature.experimentsMap.mapValues { ObjcExperiment($0) }
         self.variablesMap = feature.variablesMap.mapValues { ObjcVariable($0) }
     }
@@ -208,4 +207,3 @@ class ObjcEvent: NSObject, ObjcOptimizelyEvent {
         self.experimentIds = event.experimentIds
     }
 }
-

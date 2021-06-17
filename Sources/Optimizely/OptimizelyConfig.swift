@@ -96,10 +96,12 @@ struct OptimizelyConfigImp: OptimizelyConfig {
         self.environmentKey = project.environmentKey ?? ""
         self.sdkKey = project.sdkKey ?? ""
         self.revision = project.revision
+        
         self.attributes = project.attributes
         self.events = project.events
 
-        // merge typedAudiences + audiences in ProjectConfig to a single audiences array
+        // merge [typedAudiences, audiences] in ProjectConfig to a single audiences array.
+        // typedAudiences has a higher priority.
         var audiences = project.typedAudiences ?? []
         project.audiences.forEach { oldAudience in
             if audiences.filter({ newAudience in newAudience.id == oldAudience.id }).isEmpty {
@@ -108,14 +110,18 @@ struct OptimizelyConfigImp: OptimizelyConfig {
         }
         self.audiences = audiences
         
-        // audience [id: name] mapping
+        // update experiment data:
+        // - copy feature's variable data to variables in all variations
+        // - serialize experiment audiences to a string
+        
+        // prepare an audience [id: name] mapping for audicens serialization
         let audiencesMap = Dictionary(uniqueKeysWithValues: audiences.map{ ($0.id, $0.name) })
 
-        // copy feature's variable data to variables in all variations
         let updatedExperiments = projectConfig.allExperiments.map { experiment -> Experiment in
             let feature = project.featureFlags.filter({ $0.experimentIds.contains(experiment.id) }).first
             return updateExperiment(experiment: experiment, feature: feature, audiencesMap: audiencesMap)
         }
+        
         let updatedRollouts = projectConfig.project.rollouts.map { rollout -> Rollout in
             let feature = project.featureFlags.filter({ $0.rolloutId == rollout.id }).first
             
@@ -148,12 +154,33 @@ extension OptimizelyConfigImp {
         project.featureFlags.forEach {
             var feature = $0
             
-            // create [experiment] from [experiment-id]
-            
-            feature.experiments = feature.experimentIds.compactMap { expId in
+            let experiments = feature.experimentIds.compactMap { expId in
                 return experiments.filter { $0.id == expId }.first
             }
-            feature.rollout = rollouts.filter{ $0.id == feature.rolloutId }.first
+            
+            let rollout = rollouts.filter{ $0.id == feature.rolloutId }.first
+            
+            feature.experimentsMap = {
+                var map = [String: Experiment]()
+                experiments.forEach {
+                    map[$0.key] = $0
+                }
+                return map
+            }()
+                
+            feature.variablesMap = {
+                var map = [String: Variable]()
+                feature.variables.forEach { featureVariable in
+                    map[featureVariable.key] = Variable(id: featureVariable.id,
+                                                        value: featureVariable.defaultValue ?? "",
+                                                        key: featureVariable.key,
+                                                        type: featureVariable.type)
+                }
+                return map
+            }()
+            
+            feature.experimentRules = experiments
+            feature.deliveryRules = rollout?.experiments ?? []
                         
             map[feature.key] = feature
         }
@@ -162,13 +189,14 @@ extension OptimizelyConfigImp {
     
     func updateExperiment(experiment: Experiment, feature: FeatureFlag?, audiencesMap: [String: String]) -> Experiment {
         var experiment = experiment
-        experiment.serializeAudiences(with: audiencesMap)
         
-        guard let feature = feature else { return experiment }
+        experiment.serializeAudiences(with: audiencesMap)
         
         let variations: [Variation] = experiment.variations.map {
             var variation = $0
             
+            guard let feature = feature else { return variation }
+
             // Copy {key, type} from FeatureVariable to variation variable data
             
             let variables: [Variable] = feature.variables.map { featVariable in
@@ -184,12 +212,29 @@ extension OptimizelyConfigImp {
                 
                 return updated
             }
-            
-            variation.variables = variables
+                        
+            variation.variablesMap = {
+                var map = [String: Variable]()
+                variables.forEach({
+                    // filter out invalid variables (from invalid datafiles)
+                    if !($0.key.isEmpty) {
+                        map[$0.key] = $0
+                    }
+                })
+                return map
+            }()
+
             return variation
         }
-        
-        experiment.variations = variations
+                
+        experiment.variationsMap = {
+            var map = [String: Variation]()
+            variations.forEach {
+                map[$0.key] = $0
+            }
+            return map
+        }()
+
         return experiment
     }
     

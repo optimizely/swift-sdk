@@ -89,6 +89,14 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         XCTAssertEqual(audiences[0].id, "20348452263")
         XCTAssertEqual(audiences[0].name, "adult")
         XCTAssertEqual(audiences[0].conditions, "[\"and\",[\"or\",[\"or\",{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}]]]")
+        XCTAssertEqual(audiences[1].id, "20348352569")
+        XCTAssertEqual(audiences[1].name, "kid")
+        XCTAssertEqual(audiences[1].conditions, "[\"and\",[\"or\",[\"or\",{\"match\":\"lt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}]]]")
+
+        XCTAssertEqual(audiences[2].name, "us")
+        XCTAssertEqual(audiences[3].name, "fr")
+        XCTAssertEqual(audiences[4].name, "female")
+        XCTAssertEqual(audiences[5].name, "male")
     }
 
     func testGetOptimizelyConfig_Events() {
@@ -217,17 +225,9 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         print("------------------------------------------------------")
     }
 
-    func testGetOptimizelyConfig_InvalidDatafile() {
-        self.optimizely = OptimizelyClient(sdkKey: "12345")
-        let invalidDatafile = "{\"version\": \"4\"}"
-        try? self.optimizely.start(datafile: invalidDatafile)
-        
-        let result = try? self.optimizely.getOptimizelyConfig()
-        XCTAssertNil(result)
-    }
-    
-    // this test for full-content validation can be also covered by FSC,
+    // this test for full-content validation will be covered by FSC,
     // but it'll be useful here especially for ObjC APIs which is not covered by FSC.
+    
     func testGetOptimizelyConfig_Equal() {
         if #available(iOS 11.0, tvOS 11.0, *) {
             let optimizelyConfig = try! optimizely.getOptimizelyConfig()
@@ -243,13 +243,22 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
             let observedJSON = String(bytes: observedData, encoding: .utf8)!
             let observed = observedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
             
-            // pre-geneerated expected JSON string (NOTE: all dicts must be sorted by keys)
+            // pre-generated expected JSON string (NOTE: all dicts must be sorted by keys)
             let expectedData = OTUtils.loadJSONFile("optimizely_config_expected")!
             let expectedJSON = String(bytes: expectedData, encoding: .utf8)!
             let expected = expectedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
             
             XCTAssertEqual(observed, expected, "\n\n[Observed]\n\(observed)\n\n[Expected]\n\(expected)\n\n")
         }
+    }
+    
+    func testGetOptimizelyConfig_InvalidDatafile() {
+        self.optimizely = OptimizelyClient(sdkKey: "12345")
+        let invalidDatafile = "{\"version\": \"4\"}"
+        try? self.optimizely.start(datafile: invalidDatafile)
+        
+        let result = try? self.optimizely.getOptimizelyConfig()
+        XCTAssertNil(result)
     }
     
 }

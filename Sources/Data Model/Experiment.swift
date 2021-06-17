@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Experiment: Codable, Equatable, OptimizelyExperiment {
+struct Experiment: Codable, OptimizelyExperiment {
     enum Status: String, Codable {
         case running = "Running"
         case launched = "Launched"
@@ -42,24 +42,23 @@ struct Experiment: Codable, Equatable, OptimizelyExperiment {
 
     // MARK: - OptimizelyConfig
     
-    var variationsMap: [String: OptimizelyVariation] {
-        var map = [String: Variation]()
-        variations.forEach {
-            map[$0.key] = $0
-        }
-        return map
-    }
-
+    var variationsMap: [String: OptimizelyVariation] = [:]
     // replace with serialized string representation with audience names when ProjectConfig is ready
     var audiences: String = ""
-    
-    mutating func serializeAudiences(with audiencesMap: [String: String]) {
-        guard let conditions = audienceConditions else { return }
-        
-        let serialized = conditions.serialized
-        audiences = replaceAudienceIdsWithNames(string: serialized, audiencesMap: audiencesMap)
+}
+
+extension Experiment: Equatable {
+    static func == (lhs: Experiment, rhs: Experiment) -> Bool {
+        return lhs.id == rhs.id &&
+            lhs.key == rhs.key &&
+            lhs.status == rhs.status &&
+            lhs.layerId == rhs.layerId &&
+            lhs.variations == rhs.variations &&
+            lhs.trafficAllocation == rhs.trafficAllocation &&
+            lhs.audienceIds == rhs.audienceIds &&
+            lhs.audienceConditions == rhs.audienceConditions &&
+            lhs.forcedVariations == rhs.forcedVariations
     }
-    
 }
 
 // MARK: - Utils
@@ -75,6 +74,13 @@ extension Experiment {
     
     var isActivated: Bool {
         return status == .running
+    }
+    
+    mutating func serializeAudiences(with audiencesMap: [String: String]) {
+        guard let conditions = audienceConditions else { return }
+        
+        let serialized = conditions.serialized
+        audiences = replaceAudienceIdsWithNames(string: serialized, audiencesMap: audiencesMap)
     }
     
     /// Replace audience ids with audience names

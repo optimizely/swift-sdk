@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct FeatureFlag: Codable, Equatable {
+struct FeatureFlag: Codable, Equatable, OptimizelyFeature {
     static func == (lhs: FeatureFlag, rhs: FeatureFlag) -> Bool {
         return lhs.id == rhs.id
     }
@@ -35,41 +35,12 @@ struct FeatureFlag: Codable, Equatable {
         case variables
     }
     
-    // for OptimizelyConfig only
+    // MARK: - OptimizelyConfig
 
-    var experiments: [Experiment] = []
-    var rollout: Rollout?
-}
-    
-// MARK: - OptimizelyConfig
-
-extension FeatureFlag: OptimizelyFeature {
-    var experimentsMap: [String: OptimizelyExperiment] {
-        var map = [String: Experiment]()
-        experiments.forEach {
-            map[$0.key] = $0
-        }
-        return map
-    }
-        
-    var variablesMap: [String: OptimizelyVariable] {
-        var map = [String: Variable]()
-        variables.forEach { featureVariable in
-            map[featureVariable.key] = Variable(id: featureVariable.id,
-                                                value: featureVariable.defaultValue ?? "",
-                                                key: featureVariable.key,
-                                                type: featureVariable.type)
-        }
-        return map
-    }
-    
-    var experimentRules: [OptimizelyExperiment] {
-        return experiments
-    }
-    
-    var deliveryRules: [OptimizelyExperiment] {
-        return rollout?.experiments ?? []
-    }
+    var experimentsMap: [String: OptimizelyExperiment] = [:]
+    var variablesMap: [String: OptimizelyVariable] = [:]
+    var experimentRules: [OptimizelyExperiment] = []
+    var deliveryRules: [OptimizelyExperiment] = []
 }
 
 // MARK: - Utils

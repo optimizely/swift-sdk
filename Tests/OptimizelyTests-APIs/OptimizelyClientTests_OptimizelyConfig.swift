@@ -229,7 +229,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
     // but it'll be useful here especially for ObjC APIs which is not covered by FSC.
     
     func testGetOptimizelyConfig_Equal() {
-        if #available(iOS 11.0, tvOS 11.0, *) {
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, *) {
             let optimizelyConfig = try! optimizely.getOptimizelyConfig()
             
             // compare dictionaries as strings (after key-sorted and remove all spaces)

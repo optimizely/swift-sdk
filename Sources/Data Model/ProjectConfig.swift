@@ -85,8 +85,20 @@ class ProjectConfig {
     }()
     
     lazy var allExperiments: [Experiment] = {
-        return project.experiments + project.groups.map { $0.experiments }.flatMap({$0})
+        return project.experiments + project.groups.map{ $0.experiments }.flatMap{ $0 }
     }()
+    
+    // experiment rules + delivery rules
+    lazy var allRules: [Experiment] = {
+        var deliveryRules = [Experiment]()
+        project.rollouts.map{ $0.experiments }.flatMap{ $0 }.forEach{ rule in
+            if deliveryRules.filter({ $0.id == rule.id }).isEmpty {
+                deliveryRules.append(rule)
+            }
+        }
+        return allExperiments + deliveryRules
+    }()
+
     
     // MARK: - Init
     

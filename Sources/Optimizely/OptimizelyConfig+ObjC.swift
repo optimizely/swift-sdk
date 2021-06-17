@@ -25,12 +25,16 @@ public protocol ObjcOptimizelyConfig {
     var sdkKey: String { get }
     var experimentsMap: [String: ObjcOptimizelyExperiment] { get }
     var featuresMap: [String: ObjcOptimizelyFeature] { get }
+    var attributes: [ObjcOptimizelyAttribute] { get }
+    var audiences: [ObjcOptimizelyAudience] { get }
+    var events: [ObjcOptimizelyEvent] { get }
 }
 
 @objc(OptimizelyExperiment)
 public protocol ObjcOptimizelyExperiment {
     var id: String { get }
     var key: String { get }
+    var audiences: String { get }
     var variationsMap: [String: ObjcOptimizelyVariation] { get }
 }
 
@@ -38,8 +42,12 @@ public protocol ObjcOptimizelyExperiment {
 public protocol ObjcOptimizelyFeature {
     var id: String { get }
     var key: String { get }
-    var experimentsMap: [String: ObjcOptimizelyExperiment] { get }
+    var experimentRules: [ObjcOptimizelyExperiment] { get }
+    var deliveryRules: [ObjcOptimizelyExperiment] { get }
     var variablesMap: [String: ObjcOptimizelyVariable] { get }
+    
+    @available(*, deprecated, message: "Use experimentRules and deliveryRules")
+    var experimentsMap: [String: ObjcOptimizelyExperiment] { get }
 }
 
 @objc(OptimizelyVariation)
@@ -58,6 +66,27 @@ public protocol ObjcOptimizelyVariable {
     var value: String { get }
 }
 
+@objc(OptimizelyAttribute)
+public protocol ObjcOptimizelyAttribute {
+    var id: String { get }
+    var key: String { get }
+}
+
+@objc(OptimizelyAudience)
+public protocol ObjcOptimizelyAudience {
+    var id: String { get }
+    var name: String { get }
+    var conditions: String { get }
+}
+
+@objc(OptimizelyEvent)
+public protocol ObjcOptimizelyEvent {
+    var id: String { get }
+    var key: String { get }
+    var experimentIds: [String] { get }
+}
+
+
 // MARK: - Implementations for Objective-C support
 
 class ObjcOptimizelyConfigImp: NSObject, ObjcOptimizelyConfig {
@@ -66,6 +95,9 @@ class ObjcOptimizelyConfigImp: NSObject, ObjcOptimizelyConfig {
     public var sdkKey: String
     public var experimentsMap: [String: ObjcOptimizelyExperiment]
     public var featuresMap: [String: ObjcOptimizelyFeature]
+    public var attributes: [ObjcOptimizelyAttribute] = []
+    public var audiences: [ObjcOptimizelyAudience] = []
+    public var events: [ObjcOptimizelyEvent] = []
 
     public init(_ optimizelyConfig: OptimizelyConfig) {
         self.environmentKey = optimizelyConfig.environmentKey
@@ -73,17 +105,22 @@ class ObjcOptimizelyConfigImp: NSObject, ObjcOptimizelyConfig {
         self.sdkKey = optimizelyConfig.sdkKey
         self.experimentsMap = optimizelyConfig.experimentsMap.mapValues { ObjcExperiment($0) }
         self.featuresMap = optimizelyConfig.featuresMap.mapValues { ObjcFeature($0) }
+        self.attributes = optimizelyConfig.attributes.map { ObjcAttribute($0) }
+        self.audiences = optimizelyConfig.audiences.map { ObjcAudience($0) }
+        self.events = optimizelyConfig.events.map { ObjcEvent($0) }
     }
 }
 
 class ObjcExperiment: NSObject, ObjcOptimizelyExperiment {
     public let id: String
     public let key: String
+    public let audiences: String
     public let variationsMap: [String: ObjcOptimizelyVariation]
     
     init(_ experiment: OptimizelyExperiment) {
         self.id = experiment.id
         self.key = experiment.key
+        self.audiences = experiment.audiences
         self.variationsMap = experiment.variationsMap.mapValues { ObjcVariation($0) }
     }
 }
@@ -91,12 +128,16 @@ class ObjcExperiment: NSObject, ObjcOptimizelyExperiment {
 class ObjcFeature: NSObject, ObjcOptimizelyFeature {
     public let id: String
     public let key: String
+    public let experimentRules: [ObjcOptimizelyExperiment]
+    public let deliveryRules: [ObjcOptimizelyExperiment]
     public let experimentsMap: [String: ObjcOptimizelyExperiment]
     public let variablesMap: [String: ObjcOptimizelyVariable]
-    
+
     init(_ feature: OptimizelyFeature) {
         self.id = feature.id
         self.key = feature.key
+        self.experimentRules = feature.experimentRules.map{ ObjcExperiment($0) }
+        self.deliveryRules = feature.deliveryRules.map{ ObjcExperiment($0) }
         self.experimentsMap = feature.experimentsMap.mapValues { ObjcExperiment($0) }
         self.variablesMap = feature.variablesMap.mapValues { ObjcVariable($0) }
     }
@@ -133,3 +174,38 @@ class ObjcVariable: NSObject, ObjcOptimizelyVariable {
         return "('id': \(id), 'key': \(key), 'type': \(type), 'value': \(value)')"
     }
 }
+
+class ObjcAttribute: NSObject, ObjcOptimizelyAttribute {
+    public let id: String
+    public let key: String
+    
+    init(_ attribute: OptimizelyAttribute) {
+        self.id = attribute.id
+        self.key = attribute.key
+    }
+}
+
+class ObjcAudience: NSObject, ObjcOptimizelyAudience {
+    public let id: String
+    public let name: String
+    public let conditions: String
+
+    init(_ audience: OptimizelyAudience) {
+        self.id = audience.id
+        self.name = audience.name
+        self.conditions = audience.conditions
+    }
+}
+
+class ObjcEvent: NSObject, ObjcOptimizelyEvent {
+    public let id: String
+    public let key: String
+    public let experimentIds: [String]
+
+    init(_ event: OptimizelyEvent) {
+        self.id = event.id
+        self.key = event.key
+        self.experimentIds = event.experimentIds
+    }
+}
+

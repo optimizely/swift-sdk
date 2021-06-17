@@ -220,7 +220,8 @@ extension OptimizelyExperiment {
         return [
             "key": self.key,
             "id": self.id,
-            "variationsMap": self.variationsMap.mapValues{ $0.dict }
+            "variationsMap": self.variationsMap.mapValues{ $0.dict },
+            "audiences": self.audiences
         ]
     }
 }
@@ -230,6 +231,8 @@ extension OptimizelyFeature {
         return [
             "key": self.key,
             "id": self.id,
+            "experimentRules": self.experimentRules.map{ $0.dict },
+            "deliveryRules": self.deliveryRules.map{ $0.dict },
             "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
             "variablesMap": self.variablesMap.mapValues{ $0.dict }
         ]

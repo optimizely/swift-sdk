@@ -53,10 +53,11 @@ struct Experiment: Codable, Equatable, OptimizelyExperiment {
     // replace with serialized string representation with audience names when ProjectConfig is ready
     var audiences: String = ""
     
-    mutating func serializeAudiences(with globalAudiences: [Audience]) {
+    mutating func serializeAudiences(with audiencesMap: [String: String]) {
         guard let conditions = audienceConditions else { return }
-        let serialized = conditions.serialized
         
+        let serialized = conditions.serialized
+        audiences = replaceAudienceIdsWithNames(string: serialized, audiencesMap: audiencesMap)
     }
     
 }
@@ -74,5 +75,53 @@ extension Experiment {
     
     var isActivated: Bool {
         return status == .running
+    }
+    
+    /// Replace audience ids with audience names
+    ///
+    /// example:
+    /// - string: "(AUDIENCE(1) OR AUDIENCE(2)) AND AUDIENCE(3)"
+    /// - replaced: "(\"us\" OR \"female\") AND \"adult\""
+    ///
+    /// - Parameter string: before replacement
+    /// - Returns: string after replacement
+    func replaceAudienceIdsWithNames(string: String, audiencesMap: [String: String]) -> String {
+        let beginWord = "AUDIENCE("
+        let endWord = ")"
+        var keyIdx = 0
+        var audienceId = ""
+        var collect = false
+        
+        var replaced = ""
+        for ch in string {
+            if collect  {
+                if String(ch) == endWord {
+                    replaced += "\"\(audiencesMap[audienceId] ?? audienceId)\""
+                    collect = false
+                    audienceId = ""
+                } else {
+                    audienceId += String(ch)
+                }
+                continue
+            }
+            
+            if ch == Array(beginWord)[keyIdx] {
+                keyIdx += 1
+                if keyIdx == beginWord.count {
+                    keyIdx = 0
+                    collect = true
+                }
+                continue
+            } else {
+                if keyIdx > 0 {
+                    replaced += Array(beginWord)[..<keyIdx]
+                }
+                keyIdx = 0
+            }
+            
+            replaced += String(ch)
+        }
+        
+        return replaced
     }
 }

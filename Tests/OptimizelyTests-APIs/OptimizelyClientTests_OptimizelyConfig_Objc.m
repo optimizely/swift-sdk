@@ -52,6 +52,7 @@
         NSString *expectedJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
         NSString *expected = [self removeSpacesFromString:expectedJSON];
        
+        NSLog(@"\n\n[Observed]\n\%@\n\n[Expected]\n\%@\n\n", observed, expected);
         XCTAssert([observed isEqualToString:expected]);
     }
 }
@@ -163,13 +164,31 @@
         id<OptimizelyFeature> value = optConfig.featuresMap[key];
         featMap[key] = [self dictForOptimizelyFeature:value];
     }
+    
+    NSMutableArray *attributes = [NSMutableArray new];
+    for(id<OptimizelyAttribute> item in optConfig.attributes) {
+        [attributes addObject:[self dictForOptimizelyAttribute:item]];
+    }
+
+    NSMutableArray *audiences = [NSMutableArray new];
+    for(id<OptimizelyAudience> item in optConfig.audiences) {
+        [audiences addObject:[self dictForOptimizelyAudience:item]];
+    }
+
+    NSMutableArray *events = [NSMutableArray new];
+    for(id<OptimizelyEvent> item in optConfig.events) {
+        [events addObject:[self dictForOptimizelyEvent:item]];
+    }
 
     return @{
         @"revision": optConfig.revision,
         @"sdkKey": optConfig.sdkKey,
         @"environmentKey": optConfig.environmentKey,
         @"experimentsMap": expMap,
-        @"featuresMap": featMap
+        @"featuresMap": featMap,
+        @"attributes": attributes,
+        @"audiences": audiences,
+        @"events": events
     };
 }
 
@@ -183,7 +202,8 @@
     return @{
         @"key": experiment.key,
         @"id": experiment.id,
-        @"variationsMap": map
+        @"variationsMap": map,
+        @"audiences": experiment.audiences
     };
 }
 
@@ -200,9 +220,21 @@
         varMap[key] = [self dictForOptimizelyVariable:value];
     }
     
+    NSMutableArray *experimentRules = [NSMutableArray new];
+    for(id<OptimizelyExperiment> exp in feature.experimentRules) {
+        [experimentRules addObject:[self dictForOptimizelyExperiment:exp]];
+    }
+    
+    NSMutableArray *deliveryRules = [NSMutableArray new];
+    for(id<OptimizelyExperiment> exp in feature.deliveryRules) {
+        [deliveryRules addObject:[self dictForOptimizelyExperiment:exp]];
+    }
+    
     return @{
         @"key": feature.key,
         @"id": feature.id,
+        @"experimentRules": experimentRules,
+        @"deliveryRules": deliveryRules,
         @"experimentsMap": expMap,
         @"variablesMap": varMap
     };
@@ -231,6 +263,30 @@
         @"value": variable.value
     };
 }
+
+-(NSDictionary*)dictForOptimizelyAttribute: (id <OptimizelyAttribute>)attribute {
+    return @{
+        @"key": attribute.key,
+        @"id": attribute.id
+    };
+}
+
+-(NSDictionary*)dictForOptimizelyAudience: (id <OptimizelyAudience>)audience {
+    return @{
+        @"name": audience.name,
+        @"id": audience.id,
+        @"conditions": audience.conditions
+    };
+}
+
+-(NSDictionary*)dictForOptimizelyEvent: (id <OptimizelyEvent>)event {
+    return @{
+        @"key": event.key,
+        @"id": event.id,
+        @"experimentIds": event.experimentIds
+    };
+}
+
 
 -(NSString*)removeSpacesFromString:(NSString*)str {
     return [[str componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""];

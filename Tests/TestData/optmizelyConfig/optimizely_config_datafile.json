@@ -1,6 +1,65 @@
 {
     "version": "4",
-    "rollouts": [],
+    "rollouts": [
+      {
+        "experiments": [
+          {
+            "status": "Running",
+            "audienceConditions": [
+              "or",
+              "20348352569",
+              "20371020836"
+            ],
+            "audienceIds": [
+              "20348352569",
+              "20371020836"
+            ],
+            "variations": [
+              {
+                "variables": [],
+                "id": "6327",
+                "key": "on",
+                "featureEnabled": true
+              }
+            ],
+            "forcedVariations": {},
+            "key": "targeted_delivery",
+            "layerId": "9300000005991",
+            "trafficAllocation": [
+              {
+                "entityId": "6327",
+                "endOfRange": 10000
+              }
+            ],
+            "id": "9300000005991"
+          },
+          {
+            "status": "Running",
+            "audienceConditions": [],
+            "audienceIds": [],
+            "variations": [
+              {
+                "variables": [],
+                "id": "6326",
+                "key": "off",
+                "featureEnabled": false
+              }
+            ],
+            "forcedVariations": {},
+            "key": "default-rollout-2354-20348521767",
+            "layerId": "default-layer-rollout-2354-20348521767",
+            "trafficAllocation": [
+              {
+                "entityId": "6326",
+                "endOfRange": 10000
+              }
+            ],
+            "id": "default-rollout-2354-20348521767"
+          }
+        ],
+        "id": "rollout-2354-20348521767"
+      }
+    ],
     "anonymizeIP": true,
     "projectId": "12254210345",
     "variables": [],
@@ -10,7 +69,7 @@
             "experimentIds": ["12198292373", "12198292374"],
             "id": "4482920077",
             "key": "mutex_group_feature",
-            "rolloutId": "",
+            "rolloutId": "rollout-2354-20348521767",
             "variables": [
                 {
                     "defaultValue": "42",
@@ -99,7 +158,15 @@
                             "endOfRange": 10000
                         }
                     ],
-                    "audienceIds": [],
+                    "audienceConditions": [
+                      "or",
+                      "20348452263",
+                      "20361762308"
+                    ],
+                    "audienceIds": [
+                      "20348452263",
+                      "20361762308"
+                    ],
                     "variations": [
                         {
                             "variables": [
@@ -187,7 +254,17 @@
                             "endOfRange": 10000
                         }
                     ],
-                    "audienceIds": [],
+                    "audienceConditions": [
+                      "and",
+                      "20348452263",
+                      "20371020836",
+                      "20344341662"
+                    ],
+                    "audienceIds": [
+                      "20348452263",
+                      "20371020836",
+                      "20344341662"
+                    ],
                     "variations": [
                         {
                             "variables": [],

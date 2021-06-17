@@ -38,6 +38,7 @@ struct FeatureFlag: Codable, Equatable {
     // for OptimizelyConfig only
 
     var experiments: [Experiment] = []
+    var rollout: Rollout?
 }
     
 // MARK: - OptimizelyConfig
@@ -60,6 +61,14 @@ extension FeatureFlag: OptimizelyFeature {
                                                 type: featureVariable.type)
         }
         return map
+    }
+    
+    var experimentRules: [OptimizelyExperiment] {
+        return experiments
+    }
+    
+    var deliveryRules: [OptimizelyExperiment] {
+        return rollout?.experiments ?? []
     }
 }
 

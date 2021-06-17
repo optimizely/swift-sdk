@@ -30,7 +30,7 @@ class HandlerRegistryService {
     
     func registerBinding(binder: BinderProtocol) {
         let sk = ServiceKey(service: "\(type(of: binder.service))", sdkKey: binder.sdkKey)
-        binders.performAtomic{ prop in
+        binders.performAtomic { prop in
             if prop[sk] == nil {
                 prop[sk] = binder
             }
@@ -46,7 +46,7 @@ class HandlerRegistryService {
         let binderToUse = binders.property?[sk]
         
         func updateBinder(b: BinderProtocol) {
-            binders.performAtomic{ prop in
+            binders.performAtomic { prop in
                 prop[sk] = b
             }
         }

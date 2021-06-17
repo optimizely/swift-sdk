@@ -20,7 +20,7 @@ class MockEventDispatcher: OPTEventDispatcher {
     public var events = [EventForDispatch]()
     public var totalEventsFlushed: Int
     
-    required init() {
+    init() {
         totalEventsFlushed = 0
     }
     
@@ -37,8 +37,9 @@ class MockEventDispatcher: OPTEventDispatcher {
 class DumpEventDispatcher: DefaultEventDispatcher {
     public var totalEventsSent: Int
 
-    required init() {
+    init(dataStoreName: String = "OPTEventQueue", timerInterval: TimeInterval = DefaultValues.timeInterval) {
         totalEventsSent = 0
+        super.init(dataStoreName: dataStoreName, timerInterval: timerInterval)
     }
 
     override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {

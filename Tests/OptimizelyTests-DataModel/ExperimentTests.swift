@@ -145,6 +145,67 @@ extension ExperimentTests {
     
 }
 
+// MARK: - audiences serialization
+
+extension ExperimentTests {
+
+    func testAudiencesSerialization() {
+        let commonData: [String: Any] = ["id": "11111",
+                                         "key": "background",
+                                         "status": "Running",
+                                         "layerId": "22222",
+                                         "variations": [VariationTests.sampleData],
+                                         "trafficAllocation": [TrafficAllocationTests.sampleData],
+                                         "audienceIds": [],
+                                         "audienceConditions": [],
+                                         "forcedVariations": ["12345": "1234567890"]]
+        
+        let audiencesMap = [
+            "1": "us",
+            "11": "fr",
+            "2": "female",
+            "12": "male",
+            "3": "adult",
+            "13": "kid"
+        ]
+        
+        let audiencesInput: [Any] = [
+            ["or", "1", "2"],
+            ["and", "1", "2", "3"],
+            ["not", "1"],
+            ["or", "1"],
+            ["and", "1"],
+            ["1"],
+            ["1", "2"],
+            ["and", ["or", "1", "2"], "3"],
+            ["and", ["or", "1", ["and", "2", "3"]], ["and", "11", ["or", "12", "13"]]],
+            ["and", "and"]
+        ]
+        
+        let audiencesOutput: [String] = [
+            "\"us\" OR \"female\"",
+            "\"us\" AND \"female\" AND \"adult\"",
+            "NOT \"us\"",
+            "\"us\"",
+            "\"us\"",
+            "\"us\"",
+            "\"us\" OR \"female\"",
+            "(\"us\" OR \"female\") AND \"adult\"",
+            "(\"us\" OR (\"female\" AND \"adult\")) AND (\"fr\" AND (\"male\" OR \"kid\"))",
+            ""
+        ]
+        
+        for (idx, audience) in audiencesInput.enumerated() {
+            var data = commonData
+            data["audienceConditions"] = audience
+            var model: Experiment = try! OTUtils.model(from: data)
+            model.serializeAudiences(with: audiencesMap)
+            XCTAssertEqual(model.audiences, audiencesOutput[idx])
+        }
+    }
+    
+}
+
 // MARK: - Test Utils
 
 extension ExperimentTests {

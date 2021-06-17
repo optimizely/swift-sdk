@@ -176,8 +176,8 @@ extension OptimizelyClient {
         
         var variableMap = [String: Any]()
         
-        for (_, v) in feature.variablesMap {
-            var featureValue = v.value
+        for v in feature.variables {
+            var featureValue = v.defaultValue ?? ""
             if enabled, let variable = variation?.getVariable(id: v.id) {
                 featureValue = variable.value
             }

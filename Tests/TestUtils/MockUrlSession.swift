@@ -16,17 +16,17 @@
 
 import Foundation
 
-
 // session returns a download task that noop for resume.
 // crafts a httpurlresponse with 304
 // and returns that.
 // the response also includes the url for the data download.
 // the cdn url is used to get the datafile if the datafile is not in cache
 class MockUrlSession: URLSession {
-    var failureCode: Int
-    var passError: Bool
+    var statusCode: Int
+    var withError: Bool
     var localResponseData: String?
     var settingsMap: [String: (Int, Bool)]?
+    var handler: MockDatafileHandler?
     
     class MockDownloadTask: URLSessionDownloadTask {
         var task: () -> Void
@@ -40,15 +40,17 @@ class MockUrlSession: URLSession {
         }
     }
 
-    init(failureCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
-        self.failureCode = failureCode
-        self.passError = withError
+    init(handler: MockDatafileHandler? = nil, statusCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
+        self.handler = handler
+        self.statusCode = statusCode
+        self.withError = withError
         self.localResponseData = localResponseData
     }
    
-    init(settingsMap: [String: (Int, Bool)]) {
-        self.failureCode = 0
-        self.passError = false
+    init(handler: MockDatafileHandler? = nil, settingsMap: [String: (Int, Bool)]) {
+        self.handler = handler
+        self.statusCode = 0
+        self.withError = false
         self.settingsMap = settingsMap
     }
     
@@ -57,25 +59,22 @@ class MockUrlSession: URLSession {
         let sdkKey = request.url!.path.split(separator: "/").last!.replacingOccurrences(of: ".json", with: "")
 
         if let settings = settingsMap?[sdkKey] {
-            (failureCode, passError) = settings
+            (statusCode, withError) = settings
         }
 
-        if localResponseData == nil {
-            let datafile = MockDatafileHandler.getDatafile(sdkKey: sdkKey)
-            let lastModifiedResponse = MockDatafileHandler.getLastModified(sdkKey: sdkKey)
+        let datafile = handler?.getDatafile(sdkKey: sdkKey) ?? "invalid-mock-handler"
+        let lastModifiedResponse = handler?.getLastModified(sdkKey: sdkKey) ?? "invalid-mock-handler"
 
-            localResponseData = datafile
-            headers["Last-Modified"] = lastModifiedResponse
-        }
+        headers["Last-Modified"] = lastModifiedResponse
         
         // this filename should be different from sdkKey (to avoid conflict with datafile cache)
         let fileName = "\(sdkKey)-for-response"
-        let downloadCacheUrl = OTUtils.saveAFile(name: fileName, data: localResponseData!.data(using: .utf8)!)
+        let downloadCacheUrl = OTUtils.saveAFile(name: fileName, data: datafile.data(using: .utf8)!)
         
         return MockDownloadTask() {
-            let statusCode = self.failureCode != 0 ? self.failureCode : (request.getLastModified() != nil ? 304 : 200)
+            let statusCode = self.statusCode != 0 ? self.statusCode : 200
 
-            if (self.passError) {
+            if (self.withError) {
                 let error = OptimizelyError.datafileDownloadFailed("failure")
                 completionHandler(downloadCacheUrl, nil, error)
             } else {
@@ -88,4 +87,5 @@ class MockUrlSession: URLSession {
         }
         
     }
+
 }

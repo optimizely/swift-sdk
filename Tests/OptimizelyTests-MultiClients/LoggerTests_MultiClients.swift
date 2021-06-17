@@ -19,9 +19,54 @@ import XCTest
 class LoggerTests_MultiClients: XCTestCase {
 
     override func setUpWithError() throws {
+        DefaultLogger.logLevel = .debug
     }
 
-    override func tearDownWithError() throws {
+    func testConcurrentLogging() {
+        let logger = DefaultLogger()
+
+        let numThreads = 10
+        let numEventsPerThread = 100
+        
+        let result = OTUtils.runConcurrent(count: numThreads) { item in
+            for i in 0..<numEventsPerThread {
+                logger.e("error-level: \(item)-\(i)")
+                logger.w("warning-level: \(item)-\(i)")
+                logger.i("info-level: \(item)-\(i)")
+                logger.d("debug-level: \(item)-\(i)")
+                
+                logger.e(.attributeFormatInvalid, source: String(item))
+                logger.w(.attributeFormatInvalid, source: String(item))
+                logger.i(.attributeFormatInvalid, source: String(item))
+                logger.d(.attributeFormatInvalid, source: String(item))
+            }
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+    
+    func testConcurrentLogging_MultipleLoggerInstances() {
+
+        let numThreads = 10
+        let numEventsPerThread = 100
+
+        let result = OTUtils.runConcurrent(count: numThreads) { item in
+            let logger = DefaultLogger()
+
+            for i in 0..<numEventsPerThread {
+                logger.e("error-level: \(item)-\(i)")
+                logger.w("warning-level: \(item)-\(i)")
+                logger.i("info-level: \(item)-\(i)")
+                logger.d("debug-level: \(item)-\(i)")
+                
+                logger.e(.attributeFormatInvalid, source: String(item))
+                logger.w(.attributeFormatInvalid, source: String(item))
+                logger.i(.attributeFormatInvalid, source: String(item))
+                logger.d(.attributeFormatInvalid, source: String(item))
+            }
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
     }
 
 }

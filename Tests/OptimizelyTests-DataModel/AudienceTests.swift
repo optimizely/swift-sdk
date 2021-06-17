@@ -24,6 +24,10 @@ class AudienceTests: XCTestCase {
     static var sampleData: [String: Any] = ["id": "553339214",
                                             "name": "america",
                                             "conditions": ConditionHolderTests.sampleData]
+    static let legacyConditionString = OTUtils.jsonStringFromNative(ConditionHolderTests.sampleData)
+    static var legacySampleData: [String: Any] = ["id": "553339214",
+                                                  "name": "america",
+                                                  "conditions": legacyConditionString]
 }
 
 // MARK: - Decode (Legacy Audiences)
@@ -35,16 +39,16 @@ extension AudienceTests {
         // - "[\"or\",{\"value\":30,\"type\":\"custom_attribute\",\"match\":\"exact\",\"name\":\"geo\"}]"
         // Audience will decode it to recover to typedAudience formats
         
-        let legacyConditionString = OTUtils.jsonStringFromNative(ConditionHolderTests.sampleData)
         
         let data: [String: Any] = ["id": "553339214",
                                    "name": "america",
-                                   "conditions": legacyConditionString]
+                                   "conditions": AudienceTests.legacyConditionString]
         let model: Audience = try! OTUtils.model(from: data)
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
+        XCTAssert(model.conditionHolder == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
+        XCTAssert(model.conditions == AudienceTests.legacyConditionString)
     }
     
 }
@@ -61,7 +65,16 @@ extension AudienceTests {
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
+        XCTAssert(model.conditionHolder == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
+    
+        if let modelConditions = try? JSONDecoder().decode(ConditionHolder.self,
+                                                           from: model.conditions.data(using: .utf8)!),
+            let expectedConditions = try? JSONDecoder().decode(ConditionHolder.self,
+                                                               from: AudienceTests.legacyConditionString.data(using: .utf8)!) {
+            XCTAssertEqual(modelConditions, expectedConditions)
+        } else {
+            XCTAssert(false)
+        }
     }
     
     func testDecodeFailWithMissingId() {
@@ -95,7 +108,7 @@ extension AudienceTests {
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditions == (try! OTUtils.model(from: UserAttributeTests.sampleData)))
+        XCTAssert(model.conditionHolder == (try! OTUtils.model(from: UserAttributeTests.sampleData)))
     }
     
 }

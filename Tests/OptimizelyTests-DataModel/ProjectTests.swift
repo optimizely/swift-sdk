@@ -60,6 +60,18 @@ extension ProjectTests {
         XCTAssert(model.featureFlags == [try OTUtils.model(from: FeatureFlagTests.sampleData)])
         XCTAssert(model.botFiltering == false)
         XCTAssert(model.sendFlagDecisions == true)
+        XCTAssert(model.sdkKey == nil)
+        XCTAssert(model.environmentKey == nil)
+    }
+    
+    func testDecodeWithSDKKeyAndEnvironmentKey() {
+        var data: [String: Any] = ProjectTests.sampleData
+        data["sdkKey"] = "123"
+        data["environmentKey"] = "production"
+        
+        let model: Project? = try? OTUtils.model(from: data)
+        XCTAssertEqual(model?.sdkKey, "123")
+        XCTAssertEqual(model?.environmentKey, "production")
     }
     
     func testDecodeFailWithMissingVersion() {

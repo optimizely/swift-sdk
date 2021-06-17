@@ -1,251 +1,348 @@
 {
-  "version": "4",
-  "rollouts": [],
-  "typedAudiences": [],
-  "anonymizeIP": true,
-  "projectId": "12254210345",
-  "variables": [],
-  "featureFlags": [
-    {
-      "_comment": "trafficAllocation: 4000 and 8000, respectively",
-      "experimentIds": ["12198292373", "12198292374"],
-      "id": "4482920077",
-      "key": "mutex_group_feature",
-      "rolloutId": "",
-      "variables": [
-        {
-          "defaultValue": "42",
-          "id": "2687470094",
-          "key": "i_42",
-          "type": "integer"
-        },
-        {
-          "defaultValue": "42.2",
-          "id": "2687470095",
-          "key": "d_4_2",
-          "type": "double"
-        },
-        {
-          "defaultValue": "true",
-          "id": "2687470096",
-          "key": "b_true",
-          "type": "boolean"
-        },
-        {
-          "defaultValue": "foo",
-          "id": "2687470097",
-          "key": "s_foo",
-          "type": "string"
-        }
-      ]
-    },
-    {
-      "experimentIds": ["12198292376"],
-      "id": "4482920079",
-      "key": "feature_exp_no_traffic",
-      "rolloutId": "",
-      "variables": []
-    }
-  ],
-  "experiments": [
+    "version": "4",
+    "rollouts": [
       {
-          "status": "Running",
-          "key": "exp_with_audience",
-          "layerId": "10420273888",
-          "trafficAllocation": [
+        "experiments": [
+          {
+            "status": "Running",
+            "audienceConditions": [
+              "or",
+              "20348352569",
+              "20371020836"
+            ],
+            "audienceIds": [
+              "20348352569",
+              "20371020836"
+            ],
+            "variations": [
               {
-                  "entityId": "10389729780",
-                  "endOfRange": 10000
+                "variables": [],
+                "id": "6327",
+                "key": "on",
+                "featureEnabled": true
               }
-          ],
-          "audienceIds": [],
-          "variations": [
+            ],
+            "forcedVariations": {},
+            "key": "targeted_delivery",
+            "layerId": "9300000005991",
+            "trafficAllocation": [
               {
-                  "variables": [],
-                  "featureEnabled": true,
-                  "id": "10389729780",
-                  "key": "a"
-              },
-              {
-                  "variables": [],
-                  "id": "10416523121",
-                  "key": "b"
+                "entityId": "6327",
+                "endOfRange": 10000
               }
-          ],
-          "forcedVariations": {},
-          "id": "10390977673"
+            ],
+            "id": "9300000005991"
+          },
+          {
+            "status": "Running",
+            "audienceConditions": [],
+            "audienceIds": [],
+            "variations": [
+              {
+                "variables": [],
+                "id": "6326",
+                "key": "off",
+                "featureEnabled": false
+              }
+            ],
+            "forcedVariations": {},
+            "key": "default-rollout-2354-20348521767",
+            "layerId": "default-layer-rollout-2354-20348521767",
+            "trafficAllocation": [
+              {
+                "entityId": "6326",
+                "endOfRange": 10000
+              }
+            ],
+            "id": "default-rollout-2354-20348521767"
+          }
+        ],
+        "id": "rollout-2354-20348521767"
       }
-  ],
-  "audiences": [],
-  "groups": [
-    {
-      "policy": "random",
-      "trafficAllocation": [
+    ],
+    "anonymizeIP": true,
+    "projectId": "12254210345",
+    "variables": [],
+    "featureFlags": [
         {
-          "entityId": "12198292373",
-          "endOfRange": 4000
-        },
-        {
-          "entityId": "12198292374",
-          "endOfRange": 8000
-        }
-      ],
-      "experiments": [
-        {
-          "status": "Running",
-          "key": "experiment_4000",
-          "layerId": "12235440722",
-          "trafficAllocation": [
-            {
-              "entityId": "12098126626",
-              "endOfRange": 10000
-            }
-          ],
-          "audienceIds": [],
-          "variations": [
-            {
-              "variables": [
+            "_comment": "trafficAllocation: 4000 and 8000, respectively",
+            "experimentIds": ["12198292373", "12198292374"],
+            "id": "4482920077",
+            "key": "mutex_group_feature",
+            "rolloutId": "rollout-2354-20348521767",
+            "variables": [
                 {
-                  "value": "50",
-                  "id": "2687470094"
+                    "defaultValue": "42",
+                    "id": "2687470094",
+                    "key": "i_42",
+                    "type": "integer"
                 },
                 {
-                  "value": "50.5",
-                  "id": "2687470095"
+                    "defaultValue": "42.2",
+                    "id": "2687470095",
+                    "key": "d_4_2",
+                    "type": "double"
                 },
                 {
-                  "value": "false",
-                  "id": "2687470096"
+                    "defaultValue": "true",
+                    "id": "2687470096",
+                    "key": "b_true",
+                    "type": "boolean"
                 },
                 {
-                  "value": "s1",
-                  "id": "2687470097"
+                    "defaultValue": "foo",
+                    "id": "2687470097",
+                    "key": "s_foo",
+                    "type": "string"
                 }
-              ],
-              "featureEnabled": true,
-              "id": "12098126626",
-              "key": "all_traffic_variation_exp_1"
-            },
-            {
-              "variables": [],
-              "id": "12107729995",
-              "featureEnabled": true,
-              "key": "no_traffic_variation_exp_1"
-            }
-          ],
-          "forcedVariations": {},
-          "id": "12198292373"
+            ]
         },
         {
-          "status": "Running",
-          "key": "experiment_8000",
-          "layerId": "12187694825",
-          "trafficAllocation": [
-            {
-              "entityId": "12232050369",
-              "endOfRange": 10000
-            }
-          ],
-          "audienceIds": [],
-          "variations": [
-            {
-              "variables": [
+            "experimentIds": ["12198292376"],
+            "id": "4482920079",
+            "key": "feature_exp_no_traffic",
+            "rolloutId": "",
+            "variables": []
+        }
+    ],
+    "experiments": [
+        {
+            "status": "Running",
+            "key": "exp_with_audience",
+            "layerId": "10420273888",
+            "trafficAllocation": [
                 {
-                  "value": "50",
-                  "id": "2687470094"
+                    "entityId": "10389729780",
+                    "endOfRange": 10000
+                }
+            ],
+            "audienceIds": [],
+            "variations": [
+                {
+                    "variables": [],
+                    "featureEnabled": true,
+                    "id": "10389729780",
+                    "key": "a"
                 },
                 {
-                  "value": "50.5",
-                  "id": "2687470095"
+                    "variables": [],
+                    "id": "10416523121",
+                    "key": "b"
                 }
-              ],
-              "id": "12252360417",
-              "featureEnabled": false,
-              "key": "no_traffic_variation_exp_2"
-            }
-          ],
-          "forcedVariations": {},
-          "id": "12198292374"
+            ],
+            "forcedVariations": {},
+            "id": "10390977673"
         }
-      ],
-      "id": "12115595438"
-    },
-    {
-      "policy": "random",
-      "trafficAllocation": [
+    ],
+    "groups": [
         {
-          "entityId": "12198292375",
-          "endOfRange": 10000
-        }
-      ],
-      "experiments": [
-        {
-          "status": "Running",
-          "key": "all_traffic_experiment",
-          "layerId": "12235440723",
-          "trafficAllocation": [
-            {
-              "entityId": "12098126627",
-              "endOfRange": 10000
-            }
-          ],
-          "audienceIds": [],
-          "variations": [
-            {
-              "variables": [],
-              "id": "12098126627",
-              "featureEnabled": true,
-              "key": "all_traffic_variation"
-            },
-            {
-              "variables": [],
-              "id": "12098126628",
-              "featureEnabled": true,
-              "key": "no_traffic_variation"
-            }
-          ],
-          "forcedVariations": {},
-          "id": "12198292375"
+            "policy": "random",
+            "trafficAllocation": [
+                {
+                    "entityId": "12198292373",
+                    "endOfRange": 4000
+                },
+                {
+                    "entityId": "12198292374",
+                    "endOfRange": 8000
+                }
+            ],
+            "experiments": [
+                {
+                    "status": "Running",
+                    "key": "experiment_4000",
+                    "layerId": "12235440722",
+                    "trafficAllocation": [
+                        {
+                            "entityId": "12098126626",
+                            "endOfRange": 10000
+                        }
+                    ],
+                    "audienceConditions": [
+                      "or",
+                      "20348452263",
+                      "20361762308"
+                    ],
+                    "audienceIds": [
+                      "20348452263",
+                      "20361762308"
+                    ],
+                    "variations": [
+                        {
+                            "variables": [
+                                {
+                                    "value": "50",
+                                    "id": "2687470094"
+                                },
+                                {
+                                    "value": "50.5",
+                                    "id": "2687470095"
+                                },
+                                {
+                                    "value": "false",
+                                    "id": "2687470096"
+                                },
+                                {
+                                    "value": "s1",
+                                    "id": "2687470097"
+                                }
+                            ],
+                            "featureEnabled": true,
+                            "id": "12098126626",
+                            "key": "all_traffic_variation_exp_1"
+                        },
+                        {
+                            "variables": [],
+                            "id": "12107729995",
+                            "featureEnabled": true,
+                            "key": "no_traffic_variation_exp_1"
+                        }
+                    ],
+                    "forcedVariations": {},
+                    "id": "12198292373"
+                },
+                {
+                    "status": "Running",
+                    "key": "experiment_8000",
+                    "layerId": "12187694825",
+                    "trafficAllocation": [
+                        {
+                            "entityId": "12232050369",
+                            "endOfRange": 10000
+                        }
+                    ],
+                    "audienceIds": [],
+                    "variations": [
+                        {
+                            "variables": [
+                                {
+                                    "value": "50",
+                                    "id": "2687470094"
+                                },
+                                {
+                                    "value": "50.5",
+                                    "id": "2687470095"
+                                }
+                            ],
+                            "id": "12252360417",
+                            "featureEnabled": false,
+                            "key": "no_traffic_variation_exp_2"
+                        }
+                    ],
+                    "forcedVariations": {},
+                    "id": "12198292374"
+                }
+            ],
+            "id": "12115595438"
         },
         {
-          "status": "Running",
-          "key": "no_traffic_experiment",
-          "layerId": "12187694826",
-          "trafficAllocation": [
-            {
-              "entityId": "12098126629",
-              "endOfRange": 5000
-            },
-            {
-              "entityId": "12098126630",
-              "endOfRange": 10000
-            }
-          ],
-          "audienceIds": [],
-          "variations": [
-            {
-              "variables": [],
-              "id": "12098126629",
-              "featureEnabled": true,
-              "key": "variation_5000"
-            },
-            {
-              "variables": [],
-              "id": "12098126630",
-              "featureEnabled": true,
-              "key": "variation_10000"
-            }
-          ],
-          "forcedVariations": {},
-          "id": "12198292376"
+            "policy": "random",
+            "trafficAllocation": [
+                {
+                    "entityId": "12198292375",
+                    "endOfRange": 10000
+                }
+            ],
+            "experiments": [
+                {
+                    "status": "Running",
+                    "key": "all_traffic_experiment",
+                    "layerId": "12235440723",
+                    "trafficAllocation": [
+                        {
+                            "entityId": "12098126627",
+                            "endOfRange": 10000
+                        }
+                    ],
+                    "audienceConditions": [
+                      "and",
+                      "20348452263",
+                      "20371020836",
+                      "20344341662"
+                    ],
+                    "audienceIds": [
+                      "20348452263",
+                      "20371020836",
+                      "20344341662"
+                    ],
+                    "variations": [
+                        {
+                            "variables": [],
+                            "id": "12098126627",
+                            "featureEnabled": true,
+                            "key": "all_traffic_variation"
+                        },
+                        {
+                            "variables": [],
+                            "id": "12098126628",
+                            "featureEnabled": true,
+                            "key": "no_traffic_variation"
+                        }
+                    ],
+                    "forcedVariations": {},
+                    "id": "12198292375"
+                },
+                {
+                    "status": "Running",
+                    "key": "no_traffic_experiment",
+                    "layerId": "12187694826",
+                    "trafficAllocation": [
+                        {
+                            "entityId": "12098126629",
+                            "endOfRange": 5000
+                        },
+                        {
+                            "entityId": "12098126630",
+                            "endOfRange": 10000
+                        }
+                    ],
+                    "audienceIds": [],
+                    "variations": [
+                        {
+                            "variables": [],
+                            "id": "12098126629",
+                            "featureEnabled": true,
+                            "key": "variation_5000"
+                        },
+                        {
+                            "variables": [],
+                            "id": "12098126630",
+                            "featureEnabled": true,
+                            "key": "variation_10000"
+                        }
+                    ],
+                    "forcedVariations": {},
+                    "id": "12198292376"
+                }
+            ],
+            "id": "12115595439"
         }
-      ],
-      "id": "12115595439"
-    }
-  ],
-  "attributes": [],
-  "botFiltering": false,
-  "accountId": "8272261422",
-  "events": [],
-  "revision": "9"
+    ],
+    "typedAudiences": [
+      {"id": "20348452263", "conditions": ["and", ["or", ["or", {"value": 18, "type": "custom_attribute", "name": "age", "match": "gt"}]]], "name": "adult"},
+      {"id": "20348352569", "conditions": ["and", ["or", ["or", {"value": 18, "type": "custom_attribute", "name": "age", "match": "lt"}]]], "name": "kid"}
+    ],
+    "audiences": [
+        {"id": "20348780620", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"us\"}]]]", "name": "us"},
+        {"id": "20348780628", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"fr\"}]]]", "name": "fr"},
+        {"id": "20361762308", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"f\"}]]]", "name": "female"},
+        {"id": "20371020836", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"m\"}]]]", "name": "male"},
+        {"id": "20348452263", "conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "name": "adult"},
+        {"id": "20348352569", "conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "name": "kid"},
+        {"conditions": "[\"or\", {\"match\": \"exact\", \"name\": \"$opt_dummy_attribute\", \"type\": \"custom_attribute\", \"value\": \"$opt_dummy_value\"}]", "id": "$opt_dummy_audience", "name": "Optimizely-Generated Audience for Backwards Compatibility"}
+    ],
+    "attributes": [
+      {"id": "20348392978", "key": "gender"},
+      {"id": "20350341229", "key": "age"},
+      {"id": "20368981170", "key": "country"}
+    ],
+    "events": [
+      {"experimentIds": [], "id": "20346042538", "key": "send"},
+      {"experimentIds": ["9300000005843"], "id": "20350371588", "key": "buy"}
+    ],
+    "botFiltering": false,
+    "accountId": "8272261422",
+    "revision": "9",
+    "sdkKey": "ValidProjectConfigV4",
+    "environmentKey": "production"
 }

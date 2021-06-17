@@ -16,25 +16,27 @@
 
 import Foundation
 
-struct Variation: Codable, Equatable {
+struct Variation: Codable, OptimizelyVariation {
     var id: String
     var key: String
     var featureEnabled: Bool?
     var variables: [Variable]?
+
+    enum CodingKeys: String, CodingKey {
+        case id, key, featureEnabled, variables
+    }
+
+    // MARK: - OptimizelyConfig
+
+    var variablesMap: [String: OptimizelyVariable] = [:]
 }
 
-// MARK: - OptimizelyConfig
-
-extension Variation: OptimizelyVariation {
-    var variablesMap: [String: OptimizelyVariable] {
-        var map = [String: Variable]()
-        variables?.forEach({
-            // filter out invalid variables (from invalid datafiles)
-            if !($0.key.isEmpty) {
-                map[$0.key] = $0
-            }
-        })
-        return map
+extension Variation: Equatable {
+    static func == (lhs: Variation, rhs: Variation) -> Bool {
+        return lhs.id == rhs.id &&
+            lhs.key == rhs.key &&
+            lhs.featureEnabled == rhs.featureEnabled &&
+            lhs.variables == rhs.variables
     }
 }
 

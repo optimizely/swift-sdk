@@ -19,6 +19,8 @@ import XCTest
 
 class OTUtils {
     
+    static let testSdkKeyBasename = "testSdkKey"
+
     static func isEqualWithEncodeThenDecode<T: Codable & Equatable>(_ model: T) -> Bool {
         let jsonData = try! JSONEncoder().encode(model)
         let modelExp = try! JSONDecoder().decode(T.self, from: jsonData)
@@ -161,7 +163,7 @@ class OTUtils {
 
     // MARK: - storage
     
-    static func clearAllTestStorage(including: String) {
+    static func clearAllTestStorage(including: String? = nil) {
         clearAllDataFiles(including: including)
         clearAllEventQueues()
         clearAllLastModifiedData()
@@ -232,16 +234,20 @@ class OTUtils {
         _ = saveAFile(name: sdkKey, data: data)
     }
     
-    static func clearAllDataFiles(including: String) {
+    static func removeDatafileCache(sdkKey: String, contents: String? = nil) {
+        removeAFile(name: sdkKey)
+    }
+    
+    static func clearAllDataFiles(including: String? = nil) {
         removeAllFiles(including: including, in: .documentDirectory)
         removeAllFiles(including: including, in: .cachesDirectory)
     }
     
-    static func removeAllFiles(including: String, in directory: FileManager.SearchPathDirectory) {
+    static func removeAllFiles(including: String? = nil, in directory: FileManager.SearchPathDirectory) {
         if let docUrl = FileManager.default.urls(for: directory, in: .userDomainMask).first {
             if let names = try? FileManager.default.contentsOfDirectory(atPath: docUrl.path) {
                 names.forEach{ name in
-                    if name.contains(including) {
+                    if name.contains(including ?? testSdkKeyBasename) {
                         let fileUrl = docUrl.appendingPathComponent(name)
                         do {
                             try FileManager.default.removeItem(at: fileUrl)
@@ -268,11 +274,9 @@ class OTUtils {
         return ds.url
     }
 
-    static func removeAFile(name: String) -> URL? {
+    static func removeAFile(name: String) {
         let ds = DataStoreFile<Data>(storeName: name, async: false)
         ds.removeItem(forKey: name)
-        
-        return ds.url
     }
     
     static func createDocumentDirectoryIfNotAvailable() {
@@ -359,7 +363,13 @@ class OTUtils {
     // MARK: - others
     
     static var randomSdkKey: String {
-        return String(arc4random())
+        return "\(testSdkKeyBasename)-\(arc4random())"
+    }
+    
+    static func makeRandomSdkKeys(_ num: Int) -> [String] {
+        return (0..<num).map {
+            return "\(testSdkKeyBasename)-\($0)-\(arc4random())"
+        }
     }
 
 }

@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Attribute: Codable, Equatable {
+struct Attribute: Codable, Equatable, OptimizelyAttribute {
     var id: String
     var key: String
 }

@@ -1,5 +1,18 @@
 # Optimizely Swift SDK Changelog
 
+## 3.8.0
+June 2, 2021
+
+### New Features
+* Fix to support multiple clients (sdkKeys). ([#401](https://github.com/optimizely/swift-sdk/pull/401), [#402](https://github.com/optimizely/swift-sdk/pull/402), [#405](https://github.com/optimizely/swift-sdk/pull/405), [#406](https://github.com/optimizely/swift-sdk/pull/406), [#407](https://github.com/optimizely/swift-sdk/pull/407), [#408](https://github.com/optimizely/swift-sdk/pull/408), [#409](https://github.com/optimizely/swift-sdk/pull/409), [#410](https://github.com/optimizely/swift-sdk/pull/410))
+
+   - Full thread-safety for additional concurrency requirements
+   - No resource conflicts for multiple sdkKeys support
+
+### Bug Fixes
+* BUILD\_LIBRARY\_FOR\_DISTRIBUTION is turned on to support ABI when clients build own binaries and share within the team. ([#403](https://github.com/optimizely/swift-sdk/pull/403))
+
+
 ## 3.7.1
 April 14, 2021
 

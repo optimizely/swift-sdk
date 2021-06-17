@@ -18,13 +18,13 @@ import Foundation
 
 class MockDatafileHandler: DefaultDatafileHandler {
     var statusCode: Int = 0
-    var passError: Bool = false
+    var withError: Bool = false
     var localResponseData: String?
     var settingsMap: [String: (Int, Bool)]?
 
-    init(statusCode: Int = 0, passError: Bool = false, localResponseData: String? = nil) {
+    init(statusCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
         self.statusCode = statusCode
-        self.passError = passError
+        self.withError = withError
         self.localResponseData = localResponseData
     }
     
@@ -36,19 +36,19 @@ class MockDatafileHandler: DefaultDatafileHandler {
     
     override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
         if let settingsMap = settingsMap {
-            return MockUrlSession(settingsMap: settingsMap)
+            return MockUrlSession(handler: self, settingsMap: settingsMap)
         } else {
-            return MockUrlSession(failureCode: statusCode, withError: passError, localResponseData: localResponseData)
+            return MockUrlSession(handler: self, statusCode: statusCode, withError: withError, localResponseData: localResponseData)
         }
     }
     
     // MARK: - helpers
     
-    static func getDatafile(sdkKey: String) -> String {
-        return "datafile-for-\(sdkKey)"
+    func getDatafile(sdkKey: String) -> String {
+        return localResponseData ?? "datafile-for-\(sdkKey)"
     }
     
-    static func getLastModified(sdkKey: String) -> String {
+    func getLastModified(sdkKey: String) -> String {
         return "date-for-\(sdkKey)"
     }
     

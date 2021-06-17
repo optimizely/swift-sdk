@@ -142,6 +142,21 @@ class SamplesForAPI {
         let optConfig = try! optimizely.getOptimizelyConfig()
         
         print("[OptimizelyConfig] revision = \(optConfig.revision)")
+        print("[OptimizelyConfig] sdkKey = \(optConfig.sdkKey)")
+        print("[OptimizelyConfig] environmentKey = \(optConfig.environmentKey)")
+
+        print("[OptimizelyConfig] attributes:")
+        optConfig.attributes.forEach { attribute in
+            print("[OptimizelyConfig]   -- (id, key) = (\(attribute.id), \(attribute.key))")
+        }
+        print("[OptimizelyConfig] audiences:")
+        optConfig.audiences.forEach { audience in
+            print("[OptimizelyConfig]   -- (id, name, conditions) = (\(audience.id), \(audience.name), \(audience.conditions))")
+        }
+        print("[OptimizelyConfig] events:")
+        optConfig.events.forEach { event in
+            print("[OptimizelyConfig]   -- (id, key, experimentIds) = (\(event.id), \(event.key), \(event.experimentIds))")
+        }
 
         //let experiments = optConfig.experimentsMap.values
         let experimentKeys = optConfig.experimentsMap.keys

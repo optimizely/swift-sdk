@@ -100,7 +100,7 @@ extension Experiment {
         
         var replaced = ""
         for ch in string {
-            if collect  {
+            if collect {
                 if String(ch) == endWord {
                     replaced += "\"\(audiencesMap[audienceId] ?? audienceId)\""
                     collect = false

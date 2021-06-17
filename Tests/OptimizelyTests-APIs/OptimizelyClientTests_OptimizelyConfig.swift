@@ -85,7 +85,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         let audiences = optimizelyConfig.audiences
                 
-        XCTAssertEqual(audiences.count, 7)
+        XCTAssertEqual(audiences.count, 6)
         XCTAssertEqual(audiences[0].id, "20348452263")
         XCTAssertEqual(audiences[0].name, "adult")
         XCTAssertEqual(audiences[0].conditions, "[\"and\",[\"or\",[\"or\",{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}]]]")

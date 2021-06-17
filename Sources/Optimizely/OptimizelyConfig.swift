@@ -105,6 +105,7 @@ struct OptimizelyConfigImp: OptimizelyConfig {
         var audiences = project.typedAudiences ?? []
         project.audiences.forEach { oldAudience in
             if audiences.filter({ newAudience in newAudience.id == oldAudience.id }).isEmpty {
+                guard oldAudience.id != "$opt_dummy_audience" else { return }
                 audiences.append(oldAudience)
             }
         }
@@ -115,7 +116,7 @@ struct OptimizelyConfigImp: OptimizelyConfig {
         // - serialize experiment audiences to a string
         
         // prepare an audience [id: name] mapping for audicens serialization
-        let audiencesMap = Dictionary(uniqueKeysWithValues: audiences.map{ ($0.id, $0.name) })
+        let audiencesMap = Dictionary(uniqueKeysWithValues: audiences.map { ($0.id, $0.name) })
 
         let updatedExperiments = projectConfig.allExperiments.map { experiment -> Experiment in
             let feature = project.featureFlags.filter({ $0.experimentIds.contains(experiment.id) }).first
@@ -158,7 +159,7 @@ extension OptimizelyConfigImp {
                 return experiments.filter { $0.id == expId }.first
             }
             
-            let rollout = rollouts.filter{ $0.id == feature.rolloutId }.first
+            let rollout = rollouts.filter { $0.id == feature.rolloutId }.first
             
             feature.experimentsMap = {
                 var map = [String: Experiment]()

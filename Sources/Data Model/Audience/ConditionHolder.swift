@@ -77,6 +77,14 @@ enum ConditionHolder: Codable, Equatable {
 // MARK: - serialization
 
 extension ConditionHolder {
+    
+    /// Returns a serialized string of audienceConditions
+    /// - each audienceId is converted into "AUDIENCE(audienceId)", which can be translated to correponding names later
+    ///
+    /// Examples:
+    /// - "123" => "AUDIENCE("123")"
+    /// - ["and", "123", "456"] => "AUDIENCE("123") AND (AUDIENCE("456")"
+    /// - ["or", "123", ["and", "456", "789"]] => "AUDIENCE("123") OR ((AUDIENCE("456") AND AUDIENCE("789"))"
     var serialized: String {
         switch self {
         case .logicalOp:
@@ -144,6 +152,13 @@ extension Array where Element == ConditionHolder {
         }
     }
     
+    /// Represents an array of ConditionHolder as a serialized string
+    ///
+    /// Examples:
+    /// - ["not", A] => "NOT A"
+    /// - ["and", A, B] => "A AND B"
+    /// - ["or", A, ["and", B, C]] => "A OR (B AND C)"
+    /// - [A] => "A"
     var serialized: String {
         var result = ""
         
@@ -151,6 +166,8 @@ extension Array where Element == ConditionHolder {
             return "\(result)"
         }
 
+        // The first item of the array is supposed to be a logical op (and, or, not)
+        // extract it first and joined the rest of the array items with the logical op
         switch firstItem {
         case .logicalOp(.not):
             result = (self.count < 2) ? "" : "NOT \(self[1].serialized)"

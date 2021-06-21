@@ -126,11 +126,11 @@ struct OptimizelyConfigImp: OptimizelyConfig {
         let updatedRollouts = projectConfig.project.rollouts.map { rollout -> Rollout in
             let feature = project.featureFlags.filter({ $0.rolloutId == rollout.id }).first
             
-            var rollout = rollout
-            rollout.experiments = rollout.experiments.map { experiment in
+            var updatedRollout = rollout
+            updatedRollout.experiments = rollout.experiments.map { experiment -> Experiment in
                 return updateExperiment(experiment: experiment, feature: feature, audiencesMap: audiencesMap)
             }
-            return rollout
+            return updatedRollout
         }
         
         self.experimentsMap = makeExperimentsMap(project: project, experiments: updatedExperiments)

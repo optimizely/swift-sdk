@@ -100,8 +100,10 @@ extension Experiment {
         
         var replaced = ""
         for ch in string {
+            // extract audience id in parenthesis (example: AUDIENCE("35") => "35")
             if collect {
                 if String(ch) == endWord {
+                    // output the extracted audienceId
                     replaced += "\"\(audiencesMap[audienceId] ?? audienceId)\""
                     collect = false
                     audienceId = ""
@@ -111,6 +113,7 @@ extension Experiment {
                 continue
             }
             
+            // walk-through until finding a matching keyword "AUDIENCE("
             if ch == Array(beginWord)[keyIdx] {
                 keyIdx += 1
                 if keyIdx == beginWord.count {
@@ -125,6 +128,7 @@ extension Experiment {
                 keyIdx = 0
             }
             
+            // pass through other characters
             replaced += String(ch)
         }
         

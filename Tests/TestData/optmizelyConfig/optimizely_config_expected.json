@@ -7,6 +7,7 @@
     "audiences": [
         {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"name\": \"age\", \"type\": \"custom_attribute\", \"value\": 18}]]]", "id": "20348452263", "name": "adult"},
         {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"lt\", \"name\": \"age\", \"type\": \"custom_attribute\", \"value\": 18}]]]", "id": "20348352569", "name": "kid"},
+        {"conditions": "[\"and\", {\"match\": \"eq\", \"name\": \"dummy\", \"type\": \"custom_attribute\", \"value\": 1000}]", "id": "20348352999", "name": "for-test-only"},
         {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"us\"}]]]", "id": "20348780620", "name": "us"},
         {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"fr\"}]]]", "id": "20348780628", "name": "fr"},
         {"conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"gender\", \"type\": \"custom_attribute\", \"value\": \"f\"}]]]", "id": "20361762308", "name": "female"},

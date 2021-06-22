@@ -85,18 +85,21 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         let audiences = optimizelyConfig.audiences
                 
-        XCTAssertEqual(audiences.count, 6)
+        XCTAssertEqual(audiences.count, 7)
         XCTAssertEqual(audiences[0].id, "20348452263")
         XCTAssertEqual(audiences[0].name, "adult")
         XCTAssertEqual(audiences[0].conditions, "[\"and\",[\"or\",[\"or\",{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}]]]")
         XCTAssertEqual(audiences[1].id, "20348352569")
         XCTAssertEqual(audiences[1].name, "kid")
         XCTAssertEqual(audiences[1].conditions, "[\"and\",[\"or\",[\"or\",{\"match\":\"lt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}]]]")
+        XCTAssertEqual(audiences[2].id, "20348352999")
+        XCTAssertEqual(audiences[2].name, "for-test-only")
+        XCTAssertEqual(audiences[2].conditions, "[\"and\",{\"match\":\"eq\",\"name\":\"dummy\",\"type\":\"custom_attribute\",\"value\":1000}]")
 
-        XCTAssertEqual(audiences[2].name, "us")
-        XCTAssertEqual(audiences[3].name, "fr")
-        XCTAssertEqual(audiences[4].name, "female")
-        XCTAssertEqual(audiences[5].name, "male")
+        XCTAssertEqual(audiences[3].name, "us")
+        XCTAssertEqual(audiences[4].name, "fr")
+        XCTAssertEqual(audiences[5].name, "female")
+        XCTAssertEqual(audiences[6].name, "male")
     }
 
     func testGetOptimizelyConfig_Events() {

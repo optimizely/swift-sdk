@@ -320,7 +320,8 @@
     ],
     "typedAudiences": [
       {"id": "20348452263", "conditions": ["and", ["or", ["or", {"value": 18, "type": "custom_attribute", "name": "age", "match": "gt"}]]], "name": "adult"},
-      {"id": "20348352569", "conditions": ["and", ["or", ["or", {"value": 18, "type": "custom_attribute", "name": "age", "match": "lt"}]]], "name": "kid"}
+      {"id": "20348352569", "conditions": ["and", ["or", ["or", {"value": 18, "type": "custom_attribute", "name": "age", "match": "lt"}]]], "name": "kid"},
+      {"id": "20348352999", "conditions": ["and", {"value": 1000, "type": "custom_attribute", "name": "dummy", "match": "eq"}], "name": "for-test-only"}
     ],
     "audiences": [
         {"id": "20348780620", "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"exact\", \"name\": \"country\", \"type\": \"custom_attribute\", \"value\": \"us\"}]]]", "name": "us"},

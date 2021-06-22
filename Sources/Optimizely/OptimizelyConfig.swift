@@ -115,7 +115,7 @@ struct OptimizelyConfigImp: OptimizelyConfig {
         // - copy feature's variable data to variables in all variations
         // - serialize experiment audiences to a string
         
-        // prepare an audience [id: name] mapping for audicens serialization
+        // prepare an audience [id: name] mapping for audiences serialization
         let audiencesMap = Dictionary(uniqueKeysWithValues: audiences.map { ($0.id, $0.name) })
 
         let updatedExperiments = projectConfig.allExperiments.map { experiment -> Experiment in

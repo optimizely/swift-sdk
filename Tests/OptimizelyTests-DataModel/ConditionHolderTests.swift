@@ -302,5 +302,5 @@ extension ConditionHolderTests {
         let result = try? array.evaluate(op: .and, project: nil, attributes: nil)
         XCTAssertTrue(result == nil)
     }
-
+    
 }

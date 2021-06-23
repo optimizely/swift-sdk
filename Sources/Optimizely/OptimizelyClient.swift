@@ -646,8 +646,8 @@ open class OptimizelyClient: NSObject {
             logger.i(.userReceivedAllDefaultVariableValues(userId, featureKey))
         }
         
-        for (_, v) in featureFlag.variablesMap {
-            var featureValue = v.value
+        for v in featureFlag.variables {
+            var featureValue = v.defaultValue ?? ""
             if enabled, let variable = decision?.variation.getVariable(id: v.id) {
                 featureValue = variable.value
             }

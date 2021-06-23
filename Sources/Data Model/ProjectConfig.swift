@@ -85,7 +85,7 @@ class ProjectConfig {
     }()
     
     lazy var allExperiments: [Experiment] = {
-        return project.experiments + project.groups.map { $0.experiments }.flatMap({$0})
+        return project.experiments + project.groups.map { $0.experiments }.flatMap { $0 }
     }()
     
     // MARK: - Init

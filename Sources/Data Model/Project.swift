@@ -75,7 +75,7 @@ extension Project: ProjectProtocol {
             throw OptimizelyError.conditionNoMatchingAudience(audienceId)
         }
         logger.d { () -> String in
-            return LogMessage.audienceEvaluationStarted(audienceId, Utils.getConditionString(conditions: audience.conditions)).description
+            return LogMessage.audienceEvaluationStarted(audienceId, Utils.getConditionString(conditions: audience.conditionHolder)).description
         }
         
         let result = try audience.evaluate(project: self, attributes: attributes)

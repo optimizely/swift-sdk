@@ -30,35 +30,6 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         try! self.optimizely.start(datafile: datafile)
     }
     
-    // this test can be also covered by FSC, but it'll be useful to confirm Swift and ObjC both generate correct outputs
-    func testGetOptimizelyConfig_Equal() {
-        if #available(iOS 11.0, tvOS 11.0, *) {
-            let optimizelyConfig = try! optimizely.getOptimizelyConfig()
-            
-            // compare dictionaries as strings (after key-sorted and remove all spaces)
-            let observedDict = optimizelyConfig.dict!
-            let observedData = try! JSONSerialization.data(withJSONObject: observedDict, options: .sortedKeys)
-            let observedJSON = String(bytes: observedData, encoding: .utf8)!
-            let observed = observedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
-            
-            // pre-geneerated expected JSON string (sorted by keys)
-            let expectedData = OTUtils.loadJSONFile("optimizely_config_expected")!
-            let expectedJSON = String(bytes: expectedData, encoding: .utf8)!
-            let expected = expectedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
-            
-            XCTAssertEqual(observed, expected, "\n\n[Observed]\n\(observed)\n\n[Expected]\n\(expected)\n\n")
-        }
-    }
-    
-    func testGetOptimizelyConfig_InvalidDatafile() {
-        self.optimizely = OptimizelyClient(sdkKey: "12345")
-        let invalidDatafile = "{\"version\": \"4\"}"
-        try? self.optimizely.start(datafile: invalidDatafile)
-        
-        let result = try? self.optimizely.getOptimizelyConfig()
-        XCTAssertNil(result)
-    }
-    
     func testGetOptimizelyConfig_AfterDatafileUpdate() {
         class FakeDatafileHandler: DefaultDatafileHandler {
             let datafile = OTUtils.loadJSONDatafile("optimizely_config_datafile")
@@ -101,6 +72,49 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         XCTAssert(optimizelyConfig!.environmentKey == "production")
     }
 
+    func testGetOptimizelyConfig_Attributes() {
+        let optimizelyConfig = try! optimizely.getOptimizelyConfig()
+        let attributes = optimizelyConfig.attributes
+                
+        XCTAssertEqual(attributes.count, 3)
+        XCTAssertEqual(attributes[0].key, "gender")
+        XCTAssertEqual(attributes[0].id, "20348392978")
+    }
+
+    func testGetOptimizelyConfig_Audiences() {
+        let optimizelyConfig = try! optimizely.getOptimizelyConfig()
+        let audiences = optimizelyConfig.audiences
+                
+        XCTAssertEqual(audiences.count, 7)
+        XCTAssertEqual(audiences[0].id, "20348452263")
+        XCTAssertEqual(audiences[0].name, "adult")
+        XCTAssertEqual(audiences[0].conditions, "[\"and\",[\"or\",[\"or\",{\"match\":\"gt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}]]]")
+        XCTAssertEqual(audiences[1].id, "20348352569")
+        XCTAssertEqual(audiences[1].name, "kid")
+        XCTAssertEqual(audiences[1].conditions, "[\"and\",[\"or\",[\"or\",{\"match\":\"lt\",\"name\":\"age\",\"type\":\"custom_attribute\",\"value\":18}]]]")
+        XCTAssertEqual(audiences[2].id, "20348352999")
+        XCTAssertEqual(audiences[2].name, "for-test-only")
+        XCTAssertEqual(audiences[2].conditions, "[\"and\",{\"match\":\"eq\",\"name\":\"dummy\",\"type\":\"custom_attribute\",\"value\":1000}]")
+
+        XCTAssertEqual(audiences[3].name, "us")
+        XCTAssertEqual(audiences[4].name, "fr")
+        XCTAssertEqual(audiences[5].name, "female")
+        XCTAssertEqual(audiences[6].name, "male")
+    }
+
+    func testGetOptimizelyConfig_Events() {
+        let optimizelyConfig = try! optimizely.getOptimizelyConfig()
+        let events = optimizelyConfig.events
+                
+        XCTAssertEqual(events.count, 2)
+        XCTAssertEqual(events[0].id, "20346042538")
+        XCTAssertEqual(events[0].key, "send")
+        XCTAssertEqual(events[0].experimentIds, [])
+        XCTAssertEqual(events[1].id, "20350371588")
+        XCTAssertEqual(events[1].key, "buy")
+        XCTAssertEqual(events[1].experimentIds, ["9300000005843"])
+    }
+
     func testGetOptimizelyConfig_ExperimentsMap() {
         print("------------------------------------------------------")
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
@@ -111,6 +125,8 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
 
         let experiment1 = optimizelyConfig.experimentsMap["exp_with_audience"]!
         let experiment2 = optimizelyConfig.experimentsMap["experiment_4000"]!
+        
+        // Experiment: variationsMap
         
         XCTAssertEqual(experiment1.variationsMap.count, 2)
         XCTAssertEqual(experiment2.variationsMap.count, 2)
@@ -123,6 +139,11 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
 
         XCTAssertEqual(variation1.variablesMap.count, 0)
         XCTAssertEqual(variation2.variablesMap.count, 0)
+        
+        // Experiment: audiences
+        
+        XCTAssertEqual(experiment1.audiences, "")
+        XCTAssertEqual(experiment2.audiences, "\"adult\" OR \"female\"")
         print("------------------------------------------------------")
     }
     
@@ -145,8 +166,8 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         print("   Feature1 > Experiments: \(feature1.experimentsMap.keys)")
         print("   Feature2 > Experiments: \(feature2.experimentsMap.keys)")
 
-        let experiment1 = feature1.experimentsMap["experiment_4000"]!
-        let experiment2 = feature1.experimentsMap["experiment_8000"]!
+        var experiment1 = feature1.experimentsMap["experiment_4000"]!
+        var experiment2 = feature1.experimentsMap["experiment_8000"]!
         
         XCTAssertEqual(experiment1.variationsMap.count, 2)
         XCTAssertEqual(experiment2.variationsMap.count, 1)
@@ -181,9 +202,68 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         XCTAssertEqual(featureVariable.key, "i_42")
         XCTAssertEqual(featureVariable.type, "integer")
         XCTAssertEqual(featureVariable.value, "42")
+        
+        // FeatureFlag: experimentRules
+        
+        XCTAssertEqual(feature1.experimentRules.count, 2)
+        XCTAssertEqual(feature2.experimentRules.count, 1)
+
+        experiment1 = feature1.experimentRules[0]
+        experiment2 = feature1.experimentRules[1]
+        
+        XCTAssertEqual(experiment1.variationsMap.count, 2)
+        XCTAssertEqual(experiment2.variationsMap.count, 1)
+
+        // FeatureFlag: deliveryRules
+        
+        XCTAssertEqual(feature1.deliveryRules.count, 2)
+        XCTAssertEqual(feature2.deliveryRules.count, 0)
+        
+        experiment1 = feature1.deliveryRules[0]
+        experiment2 = feature1.deliveryRules[1]
+
+        XCTAssertEqual(experiment1.variationsMap.count, 1)
+        XCTAssertEqual(experiment2.variationsMap.count, 1)
+    
         print("------------------------------------------------------")
     }
 
+    // this test for full-content validation will be covered by FSC,
+    // but it'll be useful here especially for ObjC APIs which is not covered by FSC.
+    
+    func testGetOptimizelyConfig_Equal() {
+        if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, *) {
+            let optimizelyConfig = try! optimizely.getOptimizelyConfig()
+            
+            // compare dictionaries as strings (after key-sorted and remove all spaces)
+            guard let observedDict = optimizelyConfig.dict else {
+                XCTAssert(false)
+                return
+            }
+            
+            // compare dictionaries as strings (after key-sorted and remove all spaces)
+            let observedData = try! JSONSerialization.data(withJSONObject: observedDict, options: .sortedKeys)
+            let observedJSON = String(bytes: observedData, encoding: .utf8)!
+            let observed = observedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
+            
+            // pre-generated expected JSON string (NOTE: all dicts must be sorted by keys)
+            let expectedData = OTUtils.loadJSONFile("optimizely_config_expected")!
+            let expectedJSON = String(bytes: expectedData, encoding: .utf8)!
+            let expected = expectedJSON.filter{ !$0.isNewline && !$0.isWhitespace }
+            
+            XCTAssertEqual(observed, expected, "\n\n[Observed]\n\(observed)\n\n[Expected]\n\(expected)\n\n")
+        }
+    }
+    
+    func testGetOptimizelyConfig_InvalidDatafile() {
+        self.optimizely = OptimizelyClient(sdkKey: "12345")
+        let invalidDatafile = "{\"version\": \"4\"}"
+        try? self.optimizely.start(datafile: invalidDatafile)
+        
+        let result = try? self.optimizely.getOptimizelyConfig()
+        XCTAssertNil(result)
+    }
+    
 }
 
 // MARK: - Convert to JSON
@@ -195,7 +275,10 @@ extension OptimizelyConfig {
             "sdkKey": self.sdkKey,
             "environmentKey": self.environmentKey,
             "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
-            "featuresMap": self.featuresMap.mapValues{ $0.dict }
+            "featuresMap": self.featuresMap.mapValues{ $0.dict },
+            "attributes": self.attributes.map{ $0.dict },
+            "audiences": self.audiences.map{ $0.dict },
+            "events": self.events.map{ $0.dict }
         ]
                 
         if expected.count != Mirror(reflecting: self).children.count {
@@ -212,7 +295,8 @@ extension OptimizelyExperiment {
         return [
             "key": self.key,
             "id": self.id,
-            "variationsMap": self.variationsMap.mapValues{ $0.dict }
+            "variationsMap": self.variationsMap.mapValues{ $0.dict },
+            "audiences": self.audiences
         ]
     }
 }
@@ -222,6 +306,8 @@ extension OptimizelyFeature {
         return [
             "key": self.key,
             "id": self.id,
+            "experimentRules": self.experimentRules.map{ $0.dict },
+            "deliveryRules": self.deliveryRules.map{ $0.dict },
             "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
             "variablesMap": self.variablesMap.mapValues{ $0.dict }
         ]
@@ -255,3 +341,33 @@ extension OptimizelyVariable {
         ]
     }
 }
+
+extension OptimizelyAttribute {
+    var dict: [String: Any] {
+        return [
+            "key": self.key,
+            "id": self.id
+        ]
+    }
+}
+
+extension OptimizelyAudience {
+    var dict: [String: Any] {
+        return [
+            "name": self.name,
+            "id": self.id,
+            "conditions": self.conditions
+        ]
+    }
+}
+
+extension OptimizelyEvent {
+    var dict: [String: Any] {
+        return [
+            "key": self.key,
+            "id": self.id,
+            "experimentIds": self.experimentIds
+        ]
+    }
+}
+

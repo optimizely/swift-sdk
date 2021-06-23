@@ -71,6 +71,40 @@ enum ConditionHolder: Codable, Equatable {
             return try conditions.evaluate(project: project, attributes: attributes)
         }
     }
+    
+}
+
+// MARK: - serialization
+
+extension ConditionHolder {
+    
+    /// Returns a serialized string of audienceConditions
+    /// - each audienceId is converted into "AUDIENCE(audienceId)", which can be translated to correponding names later
+    ///
+    /// Examples:
+    /// - "123" => "AUDIENCE(123)"
+    /// - ["and", "123", "456"] => "AUDIENCE(123) AND AUDIENCE(456)"
+    /// - ["or", "123", ["and", "456", "789"]] => "AUDIENCE(123) OR ((AUDIENCE(456) AND AUDIENCE(789))"
+    var serialized: String {
+        switch self {
+        case .logicalOp:
+            return ""
+        case .leaf(.audienceId(let audienceId)):
+            return "AUDIENCE(\(audienceId))"
+        case .array(let conditions):
+            return "\(conditions.serialized)"
+        default:
+            return ""
+        }
+    }
+    
+    var isArray: Bool {
+        if case .array = self {
+            return true
+        } else {
+            return false
+        }
+    }
 }
 
 // MARK: - [ConditionHolder]
@@ -118,4 +152,40 @@ extension Array where Element == ConditionHolder {
         }
     }
     
+    /// Represents an array of ConditionHolder as a serialized string
+    ///
+    /// Examples:
+    /// - ["not", A] => "NOT A"
+    /// - ["and", A, B] => "A AND B"
+    /// - ["or", A, ["and", B, C]] => "A OR (B AND C)"
+    /// - [A] => "A"
+    var serialized: String {
+        var result = ""
+        
+        guard let firstItem = self.first else {
+            return "\(result)"
+        }
+
+        // The first item of the array is supposed to be a logical op (and, or, not)
+        // extract it first and join the rest of the array items with the logical op
+        switch firstItem {
+        case .logicalOp(.not):
+            result = (self.count < 2) ? "" : "NOT \(self[1].serialized)"
+        case .logicalOp(let op):
+            result = self.enumerated()
+                .filter { $0.offset > 0 }
+                .map {
+                    let desc = $0.element.serialized
+                    return ($0.element.isArray) ? "(\(desc))" : desc
+                }
+                .joined(separator: " " + "\(op)".uppercased() + " ")
+        case .leaf(.audienceId):
+            result = "\([[ConditionHolder.logicalOp(.or)], self].flatMap({$0}).serialized)"
+        default:
+            result = ""
+        }
+        
+        return "\(result)"
+    }
+
 }

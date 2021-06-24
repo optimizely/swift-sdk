@@ -69,7 +69,7 @@ jobs:
       branches:
         only:
           - master
-      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=14.4 NAME='iPhone 11'
       name: PLATFORM='iOS Simulator' OS=14.4 NAME='iPhone 11'
       install:
         #- gem install slather --no-document --quiet
@@ -97,7 +97,7 @@ jobs:
       env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
       name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
     - <<: *unittests
-      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.1 NAME='iPad Air'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPad Air'
       name: PLATFORM='iOS Simulator' OS=13.3 NAME='iPad Air'
     - <<: *unittests
       env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'

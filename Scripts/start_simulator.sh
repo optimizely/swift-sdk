@@ -14,6 +14,7 @@ if [ -z $simulator ]; then
     echo "The requested simulator ($PLATFORM $OS $NAME) cannot be found."
     #xcrun instruments -s device
     xcrun xctrace list devices
+    sleep 3
     exit 1
 fi
 

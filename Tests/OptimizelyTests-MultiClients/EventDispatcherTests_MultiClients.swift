@@ -35,7 +35,7 @@ class EventDispatcherTests_MultiClients: XCTestCase {
         dispatcher.batchSize = 999999999       // avoid early-fire by batch-filled
 
         let exp = dispatchEventsConcurrently(dispatcher: dispatcher,
-                                             numThreads: 100,
+                                             numThreads: 50,
                                              numEventsPerThread: (10 * stressFactor),
                                              maxRandomIntervalInUsecs: 1000000)
         wait(for: [exp], timeout: Double(30 * stressFactor))
@@ -46,7 +46,7 @@ class EventDispatcherTests_MultiClients: XCTestCase {
         dispatcher.timerInterval = 0           // no batch
 
         let exp = dispatchEventsConcurrently(dispatcher: dispatcher,
-                                             numThreads: 100,
+                                             numThreads: 50,
                                              numEventsPerThread: (10 * stressFactor),
                                              maxRandomIntervalInUsecs: 1000000)
         wait(for: [exp], timeout: Double(30 * stressFactor))
@@ -81,7 +81,7 @@ class EventDispatcherTests_MultiClients: XCTestCase {
     }
         
     func testConcurrentStartTimer() {
-        let numThreads = 100
+        let numThreads = 50
 
         let dispatcher = DumpEventDispatcher()
         dispatcher.timerInterval = 1

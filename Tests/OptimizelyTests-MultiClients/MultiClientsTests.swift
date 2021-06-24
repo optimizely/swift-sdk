@@ -31,8 +31,8 @@ class MultiClientsTests: XCTestCase {
     }
     
     func testMultiClients() {
-        let numThreads = 10
-        let numEventsPerThread = 100
+        let numThreads = 5
+        let numEventsPerThread = 50
         
         sdkKeys = OTUtils.makeRandomSdkKeys(numThreads)
 
@@ -81,8 +81,8 @@ class MultiClientsTests: XCTestCase {
     }
 
     func testMultiClients_sharedEventDispatcher() {
-        let numThreads = 10
-        let numEventsPerThread = 20
+        let numThreads = 5
+        let numEventsPerThread = 10
         
         sdkKeys = OTUtils.makeRandomSdkKeys(numThreads)
         let sharedEventDispatcher = DumpEventDispatcher(timerInterval: 0)

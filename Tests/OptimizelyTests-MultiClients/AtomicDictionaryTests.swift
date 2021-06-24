@@ -41,8 +41,8 @@ class AtomicDictionaryTests: XCTestCase {
     func testConcurrentReadWrite() {
         let a = AtomicDictionary<Int, Int>()
 
-        let numConcurrency = 100
-        let numIterations = 10000
+        let numConcurrency = 10
+        let numIterations = 1000
         let result = OTUtils.runConcurrent(count: numConcurrency) { idx in
             for i in 0..<numIterations {
                 a[i] = i + 1234

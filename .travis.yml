@@ -33,6 +33,7 @@ jobs:
         - BUILD_NUMBER=${TRAVIS_JOB_NUMBER/.}
         - TESTAPP_TAG=master
         - SDK_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
+
       cache: false
       install:
         - mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git && popd
@@ -42,7 +43,7 @@ jobs:
     - stage: 'Lint'
       language: swift
       os: osx
-      osx_image: xcode11.6
+      osx_image: xcode12.4
       install:
         - gem install cocoapods -v '1.9.3'
       script:
@@ -64,14 +65,16 @@ jobs:
       stage: 'Unit Tests'
       language: swift
       os: osx
-      osx_image: xcode11.6
+      osx_image: xcode12.4
       branches:
         only:
           - master
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
-      name: PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 11'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=14.4 NAME='iPhone 11'
+      name: PLATFORM='iOS Simulator' OS=14.4 NAME='iPhone 11'
       install:
-        - gem install slather --no-document --quiet
+        #- gem install slather --no-document --quiet
+        - gem install coveralls-lcov
+        #
         - gem install cocoapods -v '1.9.3'
         - pod repo update
         - pod install
@@ -80,10 +83,9 @@ jobs:
         # preload simulator
         - Scripts/start_simulator.sh
       script:
-        - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -workspace OptimizelySwiftSDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES | tee buildoutput | xcpretty && test ${PIPESTATUS[0]} -eq 0; fi
+        - Scripts/run_unit_tests.sh
       after_success:
-        # coverage collect for iOS only (.slather.yml)
-        - if [[ "$PLATFORM" == "iOS Simulator" ]]; then slather; fi
+        - Scripts/upload_coveralls.sh
         - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
       after_failure:
         # install travis artifacts uploader
@@ -91,20 +93,20 @@ jobs:
         - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
         - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
-      name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPhone 7 Plus'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 8'
+      name: PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 8'
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.1 NAME='iPad Air'
-      name: PLATFORM='iOS Simulator' OS=11.1 NAME='iPad Air'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPad Air'
+      name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPad Air'
     - <<: *unittests
-      env: SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
+      env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
       name: PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
 
     - stage: 'Prepare for release'
       name: Prepare for release
       language: swift
       os: osx
-      osx_image: xcode11.6
+      osx_image: xcode12.4
       env:
         - VERSION=3.8.0
       install:
@@ -121,7 +123,7 @@ jobs:
       name: Push to cocoapods.org
       language: minimal
       os: osx
-      osx_image: xcode11.6
+      osx_image: xcode12.4
       env:
         - VERSION=3.8.0
       install:

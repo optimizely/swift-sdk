@@ -12,7 +12,9 @@ echo ".devices.\"com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS
 simulator=$( xcrun simctl list --json devices | jq -f /tmp/jq_file | jq -r '.[] | select(.name==env.NAME) | .udid' )
 if [ -z $simulator ]; then
     echo "The requested simulator ($PLATFORM $OS $NAME) cannot be found."
-    xcrun instruments -s device
+    #xcrun instruments -s device
+    xcrun xctrace list devices
+    sleep 3
     exit 1
 fi
 

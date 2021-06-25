@@ -46,7 +46,7 @@ class AtomicArrayTests: XCTestCase {
     }
     
     func testConcurrentReadWrite() {
-        let num = 10000
+        let num = 1000
         let a = AtomicArray<Int>()
         (0..<num).forEach{ a.append($0) }
 
@@ -66,8 +66,8 @@ class AtomicArrayTests: XCTestCase {
     func testConcurrentAppend() {
         let a = AtomicArray<Int>()
 
-        let numConcurrency = 100
-        let numIterations = 10000
+        let numConcurrency = 10
+        let numIterations = 1000
         let result = OTUtils.runConcurrent(count: numConcurrency) { idx in
             (0..<numIterations).forEach{ a.append($0) }
             (0..<numIterations).forEach{ a.append(contentsOf: [$0+1000, $0+2000]) }

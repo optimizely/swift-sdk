@@ -242,7 +242,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         // use a shared DatafileHandler instance
         let mockHandler = MockDatafileHandler(statusCode: 200)
         
-        let numSdks = 100
+        let numSdks = 50
         sdkKeys = OTUtils.makeRandomSdkKeys(numSdks)
         
         var exps = [XCTestExpectation]()

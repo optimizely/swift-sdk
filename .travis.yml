@@ -83,7 +83,7 @@ jobs:
         # preload simulator
         - Scripts/start_simulator.sh
       script:
-        - Script/run_unit_tests.sh
+        - Scripts/run_unit_tests.sh
       after_success:
         - Scripts/upload_coveralls.sh
         - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725

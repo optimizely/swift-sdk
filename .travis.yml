@@ -85,7 +85,10 @@ jobs:
       script:
         - if [[ "$TRAVIS_BRANCH" == "master" ]]; then xcodebuild test -derivedDataPath $COVERAGE_DIR  -workspace OptimizelySwiftSDK.xcworkspace -scheme $SCHEME -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk $TEST_SDK -destination "platform=$PLATFORM,OS=$OS,name=$NAME" ONLY_ACTIVE_ARCH=YES | tee buildoutput | xcpretty && test ${PIPESTATUS[0]} -eq 0; fi
       after_success:
-        # coverage collect for PR and iPhone 11 only (avoid redundant reports)
+        # [coveralls]
+        # - exclude coverage for Test codes by setting OptimizelySwiftSDK-iOS scheme > Test > Options > Gather coverage for selected targets
+        # - report coverage for PR and iPhone 11 only (avoid redundant ones)
+        # - use Xcode12.4+ (older Xcode reports a wrong number)
         - if [[ "$TRAVIS_BRANCH" == "master" && "$PLATFORM" == "iOS Simulator" && "$NAME" == "iPhone 11" ]]; then Scripts/upload_coveralls.sh; fi
         - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
       after_failure:

@@ -46,7 +46,7 @@ class AtomicArrayTests: XCTestCase {
     }
     
     func testConcurrentReadWrite() {
-        let num = 10000
+        let num = 1000
         let a = AtomicArray<Int>()
         (0..<num).forEach{ a.append($0) }
 

@@ -79,7 +79,7 @@ jobs:
         - pod repo update
         - pod install
         # install jq without cleaning up
-        - HOMEBREW_NO_INSTALL_CLEANUP=true brew install jq
+        - HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
         # preload simulator
         - Scripts/start_simulator.sh
       script:

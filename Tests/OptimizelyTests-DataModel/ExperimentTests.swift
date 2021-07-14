@@ -170,6 +170,7 @@ extension ExperimentTests {
         ]
         
         let audiencesInput: [Any] = [
+            [],
             ["or", "1", "2"],
             ["and", "1", "2", "3"],
             ["not", "1"],
@@ -179,10 +180,13 @@ extension ExperimentTests {
             ["1", "2"],
             ["and", ["or", "1", "2"], "3"],
             ["and", ["or", "1", ["and", "2", "3"]], ["and", "11", ["or", "12", "13"]]],
+            ["not", ["and", "1", "2"]],
+            ["or", "1", "100000"],
             ["and", "and"]
         ]
         
         let audiencesOutput: [String] = [
+            "",
             "\"us\" OR \"female\"",
             "\"us\" AND \"female\" AND \"adult\"",
             "NOT \"us\"",
@@ -192,6 +196,8 @@ extension ExperimentTests {
             "\"us\" OR \"female\"",
             "(\"us\" OR \"female\") AND \"adult\"",
             "(\"us\" OR (\"female\" AND \"adult\")) AND (\"fr\" AND (\"male\" OR \"kid\"))",
+            "NOT (\"us\" AND \"female\")",
+            "\"us\" OR \"100000\"",
             ""
         ]
         

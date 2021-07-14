@@ -170,7 +170,12 @@ extension Array where Element == ConditionHolder {
         // extract it first and join the rest of the array items with the logical op
         switch firstItem {
         case .logicalOp(.not):
-            result = (self.count < 2) ? "" : "NOT \(self[1].serialized)"
+            if self.count < 2 {
+                result = ""
+            } else {
+                let desc = self[1].serialized
+                return "NOT " + (self[1].isArray ? "(\(desc))" : desc)
+            }
         case .logicalOp(let op):
             result = self.enumerated()
                 .filter { $0.offset > 0 }

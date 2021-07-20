@@ -50,12 +50,24 @@ extension OptimizelyClient {
         var decisionEventDispatched = false
         var enabled = false
         
-        let decisionResponse = decisionService.getVariationForFeature(config: config,
+        var decisionResponse: DecisionResponse<FeatureDecision>
+        if let variationKey = user.findForcedDecision(flagKey: key) {
+            decisionResponse = config.getForcedVariation(experimentKey: experiment.key, userId: userId)
+            
+            let info = LogMessage.userHasForcedVariation(userId, experiment.key, variation.key)
+            logger.d(info)
+            reasons.addInfo(info)
+        } else {
+            decisionResponse = decisionService.getVariationForFeature(config: config,
                                                                       featureFlag: feature,
                                                                       userId: userId,
                                                                       attributes: attributes,
                                                                       options: allOptions)
-        reasons.merge(decisionResponse.reasons)
+            reasons.merge(decisionResponse.reasons)
+        }
+        
+        
+        
         let decision = decisionResponse.result
         if let featureEnabled = decision?.variation.featureEnabled {
             enabled = featureEnabled

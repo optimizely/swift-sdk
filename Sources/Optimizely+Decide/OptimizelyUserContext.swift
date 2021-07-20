@@ -26,6 +26,13 @@ public class OptimizelyUserContext {
         return atomicAttributes.property ?? [:]
     }
     
+    struct SavedDecision {
+        let flagKey: String
+        let ruleKey: String?
+        var variationKey: String
+    }
+    var savedDecisions = AtomicArray<SavedDecision>()
+    
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
         return OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
@@ -127,6 +134,73 @@ public class OptimizelyUserContext {
                              userId: userId,
                              attributes: attributes,
                              eventTags: eventTags)
+    }
+    
+}
+
+// MARK: - ForcedDecisions
+
+extension OptimizelyUserContext {
+
+    public func setForcedDecision(flagKey: String,
+                                  ruleKey: String? = nil,
+                                  variationKey: String) -> Bool {
+        
+        guard let optimizely = self.optimizely, optimizely.config != nil else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return false
+        }
+        
+        if let index = savedDecisions.firstIndex(where: { $0.flagKey == flagKey && $0.ruleKey == ruleKey }) {
+            savedDecisions[index].variationKey = variationKey
+        } else {
+            savedDecisions.append(SavedDecision(flagKey: flagKey, ruleKey: ruleKey, variationKey: variationKey))
+        }
+        
+        return true
+    }
+    
+    public func getForcedDecision(flagKey: String, ruleKey: String? = nil) -> String? {
+        guard let optimizely = self.optimizely, optimizely.config != nil else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return nil
+        }
+        
+        return findForcedDecision(flagKey: flagKey, ruleKey: ruleKey)
+    }
+    
+    public func removeForcedDecision(flagKey: String, ruleKey: String? = nil) -> Bool {
+        guard let optimizely = self.optimizely, optimizely.config != nil else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return false
+        }
+        
+        if let index = savedDecisions.firstIndex(where: { $0.flagKey == flagKey && $0.ruleKey == ruleKey }) {
+            _ = savedDecisions.remove(at: index)
+            return true
+        }
+        
+        return false
+    }
+    
+    public func removeAllForcedDecisions() -> Bool {
+        guard let optimizely = self.optimizely, optimizely.config != nil else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return false
+        }
+
+        savedDecisions.removeAll()
+        return true
+    }
+    
+    func findForcedDecision(flagKey: String, ruleKey: String? = nil) -> String? {
+        guard savedDecisions.count > 0 else { return nil }
+
+        if let item = savedDecisions.filter({ $0.flagKey == flagKey && $0.ruleKey == ruleKey }).first {
+            return item.variationKey
+        }
+        
+        return nil
     }
 
 }

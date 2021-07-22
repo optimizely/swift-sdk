@@ -35,7 +35,9 @@ public class OptimizelyUserContext {
     
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
-        return OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
+        let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
+        userContext.savedDecisions = savedDecisions
+        return userContext
     }
     
     lazy var logger = OPTLoggerFactory.getLogger()
@@ -205,6 +207,8 @@ extension OptimizelyUserContext {
 
 }
 
+// MARK: - Equatable
+
 extension OptimizelyUserContext: Equatable {
     
     public static func == (lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
@@ -213,6 +217,8 @@ extension OptimizelyUserContext: Equatable {
     }
     
 }
+
+// MARK: - CustomStringConvertible
 
 extension OptimizelyUserContext: CustomStringConvertible {
     public var description: String {

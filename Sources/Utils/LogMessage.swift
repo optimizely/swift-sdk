@@ -38,6 +38,7 @@ enum LogMessage {
     case userBucketedIntoTargetingRule(_ userId: String, _ index: Int)
     case userBucketedIntoEveryoneTargetingRule(_ userId: String)
     case userNotBucketedIntoTargetingRule(_ userId: String, _ index: Int)
+    case userHasForcedDecision(_ userId: String, _ flagKey: String, _ ruleKey: String?, _ varKey: String)
     case userHasForcedVariation(_ userId: String, _ expKey: String, _ varKey: String)
     case userHasForcedVariationButInvalid(_ userId: String, _ expKey: String)
     case userHasNoForcedVariation(_ userId: String)
@@ -92,7 +93,10 @@ extension LogMessage: CustomStringConvertible {
         case .userDoesntMeetConditionsForTargetingRule(let userId, let index):  message = "User (\(userId)) does not meet conditions for targeting rule (\(index))."
         case .userBucketedIntoTargetingRule(let userId, let index):             message = "User (\(userId)) is in the traffic group of targeting rule (\(index))."
         case .userBucketedIntoEveryoneTargetingRule(let userId):                message = "User (\(userId)) meets conditions for targeting rule (Everyone Else)."
-        case .userNotBucketedIntoTargetingRule(let userId, let index):     message = "User (\(userId)) is not in the traffic group for targeting rule (\(index)). Checking (Everyone Else) rule now."
+        case .userNotBucketedIntoTargetingRule(let userId, let index):          message = "User (\(userId)) is not in the traffic group for targeting rule (\(index)). Checking (Everyone Else) rule now."
+        case .userHasForcedDecision(let userId, let flagKey, let ruleKey, let varKey):
+            let target = (ruleKey != nil) ? "flag (\(flagKey)) rule (\(ruleKey!))" : "flag (\(flagKey))"
+            message = "Variation (\(varKey)) is mapped to \(target) and user \(userId)) in the forced decision map."
         case .userHasForcedVariation(let userId, let expKey, let varKey):       message = "Variation (\(varKey)) is mapped to experiment (\(expKey)) and user \(userId)) in the forced variation map."
         case .userHasForcedVariationButInvalid(let userId, let expKey):         message = "Invalid variation is mapped to experiment (\(expKey)) and user (\(userId)) in the forced variation map."
         case .userHasNoForcedVariation(let userId):                             message = "User (\(userId)) is not in the forced variation map."

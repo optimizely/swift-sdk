@@ -88,6 +88,41 @@ class ProjectConfig {
         return project.experiments + project.groups.map { $0.experiments }.flatMap { $0 }
     }()
     
+    lazy var flagRulesMap: [String: [Experiment]] = {
+        var map = [String: [Experiment]]()
+        
+        project.featureFlags.forEach { flag in
+            var experiments = flag.experimentIds.compactMap { expId in
+                return allExperiments.filter { $0.id == expId }.first
+            }
+            let rollout = project.rollouts.filter { $0.id == flag.rolloutId }.first
+
+            experiments.append(contentsOf: rollout?.experiments ?? [])
+            map[flag.key] = experiments
+        }
+        
+        return map
+    }()
+    
+    lazy var flagVariationsMap: [String: [Variation]] = {
+        var map = [String: [Variation]]()
+        
+        flagRulesMap.forEach { (flagKey, rules) in
+            var variations = [Variation]()
+            rules.forEach { rule in
+                rule.variations.forEach { variation in
+                    if !variations.map({ $0.id }).contains(variation.id) {
+                        variations.append(variation)
+                    }
+                }
+            }
+            map[flagKey] = variations
+        }
+        
+        return map
+    }()
+
+    
     // MARK: - Init
     
     init(datafile: Data) throws {
@@ -281,6 +316,14 @@ extension ProjectConfig {
      */
     func isFeatureExperiment(id: String) -> Bool {
         return !(experimentFeatureMap[id]?.isEmpty ?? true)
+    }
+    
+    func getVariation(flagKey: String, variationKey: String) -> Variation? {
+        if let variations = flagVariationsMap[flagKey] {
+            return variations.filter{ $0.key == variationKey }.first
+        }
+        
+        return nil
     }
     
     /**

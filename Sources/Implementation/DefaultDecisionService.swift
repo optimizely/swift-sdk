@@ -17,7 +17,7 @@
 import Foundation
 
 struct FeatureDecision {
-    let experiment: Experiment
+    var experiment: Experiment?
     let variation: Variation
     let source: String
 }

@@ -50,25 +50,25 @@ extension OptimizelyClient {
         var decisionEventDispatched = false
         var enabled = false
         
-        var decisionResponse: DecisionResponse<FeatureDecision>
-        if let variationKey = user.findForcedDecision(flagKey: key) {
-            decisionResponse = config.getForcedVariation(experimentKey: experiment.key, userId: userId)
+        var decision: FeatureDecision?
+        if let variationKey = user.findForcedDecision(flagKey: key),
+           let variation = config.getVariation(flagKey: key, variationKey: variationKey) {
             
-            let info = LogMessage.userHasForcedVariation(userId, experiment.key, variation.key)
+            let info = LogMessage.userHasForcedDecision(userId, key, nil, variationKey)
             logger.d(info)
             reasons.addInfo(info)
+            
+            decision = FeatureDecision(experiment: nil, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
         } else {
-            decisionResponse = decisionService.getVariationForFeature(config: config,
-                                                                      featureFlag: feature,
-                                                                      userId: userId,
-                                                                      attributes: attributes,
-                                                                      options: allOptions)
+            let decisionResponse = decisionService.getVariationForFeature(config: config,
+                                                                          featureFlag: feature,
+                                                                          userId: userId,
+                                                                          attributes: attributes,
+                                                                          options: allOptions)
             reasons.merge(decisionResponse.reasons)
-        }
+            decision = decisionResponse.result
+       }
         
-        
-        
-        let decision = decisionResponse.result
         if let featureEnabled = decision?.variation.featureEnabled {
             enabled = featureEnabled
         }
@@ -105,7 +105,7 @@ extension OptimizelyClient {
         }
         
         // TODO: add ruleKey values when available later. Use a copy of experimentKey for now.
-        let ruleKey = decision?.experiment.key
+        let ruleKey = decision?.experiment?.key
         let reasonsToReport = reasons.toReport()
         
         sendDecisionNotification(userId: userId,

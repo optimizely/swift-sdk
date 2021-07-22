@@ -262,7 +262,7 @@ extension DecisionServiceTests_Features {
                                                                          featureFlag: featureFlag,
                                                                          userId: kUserId,
                                                                          attributes: kAttributesCountryMatch).result
-        XCTAssert(pair!.experiment.key == kExperimentKey)
+        XCTAssert(pair!.experiment?.key == kExperimentKey)
         XCTAssert(pair!.variation.key == kVariationKeyD)
         XCTAssert(pair!.source == Constants.DecisionSource.featureTest.rawValue)
     }
@@ -305,7 +305,7 @@ extension DecisionServiceTests_Features {
                                                                            userId: kUserId,
                                                                            attributes: kAttributesRolloutAge1Match).result
         
-        XCTAssert(pair?.experiment.id == kRolloutExperimentId)
+        XCTAssert(pair?.experiment?.id == kRolloutExperimentId)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyA)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
@@ -356,7 +356,7 @@ extension DecisionServiceTests_Features {
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesRolloutAge1Match).result
-        XCTAssert(pair?.experiment.id == kRolloutExperimentId3)
+        XCTAssert(pair?.experiment?.id == kRolloutExperimentId3)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyC)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
@@ -371,7 +371,7 @@ extension DecisionServiceTests_Features {
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesRolloutAge2Match).result
-        XCTAssert(pair?.experiment.id == kRolloutExperimentId2)
+        XCTAssert(pair?.experiment?.id == kRolloutExperimentId2)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyB)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
@@ -387,7 +387,7 @@ extension DecisionServiceTests_Features {
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
                                                                            attributes: kAttributesRolloutAge1Match).result
-        XCTAssert(pair?.experiment.id == kRolloutExperimentId)
+        XCTAssert(pair?.experiment?.id == kRolloutExperimentId)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyA)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
@@ -434,7 +434,7 @@ extension DecisionServiceTests_Features {
                                                                userId: kUserId,
                                                                attributes: kAttributesCountryMatch).result
         XCTAssertNotNil(pair)
-        XCTAssert(pair!.experiment.key == kExperimentKey)
+        XCTAssert(pair!.experiment?.key == kExperimentKey)
         XCTAssert(pair!.variation.key == kVariationKeyD)
     }
     
@@ -457,7 +457,7 @@ extension DecisionServiceTests_Features {
                                                                userId: kUserId,
                                                                attributes: kAttributesCountryNotMatch).result
         XCTAssertNotNil(pair)
-        XCTAssert(pair!.experiment.id == kRolloutExperimentId3)
+        XCTAssert(pair!.experiment?.id == kRolloutExperimentId3)
         XCTAssert(pair!.variation.key == kRolloutVariationKeyC)
     }
     

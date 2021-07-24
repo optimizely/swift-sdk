@@ -122,7 +122,6 @@ class ProjectConfig {
         return map
     }()
 
-    
     // MARK: - Init
     
     init(datafile: Data) throws {
@@ -320,7 +319,7 @@ extension ProjectConfig {
     
     func getVariation(flagKey: String, variationKey: String) -> Variation? {
         if let variations = flagVariationsMap[flagKey] {
-            return variations.filter{ $0.key == variationKey }.first
+            return variations.filter { $0.key == variationKey }.first
         }
         
         return nil

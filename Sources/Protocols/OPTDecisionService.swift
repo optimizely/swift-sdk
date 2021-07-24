@@ -41,8 +41,7 @@ protocol OPTDecisionService {
      */
     func getVariation(config: ProjectConfig,
                       experiment: Experiment,
-                      userId: String,
-                      attributes: OptimizelyAttributes,
+                      user: OptimizelyUserContext,
                       options: [OptimizelyDecideOption]?) -> DecisionResponse<Variation>
     
     /**
@@ -57,8 +56,7 @@ protocol OPTDecisionService {
      */
     func getVariationForFeature(config: ProjectConfig,
                                 featureFlag: FeatureFlag,
-                                userId: String,
-                                attributes: OptimizelyAttributes,
+                                user: OptimizelyUserContext,
                                 options: [OptimizelyDecideOption]?) -> DecisionResponse<FeatureDecision>
     
 }

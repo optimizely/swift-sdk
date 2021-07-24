@@ -31,6 +31,12 @@ extension OptimizelyClient {
         return OptimizelyUserContext(optimizely: self, userId: userId, attributes: attributes)
     }
     
+    func createUserContext(userId: String,
+                           attributes: OptimizelyAttributes? = nil) -> OptimizelyUserContext {
+        return createUserContext(userId: userId,
+                                 attributes: (attributes ?? [:]) as [String: Any])
+    }
+    
     func decide(user: OptimizelyUserContext,
                 key: String,
                 options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
@@ -62,8 +68,7 @@ extension OptimizelyClient {
         } else {
             let decisionResponse = decisionService.getVariationForFeature(config: config,
                                                                           featureFlag: feature,
-                                                                          userId: userId,
-                                                                          attributes: attributes,
+                                                                          user: user,
                                                                           options: allOptions)
             reasons.merge(decisionResponse.reasons)
             decision = decisionResponse.result

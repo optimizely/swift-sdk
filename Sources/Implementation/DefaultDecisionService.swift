@@ -38,11 +38,12 @@ class DefaultDecisionService: OPTDecisionService {
     
     func getVariation(config: ProjectConfig,
                       experiment: Experiment,
-                      userId: String,
-                      attributes: OptimizelyAttributes,
+                      user: OptimizelyUserContext,
                       options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
         let reasons = DecisionReasons(options: options)
         
+        let userId = user.userId
+        let attributes = user.attributes
         let experimentId = experiment.id
         
         // Acquire bucketingId .
@@ -188,8 +189,7 @@ class DefaultDecisionService: OPTDecisionService {
     
     func getVariationForFeature(config: ProjectConfig,
                                 featureFlag: FeatureFlag,
-                                userId: String,
-                                attributes: OptimizelyAttributes,
+                                user: OptimizelyUserContext,
                                 options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
         
@@ -199,8 +199,7 @@ class DefaultDecisionService: OPTDecisionService {
         // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
         var decisionResponse = getVariationForFeatureExperiment(config: config,
                                                                 featureFlag: featureFlag,
-                                                                userId: userId,
-                                                                attributes: attributes,
+                                                                user: user,
                                                                 options: options)
         reasons.merge(decisionResponse.reasons)
         if let decision = decisionResponse.result {
@@ -211,8 +210,7 @@ class DefaultDecisionService: OPTDecisionService {
         // Check if the feature flag has rollout and the user is bucketed into one of it's rules
         decisionResponse = getVariationForFeatureRollout(config: config,
                                                          featureFlag: featureFlag,
-                                                         userId: userId,
-                                                         attributes: attributes,
+                                                         user: user,
                                                          options: options)
         reasons.merge(decisionResponse.reasons)
         if let decision = decisionResponse.result {
@@ -220,13 +218,11 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         return DecisionResponse(result: nil, reasons: reasons)
-        
     }
     
     func getVariationForFeatureExperiment(config: ProjectConfig,
                                           featureFlag: FeatureFlag,
-                                          userId: String,
-                                          attributes: OptimizelyAttributes,
+                                          user: OptimizelyUserContext,
                                           options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
         
@@ -241,10 +237,17 @@ class DefaultDecisionService: OPTDecisionService {
         // Evaluate each experiment ID and return the first bucketed experiment variation
         for experimentId in experimentIds {
             if let experiment = config.getExperiment(id: experimentId) {
+                
+                findForcedDecision(config: config,
+                                   flagKey: featureFlag.key,
+                                   ruleKey: experiment.key,
+                                   user: user)
+                
+                
+                
                 let decisionResponse = getVariation(config: config,
                                                     experiment: experiment,
-                                                    userId: userId,
-                                                    attributes: attributes,
+                                                    user: user,
                                                     options: options)
                 reasons.merge(decisionResponse.reasons)
                 if let variation = decisionResponse.result {
@@ -257,13 +260,26 @@ class DefaultDecisionService: OPTDecisionService {
         return DecisionResponse(result: nil, reasons: reasons)
     }
     
+    func findForcedDecision(config: ProjectConfig,
+                            flagKey: String,
+                            ruleKey: String,
+                            user: OptimizelyUserContext) -> DecisionResponse<Variation> {
+        if let variationKey = user.findForcedDecision(flagKey: flagKey, ruleKey: ruleKey),
+           let variation = config.getVariation(flagKey: flagKey, variationKey: variationKey) {
+            return variation
+        } else {
+            return nil
+        }
+    }
+    
     func getVariationForFeatureRollout(config: ProjectConfig,
                                        featureFlag: FeatureFlag,
-                                       userId: String,
-                                       attributes: OptimizelyAttributes,
+                                       user: OptimizelyUserContext,
                                        options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
         
+        let userId = user.userId
+        let attributes = user.attributes
         let bucketingId = getBucketingId(userId: userId, attributes: attributes)
         
         let rolloutId = featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces)

@@ -26,7 +26,7 @@ class DefaultDecisionService: OPTDecisionService {
     
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
-    lazy var logger = OPTLoggerFactory.getLogger()
+    let logger = OPTLoggerFactory.getLogger()
     
     // user-profile-service read-modify-write lock for supporting multiple clients
     static let upsRMWLock = DispatchQueue(label: "ups-rmw")

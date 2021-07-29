@@ -23,7 +23,7 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
     let lock: DispatchQueue
     let async: Bool
     public let url: URL
-    lazy var logger: OPTLogger? = OPTLoggerFactory.getLogger()
+    let logger: OPTLogger? = OPTLoggerFactory.getLogger()
     
     public init(storeName: String, async: Bool = true) {
         self.async = async

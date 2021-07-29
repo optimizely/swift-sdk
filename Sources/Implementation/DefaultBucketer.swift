@@ -22,7 +22,7 @@ class DefaultBucketer: OPTBucketer {
     let MAX_HASH_SEED: UInt64 = 1
     var MAX_HASH_VALUE: UInt64?
     
-    private lazy var logger = OPTLoggerFactory.getLogger()
+    private let logger = OPTLoggerFactory.getLogger()
     
     init() {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32

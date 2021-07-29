@@ -21,7 +21,7 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     
     // lazy load the logger from the logger factory.
-    lazy var logger = OPTLoggerFactory.getLogger()
+    let logger = OPTLoggerFactory.getLogger()
     // the timers for all sdk keys are atomic to allow for thread access.
     var timers = AtomicProperty(property: [String: (timer: Timer?, interval: Int)]())
     

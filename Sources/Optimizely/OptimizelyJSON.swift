@@ -18,7 +18,7 @@ import Foundation
 
 public class OptimizelyJSON: NSObject {
     
-    private lazy var logger = OPTLoggerFactory.getLogger()
+    private let logger = OPTLoggerFactory.getLogger()
     private typealias ValueHandler<T> = (Any) -> T?
     var payload: String?
     var map = [String: Any]()

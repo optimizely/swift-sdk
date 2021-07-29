@@ -90,7 +90,7 @@ open class OptimizelyClient: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
-        self.logger = OPTLoggerFactory.getLogger()
+        self.logger = HandlerRegistryService.shared.injectLogger()
         self.eventDispatcher = HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
         self.datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)

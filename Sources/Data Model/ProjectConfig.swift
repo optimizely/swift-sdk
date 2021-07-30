@@ -18,7 +18,11 @@ import Foundation
 
 class ProjectConfig {
     
-    var project: Project!
+    var project: Project! {
+        didSet {
+            updateProjectDependentProps()
+        }
+    }
     let logger = OPTLoggerFactory.getLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
@@ -38,18 +42,19 @@ class ProjectConfig {
     // MARK: - Init
     
     init(datafile: Data) throws {
+        var project: Project
         do {
-            self.project = try JSONDecoder().decode(Project.self, from: datafile)
-            self.setAllProps()
-            
-            ProjectConfig.observer.update(project: project)
+            project = try JSONDecoder().decode(Project.self, from: datafile)
         } catch {
             throw OptimizelyError.dataFileInvalid
         }
         
-        if !isValidVersion(version: self.project.version) {
-            throw OptimizelyError.dataFileVersionInvalid(self.project.version)
+        if !isValidVersion(version: project.version) {
+            throw OptimizelyError.dataFileVersionInvalid(project.version)
         }
+
+        defer { self.project = project }  // deferred-init will call "didSet"
+        ProjectConfig.observer.update(project: project)
     }
     
     convenience init(datafile: String) throws {
@@ -58,7 +63,7 @@ class ProjectConfig {
     
     init() {}
     
-    func setAllProps() {
+    func updateProjectDependentProps() {
         self.allExperiments = project.experiments + project.groups.map { $0.experiments }.flatMap { $0 }
         
         self.experimentKeyMap = {

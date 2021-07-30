@@ -160,8 +160,7 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testGetAllFeatureVariablesWithFeatureVariables() {
-        let config = self.optimizely.config
-        config?.allExperiments[0].variations[0].variables?.append(contentsOf:[
+        self.optimizely.config?.project.experiments[0].variations[0].variables?.append(contentsOf:[
             Variable(id: "2687470095", value: "43"),
             Variable(id: "2689280165", value: "4.3"),
             Variable(id: "2689660112", value: "false"),
@@ -169,7 +168,7 @@ class OptimizelyClientTests_Valid: XCTestCase {
             Variable(id: "2696150067", value: "{\"value\":2}")
             ]
         )
-        self.optimizely.config = config
+        
         let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
                                                                          userId: kUserId)
         let variablesMap = optimizelyJSON!.toMap()
@@ -181,8 +180,7 @@ class OptimizelyClientTests_Valid: XCTestCase {
     }
     
     func testGetAllFeatureVariablesFeatureDisabled() {
-        let config = self.optimizely.config
-        config?.allExperiments[0].variations[0].variables?.append(contentsOf:[
+        self.optimizely.config?.project.experiments[0].variations[0].variables?.append(contentsOf:[
             Variable(id: "2687470095", value: "43"),
             Variable(id: "2689280165", value: "4.3"),
             Variable(id: "2689660112", value: "false"),
@@ -190,8 +188,8 @@ class OptimizelyClientTests_Valid: XCTestCase {
             Variable(id: "2696150067", value: "{\"value\":2}")
             ]
         )
-        self.optimizely.config = config
-        self.optimizely.config?.allExperiments[0].variations[0].featureEnabled = false
+        self.optimizely.config?.project.experiments[0].variations[0].featureEnabled = false
+
         let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
                                                                          userId: kUserId)
         let variablesMap = optimizelyJSON!.toMap()

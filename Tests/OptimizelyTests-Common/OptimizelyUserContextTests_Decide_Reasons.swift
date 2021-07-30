@@ -416,14 +416,15 @@ extension OptimizelyUserContextTests_Decide_Reasons {
     }
     
     func testDecideReasons_userNotBucketedIntoAnyExperimentInGroup() {
-        let featureKey = "feature_3"
-        let experimentKey = "group_exp_1"
         let groupId = "13142870430"
-        setExperimentForFeatureTest(featureKey: featureKey, experimentKey: experimentKey)
-
         var group = optimizely.config!.getGroup(id: groupId)!
         group.trafficAllocation = []
         optimizely.config!.project.groups = [group]
+
+        // set up temp feature-experiments AFTER config.project updated (otherwise overwritten)
+        let featureKey = "feature_3"
+        let experimentKey = "group_exp_1"
+        setExperimentForFeatureTest(featureKey: featureKey, experimentKey: experimentKey)
 
         let decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoAnyExperimentInGroup(kUserId,
@@ -431,18 +432,18 @@ extension OptimizelyUserContextTests_Decide_Reasons {
     }
     
     func testDecideReasons_userBucketedIntoInvalidExperiment() {
-        let featureKey = "feature_3"
-        let experimentKey = "group_exp_1"
-        let groupId = "13142870430"
-        setExperimentForFeatureTest(featureKey: featureKey, experimentKey: experimentKey)
-
         let experimentIdInvalid = "invalid"
-
+        let groupId = "13142870430"
         var group = optimizely.config!.getGroup(id: groupId)!
         var trafficAllocation = group.trafficAllocation[0]
         trafficAllocation.entityId = experimentIdInvalid
         group.trafficAllocation = [trafficAllocation]
         optimizely.config!.project.groups = [group]
+
+        // set up temp feature-experiments AFTER config.project updated (otherwise overwritten)
+        let featureKey = "feature_3"
+        let experimentKey = "group_exp_1"
+        setExperimentForFeatureTest(featureKey: featureKey, experimentKey: experimentKey)
 
         let decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoInvalidExperiment(experimentIdInvalid).reason))

@@ -67,7 +67,8 @@ class ProjectConfigTests: XCTestCase {
         // check experimentFeatureMap extracted properly
         
         let model: Project = try! OTUtils.model(from: projectData)
-        let projectConfig = try! ProjectConfig(project: model)
+        let projectConfig = ProjectConfig()
+        projectConfig.project = model
         
         let featureMap = projectConfig.experimentFeatureMap
         print(featureMap)

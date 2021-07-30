@@ -448,21 +448,13 @@ class DecisionListenerTests: XCTestCase {
         
         for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
             if featureFlag.key == kFeatureKey {
-                
-                self.optimizely.config = {
-                    var project = self.optimizely.config!.project!
-                    
-                    var flag = featureFlag
-                    flag.variables.append(FeatureVariable(id: "2689660112",
-                                                          key: "b_true",
-                                                          type: "invalid",
-                                                          subType: nil,
-                                                          defaultValue: "true"))
-                    project.featureFlags[index] = flag
-
-                    return try! ProjectConfig(project: project)
-                }()
-
+                var flag = featureFlag
+                flag.variables.append(FeatureVariable(id: "2689660112",
+                                                      key: "b_true",
+                                                      type: "invalid",
+                                                      subType: nil,
+                                                      defaultValue: "true"))
+                self.optimizely.config?.project.featureFlags[index] = flag
                 break
             }
         }
@@ -1153,21 +1145,13 @@ extension DecisionListenerTests {
 
         for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
             if featureFlag.key == kFeatureKey {
-                
-                self.optimizely.config = {
-                    var project = self.optimizely.config!.project!
-                    
-                    var flag = featureFlag
-                    flag.variables.append(FeatureVariable(id: "2689660112",
-                                                          key: kVariableKeyBool,
-                                                          type: "invalid",
-                                                          subType: nil,
-                                                          defaultValue: "true"))
-                    project.featureFlags[index] = flag
-
-                    return try! ProjectConfig(project: project)
-                }()
-
+                var flag = featureFlag
+                flag.variables.append(FeatureVariable(id: "2689660112",
+                                                      key: kVariableKeyBool,
+                                                      type: "invalid",
+                                                      subType: nil,
+                                                      defaultValue: "true"))
+                self.optimizely.config?.project.featureFlags[index] = flag
                 break
             }
         }
@@ -1231,9 +1215,6 @@ class FakeManager: OptimizelyClient {
                   defaultLogLevel: OptimizelyLogLevel? = nil,
                   defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
         
-        // clean up shared handlers
-        HandlerRegistryService.shared.removeAll()
-
         super.init(sdkKey: sdkKey,
                    logger: logger,
                    eventDispatcher: eventDispatcher,

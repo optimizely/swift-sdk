@@ -37,25 +37,19 @@ class ProjectConfig {
     
     // MARK: - Init
     
-    init(project: Project) throws {
-        guard isValidVersion(version: project.version) else {
-            throw OptimizelyError.dataFileVersionInvalid(project.version)
-        }
-
-        self.project = project
-        self.setAllProps()
-        ProjectConfig.observer.update(project: project)
-    }
-
-    convenience init(datafile: Data) throws {
-        var project: Project
+    init(datafile: Data) throws {
         do {
-            project = try JSONDecoder().decode(Project.self, from: datafile)
+            self.project = try JSONDecoder().decode(Project.self, from: datafile)
+            self.setAllProps()
+            
+            ProjectConfig.observer.update(project: project)
         } catch {
             throw OptimizelyError.dataFileInvalid
         }
         
-        try self.init(project: project)
+        if !isValidVersion(version: self.project.version) {
+            throw OptimizelyError.dataFileVersionInvalid(self.project.version)
+        }
     }
     
     convenience init(datafile: String) throws {

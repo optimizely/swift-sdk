@@ -90,21 +90,14 @@ class OptimizelyClientTests_Others: XCTestCase {
     }
     
     func testGetAllFeatureVariables_InvalidType() {
-        self.optimizely!.config = {
-            var project = self.optimizely.config!.project!
-            
-            for (index, featureFlag) in project.featureFlags.enumerated() {
-                if featureFlag.key == kFeatureKey {
-                    var flag = featureFlag
-                    flag.variables.append(FeatureVariable(id: "2689660113", key: "valid_key", type: "invalid_type", subType: nil, defaultValue: "true"))
-                    project.featureFlags[index] = flag
-                    break
-                }
+        for (index, featureFlag) in self.optimizely.config!.project!.featureFlags.enumerated() {
+            if featureFlag.key == kFeatureKey {
+                var flag = featureFlag
+                flag.variables.append(FeatureVariable(id: "2689660113", key: "valid_key", type: "invalid_type", subType: nil, defaultValue: "true"))
+                self.optimizely.config?.project.featureFlags[index] = flag
+                break
             }
-
-            return try! ProjectConfig(project: project)
-        }()
-
+        }
         let optimizelyJSON = try? self.optimizely.getAllFeatureVariables(featureKey: kFeatureKey,
                                                                          userId: kUserId)
         let variablesMap = optimizelyJSON!.toMap()

@@ -116,13 +116,7 @@ class BucketTests_GroupToExp: XCTestCase {
 extension BucketTests_GroupToExp {
     
     func testBucketGroup() {
-        self.config = {
-            var project = self.optimizely.config!.project!
-            
-            project.groups = [try! OTUtils.model(from: sampleGroupData)]
-            
-            return try! ProjectConfig(project: project)
-        }()
+        self.config.project.groups = [try! OTUtils.model(from: sampleGroupData)]
 
         let tests = [["userId": "ppid1", "expect": kExperimentKey1],
                      ["userId": "ppid2", "expect": kExperimentKey3],

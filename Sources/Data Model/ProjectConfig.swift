@@ -18,7 +18,7 @@ import Foundation
 
 class ProjectConfig {
     
-    var project: Project! 
+    var project: Project!
     let logger = OPTLoggerFactory.getLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]

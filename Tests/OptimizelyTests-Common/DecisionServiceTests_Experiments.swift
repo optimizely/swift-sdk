@@ -236,11 +236,15 @@ extension DecisionServiceTests_Experiments {
     func testGetVariationStepsWithForcedVariations() {
         experiment = try! OTUtils.model(from: sampleExperimentData)
         
-        self.config = OTUtils.updateProjectConfig(config) { project in
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
             project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
             experiment.audienceIds = [kAudienceIdInvalid]
             project.experiments = [experiment]
-        }
+            
+            return try! ProjectConfig(project: project)
+        }()
         
         // (0) initial - no variation mapped for invalid audience id
         

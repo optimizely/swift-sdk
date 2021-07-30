@@ -145,18 +145,6 @@ class OTUtils {
         }
     }
     
-    // MARK: - OptimizelyClient
-    
-    
-    /// create a new ProjectConfig with project contents replaced
-    /// - config.project can be replaced easily, but associated
-    static func updateProjectConfig(_ config: ProjectConfig,
-                                    task: (inout Project) -> Void) -> ProjectConfig {
-        var project = config.project!
-        task(&project)
-        return try! ProjectConfig(project: project)
-    }
-    
     // MARK: - HandlerRegistryService
     
     static func bindLoggerForTest(_ level: OptimizelyLogLevel? = nil) {

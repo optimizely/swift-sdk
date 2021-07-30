@@ -227,7 +227,11 @@ class DataStoreTests: XCTestCase {
         
         let value = datastore.getItem(forKey: "testUserDefaultsTooBig") as? [Data]
         XCTAssert(value == nil)
-        XCTAssert(logger.messages.last!.contains("Save to User Defaults error: testUserDefaultsTooBig is too big to save size"))
+        if let lastMessage = logger.messages.last {
+            XCTAssert(lastMessage.contains("Save to User Defaults error: testUserDefaultsTooBig is too big to save size"))
+        } else {
+            XCTFail()
+        }
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
  }

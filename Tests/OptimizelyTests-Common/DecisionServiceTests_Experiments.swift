@@ -215,7 +215,7 @@ class DecisionServiceTests_Experiments: XCTestCase {
         let binder: Binder = Binder<OPTLogger>(service: OPTLogger.self, factory: { () -> OPTLogger? in
             return self.mockLogger
         })
-
+        
         HandlerRegistryService.shared.registerBinding(binder: binder)
         
         MockLogger.logFound = false
@@ -234,11 +234,17 @@ class DecisionServiceTests_Experiments: XCTestCase {
 extension DecisionServiceTests_Experiments {
     
     func testGetVariationStepsWithForcedVariations() {
-        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
-        
         experiment = try! OTUtils.model(from: sampleExperimentData)
-        experiment.audienceIds = [kAudienceIdInvalid]
-        self.config.project.experiments = [experiment]
+        
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+            experiment.audienceIds = [kAudienceIdInvalid]
+            project.experiments = [experiment]
+            
+            return try! ProjectConfig(project: project)
+        }()
         
         // (0) initial - no variation mapped for invalid audience id
         
@@ -250,8 +256,14 @@ extension DecisionServiceTests_Experiments {
         
         // (1) non-running experiement should return nil
         
-        experiment.status = .paused
-        self.config.project.experiments = [experiment]
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            experiment.status = .paused
+            project.experiments = [experiment]
+            
+            return try! ProjectConfig(project: project)
+        }()
         
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
@@ -260,19 +272,31 @@ extension DecisionServiceTests_Experiments {
         XCTAssertNil(variation, "not running experiments return nil")
         
         // recover to running state for following tests
-        experiment.status = .running
-        self.config.project.experiments = [experiment]
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            experiment.status = .running
+            project.experiments = [experiment]
+            
+            return try! ProjectConfig(project: project)
+        }()
         
         // (2) local forcedVariation overrides
         
-        // local forcedVariation
-        _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
-                                               userId: kUserId,
-                                               variationKey: kVariationKeyA)
-        
         // remote forcedVariation (different map for the same user)
-        experiment.forcedVariations = [kUserId: kVariationKeyB]
-        self.config.project.experiments = [experiment]
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            experiment.forcedVariations = [kUserId: kVariationKeyB]
+            project.experiments = [experiment]
+            
+            return try! ProjectConfig(project: project)
+        }()
+        
+        // local forcedVariation
+        _ = self.config.setForcedVariation(experimentKey: kExperimentKey,
+                                           userId: kUserId,
+                                           variationKey: kVariationKeyA)
         
         // local forcedVariation wins
         variation = self.decisionService.getVariation(config: config,
@@ -284,9 +308,9 @@ extension DecisionServiceTests_Experiments {
         // (3) remote whitelisting overrides
         
         // reset local forcedVariation
-        _ = self.optimizely.setForcedVariation(experimentKey: kExperimentKey,
-                                               userId: kUserId,
-                                               variationKey: nil)
+        _ = self.config.setForcedVariation(experimentKey: kExperimentKey,
+                                           userId: kUserId,
+                                           variationKey: nil)
         
         // no local variation, so now remote variation works
         variation = self.decisionService.getVariation(config: config,
@@ -296,8 +320,14 @@ extension DecisionServiceTests_Experiments {
         XCTAssert(variation!.key == kVariationKeyB, "remote forcedVariation should override")
         
         // reset remote forcedVariations as well
-        experiment.forcedVariations = [:]
-        self.config.project.experiments = [experiment]
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            experiment.forcedVariations = [:]
+            project.experiments = [experiment]
+            
+            return try! ProjectConfig(project: project)
+        }()
         
         // (4) UserProfileService
         

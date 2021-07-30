@@ -236,19 +236,24 @@ class DecisionServiceTests_Features: XCTestCase {
         
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
-        self.config = self.optimizely.config!
         self.decisionService = (optimizely.decisionService as! DefaultDecisionService)
         
-        // project config
+        // modify project config
         
-        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
-        
-        experiment = try! OTUtils.model(from: sampleExperimentData)
-        experiment.audienceIds = [kAudienceIdCountry]
-        self.config.project.experiments = [experiment]
-        
-        featureFlag = try! OTUtils.model(from: sampleFeatureFlagData)
-        self.config.project.featureFlags = [featureFlag]
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+            
+            experiment = try! OTUtils.model(from: sampleExperimentData)
+            experiment.audienceIds = [kAudienceIdCountry]
+            project.experiments = [experiment]
+            
+            featureFlag = try! OTUtils.model(from: sampleFeatureFlagData)
+            project.featureFlags = [featureFlag]
+            
+            return try! ProjectConfig(project: project)
+        }()
     }
     
 }
@@ -295,11 +300,17 @@ extension DecisionServiceTests_Features {
     
     func testGetVariationForFeatureRollout() {
         // rollout set
-        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
-        featureFlag.rolloutId = kRolloutId
-        self.config.project.featureFlags = [featureFlag]
-        
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
@@ -346,12 +357,18 @@ extension DecisionServiceTests_Features {
     }
     
     func testGetVariationForFeatureRolloutFallbackRule() {
-        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
-        self.config.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
-        featureFlag.rolloutId = kRolloutId
-        self.config.project.featureFlags = [featureFlag]
-        
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+            project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
@@ -362,11 +379,17 @@ extension DecisionServiceTests_Features {
     }
     
     func testGetVariationForFeatureRolloutEvaluatesNextIfAudienceEvaluationFails() {
-        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
-        featureFlag.rolloutId = kRolloutId
-        self.config.project.featureFlags = [featureFlag]
-        
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
@@ -377,12 +400,18 @@ extension DecisionServiceTests_Features {
     }
     
     func testGetVariationForFeatureRolloutWithSameAudiencesReturnsFirstVariation() {
-        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        self.config.project.rollouts[0].experiments[1].audienceIds = [kRolloutAudienceIdAge1]
-        self.config.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
-        featureFlag.rolloutId = kRolloutId
-        self.config.project.featureFlags = [featureFlag]
-        
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            project.rollouts[0].experiments[1].audienceIds = [kRolloutAudienceIdAge1]
+            project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
                                                                            userId: kUserId,
@@ -447,10 +476,16 @@ extension DecisionServiceTests_Features {
     
     func testGetVariationForFeatureWhenExperimentNotMatchAndRolloutExist() {
         // rollout set
-        self.config.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        featureFlag.rolloutId = kRolloutId
-        self.config.project.featureFlags = [featureFlag]
-        
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let pair = self.decisionService.getVariationForFeature(config: config,
                                                                featureFlag: featureFlag,
                                                                userId: kUserId,

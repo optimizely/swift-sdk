@@ -137,12 +137,17 @@ extension BucketTests_BucketVariation {
     }
     
     func testBucketExperimentWithGroupMatched() {
-        experiment = try! OTUtils.model(from: sampleExperimentData)
-        self.config.project.experiments = [experiment]
-        
-        let group: Group =  try! OTUtils.model(from: sampleGroupData)
-        self.config.project.groups = [group]
-        
+        self.config = {
+            var project = self.optimizely.config!.project!
+            
+            experiment = try! OTUtils.model(from: sampleExperimentData)
+            project.experiments = [experiment]
+            let group: Group =  try! OTUtils.model(from: sampleGroupData)
+            project.groups = [group]
+            
+            return try! ProjectConfig(project: project)
+        }()
+
         let tests = [["userId": "ppid1", "expect": kVariationKeyB],
                      ["userId": "ppid2", "expect": kVariationKeyD],
                      ["userId": "ppid3", "expect": kVariationKeyA],

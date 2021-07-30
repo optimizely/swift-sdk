@@ -192,30 +192,48 @@ class OptimizelyClientTests_Variables: XCTestCase {
     }
     
     func testFeatureVariableWhenFeatureEnabled() {
-        var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
-        experiment.variations[0].featureEnabled = true
-        optimizely.config!.project.experiments = [experiment]
-        
+        optimizely.config = {
+            var project = self.optimizely.config!.project!
+            
+            var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
+            experiment.variations[0].featureEnabled = true
+            project.experiments = [experiment]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
         
         XCTAssertEqual(value, kVariableValueA)
     }
     
     func testFeatureVariableWhenFeatureDisabled() {
-        var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
-        experiment.variations[0].featureEnabled = false
-        optimizely.config!.project.experiments = [experiment]
-        
+        optimizely.config = {
+            var project = self.optimizely.config!.project!
+            
+            var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
+            experiment.variations[0].featureEnabled = false
+            project.experiments = [experiment]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
         
         XCTAssertEqual(value, kVariableDefaultValue)
     }
     
     func testFeatureVariableWhenFeatureEnabledNil() {
-        var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
-        experiment.variations[0].featureEnabled = nil
-        optimizely.config!.project.experiments = [experiment]
-        
+        optimizely.config = {
+            var project = self.optimizely.config!.project!
+            
+            var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
+            experiment.variations[0].featureEnabled = nil
+            project.experiments = [experiment]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
         
         XCTAssertEqual(value, kVariableDefaultValue)
@@ -227,54 +245,84 @@ class OptimizelyClientTests_Variables: XCTestCase {
 extension OptimizelyClientTests_Variables {
     
     func testFeatureVariableWhenBucketedToRollout() {
-        optimizely.config!.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        optimizely.config!.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
-        featureFlag.rolloutId = kRolloutId
-        optimizely.config!.project.featureFlags = [featureFlag]
-        
+        optimizely.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
         XCTAssert(value == kRolloutVariableValueA)
     }
     
     func testFeatureVariableWhenBucketedToRolloutUsingSecondRule() {
-        optimizely.config!.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        optimizely.config!.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
-        featureFlag.rolloutId = kRolloutId
-        optimizely.config!.project.featureFlags = [featureFlag]
-        
+        optimizely.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge2Match)
         XCTAssert(value == kRolloutVariableValueB)
     }
     
     func testFeatureVariableWhenBucketedToRolloutUsingFallbackRule() {
-        optimizely.config!.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        optimizely.config!.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
-        featureFlag.rolloutId = kRolloutId
-        optimizely.config!.project.featureFlags = [featureFlag]
-        optimizely.config!.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
-        
+        optimizely.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+            project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
         XCTAssert(value == kRolloutVariableValueC)
     }
     
     func testFeatureVariableReturnsDefaultValueWhenFeatureDisabled() {
-        optimizely.config!.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        optimizely.config!.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
-        featureFlag.rolloutId = kRolloutId
-        optimizely.config!.project.featureFlags = [featureFlag]
-        optimizely.config!.project.rollouts[0].experiments[0].variations[0].featureEnabled = false
-        
+        optimizely.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+            project.rollouts[0].experiments[0].variations[0].featureEnabled = false
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
         XCTAssert(value == kVariableDefaultValue)
     }
     
     func testFeatureVariableReturnsDefaultValueWhenRolloutBucketingReturnsNil() {
-        optimizely.config!.project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
-        optimizely.config!.project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
-        featureFlag.rolloutId = kRolloutId
-        optimizely.config!.project.featureFlags = [featureFlag]
-        optimizely.config!.project.rollouts[0].experiments = []
-        
+        optimizely.config = {
+            var project = self.optimizely.config!.project!
+            
+            project.rollouts = [try! OTUtils.model(from: sampleRolloutData)]
+            project.typedAudiences = try! OTUtils.model(from: sampleRolloutTypedAudiencesData)
+            featureFlag.rolloutId = kRolloutId
+            project.featureFlags = [featureFlag]
+            project.rollouts[0].experiments = []
+
+            return try! ProjectConfig(project: project)
+        }()
+
         let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
         XCTAssert(value == kVariableDefaultValue)
     }

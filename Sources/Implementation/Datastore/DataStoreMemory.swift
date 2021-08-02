@@ -25,7 +25,6 @@ public class DataStoreMemory<T>: BackgroundingCallbacks, OPTDataStore where T: C
     var data: T?
     var backupDataStore: OPTDataStore
     public enum BackingStore { case userDefaults, file }
-    let logger: OPTLogger? = OPTLoggerFactory.getLogger()
     
     init(storeName: String, backupStore: BackingStore = .file) {
         dataStoreName = storeName

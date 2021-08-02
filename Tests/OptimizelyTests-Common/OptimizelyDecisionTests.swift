@@ -21,16 +21,17 @@ class OptimizelyDecisionTests: XCTestCase {
     let variables = OptimizelyJSON(map: ["k1": "v1"])!
     let user = OptimizelyUserContext(optimizely: OptimizelyClient(sdkKey: "sdkKey"),
                                      userId: "userId")
+    var decision: OptimizelyDecision!
     
-    lazy var decision: OptimizelyDecision = {
-        return OptimizelyDecision(variationKey: "value-variationKey",
+    override func setUpWithError() throws {
+        decision = OptimizelyDecision(variationKey: "value-variationKey",
                                       enabled: true,
                                       variables: variables,
                                       ruleKey: "value-ruleKey",
                                       flagKey: "value-flagKey",
                                       userContext: user,
                                       reasons: [])
-    }()
+    }
     
     func testHasFailed() {
         XCTAssertFalse(decision.hasFailed)

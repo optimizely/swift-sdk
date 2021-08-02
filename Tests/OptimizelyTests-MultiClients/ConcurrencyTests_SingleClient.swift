@@ -44,6 +44,8 @@ class ConcurrencyTests_SingleClient: XCTestCase {
         XCTAssertTrue(result, "Concurrent tasks timed out")
     }
     
+    // OPTLogger.getLogger() should be called with lazy mode or after HandlerRegistryService is completely set for logger.
+    // This test validates that the logger for each type is created properly after the custom logger is registered successfully.
     func testLoggerCreatedProperlyOnClientInitialization() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                           logger: MockLogger())

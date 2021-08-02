@@ -37,7 +37,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         static let maxFailureCount = 3
     }
         
-    let logger = OPTLoggerFactory.getLogger()
+    // thread-safe lazy logger load (after HandlerRegisterService ready)
+    private var loggerInstance: OPTLogger?
+    var logger: OPTLogger {
+        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+    }
+
     // for dispatching events
     let queueLock = DispatchQueue(label: "DefaultEventDispatcherQueue")
     // using a datastore queue with a backing file

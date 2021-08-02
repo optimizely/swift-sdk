@@ -26,8 +26,15 @@ public class DataStoreUserDefaults: OPTDataStore {
     static let MAX_DS_SIZE = 1000000
     #endif
     static let dispatchQueue = DispatchQueue(label: "OPTDataStoreQueueUserDefaults")
-    
+
+    // thread-safe lazy logger load (after HandlerRegisterService ready)
+    private var loggerInstance: OPTLogger?
+    var logger: OPTLogger {
+        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+    }
+
     public func getItem(forKey: String) -> Any? {
+        
         return DataStoreUserDefaults.dispatchQueue.sync {
             return UserDefaults.standard.object(forKey: forKey)
         }
@@ -38,12 +45,12 @@ public class DataStoreUserDefaults: OPTDataStore {
         DataStoreUserDefaults.dispatchQueue.async {
             if let value = value as? Data {
                 if value.count > DataStoreUserDefaults.MAX_DS_SIZE {
-                    self.logError("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
+                    self.logger.e("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
                     return
                 }
             } else if let value = value as? String {
                 if value.count > DataStoreUserDefaults.MAX_DS_SIZE {
-                    self.logError("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
+                    self.logger.e("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
                     return
                 }
             } else if let value = value as? [Data] {
@@ -52,7 +59,7 @@ public class DataStoreUserDefaults: OPTDataStore {
                     res += data.count
                 })
                 if l > DataStoreUserDefaults.MAX_DS_SIZE {
-                    self.logError("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
+                    self.logger.e("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
                     return
                 }
             } else if let value = value as? [String] {
@@ -61,7 +68,7 @@ public class DataStoreUserDefaults: OPTDataStore {
                     res += data.count
                 })
                 if l > DataStoreUserDefaults.MAX_DS_SIZE {
-                    self.logError("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
+                    self.logger.e("Save to User Defaults error: \(forKey) is too big to save size(\(value.count))")
                     return
                 }
             }
@@ -72,10 +79,6 @@ public class DataStoreUserDefaults: OPTDataStore {
     
     public func removeItem(forKey: String) {
         UserDefaults.standard.removeObject(forKey: forKey)
-    }
-    
-    func logError(_ message: String) {
-        OPTLoggerFactory.getLogger().e(message)
     }
     
 }

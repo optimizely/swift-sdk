@@ -23,7 +23,13 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
     let lock: DispatchQueue
     let async: Bool
     public let url: URL
-    
+
+    // thread-safe lazy logger load (after HandlerRegisterService ready)
+    private var loggerInstance: OPTLogger?
+    var logger: OPTLogger {
+        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+    }
+
     public init(storeName: String, async: Bool = true) {
         self.async = async
         dataStoreName = storeName
@@ -70,7 +76,7 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
                 }
             } catch let e as NSError {
                 if e.code != 260 {
-                    self.logError(e.localizedDescription)
+                    self.logger.e(e.localizedDescription)
                 }
             }
         }
@@ -110,7 +116,7 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
                     }
                 }
             } catch let e {
-                self.logError(e.localizedDescription)
+                self.logger.e(e.localizedDescription)
             }
         }
     }
@@ -120,7 +126,7 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
             do {
                 try FileManager.default.removeItem(at: self.url)
             } catch let e {
-                self.logError(e.localizedDescription)
+                self.logger.e(e.localizedDescription)
             }
         }
 
@@ -135,9 +141,4 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
     open func writeData(_ data: Data) throws {
         try data.write(to: self.url, options: .atomic)
     }
-    
-    func logError(_ message: String) {
-        OPTLoggerFactory.getLogger().e(message)
-    }
-    
 }

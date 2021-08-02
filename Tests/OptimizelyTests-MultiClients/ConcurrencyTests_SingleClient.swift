@@ -61,5 +61,43 @@ class ConcurrencyTests_SingleClient: XCTestCase {
         
         XCTAssertTrue(result, "Concurrent tasks timed out")
     }
+        
+    func testLoggerCreatedProperlyOnClientInitialization() {
+        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
+                                          logger: MockLogger())
+        let datafile = OTUtils.loadJSONDatafile("empty_traffic_allocation")!
+        try! optimizely.start(datafile: datafile)
+        
+        let message = OptimizelyError.invalidJSONVariable
+        MockLogger.expectedLog = message.localizedDescription
+        
+        MockLogger.logFound = false
+        (optimizely.datafileHandler as! DefaultDatafileHandler).logger.i(message)
+        XCTAssert(MockLogger.logFound)
+        
+        MockLogger.logFound = false
+        (optimizely.eventDispatcher as! DefaultEventDispatcher).logger.i(message)
+        XCTAssert(MockLogger.logFound)
+        
+        MockLogger.logFound = false
+        (optimizely.decisionService as! DefaultDecisionService).logger.i(message)
+        XCTAssert(MockLogger.logFound)
+        
+        MockLogger.logFound = false
+        ((optimizely.decisionService as! DefaultDecisionService).bucketer as! DefaultBucketer).logger.i(message)
+        XCTAssert(MockLogger.logFound)
+        
+        MockLogger.logFound = false
+        optimizely.createUserContext(userId: "tester").logger.i(message)
+        XCTAssert(MockLogger.logFound)
+        
+        MockLogger.logFound = false
+        optimizely.config!.logger.i(message)
+        XCTAssert(MockLogger.logFound)
+
+        MockLogger.logFound = false
+        optimizely.config!.project.logger.i(message)
+        XCTAssert(MockLogger.logFound)
+    }
 
 }

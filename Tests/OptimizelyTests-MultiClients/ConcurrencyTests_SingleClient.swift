@@ -28,8 +28,14 @@ class ConcurrencyTests_SingleClient: XCTestCase {
         let datafile = OTUtils.loadJSONDatafile("empty_traffic_allocation")!
         try! optimizely.start(datafile: datafile)
         
-        let result = OTUtils.runConcurrent(count: 100, timeoutInSecs: 60) { idx in
-            for _ in 0..<100 {
+        let numThreads = 50
+        let numRepeats = 50
+        // these may be too much - test crashes with resources issue?
+        //let numThreads = 100
+        //let numRepeats = 100
+        
+        let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 180) { idx in
+            for _ in 0..<numRepeats {
                 let config = try! ProjectConfig(datafile: datafile)
                 optimizely.config = config
                 

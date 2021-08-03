@@ -2286,13 +2286,13 @@
 			path = "OptimizelyTests-MultiClients";
 			sourceTree = "<group>";
 		};
-		6E6BE008237F547200FE8274 /* optmizelyConfig */ = {
+		6E6BE008237F547200FE8274 /* optimizelyConfig */ = {
 			isa = PBXGroup;
 			children = (
 				6E6BE009237F547200FE8274 /* optimizely_config_datafile.json */,
 				6E6BE00A237F547200FE8274 /* optimizely_config_expected.json */,
 			);
-			path = optmizelyConfig;
+			path = optimizelyConfig;
 			sourceTree = "<group>";
 		};
 		6E75165D22C520D400B2B157 /* Sources */ = {
@@ -2500,7 +2500,7 @@
 			isa = PBXGroup;
 			children = (
 				6E75196322C5211100B2B157 /* benchmark */,
-				6E6BE008237F547200FE8274 /* optmizelyConfig */,
+				6E6BE008237F547200FE8274 /* optimizelyConfig */,
 				6EF8DE0924B8DA5D008B9488 /* decide */,
 				6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */,
 				6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */,

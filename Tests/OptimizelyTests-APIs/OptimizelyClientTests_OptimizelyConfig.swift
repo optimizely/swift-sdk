@@ -237,7 +237,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
             
             // compare dictionaries as strings (after key-sorted and remove all spaces)
             guard let observedDict = optimizelyConfig.dict else {
-                XCTAssert(false)
+                XCTFail()
                 return
             }
             

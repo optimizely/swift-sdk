@@ -73,7 +73,7 @@ extension AudienceTests {
                                                                from: AudienceTests.legacyConditionString.data(using: .utf8)!) {
             XCTAssertEqual(modelConditions, expectedConditions)
         } else {
-            XCTAssert(false)
+            XCTFail()
         }
     }
     

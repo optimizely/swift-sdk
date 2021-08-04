@@ -203,7 +203,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
             let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
             XCTAssert(array.count == 0)
         } else {
-            XCTAssert(false)
+            XCTFail()
         }
     }
     
@@ -222,7 +222,7 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
             let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
             XCTAssert(array.count == 0)
         } else {
-            XCTAssert(false)
+            XCTFail()
         }
     }
     

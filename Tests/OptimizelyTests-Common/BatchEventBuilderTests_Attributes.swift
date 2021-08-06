@@ -195,13 +195,16 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         
         let attributes: [String: Any] = [:]
         
-        _ = try! optimizely.activate(experimentKey: experimentKey,
+        _ = try? optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: attributes)
 
-        let json = getFirstEventJSON()!
-        let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
-        XCTAssert(array.count == 0)
+        if let json = getFirstEventJSON() {
+            let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
+            XCTAssert(array.count == 0)
+        } else {
+            XCTFail()
+        }
     }
     
     func testEventAttributesWhenAttributesNil() {
@@ -211,13 +214,16 @@ class BatchEventBuilderTests_Attributes: XCTestCase {
         experiment.audienceIds = []
         optimizely.config!.project!.experiments = [experiment]
         
-        _ = try! optimizely.activate(experimentKey: experimentKey,
+        _ = try? optimizely.activate(experimentKey: experimentKey,
                                      userId: userId,
                                      attributes: nil)
         
-        let json = getFirstEventJSON()!
-        let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
-        XCTAssert(array.count == 0)
+        if let json = getFirstEventJSON() {
+            let array = (json["visitors"] as! Array<Dictionary<String, Any>>)[0]["attributes"] as! Array<Dictionary<String, Any>>
+            XCTAssert(array.count == 0)
+        } else {
+            XCTFail()
+        }
     }
     
     // MARK: - compatible with ObjC types

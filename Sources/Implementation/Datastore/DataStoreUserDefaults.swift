@@ -26,8 +26,13 @@ public class DataStoreUserDefaults: OPTDataStore {
     static let MAX_DS_SIZE = 1000000
     #endif
     static let dispatchQueue = DispatchQueue(label: "OPTDataStoreQueueUserDefaults")
-    lazy var logger: OPTLogger = OPTLoggerFactory.getLogger()
-    
+
+    // thread-safe lazy logger load (after HandlerRegisterService ready)
+    private var loggerInstance: OPTLogger?
+    var logger: OPTLogger {
+        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+    }
+
     public func getItem(forKey: String) -> Any? {
         
         return DataStoreUserDefaults.dispatchQueue.sync {

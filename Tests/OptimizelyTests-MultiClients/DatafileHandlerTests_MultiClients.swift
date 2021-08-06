@@ -57,10 +57,10 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
                         let str = String(data: data, encoding: .utf8)
                         XCTAssert(str == expectedDatafile)
                     } else {
-                        XCTAssert(false)
+                        XCTFail()
                     }
                 default:
-                    XCTAssert(false)
+                    XCTFail()
                 }
                 
                 group.leave()

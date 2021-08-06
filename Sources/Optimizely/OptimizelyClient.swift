@@ -45,25 +45,14 @@ open class OptimizelyClient: NSObject {
     
     // MARK: - Customizable Services
     
-    lazy var logger = OPTLoggerFactory.getLogger()
-    
-    lazy var eventDispatcher: OPTEventDispatcher? = {
-        return HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
-    }()
-    
-    public lazy var datafileHandler: OPTDatafileHandler? = {
-        return HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
-    }()
+    var logger: OPTLogger!
+    var eventDispatcher: OPTEventDispatcher?
+    public var datafileHandler: OPTDatafileHandler?
     
     // MARK: - Default Services
     
-    lazy var decisionService: OPTDecisionService! = {
-        return HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
-    }()
-    
-    public lazy var notificationCenter: OPTNotificationCenter? = {
-        return HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
-    }()
+    var decisionService: OPTDecisionService!
+    public var notificationCenter: OPTNotificationCenter?
     
     // MARK: - Public interfaces
     
@@ -101,6 +90,12 @@ open class OptimizelyClient: NSObject {
                               decisionService: DefaultDecisionService(userProfileService: userProfileService),
                               notificationCenter: DefaultNotificationCenter())
         
+        self.logger = HandlerRegistryService.shared.injectLogger()
+        self.eventDispatcher = HandlerRegistryService.shared.injectEventDispatcher(sdkKey: self.sdkKey)
+        self.datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
+        self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
+        self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
+
         logger.d("SDK Version: \(version)")
     }
     

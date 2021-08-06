@@ -16,33 +16,6 @@
 
 import XCTest
 
-class MockLogger: OPTLogger {
-    static var logFound = false
-    static var expectedLog = ""
-    private static var _logLevel: OptimizelyLogLevel?
-    
-    public static var logLevel: OptimizelyLogLevel {
-        get {
-            return _logLevel ?? .info
-        }
-        set (newLevel){
-            if _logLevel == nil {
-                _logLevel = newLevel
-            }
-        }
-    }
-    
-    required public init() {
-        MockLogger.logLevel = .info
-    }
-    
-    open func log(level: OptimizelyLogLevel, message: String) {
-        if  ("[Optimizely][Error] " + message) == MockLogger.expectedLog {
-            MockLogger.logFound = true
-        }
-    }
-}
-
 class DecisionServiceTests_Experiments: XCTestCase {
     
     var optimizely: OptimizelyClient!

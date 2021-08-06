@@ -60,7 +60,7 @@ class MultiClientsTests: XCTestCase {
                     let str = String(data: data, encoding: .utf8)
                     XCTAssert(str == expectedDatafile)
                 default:
-                    XCTAssert(false)
+                    XCTFail()
                 }
                 
                 for i in 0..<numEventsPerThread {
@@ -110,7 +110,7 @@ class MultiClientsTests: XCTestCase {
                     let str = String(data: data, encoding: .utf8)
                     XCTAssert(str == expectedDatafile)
                 default:
-                    XCTAssert(false)
+                    XCTFail()
                 }
                 
                 for i in 0..<numEventsPerThread {

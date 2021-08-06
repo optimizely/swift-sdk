@@ -37,7 +37,7 @@ class HandlerRegistryService {
         }
     }
     
-    func injectComponent(service: Any, sdkKey: String? = nil, isReintialize: Bool=false) -> Any? {
+    func injectComponent(service: Any, sdkKey: String? = nil, isReintialize: Bool = false) -> Any? {
         var result: Any?
         
         // service key is shared for all sdkKeys when sdkKey is nil
@@ -72,7 +72,7 @@ class HandlerRegistryService {
     }
     
     func reInitializeComponent(service: Any, sdkKey: String? = nil) {
-            _ = injectComponent(service: service, sdkKey: sdkKey, isReintialize: true)
+        _ = injectComponent(service: service, sdkKey: sdkKey, isReintialize: true)
     }
     
     func lookupComponents(sdkKey: String)->[Any]? {
@@ -146,7 +146,7 @@ extension HandlerRegistryService {
     func injectDecisionService(sdkKey: String? = nil, isReintialize: Bool = false) -> OPTDecisionService? {
         return injectComponent(service: OPTDecisionService.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTDecisionService?
     }
-
+    
     func injectEventDispatcher(sdkKey: String? = nil, isReintialize: Bool = false) -> OPTEventDispatcher? {
         return injectComponent(service: OPTEventDispatcher.self, sdkKey: sdkKey, isReintialize: isReintialize) as! OPTEventDispatcher?
     }

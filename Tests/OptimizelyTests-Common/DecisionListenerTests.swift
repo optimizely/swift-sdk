@@ -465,10 +465,10 @@ class DecisionListenerTests: XCTestCase {
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.source] as! String, Constants.DecisionSource.rollout.rawValue)
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.variableValues])
             let variableValues = decisionInfo[Constants.DecisionInfoKeys.variableValues] as! [String: Any]
-            XCTAssertEqual(variableValues[self.kVariableKeyString] as! String, self.kVariableValueString)
-            XCTAssertEqual(variableValues[self.kVariableKeyInt] as! Int, self.kVariableValueInt)
-            XCTAssertEqual(variableValues[self.kVariableKeyDouble] as! Double, self.kVariableValueDouble)
-            XCTAssertEqual(variableValues[self.kVariableKeyBool] as! String, "true")
+            XCTAssertEqual(variableValues[self.kVariableKeyString] as? String, self.kVariableValueString)
+            XCTAssertEqual(variableValues[self.kVariableKeyInt] as? Int, self.kVariableValueInt)
+            XCTAssertEqual(variableValues[self.kVariableKeyDouble] as? Double, self.kVariableValueDouble)
+            XCTAssertEqual(variableValues[self.kVariableKeyBool] as? String, "true")
             let jsonMap = (variableValues[self.kVariableKeyJSON] as! [String: Any])
             XCTAssertEqual(jsonMap["value"] as! Int, 1)
             XCTAssertNil(decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment])
@@ -1163,10 +1163,10 @@ extension DecisionListenerTests {
             
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.variables])
             let variableValues = decisionInfo[Constants.DecisionInfoKeys.variables] as! [String: Any]
-            XCTAssertEqual(variableValues[self.kVariableKeyString] as! String, self.kVariableValueString)
-            XCTAssertEqual(variableValues[self.kVariableKeyInt] as! Int, self.kVariableValueInt)
-            XCTAssertEqual(variableValues[self.kVariableKeyDouble] as! Double, self.kVariableValueDouble)
-            XCTAssertEqual(variableValues[self.kVariableKeyBool] as! String, "true")
+            XCTAssertEqual(variableValues[self.kVariableKeyString] as? String, self.kVariableValueString)
+            XCTAssertEqual(variableValues[self.kVariableKeyInt] as? Int, self.kVariableValueInt)
+            XCTAssertEqual(variableValues[self.kVariableKeyDouble] as? Double, self.kVariableValueDouble)
+            XCTAssertEqual(variableValues[self.kVariableKeyBool] as? String, "true")
             let jsonMap = (variableValues[self.kVariableKeyJSON] as! [String: Any])
             XCTAssertEqual(jsonMap["value"] as! Int, 1)
 
@@ -1215,6 +1215,9 @@ class FakeManager: OptimizelyClient {
                   defaultLogLevel: OptimizelyLogLevel? = nil,
                   defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
         
+        // clear shared handlers
+        HandlerRegistryService.shared.removeAll()
+
         super.init(sdkKey: sdkKey,
                    logger: logger,
                    eventDispatcher: eventDispatcher,
@@ -1222,15 +1225,9 @@ class FakeManager: OptimizelyClient {
                    userProfileService: userProfileService,
                    defaultLogLevel: defaultLogLevel,
                    defaultDecideOptions: defaultDecideOptions)
-        HandlerRegistryService.shared.removeAll()
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()
-        self.registerServices(sdkKey: sdkKey,
-                              logger: logger ?? DefaultLogger(),
-                              eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
-                              datafileHandler: datafileHandler ?? DefaultDatafileHandler(),
-                              decisionService: FakeDecisionService(userProfileService: userProfileService),
-                              notificationCenter: DefaultNotificationCenter())
+        self.decisionService = FakeDecisionService(userProfileService: userProfileService)
     }
     
     func setDecisionServiceData(experiment: Experiment?, variation: Variation?, source: String) {

@@ -61,16 +61,7 @@ extension AudienceTests {
         
         XCTAssert(model.id == "553339214")
         XCTAssert(model.name == "america")
-        XCTAssert(model.conditionHolder == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
-    
-        if let modelConditions = try? JSONDecoder().decode(ConditionHolder.self,
-                                                           from: model.conditions.data(using: .utf8)!),
-            let expectedConditions = try? JSONDecoder().decode(ConditionHolder.self,
-                                                               from: AudienceTests.legacyConditionString.data(using: .utf8)!) {
-            XCTAssertEqual(modelConditions, expectedConditions)
-        } else {
-            XCTFail()
-        }
+        XCTAssert(model.conditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
     }
     
     func testDecodeFailWithMissingId() {

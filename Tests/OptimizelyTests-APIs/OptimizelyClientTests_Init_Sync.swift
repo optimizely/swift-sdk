@@ -190,7 +190,7 @@ class OptimizelyClientTests_Init_Sync: XCTestCase {
             if case .success = result {
                 XCTAssert(true)
             } else {
-                XCTAssert(false)
+                XCTFail()
             }
             exp.fulfill()
         }

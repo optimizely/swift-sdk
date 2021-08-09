@@ -117,7 +117,7 @@ extension OptimizelyClientTests_Invalid {
     func testTrack_WhenManagerNonInitialized() {
         do {
             try self.optimizely.track(eventKey: kEventKey, userId: kUserId)
-            XCTAssert(false)
+            XCTFail()
         } catch {
             XCTAssert(true)
         }
@@ -132,7 +132,7 @@ extension OptimizelyClientTests_Invalid {
     func testTrack_WhenEventNotInDatafile() {
         do {
             try self.optimizely.track(eventKey: "somecrazytrackingidthatdoesntexist", userId: kUserId)
-            XCTAssert(false)
+            XCTFail()
         } catch {
             XCTAssert(true)
         }

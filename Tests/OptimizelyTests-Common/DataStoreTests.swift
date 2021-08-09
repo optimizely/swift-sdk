@@ -190,21 +190,11 @@ class DataStoreTests: XCTestCase {
         // 128k as a max for user defaults saving.
         HandlerRegistryService.shared.binders.property?.removeAll()
 
-        let datastore = DataStoreUserDefaults()
-        
         class Logger : OPTLogger {
             public var messages: [String] = [String]()
-            required init() {
-    
-            }
-            static var logLevel: OptimizelyLogLevel {
-                get {
-                    return OptimizelyLogLevel.info
-                }
-                set {
-                    // necessary for OPTLogger protocol
-                }
-            }
+            required init() {}
+            
+            static var logLevel: OptimizelyLogLevel = .info
             
             func log(level: OptimizelyLogLevel, message: String) {
                 messages.append(message)
@@ -223,11 +213,16 @@ class DataStoreTests: XCTestCase {
             array.append("01234567890abcdef".data(using: .ascii)!)
         }
         
+        let datastore = DataStoreUserDefaults()
         datastore.saveItem(forKey: "testUserDefaultsTooBig", value: array)
         
         let value = datastore.getItem(forKey: "testUserDefaultsTooBig") as? [Data]
         XCTAssert(value == nil)
-        XCTAssert(logger.messages.last!.contains("Save to User Defaults error: testUserDefaultsTooBig is too big to save size"))
+        if let lastMessage = logger.messages.last {
+            XCTAssert(lastMessage.contains("Save to User Defaults error: testUserDefaultsTooBig is too big to save size"))
+        } else {
+            XCTFail()
+        }
         HandlerRegistryService.shared.binders.property?.removeAll()
     }
  }

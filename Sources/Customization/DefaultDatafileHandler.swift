@@ -20,8 +20,12 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     // endpoint used to get the datafile.  This is settable after you create a OptimizelyClient instance.
     public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     
-    // lazy load the logger from the logger factory.
-    lazy var logger = OPTLoggerFactory.getLogger()
+    // thread-safe lazy logger load (after HandlerRegisterService ready)
+    private var loggerInstance: OPTLogger?
+    var logger: OPTLogger {
+        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+    }
+        
     // the timers for all sdk keys are atomic to allow for thread access.
     var timers = AtomicProperty(property: [String: (timer: Timer?, interval: Int)]())
     

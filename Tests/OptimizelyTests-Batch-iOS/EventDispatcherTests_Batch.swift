@@ -818,7 +818,7 @@ extension EventDispatcherTests_Batch {
         if let event = notifEvent, let client = event["client_name"] as? String {
             XCTAssertEqual(client, "swift-sdk")
         } else {
-            XCTAssert(false)
+            XCTFail()
         }
     }
     

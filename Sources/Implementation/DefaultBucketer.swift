@@ -22,8 +22,12 @@ class DefaultBucketer: OPTBucketer {
     let MAX_HASH_SEED: UInt64 = 1
     var MAX_HASH_VALUE: UInt64?
     
-    private lazy var logger = OPTLoggerFactory.getLogger()
-    
+    // thread-safe lazy logger load (after HandlerRegisterService ready)
+    private var loggerInstance: OPTLogger?
+    var logger: OPTLogger {
+        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+    }
+
     init() {
         MAX_HASH_VALUE = MAX_HASH_SEED << 32
     }

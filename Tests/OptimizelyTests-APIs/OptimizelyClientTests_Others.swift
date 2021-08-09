@@ -107,7 +107,7 @@ class OptimizelyClientTests_Others: XCTestCase {
         XCTAssertEqual(variablesMap[kVariableKeyDouble] as! Double, 4.2)
         XCTAssertEqual(variablesMap[kVariableKeyInt] as! Int, 42)
         // Verifying that map contains value as string if type is invalid
-        XCTAssertEqual(variablesMap["valid_key"] as! String, "true")
+        XCTAssertEqual(variablesMap["valid_key"] as? String, "true")
         XCTAssertEqual(variablesMap["i_1"] as! String, "invalid")
     }
     

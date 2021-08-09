@@ -58,7 +58,36 @@
           }
         ],
         "id": "rollout-2354-20348521767"
+      },
+      {
+        "experiments": [
+          {
+            "status": "Running",
+            "audienceConditions": [],
+            "audienceIds": [],
+            "variations": [
+              {
+                "variables": [],
+                "id": "6328",
+                "key": "off",
+                "featureEnabled": false
+              }
+            ],
+            "forcedVariations": {},
+            "key": "targeted_delivery",
+            "layerId": "9300000005992",
+            "trafficAllocation": [
+              {
+                "entityId": "6328",
+                "endOfRange": 10000
+              }
+            ],
+            "id": "9300000005992"
+          }
+        ],
+        "id": "rollout-2354-20348521768"
       }
+
     ],
     "anonymizeIP": true,
     "projectId": "12254210345",
@@ -101,7 +130,7 @@
             "experimentIds": ["12198292376"],
             "id": "4482920079",
             "key": "feature_exp_no_traffic",
-            "rolloutId": "",
+            "rolloutId": "rollout-2354-20348521768",
             "variables": []
         }
     ],
@@ -203,7 +232,7 @@
                 },
                 {
                     "status": "Running",
-                    "key": "experiment_8000",
+                    "key": "duplicate_experiment_key",
                     "layerId": "12187694825",
                     "trafficAllocation": [
                         {
@@ -284,7 +313,7 @@
                 },
                 {
                     "status": "Running",
-                    "key": "no_traffic_experiment",
+                    "key": "duplicate_experiment_key",
                     "layerId": "12187694826",
                     "trafficAllocation": [
                         {

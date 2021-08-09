@@ -181,7 +181,7 @@ extension OptimizelyConfigImp {
             }()
             
             feature.experimentRules = experiments
-            feature.deliveryRules = rollout?.experiments ?? []
+    //        feature.deliveryRules = rollout?.experiments ?? []
                         
             map[feature.key] = feature
         }
@@ -191,7 +191,7 @@ extension OptimizelyConfigImp {
     func updateExperiment(experiment: Experiment, feature: FeatureFlag?, audiencesMap: [String: String]) -> Experiment {
         var experiment = experiment
         
-        experiment.serializeAudiences(with: audiencesMap)
+    //    experiment.serializeAudiences(with: audiencesMap)
         
         let variations: [Variation] = experiment.variations.map {
             var variation = $0

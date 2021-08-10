@@ -20,8 +20,8 @@ import Foundation
 
 public protocol OptimizelyConfig {
     var environmentKey: String { get }
-    var revision: String { get }
     var sdkKey: String { get }
+    var revision: String { get }
     var experimentsMap: [String: OptimizelyExperiment] { get }
     var featuresMap: [String: OptimizelyFeature] { get }
     var attributes: [OptimizelyAttribute] { get }
@@ -82,8 +82,8 @@ public protocol OptimizelyEvent {
 
 struct OptimizelyConfigImp: OptimizelyConfig {
     var environmentKey: String = ""
-    var revision: String = ""
     var sdkKey: String = ""
+    var revision: String = ""
     var experimentsMap: [String: OptimizelyExperiment] = [:]
     var featuresMap: [String: OptimizelyFeature] = [:]
     var attributes: [OptimizelyAttribute] = []

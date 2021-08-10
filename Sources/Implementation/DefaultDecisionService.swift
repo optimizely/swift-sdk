@@ -32,10 +32,10 @@ class DefaultDecisionService: OPTDecisionService {
     var logger: OPTLogger {
         return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
     }
-
+    
     // user-profile-service read-modify-write lock for supporting multiple clients
     static let upsRMWLock = DispatchQueue(label: "ups-rmw")
-
+    
     init(userProfileService: OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
@@ -242,18 +242,11 @@ class DefaultDecisionService: OPTDecisionService {
         // Evaluate each experiment ID and return the first bucketed experiment variation
         for experimentId in experimentIds {
             if let experiment = config.getExperiment(id: experimentId) {
-                
-                findForcedDecision(config: config,
-                                   flagKey: featureFlag.key,
-                                   ruleKey: experiment.key,
-                                   user: user)
-                
-                
-                
-                let decisionResponse = getVariation(config: config,
-                                                    experiment: experiment,
-                                                    user: user,
-                                                    options: options)
+                let decisionResponse = getVariationFromExperimentRule(config: config,
+                                                                      flagKey: featureFlag.key,
+                                                                      rule: experiment,
+                                                                      user: user,
+                                                                      options: options)
                 reasons.merge(decisionResponse.reasons)
                 if let variation = decisionResponse.result {
                     let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
@@ -265,27 +258,11 @@ class DefaultDecisionService: OPTDecisionService {
         return DecisionResponse(result: nil, reasons: reasons)
     }
     
-    func findForcedDecision(config: ProjectConfig,
-                            flagKey: String,
-                            ruleKey: String,
-                            user: OptimizelyUserContext) -> DecisionResponse<Variation> {
-        if let variationKey = user.findForcedDecision(flagKey: flagKey, ruleKey: ruleKey),
-           let variation = config.getVariation(flagKey: flagKey, variationKey: variationKey) {
-            return variation
-        } else {
-            return nil
-        }
-    }
-    
     func getVariationForFeatureRollout(config: ProjectConfig,
                                        featureFlag: FeatureFlag,
                                        user: OptimizelyUserContext,
                                        options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
-        
-        let userId = user.userId
-        let attributes = user.attributes
-        let bucketingId = getBucketingId(userId: userId, attributes: attributes)
         
         let rolloutId = featureFlag.rolloutId.trimmingCharacters(in: CharacterSet.whitespaces)
         
@@ -311,71 +288,122 @@ class DefaultDecisionService: OPTDecisionService {
             return DecisionResponse(result: nil, reasons: reasons)
         }
         
-        // Evaluate all rollout rules except for last one
         for index in 0..<rolloutRules.count.advanced(by: -1) {
-            let loggingKey = index + 1
-            let experiment = rolloutRules[index]
-            let decisionResponse = doesMeetAudienceConditions(config: config,
-                                                              experiment: experiment,
-                                                              userId: userId,
-                                                              attributes: attributes,
-                                                              logType: .rolloutRule,
-                                                              loggingKey: String(loggingKey))
-            reasons.merge(decisionResponse.reasons)
-            if decisionResponse.result ?? false {
-                var info = LogMessage.userMeetsConditionsForTargetingRule(userId, loggingKey)
-                logger.d(info)
-                reasons.addInfo(info)
-                
-                let decisionResponse = bucketer.bucketExperiment(config: config,
-                                                                 experiment: experiment,
-                                                                 bucketingId: bucketingId)
-                reasons.merge(decisionResponse.reasons)
-                if let variation = decisionResponse.result {
-                    info = LogMessage.userBucketedIntoTargetingRule(userId, loggingKey)
-                    logger.d(info)
-                    reasons.addInfo(info)
-                    
-                    let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.rollout.rawValue)
-                    return DecisionResponse(result: featureDecision, reasons: reasons)
-                }
-                info = LogMessage.userNotBucketedIntoTargetingRule(userId, loggingKey)
-                logger.d(info)
-                reasons.addInfo(info)
-                break
-            } else {
-                let info = LogMessage.userDoesntMeetConditionsForTargetingRule(userId, loggingKey)
-                logger.d(info)
-                reasons.addInfo(info)
-            }
-        }
-        
-        // Evaluate fall back rule / last rule now
-        let experiment = rolloutRules[rolloutRules.count - 1]
-        
-        let decisionResponse = doesMeetAudienceConditions(config: config,
-                                                          experiment: experiment,
-                                                          userId: userId,
-                                                          attributes: attributes,
-                                                          logType: .rolloutRule,
-                                                          loggingKey: "Everyone Else")
-        reasons.merge(decisionResponse.reasons)
-        if decisionResponse.result ?? false {
-            let decisionResponse = bucketer.bucketExperiment(config: config,
-                                                             experiment: experiment,
-                                                             bucketingId: bucketingId)
+            let decisionResponse = getVariationFromDeliveryRule(config: config,
+                                                                flagKey: featureFlag.key,
+                                                                rules: rolloutRules,
+                                                                ruleIndex: index,
+                                                                user: user,
+                                                                options: options)
             reasons.merge(decisionResponse.reasons)
             if let variation = decisionResponse.result {
-                let info = LogMessage.userBucketedIntoEveryoneTargetingRule(userId)
-                logger.d(info)
-                reasons.addInfo(info)
-                
-                let featureDecision = FeatureDecision(experiment: experiment, variation: variation, source: Constants.DecisionSource.rollout.rawValue)
+                let rule = rolloutRules[index]
+                let featureDecision = FeatureDecision(experiment: rule, variation: variation, source: Constants.DecisionSource.rollout.rawValue)
                 return DecisionResponse(result: featureDecision, reasons: reasons)
             }
         }
         
         return DecisionResponse(result: nil, reasons: reasons)
+    }
+    
+    func getVariationFromExperimentRule(config: ProjectConfig,
+                                        flagKey: String,
+                                        rule: Experiment,
+                                        user: OptimizelyUserContext,
+                                        options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons(options: options)
+        
+        // check forced-decision first
+        
+        let forcedDecisionResponse = findForcedDecision(config: config,
+                                                        flagKey: flagKey,
+                                                        ruleKey: rule.key,
+                                                        user: user,
+                                                        options: options)
+        reasons.merge(forcedDecisionResponse.reasons)
+        if let variation = forcedDecisionResponse.result {
+            return DecisionResponse(result: variation, reasons: reasons)
+        }
+        
+        // regular decision
+        
+        let decisionResponse = getVariation(config: config,
+                                            experiment: rule,
+                                            user: user,
+                                            options: options)
+        reasons.merge(decisionResponse.reasons)
+        let variation = decisionResponse.result
+        
+        return DecisionResponse(result: variation, reasons: reasons)
+    }
+    
+    func getVariationFromDeliveryRule(config: ProjectConfig,
+                                      flagKey: String,
+                                      rules: [Experiment],
+                                      ruleIndex: Int,
+                                      user: OptimizelyUserContext,
+                                      options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons(options: options)
+        
+        // check forced-decision first
+        
+        let rule = rules[ruleIndex]
+        let forcedDecisionResponse = findForcedDecision(config: config,
+                                                        flagKey: flagKey,
+                                                        ruleKey: rule.key,
+                                                        user: user,
+                                                        options: options)
+        reasons.merge(forcedDecisionResponse.reasons)
+        if let variation = forcedDecisionResponse.result {
+            return DecisionResponse(result: variation, reasons: reasons)
+        }
+        
+        // regular decision
+        
+        let userId = user.userId
+        let attributes = user.attributes
+        let bucketingId = getBucketingId(userId: userId, attributes: attributes)
+        
+        let everyoneElse = (ruleIndex == rules.count - 1)
+        let loggingKey = everyoneElse ? "Everyone Else" : String(ruleIndex + 1)
+        
+        var bucketedVariation: Variation?
+        
+        let audienceDecisionResponse = doesMeetAudienceConditions(config: config,
+                                                                  experiment: rule,
+                                                                  userId: userId,
+                                                                  attributes: attributes,
+                                                                  logType: .rolloutRule,
+                                                                  loggingKey: loggingKey)
+        reasons.merge(audienceDecisionResponse.reasons)
+        if audienceDecisionResponse.result ?? false {
+            var info = LogMessage.userMeetsConditionsForTargetingRule(userId, loggingKey)
+            logger.d(info)
+            reasons.addInfo(info)
+            
+            let decisionResponse = bucketer.bucketExperiment(config: config,
+                                                             experiment: rule,
+                                                             bucketingId: bucketingId)
+            reasons.merge(decisionResponse.reasons)
+            bucketedVariation = decisionResponse.result
+            
+            if bucketedVariation != nil {
+                info = LogMessage.userBucketedIntoTargetingRule(userId, loggingKey)
+                logger.d(info)
+                reasons.addInfo(info)
+            } else if !everyoneElse {
+                // skip this logging for EveryoneElse since this has a message not for EveryoneElse
+                info = LogMessage.userNotBucketedIntoTargetingRule(userId, loggingKey)
+                logger.d(info)
+                reasons.addInfo(info)
+            }
+        } else {
+            let info = LogMessage.userDoesntMeetConditionsForTargetingRule(userId, loggingKey)
+            logger.d(info)
+            reasons.addInfo(info)
+        }
+        
+        return DecisionResponse(result: bucketedVariation, reasons: reasons)
     }
     
     func getBucketingId(userId: String, attributes: OptimizelyAttributes) -> String {
@@ -389,6 +417,35 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         return bucketingId
+    }
+    
+}
+
+// MARK: - Forced Decisions
+
+extension DefaultDecisionService {
+    
+    func findForcedDecision(config: ProjectConfig,
+                            flagKey: String,
+                            ruleKey: String,
+                            user: OptimizelyUserContext,
+                            options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons(options: options)
+        
+        if let variationKey = user.findForcedDecision(flagKey: flagKey, ruleKey: ruleKey) {
+            if let variation = config.getVariation(flagKey: flagKey, variationKey: variationKey) {
+                let info = LogMessage.userHasForcedDecision(user.userId, flagKey, ruleKey, variationKey)
+                logger.d(info)
+                reasons.addInfo(info)
+                return DecisionResponse(result: variation, reasons: reasons)
+            }
+            
+            let info = LogMessage.userHasForcedDecisionButInvalid(user.userId, flagKey, ruleKey)
+            logger.d(info)
+            reasons.addInfo(info)
+        }
+        
+        return DecisionResponse(result: nil, reasons: reasons)
     }
     
 }

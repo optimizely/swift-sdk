@@ -185,7 +185,7 @@ extension OptimizelyUserContext {
         return false
     }
     
-    public func removeAllForcedDecisions() -> Bool {
+    public func removeForcedDecisions() -> Bool {
         guard let optimizely = self.optimizely, optimizely.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
             return false

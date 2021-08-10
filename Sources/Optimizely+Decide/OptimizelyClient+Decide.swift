@@ -109,7 +109,6 @@ extension OptimizelyClient {
             optimizelyJSON = OptimizelyJSON.createEmpty()
         }
         
-        // TODO: add ruleKey values when available later. Use a copy of experimentKey for now.
         let ruleKey = decision?.experiment?.key
         let reasonsToReport = reasons.toReport()
         

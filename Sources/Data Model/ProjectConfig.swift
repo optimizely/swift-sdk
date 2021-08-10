@@ -38,40 +38,8 @@ class ProjectConfig {
     var featureFlagKeys = [String]()
     var rolloutIdMap = [String: Rollout]()
     var allExperiments = [Experiment]()
-    
-    lazy var flagRulesMap: [String: [Experiment]] = {
-        var map = [String: [Experiment]]()
-        
-        project.featureFlags.forEach { flag in
-            var experiments = flag.experimentIds.compactMap { expId in
-                return allExperiments.filter { $0.id == expId }.first
-            }
-            let rollout = project.rollouts.filter { $0.id == flag.rolloutId }.first
-
-            experiments.append(contentsOf: rollout?.experiments ?? [])
-            map[flag.key] = experiments
-        }
-        
-        return map
-    }()
-    
-    lazy var flagVariationsMap: [String: [Variation]] = {
-        var map = [String: [Variation]]()
-        
-        flagRulesMap.forEach { (flagKey, rules) in
-            var variations = [Variation]()
-            rules.forEach { rule in
-                rule.variations.forEach { variation in
-                    if !variations.map({ $0.id }).contains(variation.id) {
-                        variations.append(variation)
-                    }
-                }
-            }
-            map[flagKey] = variations
-        }
-        
-        return map
-    }()
+    var flagRulesMap = [String: [Experiment]]()
+    var flagVariationsMap = [String: [Variation]]()
 
     // MARK: - Init
     
@@ -154,6 +122,41 @@ class ProjectConfig {
         self.rolloutIdMap = {
             var map = [String: Rollout]()
             project.rollouts.forEach { map[$0.id] = $0 }
+            return map
+        }()
+        
+        self.flagRulesMap = {
+            var map = [String: [Experiment]]()
+            
+            project.featureFlags.forEach { flag in
+                var experiments = flag.experimentIds.compactMap { expId in
+                    return allExperiments.filter { $0.id == expId }.first
+                }
+                
+                let rollout = project.rollouts.filter { $0.id == flag.rolloutId }.first
+                experiments.append(contentsOf: rollout?.experiments ?? [])
+                
+                map[flag.key] = experiments
+            }
+            
+            return map
+        }()
+        
+        self.flagVariationsMap = {
+            var map = [String: [Variation]]()
+            
+            flagRulesMap.forEach { (flagKey, rules) in
+                var variations = [Variation]()
+                rules.forEach { rule in
+                    rule.variations.forEach { variation in
+                        if !variations.map({ $0.id }).contains(variation.id) {
+                            variations.append(variation)
+                        }
+                    }
+                }
+                map[flagKey] = variations
+            }
+            
             return map
         }()
     }

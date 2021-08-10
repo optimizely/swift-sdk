@@ -158,40 +158,10 @@ class SamplesForAPI {
             print("[OptimizelyConfig]   -- (id, key, experimentIds) = (\(event.id), \(event.key), \(event.experimentIds))")
         }
 
-        //let experiments = optConfig.experimentsMap.values
-        let experimentKeys = optConfig.experimentsMap.keys
-        print("[OptimizelyConfig] all experiment keys = \(experimentKeys)")
-
         //let features = optConfig.featureFlagsMap.values
         let featureKeys = optConfig.featuresMap.keys
         print("[OptimizelyConfig] all feature keys = \(featureKeys)")
 
-        // enumerate all experiments (variations, and associated variables)
-        
-        experimentKeys.forEach { expKey in
-            print("[OptimizelyConfig] experimentKey = \(expKey)")
-            
-            let experiment = optConfig.experimentsMap[expKey]!
-            
-            let variationsMap = experiment.variationsMap
-            let variationKeys = variationsMap.keys
-            
-            variationKeys.forEach { varKey in
-                print("[OptimizelyConfig]   - variationKey = \(varKey)")
-                
-                let variation = variationsMap[varKey]!
-                
-                let variablesMap = variation.variablesMap
-                let variableKeys = variablesMap.keys
-                
-                variableKeys.forEach { variableKey in
-                    let variable = variablesMap[variableKey]!
-                    
-                    print("[OptimizelyConfig]       -- variable: \(variableKey), \(variable)")
-                }
-            }
-        }
-        
         // enumerate all features (experiments, variations, and assocated variables)
         
         featureKeys.forEach { featKey in
@@ -201,13 +171,14 @@ class SamplesForAPI {
 
             let feature = optConfig.featuresMap[featKey]!
             
-            let experimentsMap = feature.experimentsMap
-            let experimentKeys = experimentsMap.keys
+            let experimentRules = feature.experimentRules
+            let deliveryRules = feature.deliveryRules
             
-            experimentKeys.forEach { expKey in
-                print("[OptimizelyConfig]   - experimentKey = \(expKey)")
-                
-                let variationsMap = experimentsMap[expKey]!.variationsMap
+            experimentRules.forEach { experiment in
+                print("[OptimizelyConfig]   - experiment rule-key = \(experiment.key)")
+                print("[OptimizelyConfig]   - experiment audiences = \(experiment.audiences)")
+
+                let variationsMap = experiment.variationsMap
                 let variationKeys = variationsMap.keys
                 
                 variationKeys.forEach { varKey in
@@ -223,6 +194,13 @@ class SamplesForAPI {
                         print("[OptimizelyConfig]           --- variable: \(variableKey), \(variable)")
                     }
                 }
+            }
+            
+            deliveryRules.forEach { delivery in
+                print("[OptimizelyConfig]   - delivery rule-key = \(delivery.key)")
+                print("[OptimizelyConfig]   - delivery audiences = \(delivery.audiences)")
+
+                // use delivery rule data here...
             }
             
             // enumerate all feature-variables

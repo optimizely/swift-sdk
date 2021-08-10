@@ -121,7 +121,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         
         print("   Experiments: \(optimizelyConfig.experimentsMap.keys)")
 
-        XCTAssertEqual(optimizelyConfig.experimentsMap.count, 5)
+        XCTAssertEqual(optimizelyConfig.experimentsMap.count, 4)
 
         let experiment1 = optimizelyConfig.experimentsMap["exp_with_audience"]!
         let experiment2 = optimizelyConfig.experimentsMap["experiment_4000"]!
@@ -167,7 +167,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         print("   Feature2 > Experiments: \(feature2.experimentsMap.keys)")
 
         var experiment1 = feature1.experimentsMap["experiment_4000"]!
-        var experiment2 = feature1.experimentsMap["experiment_8000"]!
+        var experiment2 = feature1.experimentsMap["duplicate_experiment_key"]!
         
         XCTAssertEqual(experiment1.variationsMap.count, 2)
         XCTAssertEqual(experiment2.variationsMap.count, 1)
@@ -217,7 +217,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         // FeatureFlag: deliveryRules
         
         XCTAssertEqual(feature1.deliveryRules.count, 2)
-        XCTAssertEqual(feature2.deliveryRules.count, 0)
+        XCTAssertEqual(feature2.deliveryRules.count, 1)
         
         experiment1 = feature1.deliveryRules[0]
         experiment2 = feature1.deliveryRules[1]
@@ -237,7 +237,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
             
             // compare dictionaries as strings (after key-sorted and remove all spaces)
             guard let observedDict = optimizelyConfig.dict else {
-                XCTAssert(false)
+                XCTFail()
                 return
             }
             

@@ -196,7 +196,7 @@ class OptimizelyClientTests_Variables: XCTestCase {
         experiment.variations[0].featureEnabled = true
         optimizely.config!.project.experiments = [experiment]
         
-        let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
+        let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
         
         XCTAssertEqual(value, kVariableValueA)
     }
@@ -206,7 +206,7 @@ class OptimizelyClientTests_Variables: XCTestCase {
         experiment.variations[0].featureEnabled = false
         optimizely.config!.project.experiments = [experiment]
         
-        let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
+        let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
         
         XCTAssertEqual(value, kVariableDefaultValue)
     }
@@ -216,7 +216,7 @@ class OptimizelyClientTests_Variables: XCTestCase {
         experiment.variations[0].featureEnabled = nil
         optimizely.config!.project.experiments = [experiment]
         
-        let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
+        let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId)
         
         XCTAssertEqual(value, kVariableDefaultValue)
     }
@@ -232,7 +232,7 @@ extension OptimizelyClientTests_Variables {
         featureFlag.rolloutId = kRolloutId
         optimizely.config!.project.featureFlags = [featureFlag]
         
-        let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
+        let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
         XCTAssert(value == kRolloutVariableValueA)
     }
     
@@ -242,7 +242,7 @@ extension OptimizelyClientTests_Variables {
         featureFlag.rolloutId = kRolloutId
         optimizely.config!.project.featureFlags = [featureFlag]
         
-        let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge2Match)
+        let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge2Match)
         XCTAssert(value == kRolloutVariableValueB)
     }
     
@@ -253,7 +253,7 @@ extension OptimizelyClientTests_Variables {
         optimizely.config!.project.featureFlags = [featureFlag]
         optimizely.config!.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
         
-        let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
+        let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
         XCTAssert(value == kRolloutVariableValueC)
     }
     
@@ -264,7 +264,7 @@ extension OptimizelyClientTests_Variables {
         optimizely.config!.project.featureFlags = [featureFlag]
         optimizely.config!.project.rollouts[0].experiments[0].variations[0].featureEnabled = false
         
-        let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
+        let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
         XCTAssert(value == kVariableDefaultValue)
     }
     
@@ -275,7 +275,7 @@ extension OptimizelyClientTests_Variables {
         optimizely.config!.project.featureFlags = [featureFlag]
         optimizely.config!.project.rollouts[0].experiments = []
         
-        let value = try! optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
+        let value = try? optimizely.getFeatureVariableInteger(featureKey: "house", variableKey: "window", userId: kUserId, attributes: kAttributesRolloutAge1Match)
         XCTAssert(value == kVariableDefaultValue)
     }
 }

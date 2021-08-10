@@ -1,5 +1,12 @@
 # Optimizely Swift SDK Changelog
 
+## 3.8.1
+August 6, 2021
+
+### Bug Fixes
+* Remove lazy initializations for thread safety. ([#422](https://github.com/optimizely/swift-sdk/pull/422))
+
+
 ## 3.8.0
 June 2, 2021
 

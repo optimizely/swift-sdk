@@ -262,9 +262,9 @@ extension DecisionServiceTests_Features {
                                                                          featureFlag: featureFlag,
                                                                          userId: kUserId,
                                                                          attributes: kAttributesCountryMatch).result
-        XCTAssert(pair!.experiment?.key == kExperimentKey)
-        XCTAssert(pair!.variation.key == kVariationKeyD)
-        XCTAssert(pair!.source == Constants.DecisionSource.featureTest.rawValue)
+        XCTAssert(pair?.experiment.key == kExperimentKey)
+        XCTAssert(pair?.variation.key == kVariationKeyD)
+        XCTAssert(pair?.source == Constants.DecisionSource.featureTest.rawValue)
     }
     
     func testGetVariationForFeatureExperimentWhenNotMatched() {
@@ -433,9 +433,8 @@ extension DecisionServiceTests_Features {
                                                                featureFlag: featureFlag,
                                                                userId: kUserId,
                                                                attributes: kAttributesCountryMatch).result
-        XCTAssertNotNil(pair)
-        XCTAssert(pair!.experiment?.key == kExperimentKey)
-        XCTAssert(pair!.variation.key == kVariationKeyD)
+        XCTAssert(pair?.experiment.key == kExperimentKey)
+        XCTAssert(pair?.variation.key == kVariationKeyD)
     }
     
     func testGetVariationForFeatureWhenExperimentNotMatchAndRolloutNotExist() {
@@ -459,6 +458,8 @@ extension DecisionServiceTests_Features {
         XCTAssertNotNil(pair)
         XCTAssert(pair!.experiment?.id == kRolloutExperimentId3)
         XCTAssert(pair!.variation.key == kRolloutVariationKeyC)
+        XCTAssert(pair?.experiment.id == kRolloutExperimentId3)
+        XCTAssert(pair?.variation.key == kRolloutVariationKeyC)
     }
     
 }

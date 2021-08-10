@@ -136,12 +136,12 @@ extension OptimizelyError: CustomStringConvertible, ReasonProtocol {
         case .nilAttributeValue(let condition, let key):    message = "Audience condition (\(condition)) evaluated to UNKNOWN because a null value was passed for user attribute (\(key))."
         case .missingAttributeValue(let condition, let key):    message = "Audience condition (\(condition)) evaluated to UNKNOWN because no value was passed for user attribute (\(key))."
         case .userIdInvalid:                                message = "Provided user ID is in an invalid format."
-        case .bucketingIdInvalid (let id):                  message = "Invalid bucketing ID (\(id))."
+        case .bucketingIdInvalid(let id):                   message = "Invalid bucketing ID (\(id))."
         case .userProfileInvalid:                           message = "Provided user profile object is invalid."
             
         case .datafileDownloadFailed(let hint):             message = "Datafile download failed (\(hint))."
         case .dataFileInvalid:                              message = "Provided datafile is in an invalid format."
-        case .dataFileVersionInvalid (let version):         message = "Provided datafile version (\(version)) is not supported."
+        case .dataFileVersionInvalid(let version):          message = "Provided datafile version (\(version)) is not supported."
         case .datafileSavingFailed(let hint):               message = "Datafile save failed (\(hint))."
         case .datafileLoadingFailed(let hint):              message = "Datafile load failed (\(hint))."
             

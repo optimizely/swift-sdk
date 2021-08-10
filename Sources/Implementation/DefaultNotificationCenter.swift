@@ -205,8 +205,6 @@ extension DefaultNotificationCenter {
             if let event = try? JSONSerialization.jsonObject(with: eventData, options: []) as? [String: Any] {
                 let args: [Any] = [url, event]
                 self.sendNotifications(type: NotificationType.logEvent.rawValue, args: args)
-            } else {
-                OPTLoggerFactory.getLogger().d("LogEvent notification discarded due to invalid event")
             }
         }
     }

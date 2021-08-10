@@ -105,7 +105,7 @@ class DatafileHandlerTests: XCTestCase {
         
         handler.downloadDatafile(sdkKey: sdkKey) { (result) in
             if case .success(_) = result  {
-                XCTAssert(false)
+                XCTFail()
             }
             if case .failure(_) = result  {
                 expectation.fulfill()

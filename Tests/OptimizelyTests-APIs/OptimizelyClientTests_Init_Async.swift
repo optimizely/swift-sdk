@@ -81,7 +81,7 @@ class OptimizelyClientTests_Init_Async: XCTestCase {
             if case .failure = result {
                 XCTAssert(true)
             } else {
-                XCTAssert(false)
+                XCTFail()
             }
             exp.fulfill()
         }
@@ -101,7 +101,7 @@ class OptimizelyClientTests_Init_Async: XCTestCase {
             if case .failure = result {
                 XCTAssert(true)
             } else {
-                XCTAssert(false)
+                XCTFail()
             }
             exp.fulfill()
         }

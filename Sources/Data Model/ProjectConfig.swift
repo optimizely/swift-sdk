@@ -18,75 +18,26 @@ import Foundation
 
 class ProjectConfig {
     
-    var project: Project!
-    
-    lazy var logger = OPTLoggerFactory.getLogger()
+    var project: Project! {
+        didSet {
+            updateProjectDependentProps()
+        }
+    }
+    let logger = OPTLoggerFactory.getLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
     // NOTE: experiment.forcedVariations use [ExperimentKey: VariationKey] instead of ids
-    
     var whitelistUsers = AtomicProperty(property: [String: [String: String]]())
     
-    lazy var experimentKeyMap: [String: Experiment] = {
-        var map = [String: Experiment]()
-        allExperiments.forEach { exp in
-            map[exp.key] = exp
-        }
-        return map
-    }()
-    
-    lazy var experimentIdMap: [String: Experiment] = {
-        var map = [String: Experiment]()
-        allExperiments.forEach { map[$0.id] = $0 }
-        return map
-    }()
-    
-    lazy var experimentFeatureMap: [String: [String]] = {
-        var experimentFeatureMap = [String: [String]]()
-        project.featureFlags.forEach { (ff) in
-            ff.experimentIds.forEach {
-                if var arr = experimentFeatureMap[$0] {
-                    arr.append(ff.id)
-                    experimentFeatureMap[$0] = arr
-                } else {
-                    experimentFeatureMap[$0] = [ff.id]
-                }
-            }
-        }
-        return experimentFeatureMap
-    }()
-    
-    lazy var eventKeyMap: [String: Event] = {
-        var eventKeyMap = [String: Event]()
-        project.events.forEach { eventKeyMap[$0.key] = $0 }
-        return eventKeyMap
-    }()
-    
-    lazy var attributeKeyMap: [String: Attribute] = {
-        var map = [String: Attribute]()
-        project.attributes.forEach { map[$0.key] = $0 }
-        return map
-    }()
-    
-    lazy var featureFlagKeyMap: [String: FeatureFlag] = {
-        var map = [String: FeatureFlag]()
-        project.featureFlags.forEach { map[$0.key] = $0 }
-        return map
-    }()
-    
-    lazy var featureFlagKeys: [String] = {
-        return project.featureFlags.map { $0.key }
-    }()
-
-    lazy var rolloutIdMap: [String: Rollout] = {
-        var map = [String: Rollout]()
-        project.rollouts.forEach { map[$0.id] = $0 }
-        return map
-    }()
-    
-    lazy var allExperiments: [Experiment] = {
-        return project.experiments + project.groups.map { $0.experiments }.flatMap { $0 }
-    }()
+    var experimentKeyMap = [String: Experiment]()
+    var experimentIdMap = [String: Experiment]()
+    var experimentFeatureMap = [String: [String]]()
+    var eventKeyMap = [String: Event]()
+    var attributeKeyMap = [String: Attribute]()
+    var featureFlagKeyMap = [String: FeatureFlag]()
+    var featureFlagKeys = [String]()
+    var rolloutIdMap = [String: Rollout]()
+    var allExperiments = [Experiment]()
     
     lazy var flagRulesMap: [String: [Experiment]] = {
         var map = [String: [Experiment]]()
@@ -125,17 +76,19 @@ class ProjectConfig {
     // MARK: - Init
     
     init(datafile: Data) throws {
+        var project: Project
         do {
-            self.project = try JSONDecoder().decode(Project.self, from: datafile)
-            
-            ProjectConfig.observer.update(project: project)
+            project = try JSONDecoder().decode(Project.self, from: datafile)
         } catch {
             throw OptimizelyError.dataFileInvalid
         }
         
-        if !isValidVersion(version: self.project.version) {
-            throw OptimizelyError.dataFileVersionInvalid(self.project.version)
+        if !isValidVersion(version: project.version) {
+            throw OptimizelyError.dataFileVersionInvalid(project.version)
         }
+
+        defer { self.project = project }  // deferred-init will call "didSet"
+        ProjectConfig.observer.update(project: project)
     }
     
     convenience init(datafile: String) throws {
@@ -143,6 +96,67 @@ class ProjectConfig {
     }
     
     init() {}
+    
+    func updateProjectDependentProps() {
+        self.allExperiments = project.experiments + project.groups.map { $0.experiments }.flatMap { $0 }
+        
+        self.experimentKeyMap = {
+            var map = [String: Experiment]()
+            allExperiments.forEach { exp in
+                map[exp.key] = exp
+            }
+            return map
+        }()
+        
+        self.experimentIdMap = {
+            var map = [String: Experiment]()
+            allExperiments.forEach { map[$0.id] = $0 }
+            return map
+        }()
+        
+        self.experimentFeatureMap = {
+            var experimentFeatureMap = [String: [String]]()
+            project.featureFlags.forEach { (ff) in
+                ff.experimentIds.forEach {
+                    if var arr = experimentFeatureMap[$0] {
+                        arr.append(ff.id)
+                        experimentFeatureMap[$0] = arr
+                    } else {
+                        experimentFeatureMap[$0] = [ff.id]
+                    }
+                }
+            }
+            return experimentFeatureMap
+        }()
+        
+        self.eventKeyMap = {
+            var eventKeyMap = [String: Event]()
+            project.events.forEach { eventKeyMap[$0.key] = $0 }
+            return eventKeyMap
+        }()
+        
+        self.attributeKeyMap = {
+            var map = [String: Attribute]()
+            project.attributes.forEach { map[$0.key] = $0 }
+            return map
+        }()
+        
+        self.featureFlagKeyMap = {
+            var map = [String: FeatureFlag]()
+            project.featureFlags.forEach { map[$0.key] = $0 }
+            return map
+        }()
+        
+        self.featureFlagKeys = {
+            return project.featureFlags.map { $0.key }
+        }()
+
+        self.rolloutIdMap = {
+            var map = [String: Rollout]()
+            project.rollouts.forEach { map[$0.id] = $0 }
+            return map
+        }()
+    }
 }
 
 // MARK: - Project Change Observer

@@ -40,7 +40,7 @@ public class OptimizelyUserContext {
         return userContext
     }
     
-    lazy var logger = OPTLoggerFactory.getLogger()
+    let logger = OPTLoggerFactory.getLogger()
     
     /// OptimizelyUserContext init
     ///

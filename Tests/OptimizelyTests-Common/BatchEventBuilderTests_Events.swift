@@ -233,8 +233,7 @@ extension BatchEventBuilderTests_Events {
         _ = fakeOptimizelyManager.isFeatureEnabled(featureKey: featureKey, userId: userId)
         
         let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
-        if result == XCTWaiter.Result.timedOut {
-            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+        if result == XCTWaiter.Result.timedOut, let event = getFirstEventJSON(dispatcher: eventDispatcher2) {
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
             let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
@@ -267,8 +266,7 @@ extension BatchEventBuilderTests_Events {
         _ = fakeOptimizelyManager.isFeatureEnabled(featureKey: featureKey, userId: userId)
         
         let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
-        if result == XCTWaiter.Result.timedOut {
-            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+        if result == XCTWaiter.Result.timedOut, let event = getFirstEventJSON(dispatcher: eventDispatcher2) {
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
             let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]

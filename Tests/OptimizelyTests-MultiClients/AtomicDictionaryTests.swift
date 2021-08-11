@@ -75,4 +75,23 @@ class AtomicDictionaryTests: XCTestCase {
         XCTAssertEqual(a.count, numIterations)
     }
     
+    func testConcurrentCopy() {
+        let num = 10
+        let a = AtomicDictionary<Int, Int>()
+        (0..<num).forEach{ a[$0] = $0 + 1234 }
+        
+        let b = AtomicDictionary<Int, Int>()
+
+        let result = OTUtils.runConcurrent(count: 100) { idx in
+            for _ in 0..<100 {
+                b.property = a.property
+                XCTAssert(b.count == num)
+            }
+            
+            XCTAssert(b.property == a.property)
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+
 }

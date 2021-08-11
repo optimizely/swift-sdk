@@ -196,7 +196,7 @@ extension OptimizelyUserContextTests_Decide {
         // flag-to-decision is the 1st priority
         
         XCTAssertEqual(decision.variationKey, "3324490562")
-        XCTAssertEqual(decision.ruleKey, "")
+        XCTAssertNil(decision.ruleKey)
     }
     
     func testGetForcedDecision() {

@@ -20,8 +20,8 @@ import Foundation
 
 public protocol OptimizelyConfig {
     var environmentKey: String { get }
-    var revision: String { get }
     var sdkKey: String { get }
+    var revision: String { get }
     
     // This experimentsMap is for experiments of legacy projects only
     // For flag projects, experiment keys are not guaranteed to be unique
@@ -88,8 +88,8 @@ public protocol OptimizelyEvent {
 
 struct OptimizelyConfigImp: OptimizelyConfig {
     var environmentKey: String = ""
-    var revision: String = ""
     var sdkKey: String = ""
+    var revision: String = ""
     var experimentsMap: [String: OptimizelyExperiment] = [:]
     var featuresMap: [String: OptimizelyFeature] = [:]
     var attributes: [OptimizelyAttribute] = []

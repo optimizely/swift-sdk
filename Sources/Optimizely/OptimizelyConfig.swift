@@ -22,7 +22,13 @@ public protocol OptimizelyConfig {
     var environmentKey: String { get }
     var revision: String { get }
     var sdkKey: String { get }
+    
+    // This experimentsMap is for experiments of legacy projects only
+    // For flag projects, experiment keys are not guaranteed to be unique
+    // across multiple flags, so this map may not include all experiments
+    // when keys conflict.
     var experimentsMap: [String: OptimizelyExperiment] { get }
+    
     var featuresMap: [String: OptimizelyFeature] { get }
     var attributes: [OptimizelyAttribute] { get }
     var audiences: [OptimizelyAudience] { get }

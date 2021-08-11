@@ -35,8 +35,12 @@ public class OptimizelyUserContext {
     
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
+        
         let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
-        userContext.savedDecisions = savedDecisions
+        if savedDecisions.count > 0 {
+            userContext.savedDecisions.property = savedDecisions.property   // make a copy (not reference)
+        }
+        
         return userContext
     }
     

@@ -648,7 +648,7 @@ extension EventDispatcherTests_Batch {
 
         dispatchMultipleEvents([(kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: 10)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on batchSize hit")
     }
     
@@ -683,7 +683,7 @@ extension EventDispatcherTests_Batch {
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: 10)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
     }
     
@@ -718,7 +718,7 @@ extension EventDispatcherTests_Batch {
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
 
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: 10)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the projectId change")
     }
     

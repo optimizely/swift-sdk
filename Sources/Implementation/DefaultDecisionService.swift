@@ -288,7 +288,8 @@ class DefaultDecisionService: OPTDecisionService {
             return DecisionResponse(result: nil, reasons: reasons)
         }
         
-        for index in 0..<rolloutRules.count.advanced(by: -1) {
+        var index = 0
+        while index < rolloutRules.count {
             let decisionResponse = getVariationFromDeliveryRule(config: config,
                                                                 flagKey: featureFlag.key,
                                                                 rules: rolloutRules,
@@ -296,11 +297,16 @@ class DefaultDecisionService: OPTDecisionService {
                                                                 user: user,
                                                                 options: options)
             reasons.merge(decisionResponse.reasons)
-            if let variation = decisionResponse.result {
+            let (variation, skipToEveryoneElse) = decisionResponse.result!
+            
+            if let variation = variation {
                 let rule = rolloutRules[index]
                 let featureDecision = FeatureDecision(experiment: rule, variation: variation, source: Constants.DecisionSource.rollout.rawValue)
                 return DecisionResponse(result: featureDecision, reasons: reasons)
             }
+            
+            // the last rule is special for "Everyone Else"
+            index = skipToEveryoneElse ? (rolloutRules.count - 1) : (index + 1)
         }
         
         return DecisionResponse(result: nil, reasons: reasons)
@@ -342,9 +348,10 @@ class DefaultDecisionService: OPTDecisionService {
                                       rules: [Experiment],
                                       ruleIndex: Int,
                                       user: OptimizelyUserContext,
-                                      options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
+                                      options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<(Variation?, Bool)> {
         let reasons = DecisionReasons(options: options)
-        
+        var skipToEveryoneElse = false
+
         // check forced-decision first
         
         let rule = rules[ruleIndex]
@@ -355,7 +362,7 @@ class DefaultDecisionService: OPTDecisionService {
                                                         options: options)
         reasons.merge(forcedDecisionResponse.reasons)
         if let variation = forcedDecisionResponse.result {
-            return DecisionResponse(result: variation, reasons: reasons)
+            return DecisionResponse(result: (variation, skipToEveryoneElse), reasons: reasons)
         }
         
         // regular decision
@@ -396,6 +403,9 @@ class DefaultDecisionService: OPTDecisionService {
                 info = LogMessage.userNotBucketedIntoTargetingRule(userId, loggingKey)
                 logger.d(info)
                 reasons.addInfo(info)
+                
+                // skip the rest of rollout rules to the everyone-else rule if audience matches but not bucketed.
+                skipToEveryoneElse = true
             }
         } else {
             let info = LogMessage.userDoesntMeetConditionsForTargetingRule(userId, loggingKey)
@@ -403,7 +413,7 @@ class DefaultDecisionService: OPTDecisionService {
             reasons.addInfo(info)
         }
         
-        return DecisionResponse(result: bucketedVariation, reasons: reasons)
+        return DecisionResponse(result: (bucketedVariation, skipToEveryoneElse), reasons: reasons)
     }
     
     func getBucketingId(userId: String, attributes: OptimizelyAttributes) -> String {

@@ -36,6 +36,22 @@ class AtomicDictionaryTests: XCTestCase {
         XCTAssert(a.count == 1)
         XCTAssert(a["k1"] == nil)
         XCTAssert(a["k2"] == 2)
+        
+        // validate copying not holding reference
+        
+        let b = AtomicDictionary<String, Int>()
+        b["k1"] = 1
+        b["k2"] = 2
+
+        let c = AtomicDictionary<String, Int>()
+        c.property = b.property
+        XCTAssert(c.count == 2)
+        XCTAssert(c["k1"] == 1)
+        XCTAssert(c["k2"] == 2)
+        b["k1"] = 100
+        b["k2"] = 200
+        XCTAssert(c["k1"] == 1)
+        XCTAssert(c["k2"] == 2)
     }
     
     func testConcurrentReadWrite() {

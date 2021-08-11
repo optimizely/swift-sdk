@@ -239,7 +239,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertFalse(user.removeForcedDecision(flagKey: featureKey))  // no more saved decisions
     }
     
-    func testRemoveAllForcedDecisions() {
+    func testRemoveForcedDecisions() {
         let featureKey = "feature_1"
         let user = optimizely.createUserContext(userId: kUserId)
         
@@ -249,7 +249,7 @@ extension OptimizelyUserContextTests_Decide {
         XCTAssertEqual(user.getForcedDecision(flagKey: featureKey), "fv1")
         XCTAssertEqual(user.getForcedDecision(flagKey: featureKey, ruleKey: "r"), "ev1")
 
-        XCTAssertTrue(user.removeAllForcedDecisions())
+        XCTAssertTrue(user.removeForcedDecisions())
         XCTAssertNil(user.getForcedDecision(flagKey: featureKey))
         XCTAssertNil(user.getForcedDecision(flagKey: featureKey, ruleKey: "r"))
         XCTAssertFalse(user.removeForcedDecision(flagKey: featureKey))  // no more saved decisions

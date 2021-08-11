@@ -43,6 +43,18 @@ class AtomicArrayTests: XCTestCase {
         XCTAssert(b[6] == 10)
         XCTAssert(b[7] == 20)
         XCTAssert(b[8] == 30)
+        
+        // validate copying not holding reference
+        
+        let c = AtomicArray<Int>()
+        c.property = a.property
+        XCTAssert(c.count == 5)
+        XCTAssert(c[0] == 100)
+        XCTAssert(c[4] == 400)
+        a[0] = 1
+        a[4] = 4
+        XCTAssert(c[0] == 100)
+        XCTAssert(c[4] == 400)
     }
     
     func testConcurrentReadWrite() {

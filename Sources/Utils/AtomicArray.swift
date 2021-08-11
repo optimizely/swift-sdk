@@ -18,7 +18,20 @@ import Foundation
 
 class AtomicArray<T>: AtomicWrapper {
     private var _property: [T]
-         
+    
+    var property: [T] {
+        get {
+            return getAtomic {
+                _property
+            }!
+        }
+        set {
+            performAtomic {
+                self._property = newValue
+            }
+        }
+    }
+             
     init(_ property: [T] = []) {
         self._property = property
     }

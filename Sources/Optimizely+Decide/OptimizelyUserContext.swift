@@ -38,7 +38,7 @@ public class OptimizelyUserContext {
         
         let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
         if savedDecisions.count > 0 {
-            userContext.savedDecisions.property = savedDecisions.property   // make a copy (not reference)
+            userContext.savedDecisions.property = savedDecisions.property   // make a copy
         }
         
         return userContext
@@ -88,7 +88,7 @@ public class OptimizelyUserContext {
         
         return optimizely.decide(user: clone, key: key, options: options)
     }
-
+    
     /// Returns a key-map of decision results for multiple flag keys and a user context.
     ///
     /// - If the SDK finds an error (__flagKeyInvalid__, etc) for a key, the response will include a decision for the key showing `reasons` for the error (regardless of __includeReasons__ in options).
@@ -100,7 +100,7 @@ public class OptimizelyUserContext {
     /// - Returns: A dictionary of all decision results, mapped by flag keys.
     public func decide(keys: [String],
                        options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-
+        
         guard let optimizely = self.optimizely, let clone = self.clone else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
@@ -119,10 +119,10 @@ public class OptimizelyUserContext {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
         }
-
+        
         return optimizely.decideAll(user: clone, options: options)
     }
-
+    
     /// Track an event.
     ///
     /// - Parameters:
@@ -135,7 +135,7 @@ public class OptimizelyUserContext {
         guard let optimizely = self.optimizely, optimizely.config != nil else {
             throw OptimizelyError.sdkNotReady
         }
-
+        
         try optimizely.track(eventKey: eventKey,
                              userId: userId,
                              attributes: attributes,
@@ -147,7 +147,7 @@ public class OptimizelyUserContext {
 // MARK: - ForcedDecisions
 
 extension OptimizelyUserContext {
-
+    
     public func setForcedDecision(flagKey: String,
                                   ruleKey: String? = nil,
                                   variationKey: String) -> Bool {
@@ -194,14 +194,14 @@ extension OptimizelyUserContext {
             logger.e(OptimizelyError.sdkNotReady)
             return false
         }
-
+        
         savedDecisions.removeAll()
         return true
     }
     
     func findForcedDecision(flagKey: String, ruleKey: String? = nil) -> String? {
         guard savedDecisions.count > 0 else { return nil }
-
+        
         if let item = savedDecisions.filter({ $0.flagKey == flagKey && $0.ruleKey == ruleKey }).first {
             return item.variationKey
         }

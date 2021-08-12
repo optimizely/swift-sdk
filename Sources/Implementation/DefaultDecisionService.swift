@@ -321,12 +321,9 @@ class DefaultDecisionService: OPTDecisionService {
         
         // check forced-decision first
         
-        let forcedDecisionResponse = findForcedDecision(config: config,
-                                                        flagKey: flagKey,
-                                                        ruleKey: rule.key,
-                                                        user: user,
-                                                        options: options)
+        let forcedDecisionResponse = user.findValidatedForcedDecision(flagKey: flagKey, ruleKey: rule.key, options: options)
         reasons.merge(forcedDecisionResponse.reasons)
+        
         if let variation = forcedDecisionResponse.result {
             return DecisionResponse(result: variation, reasons: reasons)
         }
@@ -355,12 +352,9 @@ class DefaultDecisionService: OPTDecisionService {
         // check forced-decision first
         
         let rule = rules[ruleIndex]
-        let forcedDecisionResponse = findForcedDecision(config: config,
-                                                        flagKey: flagKey,
-                                                        ruleKey: rule.key,
-                                                        user: user,
-                                                        options: options)
+        let forcedDecisionResponse = user.findValidatedForcedDecision(flagKey: flagKey, ruleKey: rule.key, options: options)
         reasons.merge(forcedDecisionResponse.reasons)
+        
         if let variation = forcedDecisionResponse.result {
             return DecisionResponse(result: (variation, skipToEveryoneElse), reasons: reasons)
         }
@@ -427,35 +421,6 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         return bucketingId
-    }
-    
-}
-
-// MARK: - Forced Decisions
-
-extension DefaultDecisionService {
-    
-    func findForcedDecision(config: ProjectConfig,
-                            flagKey: String,
-                            ruleKey: String,
-                            user: OptimizelyUserContext,
-                            options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
-        let reasons = DecisionReasons(options: options)
-        
-        if let variationKey = user.findForcedDecision(flagKey: flagKey, ruleKey: ruleKey) {
-            if let variation = config.getVariation(flagKey: flagKey, variationKey: variationKey) {
-                let info = LogMessage.userHasForcedDecision(user.userId, flagKey, ruleKey, variationKey)
-                logger.d(info)
-                reasons.addInfo(info)
-                return DecisionResponse(result: variation, reasons: reasons)
-            }
-            
-            let info = LogMessage.userHasForcedDecisionButInvalid(user.userId, flagKey, ruleKey)
-            logger.d(info)
-            reasons.addInfo(info)
-        }
-        
-        return DecisionResponse(result: nil, reasons: reasons)
     }
     
 }

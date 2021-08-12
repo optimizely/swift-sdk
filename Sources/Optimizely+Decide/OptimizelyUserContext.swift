@@ -208,7 +208,28 @@ extension OptimizelyUserContext {
         
         return nil
     }
-
+    
+    func findValidatedForcedDecision(flagKey: String,
+                                    ruleKey: String?,
+                                    options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons(options: options)
+        
+        if let variationKey = findForcedDecision(flagKey: flagKey, ruleKey: ruleKey) {
+            if let variation = optimizely?.config?.getVariation(flagKey: flagKey, variationKey: variationKey) {
+                let info = LogMessage.userHasForcedDecision(userId, flagKey, ruleKey, variationKey)
+                logger.d(info)
+                reasons.addInfo(info)
+                return DecisionResponse(result: variation, reasons: reasons)
+            }
+            
+            let info = LogMessage.userHasForcedDecisionButInvalid(userId, flagKey, ruleKey)
+            logger.d(info)
+            reasons.addInfo(info)
+        }
+        
+        return DecisionResponse(result: nil, reasons: reasons)
+    }
+    
 }
 
 // MARK: - Equatable

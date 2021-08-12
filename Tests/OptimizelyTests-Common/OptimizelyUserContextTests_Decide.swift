@@ -122,10 +122,22 @@ extension OptimizelyUserContextTests_Decide {
         
         XCTAssertEqual(decision.variationKey, "3324490562")
         XCTAssertEqual(decision.ruleKey, nil)
-        
+        XCTAssertEqual(decision.enabled, true)
+        XCTAssertEqual(decision.flagKey, featureKey)
+        XCTAssertEqual(decision.userContext.userId, kUserId)
+        XCTAssertEqual(decision.userContext.attributes.count, 0)
+        XCTAssertEqual(decision.reasons, [])
+        XCTAssertEqual(decision.userContext.savedDecisions.count, 1)
+        XCTAssertEqual(decision.userContext.savedDecisions[0].flagKey, featureKey)
+        XCTAssertEqual(decision.userContext.savedDecisions[0].ruleKey, nil)
+        XCTAssertEqual(decision.userContext.savedDecisions[0].variationKey, "3324490562")
+
+        decision = user.decide(key: featureKey, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, nil, "3324490562").reason))
+
         // experiment-rule-to-decision
 
-        user = optimizely.createUserContext(userId: kUserId)
+        user = optimizely.createUserContext(userId: kUserId, attributes: ["country": "US"])
         _ = user.setForcedDecision(flagKey: featureKey,
                                    ruleKey: "exp_with_audience",
                                    variationKey: "b")
@@ -133,7 +145,19 @@ extension OptimizelyUserContextTests_Decide {
         
         XCTAssertEqual(decision.variationKey, "b")
         XCTAssertEqual(decision.ruleKey, "exp_with_audience")
+        XCTAssertEqual(decision.enabled, false)
+        XCTAssertEqual(decision.flagKey, featureKey)
+        XCTAssertEqual(decision.userContext.userId, kUserId)
+        XCTAssertEqual(decision.userContext.attributes.count, 1)
+        XCTAssertEqual(decision.reasons, [])
+        XCTAssertEqual(decision.userContext.savedDecisions.count, 1)
+        XCTAssertEqual(decision.userContext.savedDecisions[0].flagKey, featureKey)
+        XCTAssertEqual(decision.userContext.savedDecisions[0].ruleKey, "exp_with_audience")
+        XCTAssertEqual(decision.userContext.savedDecisions[0].variationKey, "b")
         
+        decision = user.decide(key: featureKey, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, "exp_with_audience", "b").reason))
+
         // delivery-rule-to-decision
         
         user = optimizely.createUserContext(userId: kUserId)
@@ -141,9 +165,25 @@ extension OptimizelyUserContextTests_Decide {
                                    ruleKey: "3332020515",
                                    variationKey: "3324490633")
         decision = user.decide(key: featureKey)
-        
+                
         XCTAssertEqual(decision.variationKey, "3324490633")
         XCTAssertEqual(decision.ruleKey, "3332020515")
+        XCTAssertEqual(decision.enabled, true)
+        XCTAssertEqual(decision.flagKey, featureKey)
+        XCTAssertEqual(decision.userContext.userId, kUserId)
+        XCTAssertEqual(decision.userContext.attributes.count, 0)
+        XCTAssertEqual(decision.reasons, [])
+        XCTAssertEqual(decision.userContext.savedDecisions.count, 1)
+        XCTAssertEqual(decision.userContext.savedDecisions[0].flagKey, featureKey)
+        XCTAssertEqual(decision.userContext.savedDecisions[0].ruleKey, "3332020515")
+        XCTAssertEqual(decision.userContext.savedDecisions[0].variationKey, "3324490633")
+        
+        decision = user.decide(key: featureKey, options: [.includeReasons])
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, "3332020515", "3324490633").reason))
+    }
+    
+    func testSetForcedDecision_eventAndNotification() {
+        XCTFail()
     }
     
     func testSetForcedDecision_invalid() {
@@ -154,10 +194,11 @@ extension OptimizelyUserContextTests_Decide {
         var user = optimizely.createUserContext(userId: kUserId)
         _ = user.setForcedDecision(flagKey: featureKey,
                                    variationKey: "invalid")
-        var decision = user.decide(key: featureKey)
+        var decision = user.decide(key: featureKey, options: [.includeReasons])
         
         XCTAssertEqual(decision.variationKey, "18257766532")
         XCTAssertEqual(decision.ruleKey, "18322080788")
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecisionButInvalid(kUserId, featureKey, nil).reason))
         
         // experiment-rule-to-decision
 
@@ -165,21 +206,23 @@ extension OptimizelyUserContextTests_Decide {
         _ = user.setForcedDecision(flagKey: featureKey,
                                    ruleKey: "exp_with_audience",
                                    variationKey: "invalid")
-        decision = user.decide(key: featureKey)
-        
+        decision = user.decide(key: featureKey, options: [.includeReasons])
+
         XCTAssertEqual(decision.variationKey, "18257766532")
         XCTAssertEqual(decision.ruleKey, "18322080788")
-        
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecisionButInvalid(kUserId, featureKey, "exp_with_audience").reason))
+
         // delivery-rule-to-decision
         
         user = optimizely.createUserContext(userId: kUserId)
         _ = user.setForcedDecision(flagKey: featureKey,
                                    ruleKey: "3332020515",
                                    variationKey: "invalid")
-        decision = user.decide(key: featureKey)
-        
+        decision = user.decide(key: featureKey, options: [.includeReasons])
+
         XCTAssertEqual(decision.variationKey, "18257766532")
         XCTAssertEqual(decision.ruleKey, "18322080788")
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecisionButInvalid(kUserId, featureKey, "3332020515").reason))
     }
     
     func testSetForcedDecision_conflicts() {

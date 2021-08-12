@@ -57,15 +57,17 @@ extension OptimizelyClient {
         var enabled = false
         
         var decision: FeatureDecision?
-        if let variationKey = user.findForcedDecision(flagKey: key),
-           let variation = config.getVariation(flagKey: key, variationKey: variationKey) {
-            
-            let info = LogMessage.userHasForcedDecision(userId, key, nil, variationKey)
-            logger.d(info)
-            reasons.addInfo(info)
-            
+        
+        // check forced-decisions first
+        
+        let forcedDecisionResponse = user.findValidatedForcedDecision(flagKey: key, ruleKey: nil, options: allOptions)
+        reasons.merge(forcedDecisionResponse.reasons)
+        
+        if let variation = forcedDecisionResponse.result {
             decision = FeatureDecision(experiment: nil, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
         } else {
+            // regular decision
+
             let decisionResponse = decisionService.getVariationForFeature(config: config,
                                                                           featureFlag: feature,
                                                                           user: user,

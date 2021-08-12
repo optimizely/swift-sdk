@@ -210,12 +210,12 @@ extension OptimizelyUserContext {
     }
     
     func findValidatedForcedDecision(flagKey: String,
-                                    ruleKey: String?,
-                                    options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
+                                     ruleKey: String?,
+                                     options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
         let reasons = DecisionReasons(options: options)
         
         if let variationKey = findForcedDecision(flagKey: flagKey, ruleKey: ruleKey) {
-            if let variation = optimizely?.config?.getVariation(flagKey: flagKey, variationKey: variationKey) {
+            if let variation = optimizely?.getFlagVariationByKey(flagKey: flagKey, variationKey: variationKey) {
                 let info = LogMessage.userHasForcedDecision(userId, flagKey, ruleKey, variationKey)
                 logger.d(info)
                 reasons.addInfo(info)

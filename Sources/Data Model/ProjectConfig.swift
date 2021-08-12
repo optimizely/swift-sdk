@@ -333,15 +333,7 @@ extension ProjectConfig {
     func isFeatureExperiment(id: String) -> Bool {
         return !(experimentFeatureMap[id]?.isEmpty ?? true)
     }
-    
-    func getVariation(flagKey: String, variationKey: String) -> Variation? {
-        if let variations = flagVariationsMap[flagKey] {
-            return variations.filter { $0.key == variationKey }.first
-        }
         
-        return nil
-    }
-    
     /**
      * Get forced variation for a given experiment key and user id.
      */

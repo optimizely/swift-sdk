@@ -176,6 +176,14 @@ extension OptimizelyClient {
 
 extension OptimizelyClient {
     
+    func getFlagVariationByKey(flagKey: String, variationKey: String) -> Variation? {
+        if let variations = config?.flagVariationsMap[flagKey] {
+            return variations.filter { $0.key == variationKey }.first
+        }
+        
+        return nil
+    }
+
     func getDecisionVariableMap(feature: FeatureFlag,
                                 variation: Variation?,
                                 enabled: Bool) -> DecisionResponse<[String: Any]> {

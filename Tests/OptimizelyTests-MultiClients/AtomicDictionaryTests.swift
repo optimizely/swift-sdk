@@ -82,8 +82,8 @@ class AtomicDictionaryTests: XCTestCase {
         
         let b = AtomicDictionary<Int, Int>()
 
-        let result = OTUtils.runConcurrent(count: 100, timeoutInSecs: 60) { idx in
-            for _ in 0..<100 {
+        let result = OTUtils.runConcurrent(count: 10, timeoutInSecs: 60) { idx in
+            for _ in 0..<10 {
                 b.property = a.property
                 XCTAssert(b.count == num)
             }

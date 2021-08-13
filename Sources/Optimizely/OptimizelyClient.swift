@@ -367,6 +367,7 @@ open class OptimizelyClient: NSObject {
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: The user's attributes.
     /// - Returns: true if feature is enabled, false otherwise.
+    @available(*, deprecated, message: "Use decide() API instead")
     public func isFeatureEnabled(featureKey: String,
                                  userId: String,
                                  attributes: OptimizelyAttributes? = nil) -> Bool {
@@ -425,6 +426,7 @@ open class OptimizelyClient: NSObject {
     ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type boolean.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
+    @available(*, deprecated, message: "Use decide() API instead")
     public func getFeatureVariableBoolean(featureKey: String,
                                           variableKey: String,
                                           userId: String,
@@ -445,6 +447,7 @@ open class OptimizelyClient: NSObject {
     ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type double.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
+    @available(*, deprecated, message: "Use decide() API instead")
     public func getFeatureVariableDouble(featureKey: String,
                                          variableKey: String,
                                          userId: String,
@@ -465,6 +468,7 @@ open class OptimizelyClient: NSObject {
     ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type integer.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
+    @available(*, deprecated, message: "Use decide() API instead")
     public func getFeatureVariableInteger(featureKey: String,
                                           variableKey: String,
                                           userId: String,
@@ -485,6 +489,7 @@ open class OptimizelyClient: NSObject {
     ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type string.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
+    @available(*, deprecated, message: "Use decide() API instead")
     public func getFeatureVariableString(featureKey: String,
                                          variableKey: String,
                                          userId: String,
@@ -505,6 +510,7 @@ open class OptimizelyClient: NSObject {
     ///   - attributes: The user's attributes.
     /// - Returns: feature variable value of type OptimizelyJSON.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
+    @available(*, deprecated, message: "Use decide() API instead")
     public func getFeatureVariableJSON(featureKey: String,
                                        variableKey: String,
                                        userId: String,
@@ -614,6 +620,7 @@ open class OptimizelyClient: NSObject {
     ///   - attributes: The user's attributes.
     /// - Returns: all the variables for a given feature.
     /// - Throws: `OptimizelyError` if feature parameter is not valid
+    @available(*, deprecated, message: "Use decide() API instead")
     public func getAllFeatureVariables(featureKey: String,
                                        userId: String,
                                        attributes: OptimizelyAttributes? = nil) throws -> OptimizelyJSON {
@@ -693,6 +700,7 @@ open class OptimizelyClient: NSObject {
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: The user's attributes.
     /// - Returns: Array of feature keys that are enabled for the user.
+    @available(*, deprecated, message: "Use decide() API instead")
     public func getEnabledFeatures(userId: String,
                                    attributes: OptimizelyAttributes? = nil) -> [String] {
         

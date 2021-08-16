@@ -60,7 +60,7 @@ public class OptimizelyUserContext {
         self.atomicAttributes = AtomicProperty(property: attributes ?? [:])
     }
     
-    /// Set an attribute for a given key.
+    /// Sets an attribute for a given key.
     /// - Parameters:
     ///   - key: An attribute key
     ///   - value: An attribute value
@@ -123,7 +123,7 @@ public class OptimizelyUserContext {
         return optimizely.decideAll(user: clone, options: options)
     }
     
-    /// Track an event.
+    /// Tracks an event.
     ///
     /// - Parameters:
     ///   - eventKey: The event name.
@@ -148,6 +148,12 @@ public class OptimizelyUserContext {
 
 extension OptimizelyUserContext {
     
+    /// Sets the forced decision (variation key) for a given flag and an optional rule.
+    /// - Parameters:
+    ///   - flagKey: A flag key.
+    ///   - ruleKey: An experiment or delivery rule key (optional).
+    ///   - variationKey: A variation key.
+    /// - Returns: true if the forced decision has been set successfully.
     public func setForcedDecision(flagKey: String,
                                   ruleKey: String? = nil,
                                   variationKey: String) -> Bool {
@@ -166,6 +172,11 @@ extension OptimizelyUserContext {
         return true
     }
     
+    /// Returns the forced decision for a given flag and an optional rule.
+    /// - Parameters:
+    ///   - flagKey: A flag key.
+    ///   - ruleKey: An experiment or delivery rule key (optional).
+    /// - Returns: A variation key or nil if forced decisions are not set for the parameters.
     public func getForcedDecision(flagKey: String, ruleKey: String? = nil) -> String? {
         guard let optimizely = self.optimizely, optimizely.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
@@ -175,6 +186,11 @@ extension OptimizelyUserContext {
         return findForcedDecision(flagKey: flagKey, ruleKey: ruleKey)
     }
     
+    /// Removes the forced decision for a given flag and an optional rule.
+    /// - Parameters:
+    ///   - flagKey: A flag key.
+    ///   - ruleKey: An experiment or delivery rule key (optional).
+    /// - Returns: true if the forced decision has been removed successfully.
     public func removeForcedDecision(flagKey: String, ruleKey: String? = nil) -> Bool {
         guard let optimizely = self.optimizely, optimizely.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
@@ -189,7 +205,9 @@ extension OptimizelyUserContext {
         return false
     }
     
-    public func removeForcedDecisions() -> Bool {
+    /// Removes all forced decisions bound to this user context.
+    /// - Returns: true if forced decisions have been removed successfully.
+    public func removeAllForcedDecisions() -> Bool {
         guard let optimizely = self.optimizely, optimizely.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
             return false
@@ -220,11 +238,11 @@ extension OptimizelyUserContext {
                 logger.d(info)
                 reasons.addInfo(info)
                 return DecisionResponse(result: variation, reasons: reasons)
+            } else {
+                let info = LogMessage.userHasForcedDecisionButInvalid(userId, flagKey, ruleKey)
+                logger.d(info)
+                reasons.addInfo(info)
             }
-            
-            let info = LogMessage.userHasForcedDecisionButInvalid(userId, flagKey, ruleKey)
-            logger.d(info)
-            reasons.addInfo(info)
         }
         
         return DecisionResponse(result: nil, reasons: reasons)

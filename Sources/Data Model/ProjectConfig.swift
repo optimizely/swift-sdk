@@ -125,15 +125,14 @@ class ProjectConfig {
             return map
         }()
         
+        // all rules (experiment rules and delivery rules) for each flag
+        
         self.flagRulesMap = {
             var map = [String: [Experiment]]()
             
             project.featureFlags.forEach { flag in
-                var experiments = flag.experimentIds.compactMap { expId in
-                    return allExperiments.filter { $0.id == expId }.first
-                }
-                
-                let rollout = project.rollouts.filter { $0.id == flag.rolloutId }.first
+                var experiments = flag.experimentIds.compactMap { experimentIdMap[$0] }
+                let rollout = self.rolloutIdMap[flag.rolloutId]
                 experiments.append(contentsOf: rollout?.experiments ?? [])
                 
                 map[flag.key] = experiments
@@ -141,6 +140,10 @@ class ProjectConfig {
             
             return map
         }()
+        
+        // all variations for each flag
+        // - datafile does not contain a separate entity for this.
+        // - we collect variations used in each rule (experiment rules and delivery rules)
         
         self.flagVariationsMap = {
             var map = [String: [Variation]]()

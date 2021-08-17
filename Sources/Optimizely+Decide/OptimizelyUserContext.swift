@@ -26,19 +26,19 @@ public class OptimizelyUserContext {
         return atomicAttributes.property ?? [:]
     }
     
-    struct SavedDecision {
+    struct ForcedDecision {
         let flagKey: String
         let ruleKey: String?
         var variationKey: String
     }
-    var savedDecisions = AtomicArray<SavedDecision>()
+    var forcedDecisions = AtomicArray<ForcedDecision>()
     
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
         
         let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
-        if savedDecisions.count > 0 {
-            userContext.savedDecisions.property = savedDecisions.property   // make a copy
+        if forcedDecisions.count > 0 {
+            userContext.forcedDecisions.property = forcedDecisions.property   // make a copy
         }
         
         return userContext
@@ -163,10 +163,10 @@ extension OptimizelyUserContext {
             return false
         }
         
-        if let index = savedDecisions.firstIndex(where: { $0.flagKey == flagKey && $0.ruleKey == ruleKey }) {
-            savedDecisions[index].variationKey = variationKey
+        if let index = forcedDecisions.firstIndex(where: { $0.flagKey == flagKey && $0.ruleKey == ruleKey }) {
+            forcedDecisions[index].variationKey = variationKey
         } else {
-            savedDecisions.append(SavedDecision(flagKey: flagKey, ruleKey: ruleKey, variationKey: variationKey))
+            forcedDecisions.append(ForcedDecision(flagKey: flagKey, ruleKey: ruleKey, variationKey: variationKey))
         }
         
         return true
@@ -197,8 +197,8 @@ extension OptimizelyUserContext {
             return false
         }
         
-        if let index = savedDecisions.firstIndex(where: { $0.flagKey == flagKey && $0.ruleKey == ruleKey }) {
-            _ = savedDecisions.remove(at: index)
+        if let index = forcedDecisions.firstIndex(where: { $0.flagKey == flagKey && $0.ruleKey == ruleKey }) {
+            _ = forcedDecisions.remove(at: index)
             return true
         }
         
@@ -213,14 +213,14 @@ extension OptimizelyUserContext {
             return false
         }
         
-        savedDecisions.removeAll()
+        forcedDecisions.removeAll()
         return true
     }
     
     func findForcedDecision(flagKey: String, ruleKey: String? = nil) -> String? {
-        guard savedDecisions.count > 0 else { return nil }
+        guard forcedDecisions.count > 0 else { return nil }
         
-        if let item = savedDecisions.filter({ $0.flagKey == flagKey && $0.ruleKey == ruleKey }).first {
+        if let item = forcedDecisions.filter({ $0.flagKey == flagKey && $0.ruleKey == ruleKey }).first {
             return item.variationKey
         }
         

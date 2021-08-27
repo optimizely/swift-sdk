@@ -132,7 +132,7 @@ public class OptimizelyUserContext {
     public func trackEvent(eventKey: String,
                            eventTags: OptimizelyEventTags? = nil) throws {
         
-        guard let optimizely = self.optimizely, optimizely.config != nil else {
+        guard let optimizely = self.optimizely else {
             throw OptimizelyError.sdkNotReady
         }
         
@@ -158,7 +158,7 @@ extension OptimizelyUserContext {
                                   ruleKey: String? = nil,
                                   variationKey: String) -> Bool {
         
-        guard let optimizely = self.optimizely, optimizely.config != nil else {
+        guard optimizely?.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
             return false
         }
@@ -178,7 +178,7 @@ extension OptimizelyUserContext {
     ///   - ruleKey: An experiment or delivery rule key (optional).
     /// - Returns: A variation key or nil if forced decisions are not set for the parameters.
     public func getForcedDecision(flagKey: String, ruleKey: String? = nil) -> String? {
-        guard let optimizely = self.optimizely, optimizely.config != nil else {
+        guard optimizely?.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
             return nil
         }
@@ -192,7 +192,7 @@ extension OptimizelyUserContext {
     ///   - ruleKey: An experiment or delivery rule key (optional).
     /// - Returns: true if the forced decision has been removed successfully.
     public func removeForcedDecision(flagKey: String, ruleKey: String? = nil) -> Bool {
-        guard let optimizely = self.optimizely, optimizely.config != nil else {
+        guard optimizely?.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
             return false
         }
@@ -208,7 +208,7 @@ extension OptimizelyUserContext {
     /// Removes all forced decisions bound to this user context.
     /// - Returns: true if forced decisions have been removed successfully.
     public func removeAllForcedDecisions() -> Bool {
-        guard let optimizely = self.optimizely, optimizely.config != nil else {
+        guard optimizely?.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
             return false
         }

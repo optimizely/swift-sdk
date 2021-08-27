@@ -118,7 +118,7 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
                                    variationKey: "invalid")
         var decision = user.decide(key: featureKey, options: [.includeReasons])
         
-        // invalid forced-decision will be ignored and regular decsion will return
+        // invalid forced-decision will be ignored and regular decision will return
         XCTAssertEqual(decision.variationKey, "18257766532")
         XCTAssertEqual(decision.ruleKey, "18322080788")
         XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecisionButInvalid(kUserId, featureKey, nil).reason))
@@ -131,7 +131,7 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
                                    variationKey: "invalid")
         decision = user.decide(key: featureKey, options: [.includeReasons])
 
-        // invalid forced-decision will be ignored and regular decsion will return
+        // invalid forced-decision will be ignored and regular decision will return
         XCTAssertEqual(decision.variationKey, "18257766532")
         XCTAssertEqual(decision.ruleKey, "18322080788")
         XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecisionButInvalid(kUserId, featureKey, "exp_with_audience").reason))
@@ -144,7 +144,7 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
                                    variationKey: "invalid")
         decision = user.decide(key: featureKey, options: [.includeReasons])
 
-        // invalid forced-decision will be ignored and regular decsion will return
+        // invalid forced-decision will be ignored and regular decision will return
         XCTAssertEqual(decision.variationKey, "18257766532")
         XCTAssertEqual(decision.ruleKey, "18322080788")
         XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecisionButInvalid(kUserId, featureKey, "3332020515").reason))

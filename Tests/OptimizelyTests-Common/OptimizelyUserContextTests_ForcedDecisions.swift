@@ -37,16 +37,26 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         try! optimizely.start(datafile: datafile)
     }
     
-    func testSetForcedDecision_returnStatus() {
+    func testForcedDecision_returnStatus() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         let user = optimizely.createUserContext(userId: kUserId)
-
-        try? optimizely.start(datafile: "invalid datafile contents")
-        var status = user.setForcedDecision(flagKey: "feature_1", variationKey: "3324490562")
-        XCTAssertFalse(status)
+        var status: Bool
+        var result: String?
         
+        try? optimizely.start(datafile: "invalid datafile contents")
+        status = user.setForcedDecision(flagKey: "feature_1", variationKey: "3324490562")
+        XCTAssertFalse(status)
+        result = user.getForcedDecision(flagKey: "feature_1")
+        XCTAssertNil(result)
+        status = user.removeForcedDecision(flagKey: "feature_1")
+        XCTAssertFalse(status)
+
         try? optimizely.start(datafile: datafile)
         status = user.setForcedDecision(flagKey: "feature_1", variationKey: "3324490562")
+        XCTAssertTrue(status)
+        result = user.getForcedDecision(flagKey: "feature_1")
+        XCTAssert(result == "3324490562")
+        status = user.removeForcedDecision(flagKey: "feature_1")
         XCTAssertTrue(status)
     }
    

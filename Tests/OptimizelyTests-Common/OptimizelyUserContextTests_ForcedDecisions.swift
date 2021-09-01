@@ -50,6 +50,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertNil(result)
         status = user.removeForcedDecision(flagKey: "feature_1")
         XCTAssertFalse(status)
+        status = user.removeAllForcedDecisions()
+        XCTAssertFalse(status)
 
         try? optimizely.start(datafile: datafile)
         status = user.setForcedDecision(flagKey: "feature_1", variationKey: "3324490562")
@@ -57,6 +59,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         result = user.getForcedDecision(flagKey: "feature_1")
         XCTAssert(result == "3324490562")
         status = user.removeForcedDecision(flagKey: "feature_1")
+        XCTAssertTrue(status)
+        status = user.removeAllForcedDecisions()
         XCTAssertTrue(status)
     }
    

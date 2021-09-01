@@ -19,6 +19,7 @@ import XCTest
 class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
 
     let kUserId = "tester"
+    let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
     
     var optimizely: OptimizelyClient!
     var eventDispatcher = MockEventDispatcher()
@@ -28,13 +29,25 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                       eventDispatcher: eventDispatcher,
                                       userProfileService: OTUtils.createClearUserProfileService())
         decisionService = (optimizely.decisionService as! DefaultDecisionService)
         ups = decisionService.userProfileService
         try! optimizely.start(datafile: datafile)
+    }
+    
+    func testSetForcedDecision_returnStatus() {
+        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        let user = optimizely.createUserContext(userId: kUserId)
+
+        try? optimizely.start(datafile: "invalid datafile contents")
+        var status = user.setForcedDecision(flagKey: "feature_1", variationKey: "3324490562")
+        XCTAssertFalse(status)
+        
+        try? optimizely.start(datafile: datafile)
+        status = user.setForcedDecision(flagKey: "feature_1", variationKey: "3324490562")
+        XCTAssertTrue(status)
     }
    
     func testSetForcedDecision_flagToDecision() {

@@ -94,10 +94,10 @@ extension LogMessage: CustomStringConvertible {
         case .userBucketedIntoTargetingRule(let userId, let rule):             message = "User (\(userId)) is in the traffic group of targeting rule (\(rule))."
         case .userNotBucketedIntoTargetingRule(let userId, let rule):          message = "User (\(userId)) is not in the traffic group for targeting rule (\(rule)). Checking (Everyone Else) rule now."
         case .userHasForcedDecision(let userId, let flagKey, let ruleKey, let varKey):
-            let target = (ruleKey != nil) ? "flag (\(flagKey)) rule (\(ruleKey!))" : "flag (\(flagKey))"
+            let target = (ruleKey != nil) ? "flag (\(flagKey)), rule (\(ruleKey!))" : "flag (\(flagKey))"
             message = "Variation (\(varKey)) is mapped to \(target) and user (\(userId)) in the forced decision map."
         case .userHasForcedDecisionButInvalid(let userId, let flagKey, let ruleKey):
-            let target = (ruleKey != nil) ? "flag (\(flagKey)) rule (\(ruleKey!))" : "flag (\(flagKey))"
+            let target = (ruleKey != nil) ? "flag (\(flagKey)), rule (\(ruleKey!))" : "flag (\(flagKey))"
             message = "Invalid variation is mapped to \(target) and user (\(userId)) in the forced decision map."
         case .userHasForcedVariation(let userId, let expKey, let varKey):       message = "Variation (\(varKey)) is mapped to experiment (\(expKey)) and user \(userId)) in the forced variation map."
         case .userHasForcedVariationButInvalid(let userId, let expKey):         message = "Invalid variation is mapped to experiment (\(expKey)) and user (\(userId)) in the forced variation map."

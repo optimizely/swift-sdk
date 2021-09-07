@@ -130,7 +130,7 @@ class DefaultBucketer: OPTBucketer {
         
         if experiment.trafficAllocation.count == 0 {
             let info = OptimizelyError.experimentHasNoTrafficAllocation(experiment.key)
-            logger.e(info)
+            logger.w(info)
             reasons.addInfo(info)
             return DecisionResponse(result: nil, reasons: reasons)
         }

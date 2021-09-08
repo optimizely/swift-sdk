@@ -20,7 +20,7 @@ protocol DecisionSchema {
     func makeLookupInput(user: OptimizelyUserContext) -> String
 }
 
-struct BucketDecisionSchema: DecisionSchema {
+struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
     let bucketKey: String
     let buckets: [Int]
     
@@ -31,7 +31,10 @@ struct BucketDecisionSchema: DecisionSchema {
         trafficAllocations.forEach {
             buckets.append($0.endOfRange)
         }
-        if let last = buckets.last, last < MAX_TRAFFIC_VALUE {
+        if buckets.isEmpty {
+            // no bucket - same as 100%
+            buckets.append(MAX_TRAFFIC_VALUE)
+        } else if let last = buckets.last, last < MAX_TRAFFIC_VALUE {
             buckets.append(MAX_TRAFFIC_VALUE)
         }
         
@@ -85,10 +88,14 @@ struct BucketDecisionSchema: DecisionSchema {
         let result = MurmurHash3.doHash32(key: hashId, maxBytes: hashId.lengthOfBytes(using: String.Encoding.utf8), seed: 1)
         return result
     }
+    
+    var description: String {
+        return "  [BucketDecisionSchema] \(bucketKey) \(buckets)"
+    }
 
 }
 
-struct AudienceDecisionSchema: DecisionSchema {
+struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
     let audience: UserAttribute
     
     init(audience: UserAttribute) {
@@ -99,11 +106,18 @@ struct AudienceDecisionSchema: DecisionSchema {
         var bool = false
         do {
             bool = try audience.evaluate(attributes: user.attributes)
-        } catch(let e) {
-            print("[DecisionSchema audience evaluation error: \(e)")
+        } catch {
+            print("[DecisionSchema audience evaluation error: \(error)")
         }
         
         return bool ? "1" : "0"
     }
-}
+    
+    var description: String {
+        let name = audience.name ?? "nil"
+        let match = audience.match ?? "nil"
+        let value = audience.value == nil ? "nil" : "\(audience.value!)"
+        return "  [AudienceSchema] \(name) \(match) \(value)"
+    }
 
+}

@@ -42,20 +42,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
             
     func testDecisionTable() {
-        
         // create DecisionTables (will be created in the backend and downloaded later)
-        
         modeGenerateDecisionTable = true
-        
         let decisionTables = DecisionTableGenerator.create(for: optimizely)
-        
         modeGenerateDecisionTable = false
-        
-        // validate decisions from DecisionTables
-        
+                
+        //compareDecisions(decisionTables)
+        //comparePerformance(decisionTables)
+    }
+    
+    func compareDecisions(_ decisionTables: DecisionTables) {
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         let allFlags = optimizelyConfig.featuresMap.keys
-        
         let compareTotal = 100
         var countMatch = 0
         
@@ -77,13 +75,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         print("Total match: \(countMatch)/\(compareTotal)")
-        
-        // performance
-        
-        let performanceTotal = 10000
-        
+    }
+    
+    func comparePerformance(_ decisionTables: DecisionTables) {
+        let optimizelyConfig = try! optimizely.getOptimizelyConfig()
+        let allFlags = optimizelyConfig.featuresMap.keys
         let flagKey = allFlags.randomElement()!
         let user = decisionTables.getRandomUserContext(optimizely: optimizely, flagKey: flagKey)
+        let performanceTotal = 10000
 
         print("----- Performance ------------------------")
         
@@ -101,22 +100,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         print(String(format: "Time elapsed for DecisionAPI: %.03f secs", CFAbsoluteTimeGetCurrent() - startTime))
     }
-    
-    
-    
-    
-    
-    
-    // MARK: - AppDelegagte
-    
+
+}
+
+
+
+
+extension AppDelegate {
     func applicationWillResignActive(_ application: UIApplication) {}
-    
     func applicationDidEnterBackground(_ application: UIApplication) {}
-    
     func applicationWillEnterForeground(_ application: UIApplication) {}
-    
     func applicationDidBecomeActive(_ application: UIApplication) {}
-    
     func applicationWillTerminate(_ application: UIApplication) {}
-    
 }

@@ -35,37 +35,35 @@ public class DecisionTableGenerator {
             let rollout = config.project.rollouts.filter { $0.id == flag.rolloutId }.first
             rules.append(contentsOf: rollout?.experiments ?? [])
             
+            // BucketDecisionSchema
+            
             rules.forEach { rule in
                 // rule-id (not key) is used for bucketing 
                 schemas.append(BucketDecisionSchema(bucketKey: rule.id, trafficAllocations: rule.trafficAllocation))
             }
             
-            // merge [typedAudiences, audiences] in ProjectConfig to a single audiences array.
-            // typedAudiences has a higher priority.
+            // AudienceDicisionSchema
             
-            var allAudiencIds = [String]()
+            var allAudienceIds = [String]()
             rules.forEach { rule in
                 rule.audienceIds.forEach { id in
-                    if !allAudiencIds.contains(id) {
-                        allAudiencIds.append(id)
+                    if !allAudienceIds.contains(id) {
+                        allAudienceIds.append(id)
                     }
                 }
             }
             
-            var allUserAttributes = [UserAttribute]()
-            allAudiencIds.forEach { audienceId in
-                guard let audience = config.getAudience(id: audienceId) else { return }
+            for (index, audienceId) in allAudienceIds.enumerated() {
+                guard let audience = config.getAudience(id: audienceId) else { continue }
+                schemas.append(AudienceDecisionSchema(audience: audience))
                 
-                let userAttributes = getUserAttributes(audience: audience)
-                userAttributes.forEach { newItem in
-                    if allUserAttributes.filter({ $0.stringRepresentation == newItem.stringRepresentation }).isEmpty {
-                        allUserAttributes.append(newItem)
-                    }
+                let maxNumAudiences = 10
+                if index >= maxNumAudiences - 1 {
+                    print("[ERROR] the number of audiences for this flag is too large (\(allAudienceIds.count))")
+                    print("[ERROR] truncated to (\(maxNumAudiences)) to move on")
+                    schemas.append(ErrorDecisionSchema(name: "Audience Overflow"))
+                    break
                 }
-            }
-            
-            allUserAttributes.forEach {
-                schemas.append(AudienceDecisionSchema(audience: $0))
             }
             
             print("\n[Flag]: \(flag.key)")
@@ -73,6 +71,8 @@ public class DecisionTableGenerator {
             schemas.forEach {
                 print($0)
             }
+            
+            // DecisionTable Body
             
             let body = makeAllInputs(schemas: schemas)
             print("\n   [DecisionTable]")
@@ -124,28 +124,6 @@ public class DecisionTableGenerator {
         }
         
         return sets
-    }
-    
-    static func getUserAttributes(audience: Audience) -> [UserAttribute] {
-        var userAttributes = [UserAttribute]()
-        getUserAttributes(conditionHolder: audience.conditionHolder, result: &userAttributes)
-        return userAttributes
-    }
-    
-    static func getUserAttributes(conditionHolder: ConditionHolder, result: inout [UserAttribute]) {
-        switch conditionHolder {
-        case .leaf(let leaf):
-            if case .attribute(let userAttribute) = leaf {
-                result.append(userAttribute)
-            }
-        case .array(let array):
-            array.forEach {
-                getUserAttributes(conditionHolder: $0, result: &result)
-            }
-        default:
-            // print("ignored conditionHolder: \(conditionHolder)")
-            break
-        }
     }
     
     static func saveDecisionTablesToFile(optimizely: OptimizelyClient) {

@@ -32,23 +32,6 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
     init(bucketKey: String, trafficAllocations: [TrafficAllocation]) {
         self.bucketKey = bucketKey
         
-        // collapse trafficAllocation - merge contiguous ranges for the same bucket
-        // [A,A,B,C,C,C,D] -> [A,B,C,D]
-        
-//        var ranges = [Int]()
-//        var prevEntityId: String?
-//        var prevEndOfRange = 0
-//        trafficAllocations.forEach {
-//            if prevEntityId != nil, $0.entityId != prevEntityId {
-//                ranges.append(prevEndOfRange)
-//            }
-//            prevEntityId = $0.entityId
-//            prevEndOfRange = $0.endOfRange
-//        }
-//        if prevEndOfRange > 0 {
-//            ranges.append(prevEndOfRange)
-//        }
-//
         let collapsed = BucketDecisionSchema.collapseTrafficAllocations(trafficAllocations)
         var ranges = collapsed.map { $0.endOfRange }
 
@@ -102,16 +85,16 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
 // MARK: - AudienceDecisionSchema
 
 struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
-    let audience: UserAttribute
+    let audience: Audience
     
-    init(audience: UserAttribute) {
+    init(audience: Audience) {
         self.audience = audience
     }
     
     func makeLookupInput(user: OptimizelyUserContext) -> String {
         var bool = false
         do {
-            bool = try audience.evaluate(attributes: user.attributes)
+            bool = try audience.evaluate(project: nil, attributes: user.attributes)
         } catch {
             // print("[DecisionSchema audience evaluation error: \(error)")
         }
@@ -124,14 +107,58 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
     }
     
     var description: String {
-        let name = audience.name ?? "nil"
-        let match = audience.match ?? "nil"
-        let value = audience.value == nil ? "nil" : "\(audience.value!)"
-        return "      AudienceSchema: \(name) (\(match), \(value))"
+        return "      AudienceSchema: \(audience.name) (\(audience.id), \(audience.conditions))"
     }
     
-    var randomAttribute: (String, Any)? {
-        return audience.randomAttribute
+    var randomAttributes: [(String, Any)]? {
+        let userAttributes = getUserAttributes(audience: audience)
+
+        return userAttributes.compactMap{ $0.randomAttribute }
+    }
+    
+    func getUserAttributes(audience: Audience) -> [UserAttribute] {
+        var userAttributes = [UserAttribute]()
+        getUserAttributes(conditionHolder: audience.conditionHolder, result: &userAttributes)
+        return userAttributes
+    }
+    
+    func getUserAttributes(conditionHolder: ConditionHolder, result: inout [UserAttribute]) {
+        switch conditionHolder {
+        case .leaf(let leaf):
+            if case .attribute(let userAttribute) = leaf {
+                result.append(userAttribute)
+            }
+        case .array(let array):
+            array.forEach {
+                getUserAttributes(conditionHolder: $0, result: &result)
+            }
+        default:
+            // print("ignored conditionHolder: \(conditionHolder)")
+            break
+        }
+    }
+    
+}
+
+// MARK: - ErrorDecisionSchema
+
+struct ErrorDecisionSchema: DecisionSchema, CustomStringConvertible {
+    let name: String
+    
+    init(name: String) {
+        self.name = name
+    }
+
+    func makeLookupInput(user: OptimizelyUserContext) -> String {
+        return ""
+    }
+    
+    var allLookupInputs: [String] {
+        return []
+    }
+    
+    var description: String {
+        return "      ErrorSchema: \(name)"
     }
 }
 

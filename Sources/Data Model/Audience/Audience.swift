@@ -71,6 +71,20 @@ struct Audience: Codable, Equatable, OptimizelyAudience {
     }
     
     func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+        
+        // DecisionTable
+        if DecisionTables.modeGenerateDecisionTable {
+            for (i, schema) in DecisionTables.schemasForGenerateDecisionTable.enumerated() {
+                if let schema = schema as? AudienceDecisionSchema {
+                    if schema.audience.id == id {
+                        let input = DecisionTables.inputForGenerateDecisionTable
+                        let char = String(Array(input)[i])
+                        return char == "0" ? false : true
+                    }
+                }
+            }
+        }
+        
         return try conditionHolder.evaluate(project: project, attributes: attributes)
     }
 

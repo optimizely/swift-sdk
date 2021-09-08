@@ -80,8 +80,8 @@ public class DecisionTables {
         var attributes = [String: Any]()
         table.schemas.forEach { schema in
             if let schema = schema as? AudienceDecisionSchema {
-                if let random = schema.randomAttribute {
-                    attributes[random.0] = random.1
+                schema.randomAttributes?.forEach{ attributeKey, attributeValue in
+                    attributes[attributeKey] = attributeValue
                 }
             }
         }

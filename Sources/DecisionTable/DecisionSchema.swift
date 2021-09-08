@@ -18,6 +18,7 @@ import Foundation
 
 protocol DecisionSchema {
     func makeLookupInput(user: OptimizelyUserContext) -> String
+    var allLookupInputs: [String] { get }
 }
 
 struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
@@ -51,11 +52,20 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
         return letterForIndex(index)
     }
     
+    var allLookupInputs: [String] {
+        return buckets.enumerated().map { letterForIndex($0.offset) }
+    }
+    
+    let startAsciiValue = 65   // "A"
+    
+    func indexForLetter(_ letter: String) -> Int {
+        return Int(Character(letter).asciiValue!) - startAsciiValue
+    }
+    
     func letterForIndex(_ index: Int?) -> String {
         guard let index = index else { return "Z" }
         
-        let startValue = 65   // "A"
-        return String(format: "%c", startValue + index)
+        return String(format: "%c", startAsciiValue + index)
     }
     
     func getBucketingId(user: OptimizelyUserContext) -> String {
@@ -90,7 +100,7 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
     }
     
     var description: String {
-        return "  [BucketDecisionSchema] \(bucketKey) \(buckets)"
+        return "      BucketSchema: \(bucketKey) \(buckets)"
     }
 
 }
@@ -113,11 +123,15 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
         return bool ? "1" : "0"
     }
     
+    var allLookupInputs: [String] {
+        return ["0", "1"]
+    }
+    
     var description: String {
         let name = audience.name ?? "nil"
         let match = audience.match ?? "nil"
         let value = audience.value == nil ? "nil" : "\(audience.value!)"
-        return "  [AudienceSchema] \(name) \(match) \(value)"
+        return "      AudienceSchema: \(name) (\(match), \(value))"
     }
 
 }

@@ -17,9 +17,6 @@
 import UIKit
 import Optimizely
 
-var modeGenerateDecisionTable = false
-var modeUseDecisionTable = false
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var optimizely: OptimizelyClient!
@@ -43,9 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
     func testDecisionTable() {
         // create DecisionTables (will be created in the backend and downloaded later)
-        modeGenerateDecisionTable = true
         let decisionTables = DecisionTableGenerator.create(for: optimizely)
-        modeGenerateDecisionTable = false
                 
         //compareDecisions(decisionTables)
         //comparePerformance(decisionTables)
@@ -62,9 +57,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let flagKey = allFlags.randomElement()!
             let user = decisionTables.getRandomUserContext(optimizely: optimizely, flagKey: flagKey)
             
-            modeUseDecisionTable = true
+            DecisionTables.modeUseDecisionTable = true
             let decisionNew = user.decide(key: flagKey).variationKey
-            modeUseDecisionTable = false
+            DecisionTables.modeUseDecisionTable = false
             let decisionOld = user.decide(key: flagKey).variationKey
             
             print("[Decision \(i)][Flag: \(flagKey)] = \(decisionOld) : \(decisionNew)")
@@ -88,14 +83,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         var startTime = CFAbsoluteTimeGetCurrent()
         for _ in 0..<performanceTotal {
-            modeUseDecisionTable = true
+            DecisionTables.modeUseDecisionTable = true
             _ = user.decide(key: flagKey).variationKey
         }
         print(String(format: "Time elapsed for DecisionTable: %.03f secs", CFAbsoluteTimeGetCurrent() - startTime))
     
         startTime = CFAbsoluteTimeGetCurrent()
         for _ in 0..<performanceTotal {
-            modeUseDecisionTable = false
+            DecisionTables.modeUseDecisionTable = false
             _ = user.decide(key: flagKey).variationKey
         }
         print(String(format: "Time elapsed for DecisionAPI: %.03f secs", CFAbsoluteTimeGetCurrent() - startTime))

@@ -73,6 +73,10 @@ public class OptimizelyUserContext {
             return OptimizelyDecision.errorDecision(key: key, user: self, error: .sdkNotReady)
         }
         
+        if DecisionTables.modeUseDecisionTable {
+            return optimizely.decisionTables.decide(user: clone, key: key, options: options)
+        }
+        
         return optimizely.decide(user: clone, key: key, options: options)
     }
 

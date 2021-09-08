@@ -135,7 +135,9 @@ class DefaultBucketer: OPTBucketer {
             return DecisionResponse(result: nil, reasons: reasons)
         }
         
-        if let variationId = allocateTraffic(trafficAllocation: experiment.trafficAllocation, bucketValue: bucketValue) {
+        if let variationId = allocateTrafficForExperiment(trafficAllocation: experiment.trafficAllocation,
+                                                          bucketValue: bucketValue,
+                                                          rule: experiment) {
             if let variation = experiment.getVariation(id: variationId) {
                 return DecisionResponse(result: variation, reasons: reasons)
             } else {
@@ -147,6 +149,32 @@ class DefaultBucketer: OPTBucketer {
         } else {
             return DecisionResponse(result: nil, reasons: reasons)
         }
+    }
+    
+    func allocateTrafficForExperiment(trafficAllocation: [TrafficAllocation], bucketValue: Int, rule: Experiment) -> String? {
+        
+        // DecisionTable
+        
+        if DecisionTables.modeGenerateDecisionTable {
+            for (i, schema) in DecisionTables.schemasForGenerateDecisionTable.enumerated() {
+                if let schema = schema as? BucketDecisionSchema, schema.bucketKey == rule.id {
+                    let input = DecisionTables.inputForGenerateDecisionTable
+                    let char = String(Array(input)[i])
+                    
+                    let trafficAllocationIndex = schema.indexForLetter(char)
+                    
+                    let bucket = trafficAllocation[trafficAllocationIndex]
+                    return bucket.entityId
+                }
+            }
+        }
+        
+        
+        for bucket in trafficAllocation where bucketValue < bucket.endOfRange {
+            return bucket.entityId
+        }
+        
+        return nil
     }
     
     func allocateTraffic(trafficAllocation: [TrafficAllocation], bucketValue: Int) -> String? {

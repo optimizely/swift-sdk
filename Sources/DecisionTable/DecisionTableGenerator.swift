@@ -23,7 +23,9 @@ public class DecisionTableGenerator {
         let flags = config.getFeatureFlags()
         let allExperiments = config.allExperiments
         
-        for flag in flags.sorted { $0.key < $1.key } {
+        var decisionTablesMap = [String: FlagDecisionTable]()
+        
+        for flag in flags.sorted(by: { $0.key < $1.key }) {
             var schemas = [DecisionSchema]()
                         
             var rules = flag.experimentIds.compactMap { expId in
@@ -34,21 +36,26 @@ public class DecisionTableGenerator {
             rules.append(contentsOf: rollout?.experiments ?? [])
             
             rules.forEach { rule in
-                schemas.append(BucketDecisionSchema(bucketKey: rule.key, trafficAllocations: rule.trafficAllocation))
+                // rule-id (not key) is used for bucketing 
+                schemas.append(BucketDecisionSchema(bucketKey: rule.id, trafficAllocations: rule.trafficAllocation))
             }
             
             // merge [typedAudiences, audiences] in ProjectConfig to a single audiences array.
             // typedAudiences has a higher priority.
-            var audiences = config.project.typedAudiences ?? []
-            config.project.audiences.forEach { oldAudience in
-                if audiences.filter({ newAudience in newAudience.id == oldAudience.id }).isEmpty {
-                    guard oldAudience.id != "$opt_dummy_audience" else { return }
-                    audiences.append(oldAudience)
+            
+            var allAudiencIds = [String]()
+            rules.forEach { rule in
+                rule.audienceIds.forEach { id in
+                    if !allAudiencIds.contains(id) {
+                        allAudiencIds.append(id)
+                    }
                 }
             }
             
             var allUserAttributes = [UserAttribute]()
-            audiences.forEach { audience in
+            allAudiencIds.forEach { audienceId in
+                guard let audience = config.getAudience(id: audienceId) else { return }
+                
                 let userAttributes = getUserAttributes(audience: audience)
                 userAttributes.forEach { newItem in
                     if allUserAttributes.filter({ $0.name == newItem.name }).isEmpty {
@@ -61,13 +68,60 @@ public class DecisionTableGenerator {
                 schemas.append(AudienceDecisionSchema(audience: $0))
             }
             
-            print("[Flag]: \(flag.key)")
+            print("\n[Flag]: \(flag.key)")
+            print("\n   [Schemas]")
             schemas.forEach {
                 print($0)
             }
+            
+            let body = makeInputSets(schemas: schemas)
+            print("\n   [DecisionTable]")
+            
+            var decisionBody = [String: String]()
+            
+            let user = OptimizelyUserContext(optimizely: optimizely, userId: "any-user-id")
+            DecisionTables.modeGenerateDecisionTable = true
+            body.forEach { input in
+                DecisionTables.schemasForGenerateDecisionTable = schemas
+                DecisionTables.inputForGenerateDecisionTable = input
+                
+                let decision = user.decide(key: flag.key)
+                decisionBody[input] = decision.variationKey
+                let decisionString = decision.variationKey ?? "nil"
+                
+                print("      \(input) -> \(decisionString)")
+            }
+            DecisionTables.modeGenerateDecisionTable = false
+
+            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, body: decisionBody)
+        }
+    
+        optimizely.decisionTables = DecisionTables(tables: decisionTablesMap)
+        return optimizely.decisionTables
+    }
+    
+    static func makeInputSets(schemas: [DecisionSchema]) -> [String] {
+        var sets = [String]()
+        
+        guard let firstSchema = schemas.first else {
+            return sets
         }
         
-        return DecisionTables()
+        sets.append(contentsOf: firstSchema.allLookupInputs)
+        
+        while sets.count > 0 {
+            var item = sets[0]
+            if item.count == schemas.count {
+                break
+            }
+                
+            item = sets.removeFirst()
+            let index = item.count
+            let schema = schemas[index]
+            sets.append(contentsOf: schema.allLookupInputs.map { item + $0 })
+        }
+        
+        return sets
     }
     
     static func getUserAttributes(audience: Audience) -> [UserAttribute] {

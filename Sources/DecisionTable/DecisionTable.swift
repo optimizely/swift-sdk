@@ -46,6 +46,13 @@ class FlagDecisionTable {
 }
 
 public class DecisionTables {
+    static var modeGenerateDecisionTable = false
+    static var schemasForGenerateDecisionTable = [DecisionSchema]()
+    static var inputForGenerateDecisionTable = ""
+
+    public static var modeUseDecisionTable = false
+
+
     let tables: [String: FlagDecisionTable]
     
     init(tables: [String: FlagDecisionTable] = [:]) {

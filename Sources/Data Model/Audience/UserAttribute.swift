@@ -100,6 +100,19 @@ extension UserAttribute {
     
     func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {
         
+        // DecisionTable
+        if DecisionTables.modeGenerateDecisionTable {
+            for (i, schema) in DecisionTables.schemasForGenerateDecisionTable.enumerated() {
+                if let schema = schema as? AudienceDecisionSchema, schema.audience.name == name {
+                    let input = DecisionTables.inputForGenerateDecisionTable
+                    let char = String(Array(input)[i])
+                    return char == "0" ? false : true
+                }
+            }
+        }
+        
+
+        
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         if typeSupported == nil {
             throw OptimizelyError.userAttributeInvalidType(stringRepresentation)

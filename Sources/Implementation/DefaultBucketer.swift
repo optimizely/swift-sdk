@@ -169,7 +169,6 @@ class DefaultBucketer: OPTBucketer {
             }
         }
         
-        
         for bucket in trafficAllocation where bucketValue < bucket.endOfRange {
             return bucket.entityId
         }

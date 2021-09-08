@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
         compareDecisions(decisionTables)
         
-        //comparePerformance(decisionTables)
+        comparePerformance(decisionTables)
     }
     
     func compareDecisions(_ decisionTables: DecisionTables) {
@@ -56,15 +56,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("----- DecisionTable : DecideAPI ------------------------")
         for i in 0..<compareTotal {
             let flagKey = allFlags.randomElement()!
+            //let flagKey = "my_feature"
             let user = decisionTables.getRandomUserContext(optimizely: optimizely, flagKey: flagKey)
             
             DecisionTables.modeUseDecisionTable = true
-            let decisionNew = user.decide(key: flagKey).variationKey ?? "nil"
+            let decisionNew = user.decide(key: flagKey)
+            let variationNew = decisionNew.variationKey ?? "nil"
+            let lookupInput = decisionNew.ruleKey!
             DecisionTables.modeUseDecisionTable = false
-            let decisionOld = user.decide(key: flagKey).variationKey ?? "nil"
+            let decisionOld = user.decide(key: flagKey)
+            let variationOld = decisionOld.variationKey ?? "nil"
+            let flagKeyPadding = "(Flag: \(flagKey))".padding(toLength: 32, withPad: " ", startingAt: 0)
             
-            print("[Decision \(i)][Flag: \(flagKey)] = \(decisionOld) : \(decisionNew)")
-            if decisionNew == decisionOld {
+            print(String(format: "[%2d]%@   =   %@ : %@ (<- %@)", i, flagKeyPadding, variationOld, variationNew, lookupInput))
+            if variationNew == variationOld {
                 countMatch += 1
             } else {
                 print("---> [Failure]")
@@ -79,8 +84,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let flagKey = allFlags.randomElement()!
         let user = decisionTables.getRandomUserContext(optimizely: optimizely, flagKey: flagKey)
         let performanceTotal = 10000
-
-        print("----- Performance ------------------------")
+        
+        print("\n----- Performance ------------------------")
         
         var startTime = CFAbsoluteTimeGetCurrent()
         for _ in 0..<performanceTotal {

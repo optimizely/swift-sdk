@@ -30,18 +30,15 @@ class FlagDecisionTable {
     func decide(user: OptimizelyUserContext,
                 options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
         let lookupInput = schemas.map { $0.makeLookupInput(user: user) }.joined()
-        print("[LookupInput] \(lookupInput)")
-        if let decision = body[lookupInput] {
-            return OptimizelyDecision(variationKey: decision,
-                                      enabled: true,
-                                      variables: OptimizelyJSON.createEmpty(),
-                                      ruleKey: nil,
-                                      flagKey: key,
-                                      userContext: user,
-                                      reasons: [])
-        } else {
-            return OptimizelyDecision.errorDecision(key: key, user: user, error: .sdkNotReady)
-        }
+        let decision = body[lookupInput]
+        
+        return OptimizelyDecision(variationKey: decision,
+                                  enabled: true,
+                                  variables: OptimizelyJSON.createEmpty(),
+                                  ruleKey: lookupInput,   // pass it up for print
+                                  flagKey: key,
+                                  userContext: user,
+                                  reasons: [])
     }
 }
 
@@ -49,9 +46,7 @@ public class DecisionTables {
     static var modeGenerateDecisionTable = false
     static var schemasForGenerateDecisionTable = [DecisionSchema]()
     static var inputForGenerateDecisionTable = ""
-
     public static var modeUseDecisionTable = false
-
 
     let tables: [String: FlagDecisionTable]
     

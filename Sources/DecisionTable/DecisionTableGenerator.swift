@@ -58,7 +58,7 @@ public class DecisionTableGenerator {
                 
                 let userAttributes = getUserAttributes(audience: audience)
                 userAttributes.forEach { newItem in
-                    if allUserAttributes.filter({ $0.name == newItem.name }).isEmpty {
+                    if allUserAttributes.filter({ $0.stringRepresentation == newItem.stringRepresentation }).isEmpty {
                         allUserAttributes.append(newItem)
                     }
                 }
@@ -74,10 +74,10 @@ public class DecisionTableGenerator {
                 print($0)
             }
             
-            let body = makeInputSets(schemas: schemas)
+            let body = makeAllInputs(schemas: schemas)
             print("\n   [DecisionTable]")
             
-            var decisionBody = [String: String]()
+            var bodyInArray = [(String, String)]()
             
             let user = OptimizelyUserContext(optimizely: optimizely, userId: "any-user-id")
             DecisionTables.modeGenerateDecisionTable = true
@@ -86,21 +86,23 @@ public class DecisionTableGenerator {
                 DecisionTables.inputForGenerateDecisionTable = input
                 
                 let decision = user.decide(key: flag.key)
-                decisionBody[input] = decision.variationKey
                 let decisionString = decision.variationKey ?? "nil"
+                bodyInArray.append((input, decisionString))
                 
                 print("      \(input) -> \(decisionString)")
             }
             DecisionTables.modeGenerateDecisionTable = false
 
-            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, body: decisionBody)
+            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray)
         }
     
         optimizely.decisionTables = DecisionTables(tables: decisionTablesMap)
+        saveDecisionTablesToFile(optimizely: optimizely)
+        
         return optimizely.decisionTables
     }
     
-    static func makeInputSets(schemas: [DecisionSchema]) -> [String] {
+    static func makeAllInputs(schemas: [DecisionSchema]) -> [String] {
         var sets = [String]()
         
         guard let firstSchema = schemas.first else {
@@ -141,9 +143,51 @@ public class DecisionTableGenerator {
                 getUserAttributes(conditionHolder: $0, result: &result)
             }
         default:
-            //print("ignored conditionHolder: \(conditionHolder)")
+            // print("ignored conditionHolder: \(conditionHolder)")
             break
         }
+    }
+    
+    static func saveDecisionTablesToFile(optimizely: OptimizelyClient) {
+        guard var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            print("FileManager saveDecisionTablesToFile error")
+            return
+        }
+        
+        url.appendPathComponent("decisionTables")
+        
+        if !FileManager.default.fileExists(atPath: url.path) {
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("FileManager saveDecisionTablesToFile create folder error")
+                return
+            }
+        }
+        
+        url.appendPathComponent("\(optimizely.sdkKey).table")
+        
+        var contents = "SDKKey: \(optimizely.sdkKey)\n"
+        
+        let tables = optimizely.decisionTables.tables
+        let sortedFlagKeys = tables.keys.sorted { $0 < $1 }
+        sortedFlagKeys.forEach { flagKey in
+            let table = tables[flagKey]!
+            
+            contents += "\n[Flag]: \(flagKey)\n"
+            contents += "\n   [Schemas]\n"
+            table.schemas.forEach {
+                contents += "\($0)\n"
+            }
+            
+            contents += "\n   [DecisionTable]\n"
+            
+            table.bodyInArray.forEach { (input, decision) in
+                contents += "      \(input) -> \(decision)\n"
+            }
+        }
+        
+        try? contents.write(to: url, atomically: true, encoding: .utf8)
     }
 
 }

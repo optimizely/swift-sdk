@@ -23,7 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
         //let sdkKey = "FCnSegiEkRry9rhVMroit4"
-        let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
+        //let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
+        //let sdkKey = "VE2r2nTX4fogL6m3EQqkk3"
+        let sdkKey = "X6xJvai8Yu9E7wT1hkvGM"
+        
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                       defaultLogLevel: .error,
@@ -51,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func compareDecisions(_ decisionTables: DecisionTables) {
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         let allFlags = optimizelyConfig.featuresMap.keys
-        let compareTotal = 1000
+        let compareTotal = 100
         var countMatch = 0
         
         print("\n----- DecisionAPI : DecideTable ------------------------")

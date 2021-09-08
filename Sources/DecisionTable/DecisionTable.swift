@@ -20,11 +20,13 @@ class FlagDecisionTable {
     let key: String
     let schemas: [DecisionSchema]
     let body: [String: String]
+    let bodyInArray: [(String, String)]
     
-    init(key: String, schemas: [DecisionSchema], body: [String: String]) {
+    init(key: String, schemas: [DecisionSchema], bodyInArray: [(String, String)]) {
         self.key = key
         self.schemas = schemas
-        self.body = body
+        self.bodyInArray = bodyInArray
+        self.body = Dictionary(uniqueKeysWithValues: bodyInArray)
     }
     
     func decide(user: OptimizelyUserContext,

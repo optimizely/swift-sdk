@@ -64,10 +64,25 @@ public class DecisionTables {
         return table.decide(user: user, options: options)
     }
     
-    public func getRandomUserContext(optimizely: OptimizelyClient, flagKey: String) -> OptimizelyUserContext {
+    public func getRandomUserContext(optimizely: OptimizelyClient, key: String) -> OptimizelyUserContext {
+        // random user-id for random bucketing
+        
         let userId = String(Int.random(in: 10000..<99999))
         
+        guard let table = tables[key] else {
+            return OptimizelyUserContext(optimizely: optimizely, userId: userId)
+        }
+
+        // create random attribute values from audience-decision-schemas
+        
         var attributes = [String: Any]()
+        table.schemas.forEach { schema in
+            if let schema = schema as? AudienceDecisionSchema {
+                if let random = schema.randomAttribute {
+                    attributes[random.0] = random.1
+                }
+            }
+        }
         
         return OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
     }

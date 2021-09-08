@@ -21,25 +21,63 @@ protocol DecisionSchema {
     var allLookupInputs: [String] { get }
 }
 
+// MARK: - BucketDecisionSchema
+
 struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
     let bucketKey: String
-    let buckets: [Int]
+    var buckets = [Int]()
+    
+    let MAX_TRAFFIC_VALUE = 10000
     
     init(bucketKey: String, trafficAllocations: [TrafficAllocation]) {
         self.bucketKey = bucketKey
         
-        var buckets = [Int]()
-        trafficAllocations.forEach {
-            buckets.append($0.endOfRange)
-        }
-        if buckets.isEmpty {
-            // no bucket - same as 100%
-            buckets.append(MAX_TRAFFIC_VALUE)
-        } else if let last = buckets.last, last < MAX_TRAFFIC_VALUE {
-            buckets.append(MAX_TRAFFIC_VALUE)
+        // collapse trafficAllocation - merge contiguous ranges for the same bucket
+        // [A,A,B,C,C,C,D] -> [A,B,C,D]
+        
+//        var ranges = [Int]()
+//        var prevEntityId: String?
+//        var prevEndOfRange = 0
+//        trafficAllocations.forEach {
+//            if prevEntityId != nil, $0.entityId != prevEntityId {
+//                ranges.append(prevEndOfRange)
+//            }
+//            prevEntityId = $0.entityId
+//            prevEndOfRange = $0.endOfRange
+//        }
+//        if prevEndOfRange > 0 {
+//            ranges.append(prevEndOfRange)
+//        }
+//
+        let collapsed = BucketDecisionSchema.collapseTrafficAllocations(trafficAllocations)
+        var ranges = collapsed.map { $0.endOfRange }
+
+        if ranges.isEmpty || (ranges.last! < MAX_TRAFFIC_VALUE) {
+            ranges.append(MAX_TRAFFIC_VALUE)
         }
         
-        self.buckets = buckets
+        self.buckets = ranges
+    }
+    
+    // collapse trafficAllocation - merge contiguous ranges for the same bucket
+    // [A,A,B,C,C,C,D] -> [A,B,C,D]
+    static func collapseTrafficAllocations(_ trafficAllocations: [TrafficAllocation]) -> [TrafficAllocation] {
+        var collapsed = [TrafficAllocation]()
+        
+        var prevEntityId: String?
+        var prevEndOfRange = 0
+        trafficAllocations.forEach {
+            if let prevEntityId = prevEntityId, $0.entityId != prevEntityId {
+                collapsed.append(TrafficAllocation(entityId: prevEntityId, endOfRange: prevEndOfRange))
+            }
+            prevEntityId = $0.entityId
+            prevEndOfRange = $0.endOfRange
+        }
+        if let prevEntityId = prevEntityId {
+            collapsed.append(TrafficAllocation(entityId: prevEntityId, endOfRange: prevEndOfRange))
+        }
+
+        return collapsed
     }
     
     func makeLookupInput(user: OptimizelyUserContext) -> String {
@@ -56,7 +94,89 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
         return buckets.enumerated().map { letterForIndex($0.offset) }
     }
     
-    let startAsciiValue = 65   // "A"
+    var description: String {
+        return "      BucketSchema: \(bucketKey) \(buckets)"
+    }
+}
+
+// MARK: - AudienceDecisionSchema
+
+struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
+    let audience: UserAttribute
+    
+    init(audience: UserAttribute) {
+        self.audience = audience
+    }
+    
+    func makeLookupInput(user: OptimizelyUserContext) -> String {
+        var bool = false
+        do {
+            bool = try audience.evaluate(attributes: user.attributes)
+        } catch {
+            // print("[DecisionSchema audience evaluation error: \(error)")
+        }
+        
+        return bool ? "1" : "0"
+    }
+    
+    var allLookupInputs: [String] {
+        return ["0", "1"]
+    }
+    
+    var description: String {
+        let name = audience.name ?? "nil"
+        let match = audience.match ?? "nil"
+        let value = audience.value == nil ? "nil" : "\(audience.value!)"
+        return "      AudienceSchema: \(name) (\(match), \(value))"
+    }
+    
+    var randomAttribute: (String, Any)? {
+        return audience.randomAttribute
+    }
+}
+
+// MARK: - random attributes
+
+extension UserAttribute {
+    
+    var randomAttribute: (String, Any)? {
+        guard let nameFinal = name else { return nil }
+        guard let matchFinal = matchSupported else { return nil }
+                
+        var randoms: [Any?]
+        switch matchFinal {
+        case .exists:
+            randoms = [1, nil]
+        case .exact:
+            let v = value!.stringValue
+            randoms = [v, "non-" + v]
+        case .substring:
+            let v = value!.stringValue
+            randoms = [v, "random-string"]
+        case .lt, .le, .gt, .ge:
+            let v = value!.doubleValue
+            randoms = [v, 0, 999999]
+        case .semver_eq, .semver_lt, .semver_le, .semver_gt, .semver_ge:
+            let v = value!.stringValue
+            randoms = [v, "0.0.0", "10.0.0"]
+        }
+
+        if let element = randoms.randomElement(), let value = element {
+            return (nameFinal, value)
+        } else {
+            return nil
+        }
+    }
+    
+}
+
+// MARK: - Utils
+
+extension BucketDecisionSchema {
+    
+    var startAsciiValue: Int {
+        return 65   // "A"
+    }
     
     func indexForLetter(_ letter: String) -> Int {
         return Int(Character(letter).asciiValue!) - startAsciiValue
@@ -64,7 +184,6 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
     
     func letterForIndex(_ index: Int?) -> String {
         guard let index = index else { return "Z" }
-        
         return String(format: "%c", startAsciiValue + index)
     }
     
@@ -82,8 +201,9 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
     
     // Bucketer
     
-    let MAX_TRAFFIC_VALUE = 10000
-    var MAX_HASH_VALUE: UInt64 = 1 << 32
+    var MAX_HASH_VALUE: UInt64 {
+        return 1 << 32
+    }
 
     func generateBucketValue(bucketingId: String) -> Int {
         let ratio = Double(generateUnsignedHashCode32Bit(hashId: bucketingId)) /  Double(MAX_HASH_VALUE)
@@ -99,39 +219,5 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
         return result
     }
     
-    var description: String {
-        return "      BucketSchema: \(bucketKey) \(buckets)"
-    }
-
 }
 
-struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
-    let audience: UserAttribute
-    
-    init(audience: UserAttribute) {
-        self.audience = audience
-    }
-    
-    func makeLookupInput(user: OptimizelyUserContext) -> String {
-        var bool = false
-        do {
-            bool = try audience.evaluate(attributes: user.attributes)
-        } catch {
-            //print("[DecisionSchema audience evaluation error: \(error)")
-        }
-        
-        return bool ? "1" : "0"
-    }
-    
-    var allLookupInputs: [String] {
-        return ["0", "1"]
-    }
-    
-    var description: String {
-        let name = audience.name ?? "nil"
-        let match = audience.match ?? "nil"
-        let value = audience.value == nil ? "nil" : "\(audience.value!)"
-        return "      AudienceSchema: \(name) (\(match), \(value))"
-    }
-
-}

@@ -22,7 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var optimizely: OptimizelyClient!
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
-        let sdkKey = "FCnSegiEkRry9rhVMroit4"
+        //let sdkKey = "FCnSegiEkRry9rhVMroit4"
+        let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,
                                       defaultLogLevel: .error,
@@ -50,14 +51,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func compareDecisions(_ decisionTables: DecisionTables) {
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         let allFlags = optimizelyConfig.featuresMap.keys
-        let compareTotal = 100
+        let compareTotal = 1000
         var countMatch = 0
         
-        print("----- DecisionTable : DecideAPI ------------------------")
+        print("\n----- DecisionAPI : DecideTable ------------------------")
         for i in 0..<compareTotal {
             let flagKey = allFlags.randomElement()!
             //let flagKey = "my_feature"
-            let user = decisionTables.getRandomUserContext(optimizely: optimizely, flagKey: flagKey)
+            let user = decisionTables.getRandomUserContext(optimizely: optimizely, key: flagKey)
             
             DecisionTables.modeUseDecisionTable = true
             let decisionNew = user.decide(key: flagKey)
@@ -68,7 +69,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let variationOld = decisionOld.variationKey ?? "nil"
             let flagKeyPadding = "(Flag: \(flagKey))".padding(toLength: 32, withPad: " ", startingAt: 0)
             
-            print(String(format: "[%2d]%@   =   %@ : %@ (<- %@)", i, flagKeyPadding, variationOld, variationNew, lookupInput))
+            print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)", i, flagKeyPadding, variationOld, variationNew, lookupInput))
+            //print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)    (%@)", i, flagKeyPadding, variationOld, variationNew, lookupInput, user.description))
             if variationNew == variationOld {
                 countMatch += 1
             } else {
@@ -82,7 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         let allFlags = optimizelyConfig.featuresMap.keys
         let flagKey = allFlags.randomElement()!
-        let user = decisionTables.getRandomUserContext(optimizely: optimizely, flagKey: flagKey)
+        let user = decisionTables.getRandomUserContext(optimizely: optimizely, key: flagKey)
         let performanceTotal = 10000
         
         print("\n----- Performance ------------------------")

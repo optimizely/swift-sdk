@@ -111,7 +111,7 @@ class DefaultBucketer: OPTBucketer {
                 return DecisionResponse(result: experiment, reasons: reasons)
             } else {
                 let info = LogMessage.userBucketedIntoInvalidExperiment(experimentId)
-                logger.e(info)
+                logger.w(info)
                 reasons.addInfo(info)
                 return DecisionResponse(result: nil, reasons: reasons)
             }
@@ -142,7 +142,7 @@ class DefaultBucketer: OPTBucketer {
                 return DecisionResponse(result: variation, reasons: reasons)
             } else {
                 let info = LogMessage.userBucketedIntoInvalidVariation(variationId)
-                logger.e(info)
+                logger.w(info)
                 reasons.addInfo(info)
                 return DecisionResponse(result: nil, reasons: reasons)
             }
@@ -156,6 +156,10 @@ class DefaultBucketer: OPTBucketer {
         // DecisionTable
         
         if DecisionTables.modeGenerateDecisionTable {
+            // collapse trafficAllocation - merge contiguous ranges for the same bucket
+            // [A,A,B,C,C,C,D] -> [A,B,C,D]
+            let collapsed = BucketDecisionSchema.collapseTrafficAllocations(trafficAllocation)
+            
             for (i, schema) in DecisionTables.schemasForGenerateDecisionTable.enumerated() {
                 if let schema = schema as? BucketDecisionSchema, schema.bucketKey == rule.id {
                     let input = DecisionTables.inputForGenerateDecisionTable
@@ -163,10 +167,17 @@ class DefaultBucketer: OPTBucketer {
                     
                     let trafficAllocationIndex = schema.indexForLetter(char)
                     
-                    let bucket = trafficAllocation[trafficAllocationIndex]
-                    return bucket.entityId
+                    if trafficAllocationIndex < collapsed.count {
+                        let bucket = collapsed[trafficAllocationIndex]
+                        return bucket.entityId
+                    } else {
+                        // mapped to other range defined in traffic allocation
+                        return nil
+                    }
                 }
             }
+            
+            return nil
         }
         
         for bucket in trafficAllocation where bucketValue < bucket.endOfRange {

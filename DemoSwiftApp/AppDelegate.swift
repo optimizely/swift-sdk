@@ -42,7 +42,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // create DecisionTables (will be created in the backend and downloaded later)
         let decisionTables = DecisionTableGenerator.create(for: optimizely)
                 
-        //compareDecisions(decisionTables)
+        compareDecisions(decisionTables)
+        
         //comparePerformance(decisionTables)
     }
     
@@ -58,9 +59,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let user = decisionTables.getRandomUserContext(optimizely: optimizely, flagKey: flagKey)
             
             DecisionTables.modeUseDecisionTable = true
-            let decisionNew = user.decide(key: flagKey).variationKey
+            let decisionNew = user.decide(key: flagKey).variationKey ?? "nil"
             DecisionTables.modeUseDecisionTable = false
-            let decisionOld = user.decide(key: flagKey).variationKey
+            let decisionOld = user.decide(key: flagKey).variationKey ?? "nil"
             
             print("[Decision \(i)][Flag: \(flagKey)] = \(decisionOld) : \(decisionNew)")
             if decisionNew == decisionOld {

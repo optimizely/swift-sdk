@@ -48,7 +48,7 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: bucketKey)
         let bucketValue = generateBucketValue(bucketingId: hashId)
 
-        let index = buckets.filter { bucketValue < $0 }.first
+        let index = buckets.enumerated().filter { bucketValue < $0.element }.first?.offset
         return letterForIndex(index)
     }
     
@@ -117,7 +117,7 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
         do {
             bool = try audience.evaluate(attributes: user.attributes)
         } catch {
-            print("[DecisionSchema audience evaluation error: \(error)")
+            //print("[DecisionSchema audience evaluation error: \(error)")
         }
         
         return bool ? "1" : "0"

@@ -177,8 +177,14 @@ class DefaultBucketer: OPTBucketer {
                 }
             }
             
-            return nil
+            // compressed schemas will drop 0% or 100% schema. handle those cases
+            if collapsed.isEmpty {
+                return nil
+            } else {
+                return collapsed.first!.entityId
+            }
         }
+        
         
         for bucket in trafficAllocation where bucketValue < bucket.endOfRange {
             return bucket.entityId

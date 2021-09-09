@@ -45,9 +45,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
             
     func testDecisionTable() {
-        // create DecisionTables (will be created in the backend and downloaded later)
-        let decisionTables = DecisionTableGenerator.create(for: optimizely, compress: false)
-                
+        // locally generate DecisionTables (will be created in the backend and downloaded later)
+        let compress = true
+        let decisionTables = DecisionTableGenerator.create(for: optimizely, compress: compress)
+
         compareDecisions(decisionTables)
         
         comparePerformance(decisionTables)

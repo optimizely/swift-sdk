@@ -27,11 +27,17 @@ public class DecisionTableGenerator {
         for flag in flags.sorted(by: { $0.key < $1.key }) {
             print("\n[Flag]: \(flag.key)")
 
-            let rules = getAllRulesForFlag(config: config, flag: flag)
+            let rules = getAllRulesInOrderForFlag(config: config, flag: flag)
             
-            let schemas = makeSchemas(config: config, rules: rules)
-                    
-            let bodyInArray = makeTableBody(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
+            var schemas: [DecisionSchema]
+            var bodyInArray: [(String, String)]
+            if compress {
+                schemas = makeSchemasCompressed(config: config, rules: rules)
+                bodyInArray = makeTableBodyCompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
+            } else {
+                schemas = makeSchemasUncompressed(config: config, rules: rules)
+                bodyInArray = makeTableBodyUncompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
+            }
                         
             decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray)
         }
@@ -42,18 +48,13 @@ public class DecisionTableGenerator {
         return optimizely.decisionTables
     }
     
-    static func getAllRulesForFlag(config: ProjectConfig, flag: FeatureFlag) -> [Experiment] {
-        var rules = flag.experimentIds.compactMap { expId in
-            return config.allExperiments.filter { $0.id == expId }.first
-        }
-        
-        let rollout = config.project.rollouts.filter { $0.id == flag.rolloutId }.first
-        rules.append(contentsOf: rollout?.experiments ?? [])
+}
 
-        return rules
-    }
+// MARK: - DecisionSchemas (Uncomprssed)
+
+extension DecisionTableGenerator {
     
-    static func makeSchemas(config: ProjectConfig, rules: [Experiment]) -> [DecisionSchema] {
+    static func makeSchemasUncompressed(config: ProjectConfig, rules: [Experiment]) -> [DecisionSchema] {
         var schemas = [DecisionSchema]()
         
         // BucketDecisionSchema
@@ -95,7 +96,13 @@ public class DecisionTableGenerator {
         return schemas
     }
     
-    static func makeTableBody(optimizely: OptimizelyClient, flagKey: String, schemas: [DecisionSchema]) -> [(String, String)] {
+}
+
+// MARK: - DecisionTable Body (Uncompressed)
+
+extension DecisionTableGenerator {
+    
+    static func makeTableBodyUncompressed(optimizely: OptimizelyClient, flagKey: String, schemas: [DecisionSchema]) -> [(String, String)] {
         let body = makeAllInputs(schemas: schemas)
         
         var bodyInArray = [(String, String)]()
@@ -142,6 +149,100 @@ public class DecisionTableGenerator {
         }
         
         return sets
+    }
+    
+}
+
+// MARK: - DecisionSchemas (Comprssed)
+
+extension DecisionTableGenerator {
+    
+    static func makeSchemasCompressed(config: ProjectConfig, rules: [Experiment]) -> [DecisionSchema] {
+        var schemas = [DecisionSchema]()
+        
+        var allAudienceIds = Set<String>()
+
+        rules.forEach { rule in
+            // rule-id (not key) is used for bucketing
+            schemas.append(BucketDecisionSchema(bucketKey: rule.id, trafficAllocations: rule.trafficAllocation))
+                        
+            rule.audienceIds.forEach { id in
+                if !allAudienceIds.contains(id) {
+                    guard let audience = config.getAudience(id: id) else { return }
+                    schemas.append(AudienceDecisionSchema(audience: audience))
+                }
+            }
+            
+            allAudienceIds = allAudienceIds.union(rule.audienceIds)
+        }
+        
+        // we need at least one schema (to create table body)
+        if schemas.count > 1 {
+            schemas = schemas.filter { schema in
+                if let schema = schema as? BucketDecisionSchema {
+                    // only one bucket (0% or 100%) can be ignored
+                    return schema.buckets.count > 1
+                } else {
+                    // keep all audience schemas
+                    return true
+                }
+            }
+        }
+
+        print("\n   [Schemas]")
+        schemas.forEach {
+            print($0)
+        }
+        
+        return schemas
+    }
+
+}
+
+// MARK: - DecisionTable Body (Compressed)
+
+extension DecisionTableGenerator {
+    
+    static func makeTableBodyCompressed(optimizely: OptimizelyClient, flagKey: String, schemas: [DecisionSchema]) -> [(String, String)] {
+        let body = makeAllInputs(schemas: schemas)
+        
+        var bodyInArray = [(String, String)]()
+        
+        let user = OptimizelyUserContext(optimizely: optimizely, userId: "any-user-id")
+        DecisionTables.modeGenerateDecisionTable = true
+        body.forEach { input in
+            DecisionTables.schemasForGenerateDecisionTable = schemas
+            DecisionTables.inputForGenerateDecisionTable = input
+            
+            let decision = user.decide(key: flagKey)
+            let decisionString = decision.variationKey ?? "nil"
+            bodyInArray.append((input, decisionString))
+        }
+        DecisionTables.modeGenerateDecisionTable = false
+        
+        print("\n   [DecisionTable]")
+        bodyInArray.forEach { (input, decisionString) in
+            print("      \(input) -> \(decisionString)")
+        }
+        
+        return bodyInArray
+    }
+
+}
+
+// MARK: - Utils
+
+extension DecisionTableGenerator {
+    
+    static func getAllRulesInOrderForFlag(config: ProjectConfig, flag: FeatureFlag) -> [Experiment] {
+        var rules = flag.experimentIds.compactMap { expId in
+            return config.allExperiments.filter { $0.id == expId }.first
+        }
+        
+        let rollout = config.project.rollouts.filter { $0.id == flag.rolloutId }.first
+        rules.append(contentsOf: rollout?.experiments ?? [])
+
+        return rules
     }
     
     static func saveDecisionTablesToFile(optimizely: OptimizelyClient, compress: Bool) {

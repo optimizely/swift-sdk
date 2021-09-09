@@ -26,7 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
         //let sdkKey = "VE2r2nTX4fogL6m3EQqkk3"
         //let sdkKey = "Q9yTzC1GTnden1geuSFXu"
-        let sdkKey = "X6xJvai8Yu9E7wT1hkvGM"
+        let sdkKey = "DZB4eRNYsk8cWMAHE4Uvhb"    // Optimizely Product JS/Python
+        //let sdkKey = "X6xJvai8Yu9E7wT1hkvGM"
         
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,
@@ -45,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
     func testDecisionTable() {
         // create DecisionTables (will be created in the backend and downloaded later)
-        let decisionTables = DecisionTableGenerator.create(for: optimizely)
+        let decisionTables = DecisionTableGenerator.create(for: optimizely, compress: false)
                 
         compareDecisions(decisionTables)
         

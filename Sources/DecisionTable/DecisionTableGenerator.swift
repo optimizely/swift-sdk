@@ -18,88 +18,106 @@ import Foundation
 
 public class DecisionTableGenerator {
     
-    public static func create(for optimizely: OptimizelyClient) -> DecisionTables {
+    public static func create(for optimizely: OptimizelyClient, compress: Bool) -> DecisionTables {
         let config = optimizely.config!
         let flags = config.getFeatureFlags()
-        let allExperiments = config.allExperiments
         
         var decisionTablesMap = [String: FlagDecisionTable]()
         
         for flag in flags.sorted(by: { $0.key < $1.key }) {
-            var schemas = [DecisionSchema]()
-                        
-            var rules = flag.experimentIds.compactMap { expId in
-                return allExperiments.filter { $0.id == expId }.first
-            }
-            
-            let rollout = config.project.rollouts.filter { $0.id == flag.rolloutId }.first
-            rules.append(contentsOf: rollout?.experiments ?? [])
-            
-            // BucketDecisionSchema
-            
-            rules.forEach { rule in
-                // rule-id (not key) is used for bucketing 
-                schemas.append(BucketDecisionSchema(bucketKey: rule.id, trafficAllocations: rule.trafficAllocation))
-            }
-            
-            // AudienceDicisionSchema
-            
-            var allAudienceIds = [String]()
-            rules.forEach { rule in
-                rule.audienceIds.forEach { id in
-                    if !allAudienceIds.contains(id) {
-                        allAudienceIds.append(id)
-                    }
-                }
-            }
-            
-            for (index, audienceId) in allAudienceIds.enumerated() {
-                guard let audience = config.getAudience(id: audienceId) else { continue }
-                schemas.append(AudienceDecisionSchema(audience: audience))
-                
-                let maxNumAudiences = 10
-                if index >= maxNumAudiences - 1 {
-                    print("[ERROR] the number of audiences for this flag is too large (\(allAudienceIds.count))")
-                    print("[ERROR] truncated to (\(maxNumAudiences)) to move on")
-                    schemas.append(ErrorDecisionSchema(name: "Audience Overflow"))
-                    break
-                }
-            }
-            
             print("\n[Flag]: \(flag.key)")
-            print("\n   [Schemas]")
-            schemas.forEach {
-                print($0)
-            }
-            
-            // DecisionTable Body
-            
-            let body = makeAllInputs(schemas: schemas)
-            print("\n   [DecisionTable]")
-            
-            var bodyInArray = [(String, String)]()
-            
-            let user = OptimizelyUserContext(optimizely: optimizely, userId: "any-user-id")
-            DecisionTables.modeGenerateDecisionTable = true
-            body.forEach { input in
-                DecisionTables.schemasForGenerateDecisionTable = schemas
-                DecisionTables.inputForGenerateDecisionTable = input
-                
-                let decision = user.decide(key: flag.key)
-                let decisionString = decision.variationKey ?? "nil"
-                bodyInArray.append((input, decisionString))
-                
-                print("      \(input) -> \(decisionString)")
-            }
-            DecisionTables.modeGenerateDecisionTable = false
 
+            let rules = getAllRulesForFlag(config: config, flag: flag)
+            
+            let schemas = makeSchemas(config: config, rules: rules)
+                    
+            let bodyInArray = makeTableBody(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
+                        
             decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray)
         }
     
         optimizely.decisionTables = DecisionTables(tables: decisionTablesMap)
-        saveDecisionTablesToFile(optimizely: optimizely)
+        saveDecisionTablesToFile(optimizely: optimizely, compress: compress)
         
         return optimizely.decisionTables
+    }
+    
+    static func getAllRulesForFlag(config: ProjectConfig, flag: FeatureFlag) -> [Experiment] {
+        var rules = flag.experimentIds.compactMap { expId in
+            return config.allExperiments.filter { $0.id == expId }.first
+        }
+        
+        let rollout = config.project.rollouts.filter { $0.id == flag.rolloutId }.first
+        rules.append(contentsOf: rollout?.experiments ?? [])
+
+        return rules
+    }
+    
+    static func makeSchemas(config: ProjectConfig, rules: [Experiment]) -> [DecisionSchema] {
+        var schemas = [DecisionSchema]()
+        
+        // BucketDecisionSchema
+
+        rules.forEach { rule in
+            // rule-id (not key) is used for bucketing
+            schemas.append(BucketDecisionSchema(bucketKey: rule.id, trafficAllocations: rule.trafficAllocation))
+        }
+        
+        // AudienceDicisionSchema
+
+        var allAudienceIds = [String]()
+        rules.forEach { rule in
+            rule.audienceIds.forEach { id in
+                if !allAudienceIds.contains(id) {
+                    allAudienceIds.append(id)
+                }
+            }
+        }
+        
+        for (index, audienceId) in allAudienceIds.enumerated() {
+            guard let audience = config.getAudience(id: audienceId) else { continue }
+            schemas.append(AudienceDecisionSchema(audience: audience))
+            
+            let maxNumAudiences = 10
+            if index >= maxNumAudiences - 1 {
+                print("[ERROR] the number of audiences for this flag is too large (\(allAudienceIds.count))")
+                print("[ERROR] truncated to (\(maxNumAudiences)) to move on")
+                schemas.append(ErrorDecisionSchema(name: "Audience Overflow"))
+                break
+            }
+        }
+
+        print("\n   [Schemas]")
+        schemas.forEach {
+            print($0)
+        }
+        
+        return schemas
+    }
+    
+    static func makeTableBody(optimizely: OptimizelyClient, flagKey: String, schemas: [DecisionSchema]) -> [(String, String)] {
+        let body = makeAllInputs(schemas: schemas)
+        
+        var bodyInArray = [(String, String)]()
+        
+        let user = OptimizelyUserContext(optimizely: optimizely, userId: "any-user-id")
+        DecisionTables.modeGenerateDecisionTable = true
+        body.forEach { input in
+            DecisionTables.schemasForGenerateDecisionTable = schemas
+            DecisionTables.inputForGenerateDecisionTable = input
+            
+            let decision = user.decide(key: flagKey)
+            let decisionString = decision.variationKey ?? "nil"
+            bodyInArray.append((input, decisionString))
+        }
+        DecisionTables.modeGenerateDecisionTable = false
+        
+        print("\n   [DecisionTable]")
+        bodyInArray.forEach { (input, decisionString) in
+            print("      \(input) -> \(decisionString)")
+        }
+        
+        return bodyInArray
     }
     
     static func makeAllInputs(schemas: [DecisionSchema]) -> [String] {
@@ -126,7 +144,7 @@ public class DecisionTableGenerator {
         return sets
     }
     
-    static func saveDecisionTablesToFile(optimizely: OptimizelyClient) {
+    static func saveDecisionTablesToFile(optimizely: OptimizelyClient, compress: Bool) {
         guard var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             print("FileManager saveDecisionTablesToFile error")
             return
@@ -143,7 +161,8 @@ public class DecisionTableGenerator {
             }
         }
         
-        url.appendPathComponent("\(optimizely.sdkKey).table")
+        let filename = "\(optimizely.sdkKey)" + (compress ? ".table-compressed" : ".table")
+        url.appendPathComponent(filename)
         
         var contents = "SDKKey: \(optimizely.sdkKey)\n"
         

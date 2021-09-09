@@ -71,26 +71,6 @@ struct Audience: Codable, Equatable, OptimizelyAudience {
     }
     
     func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
-        
-        // DecisionTable
-        if OptimizelyDecisionTables.modeGenerateDecisionTable {
-            let inputLength = OptimizelyDecisionTables.inputForGenerateDecisionTable.count
-            for i in 0..<inputLength {
-                let schema = OptimizelyDecisionTables.schemasForGenerateDecisionTable[i]
-                if let schema = schema as? AudienceDecisionSchema {
-                    if schema.audience.id == id {
-                        let input = OptimizelyDecisionTables.inputForGenerateDecisionTable
-                        let char = String(Array(input)[i])
-                        return char == "0" ? false : true
-                    }
-                }
-            }
-            
-            // cannot determine yet. insufficient input.
-            OptimizelyDecisionTables.insufficientDecisionInput = true
-            return false
-        }
-        
         return try conditionHolder.evaluate(project: project, attributes: attributes)
     }
 

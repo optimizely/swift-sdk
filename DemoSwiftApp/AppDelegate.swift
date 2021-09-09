@@ -22,25 +22,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var optimizely: OptimizelyClient!
     
     func applicationDidFinishLaunching(_ application: UIApplication) {
-        //let sdkKey = "FCnSegiEkRry9rhVMroit4"
-        //let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
-        //let sdkKey = "VE2r2nTX4fogL6m3EQqkk3"
-        //let sdkKey = "Q9yTzC1GTnden1geuSFXu"
-        //let sdkKey = "DZB4eRNYsk8cWMAHE4Uvhb"    // Optimizely Product JS/Python
-        let sdkKey = "X6xJvai8Yu9E7wT1hkvGM"     // many audiences
+        var sdkKeys = [String]()
+        //sdkKeys.append("FCnSegiEkRry9rhVMroit4")
+        //sdkKeys.append("AqLkkcss3wRGUbftnKNgh2")
+        //sdkKeys.append("VE2r2nTX4fogL6m3EQqkk3")
+        //sdkKeys.append("Q9yTzC1GTnden1geuSFXu")
+        //sdkKeys.append("DZB4eRNYsk8cWMAHE4Uvhb")    // Optimizely Product JS/Python
+        sdkKeys.append("X6xJvai8Yu9E7wT1hkvGM")     // many audiences
         
-
-        optimizely = OptimizelyClient(sdkKey: sdkKey,
-                                      defaultLogLevel: .error,
-                                      defaultDecideOptions: [.ignoreUserProfileService, .disableDecisionEvent])
-        
-        optimizely.start { result in
-            if case .failure(let error) = result {
-                print("Optimizely SDK initiliazation failed: \(error)")
-                return
+        sdkKeys.forEach { sdkKey in
+            optimizely = OptimizelyClient(sdkKey: sdkKey,
+                                          defaultLogLevel: .error,
+                                          defaultDecideOptions: [.ignoreUserProfileService, .disableDecisionEvent])
+            
+            optimizely.start { result in
+                if case .failure(let error) = result {
+                    print("Optimizely SDK initiliazation failed: \(error)")
+                    return
+                }
+                
+                self.testDecisionTable()
             }
-
-            self.testDecisionTable()
         }
     }
             

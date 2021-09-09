@@ -42,7 +42,12 @@ public class DecisionTableGenerator {
             decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray)
         }
     
-        optimizely.decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap)
+        if compress {
+            let audiences = makeAllAudiences(config: config)
+            optimizely.decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap, audiences: audiences)
+        } else {
+            optimizely.decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap)
+        }
         saveDecisionTablesToFile(optimizely: optimizely, compress: compress)
         
         return optimizely.decisionTables
@@ -75,12 +80,15 @@ extension DecisionTableGenerator {
             }
         }
         
-        for (index, audienceId) in allAudienceIds.enumerated() {
-            guard let audience = config.getAudience(id: audienceId) else { continue }
-            schemas.append(AudienceDecisionSchema(audience: audience))
+        var numAudiences = 0
+        for rule in rules {
+            if rule.audienceIds.count > 0, let conditions = rule.audienceConditions {
+                schemas.append(AudienceDecisionSchema(audiences: conditions))
+                numAudiences += 1
+            }
             
             let maxNumAudiences = 10
-            if index >= maxNumAudiences - 1 {
+            if numAudiences >= maxNumAudiences {
                 print("[ERROR] the number of audiences for this flag is too large (\(allAudienceIds.count))")
                 print("[ERROR] truncated to (\(maxNumAudiences)) to move on")
                 schemas.append(ErrorDecisionSchema(name: "Audience Overflow"))
@@ -161,8 +169,6 @@ extension DecisionTableGenerator {
     static func makeSchemasCompressed(config: ProjectConfig, rules: [Experiment]) -> [DecisionSchema] {
         var schemas = [DecisionSchema]()
         
-        var allAudienceIds = Set<String>()
-
         // the order of the rules are important for compressing the table body
         // - the order of decision-flows. if decision made early, we can ignore all other schemas as "dont-care"
         
@@ -170,14 +176,9 @@ extension DecisionTableGenerator {
             // rule-id (not key) is used for bucketing
             schemas.append(BucketDecisionSchema(bucketKey: rule.id, trafficAllocations: rule.trafficAllocation))
                      
-            rule.audienceIds.forEach { id in
-                if !allAudienceIds.contains(id) {
-                    guard let audience = config.getAudience(id: id) else { return }
-                    schemas.append(AudienceDecisionSchema(audience: audience))
-                }
+            if rule.audienceIds.count > 0, let conditions = rule.audienceConditions {
+                schemas.append(AudienceDecisionSchema(audiences: conditions))
             }
-            
-            allAudienceIds = allAudienceIds.union(rule.audienceIds)
         }
         
         // compress: remove all single-bucket BucketDecsionSchemas
@@ -285,6 +286,20 @@ extension DecisionTableGenerator {
         return rules
     }
     
+    static func makeAllAudiences(config: ProjectConfig) -> [Audience] {
+        let project = config.project!
+
+        var audiences = project.typedAudiences ?? []
+        project.audiences.forEach { oldAudience in
+            if audiences.filter({ newAudience in newAudience.id == oldAudience.id }).isEmpty {
+                guard oldAudience.id != "$opt_dummy_audience" else { return }
+                audiences.append(oldAudience)
+            }
+        }
+
+        return audiences
+    }
+    
     static func saveDecisionTablesToFile(optimizely: OptimizelyClient, compress: Bool) {
         guard var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             print("FileManager saveDecisionTablesToFile error")
@@ -307,10 +322,10 @@ extension DecisionTableGenerator {
         
         var contents = "SDKKey: \(optimizely.sdkKey)\n"
         
-        let tables = optimizely.decisionTables.tables
-        let sortedFlagKeys = tables.keys.sorted { $0 < $1 }
+        let decisionTables = optimizely.decisionTables!
+        let sortedFlagKeys = decisionTables.tables.keys.sorted { $0 < $1 }
         sortedFlagKeys.forEach { flagKey in
-            let table = tables[flagKey]!
+            let table = decisionTables.tables[flagKey]!
             
             contents += "\n[Flag]: \(flagKey)\n"
             contents += "\n   [Schemas]\n"
@@ -322,6 +337,13 @@ extension DecisionTableGenerator {
             
             table.bodyInArray.forEach { (input, decision) in
                 contents += "      \(input) -> \(decision)\n"
+            }
+        }
+        
+        if decisionTables.audiences.count > 0 {
+            contents += "\n\n[Audiences]\n"
+            decisionTables.audiences.forEach { audience in
+                contents += "   \(audience.name) (\(audience.id)) \(audience.conditions)\n"
             }
         }
         

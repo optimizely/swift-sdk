@@ -62,6 +62,30 @@ enum ConditionHolder: Codable, Equatable {
     }
     
     func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+        
+        
+        // DecisionTable
+        if OptimizelyDecisionTables.modeGenerateDecisionTable {
+            let inputLength = OptimizelyDecisionTables.inputForGenerateDecisionTable.count
+            for i in 0..<inputLength {
+                let schema = OptimizelyDecisionTables.schemasForGenerateDecisionTable[i]
+                if let schema = schema as? AudienceDecisionSchema {
+                    if schema.audiences.serialized == serialized {
+                        let input = OptimizelyDecisionTables.inputForGenerateDecisionTable
+                        let char = String(Array(input)[i])
+                        return char == "0" ? false : true
+                    }
+                }
+            }
+            
+            // cannot determine yet. insufficient input.
+            OptimizelyDecisionTables.insufficientDecisionInput = true
+            return false
+        }
+        
+
+
+
         switch self {
         case .logicalOp:
             throw OptimizelyError.conditionInvalidFormat("Logical operation not evaluated")

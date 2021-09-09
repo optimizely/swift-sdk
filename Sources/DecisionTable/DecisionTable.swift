@@ -57,9 +57,11 @@ public class OptimizelyDecisionTables {
     public static var modeUseDecisionTable = false
 
     let tables: [String: FlagDecisionTable]
+    let audiences: [Audience]
     
-    init(tables: [String: FlagDecisionTable] = [:]) {
+    init(tables: [String: FlagDecisionTable] = [:], audiences: [Audience] = []) {
         self.tables = tables
+        self.audiences = audiences
     }
         
     public func decide(user: OptimizelyUserContext,

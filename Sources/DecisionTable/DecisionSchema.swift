@@ -88,16 +88,16 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
 // MARK: - AudienceDecisionSchema
 
 struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
-    let audience: Audience
+    let audiences: ConditionHolder
     
-    init(audience: Audience) {
-        self.audience = audience
+    init(audiences: ConditionHolder) {
+        self.audiences = audiences
     }
     
     func makeLookupInput(user: OptimizelyUserContext) -> String {
         var bool = false
         do {
-            bool = try audience.evaluate(project: nil, attributes: user.attributes)
+            bool = try audiences.evaluate(project: nil, attributes: user.attributes)
         } catch {
             // print("[DecisionSchema audience evaluation error: \(error)")
         }
@@ -110,18 +110,18 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
     }
     
     var description: String {
-        return "      AudienceSchema: \(audience.name) (\(audience.id), \(audience.conditions))"
+        return "      AudienceSchema: \(audiences.serialized)"
     }
     
     var randomAttributes: [(String, Any)]? {
-        let userAttributes = getUserAttributes(audience: audience)
+        let userAttributes = getUserAttributes(audiences: audiences)
 
         return userAttributes.compactMap { $0.randomAttribute }
     }
     
-    func getUserAttributes(audience: Audience) -> [UserAttribute] {
+    func getUserAttributes(audiences: ConditionHolder) -> [UserAttribute] {
         var userAttributes = [UserAttribute]()
-        getUserAttributes(conditionHolder: audience.conditionHolder, result: &userAttributes)
+        ////getUserAttributes(conditionHolder: audience.conditionHolder, result: &userAttributes)
         return userAttributes
     }
     

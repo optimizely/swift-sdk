@@ -18,7 +18,7 @@ import Foundation
 
 public class DecisionTableGenerator {
     
-    public static func create(for optimizely: OptimizelyClient, compress: Bool) -> DecisionTables {
+    public static func create(for optimizely: OptimizelyClient, compress: Bool) -> OptimizelyDecisionTables {
         let config = optimizely.config!
         let flags = config.getFeatureFlags()
         
@@ -42,7 +42,7 @@ public class DecisionTableGenerator {
             decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray)
         }
     
-        optimizely.decisionTables = DecisionTables(tables: decisionTablesMap)
+        optimizely.decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap)
         saveDecisionTablesToFile(optimizely: optimizely, compress: compress)
         
         return optimizely.decisionTables
@@ -108,16 +108,17 @@ extension DecisionTableGenerator {
         var bodyInArray = [(String, String)]()
         
         let user = OptimizelyUserContext(optimizely: optimizely, userId: "any-user-id")
-        DecisionTables.modeGenerateDecisionTable = true
+        OptimizelyDecisionTables.modeGenerateDecisionTable = true
         body.forEach { input in
-            DecisionTables.schemasForGenerateDecisionTable = schemas
-            DecisionTables.inputForGenerateDecisionTable = input
-            
+            OptimizelyDecisionTables.schemasForGenerateDecisionTable = schemas
+            OptimizelyDecisionTables.inputForGenerateDecisionTable = input
+            OptimizelyDecisionTables.insufficientDecisionInput = false
+
             let decision = user.decide(key: flagKey)
             let decisionString = decision.variationKey ?? "nil"
             bodyInArray.append((input, decisionString))
         }
-        DecisionTables.modeGenerateDecisionTable = false
+        OptimizelyDecisionTables.modeGenerateDecisionTable = false
         
         print("\n   [DecisionTable]")
         bodyInArray.forEach { (input, decisionString) in
@@ -162,10 +163,13 @@ extension DecisionTableGenerator {
         
         var allAudienceIds = Set<String>()
 
+        // the order of the rules are important for compressing the table body
+        // - the order of decision-flows. if decision made early, we can ignore all other schemas as "dont-care"
+        
         rules.forEach { rule in
             // rule-id (not key) is used for bucketing
             schemas.append(BucketDecisionSchema(bucketKey: rule.id, trafficAllocations: rule.trafficAllocation))
-                        
+                     
             rule.audienceIds.forEach { id in
                 if !allAudienceIds.contains(id) {
                     guard let audience = config.getAudience(id: id) else { return }
@@ -176,7 +180,9 @@ extension DecisionTableGenerator {
             allAudienceIds = allAudienceIds.union(rule.audienceIds)
         }
         
-        // we need at least one schema (to create table body)
+        // compress: remove all single-bucket BucketDecsionSchemas
+        //           keep it if it's the only one schema for the flag (to create table body)
+        
         if schemas.count > 1 {
             schemas = schemas.filter { schema in
                 if let schema = schema as? BucketDecisionSchema {
@@ -204,28 +210,56 @@ extension DecisionTableGenerator {
 extension DecisionTableGenerator {
     
     static func makeTableBodyCompressed(optimizely: OptimizelyClient, flagKey: String, schemas: [DecisionSchema]) -> [(String, String)] {
-        let body = makeAllInputs(schemas: schemas)
-        
         var bodyInArray = [(String, String)]()
+
+        guard let firstSchema = schemas.first else {
+            return bodyInArray
+        }
         
         let user = OptimizelyUserContext(optimizely: optimizely, userId: "any-user-id")
-        DecisionTables.modeGenerateDecisionTable = true
-        body.forEach { input in
-            DecisionTables.schemasForGenerateDecisionTable = schemas
-            DecisionTables.inputForGenerateDecisionTable = input
-            
-            let decision = user.decide(key: flagKey)
-            let decisionString = decision.variationKey ?? "nil"
-            bodyInArray.append((input, decisionString))
-        }
-        DecisionTables.modeGenerateDecisionTable = false
+
+        // TODO: change this to depth-first (recursion), so decision table looks like increasing order
         
-        print("\n   [DecisionTable]")
-        bodyInArray.forEach { (input, decisionString) in
-            print("      \(input) -> \(decisionString)")
+        var sets = [String]()
+        sets.append(contentsOf: firstSchema.allLookupInputs)
+        
+        while sets.count > 0 {
+            var item = sets.removeFirst()
+            
+            // check early decision with the current input.
+            // if we can make a decision with it, it means we do not need the rest of the schemas.
+            // mark the rest of schemas as "dont-care" and prune the input.
+            if let decision = makeDecisionForInput(user: user, flagKey: flagKey, schemas: schemas, input: item) {
+                let decisionString = decision.variationKey ?? "nil"
+                let remainingCount = schemas.count - item.count
+                if remainingCount > 0 {
+                    item += String(repeating: "*", count: remainingCount)
+                }
+                bodyInArray.append((item, decisionString))
+            } else {
+                let index = item.count
+                let schema = schemas[index]
+                sets.append(contentsOf: schema.allLookupInputs.map { item + $0 })
+            }
         }
         
         return bodyInArray
+    }
+    
+    static func makeDecisionForInput(user: OptimizelyUserContext, flagKey: String, schemas: [DecisionSchema], input: String) -> OptimizelyDecision? {
+        OptimizelyDecisionTables.schemasForGenerateDecisionTable = schemas
+        OptimizelyDecisionTables.inputForGenerateDecisionTable = input
+        OptimizelyDecisionTables.insufficientDecisionInput = false
+
+        OptimizelyDecisionTables.modeGenerateDecisionTable = true
+        let decision = user.decide(key: flagKey)
+        OptimizelyDecisionTables.modeGenerateDecisionTable = false
+        
+        if OptimizelyDecisionTables.insufficientDecisionInput {
+            return nil
+        } else {
+            return decision
+        }
     }
 
 }

@@ -50,6 +50,9 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
         var prevEntityId: String?
         var prevEndOfRange = 0
         trafficAllocations.forEach {
+            // do not allocate a bucket for "0" range
+            guard $0.endOfRange > 0 else { return }
+            
             if let prevEntityId = prevEntityId, $0.entityId != prevEntityId {
                 collapsed.append(TrafficAllocation(entityId: prevEntityId, endOfRange: prevEndOfRange))
             }

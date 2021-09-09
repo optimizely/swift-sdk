@@ -155,14 +155,16 @@ class DefaultBucketer: OPTBucketer {
         
         // DecisionTable
         
-        if DecisionTables.modeGenerateDecisionTable {
+        if OptimizelyDecisionTables.modeGenerateDecisionTable {
             // collapse trafficAllocation - merge contiguous ranges for the same bucket
             // [A,A,B,C,C,C,D] -> [A,B,C,D]
             let collapsed = BucketDecisionSchema.collapseTrafficAllocations(trafficAllocation)
             
-            for (i, schema) in DecisionTables.schemasForGenerateDecisionTable.enumerated() {
+            let inputLength = OptimizelyDecisionTables.inputForGenerateDecisionTable.count
+            for i in 0..<inputLength {
+                let schema = OptimizelyDecisionTables.schemasForGenerateDecisionTable[i]
                 if let schema = schema as? BucketDecisionSchema, schema.bucketKey == rule.id {
-                    let input = DecisionTables.inputForGenerateDecisionTable
+                    let input = OptimizelyDecisionTables.inputForGenerateDecisionTable
                     let char = String(Array(input)[i])
                     
                     let trafficAllocationIndex = schema.indexForLetter(char)
@@ -180,8 +182,12 @@ class DefaultBucketer: OPTBucketer {
             // compressed schemas will drop 0% or 100% schema. handle those cases
             if collapsed.isEmpty {
                 return nil
-            } else {
+            } else if collapsed.count == 1 {
                 return collapsed.first!.entityId
+            } else {
+                // cannot determine yet. insufficient input.
+                OptimizelyDecisionTables.insufficientDecisionInput = true
+                return nil
             }
         }
         

@@ -55,7 +55,7 @@ open class OptimizelyClient: NSObject {
     public var notificationCenter: OPTNotificationCenter?
     
     // MARK: - DecisionTable
-    var decisionTables: DecisionTables!
+    var decisionTables: OptimizelyDecisionTables!
     
     // MARK: - Public interfaces
     

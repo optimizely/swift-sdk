@@ -49,10 +49,11 @@ class FlagDecisionTable {
 
 }
 
-public class DecisionTables {
+public class OptimizelyDecisionTables {
     static var modeGenerateDecisionTable = false
     static var schemasForGenerateDecisionTable = [DecisionSchema]()
     static var inputForGenerateDecisionTable = ""
+    static var insufficientDecisionInput = false
     public static var modeUseDecisionTable = false
 
     let tables: [String: FlagDecisionTable]

@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //let sdkKey = "VE2r2nTX4fogL6m3EQqkk3"
         //let sdkKey = "Q9yTzC1GTnden1geuSFXu"
         let sdkKey = "DZB4eRNYsk8cWMAHE4Uvhb"    // Optimizely Product JS/Python
-        //let sdkKey = "X6xJvai8Yu9E7wT1hkvGM"
+        //let sdkKey = "X6xJvai8Yu9E7wT1hkvGM"     // many audiences
         
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,
@@ -46,15 +46,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
     func testDecisionTable() {
         // locally generate DecisionTables (will be created in the backend and downloaded later)
-        let compress = true
-        let decisionTables = DecisionTableGenerator.create(for: optimizely, compress: compress)
+        var decisionTables: OptimizelyDecisionTables
+        decisionTables = DecisionTableGenerator.create(for: optimizely, compress: true)
+        decisionTables = DecisionTableGenerator.create(for: optimizely, compress: false)
 
         compareDecisions(decisionTables)
         
         comparePerformance(decisionTables)
     }
     
-    func compareDecisions(_ decisionTables: DecisionTables) {
+    func compareDecisions(_ decisionTables: OptimizelyDecisionTables) {
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         let allFlags = optimizelyConfig.featuresMap.keys
         let compareTotal = 1000
@@ -66,17 +67,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             //let flagKey = "my_feature"
             let user = decisionTables.getRandomUserContext(optimizely: optimizely, key: flagKey)
             
-            DecisionTables.modeUseDecisionTable = true
+            OptimizelyDecisionTables.modeUseDecisionTable = true
             let decisionNew = user.decide(key: flagKey)
             let variationNew = decisionNew.variationKey ?? "nil"
             let lookupInput = decisionNew.ruleKey!
-            DecisionTables.modeUseDecisionTable = false
+            OptimizelyDecisionTables.modeUseDecisionTable = false
             let decisionOld = user.decide(key: flagKey)
             let variationOld = decisionOld.variationKey ?? "nil"
             let flagKeyPadding = "(Flag: \(flagKey))".padding(toLength: 32, withPad: " ", startingAt: 0)
             
-            //print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)", i, flagKeyPadding, variationOld, variationNew, lookupInput))
-            print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)    (%@)", i, flagKeyPadding, variationOld, variationNew, lookupInput, user.description))
+            print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)", i, flagKeyPadding, variationOld, variationNew, lookupInput))
+            //print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)    (%@)", i, flagKeyPadding, variationOld, variationNew, lookupInput, user.description))
             if variationNew == variationOld {
                 countMatch += 1
             } else {
@@ -86,7 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("Total match: \(countMatch)/\(compareTotal)")
     }
     
-    func comparePerformance(_ decisionTables: DecisionTables) {
+    func comparePerformance(_ decisionTables: OptimizelyDecisionTables) {
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         let allFlags = optimizelyConfig.featuresMap.keys
         let flagKey = allFlags.randomElement()!
@@ -97,14 +98,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         var startTime = CFAbsoluteTimeGetCurrent()
         for _ in 0..<performanceTotal {
-            DecisionTables.modeUseDecisionTable = true
+            OptimizelyDecisionTables.modeUseDecisionTable = true
             _ = user.decide(key: flagKey).variationKey
         }
         print(String(format: "Time elapsed for DecisionTable: %.03f secs", CFAbsoluteTimeGetCurrent() - startTime))
     
         startTime = CFAbsoluteTimeGetCurrent()
         for _ in 0..<performanceTotal {
-            DecisionTables.modeUseDecisionTable = false
+            OptimizelyDecisionTables.modeUseDecisionTable = false
             _ = user.decide(key: flagKey).variationKey
         }
         print(String(format: "Time elapsed for DecisionAPI: %.03f secs", CFAbsoluteTimeGetCurrent() - startTime))

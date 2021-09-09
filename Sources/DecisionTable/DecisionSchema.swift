@@ -161,7 +161,7 @@ struct ErrorDecisionSchema: DecisionSchema, CustomStringConvertible {
     }
     
     var description: String {
-        return "      ErrorSchema: \(name)"
+        return "      ErrorSchema: failure ****** \(name) *******"
     }
 }
 

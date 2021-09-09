@@ -26,8 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
         //let sdkKey = "VE2r2nTX4fogL6m3EQqkk3"
         //let sdkKey = "Q9yTzC1GTnden1geuSFXu"
-        let sdkKey = "DZB4eRNYsk8cWMAHE4Uvhb"    // Optimizely Product JS/Python
-        //let sdkKey = "X6xJvai8Yu9E7wT1hkvGM"     // many audiences
+        //let sdkKey = "DZB4eRNYsk8cWMAHE4Uvhb"    // Optimizely Product JS/Python
+        let sdkKey = "X6xJvai8Yu9E7wT1hkvGM"     // many audiences
         
 
         optimizely = OptimizelyClient(sdkKey: sdkKey,

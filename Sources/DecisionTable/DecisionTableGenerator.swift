@@ -29,8 +29,8 @@ public class DecisionTableGenerator {
 
             let rules = getAllRulesInOrderForFlag(config: config, flag: flag)
             
-            var schemas: [DecisionSchema]
-            var bodyInArray: [(String, String)]
+            var schemas = [DecisionSchema]()
+            var bodyInArray = [(String, String)]()
             if compress {
                 schemas = makeSchemasCompressed(config: config, rules: rules)
                 bodyInArray = makeTableBodyCompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
@@ -225,6 +225,8 @@ extension DecisionTableGenerator {
         
         while sets.count > 0 {
             var item = sets.removeFirst()
+    
+            // print("compressed: item = \(item)")
             
             // check early decision with the current input.
             // if we can make a decision with it, it means we do not need the rest of the schemas.
@@ -236,10 +238,14 @@ extension DecisionTableGenerator {
                     item += String(repeating: "*", count: remainingCount)
                 }
                 bodyInArray.append((item, decisionString))
+                
+                // print("compressed:    decision --> \(decisionString)")
             } else {
                 let index = item.count
                 let schema = schemas[index]
                 sets.append(contentsOf: schema.allLookupInputs.map { item + $0 })
+                
+                // print("compressed:    append \(schema.allLookupInputs.map { item + $0 })")
             }
         }
         

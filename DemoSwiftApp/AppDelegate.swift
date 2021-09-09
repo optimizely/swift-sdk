@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //let sdkKey = "FCnSegiEkRry9rhVMroit4"
         //let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
         //let sdkKey = "VE2r2nTX4fogL6m3EQqkk3"
+        //let sdkKey = "Q9yTzC1GTnden1geuSFXu"
         let sdkKey = "X6xJvai8Yu9E7wT1hkvGM"
         
 
@@ -54,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func compareDecisions(_ decisionTables: DecisionTables) {
         let optimizelyConfig = try! optimizely.getOptimizelyConfig()
         let allFlags = optimizelyConfig.featuresMap.keys
-        let compareTotal = 100
+        let compareTotal = 1000
         var countMatch = 0
         
         print("\n----- DecisionAPI : DecideTable ------------------------")
@@ -72,8 +73,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let variationOld = decisionOld.variationKey ?? "nil"
             let flagKeyPadding = "(Flag: \(flagKey))".padding(toLength: 32, withPad: " ", startingAt: 0)
             
-            print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)", i, flagKeyPadding, variationOld, variationNew, lookupInput))
-            //print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)    (%@)", i, flagKeyPadding, variationOld, variationNew, lookupInput, user.description))
+            //print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)", i, flagKeyPadding, variationOld, variationNew, lookupInput))
+            print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)    (%@)", i, flagKeyPadding, variationOld, variationNew, lookupInput, user.description))
             if variationNew == variationOld {
                 countMatch += 1
             } else {

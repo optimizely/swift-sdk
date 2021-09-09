@@ -42,6 +42,11 @@ class FlagDecisionTable {
                                   userContext: user,
                                   reasons: [])
     }
+        
+    func mergeDecisionRows(_ row1: (String, String)?, _ row2: (String, String)?) -> (String, String)? {
+        return nil
+    }
+
 }
 
 public class DecisionTables {

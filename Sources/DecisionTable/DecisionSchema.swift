@@ -103,7 +103,7 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
     }
     
     var allLookupInputs: [String] {
-        return ["0", "1"]
+        return ["1", "0"]
     }
     
     var description: String {
@@ -113,7 +113,7 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
     var randomAttributes: [(String, Any)]? {
         let userAttributes = getUserAttributes(audience: audience)
 
-        return userAttributes.compactMap{ $0.randomAttribute }
+        return userAttributes.compactMap { $0.randomAttribute }
     }
     
     func getUserAttributes(audience: Audience) -> [UserAttribute] {

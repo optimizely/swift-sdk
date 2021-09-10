@@ -43,10 +43,6 @@ class FlagDecisionTable {
                                   reasons: [])
     }
         
-    func mergeDecisionRows(_ row1: (String, String)?, _ row2: (String, String)?) -> (String, String)? {
-        return nil
-    }
-
 }
 
 public class OptimizelyDecisionTables {
@@ -73,6 +69,11 @@ public class OptimizelyDecisionTables {
         
         return table.decide(user: user, options: options)
     }
+}
+
+// MARK: - Utils
+
+extension OptimizelyDecisionTables {
     
     public func getRandomUserContext(optimizely: OptimizelyClient, key: String) -> OptimizelyUserContext {
         // random user-id for random bucketing
@@ -97,4 +98,5 @@ public class OptimizelyDecisionTables {
         
         return OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
     }
+    
 }

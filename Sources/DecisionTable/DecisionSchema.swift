@@ -115,6 +115,8 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
         return "      AudienceSchema: \(audiences.serialized)"
     }
     
+    // Utils
+    
     func randomAttributes(optimizely: OptimizelyClient) -> [(String, Any)] {
         let userAttributes = getUserAttributes(optimizely: optimizely,
                                                audiences: audiences)

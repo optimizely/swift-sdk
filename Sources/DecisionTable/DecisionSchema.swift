@@ -72,12 +72,13 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
         let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: bucketKey)
         let bucketValue = generateBucketValue(bucketingId: hashId)
 
-        let index = buckets.enumerated().filter { bucketValue < $0.element }.first?.offset
+        let index = buckets.enumerated().filter { bucketValue < $0.element }.first?.offset ?? 0
+        
         return letterForIndex(index)
     }
     
     var allLookupInputs: [String] {
-        return buckets.enumerated().map { letterForIndex($0.offset) }
+        return (0..<buckets.count).reversed().map { letterForIndex($0) }
     }
     
     var description: String {
@@ -226,12 +227,16 @@ extension BucketDecisionSchema {
     }
     
     func indexForLetter(_ letter: String) -> Int {
-        return Int(Character(letter).asciiValue!) - startAsciiValue
+        //return Int(Character(letter).asciiValue!) - startAsciiValue
+        return Int(letter)!
     }
     
     func letterForIndex(_ index: Int?) -> String {
-        guard let index = index else { return "Z" }
-        return String(format: "%c", startAsciiValue + index)
+//        guard let index = index else { return "Z" }
+//        return String(format: "%c", startAsciiValue + index)
+        
+        guard let index = index else { return "0" }
+        return String(index)
     }
     
     func getBucketingId(user: OptimizelyUserContext) -> String {

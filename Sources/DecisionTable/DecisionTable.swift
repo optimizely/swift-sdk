@@ -21,18 +21,29 @@ class FlagDecisionTable {
     let schemas: [DecisionSchema]
     let body: [String: String]
     let bodyInArray: [(String, String)]
+    let compressed: Bool
     
-    init(key: String, schemas: [DecisionSchema], bodyInArray: [(String, String)]) {
+    init(key: String, schemas: [DecisionSchema], bodyInArray: [(String, String)], compressed: Bool) {
         self.key = key
         self.schemas = schemas
         self.bodyInArray = bodyInArray
         self.body = Dictionary(uniqueKeysWithValues: bodyInArray)
+        self.compressed = compressed
     }
     
     func decide(user: OptimizelyUserContext,
                 options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
         let lookupInput = schemas.map { $0.makeLookupInput(user: user) }.joined()
-        let decision = body[lookupInput]
+        
+        var decision: String?
+        if compressed {
+            let input = lookupInput
+            let rows = bodyInArray.map { $0.0 }
+            let mappedToRange = bst(input: input, rows: rows, start: 0, end: bodyInArray.count - 1)
+            decision = body[String(mappedToRange)]
+        } else {
+            decision = body[lookupInput]
+        }
         
         return OptimizelyDecision(variationKey: decision,
                                   enabled: true,
@@ -41,6 +52,29 @@ class FlagDecisionTable {
                                   flagKey: key,
                                   userContext: user,
                                   reasons: [])
+    }
+    
+    func bst(input: String, rows: [String], start: Int, end: Int) -> String {
+        if end == start {
+            return rows[end]
+        }
+        if end == start + 1 {
+            if input > rows[start] {
+                return rows[end]
+            } else {
+                return rows[start]
+            }
+        }
+        
+        let middle = start + (end - start) / 2
+        
+        if input == rows[middle] {
+            return rows[middle]
+        } else if input < rows[middle] {
+            return bst(input: input, rows: rows, start: start, end: middle)
+        } else {
+            return bst(input: input, rows: rows, start: middle, end: end)
+        }
     }
         
 }

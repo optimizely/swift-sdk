@@ -18,12 +18,14 @@ import Foundation
 
 public class DecisionTableGenerator {
     
-    public static func create(for optimizely: OptimizelyClient, compress: Bool) -> OptimizelyDecisionTables {
+    public static func create(for optimizely: OptimizelyClient) -> OptimizelyDecisionTables {
         let config = optimizely.config!
         let flags = config.getFeatureFlags()
         
         var decisionTablesMap = [String: FlagDecisionTable]()
-        
+        var decisionTablesMapCompressed = [String: FlagDecisionTable]()
+        var decisionTablesMapCompressedRanges = [String: FlagDecisionTable]()
+
         for flag in flags.sorted(by: { $0.key < $1.key }) {
             print("\n[Flag]: \(flag.key)")
 
@@ -31,23 +33,44 @@ public class DecisionTableGenerator {
             
             var schemas = [DecisionSchema]()
             var bodyInArray = [(String, String)]()
-            if compress {
-                schemas = makeSchemasCompressed(config: config, rules: rules)
-                bodyInArray = makeTableBodyCompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
-            } else {
-                schemas = makeSchemasUncompressed(config: config, rules: rules)
-                bodyInArray = makeTableBodyUncompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
+            var compressed = false
+            
+            // simple table (uncompressed)
+            
+            schemas = makeSchemasUncompressed(config: config, rules: rules)
+            bodyInArray = makeTableBodyUncompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
+            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: false)
+
+            // compressed (smaller schemas + dont-care body)
+            
+            schemas = makeSchemasCompressed(config: config, rules: rules)
+            (compressed, bodyInArray) = makeTableBodyCompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
+            decisionTablesMapCompressed[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: compressed)
+
+            // compressed with ranges (for supporting client hash)
+            
+            if compressed {
+                bodyInArray = convertTableBodyCompressedToRanges(bodyInArray: bodyInArray)
             }
-                        
-            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray)
+            decisionTablesMapCompressedRanges[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: compressed)
         }
     
         let audiences = makeAllAudiences(config: config)
-        optimizely.decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap, audiences: audiences)
-
-        saveDecisionTablesToFile(optimizely: optimizely, compress: compress)
         
-        return optimizely.decisionTables
+        let decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap, audiences: audiences)
+        saveDecisionTablesToFile(sdkKey: optimizely.sdkKey, decisionTables: decisionTables, suffix: "table")
+        
+        let decisionTablesCompressed = OptimizelyDecisionTables(tables: decisionTablesMapCompressed, audiences: audiences)
+        saveDecisionTablesToFile(sdkKey: optimizely.sdkKey, decisionTables: decisionTablesCompressed, suffix: "table-compressed")
+        
+        let decisionTablesCompressedRanges = OptimizelyDecisionTables(tables: decisionTablesMapCompressedRanges, audiences: audiences)
+        saveDecisionTablesToFile(sdkKey: optimizely.sdkKey, decisionTables: decisionTablesCompressedRanges, suffix: "table-compressed-ranges")
+
+        // set decision table for decide tests
+        // optimizely.decisionTables = decisionTables
+        optimizely.decisionTables = decisionTablesCompressedRanges
+
+        return decisionTables
     }
     
 }
@@ -213,11 +236,12 @@ extension DecisionTableGenerator {
 
 extension DecisionTableGenerator {
     
-    static func makeTableBodyCompressed(optimizely: OptimizelyClient, flagKey: String, schemas: [DecisionSchema]) -> [(String, String)] {
+    static func makeTableBodyCompressed(optimizely: OptimizelyClient, flagKey: String, schemas: [DecisionSchema]) -> (Bool, [(String, String)]) {
         var bodyInArray = [(String, String)]()
+        var compressed = false
 
         guard let firstSchema = schemas.first else {
-            return bodyInArray
+            return (compressed, bodyInArray)
         }
         
         let user = OptimizelyUserContext(optimizely: optimizely, userId: "any-user-id")
@@ -240,6 +264,7 @@ extension DecisionTableGenerator {
                 let remainingCount = schemas.count - item.count
                 if remainingCount > 0 {
                     item += String(repeating: "*", count: remainingCount)
+                    compressed = true
                 }
                 bodyInArray.append((item, decisionString))
                 
@@ -253,7 +278,7 @@ extension DecisionTableGenerator {
             }
         }
         
-        return bodyInArray
+        return (compressed, bodyInArray)
     }
     
     static func makeDecisionForInput(user: OptimizelyUserContext, flagKey: String, schemas: [DecisionSchema], input: String) -> OptimizelyDecision? {
@@ -269,6 +294,60 @@ extension DecisionTableGenerator {
             return nil
         } else {
             return decision
+        }
+    }
+
+    static func convertTableBodyCompressedToRanges(bodyInArray: [(String, String)]) -> [(String, String)] {
+        var converted = [(String, String)]()
+        
+        bodyInArray.forEach { (input, decision) in
+            var numbered = input
+            
+            // contiguous "*"s at the tail are convereted to "...1111" to find the upper ranges
+            
+            var tailCnt = 0
+            for char in Array(input).reversed() {
+                if char == "*" {
+                    tailCnt += 1
+                } else {
+                    break
+                }
+            }
+            if tailCnt > 0 {
+                let range = input.index(input.endIndex, offsetBy: -tailCnt)...
+                numbered.replaceSubrange(range, with: String(repeating: "1", count: tailCnt))
+            }
+            
+            // extend remaing dont-cares ("*") to (0,1) combos
+            
+            var combos = [[String]]()
+            let source = numbered.map { String($0) }
+            extendDontCares(source: source, index: 0, current: [], combos: &combos)
+            
+            let comboStrs = combos.map { $0.joined() }
+            comboStrs.forEach {
+                converted.append(($0, decision))
+            }
+            
+        }
+        
+        // sorted to increasing order for BST
+        
+        return converted.sorted { $0.0 < $1.0 }
+    }
+    
+    static func extendDontCares(source: [String], index: Int, current: [String], combos: inout [[String]]) {
+        if index == source.count {
+            combos.append(current)
+            return
+        }
+        
+        let char = source[index]
+        if char == "*" {
+            extendDontCares(source: source, index: index + 1, current: current + ["1"], combos: &combos)
+            extendDontCares(source: source, index: index + 1, current: current + ["0"], combos: &combos)
+        } else {
+            extendDontCares(source: source, index: index + 1, current: current + [char], combos: &combos)
         }
     }
 
@@ -303,7 +382,7 @@ extension DecisionTableGenerator {
         return audiences
     }
     
-    static func saveDecisionTablesToFile(optimizely: OptimizelyClient, compress: Bool) {
+    static func saveDecisionTablesToFile(sdkKey: String, decisionTables: OptimizelyDecisionTables, suffix: String) {
         guard var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             print("FileManager saveDecisionTablesToFile error")
             return
@@ -320,12 +399,11 @@ extension DecisionTableGenerator {
             }
         }
         
-        let filename = "\(optimizely.sdkKey)" + (compress ? ".table-compressed" : ".table")
+        let filename = "\(sdkKey).\(suffix)"
         url.appendPathComponent(filename)
         
-        var contents = "SDKKey: \(optimizely.sdkKey)\n"
+        var contents = "SDKKey: \(sdkKey)\n"
         
-        let decisionTables = optimizely.decisionTables!
         let sortedFlagKeys = decisionTables.tables.keys.sorted { $0 < $1 }
         sortedFlagKeys.forEach { flagKey in
             let table = decisionTables.tables[flagKey]!

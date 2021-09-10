@@ -182,7 +182,7 @@ class DefaultBucketer: OPTBucketer {
             // compressed schemas will drop 0% or 100% schema. handle those cases
             if collapsed.isEmpty {
                 return nil
-            } else if collapsed.count == 1 {
+            } else if collapsed.count == 1, collapsed[0].endOfRange == 10000 {
                 return collapsed.first!.entityId
             } else {
                 // cannot determine yet. insufficient input.

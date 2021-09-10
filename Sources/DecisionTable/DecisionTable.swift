@@ -88,7 +88,8 @@ public class OptimizelyDecisionTables {
         var attributes = [String: Any]()
         table.schemas.forEach { schema in
             if let schema = schema as? AudienceDecisionSchema {
-                schema.randomAttributes?.forEach{ attributeKey, attributeValue in
+                let randomAttributes = schema.randomAttributes(optimizely: optimizely)
+                randomAttributes.forEach { (attributeKey, attributeValue) in
                     attributes[attributeKey] = attributeValue
                 }
             }

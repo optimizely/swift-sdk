@@ -24,13 +24,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidFinishLaunching(_ application: UIApplication) {
         var sdkKeys = [String]()
         //sdkKeys.append("FCnSegiEkRry9rhVMroit4")
-        //sdkKeys.append("AqLkkcss3wRGUbftnKNgh2")
+        sdkKeys.append("AqLkkcss3wRGUbftnKNgh2")
         //sdkKeys.append("VE2r2nTX4fogL6m3EQqkk3")
         //sdkKeys.append("Q9yTzC1GTnden1geuSFXu")
         //sdkKeys.append("DZB4eRNYsk8cWMAHE4Uvhb")    // Optimizely Product JS/Python
-        sdkKeys.append("X6xJvai8Yu9E7wT1hkvGM")     // many audiences
+        //sdkKeys.append("X6xJvai8Yu9E7wT1hkvGM")     // many audiences
         
-        sdkKeys.forEach { sdkKey in
+        sdkKeys.forEach { sdkKey in            
+            let semaphore = DispatchSemaphore(value: 0)
+            
             optimizely = OptimizelyClient(sdkKey: sdkKey,
                                           defaultLogLevel: .error,
                                           defaultDecideOptions: [.ignoreUserProfileService, .disableDecisionEvent])
@@ -42,7 +44,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 
                 self.testDecisionTable()
+                semaphore.signal()
             }
+            
+            semaphore.wait()
         }
     }
             
@@ -78,8 +83,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let variationOld = decisionOld.variationKey ?? "nil"
             let flagKeyPadding = "(Flag: \(flagKey))".padding(toLength: 32, withPad: " ", startingAt: 0)
             
-            print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)", i, flagKeyPadding, variationOld, variationNew, lookupInput))
-            //print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)    (%@)", i, flagKeyPadding, variationOld, variationNew, lookupInput, user.description))
+            //print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)", i, flagKeyPadding, variationOld, variationNew, lookupInput))
+            print(String(format: "[%3d]%@   =   %@ : %@ (<- %@)    (%@)", i, flagKeyPadding, variationOld, variationNew, lookupInput, user.description))
             if variationNew == variationOld {
                 countMatch += 1
             } else {

@@ -97,7 +97,9 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
     func makeLookupInput(user: OptimizelyUserContext) -> String {
         var bool = false
         do {
-            bool = try audiences.evaluate(project: nil, attributes: user.attributes)
+            if let project = user.optimizely?.config?.project {
+                bool = try audiences.evaluate(project: project, attributes: user.attributes)
+            }
         } catch {
             // print("[DecisionSchema audience evaluation error: \(error)")
         }
@@ -113,27 +115,40 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
         return "      AudienceSchema: \(audiences.serialized)"
     }
     
-    var randomAttributes: [(String, Any)]? {
-        let userAttributes = getUserAttributes(audiences: audiences)
-
+    func randomAttributes(optimizely: OptimizelyClient) -> [(String, Any)] {
+        let userAttributes = getUserAttributes(optimizely: optimizely,
+                                               audiences: audiences)
         return userAttributes.compactMap { $0.randomAttribute }
     }
     
-    func getUserAttributes(audiences: ConditionHolder) -> [UserAttribute] {
+    func getUserAttributes(optimizely: OptimizelyClient, audiences: ConditionHolder) -> [UserAttribute] {
         var userAttributes = [UserAttribute]()
-        ////getUserAttributes(conditionHolder: audience.conditionHolder, result: &userAttributes)
+        getUserAttributes(optimizely: optimizely,
+                          conditionHolder: audiences,
+                          result: &userAttributes)
+        
+        // print(">>>> \(userAttributes)   \(audiences)")
         return userAttributes
     }
     
-    func getUserAttributes(conditionHolder: ConditionHolder, result: inout [UserAttribute]) {
+    func getUserAttributes(optimizely: OptimizelyClient, conditionHolder: ConditionHolder, result: inout [UserAttribute]) {
         switch conditionHolder {
         case .leaf(let leaf):
-            if case .attribute(let userAttribute) = leaf {
+            switch leaf {
+            case .attribute(let userAttribute):
                 result.append(userAttribute)
+            case .audienceId(let audienceId):
+                if let audience = optimizely.config?.getAudience(id: audienceId) {
+                    getUserAttributes(optimizely: optimizely,
+                                      conditionHolder: audience.conditionHolder,
+                                      result: &result)
+                }
             }
         case .array(let array):
             array.forEach {
-                getUserAttributes(conditionHolder: $0, result: &result)
+                getUserAttributes(optimizely: optimizely,
+                                  conditionHolder: $0,
+                                  result: &result)
             }
         default:
             // print("ignored conditionHolder: \(conditionHolder)")

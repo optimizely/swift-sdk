@@ -42,12 +42,9 @@ public class DecisionTableGenerator {
             decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray)
         }
     
-        if compress {
-            let audiences = makeAllAudiences(config: config)
-            optimizely.decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap, audiences: audiences)
-        } else {
-            optimizely.decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap)
-        }
+        let audiences = makeAllAudiences(config: config)
+        optimizely.decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap, audiences: audiences)
+
         saveDecisionTablesToFile(optimizely: optimizely, compress: compress)
         
         return optimizely.decisionTables

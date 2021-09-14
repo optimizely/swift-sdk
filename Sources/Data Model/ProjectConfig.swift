@@ -38,7 +38,6 @@ class ProjectConfig {
     var featureFlagKeys = [String]()
     var rolloutIdMap = [String: Rollout]()
     var allExperiments = [Experiment]()
-    var flagRulesMap = [String: [Experiment]]()
     var flagVariationsMap = [String: [Variation]]()
 
     // MARK: - Init
@@ -125,22 +124,6 @@ class ProjectConfig {
             return map
         }()
         
-        // all rules (experiment rules and delivery rules) for each flag
-        
-        self.flagRulesMap = {
-            var map = [String: [Experiment]]()
-            
-            project.featureFlags.forEach { flag in
-                var experiments = flag.experimentIds.compactMap { experimentIdMap[$0] }
-                let rollout = self.rolloutIdMap[flag.rolloutId]
-                experiments.append(contentsOf: rollout?.experiments ?? [])
-                
-                map[flag.key] = experiments
-            }
-            
-            return map
-        }()
-        
         // all variations for each flag
         // - datafile does not contain a separate entity for this.
         // - we collect variations used in each rule (experiment rules and delivery rules)
@@ -148,21 +131,31 @@ class ProjectConfig {
         self.flagVariationsMap = {
             var map = [String: [Variation]]()
             
-            flagRulesMap.forEach { (flagKey, rules) in
+            project.featureFlags.forEach { flag in
                 var variations = [Variation]()
-                rules.forEach { rule in
+                
+                getAllRulesForFlag(flag).forEach { rule in
                     rule.variations.forEach { variation in
-                        if !variations.map({ $0.id }).contains(variation.id) {
+                        if variations.filter({ $0.id == variation.id }).first == nil {
                             variations.append(variation)
                         }
                     }
                 }
-                map[flagKey] = variations
+                map[flag.key] = variations
             }
             
             return map
         }()
+        
     }
+    
+    func getAllRulesForFlag(_ flag: FeatureFlag) -> [Experiment] {
+        var rules = flag.experimentIds.compactMap { experimentIdMap[$0] }
+        let rollout = self.rolloutIdMap[flag.rolloutId]
+        rules.append(contentsOf: rollout?.experiments ?? [])
+        return rules
+    }
+
 }
 
 // MARK: - Project Change Observer

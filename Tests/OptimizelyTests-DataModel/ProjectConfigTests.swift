@@ -80,6 +80,23 @@ class ProjectConfigTests: XCTestCase {
         XCTAssertEqual(featureMap["1004"], ["2002"])
     }
     
+    func testFlagVariations() {
+        let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
+        let optimizely = OptimizelyClient(sdkKey: "12345",
+                                           userProfileService: OTUtils.createClearUserProfileService())
+        try! optimizely.start(datafile: datafile)
+        let allVariationsForFlag = optimizely.config!.flagVariationsMap
+        
+        let variations1 = allVariationsForFlag["feature_1"]!.map{ $0.key }
+        XCTAssertEqual(variations1, ["a", "b", "3324490633", "3324490562", "18257766532"])
+        
+        let variations2 = allVariationsForFlag["feature_2"]!.map{ $0.key }
+        XCTAssertEqual(variations2, ["variation_with_traffic", "variation_no_traffic"])
+
+        let variations3 = allVariationsForFlag["feature_3"]!.map{ $0.key }
+        XCTAssertEqual(variations3, [])
+    }
+    
 }
 
 // MARK: - Others

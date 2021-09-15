@@ -1300,6 +1300,7 @@
 		6E7E9B562523F8C6009E4426 /* OptimizelyUserContextTests_Decide_Legacy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB97BCC24C89DFB00068883 /* OptimizelyUserContextTests_Decide_Legacy.swift */; };
 		6E7E9C2F25240D2E009E4426 /* OptimizelyUserContextTests_Objc.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E86CEB224FF20DE005DAFED /* OptimizelyUserContextTests_Objc.m */; };
 		6E7E9C4C25240D31009E4426 /* OptimizelyUserContextTests_Objc.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E86CEB224FF20DE005DAFED /* OptimizelyUserContextTests_Objc.m */; };
+		6E83350B26F2B188005F6FCA /* decide_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6EF8DE0524B8DA58008B9488 /* decide_datafile.json */; };
 		6E86CEA224FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E86CEA124FDC836005DAFED /* OptimizelyUserContext+ObjC.swift */; };
 		6E86CEA324FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E86CEA124FDC836005DAFED /* OptimizelyUserContext+ObjC.swift */; };
 		6E86CEA424FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E86CEA124FDC836005DAFED /* OptimizelyUserContext+ObjC.swift */; };
@@ -3431,6 +3432,7 @@
 				6E12B2A022C55A2A0005E9E6 /* simple_datafile.json in Resources */,
 				6E12B2D422C55A380005E9E6 /* 100_entities.json in Resources */,
 				6E12B28A22C55A2A0005E9E6 /* optimizely_6372300739_v4.json in Resources */,
+				6E83350B26F2B188005F6FCA /* decide_datafile.json in Resources */,
 				6E12B29E22C55A2A0005E9E6 /* ab_experiments.json in Resources */,
 				6E12B29622C55A2A0005E9E6 /* grouped_experiments.json in Resources */,
 				6E34A62F231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */,

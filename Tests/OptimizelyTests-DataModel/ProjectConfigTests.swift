@@ -83,7 +83,7 @@ class ProjectConfigTests: XCTestCase {
     func testFlagVariations() {
         let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
         let optimizely = OptimizelyClient(sdkKey: "12345",
-                                           userProfileService: OTUtils.createClearUserProfileService())
+                                          userProfileService: OTUtils.createClearUserProfileService())
         try! optimizely.start(datafile: datafile)
         let allVariationsForFlag = optimizely.config!.flagVariationsMap
         
@@ -102,7 +102,6 @@ class ProjectConfigTests: XCTestCase {
 // MARK: - Others
 
 extension ProjectConfigTests {
-    
     
     func testGetForcedVariation_InvalidExperimentKey() {
         let variationKey = config.getForcedVariation(experimentKey: "invalid_key", userId: "user").result
@@ -157,6 +156,5 @@ extension ProjectConfigTests {
         variation = config.getForcedVariation(experimentKey: experimentKey, userId: userId).result!
         XCTAssertEqual(variation.key, "b")
     }
-
 
 }

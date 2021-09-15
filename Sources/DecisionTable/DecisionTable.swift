@@ -45,10 +45,11 @@ class FlagDecisionTable {
             decision = body[lookupInput]
         }
         
+        // TODO: a simplified decision for testing. a full decision info will be in the table output later.
         return OptimizelyDecision(variationKey: decision,
                                   enabled: true,
                                   variables: OptimizelyJSON.createEmpty(),
-                                  ruleKey: lookupInput,   // pass it up for print
+                                  ruleKey: lookupInput,   // pass it up for testing
                                   flagKey: key,
                                   userContext: user,
                                   reasons: [])

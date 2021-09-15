@@ -42,6 +42,27 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
         self.buckets = ranges
     }
     
+    func makeLookupInput(user: OptimizelyUserContext) -> String {
+        let bucketingId = getBucketingId(user: user)
+        
+        let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: bucketKey)
+        let bucketValue = generateBucketValue(bucketingId: hashId)
+
+        let index = buckets.enumerated().filter { bucketValue < $0.element }.first?.offset ?? 0
+        
+        return letterForIndex(index)
+    }
+    
+    var allLookupInputs: [String] {
+        return (0..<buckets.count).reversed().map { letterForIndex($0) }
+    }
+    
+    var description: String {
+        return "      BucketSchema: \(bucketKey) \(buckets)"
+    }
+    
+    // Utils
+    
     // collapse trafficAllocation - merge contiguous ranges for the same bucket
     // [A,A,B,C,C,C,D] -> [A,B,C,D]
     static func collapseTrafficAllocations(_ trafficAllocations: [TrafficAllocation]) -> [TrafficAllocation] {
@@ -66,24 +87,6 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
         return collapsed
     }
     
-    func makeLookupInput(user: OptimizelyUserContext) -> String {
-        let bucketingId = getBucketingId(user: user)
-        
-        let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: bucketKey)
-        let bucketValue = generateBucketValue(bucketingId: hashId)
-
-        let index = buckets.enumerated().filter { bucketValue < $0.element }.first?.offset ?? 0
-        
-        return letterForIndex(index)
-    }
-    
-    var allLookupInputs: [String] {
-        return (0..<buckets.count).reversed().map { letterForIndex($0) }
-    }
-    
-    var description: String {
-        return "      BucketSchema: \(bucketKey) \(buckets)"
-    }
 }
 
 // MARK: - AudienceDecisionSchema

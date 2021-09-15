@@ -75,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             OptimizelyDecisionTables.modeUseDecisionTable = true
             let decisionNew = user.decide(key: flagKey)
             let variationNew = decisionNew.variationKey ?? "nil"
-            let lookupInput = decisionNew.ruleKey!
+            let lookupInput = decisionNew.ruleKey!   // passing back lookupInput in the ruleKey field 
             OptimizelyDecisionTables.modeUseDecisionTable = false
             let decisionOld = user.decide(key: flagKey)
             let variationOld = decisionOld.variationKey ?? "nil"

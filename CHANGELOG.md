@@ -1,5 +1,19 @@
 # Optimizely Swift SDK Changelog
 
+## 3.9.0
+September 15, 2021
+
+### New Features
+* Add new public properties to OptimizelyConfig. ([#417](https://github.com/optimizely/swift-sdk/pull/417), [#418](https://github.com/optimizely/swift-sdk/pull/418))
+	- sdkKey
+ 	- environmentKey
+	- attributes
+	- audiences
+	- events
+	- experimentRules and deliveryRules to OptimizelyFeature
+	- audiences to OptimizelyExperiment
+* For details, refer to our documentation page: [https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyconfig-swift](https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyconfig-swift).
+
 ## 3.8.1
 August 6, 2021
 

@@ -14,7 +14,7 @@ September 15, 2021
 	- audiences to `OptimizelyExperiment`
 * For details, refer to our documentation page: [https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyconfig-swift](https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyconfig-swift).
 
-### Deprecated:
+### Deprecated
 
 * `OptimizelyFeature.experimentsMap` of `OptimizelyConfig` is deprecated as of this release. Please use `OptimizelyFeature.experimentRules` and `OptimizelyFeature.deliveryRules`. ([#418](https://github.com/optimizely/swift-sdk/pull/418))
 

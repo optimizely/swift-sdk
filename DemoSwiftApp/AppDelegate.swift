@@ -28,7 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sdkKeys.append("VE2r2nTX4fogL6m3EQqkk3")
         sdkKeys.append("Q9yTzC1GTnden1geuSFXu")
         sdkKeys.append("DZB4eRNYsk8cWMAHE4Uvhb")    // Optimizely Product JS/Python
-        sdkKeys.append("X6xJvai8Yu9E7wT1hkvGM")     // many audiences
+        sdkKeys.append("X6xJvai8Yu9E7wT1hkvGM")     // large flags + many audiences
+        sdkKeys.append("Sr9qbsCXNFhZvLpZk764za")    // many audiences
         
         sdkKeys.forEach { sdkKey in            
             let semaphore = DispatchSemaphore(value: 0)

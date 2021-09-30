@@ -4,15 +4,20 @@
 September 15, 2021
 
 ### New Features
-* Add new public properties to OptimizelyConfig. ([#417](https://github.com/optimizely/swift-sdk/pull/417), [#418](https://github.com/optimizely/swift-sdk/pull/418))
+* Add new public properties to `OptimizelyConfig`. ([#417](https://github.com/optimizely/swift-sdk/pull/417), [#418](https://github.com/optimizely/swift-sdk/pull/418))
 	- sdkKey
  	- environmentKey
 	- attributes
 	- audiences
 	- events
-	- experimentRules and deliveryRules to OptimizelyFeature
-	- audiences to OptimizelyExperiment
+	- experimentRules and deliveryRules to `OptimizelyFeature`
+	- audiences to `OptimizelyExperiment`
 * For details, refer to our documentation page: [https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyconfig-swift](https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyconfig-swift).
+
+### Deprecated
+
+* `OptimizelyFeature.experimentsMap` of `OptimizelyConfig` is deprecated as of this release. Please use `OptimizelyFeature.experimentRules` and `OptimizelyFeature.deliveryRules`. ([#418](https://github.com/optimizely/swift-sdk/pull/418))
+
 
 ## 3.8.1
 August 6, 2021

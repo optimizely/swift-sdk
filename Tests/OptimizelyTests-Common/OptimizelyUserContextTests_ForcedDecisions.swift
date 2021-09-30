@@ -78,10 +78,10 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(decision.userContext.userId, kUserId)
         XCTAssertEqual(decision.userContext.attributes.count, 0)
         XCTAssertEqual(decision.reasons, [])
-        XCTAssertEqual(decision.userContext.forcedDecisions.count, 1)
-        XCTAssertEqual(decision.userContext.forcedDecisions[0].flagKey, featureKey)
-        XCTAssertEqual(decision.userContext.forcedDecisions[0].ruleKey, nil)
-        XCTAssertEqual(decision.userContext.forcedDecisions[0].variationKey, "3324490562")
+        XCTAssertEqual(decision.userContext.forcedDecisions?.count, 1)
+        XCTAssertEqual(decision.userContext.forcedDecisions?[0].flagKey, featureKey)
+        XCTAssertEqual(decision.userContext.forcedDecisions?[0].ruleKey, nil)
+        XCTAssertEqual(decision.userContext.forcedDecisions?[0].variationKey, "3324490562")
 
         decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, nil, "3324490562").reason))
@@ -102,10 +102,10 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(decision.userContext.userId, kUserId)
         XCTAssertEqual(decision.userContext.attributes.count, 1)
         XCTAssertEqual(decision.reasons, [])
-        XCTAssertEqual(decision.userContext.forcedDecisions.count, 1)
-        XCTAssertEqual(decision.userContext.forcedDecisions[0].flagKey, featureKey)
-        XCTAssertEqual(decision.userContext.forcedDecisions[0].ruleKey, "exp_with_audience")
-        XCTAssertEqual(decision.userContext.forcedDecisions[0].variationKey, "b")
+        XCTAssertEqual(decision.userContext.forcedDecisions?.count, 1)
+        XCTAssertEqual(decision.userContext.forcedDecisions?[0].flagKey, featureKey)
+        XCTAssertEqual(decision.userContext.forcedDecisions?[0].ruleKey, "exp_with_audience")
+        XCTAssertEqual(decision.userContext.forcedDecisions?[0].variationKey, "b")
         
         decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, "exp_with_audience", "b").reason))
@@ -126,10 +126,10 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(decision.userContext.userId, kUserId)
         XCTAssertEqual(decision.userContext.attributes.count, 0)
         XCTAssertEqual(decision.reasons, [])
-        XCTAssertEqual(decision.userContext.forcedDecisions.count, 1)
-        XCTAssertEqual(decision.userContext.forcedDecisions[0].flagKey, featureKey)
-        XCTAssertEqual(decision.userContext.forcedDecisions[0].ruleKey, "3332020515")
-        XCTAssertEqual(decision.userContext.forcedDecisions[0].variationKey, "3324490633")
+        XCTAssertEqual(decision.userContext.forcedDecisions?.count, 1)
+        XCTAssertEqual(decision.userContext.forcedDecisions?[0].flagKey, featureKey)
+        XCTAssertEqual(decision.userContext.forcedDecisions?[0].ruleKey, "3332020515")
+        XCTAssertEqual(decision.userContext.forcedDecisions?[0].variationKey, "3324490633")
         
         decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, "3332020515", "3324490633").reason))
@@ -413,6 +413,41 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         _ = user.decide(key: featureKey)
         
         wait(for: [exp], timeout: 1)
+    }
+    
+    func testAccessForcedDecisionBeforeSet() {
+        let user = optimizely.createUserContext(userId: kUserId)
+        XCTAssertNil(user.forcedDecisions)
+        XCTAssertNil(user.getForcedDecision(flagKey: "a"))
+        XCTAssertFalse(user.removeForcedDecision(flagKey: "a"))
+        XCTAssertFalse(user.removeAllForcedDecisions())
+        XCTAssertNil(user.findForcedDecision(flagKey: "a"))
+        XCTAssertNil(user.findValidatedForcedDecision(flagKey:"a",ruleKey: "b").result)
+    }
+    
+    func testClone() {
+        let user = optimizely.createUserContext(userId: kUserId, attributes: ["country": "us"])
+        guard let user2 = user.clone else {
+            XCTFail()
+            return
+        }
+        XCTAssertEqual(user2.userId, kUserId)
+        XCTAssertEqual(user2.attributes["country"] as? String, "us")
+        XCTAssertNil(user2.forcedDecisions)
+        
+        _ = user.setForcedDecision(flagKey: "a", variationKey: "b")
+        _ = user.setForcedDecision(flagKey: "a", ruleKey: "c", variationKey: "d")
+        
+        guard let user3 = user.clone else {
+            XCTFail()
+            return
+        }
+        XCTAssertEqual(user3.userId, kUserId)
+        XCTAssertEqual(user3.attributes["country"] as? String, "us")
+        XCTAssertNotNil(user3.forcedDecisions)
+        XCTAssertEqual(user3.getForcedDecision(flagKey: "a"), "b")
+        XCTAssertEqual(user3.getForcedDecision(flagKey:"a", ruleKey: "c"), "d")
+        XCTAssertNil(user3.getForcedDecision(flagKey:"x"))
     }
 
 }

@@ -427,6 +427,9 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
     
     func testClone() {
         let user = optimizely.createUserContext(userId: kUserId, attributes: ["country": "us"])
+        
+        // clone with empty ForcedDecisions
+        
         guard let user2 = user.clone else {
             XCTFail()
             return
@@ -434,6 +437,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(user2.userId, kUserId)
         XCTAssertEqual(user2.attributes["country"] as? String, "us")
         XCTAssertNil(user2.forcedDecisions)
+        
+        // clone with non-empty ForcedDecisions
         
         _ = user.setForcedDecision(flagKey: "a", variationKey: "b")
         _ = user.setForcedDecision(flagKey: "a", ruleKey: "c", variationKey: "d")
@@ -448,6 +453,12 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(user3.getForcedDecision(flagKey: "a"), "b")
         XCTAssertEqual(user3.getForcedDecision(flagKey:"a", ruleKey: "c"), "d")
         XCTAssertNil(user3.getForcedDecision(flagKey:"x"))
+        
+        // clone should have a separate copy for FocedDecisions
+        
+        _ = user.setForcedDecision(flagKey: "a", ruleKey: "new-rk", variationKey: "new-vk")
+        XCTAssertEqual(user.getForcedDecision(flagKey: "a", ruleKey: "new-rk"), "new-vk")
+        XCTAssertNil(user3.getForcedDecision(flagKey: "a", ruleKey: "new-rk"))
     }
 
 }

@@ -52,6 +52,11 @@ class AtomicDictionaryTests: XCTestCase {
         b["k2"] = 200
         XCTAssert(c["k1"] == 1)
         XCTAssert(c["k2"] == 2)
+        
+        // removeAll
+        
+        b.removeAll()
+        XCTAssertEqual(b.count, 0)
     }
     
     func testConcurrentReadWrite() {

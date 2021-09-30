@@ -54,4 +54,11 @@ class AtomicDictionary<K, V>: AtomicWrapper where K: Hashable {
             _property.count
         }!
     }
+    
+    func removeAll() {
+        performAtomic {
+            self._property.removeAll()
+        }
+    }
+
 }

@@ -79,9 +79,7 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(decision.userContext.attributes.count, 0)
         XCTAssertEqual(decision.reasons, [])
         XCTAssertEqual(decision.userContext.forcedDecisions?.count, 1)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[0].flagKey, featureKey)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[0].ruleKey, nil)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[0].variationKey, "3324490562")
+        XCTAssertEqual(decision.userContext.forcedDecisions?[OptimizelyUserContext.FDKeys(flagKey: featureKey, ruleKey: nil)], "3324490562")
 
         decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, nil, "3324490562").reason))
@@ -103,10 +101,7 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(decision.userContext.attributes.count, 1)
         XCTAssertEqual(decision.reasons, [])
         XCTAssertEqual(decision.userContext.forcedDecisions?.count, 1)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[0].flagKey, featureKey)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[0].ruleKey, "exp_with_audience")
-        XCTAssertEqual(decision.userContext.forcedDecisions?[0].variationKey, "b")
-        
+        XCTAssertEqual(decision.userContext.forcedDecisions?[OptimizelyUserContext.FDKeys(flagKey: featureKey, ruleKey: "exp_with_audience")], "b")
         decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, "exp_with_audience", "b").reason))
     }
@@ -127,9 +122,7 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(decision.userContext.attributes.count, 0)
         XCTAssertEqual(decision.reasons, [])
         XCTAssertEqual(decision.userContext.forcedDecisions?.count, 1)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[0].flagKey, featureKey)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[0].ruleKey, "3332020515")
-        XCTAssertEqual(decision.userContext.forcedDecisions?[0].variationKey, "3324490633")
+        XCTAssertEqual(decision.userContext.forcedDecisions?[OptimizelyUserContext.FDKeys(flagKey: featureKey, ruleKey: "3332020515")], "3324490633")
         
         decision = user.decide(key: featureKey, options: [.includeReasons])
         XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, "3332020515", "3324490633").reason))

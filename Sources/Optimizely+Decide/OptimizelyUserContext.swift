@@ -26,14 +26,14 @@ public class OptimizelyUserContext {
         return atomicAttributes.property ?? [:]
     }
     
-    var forcedDecisions: AtomicArray<ForcedDecision>?
+    var forcedDecisions: AtomicDictionary<FDKeys, String>?
     
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
         
         let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
         if let fds = forcedDecisions {
-            userContext.forcedDecisions = AtomicArray<ForcedDecision>(fds.property)
+            userContext.forcedDecisions = AtomicDictionary<FDKeys, String>(fds.property)
         }
         
         return userContext
@@ -143,10 +143,9 @@ public class OptimizelyUserContext {
 
 extension OptimizelyUserContext {
     
-    struct ForcedDecision {
+    struct FDKeys: Hashable {
         let flagKey: String
         let ruleKey: String?
-        var variationKey: String
     }
 
     /// Sets the forced decision (variation key) for a given flag and an optional rule.
@@ -167,15 +166,10 @@ extension OptimizelyUserContext {
         // create on the first setForcedDecision call
         
         if forcedDecisions == nil {
-            forcedDecisions = AtomicArray<ForcedDecision>()
+            forcedDecisions = AtomicDictionary<FDKeys, String>()
         }
         
-        if let index = forcedDecisions!.firstIndex(where: { $0.flagKey == flagKey && $0.ruleKey == ruleKey }) {
-            forcedDecisions![index].variationKey = variationKey
-        } else {
-            forcedDecisions!.append(ForcedDecision(flagKey: flagKey, ruleKey: ruleKey, variationKey: variationKey))
-        }
-        
+        forcedDecisions![FDKeys(flagKey: flagKey, ruleKey: ruleKey)] = variationKey
         return true
     }
     
@@ -208,8 +202,8 @@ extension OptimizelyUserContext {
         
         guard forcedDecisions != nil else { return false }
 
-        if let index = forcedDecisions!.firstIndex(where: { $0.flagKey == flagKey && $0.ruleKey == ruleKey }) {
-            _ = forcedDecisions!.remove(at: index)
+        if findForcedDecision(flagKey: flagKey, ruleKey: ruleKey) != nil {
+            forcedDecisions![FDKeys(flagKey: flagKey, ruleKey: ruleKey)] = nil
             return true
         }
         
@@ -233,11 +227,7 @@ extension OptimizelyUserContext {
     func findForcedDecision(flagKey: String, ruleKey: String? = nil) -> String? {
         guard let fds = forcedDecisions else { return nil }
         
-        if let item = fds.filter({ $0.flagKey == flagKey && $0.ruleKey == ruleKey }).first {
-            return item.variationKey
-        }
-        
-        return nil
+        return fds[FDKeys(flagKey: flagKey, ruleKey: ruleKey)]
     }
     
     func findValidatedForcedDecision(flagKey: String,

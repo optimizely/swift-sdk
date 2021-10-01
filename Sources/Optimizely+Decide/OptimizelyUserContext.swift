@@ -200,10 +200,10 @@ extension OptimizelyUserContext {
             return false
         }
         
-        guard forcedDecisions != nil else { return false }
+        guard let fds = forcedDecisions else { return false }
 
         if findForcedDecision(flagKey: flagKey, ruleKey: ruleKey) != nil {
-            forcedDecisions![FDKeys(flagKey: flagKey, ruleKey: ruleKey)] = nil
+            fds[FDKeys(flagKey: flagKey, ruleKey: ruleKey)] = nil
             return true
         }
         
@@ -218,9 +218,10 @@ extension OptimizelyUserContext {
             return false
         }
         
-        guard forcedDecisions != nil else { return true }   // return true always (inpendent of implementation)
-
-        forcedDecisions!.removeAll()
+        if let fds = forcedDecisions {
+            fds.removeAll()
+        }
+        
         return true
     }
     

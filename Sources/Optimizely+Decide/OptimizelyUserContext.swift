@@ -218,7 +218,7 @@ extension OptimizelyUserContext {
             return false
         }
         
-        guard forcedDecisions != nil else { return false }
+        guard forcedDecisions != nil else { return true }   // return true always (inpendent of implementation)
 
         forcedDecisions!.removeAll()
         return true

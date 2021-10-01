@@ -413,7 +413,7 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertNil(user.forcedDecisions)
         XCTAssertNil(user.getForcedDecision(flagKey: "a"))
         XCTAssertFalse(user.removeForcedDecision(flagKey: "a"))
-        XCTAssertFalse(user.removeAllForcedDecisions())
+        XCTAssertTrue(user.removeAllForcedDecisions())    // removeAll always returns true
         XCTAssertNil(user.findForcedDecision(flagKey: "a"))
         XCTAssertNil(user.findValidatedForcedDecision(flagKey:"a",ruleKey: "b").result)
     }

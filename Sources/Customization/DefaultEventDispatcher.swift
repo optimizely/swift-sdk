@@ -51,6 +51,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     var timer = AtomicProperty<Timer>()
     var observers = [NSObjectProtocol]()
     
+    var numContiguousFails = 0
+
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
                 dataStoreName: String = "OPTEventQueue",
@@ -149,6 +151,10 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                     break
                 }
                 
+                if Utils.shouldBlockNetworkAccess(self.numContiguousFails) {
+                    break
+                }
+                
                 // make the send event synchronous. enter our notify
                 self.notify.enter()
                 self.sendEvent(event: batchEvent) { (result) -> Void in
@@ -191,6 +197,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 self.logger.d("Event Sent")
                 completionHandler(.success(event.body))
             }
+            
+            self.numContiguousFails = (error == nil) ? 0 : (self.numContiguousFails + 1)
         }
         
         task.resume()

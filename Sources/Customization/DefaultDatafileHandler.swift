@@ -36,6 +36,8 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     
     // and our download queue to speed things up.
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
+    
+    var numContiguousFails = 0
 
     public required init() {}
     
@@ -85,6 +87,8 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                         returnCached() // error recovery
                     }
                 }
+                
+                self.numContiguousFails = (error == nil) ? 0 : (self.numContiguousFails + 1)
                 
                 completionHandler(result)
             }
@@ -244,6 +248,29 @@ extension DefaultDatafileHandler {
                                 updateInterval: Int,
                                 datafileChangeNotification: ((Data) -> Void)?) {
         let beginDownloading = Date()
+
+        let scheduleNextUpdate: () -> Void = {
+            guard self.hasPeriodicInterval(sdkKey: sdkKey) else { return }
+            
+            // adjust the next fire time so that events will be fired at fixed interval regardless of the download latency
+            // if latency is too big (or returning from background mode), fire the next event immediately once
+            
+            var interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
+            let delay = Int(Date().timeIntervalSince(beginDownloading))
+            interval -= delay
+            if interval < 0 {
+                interval = 0
+            }
+            
+            self.logger.d("next datafile download is \(interval) seconds \(Date())")
+            self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: interval, datafileChangeNotification: datafileChangeNotification)
+        }
+        
+        if Utils.shouldBlockNetworkAccess(numContiguousFails) {
+            scheduleNextUpdate()
+            return
+        }
+        
         self.downloadDatafile(sdkKey: sdkKey) { (result) in
             switch result {
             case .success(let data):
@@ -255,20 +282,7 @@ extension DefaultDatafileHandler {
                 self.logger.e(error.reason)
             }
             
-            if self.hasPeriodicInterval(sdkKey: sdkKey) {
-                // adjust the next fire time so that events will be fired at fixed interval regardless of the download latency
-                // if latency is too big (or returning from background mode), fire the next event immediately once
-                
-                var interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
-                let delay = Int(Date().timeIntervalSince(beginDownloading))
-                interval -= delay
-                if interval < 0 {
-                    interval = 0
-                }
-                
-                self.logger.d("next datafile download is \(interval) seconds \(Date())")
-                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: interval, datafileChangeNotification: datafileChangeNotification)
-            }
+            scheduleNextUpdate()
         }
     }
     

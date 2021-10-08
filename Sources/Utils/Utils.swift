@@ -133,4 +133,20 @@ class Utils {
         }
         return "Invalid conditions format."
     }
+    
+    /// Skip network access when reachability is down (optimization for iOS12+ only)
+    ///
+    /// For safety, trust reachability only when the last downloads failed contiguously.
+    ///
+    /// - Parameter lastAccessSuccess: true if last access succeeded
+    /// - Returns: true when network access should be skipped
+    static func shouldBlockNetworkAccess(_ numContiguousFails: Int, maxContiguousFails: Int = 2) -> Bool {
+        guard numContiguousFails >= maxContiguousFails else { return false }
+        
+        if #available(iOSApplicationExtension 12.0, *) {
+            return !NetworkReachability.shared.isConnected
+        } else {
+            return false
+        }
+    }
 }

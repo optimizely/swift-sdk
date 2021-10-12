@@ -138,7 +138,8 @@ class Utils {
     ///
     /// For safety, trust reachability only when the last downloads failed contiguously.
     ///
-    /// - Parameter lastAccessSuccess: true if last access succeeded
+    /// - Parameter numContiguousFails: the number of contiguous network connection failures
+    /// - Parameter maxContiguousFails: the maximum number of contiguous network connection failures allowed before blocking
     /// - Returns: true when network access should be skipped
     static func shouldBlockNetworkAccess(_ numContiguousFails: Int, maxContiguousFails: Int = 2) -> Bool {
         guard numContiguousFails >= maxContiguousFails else { return false }

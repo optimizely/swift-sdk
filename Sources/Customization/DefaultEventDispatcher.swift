@@ -146,12 +146,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 
                 // we've exhuasted our failure count.  Give up and try the next time a event
                 // is queued or someone calls flush.
-                if failureCount > DefaultValues.maxFailureCount {
+                if failureCount >= DefaultValues.maxFailureCount {
                     self.logger.e(.eventSendRetyFailed(failureCount))
-                    break
-                }
-                
-                if Utils.shouldBlockNetworkAccess(self.numContiguousFails) {
                     break
                 }
                 
@@ -180,6 +176,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
+        
+        if Utils.shouldBlockNetworkAccess(self.numContiguousFails) {
+            completionHandler(.failure(.eventDispatchFailed("NetworkReachability down")))
+            return
+        }
+        
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         var request = URLRequest(url: event.url)

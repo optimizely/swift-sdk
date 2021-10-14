@@ -49,6 +49,12 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                                completionHandler: @escaping DatafileDownloadCompletionHandler) {
         
         downloadQueue.async {
+            
+            if Utils.shouldBlockNetworkAccess(self.numContiguousFails) {
+                completionHandler(.failure(.datafileDownloadFailed("NetworkReachability down")))
+                return
+            }
+            
             let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
             
             guard let request = self.getRequest(sdkKey: sdkKey) else { return }
@@ -264,11 +270,6 @@ extension DefaultDatafileHandler {
             
             self.logger.d("next datafile download is \(interval) seconds \(Date())")
             self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: interval, datafileChangeNotification: datafileChangeNotification)
-        }
-        
-        if Utils.shouldBlockNetworkAccess(numContiguousFails) {
-            scheduleNextUpdate()
-            return
         }
         
         self.downloadDatafile(sdkKey: sdkKey) { (result) in

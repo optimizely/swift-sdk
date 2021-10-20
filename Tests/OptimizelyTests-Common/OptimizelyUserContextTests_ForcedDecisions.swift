@@ -41,24 +41,29 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         let user = optimizely.createUserContext(userId: kUserId)
         var status: Bool
-        var result: String?
+        var result: OptimizelyForcedDecision?
         
+        let context = OptimizelyDecisionContext(flagKey: "feature_1")
+        let d = OptimizelyForcedDecision(variationKey: "3324490562")
+
         try? optimizely.start(datafile: "invalid datafile contents")
-        status = user.setForcedDecision(flagKey: "feature_1", variationKey: "3324490562")
+
+        status = user.setForcedDecision(context: context, decision: d)
         XCTAssertFalse(status)
-        result = user.getForcedDecision(flagKey: "feature_1")
+        result = user.getForcedDecision(context: context)
         XCTAssertNil(result)
-        status = user.removeForcedDecision(flagKey: "feature_1")
+        status = user.removeForcedDecision(context: context)
         XCTAssertFalse(status)
         status = user.removeAllForcedDecisions()
         XCTAssertFalse(status)
 
         try? optimizely.start(datafile: datafile)
-        status = user.setForcedDecision(flagKey: "feature_1", variationKey: "3324490562")
+
+        status = user.setForcedDecision(context: context, decision: d)
         XCTAssertTrue(status)
-        result = user.getForcedDecision(flagKey: "feature_1")
-        XCTAssert(result == "3324490562")
-        status = user.removeForcedDecision(flagKey: "feature_1")
+        result = user.getForcedDecision(context: context)
+        XCTAssert(result!.variationKey == "3324490562")
+        status = user.removeForcedDecision(context: context)
         XCTAssertTrue(status)
         status = user.removeAllForcedDecisions()
         XCTAssertTrue(status)
@@ -66,12 +71,15 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
    
     func testSetForcedDecision_flagToDecision() {
         let featureKey = "feature_1"
+        let variationKey = "3324490562"
+        
         let user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   variationKey: "3324490562")
+        
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey),
+                                   decision: OptimizelyForcedDecision(variationKey: variationKey))
         var decision = user.decide(key: featureKey)
         
-        XCTAssertEqual(decision.variationKey, "3324490562")
+        XCTAssertEqual(decision.variationKey, variationKey)
         XCTAssertEqual(decision.ruleKey, nil)
         XCTAssertEqual(decision.enabled, true)
         XCTAssertEqual(decision.flagKey, featureKey)
@@ -79,63 +87,68 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(decision.userContext.attributes.count, 0)
         XCTAssertEqual(decision.reasons, [])
         XCTAssertEqual(decision.userContext.forcedDecisions?.count, 1)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[OptimizelyUserContext.FDKeys(flagKey: featureKey, ruleKey: nil)], "3324490562")
+        XCTAssertEqual(decision.userContext.forcedDecisions?[OptimizelyDecisionContext(flagKey: featureKey)]!.variationKey, variationKey)
 
         decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, nil, "3324490562").reason))
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, nil, variationKey).reason))
     }
     
     func testSetForcedDecision_experimentRuleToDecision() {
         let featureKey = "feature_1"
+        let ruleKey = "exp_with_audience"
+        let variationKey = "b"
+        
         let user = optimizely.createUserContext(userId: kUserId, attributes: ["country": "US"])
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   ruleKey: "exp_with_audience",
-                                   variationKey: "b")
+        
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey, ruleKey: ruleKey),
+                                   decision: OptimizelyForcedDecision(variationKey: variationKey))
         var decision = user.decide(key: featureKey)
         
-        XCTAssertEqual(decision.variationKey, "b")
-        XCTAssertEqual(decision.ruleKey, "exp_with_audience")
+        XCTAssertEqual(decision.variationKey, variationKey)
+        XCTAssertEqual(decision.ruleKey, ruleKey)
         XCTAssertEqual(decision.enabled, false)
         XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.userContext.userId, kUserId)
         XCTAssertEqual(decision.userContext.attributes.count, 1)
         XCTAssertEqual(decision.reasons, [])
         XCTAssertEqual(decision.userContext.forcedDecisions?.count, 1)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[OptimizelyUserContext.FDKeys(flagKey: featureKey, ruleKey: "exp_with_audience")], "b")
+        XCTAssertEqual(decision.userContext.forcedDecisions?[OptimizelyDecisionContext(flagKey: featureKey, ruleKey: ruleKey)]!.variationKey, variationKey)
         decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, "exp_with_audience", "b").reason))
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, ruleKey, variationKey).reason))
     }
     
     func testSetForcedDecision_deliveryRuleToDecision() {
         let featureKey = "feature_1"
+        let ruleKey = "3332020515"
+        let variationKey = "3324490633"
+        
         let user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   ruleKey: "3332020515",
-                                   variationKey: "3324490633")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey, ruleKey: ruleKey),
+                                   decision: OptimizelyForcedDecision(variationKey: variationKey))
         var decision = user.decide(key: featureKey)
                 
-        XCTAssertEqual(decision.variationKey, "3324490633")
-        XCTAssertEqual(decision.ruleKey, "3332020515")
+        XCTAssertEqual(decision.variationKey, variationKey)
+        XCTAssertEqual(decision.ruleKey, ruleKey)
         XCTAssertEqual(decision.enabled, true)
         XCTAssertEqual(decision.flagKey, featureKey)
         XCTAssertEqual(decision.userContext.userId, kUserId)
         XCTAssertEqual(decision.userContext.attributes.count, 0)
         XCTAssertEqual(decision.reasons, [])
         XCTAssertEqual(decision.userContext.forcedDecisions?.count, 1)
-        XCTAssertEqual(decision.userContext.forcedDecisions?[OptimizelyUserContext.FDKeys(flagKey: featureKey, ruleKey: "3332020515")], "3324490633")
+        XCTAssertEqual(decision.userContext.forcedDecisions?[OptimizelyDecisionContext(flagKey: featureKey, ruleKey: ruleKey)]!.variationKey, variationKey)
         
         decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, "3332020515", "3324490633").reason))
+        XCTAssert(decision.reasons.contains(LogMessage.userHasForcedDecision(kUserId, featureKey, ruleKey, variationKey).reason))
     }
     
     func testSetForcedDecision_invalid() {
         let featureKey = "feature_1"
-
+        
         // flag-to-decision
         
         var user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   variationKey: "invalid")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey),
+                                   decision: OptimizelyForcedDecision(variationKey: "invalid"))
         var decision = user.decide(key: featureKey, options: [.includeReasons])
         
         // invalid forced-decision will be ignored and regular decision will return
@@ -146,9 +159,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         // experiment-rule-to-decision
 
         user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   ruleKey: "exp_with_audience",
-                                   variationKey: "invalid")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "exp_with_audience"),
+                                   decision: OptimizelyForcedDecision(variationKey: "invalid"))
         decision = user.decide(key: featureKey, options: [.includeReasons])
 
         // invalid forced-decision will be ignored and regular decision will return
@@ -159,9 +171,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         // delivery-rule-to-decision
         
         user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   ruleKey: "3332020515",
-                                   variationKey: "invalid")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "3332020515"),
+                                   decision: OptimizelyForcedDecision(variationKey: "invalid"))
         decision = user.decide(key: featureKey, options: [.includeReasons])
 
         // invalid forced-decision will be ignored and regular decision will return
@@ -174,11 +185,10 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         let featureKey = "feature_1"
 
         let user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   variationKey: "3324490562")
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   ruleKey: "exp_with_audience",
-                                   variationKey: "b")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey),
+                                   decision: OptimizelyForcedDecision(variationKey: "3324490562"))
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "exp_with_audience"),
+                                   decision: OptimizelyForcedDecision(variationKey: "b"))
         let decision = user.decide(key: featureKey)
         
         // flag-to-decision is the 1st priority
@@ -191,56 +201,81 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         let featureKey = "feature_1"
         let user = optimizely.createUserContext(userId: kUserId)
         
-        _ = user.setForcedDecision(flagKey: featureKey, variationKey: "fv1")
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey), "fv1")
-
-        _ = user.setForcedDecision(flagKey: featureKey, variationKey: "fv2")
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey), "fv2")
+        var context = OptimizelyDecisionContext(flagKey: featureKey)
+        var d = OptimizelyForcedDecision(variationKey: "fv1")
         
-        _ = user.setForcedDecision(flagKey: featureKey, ruleKey: "r", variationKey: "ev1")
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey, ruleKey: "r"), "ev1")
+        _ = user.setForcedDecision(context: context, decision: d)
+        XCTAssertEqual(user.getForcedDecision(context: context)!.variationKey, "fv1")
 
-        _ = user.setForcedDecision(flagKey: featureKey, ruleKey: "r", variationKey: "ev2")
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey, ruleKey: "r"), "ev2")
+        context = OptimizelyDecisionContext(flagKey: featureKey)
+        d = OptimizelyForcedDecision(variationKey: "fv2")
+
+        _ = user.setForcedDecision(context: context, decision: d)
+        XCTAssertEqual(user.getForcedDecision(context: context)!.variationKey, "fv2")
+
+        context = OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "r")
+        d = OptimizelyForcedDecision(variationKey: "ev1")
+
+        _ = user.setForcedDecision(context: context, decision: d)
+        XCTAssertEqual(user.getForcedDecision(context: context)!.variationKey, "ev1")
+
+        context = OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "r")
+        d = OptimizelyForcedDecision(variationKey: "ev2")
+
+        _ = user.setForcedDecision(context: context, decision: d)
+        XCTAssertEqual(user.getForcedDecision(context: context)!.variationKey, "ev2")
         
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey), "fv2")
+        context = OptimizelyDecisionContext(flagKey: featureKey)
+        d = OptimizelyForcedDecision(variationKey: "fv2")
+
+        XCTAssertEqual(user.getForcedDecision(context: context)!.variationKey, "fv2")
     }
 
     func testRemoveForcedDecision() {
         let featureKey = "feature_1"
         let user = optimizely.createUserContext(userId: kUserId)
         
-        _ = user.setForcedDecision(flagKey: featureKey, variationKey: "fv1")
-        _ = user.setForcedDecision(flagKey: featureKey, ruleKey: "r", variationKey: "ev1")
-        
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey), "fv1")
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey, ruleKey: "r"), "ev1")
-        
-        XCTAssertTrue(user.removeForcedDecision(flagKey: featureKey))
-        XCTAssertNil(user.getForcedDecision(flagKey: featureKey))
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey, ruleKey: "r"), "ev1")
+        let context1 = OptimizelyDecisionContext(flagKey: featureKey)
+        let context2 = OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "r")
+        let d1 = OptimizelyForcedDecision(variationKey: "fv1")
+        let d2 = OptimizelyForcedDecision(variationKey: "ev1")
 
-        XCTAssertTrue(user.removeForcedDecision(flagKey: featureKey, ruleKey: "r"))
-        XCTAssertNil(user.getForcedDecision(flagKey: featureKey))
-        XCTAssertNil(user.getForcedDecision(flagKey: featureKey, ruleKey: "r"))
+        _ = user.setForcedDecision(context: context1, decision: d1)
+        _ = user.setForcedDecision(context: context2, decision: d2)
+        
+        XCTAssertEqual(user.getForcedDecision(context: context1)!.variationKey, "fv1")
+        XCTAssertEqual(user.getForcedDecision(context: context2)!.variationKey, "ev1")
+        
+        XCTAssertTrue(user.removeForcedDecision(context: context1))
+        XCTAssertNil(user.getForcedDecision(context: context1))
+        XCTAssertEqual(user.getForcedDecision(context: context2)!.variationKey, "ev1")
 
-        XCTAssertFalse(user.removeForcedDecision(flagKey: featureKey))  // no more saved decisions
+        XCTAssertTrue(user.removeForcedDecision(context: context2))
+        XCTAssertNil(user.getForcedDecision(context: context1))
+        XCTAssertNil(user.getForcedDecision(context: context2))
+
+        XCTAssertFalse(user.removeForcedDecision(context: context1))  // no more saved decisions
     }
     
     func testRemoveAllForcedDecisions() {
         let featureKey = "feature_1"
         let user = optimizely.createUserContext(userId: kUserId)
         
-        _ = user.setForcedDecision(flagKey: featureKey, variationKey: "fv1")
-        _ = user.setForcedDecision(flagKey: featureKey, ruleKey: "r", variationKey: "ev1")
+        let context1 = OptimizelyDecisionContext(flagKey: featureKey)
+        let context2 = OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "r")
+        let d1 = OptimizelyForcedDecision(variationKey: "fv1")
+        let d2 = OptimizelyForcedDecision(variationKey: "ev1")
+
+        _ = user.setForcedDecision(context: context1, decision: d1)
+        _ = user.setForcedDecision(context: context2, decision: d2)
         
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey), "fv1")
-        XCTAssertEqual(user.getForcedDecision(flagKey: featureKey, ruleKey: "r"), "ev1")
+        XCTAssertEqual(user.getForcedDecision(context: context1)!.variationKey, "fv1")
+        XCTAssertEqual(user.getForcedDecision(context: context2)!.variationKey, "ev1")
 
         XCTAssertTrue(user.removeAllForcedDecisions())
-        XCTAssertNil(user.getForcedDecision(flagKey: featureKey))
-        XCTAssertNil(user.getForcedDecision(flagKey: featureKey, ruleKey: "r"))
-        XCTAssertFalse(user.removeForcedDecision(flagKey: featureKey))  // no more saved decisions
+        XCTAssertNil(user.getForcedDecision(context: context1))
+        XCTAssertNil(user.getForcedDecision(context: context2))
+        XCTAssertFalse(user.removeForcedDecision(context: context1))  // no more saved decisions
     }
     
     // Impression Events
@@ -248,8 +283,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
     func testSetForcedDecision_flagToDecision_sendImpression() {
         let featureKey = "feature_1"
         let user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   variationKey: "3324490562")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey),
+                                   decision: OptimizelyForcedDecision(variationKey: "3324490562"))
 
         // no impression event
         
@@ -286,9 +321,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         let featureKey = "feature_1"
         
         let user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   ruleKey: "exp_with_audience",
-                                   variationKey: "b")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "exp_with_audience"),
+                                   decision: OptimizelyForcedDecision(variationKey: "b"))
         _ = user.decide(key: featureKey)
 
         optimizely.eventLock.sync{}
@@ -315,9 +349,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         let featureKey = "feature_1"
         
         let user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   ruleKey: "3332020515",
-                                   variationKey: "3324490633")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "3332020515"),
+                                   decision: OptimizelyForcedDecision(variationKey: "3324490633"))
         _ = user.decide(key: featureKey)
 
         optimizely.eventLock.sync{}
@@ -345,8 +378,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
     func testSetForcedDecision_flagToDecision_notification() {
         let featureKey = "feature_1"
         let user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   variationKey: "3324490562")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey),
+                                   decision: OptimizelyForcedDecision(variationKey: "3324490562"))
         
         let exp = expectation(description: "a")
         
@@ -367,9 +400,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         let featureKey = "feature_1"
         
         let user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   ruleKey: "exp_with_audience",
-                                   variationKey: "b")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "exp_with_audience"),
+                                   decision: OptimizelyForcedDecision(variationKey: "b"))
         
         let exp = expectation(description: "a")
         
@@ -390,9 +422,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         let featureKey = "feature_1"
         
         let user = optimizely.createUserContext(userId: kUserId)
-        _ = user.setForcedDecision(flagKey: featureKey,
-                                   ruleKey: "3332020515",
-                                   variationKey: "3324490633")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: featureKey, ruleKey: "3332020515"),
+                                   decision: OptimizelyForcedDecision(variationKey: "3324490633"))
         let exp = expectation(description: "a")
         
         optimizely.notificationCenter?.clearAllNotificationListeners()
@@ -411,11 +442,11 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
     func testAccessForcedDecisionBeforeSet() {
         let user = optimizely.createUserContext(userId: kUserId)
         XCTAssertNil(user.forcedDecisions)
-        XCTAssertNil(user.getForcedDecision(flagKey: "a"))
-        XCTAssertFalse(user.removeForcedDecision(flagKey: "a"))
+        XCTAssertNil(user.getForcedDecision(context: OptimizelyDecisionContext(flagKey: "a")))
+        XCTAssertFalse(user.removeForcedDecision(context: OptimizelyDecisionContext(flagKey: "a")))
         XCTAssertTrue(user.removeAllForcedDecisions())    // removeAll always returns true
-        XCTAssertNil(user.findForcedDecision(flagKey: "a"))
-        XCTAssertNil(user.findValidatedForcedDecision(flagKey:"a",ruleKey: "b").result)
+        XCTAssertNil(user.findForcedDecision(context: OptimizelyDecisionContext(flagKey: "a")))
+        XCTAssertNil(user.findValidatedForcedDecision(context: OptimizelyDecisionContext(flagKey: "a",ruleKey: "b")).result)
     }
     
     func testClone() {
@@ -433,8 +464,8 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         
         // clone with non-empty ForcedDecisions
         
-        _ = user.setForcedDecision(flagKey: "a", variationKey: "b")
-        _ = user.setForcedDecision(flagKey: "a", ruleKey: "c", variationKey: "d")
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: "a"), decision: OptimizelyForcedDecision(variationKey: "b"))
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: "a", ruleKey: "c"), decision: OptimizelyForcedDecision(variationKey: "d"))
         
         guard let user3 = user.clone else {
             XCTFail()
@@ -443,15 +474,15 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertEqual(user3.userId, kUserId)
         XCTAssertEqual(user3.attributes["country"] as? String, "us")
         XCTAssertNotNil(user3.forcedDecisions)
-        XCTAssertEqual(user3.getForcedDecision(flagKey: "a"), "b")
-        XCTAssertEqual(user3.getForcedDecision(flagKey:"a", ruleKey: "c"), "d")
-        XCTAssertNil(user3.getForcedDecision(flagKey:"x"))
+        XCTAssertEqual(user3.getForcedDecision(context: OptimizelyDecisionContext(flagKey: "a"))!.variationKey, "b")
+        XCTAssertEqual(user3.getForcedDecision(context: OptimizelyDecisionContext(flagKey: "a", ruleKey: "c"))!.variationKey, "d")
+        XCTAssertNil(user3.getForcedDecision(context: OptimizelyDecisionContext(flagKey: "x")))
         
         // clone should have a separate copy for FocedDecisions
         
-        _ = user.setForcedDecision(flagKey: "a", ruleKey: "new-rk", variationKey: "new-vk")
-        XCTAssertEqual(user.getForcedDecision(flagKey: "a", ruleKey: "new-rk"), "new-vk")
-        XCTAssertNil(user3.getForcedDecision(flagKey: "a", ruleKey: "new-rk"))
+        _ = user.setForcedDecision(context: OptimizelyDecisionContext(flagKey: "a", ruleKey: "new-rk"), decision: OptimizelyForcedDecision(variationKey: "new-vk"))
+        XCTAssertEqual(user.getForcedDecision(context: OptimizelyDecisionContext(flagKey: "a", ruleKey: "new-rk"))!.variationKey, "new-vk")
+        XCTAssertNil(user3.getForcedDecision(context: OptimizelyDecisionContext(flagKey: "a", ruleKey: "new-rk")))
     }
 
 }

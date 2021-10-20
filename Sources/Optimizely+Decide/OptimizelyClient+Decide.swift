@@ -60,7 +60,7 @@ extension OptimizelyClient {
         
         // check forced-decisions first
         
-        let forcedDecisionResponse = user.findValidatedForcedDecision(flagKey: key, ruleKey: nil, options: allOptions)
+        let forcedDecisionResponse = user.findValidatedForcedDecision(context: OptimizelyDecisionContext(flagKey: key), options: allOptions)
         reasons.merge(forcedDecisionResponse.reasons)
         
         if let variation = forcedDecisionResponse.result {

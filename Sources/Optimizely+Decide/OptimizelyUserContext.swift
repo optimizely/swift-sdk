@@ -26,14 +26,14 @@ public class OptimizelyUserContext {
         return atomicAttributes.property ?? [:]
     }
     
-    var forcedDecisions: AtomicDictionary<FDKeys, String>?
+    var forcedDecisions: AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>?
     
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
         
         let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
         if let fds = forcedDecisions {
-            userContext.forcedDecisions = AtomicDictionary<FDKeys, String>(fds.property)
+            userContext.forcedDecisions = AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>(fds.property)
         }
         
         return userContext
@@ -141,23 +141,34 @@ public class OptimizelyUserContext {
 
 // MARK: - ForcedDecisions
 
-extension OptimizelyUserContext {
-    
-    struct FDKeys: Hashable {
-        let flagKey: String
-        let ruleKey: String?
-    }
+/// Decision Context
+public struct OptimizelyDecisionContext: Hashable {
+    public let flagKey: String
+    public let ruleKey: String?
 
-    /// Sets the forced decision (variation key) for a given flag and an optional rule.
-    /// - Parameters:
-    ///   - flagKey: A flag key.
-    ///   - ruleKey: An experiment or delivery rule key (optional).
-    ///   - variationKey: A variation key.
-    /// - Returns: true if the forced decision has been set successfully.
-    public func setForcedDecision(flagKey: String,
-                                  ruleKey: String? = nil,
-                                  variationKey: String) -> Bool {
+    public init(flagKey: String, ruleKey: String? = nil) {
+        self.flagKey = flagKey
+        self.ruleKey = ruleKey
+    }
+}
+
+/// Forced Decision
+public struct OptimizelyForcedDecision {
+    public let variationKey: String
+    
+    public init(variationKey: String) {
+        self.variationKey = variationKey
+    }
+}
+
+extension OptimizelyUserContext {
         
+    /// Sets the forced decision for a given decision context.
+    /// - Parameters:
+    ///   - context: A decision context.
+    ///   - decision: A forced decision.
+    /// - Returns: true if the forced decision has been set successfully.
+    public func setForcedDecision(context: OptimizelyDecisionContext, decision: OptimizelyForcedDecision) -> Bool {
         guard optimizely?.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
             return false
@@ -166,19 +177,18 @@ extension OptimizelyUserContext {
         // create on the first setForcedDecision call
         
         if forcedDecisions == nil {
-            forcedDecisions = AtomicDictionary<FDKeys, String>()
+            forcedDecisions = AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>()
         }
         
-        forcedDecisions![FDKeys(flagKey: flagKey, ruleKey: ruleKey)] = variationKey
+        forcedDecisions![context] = decision
         return true
     }
     
-    /// Returns the forced decision for a given flag and an optional rule.
+    /// Returns the forced decision for a given decision context.
     /// - Parameters:
-    ///   - flagKey: A flag key.
-    ///   - ruleKey: An experiment or delivery rule key (optional).
-    /// - Returns: A variation key or nil if forced decisions are not set for the parameters.
-    public func getForcedDecision(flagKey: String, ruleKey: String? = nil) -> String? {
+    ///   - context: A decision context
+    /// - Returns: A forced decision or nil if forced decisions are not set for the decision context.
+    public func getForcedDecision(context: OptimizelyDecisionContext) -> OptimizelyForcedDecision? {
         guard optimizely?.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
             return nil
@@ -186,15 +196,14 @@ extension OptimizelyUserContext {
         
         guard forcedDecisions != nil else { return nil }
         
-        return findForcedDecision(flagKey: flagKey, ruleKey: ruleKey)
+        return findForcedDecision(context: context)
     }
     
-    /// Removes the forced decision for a given flag and an optional rule.
+    /// Removes the forced decision for a given decision context.
     /// - Parameters:
-    ///   - flagKey: A flag key.
-    ///   - ruleKey: An experiment or delivery rule key (optional).
+    ///   - context: A decision context.
     /// - Returns: true if the forced decision has been removed successfully.
-    public func removeForcedDecision(flagKey: String, ruleKey: String? = nil) -> Bool {
+    public func removeForcedDecision(context: OptimizelyDecisionContext) -> Bool {
         guard optimizely?.config != nil else {
             logger.e(OptimizelyError.sdkNotReady)
             return false
@@ -202,8 +211,8 @@ extension OptimizelyUserContext {
         
         guard let fds = forcedDecisions else { return false }
 
-        if findForcedDecision(flagKey: flagKey, ruleKey: ruleKey) != nil {
-            fds[FDKeys(flagKey: flagKey, ruleKey: ruleKey)] = nil
+        if findForcedDecision(context: context) != nil {
+            fds[context] = nil
             return true
         }
         
@@ -225,25 +234,24 @@ extension OptimizelyUserContext {
         return true
     }
     
-    func findForcedDecision(flagKey: String, ruleKey: String? = nil) -> String? {
+    func findForcedDecision(context: OptimizelyDecisionContext) -> OptimizelyForcedDecision? {
         guard let fds = forcedDecisions else { return nil }
         
-        return fds[FDKeys(flagKey: flagKey, ruleKey: ruleKey)]
+        return fds[context]
     }
     
-    func findValidatedForcedDecision(flagKey: String,
-                                     ruleKey: String?,
+    func findValidatedForcedDecision(context: OptimizelyDecisionContext,
                                      options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
         let reasons = DecisionReasons(options: options)
         
-        if let variationKey = findForcedDecision(flagKey: flagKey, ruleKey: ruleKey) {
-            if let variation = optimizely?.getFlagVariationByKey(flagKey: flagKey, variationKey: variationKey) {
-                let info = LogMessage.userHasForcedDecision(userId, flagKey, ruleKey, variationKey)
+        if let variationKey = findForcedDecision(context: context)?.variationKey {
+            if let variation = optimizely?.getFlagVariationByKey(flagKey: context.flagKey, variationKey: variationKey) {
+                let info = LogMessage.userHasForcedDecision(userId, context.flagKey, context.ruleKey, variationKey)
                 logger.d(info)
                 reasons.addInfo(info)
                 return DecisionResponse(result: variation, reasons: reasons)
             } else {
-                let info = LogMessage.userHasForcedDecisionButInvalid(userId, flagKey, ruleKey)
+                let info = LogMessage.userHasForcedDecisionButInvalid(userId, context.flagKey, context.ruleKey)
                 logger.d(info)
                 reasons.addInfo(info)
             }

@@ -321,7 +321,8 @@ class DefaultDecisionService: OPTDecisionService {
         
         // check forced-decision first
         
-        let forcedDecisionResponse = user.findValidatedForcedDecision(flagKey: flagKey, ruleKey: rule.key, options: options)
+        let forcedDecisionResponse = user.findValidatedForcedDecision(context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: rule.key),
+                                                                      options: options)
         reasons.merge(forcedDecisionResponse.reasons)
         
         if let variation = forcedDecisionResponse.result {
@@ -352,7 +353,8 @@ class DefaultDecisionService: OPTDecisionService {
         // check forced-decision first
         
         let rule = rules[ruleIndex]
-        let forcedDecisionResponse = user.findValidatedForcedDecision(flagKey: flagKey, ruleKey: rule.key, options: options)
+        let forcedDecisionResponse = user.findValidatedForcedDecision(context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: rule.key),
+                                                                      options: options)
         reasons.merge(forcedDecisionResponse.reasons)
         
         if let variation = forcedDecisionResponse.result {

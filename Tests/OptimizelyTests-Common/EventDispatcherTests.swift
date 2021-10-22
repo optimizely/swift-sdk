@@ -151,16 +151,46 @@ class EventDispatcherTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
-    func testDispatcherCustom() {
+    func testDispatcherCustomUrl() {
         let dispatcher = MockEventDispatcher()
+        
+        let originalUrl = "https://logx.optimizely.com/v1/events"
+        let customUrl = "https://google.com"
+        let overrideUrl = "https://apple.com"
+        
+        // default end-point
         
         dispatcher.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
         
         XCTAssert(dispatcher.events.count == 1)
+        XCTAssert(dispatcher.events.first?.url.absoluteString == originalUrl)
+        dispatcher.flushEvents()
+        XCTAssert(dispatcher.events.count == 0)
         
+        // customize end-point
+        
+        EventForDispatch.eventEndpoint = customUrl
+        dispatcher.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
+        
+        XCTAssert(dispatcher.events.count == 1)
+        XCTAssert(dispatcher.events.first?.url.absoluteString == customUrl)
         dispatcher.flushEvents()
         
-        XCTAssert(dispatcher.events.count == 0)
+        // override end-point
+        
+        dispatcher.dispatchEvent(event: EventForDispatch(url: URL(string: overrideUrl), body: Data()), completionHandler: nil)
+        
+        XCTAssert(dispatcher.events.count == 1)
+        XCTAssert(dispatcher.events.first?.url.absoluteString == overrideUrl)
+        dispatcher.flushEvents()
+        
+        // saved custom end-point
+        
+        dispatcher.dispatchEvent(event: EventForDispatch(body: Data()), completionHandler: nil)
+        
+        XCTAssert(dispatcher.events.count == 1)
+        XCTAssert(dispatcher.events.first?.url.absoluteString == customUrl)
+        dispatcher.flushEvents()
     }
     
     func testDispatcherMethods() {

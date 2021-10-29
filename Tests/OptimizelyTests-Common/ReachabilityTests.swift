@@ -27,20 +27,28 @@ class ReachabilityTests: XCTestCase {
             // disconnect monitoring 
             NetworkReachability.shared.stop()
             
+            // never blocked if previous connections did not fail
+            
             NetworkReachability.shared.isConnected = false
-            XCTAssertFalse(Utils.shouldBlockNetworkAccess(numContiguousFails: 0))
+            XCTAssertFalse(Utils.shouldBlockNetworkAccess(numContiguousFails: 0, maxContiguousFails: 1))
             NetworkReachability.shared.isConnected = true
-            XCTAssertFalse(Utils.shouldBlockNetworkAccess(numContiguousFails: 0))
+            XCTAssertFalse(Utils.shouldBlockNetworkAccess(numContiguousFails: 0, maxContiguousFails: 1))
 
+            // block depending on reachability if previous connections failed
+            
             NetworkReachability.shared.isConnected = false
-            XCTAssertTrue(Utils.shouldBlockNetworkAccess(numContiguousFails: 1))
+            XCTAssertTrue(Utils.shouldBlockNetworkAccess(numContiguousFails: 1, maxContiguousFails: 1))
             NetworkReachability.shared.isConnected = true
-            XCTAssertFalse(Utils.shouldBlockNetworkAccess(numContiguousFails: 1))
+            XCTAssertFalse(Utils.shouldBlockNetworkAccess(numContiguousFails: 1, maxContiguousFails: 1))
+
+            // never blocked if previous contiguous connection failures less than max threshold
 
             NetworkReachability.shared.isConnected = false
             XCTAssertFalse(Utils.shouldBlockNetworkAccess(numContiguousFails: 8, maxContiguousFails: 10))
             NetworkReachability.shared.isConnected = true
             XCTAssertFalse(Utils.shouldBlockNetworkAccess(numContiguousFails: 8, maxContiguousFails: 10))
+
+            // block depending on reachability if previous contiguous connection failures more than max threshold
 
             NetworkReachability.shared.isConnected = false
             XCTAssertTrue(Utils.shouldBlockNetworkAccess(numContiguousFails: 12, maxContiguousFails: 10))
@@ -62,6 +70,8 @@ class ReachabilityTests: XCTestCase {
     func testReachabilityMonitoring() throws {
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
             
+            // isConnected is initially false (simulators only)
+            
             let exp = expectation(description: "x")
             DispatchQueue.global().async {
                 while true {
@@ -73,16 +83,16 @@ class ReachabilityTests: XCTestCase {
                 }
             }
             
-            wait(for: [exp], timeout: 10)
+            wait(for: [exp], timeout: 3)
             XCTAssertTrue(NetworkReachability.shared.isConnected)
             
         }
     }
     
-    func testReachabilityForFetchDatafile_numContiguousFails() {
-        let sdkKey = "localcdnTestSDKKey"
+    func testFetchDatafile_numContiguousFails() {
         let handler = MockDatafileHandler(withError: true)
-        
+        let sdkKey = "localcdnTestSDKKey"
+
         var exp = expectation(description: "r")
         handler.downloadDatafile(sdkKey: sdkKey) { _ in exp.fulfill() }
         wait(for: [exp], timeout: 3)
@@ -93,7 +103,7 @@ class ReachabilityTests: XCTestCase {
         wait(for: [exp], timeout: 3)
         XCTAssertEqual(handler.numContiguousFails, 2, "should be incremented on failure")
        
-        handler.withError = false  // following requests should success (no error)
+        handler.withError = false  // following requests should succeed (no error)
 
         exp = expectation(description: "r")
         handler.downloadDatafile(sdkKey: sdkKey) { _ in exp.fulfill() }
@@ -101,7 +111,7 @@ class ReachabilityTests: XCTestCase {
         XCTAssertEqual(handler.numContiguousFails, 0, "should be reset on success")
     }
 
-    func testReachabilityForEventDispatch_numContiguousFails() {
+    func testEventDispatch_numContiguousFails() {
         let handler = MockDefaultEventDispatcher(withError: true)
         let event = EventForDispatch(body: Data())
         
@@ -115,7 +125,7 @@ class ReachabilityTests: XCTestCase {
         wait(for: [exp], timeout: 3)
         XCTAssertEqual(handler.numContiguousFails, 2, "should be incremented on failure")
         
-        handler.withError = false  // following requests should success (no error)
+        handler.withError = false  // following requests should succeed (no error)
         
         exp = expectation(description: "r")
         handler.sendEvent(event: event) { _ in exp.fulfill() }
@@ -123,12 +133,12 @@ class ReachabilityTests: XCTestCase {
         XCTAssertEqual(handler.numContiguousFails, 0, "should be reset on success")
     }
 
-    func testReachabilityForFetchDatafile_checkReachability() {
+    func testFetchDatafile_checkReachability() {
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
             
             NetworkReachability.shared.stop()
             NetworkReachability.shared.isConnected = false
-            Utils.defaultMaxContiguousFails = 1
+            Utils.defaultMaxContiguousFails = 3
             
             let sdkKey = "localcdnTestSDKKey"
             let handler = MockDatafileHandler(withError: true)
@@ -144,18 +154,19 @@ class ReachabilityTests: XCTestCase {
                 // reachability check will kick in when maxContiguousFails is reached.
                 // numContiguousFails should not increase beyond maxContiguousFails (since connection request will be discarded).
 
+                //print("numContiguousFails: \(handler.numContiguousFails)")
                 XCTAssertEqual(handler.numContiguousFails, expNumFails)
             }
 
         }
     }
 
-    func testReachabilityForEventDispatch_checkReachability() {
+    func testEventDispatch_checkReachability() {
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
             
             NetworkReachability.shared.stop()
             NetworkReachability.shared.isConnected = false
-            Utils.defaultMaxContiguousFails = 3
+            Utils.defaultMaxContiguousFails = 1
             
             let handler = MockDefaultEventDispatcher(withError: true)
             let event = EventForDispatch(body: Data())
@@ -171,6 +182,7 @@ class ReachabilityTests: XCTestCase {
                 // reachability check will kick in when maxContiguousFails is reached.
                 // numContiguousFails should not increase beyond maxContiguousFails (since connection request will be discarded).
                 
+                //print("numContiguousFails: \(handler.numContiguousFails)")
                 XCTAssertEqual(handler.numContiguousFails, expNumFails)
             }
 

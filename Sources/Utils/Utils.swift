@@ -133,5 +133,4 @@ class Utils {
         }
         return "Invalid conditions format."
     }
-    
 }

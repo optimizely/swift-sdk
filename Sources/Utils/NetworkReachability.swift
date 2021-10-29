@@ -48,7 +48,7 @@ class NetworkReachability {
     
     private init() {
         
-        // NOTE: unit test with real devices only (simulator not updating properly)
+        // NOTE: test with real devices only (simulator not updating properly)
 
         start()
     }
@@ -59,7 +59,7 @@ class NetworkReachability {
             // "Reachability path: unsatisfied (No network route)"
             //print("Reachability path: \(path)")
             
-            // this task runs in sync queue. set priviate variable (instead of isConnected to avoid deadlock)
+            // this task runs in sync queue. set private variable (instead of isConnected to avoid deadlock)
             self?.connected = (path.status == .satisfied)
         }
 
@@ -82,8 +82,8 @@ extension Utils {
     /// For safety, trust reachability only when the last downloads failed contiguously.
     ///
     /// - Parameter numContiguousFails: the number of contiguous network connection failures
-    /// - Parameter maxContiguousFails: the maximum number of contiguous network connection failures allowed before blocking
-    /// - Returns: true when network access should be skipped
+    /// - Parameter maxContiguousFails: the maximum number of contiguous network connection failures allowed before reachability checking
+    /// - Returns: true when network access should be blocked
     static func shouldBlockNetworkAccess(numContiguousFails: Int, maxContiguousFails: Int = defaultMaxContiguousFails) -> Bool {
         if numContiguousFails < maxContiguousFails { return false }
         

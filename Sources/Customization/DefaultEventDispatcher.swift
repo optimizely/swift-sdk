@@ -51,6 +51,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     var timer = AtomicProperty<Timer>()
     var observers = [NSObjectProtocol]()
     
+    // the number of contiguous dispatch failures (reachability)
     var numContiguousFails = 0
 
     public init(batchSize: Int = DefaultValues.batchSize,
@@ -177,13 +178,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         
-        if Utils.shouldBlockNetworkAccess(self.numContiguousFails) {
+        if Utils.shouldBlockNetworkAccess(numContiguousFails: self.numContiguousFails) {
             completionHandler(.failure(.eventDispatchFailed("NetworkReachability down")))
             return
         }
         
-        let config = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: config)
+        let session = getSession()
         var request = URLRequest(url: event.url)
         request.httpMethod = "POST"
         request.httpBody = event.body
@@ -206,6 +206,11 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         task.resume()
     }
     
+    func getSession() -> URLSession {
+        let config = URLSessionConfiguration.ephemeral
+        return URLSession(configuration: config)
+    }
+
 }
 
 // MARK: - internals

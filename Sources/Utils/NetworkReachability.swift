@@ -17,28 +17,81 @@
 import Foundation
 import Network
 
-@available(iOSApplicationExtension 12.0, *)
+@available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *)
 class NetworkReachability {
     static let shared = NetworkReachability()
     
     let monitor = NWPathMonitor()
-    var isConnected = false
+    let queue = DispatchQueue(label: "reachability")
+    
+    #if targetEnvironment(simulator)
+    private var connected = false       // initially false for testing support
+    #else
+    private var connected = true        // initially true for safety in production
+    #endif
+    
+    var isConnected: Bool {
+        get {
+            var result = false
+            queue.sync {
+                result = connected
+            }
+            return result
+        }
+        // for test support only
+        set {
+            queue.sync {
+                connected = newValue
+            }
+        }
+    }
     
     private init() {
         
         // NOTE: unit test with real devices only (simulator not updating properly)
-        
-        monitor.pathUpdateHandler = { [weak self] path in
-            // "Reachability path: satisfied (Path is satisfied), interface: en0, ipv4, ipv6, dns, expensive, constrained"
-            // "Reachability path: unsatisfied (No network route)"
-            print("Reachability path: \(path)")
-            
-            self?.isConnected = (path.status == .satisfied)
-        }
+
+        start()
     }
     
     func start() {
-        monitor.start(queue: DispatchQueue.global())
+        monitor.pathUpdateHandler = { [weak self] (path: NWPath) -> Void in
+            // "Reachability path: satisfied (Path is satisfied), interface: en0, ipv4, ipv6, dns, expensive, constrained"
+            // "Reachability path: unsatisfied (No network route)"
+            //print("Reachability path: \(path)")
+            
+            // this task runs in sync queue. set priviate variable (instead of isConnected to avoid deadlock)
+            self?.connected = (path.status == .satisfied)
+        }
+
+        monitor.start(queue: queue)
+    }
+    
+    func stop() {
+        monitor.pathUpdateHandler = nil
+        monitor.cancel()
+    }
+    
+}
+
+extension Utils {
+    
+    static var defaultMaxContiguousFails = 1
+    
+    /// Skip network access when reachability is down (optimization for iOS12+ only)
+    ///
+    /// For safety, trust reachability only when the last downloads failed contiguously.
+    ///
+    /// - Parameter numContiguousFails: the number of contiguous network connection failures
+    /// - Parameter maxContiguousFails: the maximum number of contiguous network connection failures allowed before blocking
+    /// - Returns: true when network access should be skipped
+    static func shouldBlockNetworkAccess(numContiguousFails: Int, maxContiguousFails: Int = defaultMaxContiguousFails) -> Bool {
+        if numContiguousFails < maxContiguousFails { return false }
+        
+        if #available(iOS 12, tvOS 12, macOS 10.14, watchOS 5, macCatalyst 13, *) {            
+            return !NetworkReachability.shared.isConnected
+        } else {
+            return false
+        }
     }
     
 }

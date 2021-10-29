@@ -39,6 +39,18 @@ class MockUrlSession: URLSession {
             task()
         }
     }
+    
+    class MockUploadTask: URLSessionUploadTask {
+        var task: () -> Void
+        
+        init(_ task: @escaping () -> Void) {
+            self.task = task
+        }
+        
+        override func resume() {
+            task()
+        }
+    }
 
     init(handler: MockDatafileHandler? = nil, statusCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
         self.handler = handler
@@ -85,7 +97,16 @@ class MockUrlSession: URLSession {
                 completionHandler(downloadCacheUrl, response, nil)
             }
         }
-        
+    }
+    
+    override func uploadTask(with request: URLRequest, from bodyData: Data?, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionUploadTask {
+        return MockUploadTask() {
+            if (self.withError) {
+                completionHandler(nil, nil, OptimizelyError.eventDispatchFailed("mock error"))
+            } else {
+                completionHandler(nil, nil, nil)
+            }
+        }
     }
 
 }

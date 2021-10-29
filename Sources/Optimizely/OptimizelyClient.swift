@@ -83,10 +83,6 @@ open class OptimizelyClient: NSObject {
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
-        if #available(iOSApplicationExtension 12.0, *) {
-            NetworkReachability.shared.start()
-        }
-        
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,

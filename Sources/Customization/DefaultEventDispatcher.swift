@@ -51,8 +51,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     var timer = AtomicProperty<Timer>()
     var observers = [NSObjectProtocol]()
     
-    // the number of contiguous dispatch failures (reachability)
-    var numContiguousFails = 0
+    // network reachability
+    let reachability = NetworkReachability(maxContiguousFails: 1)
 
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
@@ -178,7 +178,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     
     open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
         
-        if Utils.shouldBlockNetworkAccess(numContiguousFails: self.numContiguousFails) {
+        if self.reachability.shouldBlockNetworkAccess() {
             completionHandler(.failure(.eventDispatchFailed("NetworkReachability down")))
             return
         }
@@ -200,7 +200,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 completionHandler(.success(event.body))
             }
             
-            self.numContiguousFails = (error == nil) ? 0 : (self.numContiguousFails + 1)
+            self.reachability.updateNumContiguousFails(isError: (error != nil))
         }
         
         task.resume()

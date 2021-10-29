@@ -37,8 +37,8 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     // and our download queue to speed things up.
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
     
-    // the number of contiguous download failures (reachability)
-    var numContiguousFails = 0
+    // network reachability
+    let reachability = NetworkReachability(maxContiguousFails: 1)
 
     public required init() {}
     
@@ -51,7 +51,7 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
         
         downloadQueue.async {
             
-            if Utils.shouldBlockNetworkAccess(numContiguousFails: self.numContiguousFails) {
+            if self.reachability.shouldBlockNetworkAccess() {
                 completionHandler(.failure(.datafileDownloadFailed("NetworkReachability down")))
                 return
             }
@@ -95,7 +95,7 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                     }
                 }
                 
-                self.numContiguousFails = (error == nil) ? 0 : (self.numContiguousFails + 1)
+                self.reachability.updateNumContiguousFails(isError: (error != nil))
                 
                 completionHandler(result)
             }

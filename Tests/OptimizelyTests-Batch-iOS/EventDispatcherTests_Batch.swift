@@ -464,7 +464,7 @@ extension EventDispatcherTests_Batch {
 
         eventDispatcher.close()
 
-        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.maxFailureCount + 1
+        let maxFailureCount = 3   // DefaultEventDispatcher.maxFailureCount
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
         

@@ -38,7 +38,8 @@ class ProjectConfig {
     var featureFlagKeys = [String]()
     var rolloutIdMap = [String: Rollout]()
     var allExperiments = [Experiment]()
-    
+    var flagVariationsMap = [String: [Variation]]()
+
     // MARK: - Init
     
     init(datafile: Data) throws {
@@ -122,7 +123,39 @@ class ProjectConfig {
             project.rollouts.forEach { map[$0.id] = $0 }
             return map
         }()
+        
+        // all variations for each flag
+        // - datafile does not contain a separate entity for this.
+        // - we collect variations used in each rule (experiment rules and delivery rules)
+        
+        self.flagVariationsMap = {
+            var map = [String: [Variation]]()
+            
+            project.featureFlags.forEach { flag in
+                var variations = [Variation]()
+                
+                getAllRulesForFlag(flag).forEach { rule in
+                    rule.variations.forEach { variation in
+                        if variations.filter({ $0.id == variation.id }).first == nil {
+                            variations.append(variation)
+                        }
+                    }
+                }
+                map[flag.key] = variations
+            }
+            
+            return map
+        }()
+        
     }
+    
+    func getAllRulesForFlag(_ flag: FeatureFlag) -> [Experiment] {
+        var rules = flag.experimentIds.compactMap { experimentIdMap[$0] }
+        let rollout = self.rolloutIdMap[flag.rolloutId]
+        rules.append(contentsOf: rollout?.experiments ?? [])
+        return rules
+    }
+
 }
 
 // MARK: - Project Change Observer
@@ -296,7 +329,7 @@ extension ProjectConfig {
     func isFeatureExperiment(id: String) -> Bool {
         return !(experimentFeatureMap[id]?.isEmpty ?? true)
     }
-    
+        
     /**
      * Get forced variation for a given experiment key and user id.
      */

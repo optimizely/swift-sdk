@@ -300,7 +300,7 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
         decision = user.decide(key: key, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(LogMessage.userMeetsConditionsForTargetingRule(kUserId, 1).reason))
+        XCTAssert(decision.reasons.contains(LogMessage.userMeetsConditionsForTargetingRule(kUserId, "1").reason))
     }
     
     func testDecideReasons_userDoesntMeetConditionsForTargetingRule() {
@@ -310,7 +310,7 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
         decision = user.decide(key: key, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(LogMessage.userDoesntMeetConditionsForTargetingRule(kUserId, 1).reason))
+        XCTAssert(decision.reasons.contains(LogMessage.userDoesntMeetConditionsForTargetingRule(kUserId, "1").reason))
     }
     
     func testDecideReasons_userBucketedIntoTargetingRule() {
@@ -320,9 +320,9 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
         decision = user.decide(key: key, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoTargetingRule(kUserId, 1).reason))
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoTargetingRule(kUserId, "1").reason))
     }
-    
+      
     func testDecideReasons_userBucketedIntoEveryoneTargetingRule() {
         let key = "feature_1"
         
@@ -330,7 +330,7 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
         decision = user.decide(key: key, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoEveryoneTargetingRule(kUserId).reason))
+        XCTAssert(decision.reasons.contains(LogMessage.userBucketedIntoTargetingRule(kUserId, "Everyone Else").reason))
     }
     
     func testDecideReasons_userNotBucketedIntoTargetingRule() {
@@ -340,7 +340,7 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         var decision = user.decide(key: key)
         XCTAssert(decision.reasons.isEmpty)
         decision = user.decide(key: key, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoTargetingRule(kUserId, 2).reason))
+        XCTAssert(decision.reasons.contains(LogMessage.userNotBucketedIntoTargetingRule(kUserId, "2").reason))
     }
         
     func testDecideReasons_userBucketedIntoVariationInExperiment() {

@@ -217,8 +217,7 @@ extension DecisionServiceTests_Experiments {
         
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
-                                                      userId: kUserId,
-                                                      attributes: kAttributesCountryMatch).result
+                                                      user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssertNil(variation, "no matching audience should return nil")
         
         // (1) non-running experiement should return nil
@@ -228,8 +227,7 @@ extension DecisionServiceTests_Experiments {
         
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
-                                                      userId: kUserId,
-                                                      attributes: kAttributesCountryMatch).result
+                                                      user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssertNil(variation, "not running experiments return nil")
         
         // recover to running state for following tests
@@ -250,8 +248,7 @@ extension DecisionServiceTests_Experiments {
         // local forcedVariation wins
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
-                                                      userId: kUserId,
-                                                      attributes: kAttributesCountryMatch).result
+                                                      user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(variation!.key == kVariationKeyA, "local forcedVariation should override")
         
         // (3) remote whitelisting overrides
@@ -264,8 +261,7 @@ extension DecisionServiceTests_Experiments {
         // no local variation, so now remote variation works
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
-                                                      userId: kUserId,
-                                                      attributes: kAttributesCountryMatch).result
+                                                      user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(variation!.key == kVariationKeyB, "remote forcedVariation should override")
         
         // reset remote forcedVariations as well
@@ -281,8 +277,7 @@ extension DecisionServiceTests_Experiments {
         // no variation mapped for invalid audience id
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
-                                                      userId: kUserId,
-                                                      attributes: kAttributesCountryMatch).result
+                                                      user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssertNil(variation, "no matching audience should return nil")
         
     }
@@ -297,8 +292,7 @@ extension DecisionServiceTests_Experiments {
         
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
-                                                      userId: kUserId,
-                                                      attributes: kAttributesEmpty).result
+                                                      user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesEmpty)).result
         XCTAssertNil(variation, "bucketing should return nil")
         
         // (1) desicion + bucketing
@@ -307,8 +301,7 @@ extension DecisionServiceTests_Experiments {
         
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
-                                                      userId: kUserId,
-                                                      attributes: kAttributesCountryMatch).result
+                                                      user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(variation!.key == kVariationKeyD, "bucketing should work")
         
         // (2) UserProfileService updated by previous decisions
@@ -317,8 +310,7 @@ extension DecisionServiceTests_Experiments {
         
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
-                                                      userId: kUserId,
-                                                      attributes: kAttributesEmpty).result
+                                                      user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesEmpty)).result
         XCTAssert(variation!.key == kVariationKeyD, "bucketing should work")
     }
     
@@ -335,8 +327,7 @@ extension DecisionServiceTests_Experiments {
         // no local variation, so now remote variation works
         variation = self.decisionService.getVariation(config: config,
                                                       experiment: experiment,
-                                                      userId: kUserId,
-                                                      attributes: kAttributesCountryMatch).result
+                                                      user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(variation!.key == kVariationKeyD, "invalid forced variation should be skipped")
     }
     

@@ -26,9 +26,17 @@ public class OptimizelyUserContext {
         return atomicAttributes.property ?? [:]
     }
     
+    var forcedDecisions: AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>?
+    
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
-        return OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
+        
+        let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
+        if let fds = forcedDecisions {
+            userContext.forcedDecisions = AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>(fds.property)
+        }
+        
+        return userContext
     }
     
     let logger = OPTLoggerFactory.getLogger()
@@ -47,7 +55,7 @@ public class OptimizelyUserContext {
         self.atomicAttributes = AtomicProperty(property: attributes ?? [:])
     }
     
-    /// Set an attribute for a given key.
+    /// Sets an attribute for a given key.
     /// - Parameters:
     ///   - key: An attribute key
     ///   - value: An attribute value
@@ -75,7 +83,7 @@ public class OptimizelyUserContext {
         
         return optimizely.decide(user: clone, key: key, options: options)
     }
-
+    
     /// Returns a key-map of decision results for multiple flag keys and a user context.
     ///
     /// - If the SDK finds an error (__flagKeyInvalid__, etc) for a key, the response will include a decision for the key showing `reasons` for the error (regardless of __includeReasons__ in options).
@@ -87,7 +95,7 @@ public class OptimizelyUserContext {
     /// - Returns: A dictionary of all decision results, mapped by flag keys.
     public func decide(keys: [String],
                        options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-
+        
         guard let optimizely = self.optimizely, let clone = self.clone else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
@@ -106,11 +114,11 @@ public class OptimizelyUserContext {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
         }
-
+        
         return optimizely.decideAll(user: clone, options: options)
     }
-
-    /// Track an event.
+    
+    /// Tracks an event.
     ///
     /// - Parameters:
     ///   - eventKey: The event name.
@@ -119,17 +127,142 @@ public class OptimizelyUserContext {
     public func trackEvent(eventKey: String,
                            eventTags: OptimizelyEventTags? = nil) throws {
         
-        guard let optimizely = self.optimizely, optimizely.config != nil else {
+        guard let optimizely = self.optimizely else {
             throw OptimizelyError.sdkNotReady
         }
-
+        
         try optimizely.track(eventKey: eventKey,
                              userId: userId,
                              attributes: attributes,
                              eventTags: eventTags)
     }
-
+    
 }
+
+// MARK: - ForcedDecisions
+
+/// Decision Context
+public struct OptimizelyDecisionContext: Hashable {
+    public let flagKey: String
+    public let ruleKey: String?
+
+    public init(flagKey: String, ruleKey: String? = nil) {
+        self.flagKey = flagKey
+        self.ruleKey = ruleKey
+    }
+}
+
+/// Forced Decision
+public struct OptimizelyForcedDecision {
+    public let variationKey: String
+    
+    public init(variationKey: String) {
+        self.variationKey = variationKey
+    }
+}
+
+extension OptimizelyUserContext {
+        
+    /// Sets the forced decision for a given decision context.
+    /// - Parameters:
+    ///   - context: A decision context.
+    ///   - decision: A forced decision.
+    /// - Returns: true if the forced decision has been set successfully.
+    public func setForcedDecision(context: OptimizelyDecisionContext, decision: OptimizelyForcedDecision) -> Bool {
+        guard optimizely?.config != nil else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return false
+        }
+        
+        // create on the first setForcedDecision call
+        
+        if forcedDecisions == nil {
+            forcedDecisions = AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>()
+        }
+        
+        forcedDecisions![context] = decision
+        return true
+    }
+    
+    /// Returns the forced decision for a given decision context.
+    /// - Parameters:
+    ///   - context: A decision context
+    /// - Returns: A forced decision or nil if forced decisions are not set for the decision context.
+    public func getForcedDecision(context: OptimizelyDecisionContext) -> OptimizelyForcedDecision? {
+        guard optimizely?.config != nil else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return nil
+        }
+        
+        guard forcedDecisions != nil else { return nil }
+        
+        return findForcedDecision(context: context)
+    }
+    
+    /// Removes the forced decision for a given decision context.
+    /// - Parameters:
+    ///   - context: A decision context.
+    /// - Returns: true if the forced decision has been removed successfully.
+    public func removeForcedDecision(context: OptimizelyDecisionContext) -> Bool {
+        guard optimizely?.config != nil else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return false
+        }
+        
+        guard let fds = forcedDecisions else { return false }
+
+        if findForcedDecision(context: context) != nil {
+            fds[context] = nil
+            return true
+        }
+        
+        return false
+    }
+    
+    /// Removes all forced decisions bound to this user context.
+    /// - Returns: true if forced decisions have been removed successfully.
+    public func removeAllForcedDecisions() -> Bool {
+        guard optimizely?.config != nil else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return false
+        }
+        
+        if let fds = forcedDecisions {
+            fds.removeAll()
+        }
+        
+        return true
+    }
+    
+    func findForcedDecision(context: OptimizelyDecisionContext) -> OptimizelyForcedDecision? {
+        guard let fds = forcedDecisions else { return nil }
+        
+        return fds[context]
+    }
+    
+    func findValidatedForcedDecision(context: OptimizelyDecisionContext,
+                                     options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons(options: options)
+        
+        if let variationKey = findForcedDecision(context: context)?.variationKey {
+            if let variation = optimizely?.getFlagVariationByKey(flagKey: context.flagKey, variationKey: variationKey) {
+                let info = LogMessage.userHasForcedDecision(userId, context.flagKey, context.ruleKey, variationKey)
+                logger.d(info)
+                reasons.addInfo(info)
+                return DecisionResponse(result: variation, reasons: reasons)
+            } else {
+                let info = LogMessage.userHasForcedDecisionButInvalid(userId, context.flagKey, context.ruleKey)
+                logger.d(info)
+                reasons.addInfo(info)
+            }
+        }
+        
+        return DecisionResponse(result: nil, reasons: reasons)
+    }
+    
+}
+
+// MARK: - Equatable
 
 extension OptimizelyUserContext: Equatable {
     
@@ -139,6 +272,8 @@ extension OptimizelyUserContext: Equatable {
     }
     
 }
+
+// MARK: - CustomStringConvertible
 
 extension OptimizelyUserContext: CustomStringConvertible {
     public var description: String {

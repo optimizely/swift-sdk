@@ -24,7 +24,7 @@ open class OptimizelyClient: NSObject {
     // MARK: - Properties
     
     var sdkKey: String
-
+    
     private var atomicConfig = AtomicProperty<ProjectConfig>()
     var config: ProjectConfig? {
         get {
@@ -36,7 +36,7 @@ open class OptimizelyClient: NSObject {
     }
     
     var defaultDecideOptions: [OptimizelyDecideOption]
-
+    
     public var version: String {
         return Utils.sdkVersion
     }
@@ -174,7 +174,7 @@ open class OptimizelyClient: NSObject {
         
         datafileHandler.downloadDatafile(sdkKey: sdkKey, returnCacheIfNoChange: false) { [weak self] result in
             guard let self = self else { return }
-
+            
             // override to update always if periodic datafile polling is enabled
             // this is necessary for the case that the first cache download gets the updated datafile
             guard doUpdateConfigOnNewDatafile || datafileHandler.hasPeriodicInterval(sdkKey: self.sdkKey) else { return }
@@ -299,8 +299,8 @@ open class OptimizelyClient: NSObject {
         
         let variation = decisionService.getVariation(config: config,
                                                      experiment: experiment,
-                                                     userId: userId,
-                                                     attributes: attributes ?? OptimizelyAttributes(),
+                                                     user: createUserContext(userId: userId,
+                                                                             attributes: attributes),
                                                      options: nil).result
         
         let decisionType: Constants.DecisionType = config.isFeatureExperiment(id: experiment.id) ? .featureTest : .abTest
@@ -383,8 +383,8 @@ open class OptimizelyClient: NSObject {
         
         let pair = decisionService.getVariationForFeature(config: config,
                                                           featureFlag: featureFlag,
-                                                          userId: userId,
-                                                          attributes: attributes ?? OptimizelyAttributes(),
+                                                          user: createUserContext(userId: userId,
+                                                                                  attributes: attributes),
                                                           options: nil).result
         
         let source = pair?.source ?? Constants.DecisionSource.rollout.rawValue
@@ -394,7 +394,7 @@ open class OptimizelyClient: NSObject {
         } else {
             logger.i(.featureNotEnabledForUser(featureKey, userId))
         }
-
+        
         if shouldSendDecisionEvent(source: source, decision: pair) {
             sendImpressionEvent(experiment: pair?.experiment,
                                 variation: pair?.variation,
@@ -534,10 +534,10 @@ open class OptimizelyClient: NSObject {
         var featureValue = variable.defaultValue ?? ""
         
         let decision = decisionService.getVariationForFeature(config: config,
-                                                                   featureFlag: featureFlag,
-                                                                   userId: userId,
-                                                                   attributes: attributes ?? OptimizelyAttributes(),
-                                                                   options: nil).result
+                                                              featureFlag: featureFlag,
+                                                              user: createUserContext(userId: userId,
+                                                                                      attributes: attributes),
+                                                              options: nil).result
         if let decision = decision {
             if let featureVariable = decision.variation.variables?.filter({$0.id == variable.id}).first {
                 if let featureEnabled = decision.variation.featureEnabled, featureEnabled {
@@ -626,10 +626,10 @@ open class OptimizelyClient: NSObject {
         }
         
         let decision = decisionService.getVariationForFeature(config: config,
-                                                                   featureFlag: featureFlag,
-                                                                   userId: userId,
-                                                                   attributes: attributes ?? OptimizelyAttributes(),
-                                                                   options: nil).result
+                                                              featureFlag: featureFlag,
+                                                              user: createUserContext(userId: userId,
+                                                                                      attributes: attributes),
+                                                              options: nil).result
         if let featureEnabled = decision?.variation.featureEnabled {
             enabled = featureEnabled
             if featureEnabled {
@@ -888,7 +888,7 @@ extension OptimizelyClient {
                                      decisionInfo.toMap],
                               async: async)
     }
-        
+    
     func sendDatafileChangeNotification(data: Data, async: Bool = true) {
         self.sendNotification(type: .datafileChange, args: [data], async: async)
     }

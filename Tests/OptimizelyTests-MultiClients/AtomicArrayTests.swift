@@ -43,6 +43,18 @@ class AtomicArrayTests: XCTestCase {
         XCTAssert(b[6] == 10)
         XCTAssert(b[7] == 20)
         XCTAssert(b[8] == 30)
+        
+        // validate copying not holding reference
+        
+        let c = AtomicArray<Int>()
+        c.property = a.property
+        XCTAssert(c.count == 5)
+        XCTAssert(c[0] == 100)
+        XCTAssert(c[4] == 400)
+        a[0] = 1
+        a[4] = 4
+        XCTAssert(c[0] == 100)
+        XCTAssert(c[4] == 400)
     }
     
     func testConcurrentReadWrite() {
@@ -77,4 +89,23 @@ class AtomicArrayTests: XCTestCase {
         XCTAssertEqual(a.count, 3 * numIterations * numConcurrency)
     }
     
+    func testConcurrentCopy() {
+        let num = 10
+        let a = AtomicArray<Int>()
+        (0..<num).forEach{ a.append($0) }
+        
+        let b = AtomicArray<Int>()
+
+        let result = OTUtils.runConcurrent(count: 10, timeoutInSecs: 60) { idx in
+            for _ in 0..<10 {
+                b.property = a.property
+                XCTAssert(b.count == num)
+            }
+            
+            XCTAssert(b.property == a.property)
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+
 }

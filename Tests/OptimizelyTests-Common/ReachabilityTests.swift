@@ -154,60 +154,60 @@ class ReachabilityTests: XCTestCase {
     }
 
     func testFetchDatafile_checkReachability() {
-        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
-            
-            let handler = MockDatafileHandler(withError: true)
-            let reachability = handler.reachability
-            let sdkKey = "localcdnTestSDKKey"
-
-            reachability.stop()
-            reachability.isConnected = false
-            reachability.maxContiguousFails = 3
-            
-            var expNumFails = 0
-            for _ in 0..<10 {
+        let handler = MockDatafileHandler(withError: true)
+        let reachability = handler.reachability
+        let sdkKey = "localcdnTestSDKKey"
+        
+        reachability.stop()
+        reachability.isConnected = false
+        reachability.maxContiguousFails = 3
+        
+        var expNumFails = 0
+        for _ in 0..<10 {
+            if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
                 if expNumFails < reachability.maxContiguousFails { expNumFails += 1 }
-                
-                let exp = expectation(description: "r")
-                handler.downloadDatafile(sdkKey: sdkKey) { _ in exp.fulfill() }
-                wait(for: [exp], timeout: 3)
-                
-                // reachability check will kick in when maxContiguousFails is reached.
-                // numContiguousFails should not increase beyond maxContiguousFails (since connection request will be discarded).
-
-                //print("numContiguousFails: \(handler.numContiguousFails)")
-                XCTAssertEqual(reachability.numContiguousFails, expNumFails)
+            } else {
+                expNumFails += 1
             }
-
+            
+            let exp = expectation(description: "r")
+            handler.downloadDatafile(sdkKey: sdkKey) { _ in exp.fulfill() }
+            wait(for: [exp], timeout: 3)
+            
+            // reachability check will kick in when maxContiguousFails is reached.
+            // numContiguousFails should not increase beyond maxContiguousFails (since connection request will be discarded).
+            
+            //print("numContiguousFails: \(handler.numContiguousFails)")
+            XCTAssertEqual(reachability.numContiguousFails, expNumFails)
         }
     }
 
     func testEventDispatch_checkReachability() {
-        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
-            
-            let handler = MockDefaultEventDispatcher(withError: true)
-            let reachability = handler.reachability
-            let event = EventForDispatch(body: Data())
-
-            reachability.stop()
-            reachability.isConnected = false
-            reachability.maxContiguousFails = 3
-
-            var expNumFails = 0
-            for _ in 0..<10 {
+        let handler = MockDefaultEventDispatcher(withError: true)
+        let reachability = handler.reachability
+        let event = EventForDispatch(body: Data())
+        
+        reachability.stop()
+        reachability.isConnected = false
+        reachability.maxContiguousFails = 3
+        
+        var expNumFails = 0
+        for _ in 0..<10 {
+            if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
                 if expNumFails < reachability.maxContiguousFails { expNumFails += 1 }
-
-                let exp = expectation(description: "r")
-                handler.sendEvent(event: event) { _ in exp.fulfill() }
-                wait(for: [exp], timeout: 3)
-                
-                // reachability check will kick in when maxContiguousFails is reached.
-                // numContiguousFails should not increase beyond maxContiguousFails (since connection request will be discarded).
-                
-                //print("numContiguousFails: \(handler.numContiguousFails)")
-                XCTAssertEqual(reachability.numContiguousFails, expNumFails)
+            } else {
+                expNumFails += 1
             }
-
+            
+            let exp = expectation(description: "r")
+            handler.sendEvent(event: event) { _ in exp.fulfill() }
+            wait(for: [exp], timeout: 3)
+            
+            // reachability check will kick in when maxContiguousFails is reached.
+            // numContiguousFails should not increase beyond maxContiguousFails (since connection request will be discarded).
+            
+            //print("numContiguousFails: \(handler.numContiguousFails)")
+            XCTAssertEqual(reachability.numContiguousFails, expNumFails)
         }
     }
 

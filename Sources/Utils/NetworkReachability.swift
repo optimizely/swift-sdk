@@ -90,7 +90,7 @@ class NetworkReachability {
     func shouldBlockNetworkAccess() -> Bool {
         if numContiguousFails < maxContiguousFails { return false }
 
-        if #available(iOS 12, tvOS 12, macOS 10.14, watchOS 5, macCatalyst 13, *) {
+        if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
             return !isConnected
         } else {
             return false

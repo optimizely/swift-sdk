@@ -26,7 +26,7 @@ class NetworkReachability {
     var numContiguousFails = 0
     // the maximum number of contiguous network connection failures allowed before reachability checking
     var maxContiguousFails: Int
-    let defaultMaxContiguousFails = 1
+    static let defaultMaxContiguousFails = 1
 
     #if targetEnvironment(simulator)
     private var connected = false       // initially false for testing support
@@ -51,7 +51,7 @@ class NetworkReachability {
     }
     
     init(maxContiguousFails: Int? = nil) {
-        self.maxContiguousFails = maxContiguousFails ?? defaultMaxContiguousFails
+        self.maxContiguousFails = maxContiguousFails ?? NetworkReachability.defaultMaxContiguousFails
      
         if #available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
             
@@ -62,7 +62,7 @@ class NetworkReachability {
             (monitor as! NWPathMonitor).pathUpdateHandler = { [weak self] (path: NWPath) -> Void in
                 // "Reachability path: satisfied (Path is satisfied), interface: en0, ipv4, ipv6, dns, expensive, constrained"
                 // "Reachability path: unsatisfied (No network route)"
-                //print("Reachability path: \(path)")
+                // print("Reachability path: \(path)")
                 
                 // this task runs in sync queue. set private variable (instead of isConnected to avoid deadlock)
                 self?.connected = (path.status == .satisfied)

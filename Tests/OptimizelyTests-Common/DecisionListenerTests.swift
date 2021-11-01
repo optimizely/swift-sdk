@@ -1249,8 +1249,7 @@ class FakeDecisionService: DefaultDecisionService {
     
     override func getVariationForFeature(config: ProjectConfig,
                                          featureFlag: FeatureFlag,
-                                         userId: String,
-                                         attributes: OptimizelyAttributes,
+                                         user: OptimizelyUserContext,
                                          options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         guard let experiment = self.experiment, let tmpVariation = self.variation else {
             return DecisionResponse.nilNoReasons()

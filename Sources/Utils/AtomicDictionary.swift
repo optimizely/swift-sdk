@@ -19,6 +19,19 @@ import Foundation
 class AtomicDictionary<K, V>: AtomicWrapper where K: Hashable {
     private var _property: [K: V]
          
+    var property: [K: V] {
+        get {
+            return getAtomic {
+                _property
+            }!
+        }
+        set {
+            performAtomic {
+                self._property = newValue
+            }
+        }
+    }
+
     init(_ property: [K: V] = [:]) {
         self._property = property
     }
@@ -41,4 +54,11 @@ class AtomicDictionary<K, V>: AtomicWrapper where K: Hashable {
             _property.count
         }!
     }
+    
+    func removeAll() {
+        performAtomic {
+            self._property.removeAll()
+        }
+    }
+
 }

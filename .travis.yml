@@ -6,9 +6,10 @@ stages:
   - name: 'Source Clear'
   - name: 'Lint markdown files'
   - name: 'Trigger Integration Tests'
-    if: env(RUN_COMPAT_SUITE) = true
+    if: env(RUN_COMPAT_SUITE) = true and env(PREP) IS NOT present and env(RELEASE) IS NOT present
   - name: 'Lint'
   - name: 'Unit Tests'
+    if: env(PREP) IS NOT present and env(RELEASE) IS NOT present
   - name: 'Prepare for release'
     if: env(PREP) = true and type = api
   - name: 'Release'

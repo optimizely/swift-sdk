@@ -29,7 +29,7 @@ class DecisionServiceTests_Features: XCTestCase {
     var kRolloutExperimentId = "rolloutExp11"
     var kRolloutExperimentId2 = "rolloutExp12"
     var kRolloutExperimentId3 = "rolloutExp13"
-
+    
     var kVariationKeyA = "a"
     var kVariationKeyB = "b"
     var kVariationKeyC = "c"
@@ -260,9 +260,9 @@ extension DecisionServiceTests_Features {
     func testGetVariationForFeatureExperimentWhenMatched() {
         let pair = self.decisionService.getVariationForFeatureExperiment(config: config,
                                                                          featureFlag: featureFlag,
-                                                                         userId: kUserId,
-                                                                         attributes: kAttributesCountryMatch).result
-        XCTAssert(pair?.experiment.key == kExperimentKey)
+                                                                         user: optimizely.createUserContext(userId: kUserId,
+                                                                                                            attributes: kAttributesCountryMatch)).result
+        XCTAssert(pair?.experiment?.key == kExperimentKey)
         XCTAssert(pair?.variation.key == kVariationKeyD)
         XCTAssert(pair?.source == Constants.DecisionSource.featureTest.rawValue)
     }
@@ -270,8 +270,8 @@ extension DecisionServiceTests_Features {
     func testGetVariationForFeatureExperimentWhenNotMatched() {
         let pair = self.decisionService.getVariationForFeatureExperiment(config: config,
                                                                          featureFlag: featureFlag,
-                                                                         userId: kUserId,
-                                                                         attributes: kAttributesCountryNotMatch).result
+                                                                         user: optimizely.createUserContext(userId: kUserId,
+                                                                                                            attributes: kAttributesCountryNotMatch)).result
         XCTAssertNil(pair)
     }
     
@@ -282,8 +282,8 @@ extension DecisionServiceTests_Features {
         
         let pair = self.decisionService.getVariationForFeatureExperiment(config: config,
                                                                          featureFlag: featureFlag,
-                                                                         userId: kUserId,
-                                                                         attributes: kAttributesCountryMatch).result
+                                                                         user: optimizely.createUserContext(userId: kUserId,
+                                                                                                            attributes: kAttributesCountryMatch)).result
         XCTAssertNil(pair)
     }
     
@@ -301,11 +301,11 @@ extension DecisionServiceTests_Features {
         self.config.project.featureFlags = [featureFlag]
         
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
-                                                                           featureFlag: featureFlag,
-                                                                           userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match).result
+                                                                      featureFlag: featureFlag,
+                                                                      user: optimizely.createUserContext(userId: kUserId,
+                                                                                                         attributes: kAttributesRolloutAge1Match)).result
         
-        XCTAssert(pair?.experiment.id == kRolloutExperimentId)
+        XCTAssert(pair?.experiment?.id == kRolloutExperimentId)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyA)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
@@ -313,8 +313,8 @@ extension DecisionServiceTests_Features {
     func testGetVariationForFeatureRolloutEmpty() {
         let variation = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
-                                                                           userId: kUserId,
-                                                                           attributes: kAttributesEmpty).result
+                                                                           user: optimizely.createUserContext(userId: kUserId,
+                                                                                                              attributes: kAttributesEmpty)).result
         XCTAssertNil(variation)
     }
     
@@ -326,8 +326,8 @@ extension DecisionServiceTests_Features {
         
         let variation = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
-                                                                           userId: kUserId,
-                                                                           attributes: kAttributesEmpty).result
+                                                                           user: optimizely.createUserContext(userId: kUserId,
+                                                                                                              attributes: kAttributesEmpty)).result
         XCTAssertNil(variation)
     }
     
@@ -340,8 +340,8 @@ extension DecisionServiceTests_Features {
         
         let variation = self.decisionService.getVariationForFeatureRollout(config: config,
                                                                            featureFlag: featureFlag,
-                                                                           userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match).result
+                                                                           user: optimizely.createUserContext(userId: kUserId,
+                                                                                                              attributes: kAttributesRolloutAge1Match)).result
         XCTAssertNil(variation)
     }
     
@@ -353,10 +353,10 @@ extension DecisionServiceTests_Features {
         self.config.project.featureFlags = [featureFlag]
         
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
-                                                                           featureFlag: featureFlag,
-                                                                           userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match).result
-        XCTAssert(pair?.experiment.id == kRolloutExperimentId3)
+                                                                      featureFlag: featureFlag,
+                                                                      user: optimizely.createUserContext(userId: kUserId,
+                                                                                                         attributes: kAttributesRolloutAge1Match)).result
+        XCTAssert(pair?.experiment?.id == kRolloutExperimentId3)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyC)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
@@ -368,10 +368,10 @@ extension DecisionServiceTests_Features {
         self.config.project.featureFlags = [featureFlag]
         
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
-                                                                           featureFlag: featureFlag,
-                                                                           userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge2Match).result
-        XCTAssert(pair?.experiment.id == kRolloutExperimentId2)
+                                                                      featureFlag: featureFlag,
+                                                                      user: optimizely.createUserContext(userId: kUserId,
+                                                                                                         attributes: kAttributesRolloutAge2Match)).result
+        XCTAssert(pair?.experiment?.id == kRolloutExperimentId2)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyB)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
@@ -384,10 +384,10 @@ extension DecisionServiceTests_Features {
         self.config.project.featureFlags = [featureFlag]
         
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
-                                                                           featureFlag: featureFlag,
-                                                                           userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match).result
-        XCTAssert(pair?.experiment.id == kRolloutExperimentId)
+                                                                      featureFlag: featureFlag,
+                                                                      user: optimizely.createUserContext(userId: kUserId,
+                                                                                                         attributes: kAttributesRolloutAge1Match)).result
+        XCTAssert(pair?.experiment?.id == kRolloutExperimentId)
         XCTAssert(pair?.variation.key == kRolloutVariationKeyA)
         XCTAssert(pair?.source == Constants.DecisionSource.rollout.rawValue)
     }
@@ -402,9 +402,9 @@ extension DecisionServiceTests_Features {
         self.config.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
         self.config.project.rollouts[0].experiments[2].audienceIds = [kRolloutAudienceIdAge1]
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
-                                                                           featureFlag: featureFlag,
-                                                                           userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge2Match).result
+                                                                      featureFlag: featureFlag,
+                                                                      user: optimizely.createUserContext(userId: kUserId,
+                                                                                                         attributes: kAttributesRolloutAge2Match)).result
         XCTAssertNil(pair)
     }
     
@@ -417,9 +417,9 @@ extension DecisionServiceTests_Features {
         self.config.project.rollouts[0].experiments[0].trafficAllocation[0].endOfRange = 0
         self.config.project.rollouts[0].experiments[2].trafficAllocation[0].endOfRange = 0
         let pair = self.decisionService.getVariationForFeatureRollout(config: config,
-                                                                           featureFlag: featureFlag,
-                                                                           userId: kUserId,
-                                                                           attributes: kAttributesRolloutAge1Match).result
+                                                                      featureFlag: featureFlag,
+                                                                      user: optimizely.createUserContext(userId: kUserId,
+                                                                                                         attributes: kAttributesRolloutAge1Match)).result
         XCTAssertNil(pair?.variation)
     }
 }
@@ -431,17 +431,17 @@ extension DecisionServiceTests_Features {
     func testGetVariationForFeatureWhenExperimentMatch() {
         let pair = self.decisionService.getVariationForFeature(config: config,
                                                                featureFlag: featureFlag,
-                                                               userId: kUserId,
-                                                               attributes: kAttributesCountryMatch).result
-        XCTAssert(pair?.experiment.key == kExperimentKey)
+                                                               user: optimizely.createUserContext(userId: kUserId,
+                                                                                                  attributes: kAttributesCountryMatch)).result
+        XCTAssert(pair?.experiment?.key == kExperimentKey)
         XCTAssert(pair?.variation.key == kVariationKeyD)
     }
     
     func testGetVariationForFeatureWhenExperimentNotMatchAndRolloutNotExist() {
         let pair = self.decisionService.getVariationForFeature(config: config,
                                                                featureFlag: featureFlag,
-                                                               userId: kUserId,
-                                                               attributes: kAttributesCountryNotMatch).result
+                                                               user: optimizely.createUserContext(userId: kUserId,
+                                                                                                  attributes: kAttributesCountryNotMatch)).result
         XCTAssertNil(pair)
     }
     
@@ -453,10 +453,16 @@ extension DecisionServiceTests_Features {
         
         let pair = self.decisionService.getVariationForFeature(config: config,
                                                                featureFlag: featureFlag,
-                                                               userId: kUserId,
-                                                               attributes: kAttributesCountryNotMatch).result
-        XCTAssert(pair?.experiment.id == kRolloutExperimentId3)
-        XCTAssert(pair?.variation.key == kRolloutVariationKeyC)
+                                                               user: optimizely.createUserContext(userId: kUserId,
+                                                                                                  attributes: kAttributesCountryNotMatch)).result
+        if let pair = pair {
+            XCTAssert(pair.experiment?.id == kRolloutExperimentId3)
+            XCTAssert(pair.variation.key == kRolloutVariationKeyC)
+            XCTAssert(pair.experiment?.id == kRolloutExperimentId3)
+            XCTAssert(pair.variation.key == kRolloutVariationKeyC)
+        } else {
+            XCTFail()
+        }
     }
     
 }

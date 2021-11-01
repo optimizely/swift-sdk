@@ -118,7 +118,7 @@ class SamplesForAPI {
 
         let user = optimizely.createUserContext(userId: "user_123", attributes: attributes)
         
-        let decision = user.decide(key: "show_coupon", options: [.includeReasons])
+        var decision = user.decide(key: "show_coupon", options: [.includeReasons])
         
         if let variationKey = decision.variationKey {
             print("[decide] flag decision to variation: \(variationKey)")
@@ -134,6 +134,41 @@ class SamplesForAPI {
         } catch {
             print("[track] error: \(error)")
         }
+        
+        // Forced Decisions
+        
+        let context1 = OptimizelyDecisionContext(flagKey: "flag-1")
+        let context2 = OptimizelyDecisionContext(flagKey: "flag-1", ruleKey: "ab-test-1")
+        let context3 = OptimizelyDecisionContext(flagKey: "flag-1", ruleKey: "delivery-1")
+        let forced1 = OptimizelyForcedDecision(variationKey: "variation-a")
+        let forced2 = OptimizelyForcedDecision(variationKey: "variation-b")
+        let forced3 = OptimizelyForcedDecision(variationKey: "on")
+        
+        // (1) set a forced decision for a flag
+
+        var success = user.setForcedDecision(context: context1, decision: forced1)
+        decision = user.decide(key: "flag-1")
+
+        // (2) set a forced decision for an ab-test rule
+
+        success = user.setForcedDecision(context: context2, decision: forced2)
+        decision = user.decide(key: "flag-1")
+
+        // (3) set a forced variation for a delivery rule
+
+        success = user.setForcedDecision(context: context3,
+                                         decision: forced3)
+        decision = user.decide(key: "flag-1")
+
+        // (4) get forced variations
+
+        let forcedDecision = user.getForcedDecision(context: context1)
+        print("[ForcedDecision] variationKey = \(forcedDecision!.variationKey)")
+
+        // (5) remove forced variations
+
+        success = user.removeForcedDecision(context: context2)
+        success = user.removeAllForcedDecisions()
     }
     
     // MARK: - OptimizelyConfig

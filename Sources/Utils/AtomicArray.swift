@@ -18,22 +18,33 @@ import Foundation
 
 class AtomicArray<T>: AtomicWrapper {
     private var _property: [T]
-         
+    
+    var property: [T] {
+        get {
+            return getAtomic {
+                _property
+            }!
+        }
+        set {
+            performAtomic {
+                self._property = newValue
+            }
+        }
+    }
+             
     init(_ property: [T] = []) {
         self._property = property
     }
     
-    subscript(index: Int) -> T? {
+    subscript(index: Int) -> T {
         get {
             return getAtomic {
                 _property[index]
-            }
+            }!
         }
         set {
             performAtomic {
-                if let value = newValue {
-                    self._property[index] = value
-                }
+                self._property[index] = newValue
             }
         }
     }
@@ -55,6 +66,31 @@ class AtomicArray<T>: AtomicWrapper {
             self._property.append(contentsOf: items)
         }
     }
+    
+    func firstIndex(where predicate: (T) throws -> Bool) rethrows -> Int? {
+        return getAtomic {
+            try _property.firstIndex(where: predicate)
+        }
+    }
+    
+    func filter(_ isIncluded: (T) throws -> Bool) rethrows -> [T] {
+        return getAtomic {
+            try _property.filter(isIncluded)
+        }!
+    }
+    
+    func remove(at i: Int) -> T {
+        return getAtomic {
+            _property.remove(at: i)
+        }!
+    }
+    
+    func removeAll() {
+        performAtomic {
+            self._property.removeAll()
+        }
+    }
+
 }
 
 // MARK: - AtomicWrapper

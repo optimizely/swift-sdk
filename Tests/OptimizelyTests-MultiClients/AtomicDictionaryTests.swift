@@ -36,6 +36,27 @@ class AtomicDictionaryTests: XCTestCase {
         XCTAssert(a.count == 1)
         XCTAssert(a["k1"] == nil)
         XCTAssert(a["k2"] == 2)
+        
+        // validate copying not holding reference
+        
+        let b = AtomicDictionary<String, Int>()
+        b["k1"] = 1
+        b["k2"] = 2
+
+        let c = AtomicDictionary<String, Int>()
+        c.property = b.property
+        XCTAssert(c.count == 2)
+        XCTAssert(c["k1"] == 1)
+        XCTAssert(c["k2"] == 2)
+        b["k1"] = 100
+        b["k2"] = 200
+        XCTAssert(c["k1"] == 1)
+        XCTAssert(c["k2"] == 2)
+        
+        // removeAll
+        
+        b.removeAll()
+        XCTAssertEqual(b.count, 0)
     }
     
     func testConcurrentReadWrite() {
@@ -59,4 +80,23 @@ class AtomicDictionaryTests: XCTestCase {
         XCTAssertEqual(a.count, numIterations)
     }
     
+    func testConcurrentCopy() {
+        let num = 10
+        let a = AtomicDictionary<Int, Int>()
+        (0..<num).forEach{ a[$0] = $0 + 1234 }
+        
+        let b = AtomicDictionary<Int, Int>()
+
+        let result = OTUtils.runConcurrent(count: 10, timeoutInSecs: 60) { idx in
+            for _ in 0..<10 {
+                b.property = a.property
+                XCTAssert(b.count == num)
+            }
+            
+            XCTAssert(b.property == a.property)
+        }
+        
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
+
 }

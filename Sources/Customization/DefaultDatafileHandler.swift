@@ -51,8 +51,17 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
         
         downloadQueue.async {
             
+            func returnCached(_ result: OptimizelyResult<Data?>? = nil) -> OptimizelyResult<Data?> {
+                if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
+                    return .success(data)
+                } else {
+                    return result ?? .failure(.datafileLoadingFailed(sdkKey))
+                }
+            }
+        
             if self.reachability.shouldBlockNetworkAccess() {
-                completionHandler(.failure(.datafileDownloadFailed("NetworkReachability down")))
+                let result = OptimizelyResult<Data?>.failure(.datafileDownloadFailed("NetworkReachability down"))
+                completionHandler(returnCached(result))
                 return
             }
             
@@ -61,37 +70,30 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
             guard let request = self.getRequest(sdkKey: sdkKey) else { return }
             
             let task = session.downloadTask(with: request) { (url, response, error) in
-                var result = OptimizelyResult<Data?>.failure(.datafileLoadingFailed(sdkKey))
-
-                let returnCached = {
-                    if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
-                        result = .success(data)
-                    }
-                }
+                var result = OptimizelyResult<Data?>.failure(.generic)
                 
                 if error != nil {
                     self.logger.e(error.debugDescription)
-                    result = .failure(.datafileDownloadFailed(error.debugDescription))
-                    returnCached() // error recovery
+                    result = returnCached(.failure(.datafileDownloadFailed(error.debugDescription)))  // error recovery
                 } else if let response = response as? HTTPURLResponse {
                     switch response.statusCode {
                     case 200:
                         if let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url) {
                             result = .success(data)
                         } else {
-                            returnCached() // error recovery
+                            result = returnCached() // error recovery
                         }
                     case 304:
                         self.logger.d("The datafile was not modified and won't be downloaded again")
                         
                         if returnCacheIfNoChange {
-                            returnCached()
+                            result = returnCached()
                         } else {
                             result = .success(nil)
                         }
                     default:
                         self.logger.i("got response code \(response.statusCode)")
-                        returnCached() // error recovery
+                        result = returnCached() // error recovery
                     }
                 }
                 

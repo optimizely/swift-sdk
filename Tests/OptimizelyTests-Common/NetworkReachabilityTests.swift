@@ -16,7 +16,17 @@
 
 import XCTest
 
-class ReachabilityTests: XCTestCase {
+class NetworkReachabilityTests: XCTestCase {
+    
+    let sdkKey = "localcdnTestSDKKey"
+
+    override func setUp() {
+        OTUtils.createDocumentDirectoryIfNotAvailable()
+    }
+
+    override func tearDown() {
+        OTUtils.clearAllTestStorage(including: sdkKey)
+    }
 
     // Reachability (NWPathMonitor) can be tested with real devices only (no simulators), but framework logic testing is not supported on devices.
     // We mock reachability to test core functions on simulators.
@@ -110,7 +120,6 @@ class ReachabilityTests: XCTestCase {
     func testFetchDatafile_numContiguousFails() {
         let handler = MockDatafileHandler(withError: true)
         let reachability = handler.reachability
-        let sdkKey = "localcdnTestSDKKey"
 
         var exp = expectation(description: "r")
         handler.downloadDatafile(sdkKey: sdkKey) { _ in exp.fulfill() }
@@ -156,7 +165,6 @@ class ReachabilityTests: XCTestCase {
     func testFetchDatafile_checkReachability() {
         let handler = MockDatafileHandler(withError: true)
         let reachability = handler.reachability
-        let sdkKey = "localcdnTestSDKKey"
         
         reachability.stop()
         reachability.isConnected = false
@@ -172,6 +180,7 @@ class ReachabilityTests: XCTestCase {
             
             let exp = expectation(description: "r")
             handler.downloadDatafile(sdkKey: sdkKey) { _ in exp.fulfill() }
+
             wait(for: [exp], timeout: 3)
             
             // reachability check will kick in when maxContiguousFails is reached.
@@ -180,6 +189,42 @@ class ReachabilityTests: XCTestCase {
             //print("numContiguousFails: \(handler.numContiguousFails)")
             XCTAssertEqual(reachability.numContiguousFails, expNumFails)
         }
+    }
+    
+    func testFetchDatafile_checkReachability_Cache() {
+        
+        // no valid datafile cache
+        
+        let handler = MockDatafileHandler(withError: true)
+        let reachability = handler.reachability
+        
+        reachability.stop()
+        reachability.isConnected = false
+        reachability.numContiguousFails = 2
+        reachability.maxContiguousFails = 1
+        
+        let exp1 = expectation(description: "r")
+        handler.downloadDatafile(sdkKey: sdkKey) { result in
+            if case .success = result  {
+                XCTFail()   // no cache available
+            }
+            exp1.fulfill()
+        }
+        wait(for: [exp1], timeout: 3)
+
+        // set up valid datafile cache
+        OTUtils.createDatafileCache(sdkKey: sdkKey)
+
+        let exp2 = expectation(description: "r")
+        handler.downloadDatafile(sdkKey: sdkKey) { result in
+            if case let .success(data) = result  {
+                XCTAssert(data != nil)
+            } else {
+                XCTFail()   // return cached datafile on error
+            }
+            exp2.fulfill()
+        }
+        wait(for: [exp2], timeout: 3)
     }
 
     func testEventDispatch_checkReachability() {

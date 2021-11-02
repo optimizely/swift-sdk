@@ -146,7 +146,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 }
                 
                 // we've exhuasted our failure count.  Give up and try the next time a event
-                // is queued or someone calls flush.
+                // is queued or someone calls flush (changed to >= so that retried exactly "maxFailureCount" times).
                 if failureCount >= DefaultValues.maxFailureCount {
                     self.logger.e(.eventSendRetyFailed(failureCount))
                     break

@@ -60,7 +60,10 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
             }
         
             if self.reachability.shouldBlockNetworkAccess() {
-                let result = OptimizelyResult<Data?>.failure(.datafileDownloadFailed("NetworkReachability down"))
+                let optError = OptimizelyError.datafileDownloadFailed("NetworkReachability down")
+                self.logger.e(optError)
+
+                let result = OptimizelyResult<Data?>.failure(optError)
                 completionHandler(returnCached(result))
                 return
             }
@@ -73,8 +76,9 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                 var result = OptimizelyResult<Data?>.failure(.generic)
                 
                 if error != nil {
-                    self.logger.e(error.debugDescription)
-                    result = returnCached(.failure(.datafileDownloadFailed(error.debugDescription)))  // error recovery
+                    let optError = OptimizelyError.datafileDownloadFailed(error.debugDescription)
+                    self.logger.e(optError)
+                    result = returnCached(.failure(optError))  // error recovery
                 } else if let response = response as? HTTPURLResponse {
                     switch response.statusCode {
                     case 200:

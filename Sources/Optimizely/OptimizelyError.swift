@@ -107,7 +107,7 @@ extension OptimizelyError: CustomStringConvertible, ReasonProtocol {
         // These error messages not validated by FSC
         case .experimentKeyInvalid(let key):                message = "Experiment key (\(key)) is not in datafile. It is either invalid, paused, or archived."
         case .experimentIdInvalid(let id):                  message = "Experiment ID (\(id)) is not in datafile."
-        case .experimentHasNoTrafficAllocation(let key):    message = "No traffic allocation rules are defined for experiement (\(key))."
+        case .experimentHasNoTrafficAllocation(let key):    message = "No traffic allocation rules are defined for experiment (\(key))."
         case .variationKeyInvalid(let expKey, let varKey):  message = "No variation key (\(varKey)) defined in datafile for experiment (\(expKey))."
         case .variationIdInvalid(let expKey, let varId):    message = "No variation ID (\(varId)) defined in datafile for experiment (\(expKey))."
         case .variationUnknown(let userId, let key):        message = "User (\(userId)) does not meet conditions to be in experiment/feature (\(key))."

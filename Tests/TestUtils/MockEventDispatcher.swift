@@ -34,6 +34,20 @@ class MockEventDispatcher: OPTEventDispatcher {
     }
 }
 
+class MockDefaultEventDispatcher: DefaultEventDispatcher {
+    var withError: Bool
+
+    init(withError: Bool) {
+        self.withError = withError
+        super.init()
+    }
+
+    override func getSession() -> URLSession {
+        return MockUrlSession(withError: withError)
+    }
+}
+
+
 class DumpEventDispatcher: DefaultEventDispatcher {
     public var totalEventsSent: Int
 

@@ -36,6 +36,9 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     
     // and our download queue to speed things up.
     let downloadQueue = DispatchQueue(label: "DefaultDatafileHandlerQueue")
+    
+    // network reachability
+    let reachability = NetworkReachability(maxContiguousFails: 1)
 
     public required init() {}
     
@@ -47,44 +50,58 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                                completionHandler: @escaping DatafileDownloadCompletionHandler) {
         
         downloadQueue.async {
+            
+            func returnCached(_ result: OptimizelyResult<Data?>? = nil) -> OptimizelyResult<Data?> {
+                if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
+                    return .success(data)
+                } else {
+                    return result ?? .failure(.datafileLoadingFailed(sdkKey))
+                }
+            }
+        
+            if self.reachability.shouldBlockNetworkAccess() {
+                let optError = OptimizelyError.datafileDownloadFailed("NetworkReachability down")
+                self.logger.e(optError)
+
+                let result = OptimizelyResult<Data?>.failure(optError)
+                completionHandler(returnCached(result))
+                return
+            }
+            
             let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
             
             guard let request = self.getRequest(sdkKey: sdkKey) else { return }
             
             let task = session.downloadTask(with: request) { (url, response, error) in
-                var result = OptimizelyResult<Data?>.failure(.datafileLoadingFailed(sdkKey))
-
-                let returnCached = {
-                    if let data = self.loadSavedDatafile(sdkKey: sdkKey) {
-                        result = .success(data)
-                    }
-                }
+                var result = OptimizelyResult<Data?>.failure(.generic)
                 
                 if error != nil {
-                    self.logger.e(error.debugDescription)
-                    result = .failure(.datafileDownloadFailed(error.debugDescription))
-                    returnCached() // error recovery
+                    let optError = OptimizelyError.datafileDownloadFailed(error.debugDescription)
+                    self.logger.e(optError)
+                    result = returnCached(.failure(optError))  // error recovery
                 } else if let response = response as? HTTPURLResponse {
                     switch response.statusCode {
                     case 200:
                         if let data = self.getResponseData(sdkKey: sdkKey, response: response, url: url) {
                             result = .success(data)
                         } else {
-                            returnCached() // error recovery
+                            result = returnCached() // error recovery
                         }
                     case 304:
                         self.logger.d("The datafile was not modified and won't be downloaded again")
                         
                         if returnCacheIfNoChange {
-                            returnCached()
+                            result = returnCached()
                         } else {
                             result = .success(nil)
                         }
                     default:
                         self.logger.i("got response code \(response.statusCode)")
-                        returnCached() // error recovery
+                        result = returnCached() // error recovery
                     }
                 }
+                
+                self.reachability.updateNumContiguousFails(isError: (error != nil))
                 
                 completionHandler(result)
             }
@@ -244,6 +261,24 @@ extension DefaultDatafileHandler {
                                 updateInterval: Int,
                                 datafileChangeNotification: ((Data) -> Void)?) {
         let beginDownloading = Date()
+
+        let scheduleNextUpdate: () -> Void = {
+            guard self.hasPeriodicInterval(sdkKey: sdkKey) else { return }
+            
+            // adjust the next fire time so that events will be fired at fixed interval regardless of the download latency
+            // if latency is too big (or returning from background mode), fire the next event immediately once
+            
+            var interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
+            let delay = Int(Date().timeIntervalSince(beginDownloading))
+            interval -= delay
+            if interval < 0 {
+                interval = 0
+            }
+            
+            self.logger.d("next datafile download is \(interval) seconds \(Date())")
+            self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: interval, datafileChangeNotification: datafileChangeNotification)
+        }
+        
         self.downloadDatafile(sdkKey: sdkKey) { (result) in
             switch result {
             case .success(let data):
@@ -255,20 +290,7 @@ extension DefaultDatafileHandler {
                 self.logger.e(error.reason)
             }
             
-            if self.hasPeriodicInterval(sdkKey: sdkKey) {
-                // adjust the next fire time so that events will be fired at fixed interval regardless of the download latency
-                // if latency is too big (or returning from background mode), fire the next event immediately once
-                
-                var interval = self.timers.property?[sdkKey]?.interval ?? updateInterval
-                let delay = Int(Date().timeIntervalSince(beginDownloading))
-                interval -= delay
-                if interval < 0 {
-                    interval = 0
-                }
-                
-                self.logger.d("next datafile download is \(interval) seconds \(Date())")
-                self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: interval, datafileChangeNotification: datafileChangeNotification)
-            }
+            scheduleNextUpdate()
         }
     }
     

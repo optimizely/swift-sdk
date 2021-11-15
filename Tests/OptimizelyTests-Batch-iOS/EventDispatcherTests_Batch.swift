@@ -41,6 +41,7 @@ class EventDispatcherTests_Batch: XCTestCase {
     let kUserIdC = "789"
     
     var eventDispatcher: TestEventDispatcher!
+    let eventTimeout: TimeInterval = 10
     
     static let keyTestEventFileName = "OPTEventQueue-Test-"
     var uniqueFileName: String {
@@ -464,7 +465,7 @@ extension EventDispatcherTests_Batch {
 
         eventDispatcher.close()
 
-        let maxFailureCount = 3 + 1   // DefaultEventDispatcher.maxFailureCount + 1
+        let maxFailureCount = 3   // DefaultEventDispatcher.maxFailureCount
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, maxFailureCount, "repeated the same request several times before giveup")
         
@@ -515,7 +516,7 @@ extension EventDispatcherTests_Batch {
             self.eventDispatcher.dispatchEvent(event: self.makeEventForDispatch(url: self.kUrlA, event: self.batchEventA), completionHandler: nil)
         }
 
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1)
 
@@ -536,7 +537,7 @@ extension EventDispatcherTests_Batch {
             self.dispatchMultipleEvents([(self.kUrlA, self.batchEventA)])
         }
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "events should not be sent until timer fires")
     }
     
@@ -583,7 +584,7 @@ extension EventDispatcherTests_Batch {
                                      (self.kUrlA, self.batchEventB)])
 
         // wait for the 1st batched event transmitted successfully
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
 
         // wait more for multiple timer fires to make sure there is no redandant sent out
         waitAsyncSeconds(5)
@@ -607,7 +608,7 @@ extension EventDispatcherTests_Batch {
                                      (self.kUrlA, self.batchEventB)])
 
         // wait for the first timer-fire
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         // tranmission is expected to fail
         XCTAssertEqual(eventDispatcher.eventQueue.count, 2, "all failed to transmit, so should keep all original events")
         
@@ -617,7 +618,7 @@ extension EventDispatcherTests_Batch {
         eventDispatcher.exp = expectation(description: "timer")
         
         // wait for the next timer-fire
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         
         XCTAssertEqual(eventDispatcher.eventQueue.count, 0, "all expected to get transmitted successfully")
     }
@@ -639,7 +640,7 @@ extension EventDispatcherTests_Batch {
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) add one more event, so batchSize hits and flushed
@@ -648,7 +649,7 @@ extension EventDispatcherTests_Batch {
 
         dispatchMultipleEvents([(kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on batchSize hit")
     }
     
@@ -672,7 +673,7 @@ extension EventDispatcherTests_Batch {
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) flush on revision-change notification
@@ -683,7 +684,7 @@ extension EventDispatcherTests_Batch {
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
         
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
     }
     
@@ -707,7 +708,7 @@ extension EventDispatcherTests_Batch {
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) flush on revision-change notification
@@ -718,7 +719,7 @@ extension EventDispatcherTests_Batch {
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
 
-        wait(for: [eventDispatcher.exp!], timeout: 10)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the projectId change")
     }
     
@@ -742,7 +743,7 @@ extension EventDispatcherTests_Batch {
         dispatchMultipleEvents([(kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) not flush on other datafile contents change
@@ -754,7 +755,7 @@ extension EventDispatcherTests_Batch {
         datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
         optimizely.config = try! ProjectConfig(datafile: datafile)
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on any other changes")
     }
     
@@ -780,7 +781,7 @@ extension EventDispatcherTests_Batch {
         let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
         try! optimizely.start(datafile: datafile)
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on the first datafile load")
     }
 }
@@ -928,7 +929,7 @@ extension EventDispatcherTests_Batch {
                                 (kUrlA, batchEventA),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (2) should flush/batch all on close()
@@ -951,7 +952,7 @@ extension EventDispatcherTests_Batch {
         dispatchMultipleEvents([(kUrlA, batchEventB),
                                 (kUrlA, batchEventA)])
         
-        wait(for: [eventDispatcher.exp!], timeout: 3)
+        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
         
         // (4) should flush/batch all on close()

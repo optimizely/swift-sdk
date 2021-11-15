@@ -51,6 +51,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     var timer = AtomicProperty<Timer>()
     var observers = [NSObjectProtocol]()
     
+    // network reachability
+    let reachability = NetworkReachability(maxContiguousFails: 1)
+
     public init(batchSize: Int = DefaultValues.batchSize,
                 backingStore: DataStoreType = .file,
                 dataStoreName: String = "OPTEventQueue",
@@ -143,8 +146,8 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 }
                 
                 // we've exhuasted our failure count.  Give up and try the next time a event
-                // is queued or someone calls flush.
-                if failureCount > DefaultValues.maxFailureCount {
+                // is queued or someone calls flush (changed to >= so that retried exactly "maxFailureCount" times).
+                if failureCount >= DefaultValues.maxFailureCount {
                     self.logger.e(.eventSendRetyFailed(failureCount))
                     break
                 }
@@ -174,8 +177,13 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
     
     open func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {
-        let config = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: config)
+        
+        if self.reachability.shouldBlockNetworkAccess() {
+            completionHandler(.failure(.eventDispatchFailed("NetworkReachability down")))
+            return
+        }
+        
+        let session = getSession()
         var request = URLRequest(url: event.url)
         request.httpMethod = "POST"
         request.httpBody = event.body
@@ -191,11 +199,18 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
                 self.logger.d("Event Sent")
                 completionHandler(.success(event.body))
             }
+            
+            self.reachability.updateNumContiguousFails(isError: (error != nil))
         }
         
         task.resume()
     }
     
+    func getSession() -> URLSession {
+        let config = URLSessionConfiguration.ephemeral
+        return URLSession(configuration: config)
+    }
+
 }
 
 // MARK: - internals

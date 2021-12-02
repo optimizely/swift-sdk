@@ -46,19 +46,6 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         let context = OptimizelyDecisionContext(flagKey: "feature_1")
         let d = OptimizelyForcedDecision(variationKey: "3324490562")
 
-        try? optimizely.start(datafile: "invalid datafile contents")
-
-        status = user.setForcedDecision(context: context, decision: d)
-        XCTAssertFalse(status)
-        result = user.getForcedDecision(context: context)
-        XCTAssertNil(result)
-        status = user.removeForcedDecision(context: context)
-        XCTAssertFalse(status)
-        status = user.removeAllForcedDecisions()
-        XCTAssertFalse(status)
-
-        try? optimizely.start(datafile: datafile)
-
         status = user.setForcedDecision(context: context, decision: d)
         XCTAssertTrue(status)
         result = user.getForcedDecision(context: context)

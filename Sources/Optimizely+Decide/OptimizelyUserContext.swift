@@ -169,11 +169,6 @@ extension OptimizelyUserContext {
     ///   - decision: A forced decision.
     /// - Returns: true if the forced decision has been set successfully.
     public func setForcedDecision(context: OptimizelyDecisionContext, decision: OptimizelyForcedDecision) -> Bool {
-        guard optimizely?.config != nil else {
-            logger.e(OptimizelyError.sdkNotReady)
-            return false
-        }
-        
         // create on the first setForcedDecision call
         
         if forcedDecisions == nil {
@@ -189,11 +184,6 @@ extension OptimizelyUserContext {
     ///   - context: A decision context
     /// - Returns: A forced decision or nil if forced decisions are not set for the decision context.
     public func getForcedDecision(context: OptimizelyDecisionContext) -> OptimizelyForcedDecision? {
-        guard optimizely?.config != nil else {
-            logger.e(OptimizelyError.sdkNotReady)
-            return nil
-        }
-        
         guard forcedDecisions != nil else { return nil }
         
         return findForcedDecision(context: context)
@@ -204,11 +194,6 @@ extension OptimizelyUserContext {
     ///   - context: A decision context.
     /// - Returns: true if the forced decision has been removed successfully.
     public func removeForcedDecision(context: OptimizelyDecisionContext) -> Bool {
-        guard optimizely?.config != nil else {
-            logger.e(OptimizelyError.sdkNotReady)
-            return false
-        }
-        
         guard let fds = forcedDecisions else { return false }
 
         if findForcedDecision(context: context) != nil {
@@ -222,11 +207,6 @@ extension OptimizelyUserContext {
     /// Removes all forced decisions bound to this user context.
     /// - Returns: true if forced decisions have been removed successfully.
     public func removeAllForcedDecisions() -> Bool {
-        guard optimizely?.config != nil else {
-            logger.e(OptimizelyError.sdkNotReady)
-            return false
-        }
-        
         if let fds = forcedDecisions {
             fds.removeAll()
         }

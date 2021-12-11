@@ -35,6 +35,9 @@ struct SchemaCollection: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
         for value in array {
+            
+            // TODO: polymorph?
+
             if let schema = value as? BucketDecisionSchema {
                 try container.encode(schema)
             } else if let schema = value as? AudienceDecisionSchema {
@@ -47,11 +50,13 @@ struct SchemaCollection: Encodable {
 // MARK: - BucketDecisionSchema
 
 struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
+    let MAX_TRAFFIC_VALUE = 10000
+
     let type = "bucket"
     let bucketKey: String
     var buckets = [Int]()
     
-    let MAX_TRAFFIC_VALUE = 10000
+    // JSON encoding
     
     enum CodingKeys: String, CodingKey {
         case type
@@ -124,6 +129,8 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
 struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible, Encodable {
     let type = "audience"
     let audiences: ConditionHolder
+    
+    // JSON encoding
     
     enum CodingKeys: String, CodingKey {
         case type

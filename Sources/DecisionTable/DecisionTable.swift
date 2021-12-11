@@ -23,18 +23,6 @@ class FlagDecisionTable: Encodable {
     let bodyInArray: [(String, String)]
     let compressed: Bool
     
-    enum CodingKeys: String, CodingKey {
-      case key, schemas, body, compressed
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(key, forKey: .key)
-        try container.encode(schemas, forKey: .schemas)
-        try container.encode(body, forKey: .body)
-        try container.encode(compressed, forKey: .compressed)
-    }
-
     init(key: String, schemas: [DecisionSchema], bodyInArray: [(String, String)], compressed: Bool) {
         self.key = key
         self.schemas = SchemaCollection(array: schemas)
@@ -89,6 +77,23 @@ class FlagDecisionTable: Encodable {
             return bst(input: input, rows: rows, start: middle, end: end)
         }
     }
+    
+    // JSON encoding
+    
+    enum CodingKeys: String, CodingKey {
+        case key
+        case schemas
+        case body
+        case compressed
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(key, forKey: .key)
+        try container.encode(schemas, forKey: .schemas)
+        try container.encode(body, forKey: .body)
+        try container.encode(compressed, forKey: .compressed)
+    }
         
 }
 
@@ -99,10 +104,12 @@ public class OptimizelyDecisionTables: Encodable {
     static var insufficientDecisionInput = false
     public static var modeUseDecisionTable = false
 
+    let sdkKey: String
     let tables: [String: FlagDecisionTable]
     let audiences: [Audience]
     
-    init(tables: [String: FlagDecisionTable] = [:], audiences: [Audience] = []) {
+    init(sdkKey: String, tables: [String: FlagDecisionTable] = [:], audiences: [Audience] = []) {
+        self.sdkKey = sdkKey
         self.tables = tables
         self.audiences = audiences
     }
@@ -117,13 +124,14 @@ public class OptimizelyDecisionTables: Encodable {
         return table.decide(user: user, options: options)
     }
     
-    // JSON
+    // JSON encoding
     
     var tablesArray: [FlagDecisionTable] {
         return Array(tables.values)
     }
 
     enum CodingKeys: String, CodingKey {
+        case sdkKey
         case tablesArray = "decisions"
         case audiences
     }
@@ -131,6 +139,7 @@ public class OptimizelyDecisionTables: Encodable {
     // this explicit encode method is required to support computed props (tablesArray) for coding
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(sdkKey, forKey: .sdkKey)
         try container.encode(tablesArray, forKey: .tablesArray)
         try container.encode(audiences, forKey: .audiences)
     }

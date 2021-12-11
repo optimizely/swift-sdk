@@ -56,18 +56,19 @@ public class DecisionTableGenerator {
         }
     
         let audiences = makeAllAudiences(config: config)
+        let sdkKey = optimizely.sdkKey
         
         // save original datafile for reference
         saveOriginalDatafileToFile(optimizely: optimizely)
         
-        let decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap, audiences: audiences)
-        saveDecisionTablesToFile(sdkKey: optimizely.sdkKey, decisionTables: decisionTables, suffix: "table")
+        let decisionTables = OptimizelyDecisionTables(sdkKey: sdkKey, tables: decisionTablesMap, audiences: audiences)
+        saveDecisionTablesToFile(sdkKey: sdkKey, decisionTables: decisionTables, suffix: "table")
         
-        let decisionTablesCompressed = OptimizelyDecisionTables(tables: decisionTablesMapCompressed, audiences: audiences)
-        saveDecisionTablesToFile(sdkKey: optimizely.sdkKey, decisionTables: decisionTablesCompressed, suffix: "table-compressed")
+        let decisionTablesCompressed = OptimizelyDecisionTables(sdkKey: sdkKey, tables: decisionTablesMapCompressed, audiences: audiences)
+        saveDecisionTablesToFile(sdkKey: sdkKey, decisionTables: decisionTablesCompressed, suffix: "table-compressed")
         
-        let decisionTablesCompressedRanges = OptimizelyDecisionTables(tables: decisionTablesMapCompressedRanges, audiences: audiences)
-        saveDecisionTablesToFile(sdkKey: optimizely.sdkKey, decisionTables: decisionTablesCompressedRanges, suffix: "table-compressed-ranges")
+        let decisionTablesCompressedRanges = OptimizelyDecisionTables(sdkKey: sdkKey, tables: decisionTablesMapCompressedRanges, audiences: audiences)
+        saveDecisionTablesToFile(sdkKey: sdkKey, decisionTables: decisionTablesCompressedRanges, suffix: "table-compressed-ranges")
 
         // set decision table for decide tests
         // optimizely.decisionTables = decisionTables

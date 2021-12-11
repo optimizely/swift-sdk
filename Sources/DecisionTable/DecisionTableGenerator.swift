@@ -57,6 +57,9 @@ public class DecisionTableGenerator {
     
         let audiences = makeAllAudiences(config: config)
         
+        // save original datafile for reference
+        saveOriginalDatafileToFile(optimizely: optimizely)
+        
         let decisionTables = OptimizelyDecisionTables(tables: decisionTablesMap, audiences: audiences)
         saveDecisionTablesToFile(sdkKey: optimizely.sdkKey, decisionTables: decisionTables, suffix: "table")
         
@@ -382,7 +385,7 @@ extension DecisionTableGenerator {
         return audiences
     }
     
-    static func saveDecisionTablesToFile(sdkKey: String, decisionTables: OptimizelyDecisionTables, suffix: String) {
+    static func saveOriginalDatafileToFile(optimizely: OptimizelyClient) {
         guard var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             print("FileManager saveDecisionTablesToFile error")
             return
@@ -399,14 +402,45 @@ extension DecisionTableGenerator {
             }
         }
         
+        let sdkKey = optimizely.sdkKey
+        if let data = optimizely.datafileHandler?.loadSavedDatafile(sdkKey: sdkKey),
+           let datafile = String(bytes: data, encoding: .utf8) {
+            
+            let filename = "\(sdkKey).json"
+            let urlOriginal = url.appendingPathComponent(filename)
+            try? datafile.write(to: urlOriginal, atomically: true, encoding: .utf8)
+        }
+    }
+        
+    static func saveDecisionTablesToFile(sdkKey: String, decisionTables: OptimizelyDecisionTables, suffix: String) {
+        guard var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            print("FileManager saveDecisionTablesToFile error")
+            return
+        }
+        
+        url.appendPathComponent("decisionTables")
+        
+        if !FileManager.default.fileExists(atPath: url.path) {
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("FileManager saveDecisionTablesToFile create folder error")
+                return
+            }
+        }
+                
         let filename = "\(sdkKey).\(suffix)"
         let urlText = url.appendingPathComponent(filename)
         let contentsInText = decisionTableInTextFormat(sdkKey: sdkKey, decisionTables: decisionTables)
         try? contentsInText.write(to: urlText, atomically: true, encoding: .utf8)
         
         let urlJson = url.appendingPathComponent("\(filename).json")
-        let contentsInJson = decisionTableInJSONFormat(sdkKey: sdkKey, decisionTables: decisionTables)
+        let contentsInJson = decisionTableInJSONFormat(sdkKey: sdkKey, decisionTables: decisionTables, pretty: false)
         try? contentsInJson.write(to: urlJson, atomically: true, encoding: .utf8)
+        
+        let urlJson2 = url.appendingPathComponent("\(filename).pretty.json")
+        let contentsInJson2 = decisionTableInJSONFormat(sdkKey: sdkKey, decisionTables: decisionTables, pretty: true)
+        try? contentsInJson2.write(to: urlJson2, atomically: true, encoding: .utf8)
     }
     
     static func decisionTableInTextFormat(sdkKey: String, decisionTables: OptimizelyDecisionTables) -> String {
@@ -418,7 +452,7 @@ extension DecisionTableGenerator {
             
             contents += "\n[Flag]: \(flagKey)\n"
             contents += "\n   [Schemas]\n"
-            table.schemas.forEach {
+            table.schemas.array.forEach {
                 contents += "\($0)\n"
             }
             
@@ -439,10 +473,12 @@ extension DecisionTableGenerator {
         return contents
     }
 
-    static func decisionTableInJSONFormat(sdkKey: String, decisionTables: OptimizelyDecisionTables) -> String {
+    static func decisionTableInJSONFormat(sdkKey: String, decisionTables: OptimizelyDecisionTables, pretty: Bool) -> String {
         do {
             let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
+            if pretty {
+                encoder.outputFormatting = [.prettyPrinted]
+            }
 
             let data = try encoder.encode(decisionTables)
             let str = String(data: data, encoding: .utf8) ?? "invalid JSON data"

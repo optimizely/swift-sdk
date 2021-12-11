@@ -21,14 +21,44 @@ protocol DecisionSchema: Encodable {
     var allLookupInputs: [String] { get }
 }
 
+extension DecisionSchema {
+    func encode(using encoder: JSONEncoder) throws -> Data {
+        try encoder.encode(self)
+    }
+}
+
+// DecisionSchema array wrapper for JSON encoding (since Codable not supported in Protocol)
+
+struct SchemaCollection: Encodable {
+    let array: [DecisionSchema]
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        for value in array {
+            if let schema = value as? BucketDecisionSchema {
+                try container.encode(schema)
+            } else if let schema = value as? AudienceDecisionSchema {
+                try container.encode(schema)
+            }
+        }
+    }
+}
+
 // MARK: - BucketDecisionSchema
 
 struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
+    let type = "bucket"
     let bucketKey: String
     var buckets = [Int]()
     
     let MAX_TRAFFIC_VALUE = 10000
     
+    enum CodingKeys: String, CodingKey {
+        case type
+        case bucketKey
+        case buckets
+    }
+        
     init(bucketKey: String, trafficAllocations: [TrafficAllocation]) {
         self.bucketKey = bucketKey
         
@@ -92,8 +122,14 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
 // MARK: - AudienceDecisionSchema
 
 struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible, Encodable {
+    let type = "audience"
     let audiences: ConditionHolder
     
+    enum CodingKeys: String, CodingKey {
+        case type
+        case audiences
+    }
+        
     init(audiences: ConditionHolder) {
         self.audiences = audiences
     }

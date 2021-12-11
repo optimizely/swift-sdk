@@ -18,18 +18,26 @@ import Foundation
 
 class FlagDecisionTable: Encodable {
     let key: String
-    let schemas: [DecisionSchema]
+    let schemas: SchemaCollection
     let body: [String: String]
     let bodyInArray: [(String, String)]
     let compressed: Bool
     
-    enum CodingKeys: CodingKey {
-      case key, body, compressed
+    enum CodingKeys: String, CodingKey {
+      case key, schemas, body, compressed
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(key, forKey: .key)
+        try container.encode(schemas, forKey: .schemas)
+        try container.encode(body, forKey: .body)
+        try container.encode(compressed, forKey: .compressed)
     }
 
     init(key: String, schemas: [DecisionSchema], bodyInArray: [(String, String)], compressed: Bool) {
         self.key = key
-        self.schemas = schemas
+        self.schemas = SchemaCollection(array: schemas)
         self.bodyInArray = bodyInArray
         self.body = Dictionary(uniqueKeysWithValues: bodyInArray)
         self.compressed = compressed
@@ -37,7 +45,7 @@ class FlagDecisionTable: Encodable {
     
     func decide(user: OptimizelyUserContext,
                 options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
-        let lookupInput = schemas.map { $0.makeLookupInput(user: user) }.joined()
+        let lookupInput = schemas.array.map { $0.makeLookupInput(user: user) }.joined()
         
         var decision: String?
         if compressed {
@@ -122,9 +130,9 @@ public class OptimizelyDecisionTables: Encodable {
     
     // this explicit encode method is required to support computed props (tablesArray) for coding
     public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(tablesArray, forKey: .tablesArray)
-            try container.encode(audiences, forKey: .audiences)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(tablesArray, forKey: .tablesArray)
+        try container.encode(audiences, forKey: .audiences)
     }
 
 }
@@ -145,7 +153,7 @@ extension OptimizelyDecisionTables {
         // create random attribute values from audience-decision-schemas
         
         var attributes = [String: Any]()
-        table.schemas.forEach { schema in
+        table.schemas.array.forEach { schema in
             if let schema = schema as? AudienceDecisionSchema {
                 let randomAttributes = schema.randomAttributes(optimizely: optimizely)
                 randomAttributes.forEach { (attributeKey, attributeValue) in

@@ -16,7 +16,7 @@
 
 import Foundation
 
-protocol DecisionSchema {
+protocol DecisionSchema: Encodable {
     func makeLookupInput(user: OptimizelyUserContext) -> String
     var allLookupInputs: [String] { get }
 }
@@ -91,7 +91,7 @@ struct BucketDecisionSchema: DecisionSchema, CustomStringConvertible {
 
 // MARK: - AudienceDecisionSchema
 
-struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
+struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible, Encodable {
     let audiences: ConditionHolder
     
     init(audiences: ConditionHolder) {
@@ -166,7 +166,7 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible {
 
 // MARK: - ErrorDecisionSchema
 
-struct ErrorDecisionSchema: DecisionSchema, CustomStringConvertible {
+struct ErrorDecisionSchema: DecisionSchema, CustomStringConvertible, Encodable {
     let name: String
     
     init(name: String) {
@@ -230,7 +230,7 @@ extension BucketDecisionSchema {
     }
     
     func indexForLetter(_ letter: String) -> Int {
-        //return Int(Character(letter).asciiValue!) - startAsciiValue
+        // return Int(Character(letter).asciiValue!) - startAsciiValue
         return Int(letter)!
     }
     
@@ -275,4 +275,3 @@ extension BucketDecisionSchema {
     }
     
 }
-

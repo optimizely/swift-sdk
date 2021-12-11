@@ -16,13 +16,17 @@
 
 import Foundation
 
-class FlagDecisionTable {
+class FlagDecisionTable: Encodable {
     let key: String
     let schemas: [DecisionSchema]
     let body: [String: String]
     let bodyInArray: [(String, String)]
     let compressed: Bool
     
+    enum CodingKeys: CodingKey {
+      case key, body, compressed
+    }
+
     init(key: String, schemas: [DecisionSchema], bodyInArray: [(String, String)], compressed: Bool) {
         self.key = key
         self.schemas = schemas
@@ -80,7 +84,7 @@ class FlagDecisionTable {
         
 }
 
-public class OptimizelyDecisionTables {
+public class OptimizelyDecisionTables: Encodable {
     static var modeGenerateDecisionTable = false
     static var schemasForGenerateDecisionTable = [DecisionSchema]()
     static var inputForGenerateDecisionTable = ""
@@ -104,6 +108,25 @@ public class OptimizelyDecisionTables {
         
         return table.decide(user: user, options: options)
     }
+    
+    // JSON
+    
+    var tablesArray: [FlagDecisionTable] {
+        return Array(tables.values)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case tablesArray = "decisions"
+        case audiences
+    }
+    
+    // this explicit encode method is required to support computed props (tablesArray) for coding
+    public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(tablesArray, forKey: .tablesArray)
+            try container.encode(audiences, forKey: .audiences)
+    }
+
 }
 
 // MARK: - Utils

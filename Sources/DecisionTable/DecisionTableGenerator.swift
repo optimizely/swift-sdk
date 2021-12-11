@@ -400,8 +400,16 @@ extension DecisionTableGenerator {
         }
         
         let filename = "\(sdkKey).\(suffix)"
-        url.appendPathComponent(filename)
+        let urlText = url.appendingPathComponent(filename)
+        let contentsInText = decisionTableInTextFormat(sdkKey: sdkKey, decisionTables: decisionTables)
+        try? contentsInText.write(to: urlText, atomically: true, encoding: .utf8)
         
+        let urlJson = url.appendingPathComponent("\(filename).json")
+        let contentsInJson = decisionTableInJSONFormat(sdkKey: sdkKey, decisionTables: decisionTables)
+        try? contentsInJson.write(to: urlJson, atomically: true, encoding: .utf8)
+    }
+    
+    static func decisionTableInTextFormat(sdkKey: String, decisionTables: OptimizelyDecisionTables) -> String {
         var contents = "SDKKey: \(sdkKey)\n"
         
         let sortedFlagKeys = decisionTables.tables.keys.sorted { $0 < $1 }
@@ -427,8 +435,21 @@ extension DecisionTableGenerator {
                 contents += "   \(audience.name) (\(audience.id)) \(audience.conditions)\n"
             }
         }
-        
-        try? contents.write(to: url, atomically: true, encoding: .utf8)
+
+        return contents
+    }
+
+    static func decisionTableInJSONFormat(sdkKey: String, decisionTables: OptimizelyDecisionTables) -> String {
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+
+            let data = try encoder.encode(decisionTables)
+            let str = String(data: data, encoding: .utf8) ?? "invalid JSON data"
+            return str
+        } catch {
+            return "JSON failed: \(error)"
+        }
     }
 
 }

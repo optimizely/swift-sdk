@@ -1,5 +1,5 @@
 //
-// Copyright 2021, Optimizely, Inc. and contributors
+// Copyright 2021-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,9 @@ extension OptimizelyClient {
         
         // check forced-decisions first
         
-        let forcedDecisionResponse = user.findValidatedForcedDecision(context: OptimizelyDecisionContext(flagKey: key), options: allOptions)
+        let forcedDecisionResponse = decisionService.findValidatedForcedDecision(config: config,
+                                                                                 user: user,
+                                                                                 context: OptimizelyDecisionContext(flagKey: key))
         reasons.merge(forcedDecisionResponse.reasons)
         
         if let variation = forcedDecisionResponse.result {
@@ -176,14 +178,6 @@ extension OptimizelyClient {
 
 extension OptimizelyClient {
     
-    func getFlagVariationByKey(flagKey: String, variationKey: String) -> Variation? {
-        if let variations = config?.flagVariationsMap[flagKey] {
-            return variations.filter { $0.key == variationKey }.first
-        }
-        
-        return nil
-    }
-
     func getDecisionVariableMap(feature: FeatureFlag,
                                 variation: Variation?,
                                 enabled: Bool) -> DecisionResponse<[String: Any]> {

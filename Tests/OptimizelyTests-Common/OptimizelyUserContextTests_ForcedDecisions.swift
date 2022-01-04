@@ -432,8 +432,7 @@ class OptimizelyUserContextTests_ForcedDecisions: XCTestCase {
         XCTAssertNil(user.getForcedDecision(context: OptimizelyDecisionContext(flagKey: "a")))
         XCTAssertFalse(user.removeForcedDecision(context: OptimizelyDecisionContext(flagKey: "a")))
         XCTAssertTrue(user.removeAllForcedDecisions())    // removeAll always returns true
-        XCTAssertNil(user.findForcedDecision(context: OptimizelyDecisionContext(flagKey: "a")))
-        XCTAssertNil(user.findValidatedForcedDecision(context: OptimizelyDecisionContext(flagKey: "a",ruleKey: "b")).result)
+        XCTAssertNil(user.getForcedDecision(context: OptimizelyDecisionContext(flagKey: "a")))
     }
     
     func testClone() {

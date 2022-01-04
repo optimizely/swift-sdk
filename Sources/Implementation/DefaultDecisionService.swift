@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -321,8 +321,9 @@ class DefaultDecisionService: OPTDecisionService {
         
         // check forced-decision first
         
-        let forcedDecisionResponse = user.findValidatedForcedDecision(context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: rule.key),
-                                                                      options: options)
+        let forcedDecisionResponse = findValidatedForcedDecision(config: config,
+                                                                 user: user,
+                                                                 context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: rule.key))
         reasons.merge(forcedDecisionResponse.reasons)
         
         if let variation = forcedDecisionResponse.result {
@@ -353,8 +354,9 @@ class DefaultDecisionService: OPTDecisionService {
         // check forced-decision first
         
         let rule = rules[ruleIndex]
-        let forcedDecisionResponse = user.findValidatedForcedDecision(context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: rule.key),
-                                                                      options: options)
+        let forcedDecisionResponse = findValidatedForcedDecision(config: config,
+                                                                 user: user,
+                                                                 context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: rule.key))
         reasons.merge(forcedDecisionResponse.reasons)
         
         if let variation = forcedDecisionResponse.result {
@@ -423,6 +425,29 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         return bucketingId
+    }
+    
+    func findValidatedForcedDecision(config: ProjectConfig,
+                                     user: OptimizelyUserContext,
+                                     context: OptimizelyDecisionContext) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons()
+        
+        if let variationKey = user.getForcedDecision(context: context)?.variationKey {
+            let userId = user.userId
+            
+            if let variation = config.getFlagVariationByKey(flagKey: context.flagKey, variationKey: variationKey) {
+                let info = LogMessage.userHasForcedDecision(userId, context.flagKey, context.ruleKey, variationKey)
+                logger.i(info)
+                reasons.addInfo(info)
+                return DecisionResponse(result: variation, reasons: reasons)
+            } else {
+                let info = LogMessage.userHasForcedDecisionButInvalid(userId, context.flagKey, context.ruleKey)
+                logger.i(info)
+                reasons.addInfo(info)
+            }
+        }
+        
+        return DecisionResponse(result: nil, reasons: reasons)
     }
     
 }

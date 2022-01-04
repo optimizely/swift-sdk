@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,10 +33,8 @@ protocol OPTDecisionService {
      
      - Parameter config: The project configuration.
      - Parameter experiment: The experiment in which to bucket the user.
-     - Parameter userId: The ID of the user.
-     - Parameter attributes: User attributes
+     - Parameter user: The user context.
      - Parameter options: An array of decision options
-     - Parameter reasons: A struct to collect decision reasons
      - Returns: The variation assigned to the specified user ID for an experiment.
      */
     func getVariation(config: ProjectConfig,
@@ -48,10 +46,8 @@ protocol OPTDecisionService {
      Get a variation the user is bucketed into for the given FeatureFlag
      - Parameter config: The project configuration.
      - Parameter featureFlag: The feature flag the user wants to access.
-     - Parameter userId: The ID of the user.
-     - Parameter attributes: User attributes
+     - Parameter user: The user context.
      - Parameter options: An array of decision options
-     - Parameter reasons: A struct to collect decision reasons
      - Returns: The variation assigned to the specified user ID for a feature flag.
      */
     func getVariationForFeature(config: ProjectConfig,
@@ -59,4 +55,15 @@ protocol OPTDecisionService {
                                 user: OptimizelyUserContext,
                                 options: [OptimizelyDecideOption]?) -> DecisionResponse<FeatureDecision>
     
+    /**
+     Get a variation the user is bucketed into for the given FeatureFlag
+     - Parameter config: The project configuration.
+     - Parameter user: The user context.
+     - Parameter context: The decision context.
+     - Returns: The validated variation wrapped in DecisionResponse with reasons.
+     */
+    func findValidatedForcedDecision(config: ProjectConfig,
+                                     user: OptimizelyUserContext,
+                                     context: OptimizelyDecisionContext) -> DecisionResponse<Variation>
+
 }

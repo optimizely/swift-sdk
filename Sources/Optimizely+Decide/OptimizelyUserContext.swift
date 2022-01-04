@@ -1,5 +1,5 @@
 //
-// Copyright 2021, Optimizely, Inc. and contributors
+// Copyright 2021-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -184,9 +184,9 @@ extension OptimizelyUserContext {
     ///   - context: A decision context
     /// - Returns: A forced decision or nil if forced decisions are not set for the decision context.
     public func getForcedDecision(context: OptimizelyDecisionContext) -> OptimizelyForcedDecision? {
-        guard forcedDecisions != nil else { return nil }
+        guard let fds = forcedDecisions else { return nil }
         
-        return findForcedDecision(context: context)
+        return fds[context]
     }
     
     /// Removes the forced decision for a given decision context.
@@ -196,7 +196,7 @@ extension OptimizelyUserContext {
     public func removeForcedDecision(context: OptimizelyDecisionContext) -> Bool {
         guard let fds = forcedDecisions else { return false }
 
-        if findForcedDecision(context: context) != nil {
+        if getForcedDecision(context: context) != nil {
             fds[context] = nil
             return true
         }
@@ -212,32 +212,6 @@ extension OptimizelyUserContext {
         }
         
         return true
-    }
-    
-    func findForcedDecision(context: OptimizelyDecisionContext) -> OptimizelyForcedDecision? {
-        guard let fds = forcedDecisions else { return nil }
-        
-        return fds[context]
-    }
-    
-    func findValidatedForcedDecision(context: OptimizelyDecisionContext,
-                                     options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
-        let reasons = DecisionReasons(options: options)
-        
-        if let variationKey = findForcedDecision(context: context)?.variationKey {
-            if let variation = optimizely?.getFlagVariationByKey(flagKey: context.flagKey, variationKey: variationKey) {
-                let info = LogMessage.userHasForcedDecision(userId, context.flagKey, context.ruleKey, variationKey)
-                logger.d(info)
-                reasons.addInfo(info)
-                return DecisionResponse(result: variation, reasons: reasons)
-            } else {
-                let info = LogMessage.userHasForcedDecisionButInvalid(userId, context.flagKey, context.ruleKey)
-                logger.d(info)
-                reasons.addInfo(info)
-            }
-        }
-        
-        return DecisionResponse(result: nil, reasons: reasons)
     }
     
 }

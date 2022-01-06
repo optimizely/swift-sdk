@@ -10,7 +10,7 @@ January 6, 2022
 	- removeForcedDecision
 	- removeAllForcedDecisions
 
-	For details, refer to our [documentation](https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyconfig-swift).
+	For details, refer to our documentation pages: [OptimizelyUserContext](https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyusercontext-swift) and [Forced Decision methods](https://docs.developers.optimizely.com/full-stack/v4.0/docs/forced-decision-methods-swift).
 
 * Add reachability checking for datafile fetch and event dispatching ([#439](https://github.com/optimizely/swift-sdk/pull/439)).
 

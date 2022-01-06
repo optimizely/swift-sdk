@@ -1,5 +1,19 @@
 # Optimizely Swift SDK Changelog
 
+## 3.10.0
+January 6, 2022
+
+### New Features
+* Add a set of new APIs for forced-decisions to OptimizelyUserContext ([#431](https://github.com/optimizely/swift-sdk/pull/431), [#442](https://github.com/optimizely/swift-sdk/pull/442), [#443](https://github.com/optimizely/swift-sdk/pull/443)):
+	- setForcedDecision
+	- getForcedDecision
+	- removeForcedDecision
+	- removeAllForcedDecisions
+
+	For details, refer to our [documentation](https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyconfig-swift).
+
+* Add reachability checking for datafile fetch and event dispatching ([#439](https://github.com/optimizely/swift-sdk/pull/439)).
+
 ## 3.9.0
 September 15, 2021
 

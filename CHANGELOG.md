@@ -4,7 +4,7 @@
 January 6, 2022
 
 ### New Features
-* Add a set of new APIs for forced-decisions to OptimizelyUserContext ([#431](https://github.com/optimizely/swift-sdk/pull/431), [#442](https://github.com/optimizely/swift-sdk/pull/442), [#443](https://github.com/optimizely/swift-sdk/pull/443)):
+* Add a set of new APIs for overriding and managing user-level flag, experiment and delivery rule decisions. These methods can be used for QA and automated testing purposes. They are an extension of the OptimizelyUserContext interface ([#431](https://github.com/optimizely/swift-sdk/pull/431), [#442](https://github.com/optimizely/swift-sdk/pull/442), [#443](https://github.com/optimizely/swift-sdk/pull/443)):
 	- setForcedDecision
 	- getForcedDecision
 	- removeForcedDecision

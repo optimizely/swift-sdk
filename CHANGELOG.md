@@ -1,5 +1,19 @@
 # Optimizely Swift SDK Changelog
 
+## 3.10.0
+January 6, 2022
+
+### New Features
+* Add a set of new APIs for overriding and managing user-level flag, experiment and delivery rule decisions. These methods can be used for QA and automated testing purposes. They are an extension of the OptimizelyUserContext interface ([#431](https://github.com/optimizely/swift-sdk/pull/431), [#442](https://github.com/optimizely/swift-sdk/pull/442), [#443](https://github.com/optimizely/swift-sdk/pull/443)):
+	- setForcedDecision
+	- getForcedDecision
+	- removeForcedDecision
+	- removeAllForcedDecisions
+
+	For details, refer to our documentation pages: [OptimizelyUserContext](https://docs.developers.optimizely.com/full-stack/v4.0/docs/optimizelyusercontext-swift) and [Forced Decision methods](https://docs.developers.optimizely.com/full-stack/v4.0/docs/forced-decision-methods-swift).
+
+* Add reachability checking for datafile fetch and event dispatching ([#439](https://github.com/optimizely/swift-sdk/pull/439)).
+
 ## 3.9.0
 September 15, 2021
 

@@ -28,6 +28,9 @@ public class OptimizelyUserContext {
     
     var forcedDecisions: AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>?
     
+    // ODP { get, set }
+    public var qualifiedSegments: Set<String>?
+
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
         

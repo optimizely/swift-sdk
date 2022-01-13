@@ -625,6 +625,86 @@
 		6E636BA02236C96700AF3CEF /* Optimizely.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */; };
 		6E6419DA2657059700C49555 /* NotificationCenterTests_MultiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6419D92657059700C49555 /* NotificationCenterTests_MultiClients.swift */; };
 		6E6419FE265734C100C49555 /* ProjectConfigTests_MultiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6419FD265734C100C49555 /* ProjectConfigTests_MultiClients.swift */; };
+		6E6522BA278DF26400954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522BB278DF26400954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522BC278DF26400954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522BD278DF26400954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522BE278DF27200954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522BF278DF27300954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C0278DF27300954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C1278DF27400954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C2278DF27400954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C3278DF27500954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C4278DF27600954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C5278DF27600954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C6278DF27700954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C7278DF27700954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C8278DF27800954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522C9278DF27900954EA1 /* ZaiusApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */; };
+		6E6522CD278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522CE278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522CF278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D0278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D1278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D2278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D3278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D4278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D5278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D6278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D7278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D8278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522D9278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522DA278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522DB278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522DC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */; };
+		6E6522DE278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522DF278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E0278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E1278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E2278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E3278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E4278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E5278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E6278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E7278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E8278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522E9278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522EA278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522EB278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522EC278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522ED278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */; };
+		6E6522EF278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F0278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F1278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F2278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F3278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F4278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F5278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F6278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F7278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F8278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522F9278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522FA278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522FB278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522FC278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522FD278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E6522FE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */; };
+		6E652300278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E652301278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E652302278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E652303278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E652304278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E652305278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E652306278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E652307278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E652308278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E652309278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E65230A278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E65230B278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E65230C278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E65230D278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E65230E278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
+		6E65230F278E688B00954EA1 /* SegmentsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6522FF278E688B00954EA1 /* SegmentsCache.swift */; };
 		6E6BE00B237F547200FE8274 /* optimizely_config_datafile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BE009237F547200FE8274 /* optimizely_config_datafile.json */; };
 		6E6BE00C237F547200FE8274 /* optimizely_config_expected.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BE00A237F547200FE8274 /* optimizely_config_expected.json */; };
 		6E7516A622C520D400B2B157 /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75165F22C520D400B2B157 /* DefaultLogger.swift */; };
@@ -1945,6 +2025,11 @@
 		6E636B9B2236C96700AF3CEF /* OptimizelyTests-Legacy-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OptimizelyTests-Legacy-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E6419D92657059700C49555 /* NotificationCenterTests_MultiClients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterTests_MultiClients.swift; sourceTree = "<group>"; };
 		6E6419FD265734C100C49555 /* ProjectConfigTests_MultiClients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfigTests_MultiClients.swift; sourceTree = "<group>"; };
+		6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZaiusApiManager.swift; sourceTree = "<group>"; };
+		6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OPTAudienceSegmentsHandler.swift; sourceTree = "<group>"; };
+		6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAudienceSegmentsHandler.swift; sourceTree = "<group>"; };
+		6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "OptimizelyUserContext+ODP.swift"; sourceTree = "<group>"; };
+		6E6522FF278E688B00954EA1 /* SegmentsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentsCache.swift; sourceTree = "<group>"; };
 		6E6BE009237F547200FE8274 /* optimizely_config_datafile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_config_datafile.json; sourceTree = "<group>"; };
 		6E6BE00A237F547200FE8274 /* optimizely_config_expected.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = optimizely_config_expected.json; sourceTree = "<group>"; };
 		6E75165F22C520D400B2B157 /* DefaultLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
@@ -2340,6 +2425,18 @@
 			path = "OptimizelyTests-MultiClients";
 			sourceTree = "<group>";
 		};
+		6E6522B8278DF20F00954EA1 /* Audience Targeting */ = {
+			isa = PBXGroup;
+			children = (
+				6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */,
+				6E6522DD278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift */,
+				6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */,
+				6E6522FF278E688B00954EA1 /* SegmentsCache.swift */,
+				6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */,
+			);
+			path = "Audience Targeting";
+			sourceTree = "<group>";
+		};
 		6E6BE008237F547200FE8274 /* optimizelyConfig */ = {
 			isa = PBXGroup;
 			children = (
@@ -2352,6 +2449,7 @@
 		6E75165D22C520D400B2B157 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				6E6522B8278DF20F00954EA1 /* Audience Targeting */,
 				6E75166622C520D400B2B157 /* Optimizely */,
 				6EC6DD3F24ABF8180017D296 /* Optimizely+Decide */,
 				6E75165E22C520D400B2B157 /* Customization */,
@@ -3041,6 +3139,8 @@
 			dependencies = (
 			);
 			name = "OptimizelySwiftSDK-iOS";
+			packageProductDependencies = (
+			);
 			productName = OptimizelySwiftSDKiOS;
 			productReference = 6EBAEB6C21E3FEF800D13AA9 /* Optimizely.framework */;
 			productType = "com.apple.product-type.framework";
@@ -3166,6 +3266,8 @@
 				Base,
 			);
 			mainGroup = 0B7CB0B821AC5FE2007B77E5;
+			packageReferences = (
+			);
 			productRefGroup = 0B7CB0C321AC5FE2007B77E5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -3786,9 +3888,11 @@
 				C78CAFA824486E0A009FE876 /* OptimizelyJSON+ObjC.swift in Sources */,
 				6E14CD932423F9A700010234 /* Experiment.swift in Sources */,
 				6E14CD982423F9C300010234 /* BackgroundingCallbacks.swift in Sources */,
+				6E6522E5278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E623F07253F9045000617D0 /* DecisionInfo.swift in Sources */,
 				C78CAF5C2445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E14CDA52423F9C300010234 /* MurmurHash3.swift in Sources */,
+				6E6522D4278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E86CEA824FDC847005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E5D12222638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E14CD912423F9A700010234 /* TrafficAllocation.swift in Sources */,
@@ -3822,13 +3926,16 @@
 				6E14CD8A2423F9A100010234 /* ConditionHolder.swift in Sources */,
 				6E14CD9E2423F9C300010234 /* OPTBucketer.swift in Sources */,
 				6E14CD742423F97200010234 /* OptimizelyConfig.swift in Sources */,
+				6E6522C1278DF27400954EA1 /* ZaiusApiManager.swift in Sources */,
 				6EF8DE1124BD1BB2008B9488 /* OptimizelyDecision.swift in Sources */,
 				6E14CDA12423F9C300010234 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E994B3925A3E6EA00999262 /* DecisionResponse.swift in Sources */,
 				6E14CDA82423F9C300010234 /* AtomicProperty.swift in Sources */,
 				6E14CD7A2423F98D00010234 /* OPTUserProfileService.swift in Sources */,
 				6E14CDA32423F9C300010234 /* Constants.swift in Sources */,
+				6E6522F6278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E4544B1270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
+				6E652307278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3848,6 +3955,7 @@
 				6E424CF326324B620081004A /* OPTDatafileHandler.swift in Sources */,
 				6E424CF426324B620081004A /* DecisionInfo.swift in Sources */,
 				6E5D120D2638DCE1000ABFC3 /* EventDispatcherTests_MultiClients.swift in Sources */,
+				6E6522D3278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E424CF526324B620081004A /* DefaultBucketer.swift in Sources */,
 				6EE5911A2649CF640013AD66 /* LoggerTests_MultiClients.swift in Sources */,
 				6E424D5426324C4D0081004A /* OptimizelyUserContext.swift in Sources */,
@@ -3857,6 +3965,7 @@
 				6E424CF926324B620081004A /* DecisionResponse.swift in Sources */,
 				6E424CFA26324B620081004A /* DataStoreMemory.swift in Sources */,
 				6E424CFB26324B620081004A /* DataStoreUserDefaults.swift in Sources */,
+				6E6522E4278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E424CFC26324B620081004A /* DataStoreFile.swift in Sources */,
 				6E424CFD26324B620081004A /* DataStoreQueueStackImpl.swift in Sources */,
 				6E424CFE26324B620081004A /* BatchEventBuilder.swift in Sources */,
@@ -3876,6 +3985,7 @@
 				6E424D0926324B620081004A /* FeatureVariable.swift in Sources */,
 				6E6419DA2657059700C49555 /* NotificationCenterTests_MultiClients.swift in Sources */,
 				6E424D0A26324B620081004A /* Rollout.swift in Sources */,
+				6E6522F5278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E2D5DAE26338CA00002077F /* AtomicDictionaryTests.swift in Sources */,
 				6E424D0B26324B620081004A /* Variation.swift in Sources */,
 				6E424D0C26324B620081004A /* TrafficAllocation.swift in Sources */,
@@ -3885,6 +3995,7 @@
 				6E424D1026324B620081004A /* Group.swift in Sources */,
 				6E424D1126324B620081004A /* Variable.swift in Sources */,
 				6E424D1226324B620081004A /* Attribute.swift in Sources */,
+				6E6522C0278DF27300954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E424D1326324B620081004A /* BackgroundingCallbacks.swift in Sources */,
 				6E424D1426324B620081004A /* OPTNotificationCenter.swift in Sources */,
 				6E424D5026324C4D0081004A /* OptimizelyDecideOption.swift in Sources */,
@@ -3901,6 +4012,7 @@
 				6E424D1C26324B620081004A /* Array+Extension.swift in Sources */,
 				6E424D7626324DBD0081004A /* AtomicArrayTests.swift in Sources */,
 				6E424CD326324B270081004A /* OptimizelyError.swift in Sources */,
+				6E652306278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				6E424D5326324C4D0081004A /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E424CD426324B270081004A /* OptimizelyLogLevel.swift in Sources */,
 				6EE5918E264AF44B0013AD66 /* HandlerRegistryServiceTests_MultiClients.swift in Sources */,
@@ -3949,6 +4061,7 @@
 				6E7518A122C520D400B2B157 /* FeatureFlag.swift in Sources */,
 				6E994B3525A3E6EA00999262 /* DecisionResponse.swift in Sources */,
 				6E7516D722C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
+				6E6522CE278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E75195522C520D500B2B157 /* OPTBucketer.swift in Sources */,
 				6E75176722C520D400B2B157 /* Utils.swift in Sources */,
 				6E75180522C520D400B2B157 /* DataStoreFile.swift in Sources */,
@@ -3958,6 +4071,7 @@
 				6E75186522C520D400B2B157 /* Rollout.swift in Sources */,
 				6E86CEA324FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E75190122C520D500B2B157 /* Attribute.swift in Sources */,
+				6E6522BB278DF26400954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E7516B322C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E75183522C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E7517D522C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
@@ -3990,13 +4104,16 @@
 				6E7516CB22C520D400B2B157 /* OPTLogger.swift in Sources */,
 				6E7517A322C520D400B2B157 /* Array+Extension.swift in Sources */,
 				6EC6DD4224ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
+				6E652301278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				6E75193122C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75190D22C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
 				6E75194922C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E7516EF22C520D400B2B157 /* OptimizelyError.swift in Sources */,
 				6E75174F22C520D400B2B157 /* LogMessage.swift in Sources */,
+				6E6522F0278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E75189522C520D400B2B157 /* Experiment.swift in Sources */,
 				6EA2CC252345618E001E7531 /* OptimizelyConfig.swift in Sources */,
+				6E6522DF278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E7518D122C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E75182922C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6E75171F22C520D400B2B157 /* OptimizelyResult.swift in Sources */,
@@ -4051,9 +4168,11 @@
 				C78CAFAD24486E0A009FE876 /* OptimizelyJSON+ObjC.swift in Sources */,
 				6E7516AE22C520D400B2B157 /* DefaultLogger.swift in Sources */,
 				6E75195022C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
+				6E6522EA278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E623F0C253F9045000617D0 /* DecisionInfo.swift in Sources */,
 				C78CAF612445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E7516D222C520D400B2B157 /* OPTLogger.swift in Sources */,
+				6E6522D9278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E86CEAC24FDC849005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E5D12272638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E75186022C520D400B2B157 /* FeatureVariable.swift in Sources */,
@@ -4087,13 +4206,16 @@
 				6ECB60D2234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
 				6E75192C22C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E7517AA22C520D400B2B157 /* Array+Extension.swift in Sources */,
+				6E6522C6278DF27700954EA1 /* ZaiusApiManager.swift in Sources */,
 				6EF8DE1624BD1BB2008B9488 /* OptimizelyDecision.swift in Sources */,
 				6E75186C22C520D400B2B157 /* Rollout.swift in Sources */,
 				6E994B3E25A3E6EA00999262 /* DecisionResponse.swift in Sources */,
 				6E75183C22C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E75194422C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E75179222C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
+				6E6522FB278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E4544B6270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
+				6E65230C278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4142,12 +4264,14 @@
 				6E623F08253F9045000617D0 /* DecisionInfo.swift in Sources */,
 				6E75188C22C520D400B2B157 /* Project.swift in Sources */,
 				6ECB60CE234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
+				6E6522F7278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E86CEA624FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E75172222C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E7517E422C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E9B11D722C548A200C22D81 /* OptimizelyErrorTests.swift in Sources */,
 				C78CAF8624485029009FE876 /* OptimizelyClientTests_OptimizelyJSON_Objc.m in Sources */,
 				6E75194C22C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
+				6E652308278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				6E7517C022C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E75183822C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E75175222C520D400B2B157 /* LogMessage.swift in Sources */,
@@ -4165,6 +4289,7 @@
 				6E7517FC22C520D400B2B157 /* DataStoreUserDefaults.swift in Sources */,
 				6E75178222C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E7518A422C520D400B2B157 /* FeatureFlag.swift in Sources */,
+				6E6522E6278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E75185C22C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E20050C26B4D28500278087 /* MockLogger.swift in Sources */,
 				6E75176A22C520D400B2B157 /* Utils.swift in Sources */,
@@ -4176,6 +4301,7 @@
 				6EF8DE1224BD1BB2008B9488 /* OptimizelyDecision.swift in Sources */,
 				6E9B11DA22C548A200C22D81 /* OptimizelyClientTests_ObjcAPIs.m in Sources */,
 				6E75179A22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
+				6E6522C2278DF27400954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E75182022C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
 				6E5AB69323F6130D007A82B1 /* OptimizelyClientTests_Init_Sync.swift in Sources */,
 				6E4544B2270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
@@ -4185,6 +4311,7 @@
 				6E7518B022C520D400B2B157 /* Group.swift in Sources */,
 				6E75185022C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E7516CE22C520D400B2B157 /* OPTLogger.swift in Sources */,
+				6E6522D5278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E9B11AB22C5489300C22D81 /* MockUrlSession.swift in Sources */,
 				6E75190422C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75193422C520D500B2B157 /* OPTDataStore.swift in Sources */,
@@ -4217,6 +4344,7 @@
 				6E75193722C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75191322C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
 				6E75172522C520D400B2B157 /* OptimizelyResult.swift in Sources */,
+				6E6522FA278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E75173122C520D400B2B157 /* Constants.swift in Sources */,
 				6E75184722C520D400B2B157 /* Event.swift in Sources */,
 				6E994B3D25A3E6EA00999262 /* DecisionResponse.swift in Sources */,
@@ -4227,11 +4355,13 @@
 				6E75189B22C520D400B2B157 /* Experiment.swift in Sources */,
 				6E75176122C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				6E75180B22C520D400B2B157 /* DataStoreFile.swift in Sources */,
+				6E6522E9278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6EF8DE2324BD1BB2008B9488 /* OptimizelyDecideOption.swift in Sources */,
 				6E7517C322C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
 				6E75190722C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75179D22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E7518BF22C520D400B2B157 /* Variable.swift in Sources */,
+				6E6522D8278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E75181722C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E75185322C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E75173D22C520D400B2B157 /* MurmurHash3.swift in Sources */,
@@ -4240,6 +4370,7 @@
 				6E75187722C520D400B2B157 /* Variation.swift in Sources */,
 				6E7517F322C520D400B2B157 /* DataStoreMemory.swift in Sources */,
 				6E7518FB22C520D500B2B157 /* UserAttribute.swift in Sources */,
+				6E65230B278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				6E9B11B222C5489400C22D81 /* OTUtils.swift in Sources */,
 				6E7518D722C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E7516AD22C520D400B2B157 /* DefaultLogger.swift in Sources */,
@@ -4262,6 +4393,7 @@
 				6E7518CB22C520D400B2B157 /* Audience.swift in Sources */,
 				6ECB60D1234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
 				C78CAFAC24486E0A009FE876 /* OptimizelyJSON+ObjC.swift in Sources */,
+				6E6522C5278DF27600954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E75176D22C520D400B2B157 /* Utils.swift in Sources */,
 				6EA2CC2B2345618E001E7531 /* OptimizelyConfig.swift in Sources */,
 				6E75182322C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
@@ -4300,6 +4432,7 @@
 				6E9B117422C5487100C22D81 /* DecisionServiceTests_Others.swift in Sources */,
 				6E9B116E22C5487100C22D81 /* LoggerTests.swift in Sources */,
 				6E75180D22C520D400B2B157 /* DataStoreFile.swift in Sources */,
+				6E6522C7278DF27700954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E75178722C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E75179F22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E7516BB22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
@@ -4308,6 +4441,7 @@
 				6E75184922C520D400B2B157 /* Event.swift in Sources */,
 				0B97DDA4249D4A27003DE606 /* SemanticVersion.swift in Sources */,
 				6ECB60D3234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
+				6E6522DA278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E9B116C22C5487100C22D81 /* BucketTests_ExpToVariation.swift in Sources */,
 				6E7E9C4C25240D31009E4426 /* OptimizelyUserContextTests_Objc.m in Sources */,
 				6E75193922C520D500B2B157 /* OPTDataStore.swift in Sources */,
@@ -4339,6 +4473,7 @@
 				6E7516EB22C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
 				6E75188522C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E75176F22C520D400B2B157 /* Utils.swift in Sources */,
+				6E65230D278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				6E75182522C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
 				6EC6DD6A24AE94820017D296 /* OptimizelyUserContextTests.swift in Sources */,
 				6E7517D122C520D400B2B157 /* DefaultBucketer.swift in Sources */,
@@ -4365,6 +4500,7 @@
 				6E75183122C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6EF41A422522BE2100EAADF1 /* OptimizelyUserContextTests_Decide.swift in Sources */,
 				6E9B117822C5487100C22D81 /* DataStoreTests.swift in Sources */,
+				6E6522FC278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E75171B22C520D400B2B157 /* OptimizelyClient+ObjC.swift in Sources */,
 				6E75195122C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E75176322C520D400B2B157 /* AtomicProperty.swift in Sources */,
@@ -4386,6 +4522,7 @@
 				6E9B116F22C5487100C22D81 /* BucketTests_BucketVariation.swift in Sources */,
 				6E994B3F25A3E6EA00999262 /* DecisionResponse.swift in Sources */,
 				6E75174B22C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
+				6E6522EB278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E75187922C520D400B2B157 /* Variation.swift in Sources */,
 				6E75191522C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
 				6E75195D22C520D500B2B157 /* OPTBucketer.swift in Sources */,
@@ -4424,6 +4561,7 @@
 				6E75170422C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
 				6E75187A22C520D400B2B157 /* Variation.swift in Sources */,
 				0B97DD9A249D332C003DE606 /* SemanticVersionTests.swift in Sources */,
+				6E65230E278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				6E9B119C22C5488300C22D81 /* ProjectConfigTests.swift in Sources */,
 				6E7518FE22C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E7517F622C520D400B2B157 /* DataStoreMemory.swift in Sources */,
@@ -4435,6 +4573,7 @@
 				6E75190A22C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75171022C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E7516C822C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
+				6E6522C8278DF27800954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E75194622C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E75185622C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E20051226B4D28600278087 /* MockLogger.swift in Sources */,
@@ -4454,6 +4593,7 @@
 				6E75183222C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6E7518DA22C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E9B119822C5488300C22D81 /* AudienceTests_Evaluate.swift in Sources */,
+				6E6522DB278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E75192222C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75177022C520D400B2B157 /* Utils.swift in Sources */,
 				6E7516E022C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
@@ -4480,6 +4620,7 @@
 				6E7518E622C520D400B2B157 /* ConditionLeaf.swift in Sources */,
 				6E75179422C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
 				6E9B11B722C5489600C22D81 /* MockUrlSession.swift in Sources */,
+				6E6522EC278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E9B119222C5488300C22D81 /* FeatureVariableTests.swift in Sources */,
 				6E75176422C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				C78CAF632445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
@@ -4488,6 +4629,7 @@
 				6E4544B8270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
 				6E7517A022C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E7517AC22C520D400B2B157 /* Array+Extension.swift in Sources */,
+				6E6522FD278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6EA425A52218E6AE00B074B5 /* (null) in Sources */,
 				6E8A3D522637408500DAEA13 /* MockDatafileHandler.swift in Sources */,
 				6E75180E22C520D400B2B157 /* DataStoreFile.swift in Sources */,
@@ -4560,6 +4702,7 @@
 				6E7516D922C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E7516E522C520D400B2B157 /* OPTEventDispatcher.swift in Sources */,
 				6E7E9B552523F8C6009E4426 /* OptimizelyUserContextTests_Decide_Legacy.swift in Sources */,
+				6E652305278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				6EC6DD3524ABF6990017D296 /* OptimizelyClient+Decide.swift in Sources */,
 				6E20050926B4D28500278087 /* MockLogger.swift in Sources */,
 				6E75175122C520D400B2B157 /* LogMessage.swift in Sources */,
@@ -4572,17 +4715,21 @@
 				6E75181322C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6EC6DD6924AE94820017D296 /* OptimizelyUserContextTests.swift in Sources */,
 				6E75171522C520D400B2B157 /* OptimizelyClient+ObjC.swift in Sources */,
+				6E6522E3278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6EA2CC272345618E001E7531 /* OptimizelyConfig.swift in Sources */,
 				C78CAFA724486E0A009FE876 /* OptimizelyJSON+ObjC.swift in Sources */,
 				6E75185B22C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E7516B522C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E7516A922C520D400B2B157 /* DefaultLogger.swift in Sources */,
+				6E6522BF278DF27300954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E9B114822C5486E00C22D81 /* OptimizelySwiftSDKiOSTests.swift in Sources */,
 				6E7517D722C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
+				6E6522D2278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E75181F22C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
 				6E623F06253F9045000617D0 /* DecisionInfo.swift in Sources */,
 				6E424BE2263228E90081004A /* AtomicArray.swift in Sources */,
 				6E9B115822C5486E00C22D81 /* EventDispatcherTests.swift in Sources */,
+				6E6522F4278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E9B114F22C5486E00C22D81 /* DefaultUserProfileServiceTests.swift in Sources */,
 				6E7518F722C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E75174522C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
@@ -4654,6 +4801,7 @@
 				6E7516FF22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
 				6E75187522C520D400B2B157 /* Variation.swift in Sources */,
 				0B97DD99249D332C003DE606 /* SemanticVersionTests.swift in Sources */,
+				6E652309278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				6E9B118622C5488100C22D81 /* ProjectConfigTests.swift in Sources */,
 				6E7518F922C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E7517F122C520D400B2B157 /* DataStoreMemory.swift in Sources */,
@@ -4665,6 +4813,7 @@
 				6E75190522C520D500B2B157 /* Attribute.swift in Sources */,
 				6E75170B22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E7516C322C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
+				6E6522C3278DF27500954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E75194122C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E75185122C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E20050D26B4D28500278087 /* MockLogger.swift in Sources */,
@@ -4684,6 +4833,7 @@
 				6E75182D22C520D400B2B157 /* BatchEvent.swift in Sources */,
 				6E7518D522C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E9B118222C5488100C22D81 /* AudienceTests_Evaluate.swift in Sources */,
+				6E6522D6278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E75191D22C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75176B22C520D400B2B157 /* Utils.swift in Sources */,
 				6E7516DB22C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
@@ -4710,6 +4860,7 @@
 				6E7518E122C520D400B2B157 /* ConditionLeaf.swift in Sources */,
 				6E75178F22C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
 				6E9B11AD22C5489300C22D81 /* MockUrlSession.swift in Sources */,
+				6E6522E7278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E9B117C22C5488100C22D81 /* FeatureVariableTests.swift in Sources */,
 				6E75175F22C520D400B2B157 /* AtomicProperty.swift in Sources */,
 				C78CAF5E2445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
@@ -4718,6 +4869,7 @@
 				6E4544B3270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
 				6E75179B22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
 				6E7517A722C520D400B2B157 /* Array+Extension.swift in Sources */,
+				6E6522F8278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6EA425962218E6AD00B074B5 /* (null) in Sources */,
 				6E8A3D4D2637408500DAEA13 /* MockDatafileHandler.swift in Sources */,
 				6E75180922C520D400B2B157 /* DataStoreFile.swift in Sources */,
@@ -4762,6 +4914,7 @@
 				6E75181622C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E75188E22C520D400B2B157 /* Project.swift in Sources */,
 				6E994B3C25A3E6EA00999262 /* DecisionResponse.swift in Sources */,
+				6E6522E8278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E75189A22C520D400B2B157 /* Experiment.swift in Sources */,
 				6EC6DD3924ABF6990017D296 /* OptimizelyClient+Decide.swift in Sources */,
 				6E75179C22C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
@@ -4799,6 +4952,7 @@
 				6E75180A22C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E7516B822C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E7517C222C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
+				6E6522C4278DF27600954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E75191E22C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75193622C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75170022C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
@@ -4817,17 +4971,20 @@
 				6E75173C22C520D400B2B157 /* MurmurHash3.swift in Sources */,
 				6E75170C22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E7518D622C520D400B2B157 /* AttributeValue.swift in Sources */,
+				6E6522F9278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E7518A622C520D400B2B157 /* FeatureFlag.swift in Sources */,
 				6E75186A22C520D400B2B157 /* Rollout.swift in Sources */,
 				6E75178422C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6EF8DE1424BD1BB2008B9488 /* OptimizelyDecision.swift in Sources */,
 				6E75175422C520D400B2B157 /* LogMessage.swift in Sources */,
 				6E20050E26B4D28500278087 /* MockLogger.swift in Sources */,
+				6E6522D7278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E75194222C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E34A61D2319EBB800BAE302 /* Notifications.swift in Sources */,
 				6E7517A822C520D400B2B157 /* Array+Extension.swift in Sources */,
 				6E7518EE22C520D400B2B157 /* ConditionHolder.swift in Sources */,
 				6E75185222C520D400B2B157 /* ProjectConfig.swift in Sources */,
+				6E65230A278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				C78CAF5F2445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E623F0A253F9045000617D0 /* DecisionInfo.swift in Sources */,
 				6E75179022C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
@@ -4850,6 +5007,7 @@
 				6E75181B22C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E75189322C520D400B2B157 /* Project.swift in Sources */,
 				6E994B4125A3E6EA00999262 /* DecisionResponse.swift in Sources */,
+				6E6522ED278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E75189F22C520D400B2B157 /* Experiment.swift in Sources */,
 				6EC6DD3E24ABF6990017D296 /* OptimizelyClient+Decide.swift in Sources */,
 				6E7517A122C520D400B2B157 /* DataStoreQueueStackImpl+Extension.swift in Sources */,
@@ -4887,6 +5045,7 @@
 				6E75180F22C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E7516BD22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				6E7517C722C520D400B2B157 /* DefaultDatafileHandler.swift in Sources */,
+				6E6522C9278DF27900954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E75192322C520D500B2B157 /* OPTNotificationCenter.swift in Sources */,
 				6E75193B22C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75170522C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
@@ -4905,17 +5064,20 @@
 				6E75174122C520D400B2B157 /* MurmurHash3.swift in Sources */,
 				6E75171122C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E7518DB22C520D400B2B157 /* AttributeValue.swift in Sources */,
+				6E6522FE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E7518AB22C520D400B2B157 /* FeatureFlag.swift in Sources */,
 				6E75186F22C520D400B2B157 /* Rollout.swift in Sources */,
 				6E75178922C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6EF8DE1924BD1BB2008B9488 /* OptimizelyDecision.swift in Sources */,
 				6E75175922C520D400B2B157 /* LogMessage.swift in Sources */,
 				6E20051326B4D28600278087 /* MockLogger.swift in Sources */,
+				6E6522DC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E75194722C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E34A6222319EBB800BAE302 /* Notifications.swift in Sources */,
 				6E7517AD22C520D400B2B157 /* Array+Extension.swift in Sources */,
 				6E7518F322C520D500B2B157 /* ConditionHolder.swift in Sources */,
 				6E75185722C520D400B2B157 /* ProjectConfig.swift in Sources */,
+				6E65230F278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				C78CAF642445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E623F0F253F9045000617D0 /* DecisionInfo.swift in Sources */,
 				6E75179522C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
@@ -4944,6 +5106,7 @@
 				6E7517D422C520D400B2B157 /* DefaultNotificationCenter.swift in Sources */,
 				6E994B3425A3E6EA00999262 /* DecisionResponse.swift in Sources */,
 				6E75193C22C520D500B2B157 /* OPTDecisionService.swift in Sources */,
+				6E6522CD278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E75176622C520D400B2B157 /* Utils.swift in Sources */,
 				6E75177E22C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				6E7516BE22C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
@@ -4953,6 +5116,7 @@
 				6E75180422C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E86CEA224FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E75195422C520D500B2B157 /* OPTBucketer.swift in Sources */,
+				6E6522BA278DF26400954EA1 /* ZaiusApiManager.swift in Sources */,
 				6E75171E22C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E75172A22C520D400B2B157 /* Constants.swift in Sources */,
 				6E7516A622C520D400B2B157 /* DefaultLogger.swift in Sources */,
@@ -4985,13 +5149,16 @@
 				6E75184C22C520D400B2B157 /* ProjectConfig.swift in Sources */,
 				6E75181022C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6EC6DD4124ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
+				6E652300278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				6E7516EE22C520D400B2B157 /* OptimizelyError.swift in Sources */,
 				6E75183422C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E75171222C520D400B2B157 /* OptimizelyClient+ObjC.swift in Sources */,
 				6E7516D622C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E7516B222C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
+				6E6522EF278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E75192422C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6EA2CC242345618E001E7531 /* OptimizelyConfig.swift in Sources */,
+				6E6522DE278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E75193022C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E7517E022C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
 				6E7516FA22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
@@ -5046,9 +5213,11 @@
 				C78CAFA624486E0A009FE876 /* OptimizelyJSON+ObjC.swift in Sources */,
 				6E7518D222C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E7516A822C520D400B2B157 /* DefaultLogger.swift in Sources */,
+				6E6522E2278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				6E623F05253F9045000617D0 /* DecisionInfo.swift in Sources */,
 				C78CAF5A2445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E75194A22C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
+				6E6522D1278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				6E86CEA724FDC846005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E5D121F2638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E7516CC22C520D400B2B157 /* OPTLogger.swift in Sources */,
@@ -5082,13 +5251,16 @@
 				6ECB60CC234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
 				6E75192622C520D500B2B157 /* DataStoreQueueStack.swift in Sources */,
 				6E7517A422C520D400B2B157 /* Array+Extension.swift in Sources */,
+				6E6522BE278DF27200954EA1 /* ZaiusApiManager.swift in Sources */,
 				6EF8DE0F24BD1BB2008B9488 /* OptimizelyDecision.swift in Sources */,
 				6E75186622C520D400B2B157 /* Rollout.swift in Sources */,
 				6E994B3725A3E6EA00999262 /* DecisionResponse.swift in Sources */,
 				6E75183622C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E75193E22C520D500B2B157 /* OPTDecisionService.swift in Sources */,
 				6E75178C22C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
+				6E6522F3278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				6E4544AE270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
+				6E652304278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5120,6 +5292,7 @@
 				75C71A1325E454460084187E /* OPTEventDispatcher.swift in Sources */,
 				75C71A1425E454460084187E /* DefaultDatafileHandler.swift in Sources */,
 				6E424BE0263228E90081004A /* AtomicArray.swift in Sources */,
+				6E652303278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				75C71A1525E454460084187E /* DecisionInfo.swift in Sources */,
 				75C71A1625E454460084187E /* DefaultBucketer.swift in Sources */,
 				75C71A1725E454460084187E /* DefaultNotificationCenter.swift in Sources */,
@@ -5127,14 +5300,17 @@
 				75C71A1925E454460084187E /* DecisionReasons.swift in Sources */,
 				75C71A1A25E454460084187E /* DecisionResponse.swift in Sources */,
 				75C71A1B25E454460084187E /* DataStoreMemory.swift in Sources */,
+				6E6522F2278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				75C71A1C25E454460084187E /* DataStoreUserDefaults.swift in Sources */,
 				75C71A1D25E454460084187E /* DataStoreFile.swift in Sources */,
 				75C71A1E25E454460084187E /* DataStoreQueueStackImpl.swift in Sources */,
 				75C71A1F25E454460084187E /* BatchEventBuilder.swift in Sources */,
 				75C71A2025E454460084187E /* BatchEvent.swift in Sources */,
+				6E6522D0278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				75C71A2125E454460084187E /* EventForDispatch.swift in Sources */,
 				75C71A2225E454460084187E /* SemanticVersion.swift in Sources */,
 				75C71A2325E454460084187E /* Audience.swift in Sources */,
+				6E6522E1278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				75C71A2425E454460084187E /* AttributeValue.swift in Sources */,
 				75C71A2525E454460084187E /* ConditionLeaf.swift in Sources */,
 				75C71A2625E454460084187E /* ConditionHolder.swift in Sources */,
@@ -5151,6 +5327,7 @@
 				75C71A3025E454460084187E /* FeatureFlag.swift in Sources */,
 				75C71A3125E454460084187E /* Group.swift in Sources */,
 				75C71A3225E454460084187E /* Variable.swift in Sources */,
+				6E6522BD278DF26400954EA1 /* ZaiusApiManager.swift in Sources */,
 				75C71A3325E454460084187E /* Attribute.swift in Sources */,
 				75C71A3425E454460084187E /* BackgroundingCallbacks.swift in Sources */,
 				75C71A3525E454460084187E /* OPTNotificationCenter.swift in Sources */,
@@ -5194,6 +5371,7 @@
 				BD6485482491474500F30986 /* DefaultNotificationCenter.swift in Sources */,
 				6E994B3625A3E6EA00999262 /* DecisionResponse.swift in Sources */,
 				BD6485492491474500F30986 /* OPTDecisionService.swift in Sources */,
+				6E6522CF278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift in Sources */,
 				BD64854A2491474500F30986 /* Utils.swift in Sources */,
 				BD64854B2491474500F30986 /* ArrayEventForDispatch+Extension.swift in Sources */,
 				BD64854C2491474500F30986 /* DefaultEventDispatcher.swift in Sources */,
@@ -5203,6 +5381,7 @@
 				BD64854F2491474500F30986 /* DataStoreFile.swift in Sources */,
 				6E86CEA424FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				BD6485502491474500F30986 /* OPTBucketer.swift in Sources */,
+				6E6522BC278DF26400954EA1 /* ZaiusApiManager.swift in Sources */,
 				BD6485512491474500F30986 /* OptimizelyResult.swift in Sources */,
 				BD6485522491474500F30986 /* Constants.swift in Sources */,
 				BD6485532491474500F30986 /* DefaultLogger.swift in Sources */,
@@ -5235,13 +5414,16 @@
 				BD64856B2491474500F30986 /* ProjectConfig.swift in Sources */,
 				BD64856C2491474500F30986 /* DataStoreQueueStackImpl.swift in Sources */,
 				6EC6DD4324ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
+				6E652302278E688B00954EA1 /* SegmentsCache.swift in Sources */,
 				BD64856D2491474500F30986 /* OptimizelyError.swift in Sources */,
 				BD64856E2491474500F30986 /* EventForDispatch.swift in Sources */,
 				BD64856F2491474500F30986 /* OptimizelyClient+ObjC.swift in Sources */,
 				BD6485702491474500F30986 /* OPTUserProfileService.swift in Sources */,
 				BD6485712491474500F30986 /* DefaultUserProfileService.swift in Sources */,
+				6E6522F1278E56D400954EA1 /* OptimizelyUserContext+ODP.swift in Sources */,
 				BD6485722491474500F30986 /* DataStoreQueueStack.swift in Sources */,
 				BD6485732491474500F30986 /* OptimizelyConfig.swift in Sources */,
+				6E6522E0278E4F3800954EA1 /* DefaultAudienceSegmentsHandler.swift in Sources */,
 				BD6485742491474500F30986 /* OPTDataStore.swift in Sources */,
 				BD6485752491474500F30986 /* DefaultDecisionService.swift in Sources */,
 				BD6485762491474500F30986 /* OptimizelyLogLevel.swift in Sources */,

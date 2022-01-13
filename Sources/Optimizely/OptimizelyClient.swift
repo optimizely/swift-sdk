@@ -49,6 +49,9 @@ open class OptimizelyClient: NSObject {
     var eventDispatcher: OPTEventDispatcher?
     public var datafileHandler: OPTDatafileHandler?
     
+    // MARK: - ODP
+    public var audienceHandler: OPTAudienceSegmentsHandler = DefaultAudienceSegmentsHandler()
+    
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService!

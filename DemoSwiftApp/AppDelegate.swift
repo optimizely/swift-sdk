@@ -102,11 +102,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initializeOptimizelySDKWithCustomization() {
         // customization example (optional)
         
+        // You can enable background datafile polling by setting periodicDownloadInterval (polling is disabled by default)
+        // 60 sec interval may be too frequent. This is for demo purpose. (You can set this to nil to use the recommended value of 600 secs).
+        let downloadIntervalInSecs: Int? = 60
+        
+        // You can turn off event batching with 0 timerInterval (this means that events are sent out immediately to the server instead of saving in the local queue for batching)
+        let eventDispatcher = DefaultEventDispatcher(timerInterval: 0)
+        
+        // customize logger
+        let customLogger = CustomLogger()
         
         optimizely = OptimizelyClient(sdkKey: sdkKey,
+                                      logger: customLogger,
+                                      eventDispatcher: eventDispatcher,
+                                      periodicDownloadInterval: downloadIntervalInSecs,
                                       defaultLogLevel: logLevel)
         
-        optimizely.start { result in
+        addNotificationListeners()
+        
+        // initialize SDK
+        optimizely!.start { result in
             switch result {
             case .failure(let error):
                 print("Optimizely SDK initiliazation failed: \(error)")
@@ -115,51 +130,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             @unknown default:
                 print("Optimizely SDK initiliazation failed with unknown result")
             }
+            self.startWithRootViewController()
             
-            let user = self.optimizely.createUserContext(userId: "tester")
-            user.fetchQualifiedSegments(apiKey: "valid-api-key") { success in
-                if success {
-                    let decisions = user.decideAll(options: nil)
-                    print("[ODP DECISIONS] \(decisions)")
-                }
-            }
+            // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
+            //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
+            //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
         }
-
-        
-//        // You can enable background datafile polling by setting periodicDownloadInterval (polling is disabled by default)
-//        // 60 sec interval may be too frequent. This is for demo purpose. (You can set this to nil to use the recommended value of 600 secs).
-//        let downloadIntervalInSecs: Int? = 60
-//
-//        // You can turn off event batching with 0 timerInterval (this means that events are sent out immediately to the server instead of saving in the local queue for batching)
-//        let eventDispatcher = DefaultEventDispatcher(timerInterval: 0)
-//
-//        // customize logger
-//        let customLogger = CustomLogger()
-//
-//        optimizely = OptimizelyClient(sdkKey: sdkKey,
-//                                      logger: customLogger,
-//                                      eventDispatcher: eventDispatcher,
-//                                      periodicDownloadInterval: downloadIntervalInSecs,
-//                                      defaultLogLevel: logLevel)
-//
-//        addNotificationListeners()
-//
-//        // initialize SDK
-//        optimizely!.start { result in
-//            switch result {
-//            case .failure(let error):
-//                print("Optimizely SDK initiliazation failed: \(error)")
-//            case .success:
-//                print("Optimizely SDK initialized successfully!")
-//            @unknown default:
-//                print("Optimizely SDK initiliazation failed with unknown result")
-//            }
-//            self.startWithRootViewController()
-//
-//            // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
-//            //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
-//            //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
-//        }
     }
     
     func addNotificationListeners() {

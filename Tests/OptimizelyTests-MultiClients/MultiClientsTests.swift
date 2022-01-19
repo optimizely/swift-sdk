@@ -28,6 +28,7 @@ class MultiClientsTests: XCTestCase {
 
     override func tearDown() {
         OTUtils.clearAllTestStorage(including: testSdkKeyBasename)
+        XCTAssertEqual(MockUrlSession.validSessions, 0, "all MockUrlSession must be invalidated")
     }
     
     func testMultiClients() {

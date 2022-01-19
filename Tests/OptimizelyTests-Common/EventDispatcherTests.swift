@@ -26,6 +26,7 @@ class EventDispatcherTests: XCTestCase {
 
     override func tearDown() {
         OTUtils.clearAllEventQueues()
+        XCTAssertEqual(MockUrlSession.validSessions, 0, "all MockUrlSession must be invalidated")
     }
 
     func testDefaultDispatcher() {

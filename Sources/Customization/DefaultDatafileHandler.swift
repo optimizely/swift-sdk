@@ -69,6 +69,8 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
             }
             
             let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
+            // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
+            defer { session.finishTasksAndInvalidate() }
             
             guard let request = self.getRequest(sdkKey: sdkKey) else { return }
             

@@ -32,6 +32,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     override func tearDown() {
         OTUtils.clearAllBinders()
         OTUtils.clearAllTestStorage()
+        XCTAssertEqual(MockUrlSession.validSessions, 0, "all MockUrlSession must be invalidated")
     }
     
     // MARK: - downloadDatafile

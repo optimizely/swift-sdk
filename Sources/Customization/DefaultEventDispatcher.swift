@@ -184,6 +184,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         }
         
         let session = getSession()
+        // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
+        defer { session.finishTasksAndInvalidate() }
+        
         var request = URLRequest(url: event.url)
         request.httpMethod = "POST"
         request.httpBody = event.body

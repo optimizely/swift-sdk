@@ -28,6 +28,7 @@ class OptimizelyClientTests_DatafileHandler: XCTestCase {
     override func tearDown() {
         OTUtils.clearAllBinders()
         OTUtils.clearAllTestStorage(including: sdkKey)
+        XCTAssertEqual(MockUrlSession.validSessions, 0, "all MockUrlSession must be invalidated")
     }
 
     func testOptimizelyClientWithCachedDatafile() {

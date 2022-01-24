@@ -26,6 +26,7 @@ class NetworkReachabilityTests: XCTestCase {
 
     override func tearDown() {
         OTUtils.clearAllTestStorage(including: sdkKey)
+        XCTAssertEqual(MockUrlSession.validSessions, 0, "all MockUrlSession must be invalidated")
     }
 
     // Reachability (NWPathMonitor) can be tested with real devices only (no simulators), but framework logic testing is not supported on devices.

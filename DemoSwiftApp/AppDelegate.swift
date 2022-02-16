@@ -56,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // locally generate DecisionTables (will be created in the backend and downloaded later)
         let decisionTables = DecisionTableGenerator.create(for: optimizely)
 
-//        compareDecisions(decisionTables)
+        compareDecisions(decisionTables)
 //
 //        comparePerformance(decisionTables)
     }

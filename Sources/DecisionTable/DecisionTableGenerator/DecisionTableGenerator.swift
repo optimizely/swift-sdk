@@ -23,117 +23,14 @@ public class DecisionTableGenerator {
         saveOriginalDatafileToFile(optimizely: optimizely)
         
         var decisionTables: OptimizelyDecisionTables
-        decisionTables = createDecisionTableUncompressed(optimizely: optimizely)
+        //decisionTables = createDecisionTableUncompressed(optimizely: optimizely)
         decisionTables = createDecisionTableCompressed(optimizely: optimizely)
-        //decisionTables = createDecisionTableCompressedToRanges(optimizely: optimizely)
-        decisionTables = createDecisionTableCompressedFlatAudiences(optimizely: optimizely)
+        decisionTables = createDecisionTableCompressedToRanges(optimizely: optimizely)
+        //decisionTables = createDecisionTableCompressedFlatAudiences(optimizely: optimizely)
         
         // set decision table for decide tests
         optimizely.decisionTables = decisionTables
         return decisionTables
     }
     
-    public static func createDecisionTableUncompressed(optimizely: OptimizelyClient) -> OptimizelyDecisionTables {
-        let config = optimizely.config!
-        let flags = config.getFeatureFlags()
-
-        var decisionTablesMap = [String: FlagDecisionTable]()
-
-        for flag in flags.sorted(by: { $0.key < $1.key }) {
-            print("\n[Flag]: \(flag.key)")
-
-            let rules = getAllRulesInOrderForFlag(config: config, flag: flag)
-            
-            let schemas = makeSchemasUncompressed(config: config, rules: rules)
-            let bodyInArray = makeTableBodyUncompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
-            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: false)
-        }
-    
-        let audiences = makeAllAudiences(config: config)
-        let sdkKey = optimizely.sdkKey
-        
-        let decisionTables = OptimizelyDecisionTables(sdkKey: sdkKey, tables: decisionTablesMap, audiences: audiences)
-        saveDecisionTablesToFile(sdkKey: sdkKey, decisionTables: decisionTables, suffix: "table")
-        
-        return decisionTables
-    }
-
-    public static func createDecisionTableCompressed(optimizely: OptimizelyClient) -> OptimizelyDecisionTables {
-        let config = optimizely.config!
-        let flags = config.getFeatureFlags()
-
-        var decisionTablesMap = [String: FlagDecisionTable]()
-
-        for flag in flags.sorted(by: { $0.key < $1.key }) {
-            print("\n[Flag]: \(flag.key)")
-
-            let rules = getAllRulesInOrderForFlag(config: config, flag: flag)
-            
-            let schemas = makeSchemasCompressed(config: config, rules: rules)
-            let (compressed, bodyInArray) = makeTableBodyCompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
-            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: compressed)
-        }
-    
-        let audiences = makeAllAudiences(config: config)
-        let sdkKey = optimizely.sdkKey
-        
-        let decisionTables = OptimizelyDecisionTables(sdkKey: sdkKey, tables: decisionTablesMap, audiences: audiences)
-        saveDecisionTablesToFile(sdkKey: sdkKey, decisionTables: decisionTables, suffix: "table-compressed")
-        
-        return decisionTables
-    }
-
-    public static func createDecisionTableCompressedToRanges(optimizely: OptimizelyClient) -> OptimizelyDecisionTables {
-        let config = optimizely.config!
-        let flags = config.getFeatureFlags()
-
-        var decisionTablesMap = [String: FlagDecisionTable]()
-
-        for flag in flags.sorted(by: { $0.key < $1.key }) {
-            print("\n[Flag]: \(flag.key)")
-
-            let rules = getAllRulesInOrderForFlag(config: config, flag: flag)
-            
-            let schemas = makeSchemasCompressed(config: config, rules: rules)
-            var (compressed, bodyInArray) = makeTableBodyCompressed(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
-            if compressed {
-                bodyInArray = convertTableBodyCompressedToRanges(bodyInArray: bodyInArray)
-             }
-            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: compressed)
-        }
-    
-        let audiences = makeAllAudiences(config: config)
-        let sdkKey = optimizely.sdkKey
-        
-        let decisionTables = OptimizelyDecisionTables(sdkKey: sdkKey, tables: decisionTablesMap, audiences: audiences)
-        saveDecisionTablesToFile(sdkKey: sdkKey, decisionTables: decisionTables, suffix: "table-compressed-ranges")
-        
-        return decisionTables
-    }
-
-    public static func createDecisionTableCompressedFlatAudiences(optimizely: OptimizelyClient) -> OptimizelyDecisionTables {
-        let config = optimizely.config!
-        let flags = config.getFeatureFlags()
-
-        var decisionTablesMap = [String: FlagDecisionTable]()
-
-        for flag in flags.sorted(by: { $0.key < $1.key }) {
-            print("\n[Flag]: \(flag.key)")
-
-            let rules = getAllRulesInOrderForFlag(config: config, flag: flag)
-            
-            let schemas = makeSchemasCompressedFlatAudiences(config: config, rules: rules)
-            let (compressed, bodyInArray) = makeTableBodyCompressedFlatAudiences(optimizely: optimizely, flagKey: flag.key, schemas: schemas)
-            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: compressed)
-        }
-    
-        let audiences = makeAllAudiences(config: config)
-        let sdkKey = optimizely.sdkKey
-        
-        let decisionTables = OptimizelyDecisionTables(sdkKey: sdkKey, tables: decisionTablesMap, audiences: audiences)
-        saveDecisionTablesToFile(sdkKey: sdkKey, decisionTables: decisionTables, suffix: "flat-audiences")
-        
-        return decisionTables
-    }
-
 }

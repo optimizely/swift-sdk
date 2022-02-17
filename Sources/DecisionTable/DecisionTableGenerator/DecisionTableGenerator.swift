@@ -23,10 +23,10 @@ public class DecisionTableGenerator {
         saveOriginalDatafileToFile(optimizely: optimizely)
         
         var decisionTables: OptimizelyDecisionTables
-        //decisionTables = createDecisionTableUncompressed(optimizely: optimizely)
+        decisionTables = createDecisionTableUncompressed(optimizely: optimizely)
         decisionTables = createDecisionTableCompressed(optimizely: optimizely)
         decisionTables = createDecisionTableCompressedToRanges(optimizely: optimizely)
-        //decisionTables = createDecisionTableCompressedFlatAudiences(optimizely: optimizely)
+        decisionTables = createDecisionTableCompressedFlatAudiences(optimizely: optimizely)
         
         // set decision table for decide tests
         optimizely.decisionTables = decisionTables

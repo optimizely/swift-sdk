@@ -31,6 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sdkKeys.append("X6xJvai8Yu9E7wT1hkvGM")     // large flags + many audiences
         sdkKeys.append("Sr9qbsCXNFhZvLpZk764za")    // many audiences
         
+        print("[DecisionTable Files Directory] \(NSHomeDirectory())")
+
         sdkKeys.forEach { sdkKey in            
             let semaphore = DispatchSemaphore(value: 0)
             

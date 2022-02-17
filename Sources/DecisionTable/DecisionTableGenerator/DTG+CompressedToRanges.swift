@@ -36,7 +36,7 @@ extension DecisionTableGenerator {
             if compressed {
                 bodyInArray = convertTableBodyCompressedToRanges(bodyInArray: bodyInArray)
             }
-            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: compressed, toRanges: true)
+            decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: compressed, toRanges: compressed)
         }
         
         let audiences = makeAllAudiences(config: config)

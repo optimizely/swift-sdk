@@ -22,7 +22,7 @@ class FlagDecisionTable: Encodable {
     let body: [String: String]
     let bodyInArray: [(String, String)]
     let compressed: Bool
-    let toRanges: Bool
+    let compressedToRanges: Bool
     
     init(key: String, schemas: [DecisionSchema], bodyInArray: [(String, String)], compressed: Bool, toRanges: Bool = false) {
         self.key = key
@@ -30,7 +30,7 @@ class FlagDecisionTable: Encodable {
         self.bodyInArray = bodyInArray
         self.body = Dictionary(uniqueKeysWithValues: bodyInArray)
         self.compressed = compressed
-        self.toRanges = toRanges
+        self.compressedToRanges = toRanges
     }
     
     func decide(user: OptimizelyUserContext,
@@ -38,14 +38,12 @@ class FlagDecisionTable: Encodable {
         let lookupInput = schemas.array.map { $0.makeLookupInput(user: user) }.joined()
         
         var decision: String?
-        if compressed {
-            if toRanges {
-                // dont-cares(*) converted to ranges. compare for ranges
-                decision = lookupCompressedToRanges(lookupInput: lookupInput)
-            } else {
-                // dont-cares(*) will be compared as is
-                decision = lookupCompressed(lookupInput: lookupInput)
-            }
+        if compressedToRanges {
+            // dont-cares(*) converted to ranges. compare for ranges
+            decision = lookupCompressedToRanges(lookupInput: lookupInput)
+        } else if compressed {
+            // dont-cares(*) will be compared as is
+            decision = lookupCompressed(lookupInput: lookupInput)
         } else {
             decision = body[lookupInput]
         }
@@ -77,8 +75,8 @@ class FlagDecisionTable: Encodable {
         let targetArray = Array(target)
         for i in 0..<dontCareArray.count {
             let char = dontCareArray[i]
-            if (char == "*") { continue }
-            if (char != targetArray[i]) { return false }
+            if char == "*" { continue }
+            if char != targetArray[i] { return false }
         }
         
         return true
@@ -122,7 +120,7 @@ class FlagDecisionTable: Encodable {
         case schemas
         case body
         case compressed
-        case toRanges
+        case compressedToRanges
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -131,7 +129,7 @@ class FlagDecisionTable: Encodable {
         try container.encode(schemas, forKey: .schemas)
         try container.encode(body, forKey: .body)
         try container.encode(compressed, forKey: .compressed)
-        try container.encode(toRanges, forKey: .toRanges)
+        try container.encode(compressedToRanges, forKey: .compressedToRanges)
     }
         
 }

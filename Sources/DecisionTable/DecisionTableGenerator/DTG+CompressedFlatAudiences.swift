@@ -17,7 +17,7 @@
 import Foundation
 import CoreText
 
-// Compressed + Flag-audiences
+// Compressed + Flat-audiences
 
 extension DecisionTableGenerator {
 

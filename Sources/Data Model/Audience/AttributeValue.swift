@@ -159,7 +159,7 @@ extension AttributeValue: Equatable {
         
         switch (lhs, rhs) {
         case (.string, .string), (.int, .int), (.double, .double), (.bool, .bool), (.array, .array):
-            return true;
+            return true
         default:
             return false
         }

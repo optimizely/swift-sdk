@@ -15,6 +15,7 @@
 //
 
 import Foundation
+import CoreText
 
 // Compressed + Flag-audiences
 
@@ -36,11 +37,11 @@ extension DecisionTableGenerator {
             decisionTablesMap[flag.key] = FlagDecisionTable(key: flag.key, schemas: schemas, bodyInArray: bodyInArray, compressed: compressed)
         }
     
-        let audiences = makeAllAudiences(config: config)
+        let audiences = compressAllAudiences(config: config)
         let sdkKey = optimizely.sdkKey
         
         let decisionTables = OptimizelyDecisionTables(sdkKey: sdkKey, tables: decisionTablesMap, audiences: audiences)
-        saveDecisionTablesToFile(sdkKey: sdkKey, decisionTables: decisionTables, suffix: "flat-audiences")
+        saveDecisionTablesToFile(sdkKey: sdkKey, decisionTables: decisionTables, suffix: "table-flat-audiences")
         
         return decisionTables
     }
@@ -136,6 +137,137 @@ extension DecisionTableGenerator {
         }
         
         return (compressed, bodyInArray)
+    }
+    
+    // MARK: - Utils
+    
+    static func compressAllAudiences(config: ProjectConfig) -> [Audience] {
+        let audiences = makeAllAudiences(config: config)
+        
+        var compressed = [Audience]()
+        for var audience in audiences {
+            audience.conditionHolder = flattenAudienceConditions(audience.conditionHolder)
+            audience.conditionHolder = mergeAudienceConditions(audience.conditionHolder)
+            
+            // update serialized strings too (to avoid confusion later)
+            audience.conditions = serializeConditionHolder(audience.conditionHolder)
+
+            compressed.append(audience)
+        }
+        
+        return compressed
+    }
+    
+    static func flattenAudienceConditions(_ condition: ConditionHolder) -> ConditionHolder {
+        guard case ConditionHolder.array(let array) = condition else { return condition }
+
+        if array.count == 2, case ConditionHolder.logicalOp = array[0] {
+            return flattenAudienceConditions(array[1])   // repeat into lower levels
+        }
+          
+        var compressedCondition: [ConditionHolder] = [array[0]]
+        let operands = array[1...]
+
+        for item in operands {
+            switch item {
+            case .array:
+                // recursive call for compression
+                compressedCondition.append(flattenAudienceConditions(item))
+            default:
+                compressedCondition.append(item)
+            }
+        }
+
+        return ConditionHolder.array(compressedCondition)
+    }
+    
+    static func mergeAudienceConditions(_ condition: ConditionHolder) -> ConditionHolder {
+        guard case ConditionHolder.array(let array) = condition else { return condition }
+        guard array.count > 2 else { return condition }
+        guard case ConditionHolder.logicalOp(let op) = array[0] else { return condition }
+        
+        let operands = array[1...]
+
+        // merge only with OR operator with multiple operands with all same name and
+        // "exact" or "substring" matches
+        
+        if case LogicalOp.or = op {
+            var merged = true
+            
+            var commonUserAttribute: UserAttribute?
+            var mergedValues = [Any]()
+            for item in operands {
+                guard case ConditionHolder.leaf(let leaf) = item,
+                      case .attribute(let userAttribute) = leaf else {
+                          merged = false
+                          break
+                      }
+                
+                if commonUserAttribute == nil {
+                    commonUserAttribute = userAttribute
+                }
+                
+                guard commonUserAttribute!.name == userAttribute.name,
+                      commonUserAttribute!.match == userAttribute.match,
+                      AttributeValue.isSameType(commonUserAttribute!.value, userAttribute.value)  // some condition is mixed up with multiple types. DO NOT merge them.
+                else {
+                    merged = false
+                    break
+                }
+                                    
+                switch userAttribute.value {
+                case .string(let value):
+                    mergedValues.append(value)
+                case .int(let value):
+                    mergedValues.append(value)
+                case .double(let value):
+                    mergedValues.append(value)
+                default:
+                    break
+                }
+            }
+        
+            if merged, var mergedAttributes = commonUserAttribute {
+                if mergedAttributes.match == "exact" || mergedAttributes.match == "substring" {
+                    mergedAttributes.match = (mergedAttributes.match == "exact") ? "member" : "member_substring"
+                    mergedAttributes.value = AttributeValue(value: mergedValues)
+                    return ConditionHolder.leaf(ConditionLeaf.attribute(mergedAttributes))
+                } else {
+                    // merge not supported for other types yet
+                }
+            }
+        }
+
+        // look into next-level for compression
+        
+        var compressedCondition: [ConditionHolder] = [array[0]]
+        
+        for item in operands {
+            switch item {
+            case .array:
+                // recursive call for compression
+                compressedCondition.append(mergeAudienceConditions(item))
+            default:
+                compressedCondition.append(item)
+            }
+        }
+
+        return ConditionHolder.array(compressedCondition)
+    }
+    
+    static func serializeConditionHolder(_ conditionHolder: ConditionHolder) -> String {
+        // update serialized strings too (to avoid confusion later)
+        let sortEncoder = JSONEncoder()
+        if #available(iOSApplicationExtension 11.0, *) {
+            sortEncoder.outputFormatting = .sortedKeys
+        }
+        
+        var serialized = ""
+        if let data = try? sortEncoder.encode(conditionHolder) {
+            serialized = String(bytes: data, encoding: .utf8) ?? ""
+        }
+        
+        return serialized
     }
 
 }

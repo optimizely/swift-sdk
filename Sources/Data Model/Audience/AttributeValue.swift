@@ -16,11 +16,12 @@
 
 import Foundation
 
-enum AttributeValue: Codable, Equatable, CustomStringConvertible {
+enum AttributeValue: Codable, CustomStringConvertible {
     case string(String)
     case int(Int64)         // supported value range [-2^53, 2^53]
     case double(Double)
     case bool(Bool)
+    case array([Any])
     // not defined in datafile schema, but required for forward compatiblity (see Nikhil's doc)
     case others
     
@@ -34,17 +35,23 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             return "int(\(value))"
         case .bool(let value):
             return "bool(\(value))"
+        case .array(let value):
+            return "array(\(value))"
         case .others:
             return "others"
         }
     }
     
     init?(value: Any?) {
-
         guard let value = value else { return nil }
 
         if let stringValue = Utils.getStringValue(value) {
             self = .string(stringValue)
+            return
+        }
+        
+        if let arrayValue = Utils.getArrayValue(value) {
+            self = .array(arrayValue)
             return
         }
 
@@ -63,7 +70,7 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             self = .bool(boolValue)
             return
         }
-
+        
         return nil
     }
     
@@ -103,10 +110,61 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             try container.encode(value)
         case .bool(let value):
             try container.encode(value)
+        case .array(let value):
+            if let array = value as? [String] {
+                try container.encode(array)
+            } else if let array = value as? [Int] {
+                try container.encode(array)
+            } else if let array = value as? [Double] {
+                try container.encode(array)
+            } else {
+                return
+            }
         case .others:
             return
         }
     }
+}
+
+
+extension AttributeValue: Equatable {
+    
+    static func == (lhs: AttributeValue, rhs: AttributeValue) -> Bool {
+        switch (lhs, rhs) {
+        case (.string(let lv), .string(let rv)):
+            return lv == rv
+        case (.int(let lv), .int(let rv)):
+            return lv == rv
+        case (.double(let lv), .double(let rv)):
+            return lv == rv
+        case (.bool(let lv), .bool(let rv)):
+            return lv == rv
+        case (.array(let lv), .array(let rv)):
+            if let la = lv as? [String], let ra = rv as? [String] {
+                return la == ra
+            } else if let la = lv as? [Int], let ra = rv as? [Int] {
+                return la == ra
+            } else if let la = lv as? [Double], let ra = rv as? [Double] {
+                return la == ra
+            } else {
+                return false
+            }
+        default:
+            return false
+        }
+    }
+    
+    static func isSameType(_ lhs: AttributeValue?, _ rhs: AttributeValue?) -> Bool {
+        guard let lhs = lhs, let rhs = rhs else { return false }
+        
+        switch (lhs, rhs) {
+        case (.string, .string), (.int, .int), (.double, .double), (.bool, .bool), (.array, .array):
+            return true;
+        default:
+            return false
+        }
+    }
+
 }
 
 // MARK: - Evaluate
@@ -227,11 +285,13 @@ extension AttributeValue {
             return String(value)
         case .bool(let value):
             return String(value)
+        case .array(let value):
+            return value.description
         case .others:
             return "UNKNOWN"
         }
     }
-    
+        
     func isComparable(with target: AttributeValue) -> Bool {
         switch (self, target) {
         case (.string, .string): return true

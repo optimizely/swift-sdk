@@ -127,6 +127,11 @@ class Utils {
         return (value as! Bool)
     }
     
+    static func getArrayValue(_ value: Any) -> [Any]? {
+        guard value is [Any] else { return nil }
+        return (value as! [Any])
+    }
+
     static func getConditionString<T: Encodable>(conditions: T) -> String {
         if let jsonData = try? self.jsonEncoder.encode(conditions), let jsonString = String(data: jsonData, encoding: .utf8) {
             return jsonString

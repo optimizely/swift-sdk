@@ -25,12 +25,25 @@ extension DecisionSchema {
     func encode(using encoder: JSONEncoder) throws -> Data {
         try encoder.encode(self)
     }
+    
+    func letterForIndex(_ index: Int?) -> String {
+        guard let index = index else { return "0" }
+        return String(index)
+    }
+
+    func indexForLetter(_ letter: String) -> Int {
+        return Int(letter)!
+    }
 }
 
 // DecisionSchema array wrapper for JSON encoding (since Codable not supported in Protocol)
 
 struct SchemaCollection: Encodable {
     let array: [DecisionSchema]
+    
+    var isEmpty: Bool {
+        return array.isEmpty
+    }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
@@ -151,11 +164,11 @@ struct AudienceDecisionSchema: DecisionSchema, CustomStringConvertible, Encodabl
             // print("[DecisionSchema audience evaluation error: \(error)")
         }
         
-        return bool ? "1" : "0"
+        return letterForIndex(bool ? 1 : 0)
     }
     
     var allLookupInputs: [String] {
-        return ["1", "0"]
+        return [true, false].map{ letterForIndex($0 ? 1 : 0) }
     }
     
     var description: String {
@@ -267,23 +280,6 @@ extension UserAttribute {
 // MARK: - Utils
 
 extension BucketDecisionSchema {
-    
-    var startAsciiValue: Int {
-        return 65   // "A"
-    }
-    
-    func indexForLetter(_ letter: String) -> Int {
-        // return Int(Character(letter).asciiValue!) - startAsciiValue
-        return Int(letter)!
-    }
-    
-    func letterForIndex(_ index: Int?) -> String {
-//        guard let index = index else { return "Z" }
-//        return String(format: "%c", startAsciiValue + index)
-        
-        guard let index = index else { return "0" }
-        return String(index)
-    }
     
     func getBucketingId(user: OptimizelyUserContext) -> String {
         // By default, the bucketing ID should be the user ID .

@@ -21,16 +21,25 @@ class FlagDecisionTable: Encodable {
     let schemas: SchemaCollection
     let body: [String: String]
     let bodyInArray: [(String, String)]
-    let compressed: Bool
-    let compressedToRanges: Bool
+    var compressed: Bool?
+    var compressedToRanges: Bool?
+    
+    // 0% or 100% rollout case. we can drop the dummy schema.
+    var isFullRollout: Bool {
+        schemas.array.count == 1 && body.count == 1
+    }
     
     init(key: String, schemas: [DecisionSchema], bodyInArray: [(String, String)], compressed: Bool, toRanges: Bool = false) {
         self.key = key
         self.schemas = SchemaCollection(array: schemas)
         self.bodyInArray = bodyInArray
         self.body = Dictionary(uniqueKeysWithValues: bodyInArray)
-        self.compressed = compressed
-        self.compressedToRanges = toRanges
+        if compressed {
+            self.compressed = true
+        }
+        if toRanges {
+            self.compressedToRanges = true
+        }
     }
     
     func decide(user: OptimizelyUserContext,
@@ -38,10 +47,10 @@ class FlagDecisionTable: Encodable {
         let lookupInput = schemas.array.map { $0.makeLookupInput(user: user) }.joined()
         
         var decision: String?
-        if compressedToRanges {
+        if compressedToRanges != nil {
             // dont-cares(*) converted to ranges. compare for ranges
             decision = lookupCompressedToRanges(lookupInput: lookupInput)
-        } else if compressed {
+        } else if compressed != nil {
             // dont-cares(*) will be compared as is
             decision = lookupCompressed(lookupInput: lookupInput)
         } else {
@@ -126,10 +135,19 @@ class FlagDecisionTable: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(key, forKey: .key)
-        try container.encode(schemas, forKey: .schemas)
         try container.encode(body, forKey: .body)
-        try container.encode(compressed, forKey: .compressed)
-        try container.encode(compressedToRanges, forKey: .compressedToRanges)
+        
+        if !isFullRollout {
+            try container.encode(schemas, forKey: .schemas)
+        }
+        
+        if let comp = compressed, comp {
+            try container.encode(comp, forKey: .compressed)
+        }
+        
+        if let comp = compressedToRanges, comp {
+            try container.encode(compressedToRanges, forKey: .compressedToRanges)
+        }
     }
         
 }

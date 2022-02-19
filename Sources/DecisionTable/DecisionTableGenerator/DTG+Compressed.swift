@@ -63,25 +63,23 @@ extension DecisionTableGenerator {
         }
         
         // compress: remove all single-bucket BucketDecsionSchemas
-        //           keep it if it's the only one schema for the flag (to create table body)
         
-        if schemas.count > 1 {
-            var compressed = schemas.filter { schema in
-                if let schema = schema as? BucketDecisionSchema {
-                    // only one bucket (0% or 100%) can be ignored
-                    return schema.buckets.count > 1
-                } else {
-                    // keep all audience schemas
-                    return true
-                }
+        var compressed = schemas.filter { schema in
+            if let schema = schema as? BucketDecisionSchema {
+                // only one bucket (0% or 100%) can be ignored
+                return schema.buckets.count > 1
+            } else {
+                // keep all audience schemas
+                return true
             }
-            
-            if compressed.isEmpty {
-                compressed.append(schemas.first!)
-            }
-            
-            schemas = compressed
         }
+        
+        // keep at least one schema (to create table body)
+        if compressed.isEmpty {
+            compressed.append(schemas.first!)
+        }
+        
+        schemas = compressed
 
         print("\n   [Schemas]")
         schemas.forEach {

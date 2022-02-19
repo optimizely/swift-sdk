@@ -179,7 +179,9 @@ class DefaultBucketer: OPTBucketer {
                 }
             }
             
-            // compressed schemas will drop 0% or 100% schema. handle those cases
+            // the bucket schema is removed for compression
+            // - schema with 0% or 100% traffic allocation will be removed. handle those cases here.
+            
             if collapsed.isEmpty {
                 return nil
             } else if collapsed.count == 1, collapsed[0].endOfRange == 10000 {
@@ -191,6 +193,7 @@ class DefaultBucketer: OPTBucketer {
             }
         }
         
+        // normal bucket decision
         
         for bucket in trafficAllocation where bucketValue < bucket.endOfRange {
             return bucket.entityId

@@ -18,9 +18,9 @@ import Foundation
 
 class ThreadSafeLogger {
     
-    // thread-safe lazy logger load (after HandlerRegisterService ready)
+    // thread-safe lazy logger (after HandlerRegisterService ready)
     // - "lazy var" is not thread-safe
-    // - call this thread-safe version for types that should be initialized before (for customiziation) or at the same time with OptimizelyClient (so HandlerRegisterService is not ready yet), so required to be lazy-init.
+    // - call this thread-safe version when required to be lazy-init. logger should be initialized before (for customiziation) or at the same time with OptimizelyClient (so HandlerRegisterService is not ready yet).
     // - [DefaultDatafileHandler, DefaultEventDispatcher, DefaultDecisionService, DefaultBucketer]
     
     private var instance: OPTLogger?
@@ -32,7 +32,7 @@ class ThreadSafeLogger {
             if instance == nil {
                 instance = OPTLoggerFactory.getLogger()
             }
-            result = instance!
+            result = instance
         }
         return result!
     }

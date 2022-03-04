@@ -25,9 +25,9 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
     public let url: URL
 
     // thread-safe lazy logger load (after HandlerRegisterService ready)
-    private var loggerInstance: OPTLogger?
+    private let threadSafeLogger = ThreadSafeLogger()
     var logger: OPTLogger {
-        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+        return threadSafeLogger.logger
     }
 
     public init(storeName: String, async: Bool = true) {

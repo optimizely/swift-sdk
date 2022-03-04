@@ -38,9 +38,9 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     }
         
     // thread-safe lazy logger load (after HandlerRegisterService ready)
-    private var loggerInstance: OPTLogger?
+    private let threadSafeLogger = ThreadSafeLogger()
     var logger: OPTLogger {
-        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+        return threadSafeLogger.logger
     }
 
     // for dispatching events

@@ -21,11 +21,11 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     
     // thread-safe lazy logger load (after HandlerRegisterService ready)
-    private var loggerInstance: OPTLogger?
+    private let threadSafeLogger = ThreadSafeLogger()
     var logger: OPTLogger {
-        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+        return threadSafeLogger.logger
     }
-        
+
     // the timers for all sdk keys are atomic to allow for thread access.
     var timers = AtomicProperty(property: [String: (timer: Timer?, interval: Int)]())
     

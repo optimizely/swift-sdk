@@ -28,7 +28,7 @@ class DefaultDecisionService: OPTDecisionService {
     let userProfileService: OPTUserProfileService
     
     // thread-safe lazy logger load (after HandlerRegisterService ready)
-    let threadSafeLogger = ThreadSafeLogger()
+    private let threadSafeLogger = ThreadSafeLogger()
     var logger: OPTLogger {
         return threadSafeLogger.logger
     }

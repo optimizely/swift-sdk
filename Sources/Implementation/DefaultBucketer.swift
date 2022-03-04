@@ -23,9 +23,9 @@ class DefaultBucketer: OPTBucketer {
     var MAX_HASH_VALUE: UInt64?
     
     // thread-safe lazy logger load (after HandlerRegisterService ready)
-    private var loggerInstance: OPTLogger?
+    private let threadSafeLogger = ThreadSafeLogger()
     var logger: OPTLogger {
-        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+        return threadSafeLogger.logger
     }
 
     init() {

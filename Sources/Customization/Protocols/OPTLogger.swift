@@ -86,22 +86,4 @@ extension OPTLogger {
         return DefaultLogger()
     }
     
-    // thread-safe lazy logger load (after HandlerRegisterService ready)
-    // - "lazy var" is not thread-safe
-    // - call this thread-safe version for types that can be initialized before (for customiziation) or at the same time with OptimizelyClient (so HandlerRegisterService is not ready yet).
-    // - DefaultDatafileHandler, DefaultEventDispatcher, DefaultDecisionService, DefaultBucketer
-
-    static let lock = DispatchQueue(label: "logger")
-    
-    class func getLoggerThreadSafe(_ instance: inout OPTLogger?) -> OPTLogger {
-        var result: OPTLogger?
-        lock.sync {
-            if instance == nil {
-                instance = OPTLoggerFactory.getLogger()
-            }
-            result = instance!
-        }
-        return result!
-    }
-    
 }

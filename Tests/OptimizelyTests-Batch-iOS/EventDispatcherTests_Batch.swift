@@ -1,5 +1,5 @@
 //
-// Copyright 2019, 2021, Optimizely, Inc. and contributors
+// Copyright 2019, 2021-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,9 +58,6 @@ class EventDispatcherTests_Batch: XCTestCase {
         // for debug level setting
         HandlerRegistryService.shared.binders.property?.removeAll()
         _ = OptimizelyClient(sdkKey: "any", eventDispatcher: eventDispatcher, defaultLogLevel: .debug)
-        
-        // clear static states to test first datafile load
-        ProjectConfig.observer.reset()
     }
     
     override func tearDown() {
@@ -233,8 +230,8 @@ extension EventDispatcherTests_Batch {
     }
 
     func testBatchingEventsWhenProjectIdsNotEqual() {
-        // projectId change will flush all pending events, so this scenario should not happen frequently.
-        // but still possible when previous flushes failed.
+        // Batching set a boundary when an event has a different projectId from previous events.
+        // The remaining events will be sent as a separate batch (see "testFlushEventsWhenBatchFails()" for that).
         
         let events: [EventForDispatch] = [
             makeEventForDispatch(url: kUrlA, event: batchEventA),
@@ -255,8 +252,8 @@ extension EventDispatcherTests_Batch {
     }
 
     func testBatchingEventsWhenRevisionNotEqual() {
-        // datafile revision change will flush all pending events, so this scenario should not happen frequently.
-        // but still possible when previous flushes failed.
+        // Batching set a boundary when an event has a different revision from previous events.
+        // The remaining events will be sent as a separate batch (see "testFlushEventsWhenBatchFails()" for that).
 
         let events: [EventForDispatch] = [
             makeEventForDispatch(url: kUrlA, event: batchEventA),
@@ -652,138 +649,7 @@ extension EventDispatcherTests_Batch {
         wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
         XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on batchSize hit")
     }
-    
-    func testEventsFlushedOnRevisionChange() {
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
-
-        eventDispatcher.batchSize = 1000        // big, won't flush
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
         
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
-        var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
-
-        // (1) not enough events to be flushed yet
-        
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
-        
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
-        
-        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
-        
-        // (2) flush on revision-change notification
-        
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        
-        // change revision
-        datafile = OTUtils.loadJSONDatafile("empty_datafile_new_revision")!
-        optimizely.config = try! ProjectConfig(datafile: datafile)
-        
-        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the revision change")
-    }
-    
-    func testEventsFlushedOnProjectIdChange() {
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
-
-        eventDispatcher.batchSize = 1000        // big, won't flush
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
-        
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
-        var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
-
-        // (1) not enough events to be flushed yet
-        
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
-        
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
-        
-        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
-        
-        // (2) flush on revision-change notification
-        
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        
-        // change projectId
-        datafile = OTUtils.loadJSONDatafile("empty_datafile_new_project_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile)
-
-        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 1, "should flush on the projectId change")
-    }
-    
-    func testEventsNotFlushedOnOtherDatafileChanges() {
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
-
-        eventDispatcher.batchSize = 1000        // big, won't flush
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
-        
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
-        var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
-        
-        // (1) not enough events to be flushed yet
-        
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
-        
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
-        
-        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush yet")
-        
-        // (2) not flush on other datafile contents change
-        
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
-
-        // change accountId (not projectId or revision)
-        datafile = OTUtils.loadJSONDatafile("empty_datafile_new_account_id")!
-        optimizely.config = try! ProjectConfig(datafile: datafile)
-        
-        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on any other changes")
-    }
-    
-    func testEventsNotFlushedOnFirstDatafileLoad() {
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
-
-        eventDispatcher.batchSize = 1000        // big, won't flush
-        eventDispatcher.timerInterval = 99999   // timer is big, won't fire
-        
-        eventDispatcher.exp = XCTestExpectation(description: "timer")
-        eventDispatcher.exp?.isInverted = true
-        
-        // old events queued before SDK starts
-        
-        dispatchMultipleEvents([(kUrlA, batchEventA),
-                                (kUrlA, batchEventA)])
-        
-        // first datafile load
-
-        let optimizely = OptimizelyClient(sdkKey: "SDKKey",
-                                          eventDispatcher: eventDispatcher,
-                                          defaultLogLevel: .debug)
-        let datafile = OTUtils.loadJSONDatafile("empty_datafile")!
-        try! optimizely.start(datafile: datafile)
-        
-        wait(for: [eventDispatcher.exp!], timeout: eventTimeout)
-        XCTAssertEqual(eventDispatcher.sendRequestedEvents.count, 0, "should not flush on the first datafile load")
-    }
 }
 
 // MARK: - LogEvent Notification
@@ -907,7 +773,7 @@ extension EventDispatcherTests_Batch {
 extension EventDispatcherTests_Batch {
     
     func testCloseForOptimizleyClient() {
-        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName, removeDatafileObserver: false)
+        self.eventDispatcher = TestEventDispatcher(eventFileName: uniqueFileName)
         
         eventDispatcher.batchSize = 1000        // big, won't flush
         eventDispatcher.timerInterval = 99999   // timer is big, won't fire
@@ -1150,14 +1016,9 @@ class TestEventDispatcher: DefaultEventDispatcher {
     // set this if need to wait sendEvent completed
     var exp: XCTestExpectation?
     
-    init(eventFileName: String, removeDatafileObserver: Bool = true) {
+    init(eventFileName: String) {
         self.eventFileName = eventFileName
         super.init(dataStoreName: eventFileName)
-        
-        // block interference from other tests notifications when testing batch timing
-        if removeDatafileObserver {
-            removeProjectChangeNotificationObservers()
-        }
     }
     
     override func sendEvent(event: EventForDispatch, completionHandler: @escaping DispatchCompletionHandler) {

@@ -1,5 +1,5 @@
 //
-// Copyright 2021, Optimizely, Inc. and contributors 
+// Copyright 2021-2022, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -133,12 +133,6 @@ extension EventDispatcherTests_MultiClients {
                 (0..<numEventsPerThread).forEach{ e in
                     usleep(UInt32.random(in: 0..<UInt32(maxRandomIntervalInUsecs)))
                     dispatcher.dispatchEvent(event: OTUtils.makeEventForDispatch(), completionHandler: nil)
-                }
-                
-                // more stress with notifications
-                if injectNotifications, Bool.random() {
-                    NotificationCenter.default.post(name: .didReceiveOptimizelyProjectIdChange, object: nil)
-                    NotificationCenter.default.post(name: .didReceiveOptimizelyRevisionChange, object: nil)
                 }
             }
         }

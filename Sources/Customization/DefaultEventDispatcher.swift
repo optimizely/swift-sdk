@@ -1,5 +1,5 @@
 //
-// Copyright 2019, 2021, Optimizely, Inc. and contributors
+// Copyright 2019, 2021-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,7 +49,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     let eventQueue: DataStoreQueueStackImpl<EventForDispatch>
     // timer as a atomic property.
     var timer = AtomicProperty<Timer>()
-    var observers = [NSObjectProtocol]()
     
     // network reachability
     let reachability = NetworkReachability(maxContiguousFails: 1)
@@ -79,17 +78,12 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
             self.logger.e(.eventDispatcherConfigError("batchSize cannot be bigger than maxQueueSize"))
             self.maxQueueSize = self.batchSize
         }
-        
-        addProjectChangeNotificationObservers()
-        
+                
         subscribe()
     }
     
     deinit {
         stopTimer()
-        
-        removeProjectChangeNotificationObservers()
-
         unsubscribe()
     }
     
@@ -269,34 +263,6 @@ extension DefaultEventDispatcher {
     open func close() {
         self.flushEvents()
         self.queueLock.sync {}
-    }
-    
-}
-
-// MARK: - Notification Observers
-
-extension DefaultEventDispatcher {
-    
-    func addProjectChangeNotificationObservers() {
-        observers.append(
-            NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyProjectIdChange, object: nil, queue: nil) { [weak self] _ in
-                self?.logger.d("Event flush triggered by datafile projectId change")
-                self?.flushEvents()
-            }
-        )
-        
-        observers.append(
-            NotificationCenter.default.addObserver(forName: .didReceiveOptimizelyRevisionChange, object: nil, queue: nil) { [weak self] _ in
-                self?.logger.d("Event flush triggered by datafile revision change")
-                self?.flushEvents()
-            }
-        )
-    }
-    
-    func removeProjectChangeNotificationObservers() {
-        observers.forEach {
-            NotificationCenter.default.removeObserver($0)
-        }
     }
     
 }

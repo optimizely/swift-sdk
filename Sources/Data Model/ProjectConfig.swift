@@ -55,7 +55,6 @@ class ProjectConfig {
         }
 
         defer { self.project = project }  // deferred-init will call "didSet"
-        ProjectConfig.observer.update(project: project)
     }
     
     convenience init(datafile: String) throws {
@@ -156,44 +155,6 @@ class ProjectConfig {
         return rules
     }
 
-}
-
-// MARK: - Project Change Observer
-
-extension ProjectConfig {
-    
-    struct ProjectObserver {
-        var projectId: String? {
-            didSet {
-                if oldValue != nil, projectId != oldValue {
-                    NotificationCenter.default.post(name: .didReceiveOptimizelyProjectIdChange, object: nil)
-                }
-            }
-        }
-        
-        var revision: String? {
-            didSet {
-                if oldValue != nil, revision != oldValue {
-                    NotificationCenter.default.post(name: .didReceiveOptimizelyRevisionChange, object: nil)
-                }
-            }
-        }
-        
-        /// update obseverable properties
-        ///
-        /// - Parameter project: new Project values (pass nil for reset)
-        mutating func update(project: Project?) {
-            self.projectId = project?.projectId
-            self.revision = project?.revision
-        }
-        
-        mutating func reset() {
-            self.update(project: nil)
-        }
-    }
-    
-    static var observer = ProjectObserver()
-    
 }
 
 // MARK: - Persistent Data

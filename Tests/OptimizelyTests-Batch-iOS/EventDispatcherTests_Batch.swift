@@ -230,7 +230,7 @@ extension EventDispatcherTests_Batch {
     }
 
     func testBatchingEventsWhenProjectIdsNotEqual() {
-        // Batching set a boundary when an event has a different projectId from previous events.
+        // Batching sets a boundary when an event has a different projectId from previous events.
         // The remaining events will be sent as a separate batch (see "testFlushEventsWhenBatchFails()" for that).
         
         let events: [EventForDispatch] = [
@@ -252,7 +252,7 @@ extension EventDispatcherTests_Batch {
     }
 
     func testBatchingEventsWhenRevisionNotEqual() {
-        // Batching set a boundary when an event has a different revision from previous events.
+        // Batching sets a boundary when an event has a different revision from previous events.
         // The remaining events will be sent as a separate batch (see "testFlushEventsWhenBatchFails()" for that).
 
         let events: [EventForDispatch] = [

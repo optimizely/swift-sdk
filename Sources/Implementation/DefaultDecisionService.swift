@@ -28,9 +28,9 @@ class DefaultDecisionService: OPTDecisionService {
     let userProfileService: OPTUserProfileService
     
     // thread-safe lazy logger load (after HandlerRegisterService ready)
-    private var loggerInstance: OPTLogger?
+    private let threadSafeLogger = ThreadSafeLogger()
     var logger: OPTLogger {
-        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+        return threadSafeLogger.logger
     }
     
     // user-profile-service read-modify-write lock for supporting multiple clients

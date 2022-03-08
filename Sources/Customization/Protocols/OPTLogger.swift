@@ -1,5 +1,5 @@
 //
-// Copyright 2019, 2021, Optimizely, Inc. and contributors
+// Copyright 2019, 2021-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,24 +84,6 @@ extension OPTLogger {
         }
         
         return DefaultLogger()
-    }
-    
-    // thread-safe lazy logger load (after HandlerRegisterService ready)
-    // - "lazy var" is not thread-safe
-    // - call this thread-safe version for types that can be initialized before (for customiziation) or at the same time with OptimizelyClient (so HandlerRegisterService is not ready yet).
-    // - DefaultDatafileHandler, DefaultEventDispatcher, DefaultDecisionService, DefaultBucketer
-
-    static let lock = DispatchQueue(label: "logger")
-    
-    class func getLoggerThreadSafe(_ instance: inout OPTLogger?) -> OPTLogger {
-        var result: OPTLogger?
-        lock.sync {
-            if instance == nil {
-                instance = OPTLoggerFactory.getLogger()
-            }
-            result = instance!
-        }
-        return result!
     }
     
 }

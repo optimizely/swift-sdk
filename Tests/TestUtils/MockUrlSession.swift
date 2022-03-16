@@ -22,6 +22,7 @@ import Foundation
 // the response also includes the url for the data download.
 // the cdn url is used to get the datafile if the datafile is not in cache
 class MockUrlSession: URLSession {
+    static var validSessions = 0
     var statusCode: Int
     var withError: Bool
     var localResponseData: String?
@@ -53,6 +54,7 @@ class MockUrlSession: URLSession {
     }
 
     init(handler: MockDatafileHandler? = nil, statusCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
+        Self.validSessions += 1
         self.handler = handler
         self.statusCode = statusCode
         self.withError = withError
@@ -60,6 +62,7 @@ class MockUrlSession: URLSession {
     }
    
     init(handler: MockDatafileHandler? = nil, settingsMap: [String: (Int, Bool)]) {
+        Self.validSessions += 1
         self.handler = handler
         self.statusCode = 0
         self.withError = false
@@ -109,4 +112,7 @@ class MockUrlSession: URLSession {
         }
     }
 
+    override func finishTasksAndInvalidate() {
+        Self.validSessions -= 1
+    }
 }

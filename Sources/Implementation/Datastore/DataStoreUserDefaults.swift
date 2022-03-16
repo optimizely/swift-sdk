@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ public class DataStoreUserDefaults: OPTDataStore {
     static let dispatchQueue = DispatchQueue(label: "OPTDataStoreQueueUserDefaults")
 
     // thread-safe lazy logger load (after HandlerRegisterService ready)
-    private var loggerInstance: OPTLogger?
+    private let threadSafeLogger = ThreadSafeLogger()
     var logger: OPTLogger {
-        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+        return threadSafeLogger.logger
     }
 
     public func getItem(forKey: String) -> Any? {

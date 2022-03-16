@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ open class DataStoreFile<T>: OPTDataStore where T: Codable {
     public let url: URL
 
     // thread-safe lazy logger load (after HandlerRegisterService ready)
-    private var loggerInstance: OPTLogger?
+    private let threadSafeLogger = ThreadSafeLogger()
     var logger: OPTLogger {
-        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+        return threadSafeLogger.logger
     }
 
     public init(storeName: String, async: Bool = true) {

@@ -28,6 +28,7 @@ class DatafileHandlerTests: XCTestCase {
     override func tearDown() {
         OTUtils.clearAllBinders()
         OTUtils.clearAllTestStorage(including: sdkKey)
+        XCTAssertEqual(MockUrlSession.validSessions, 0, "all MockUrlSession must be invalidated")
     }
 
     func testDatafileHandler() {
@@ -331,13 +332,12 @@ class DatafileHandlerTests: XCTestCase {
         var localFileUrl:URL?
         // override getSession to return our own session.
         override func getSession(resourceTimeoutInterval: Double?) -> URLSession {
-            var session = MockUrlSession(statusCode: 200)
-            // will return 500
             if let _ = resourceTimeoutInterval {
-                session = MockUrlSession(withError: true)
+                // will return 500
+                return MockUrlSession(withError: true)
+            } else {
+                return MockUrlSession(statusCode: 200)
             }
-            
-            return session
         }
     }
 

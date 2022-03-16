@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     public var endPointStringFormat = "https://cdn.optimizely.com/datafiles/%@.json"
     
     // thread-safe lazy logger load (after HandlerRegisterService ready)
-    private var loggerInstance: OPTLogger?
+    private let threadSafeLogger = ThreadSafeLogger()
     var logger: OPTLogger {
-        return OPTLoggerFactory.getLoggerThreadSafe(&loggerInstance)
+        return threadSafeLogger.logger
     }
-        
+
     // the timers for all sdk keys are atomic to allow for thread access.
     var timers = AtomicProperty(property: [String: (timer: Timer?, interval: Int)]())
     
@@ -69,6 +69,8 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
             }
             
             let session = self.getSession(resourceTimeoutInterval: resourceTimeoutInterval)
+            // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
+            defer { session.finishTasksAndInvalidate() }
             
             guard let request = self.getRequest(sdkKey: sdkKey) else { return }
             

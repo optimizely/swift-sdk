@@ -20,7 +20,13 @@ extension OptimizelyUserContext {
 
     // fetch (or read from cache) all qualified segments for the user attribute (userId default)
     public func fetchQualifiedSegments(apiKey: String, completionHandler: @escaping (Bool) -> Void) {
-        optimizely?.audienceHandler.fetchQualifiedSegments(apiKey: apiKey, user: self) { segments, err in
+        guard let handler = optimizely?.audienceSegmentsHandler else {
+            self.logger.e("AudienceSegmentsHandler is not enabled")
+            completionHandler(false)
+            return
+        }
+        
+        handler.fetchQualifiedSegments(apiKey: apiKey, user: self) { segments, err in
             if let err = err {
                 self.logger.e("Fetch segments failed with error: \(err)")
                 completionHandler(false)

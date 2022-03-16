@@ -63,7 +63,8 @@ extension OptimizelyClient {
                             userProfileService: OPTUserProfileService? = nil,
                             periodicDownloadInterval: Int?,
                             defaultLogLevel: OptimizelyLogLevel? = nil,
-                            defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
+                            defaultDecideOptions: [OptimizelyDecideOption]? = nil,
+                            enableAudienceSegmentsHandler: Bool = true) {
         
         self.init(sdkKey: sdkKey,
                   logger: logger,
@@ -71,7 +72,8 @@ extension OptimizelyClient {
                   datafileHandler: datafileHandler,
                   userProfileService: userProfileService,
                   defaultLogLevel: defaultLogLevel,
-                  defaultDecideOptions: defaultDecideOptions)
+                  defaultDecideOptions: defaultDecideOptions,
+                  enableAudienceSegmentsHandler: enableAudienceSegmentsHandler)
         
         let interval = periodicDownloadInterval ?? 10 * 60
         if interval > 0 {

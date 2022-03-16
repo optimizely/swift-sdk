@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,15 +48,13 @@ open class OptimizelyClient: NSObject {
     var logger: OPTLogger!
     var eventDispatcher: OPTEventDispatcher?
     public var datafileHandler: OPTDatafileHandler?
-    
-    // MARK: - ODP
-    public var audienceHandler: OPTAudienceSegmentsHandler = DefaultAudienceSegmentsHandler()
-    
+        
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService!
+    var audienceSegmentsHandler: OPTAudienceSegmentsHandler?
     public var notificationCenter: OPTNotificationCenter?
-    
+
     // MARK: - Public interfaces
     
     /// OptimizelyClient init
@@ -69,13 +67,15 @@ open class OptimizelyClient: NSObject {
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision optiopns (optional)
+    ///   - enableAudienceSegmentsHandler: enable AudienceSegmentsHandler (enabled by default). Set to false if not used.
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 datafileHandler: OPTDatafileHandler? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
-                defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
+                defaultDecideOptions: [OptimizelyDecideOption]? = nil,
+                enableAudienceSegmentsHandler: Bool = true) {
         
         self.sdkKey = sdkKey
         self.defaultDecideOptions = defaultDecideOptions ?? []
@@ -86,6 +86,10 @@ open class OptimizelyClient: NSObject {
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
+        if enableAudienceSegmentsHandler {
+            self.audienceSegmentsHandler = DefaultAudienceSegmentsHandler()
+        }
+
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,

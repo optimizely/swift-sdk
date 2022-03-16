@@ -28,7 +28,8 @@ public class OptimizelyUserContext {
     
     var forcedDecisions: AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>?
     
-    // ODP { get, set }
+    // MARK: - AudienceSegments
+    
     public var qualifiedSegments: Set<String>?
 
     var clone: OptimizelyUserContext? {

@@ -2442,7 +2442,7 @@
 			path = "OptimizelyTests-MultiClients";
 			sourceTree = "<group>";
 		};
-		6E6522B8278DF20F00954EA1 /* Audience Targeting */ = {
+		6E6522B8278DF20F00954EA1 /* AudienceSegments */ = {
 			isa = PBXGroup;
 			children = (
 				6E6522EE278E56D400954EA1 /* OptimizelyUserContext+ODP.swift */,
@@ -2451,7 +2451,7 @@
 				6E6522FF278E688B00954EA1 /* SegmentsCache.swift */,
 				6E6522CC278E4EA500954EA1 /* OPTAudienceSegmentsHandler.swift */,
 			);
-			path = "Audience Targeting";
+			path = AudienceSegments;
 			sourceTree = "<group>";
 		};
 		6E6BE008237F547200FE8274 /* optimizelyConfig */ = {
@@ -2466,11 +2466,11 @@
 		6E75165D22C520D400B2B157 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				6E6522B8278DF20F00954EA1 /* Audience Targeting */,
 				6E75166622C520D400B2B157 /* Optimizely */,
 				6EC6DD3F24ABF8180017D296 /* Optimizely+Decide */,
 				6E75165E22C520D400B2B157 /* Customization */,
 				6E75167C22C520D400B2B157 /* Implementation */,
+				6E6522B8278DF20F00954EA1 /* AudienceSegments */,
 				6E75168822C520D400B2B157 /* Data Model */,
 				6E75169E22C520D400B2B157 /* Protocols */,
 				6E75167422C520D400B2B157 /* Extensions */,

@@ -104,14 +104,16 @@ extension OptimizelyClient {
                                   userProfileService: OPTUserProfileService?,
                                   periodicDownloadInterval: NSNumber?,
                                   defaultLogLevel: OptimizelyLogLevel,
-                                  defaultDecideOptions: [Int]?) {
+                                  defaultDecideOptions: [Int]?,
+                                  enableAudienceSegmentsHandler: Bool) {
         self.init(sdkKey: sdkKey,
                   logger: logger,
                   eventDispatcher: SwiftEventDispatcher(eventDispatcher),
                   userProfileService: userProfileService,
                   periodicDownloadInterval: periodicDownloadInterval?.intValue,
                   defaultLogLevel: defaultLogLevel,
-                  defaultDecideOptions: mapOptionsObjcToSwift(defaultDecideOptions))
+                  defaultDecideOptions: mapOptionsObjcToSwift(defaultDecideOptions),
+                  enableAudienceSegmentsHandler: enableAudienceSegmentsHandler)
     }
 
 }

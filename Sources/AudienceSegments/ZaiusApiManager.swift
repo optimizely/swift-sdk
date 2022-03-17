@@ -60,15 +60,30 @@ query MyQuery {
  */
 
 class ZaiusApiManager {
+    let logger = OPTLoggerFactory.getLogger()
+
     let apiHost = "https://api.zaius.com/v3/graphql"
     
     /*
      curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name is_ready state description}}} vuid}}"}' https://api.zaius.com/v3/graphql
      */
     
-    func fetch(apiKey: String, userId: String, completionHandler: @escaping ([String]?, Error?) -> Void) {
+    func fetch(apiKey: String,
+               userKey: String,
+               userValue: String,
+               segments: [String]?,
+               completionHandler: @escaping ([String]?, Error?) -> Void) {
+        if userKey != "vuid" {
+            self.logger.e("Currently userKeys other than 'vuid' are not supported yet.")
+            return
+        }
+        
+        if (segments?.count ?? 0) > 0 {
+            self.logger.w("Selective segments fetching is not supported yet.")
+        }
+        
         let body = [
-            "query": "query {customer(vuid: \"\(userId)\") {audiences {edges {node {name is_ready state description}}}}}"
+            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state description}}}}}"
         ]
         guard let httpBody = try? JSONEncoder().encode(body) else { return }
 
@@ -82,7 +97,7 @@ class ZaiusApiManager {
         
         let task = URLSession.shared.dataTask(with: urlRequest) { data, _, error in
             if let error = error {
-                print("[GraphQL Error] download failed: \(error)")
+                self.logger.e("GraphQL download failed: \(error)")
                 return
             }
             
@@ -90,19 +105,19 @@ class ZaiusApiManager {
                 if let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                     if let audDict: [[String: Any]] = dict.extractComponent(keyPath: "data.customer.audiences.edges") {
                         let audiences = audDict.compactMap { ODPAudience($0["node"] as? [String: Any]) }
-                        print("[GraphQL Response] \(audiences)")
+                        //print("[GraphQL Response] \(audiences)")
                         
                         let segments = audiences.filter { $0.isQualified }.map { $0.name }
-                        print("[GraphQL Audience Segments] \(segments)")
+                        //print("[GraphQL Audience Segments] \(segments)")
                         
                         completionHandler(segments, nil)
                         return
                     }
                 } else {
-                    print("[GraphQL Error] decode failed: " + String(bytes: data, encoding: .utf8)!)
+                    self.logger.e("GraphQL decode failed: " + String(bytes: data, encoding: .utf8)!)
                 }
             } else {
-                print("[GraphQL Error] data empty")
+                self.logger.e("GraphQL data empty")
             }
             
             completionHandler([], OptimizelyError.generic)

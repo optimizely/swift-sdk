@@ -27,10 +27,7 @@ public class OptimizelyUserContext {
     }
     
     var forcedDecisions: AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>?
-    
-    // MARK: - AudienceSegments
-    
-    public var qualifiedSegments: Set<String>?
+    public var qualifiedSegments: [String]?
 
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
@@ -139,6 +136,70 @@ public class OptimizelyUserContext {
                              userId: userId,
                              attributes: attributes,
                              eventTags: eventTags)
+    }
+    
+}
+
+// MARK: - AudienceSegments
+
+let testApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
+let testUserIdForAudienceSegments = "d66a9d81923d4d2f99d8f64338976322"
+
+extension OptimizelyUserContext {
+    
+    /// Fetch all qualified segments for the given user identifier (**userKey** and **userValue**).
+    ///
+    /// The **userId** of this context will be used by defaut when the user identifier is not given.
+    /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
+    ///
+    /// - Parameters:
+    ///   - apiKey: the public API key for the ODP account from which the audience segments will be fetched.
+    ///   - userKey: The name of the user identifier (optional).
+    ///   - userValue: The value of the user identifier (optional).
+    ///   - options: A set of options for fetching qualified segments (optional).
+    ///   - completionHandler: A completion handler to be called with the fetch status success/failure.
+    public func fetchQualifiedSegments(apiKey: String,
+                                       userKey: String? = nil,
+                                       userValue: String? = nil,
+                                       options: [OptimizelySegmentOption] = [],
+                                       completionHandler: @escaping (Bool) -> Void) {
+        guard let handler = optimizely?.audienceSegmentsHandler else {
+            self.logger.e("AudienceSegmentsHandler is not enabled")
+            completionHandler(false)
+            return
+        }
+        
+        //let segments = optimizely.getAllSegmentsForProject()
+        let segments = [String]()
+        
+        let userKey = userKey ?? AudienceSegmentsHandler.reservedUserIdKey
+        let userValue = userValue ?? userId
+                
+        handler.fetchQualifiedSegments(apiKey: apiKey,
+                                       userKey: userKey,
+                                       userValue: userValue,
+                                       segments: segments,
+                                       options: options) { segments, err in
+            if let err = err {
+                self.logger.e("Fetch segments failed with error: \(err)")
+                completionHandler(false)
+                return
+            }
+            
+            guard let segments = segments else {
+                self.logger.e("Fetch segments failed with invalid segments")
+                completionHandler(false)
+                return
+            }
+            
+            self.qualifiedSegments = segments
+            completionHandler(true)
+        }
+    }
+
+    // true if the user is qualified for the given segment name
+    public func isQualifiedFor(segment: String) -> Bool {
+        return qualifiedSegments != nil
     }
     
 }

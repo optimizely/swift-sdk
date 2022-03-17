@@ -15,20 +15,26 @@
 //
 
 import Foundation
+import UIKit
 
-class DefaultAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
+class AudienceSegmentsHandler {
     
-    let testApiKey = "W4WzcEs-ABgXorzY7h1LCQ"
-    let testUserId = "d66a9d81923d4d2f99d8f64338976322"
+    static let reservedUserIdKey = "$opt_user_id"
     
     let zaiusMgr = ZaiusApiManager()
     let cache = SegmentsCache()
+    let logger = OPTLoggerFactory.getLogger()
 
-    func fetchQualifiedSegments(apiKey: String, user: OptimizelyUserContext, completionHandler: @escaping ([String]?, Error?) -> Void) {
-        let apiKey = testApiKey
-        let userId = testUserId
-        
-        zaiusMgr.fetch(apiKey: apiKey, userId: userId) { segments, err in
+    func fetchQualifiedSegments(apiKey: String,
+                                userKey: String,
+                                userValue: String,
+                                segments: [String]? = nil,
+                                options: [OptimizelySegmentOption],
+                                completionHandler: @escaping ([String]?, Error?) -> Void) {
+        zaiusMgr.fetch(apiKey: apiKey,
+                       userKey: userKey,
+                       userValue: userValue,
+                       segments: segments) { segments, err in
             completionHandler(segments, err)
         }
     }

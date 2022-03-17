@@ -52,7 +52,7 @@ open class OptimizelyClient: NSObject {
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService!
-    var audienceSegmentsHandler: OPTAudienceSegmentsHandler?
+    var audienceSegmentsHandler: AudienceSegmentsHandler?
     public var notificationCenter: OPTNotificationCenter?
 
     // MARK: - Public interfaces
@@ -87,7 +87,7 @@ open class OptimizelyClient: NSObject {
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
         if enableAudienceSegmentsHandler {
-            self.audienceSegmentsHandler = DefaultAudienceSegmentsHandler()
+            self.audienceSegmentsHandler = AudienceSegmentsHandler()
         }
 
         self.registerServices(sdkKey: sdkKey,

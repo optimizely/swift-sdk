@@ -16,11 +16,8 @@
 
 import Foundation
 
-
-public protocol OPTAudienceSegmentsHandler {
-
-    func fetchQualifiedSegments(apiKey: String,
-                                user: OptimizelyUserContext,
-                                completionHandler: @escaping ([String]?, Error?) -> Void)
-    
+/// Options controlling audience segments.
+@objc public enum OptimizelySegmentOption: Int {
+    // refresh the cache for the current target user
+    case forceCacheRefresh
 }

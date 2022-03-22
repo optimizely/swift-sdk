@@ -19,8 +19,12 @@ import UIKit
 
 class AudienceSegmentsHandler {
     
-    static let reservedUserIdKey = "$opt_user_id"
+    // configurable size + timeout
+    static var cacheMaxSize = 1000
+    static var cacheTimeoutInSecs = 10*60
     
+    static let reservedUserIdKey = "$opt_user_id"
+        
     let zaiusMgr = ZaiusApiManager()
     let cache = SegmentsCache()
     let logger = OPTLoggerFactory.getLogger()

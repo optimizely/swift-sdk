@@ -79,6 +79,10 @@ public enum OptimizelyError: Error {
     
     case eventDispatchFailed(_ reason: String)
     case eventDispatcherConfigError(_ reason: String)
+    
+    // MARK: - AudienceSegements Errors
+    
+    case fetchSegmentsFailed(_ reason: String)
 }
 
 // MARK: - CustomStringConvertible
@@ -147,6 +151,8 @@ extension OptimizelyError: CustomStringConvertible, ReasonProtocol {
             
         case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))."
         case .eventDispatcherConfigError(let hint):         message = "EventDispatcher config error (\(hint))."
+            
+        case .fetchSegmentsFailed(let hint):                message = "Fetch segments failed (\(hint))."
         }
         
         return message

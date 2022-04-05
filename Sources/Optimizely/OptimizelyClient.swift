@@ -52,7 +52,7 @@ open class OptimizelyClient: NSObject {
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService!
-    var audienceSegmentsHandler: AudienceSegmentsHandler?
+    var audienceSegmentsHandler: OPTAudienceSegmentsHandler?
     public var notificationCenter: OPTNotificationCenter?
 
     // MARK: - Public interfaces
@@ -67,15 +67,13 @@ open class OptimizelyClient: NSObject {
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision optiopns (optional)
-    ///   - enableAudienceSegmentsHandler: enable AudienceSegmentsHandler (enabled by default). Set to false if not used.
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 datafileHandler: OPTDatafileHandler? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
-                defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                enableAudienceSegmentsHandler: Bool = true) {
+                defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
         
         self.sdkKey = sdkKey
         self.defaultDecideOptions = defaultDecideOptions ?? []
@@ -86,10 +84,6 @@ open class OptimizelyClient: NSObject {
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
-        if enableAudienceSegmentsHandler {
-            self.audienceSegmentsHandler = AudienceSegmentsHandler()
-        }
-
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
@@ -754,6 +748,28 @@ open class OptimizelyClient: NSObject {
         
         return OptimizelyConfigImp(projectConfig: config)
     }
+
+    // MARK: - AudienceSegmentsHandler
+
+    func fetchQualifiedSegments(apiKey: String,
+                                userKey: String,
+                                userValue: String,
+                                options: [OptimizelySegmentOption],
+                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+        // instantiate on the first request
+        let handler = audienceSegmentsHandler ?? DefaultAudienceSegmentsHandler()
+        
+        //let segmentsToCheck = getAllSegmentsForProject()
+        let segmentsToCheck = [String]()
+
+        handler.fetchQualifiedSegments(apiKey: apiKey,
+                                       userKey: userKey,
+                                       userValue: userValue,
+                                       segmentsToCheck: segmentsToCheck,
+                                       options: options,
+                                       completionHandler: completionHandler)
+    }
+
 }
 
 // MARK: - Send Events

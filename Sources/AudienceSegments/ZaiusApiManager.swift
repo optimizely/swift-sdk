@@ -71,14 +71,14 @@ class ZaiusApiManager {
     func fetch(apiKey: String,
                userKey: String,
                userValue: String,
-               segments: [String]?,
-               completionHandler: @escaping ([String]?, Error?) -> Void) {
+               segmentsToCheck: [String]?,
+               completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         if userKey != "vuid" {
             self.logger.e("Currently userKeys other than 'vuid' are not supported yet.")
             return
         }
         
-        if (segments?.count ?? 0) > 0 {
+        if (segmentsToCheck?.count ?? 0) > 0 {
             self.logger.w("Selective segments fetching is not supported yet.")
         }
         
@@ -156,6 +156,7 @@ struct ODPAudience: Decodable {
 // { "a": { "b": { "c": "contents" } } }
 
 extension Dictionary {
+    
     func extractComponent<T>(keyPath: String) -> T? {
         var current: Any? = self
         
@@ -169,5 +170,5 @@ extension Dictionary {
         
         return current as? T
     }
+    
 }
-

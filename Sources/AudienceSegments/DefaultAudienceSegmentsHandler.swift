@@ -17,7 +17,7 @@
 import Foundation
 import UIKit
 
-class AudienceSegmentsHandler {
+class DefaultAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
     
     // configurable size + timeout
     static var cacheMaxSize = 1000
@@ -32,13 +32,13 @@ class AudienceSegmentsHandler {
     func fetchQualifiedSegments(apiKey: String,
                                 userKey: String,
                                 userValue: String,
-                                segments: [String]? = nil,
+                                segmentsToCheck: [String]? = nil,
                                 options: [OptimizelySegmentOption],
-                                completionHandler: @escaping ([String]?, Error?) -> Void) {
+                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         zaiusMgr.fetch(apiKey: apiKey,
                        userKey: userKey,
                        userValue: userValue,
-                       segments: segments) { segments, err in
+                       segmentsToCheck: segmentsToCheck) { segments, err in
             completionHandler(segments, err)
         }
     }

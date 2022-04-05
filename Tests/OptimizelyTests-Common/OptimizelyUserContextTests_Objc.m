@@ -184,8 +184,7 @@ static NSString * datafile;
                                                            userProfileService:nil
                                                      periodicDownloadInterval:0
                                                               defaultLogLevel:OptimizelyLogLevelDebug
-                                                         defaultDecideOptions:defaultOptionsInObjcFormat
-                                                enableAudienceSegmentsHandler:true];
+                                                         defaultDecideOptions:defaultOptionsInObjcFormat];
     [newOtimizely startWithDatafile:datafile error:nil];
 
     user = [newOtimizely createUserContextWithUserId:kUserId attributes:@{@"gender": @"f"}];

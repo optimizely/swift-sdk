@@ -149,7 +149,7 @@ extension OptimizelyUserContext {
     
     /// Fetch all qualified segments for the given user identifier (**userKey** and **userValue**).
     ///
-    /// The **userId** of this context will be used by defaut when the user identifier is not given.
+    /// The **userId** of this context will be used by default when the user identifier is not provided.
     /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
     ///
     /// - Parameters:
@@ -162,44 +162,37 @@ extension OptimizelyUserContext {
                                        userKey: String? = nil,
                                        userValue: String? = nil,
                                        options: [OptimizelySegmentOption] = [],
-                                       completionHandler: @escaping (Bool) -> Void) {
-        guard let handler = optimizely?.audienceSegmentsHandler else {
-            self.logger.e("AudienceSegmentsHandler is not enabled")
-            completionHandler(false)
+                                       completionHandler: @escaping (OptimizelyError?) -> Void) {
+        guard let optimizely = self.optimizely else {
+            completionHandler(.sdkNotReady)
             return
         }
-        
-        //let segments = optimizely.getAllSegmentsForProject()
-        let segments = [String]()
-        
-        let userKey = userKey ?? AudienceSegmentsHandler.reservedUserIdKey
+
+        let userKey = userKey ?? DefaultAudienceSegmentsHandler.reservedUserIdKey
         let userValue = userValue ?? userId
                 
-        handler.fetchQualifiedSegments(apiKey: apiKey,
-                                       userKey: userKey,
-                                       userValue: userValue,
-                                       segments: segments,
-                                       options: options) { segments, err in
+        optimizely.fetchQualifiedSegments(apiKey: apiKey,
+                                          userKey: userKey,
+                                          userValue: userValue,
+                                          options: options) { segments, err in
             if let err = err {
-                self.logger.e("Fetch segments failed with error: \(err)")
-                completionHandler(false)
+                completionHandler(err)
                 return
             }
             
             guard let segments = segments else {
-                self.logger.e("Fetch segments failed with invalid segments")
-                completionHandler(false)
+                completionHandler(.fetchSegmentsFailed("invalid segments"))
                 return
             }
             
             self.qualifiedSegments = segments
-            completionHandler(true)
+            completionHandler(nil)
         }
     }
 
     // true if the user is qualified for the given segment name
     public func isQualifiedFor(segment: String) -> Bool {
-        return qualifiedSegments != nil
+        return qualifiedSegments?.contains(segment) ?? false
     }
     
 }

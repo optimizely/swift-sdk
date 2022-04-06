@@ -70,8 +70,8 @@ struct Audience: Codable, Equatable, OptimizelyAudience {
         try container.encode(conditionHolder, forKey: .conditions)
     }
     
-    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
-        return try conditionHolder.evaluate(project: project, attributes: attributes)
+    func evaluate(project: ProjectProtocol?, user: OptimizelyUserContext) throws -> Bool {
+        return try conditionHolder.evaluate(project: project, user: user)
     }
 
 }

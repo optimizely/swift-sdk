@@ -310,6 +310,14 @@ class OTUtils {
         UserDefaults.standard.synchronize()
     }
     
+    // MARK: - decide
+    
+    static func user(userId: String? = nil, attributes: [String: Any?]? = nil) -> OptimizelyUserContext {
+        return OptimizelyUserContext(optimizely: OptimizelyClient(sdkKey: "any-key"),
+                                     userId: userId ?? "any-user",
+                                     attributes: attributes)
+    }
+    
     // MARK: - concurrency
     
     static func runConcurrent(for items: [String],

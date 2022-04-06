@@ -17,7 +17,7 @@
 import Foundation
 
 protocol ProjectProtocol {
-    func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool
+    func evaluateAudience(audienceId: String, user: OptimizelyUserContext) throws -> Bool
 }
 
 // [REF]: datafile schema
@@ -70,7 +70,7 @@ struct Project: Codable, Equatable {
 
 extension Project: ProjectProtocol {
     
-    func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluateAudience(audienceId: String, user: OptimizelyUserContext) throws -> Bool {
         guard let audience = getAudience(id: audienceId) else {
             throw OptimizelyError.conditionNoMatchingAudience(audienceId)
         }
@@ -78,7 +78,7 @@ extension Project: ProjectProtocol {
             return LogMessage.audienceEvaluationStarted(audienceId, Utils.getConditionString(conditions: audience.conditionHolder)).description
         }
         
-        let result = try audience.evaluate(project: self, attributes: attributes)
+        let result = try audience.evaluate(project: self, user: user)
         logger.d(.audienceEvaluationResult(audienceId, result.description))
         return result
     }

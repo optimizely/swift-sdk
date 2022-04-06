@@ -27,7 +27,20 @@ public class OptimizelyUserContext {
     }
     
     var forcedDecisions: AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>?
-    public var qualifiedSegments: [String]?
+    
+    var atomicQualifiedSegments: AtomicArray<String>?
+    public var qualifiedSegments: [String]? {
+        get {
+            return atomicQualifiedSegments?.property
+        }
+        set {
+            if let value = newValue {
+                atomicQualifiedSegments = AtomicArray<String>(value)
+            } else {
+                atomicQualifiedSegments = nil
+            }
+        }
+    }
 
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
@@ -35,6 +48,10 @@ public class OptimizelyUserContext {
         let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
         if let fds = forcedDecisions {
             userContext.forcedDecisions = AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>(fds.property)
+        }
+        
+        if let qs = atomicQualifiedSegments {
+            userContext.atomicQualifiedSegments = AtomicArray<String>(qs.property)
         }
         
         return userContext
@@ -185,14 +202,14 @@ extension OptimizelyUserContext {
                 return
             }
             
-            self.qualifiedSegments = segments
+            self.atomicQualifiedSegments = AtomicArray(segments)
             completionHandler(nil)
         }
     }
 
     // true if the user is qualified for the given segment name
     public func isQualifiedFor(segment: String) -> Bool {
-        return qualifiedSegments?.contains(segment) ?? false
+        return atomicQualifiedSegments?.contains(segment) ?? false
     }
     
 }

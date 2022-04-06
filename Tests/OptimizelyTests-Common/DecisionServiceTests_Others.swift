@@ -36,8 +36,7 @@ class DecisionServiceTests_Others: XCTestCase {
         let isValid = (optimizely.decisionService as! DefaultDecisionService)
             .doesMeetAudienceConditions(config: config,
                                         experiment: experiment,
-                                        userId: kUserId,
-                                        attributes: attributes).result!
+                                        user: OTUtils.user(userId: kUserId, attributes: attributes)).result!
         XCTAssert(isValid)
     }
     

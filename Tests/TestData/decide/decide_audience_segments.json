@@ -111,12 +111,12 @@
       },
       {
           "id": "13389142234",
-          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"qualified\", \"name\": \"$opt_user_id\", \"type\": \"segment\", \"value\": \"odp-segement-1\"}]]]",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"qualified\", \"name\": \"odp.audiences\", \"type\": \"third_party_dimension\", \"value\": \"odp-segment-1\"}]]]",
           "name": "odp-segment"
       },
       {
           "id": "13389130056",
-          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"qualified\", \"name\": \"$opt_user_id\", \"type\": \"segment\", \"value\": \"odp-segement-2\"}]]]",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"qualified\", \"name\": \"odp.audiences\", \"type\": \"third_party_dimension\", \"value\": \"odp-segment-2\"}]]]",
           "name": "odp-segment"
       }
   ],

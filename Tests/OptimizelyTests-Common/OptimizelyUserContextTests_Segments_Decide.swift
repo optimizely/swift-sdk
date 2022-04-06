@@ -25,7 +25,7 @@ class OptimizelyUserContextTests_Segments_Decide: XCTestCase {
 
     override func setUp() {
         let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
-        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, defaultLogLevel: .info)
         try! optimizely.start(datafile: datafile)
         user = optimizely.createUserContext(userId: kUserId)
     }

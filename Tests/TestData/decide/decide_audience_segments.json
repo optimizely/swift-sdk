@@ -1,0 +1,136 @@
+{
+  "version": "4",
+  "sendFlagDecisions": true,
+  "rollouts": [
+    {
+      "experiments": [
+        {
+          "audienceIds": ["13389130056"],
+          "forcedVariations": {},
+          "id": "3332020515",
+          "key": "rollout-rule-1",
+          "layerId": "3319450668",
+          "status": "Running",
+          "trafficAllocation": [
+            {
+              "endOfRange": 10000,
+              "entityId": "3324490633"
+            }
+          ],
+          "variations": [
+            {
+              "featureEnabled": true,
+              "id": "3324490633",
+              "key": "rollout-variation-on",
+              "variables": []
+            }
+          ]
+        },
+        {
+          "audienceIds": [],
+          "forcedVariations": {},
+          "id": "3332020556",
+          "key": "rollout-rule-2",
+          "layerId": "3319450668",
+          "status": "Running",
+          "trafficAllocation": [
+            {
+              "endOfRange": 10000,
+              "entityId": "3324490644"
+            }
+          ],
+          "variations": [
+            {
+              "featureEnabled": false,
+              "id": "3324490644",
+              "key": "rollout-variation-off",
+              "variables": []
+            }
+          ]
+        }
+      ],
+      "id": "3319450668"
+    }
+  ],
+  "anonymizeIP": true,
+  "botFiltering": true,
+  "projectId": "10431130345",
+  "variables": [],
+  "featureFlags": [
+      {
+          "experimentIds": ["10390977673"],
+          "id": "4482920077",
+          "key": "flag-segment",
+          "rolloutId": "3319450668",
+          "variables": [
+              {
+                  "defaultValue": "42",
+                  "id": "2687470095",
+                  "key": "i_42",
+                  "type": "integer"
+              }
+          ]
+      }
+  ],
+  "experiments": [
+    {
+      "status": "Running",
+      "key": "experiment-segment",
+      "layerId": "10420273888",
+      "trafficAllocation": [
+        {
+          "entityId": "10389729780",
+          "endOfRange": 10000
+        }
+      ],
+      "audienceIds": ["$opt_dummy_audience"],
+      "audienceConditions": ["or", "13389141123", "13389142234"],
+      "variations": [
+        {
+          "variables": [],
+          "featureEnabled": true,
+          "id": "10389729780",
+          "key": "variation-a"
+        },
+        {
+          "variables": [],
+          "id": "10416523121",
+          "key": "variation-b"
+        }
+      ],
+      "forcedVariations": {},
+      "id": "10390977673"
+    }
+  ],
+  "groups": [],
+  "audiences": [
+      {
+          "id": "13389141123",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"name\": \"age\", \"type\": \"custom_attribute\", \"value\": 20}]]]",
+          "name": "adult"
+      },
+      {
+          "id": "13389142234",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"qualified\", \"name\": \"$opt_user_id\", \"type\": \"segment\", \"value\": \"odp-segement-1\"}]]]",
+          "name": "odp-segment"
+      },
+      {
+          "id": "13389130056",
+          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"qualified\", \"name\": \"$opt_user_id\", \"type\": \"segment\", \"value\": \"odp-segement-2\"}]]]",
+          "name": "odp-segment"
+      }
+  ],
+  "attributes": [
+      {
+          "id": "10401066117",
+          "key": "gender"
+      },
+      {
+          "id": "10401066170",
+          "key": "testvar"
+      }
+  ],
+  "accountId": "10367498574",
+  "events": [],
+  "revision": "101"
+}

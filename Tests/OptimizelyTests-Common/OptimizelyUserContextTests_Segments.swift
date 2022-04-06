@@ -73,6 +73,8 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
 
 }
 
+// MARK: - MockAudienceSegmentsHandler
+
 class MockAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
     static let kApiKeyGood = "apiKeyGood"
     static let kApiKeyBad = "apiKeyBad"

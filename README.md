@@ -38,7 +38,7 @@ Add the dependency on the Optimizely Swift SDK with Swift Package Manager in `Xc
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 ```use_frameworks!```
-```pod 'OptimizelySwiftSDK', '~> 3.10.0'```
+```pod 'OptimizelySwiftSDK', '~> 3.10.1'```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -46,7 +46,7 @@ Add the dependency on the Optimizely Swift SDK with Swift Package Manager in `Xc
 Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.10.0```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.10.1```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 

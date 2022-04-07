@@ -1,7 +1,7 @@
 # Optimizely Swift SDK Changelog
 
 ## 3.10.1
-April 7, 2022
+April 8, 2022
 
 ### Bug Fixes
 * Remove sources of race conditions in ProjectConfig ([#449](https://github.com/optimizely/swift-sdk/pull/449)).

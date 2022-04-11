@@ -8,17 +8,17 @@
 
 This repository houses the Swift SDK for use with Optimizely Full Stack and Optimizely Rollouts for Mobile and OTT.
 
-Optimizely Full Stack is A/B testing and feature flag management for product development teams. Experiment in any application. Make every feature on your roadmap an opportunity to learn. Learn more at https://www.optimizely.com/platform/full-stack/, or see the [documentation](https://docs.developers.optimizely.com/full-stack/docs).
+Optimizely Full Stack is A/B testing and feature flag management for product development teams. Experiment in any application. Make every feature on your roadmap an opportunity to learn. Learn more at https://www.optimizely.com/platform/full-stack/, or see the [documentation](https://docs.developers.optimizely.com/experimentation/v4.0.0-full-stack/docs/welcome).
 
-Optimizely Rollouts is free feature flags for development teams. Easily roll out and roll back features in any application without code deploys. Mitigate risk for every feature on your roadmap. Learn more at https://www.optimizely.com/rollouts/, or see the [documentation](https://docs.developers.optimizely.com/rollouts/docs).
+Optimizely Rollouts is free feature flags for development teams. Easily roll out and roll back features in any application without code deploys. Mitigate risk for every feature on your roadmap. Learn more at https://www.optimizely.com/rollouts/, or see the [documentation](https://docs.developers.optimizely.com/experimentation/v3.1.0-full-stack/docs/introduction-to-rollouts).
 
 
 ## Getting Started
 
 ### Using the SDK
 
-See the [Mobile developer documentation](https://docs.developers.optimizely.com/full-stack/docs/install-sdk-swift) to learn how to set
-up an Optimizely X project and start using the SDK.
+See the [Swift SDK developer documentation](https://docs.developers.optimizely.com/experimentation/v4.0.0-full-stack/docs/swift-sdk) to learn how to set
+up an Optimizely project and start using the SDK.
 
 ### Requirements
 * iOS 10.0+ / tvOS 10.0+ / watchOS 3.0+
@@ -38,7 +38,7 @@ Add the dependency on the Optimizely Swift SDK with Swift Package Manager in `Xc
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 ```use_frameworks!```
-```pod 'OptimizelySwiftSDK', '~> 3.10.0'```
+```pod 'OptimizelySwiftSDK', '~> 3.10.1'```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -46,7 +46,7 @@ Add the dependency on the Optimizely Swift SDK with Swift Package Manager in `Xc
 Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.10.0```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.10.1```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 
@@ -86,7 +86,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md).
 
 ### Credits
 
-First-party code (under OptimizelySwiftSDK is copyright Optimizely, Inc. and contributors, licensed under Apache 2.0.
+First-party code (under OptimizelySwiftSDK is copyright Optimizely, Inc. and contributors, licensed under Apache 2.0.)
 
 ### Additional Code
 

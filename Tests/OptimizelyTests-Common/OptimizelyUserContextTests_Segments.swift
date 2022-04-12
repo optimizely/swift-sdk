@@ -21,6 +21,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     var optimizely: OptimizelyClient!
     var user: OptimizelyUserContext!
     let kUserId = "tester"
+    let kUserIdKey = "$opt_user_id"
 
     override func setUp() {
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
@@ -43,7 +44,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments(apiKey: MockAudienceSegmentsHandler.kApiKeyGood) { error in
             XCTAssertNil(error)
-            XCTAssert(self.user.qualifiedSegments == [MockAudienceSegmentsHandler.kApiKeyGood, "$opt_user_id", self.kUserId])
+            XCTAssert(self.user.qualifiedSegments == [MockAudienceSegmentsHandler.kApiKeyGood, self.kUserIdKey, self.kUserId])
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -87,6 +88,7 @@ class MockAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(1)) {
             if apiKey == MockAudienceSegmentsHandler.kApiKeyGood {
+                // pass back [key, userKey, userValue] in segments for validation
                 let sampleSegments = [apiKey, userKey, userValue]
                 completionHandler(sampleSegments, nil)
             } else {

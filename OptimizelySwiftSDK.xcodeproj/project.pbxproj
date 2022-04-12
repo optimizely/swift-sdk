@@ -1771,6 +1771,8 @@
 		75C71A4625E454460084187E /* SDKVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75167322C520D400B2B157 /* SDKVersion.swift */; };
 		75C71C3925E45A2B0084187E /* WatchBackgroundNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75C71C3825E45A2B0084187E /* WatchBackgroundNotifier.swift */; };
 		7B4A4C11E9A503E68F2FCC69 /* libPods-OptimizelyTests-Common-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33BE1D8564FE425132F728C0 /* libPods-OptimizelyTests-Common-iOS.a */; };
+		84632F1128049F5C00F06D9C /* AudienceSegmentsHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84632F1028049F5C00F06D9C /* AudienceSegmentsHandlerTests.swift */; };
+		84632F1228049F5C00F06D9C /* AudienceSegmentsHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84632F1028049F5C00F06D9C /* AudienceSegmentsHandlerTests.swift */; };
 		84B4D75027E2A7550078CDA4 /* OptimizelySegmentOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */; };
 		84B4D75127E2A7550078CDA4 /* OptimizelySegmentOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */; };
 		84B4D75227E2A7550078CDA4 /* OptimizelySegmentOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */; };
@@ -2241,6 +2243,7 @@
 		6EF8DE3024BF7D69008B9488 /* DecisionReasons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecisionReasons.swift; sourceTree = "<group>"; };
 		75C719BB25E4519B0084187E /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		75C71C3825E45A2B0084187E /* WatchBackgroundNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchBackgroundNotifier.swift; sourceTree = "<group>"; };
+		84632F1028049F5C00F06D9C /* AudienceSegmentsHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceSegmentsHandlerTests.swift; sourceTree = "<group>"; };
 		84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelySegmentOption.swift; sourceTree = "<group>"; };
 		84E7ABBA27D2A1F100447CAE /* ThreadSafeLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSafeLogger.swift; sourceTree = "<group>"; };
 		84F6BAB227FCC5CF004BE62A /* OptimizelyUserContextTests_Segments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Segments.swift; sourceTree = "<group>"; };
@@ -2731,6 +2734,7 @@
 		6E75197E22C5211100B2B157 /* OptimizelyTests-Common */ = {
 			isa = PBXGroup;
 			children = (
+				84632F1028049F5C00F06D9C /* AudienceSegmentsHandlerTests.swift */,
 				6E75197F22C5211100B2B157 /* MurmurTests.swift */,
 				6E75198022C5211100B2B157 /* DecisionServiceTests_Experiments.swift */,
 				6E75198122C5211100B2B157 /* OptimizelyErrorTests.swift */,
@@ -4528,6 +4532,7 @@
 				6E7517D122C520D400B2B157 /* DefaultBucketer.swift in Sources */,
 				6EA2CC2D2345618E001E7531 /* OptimizelyConfig.swift in Sources */,
 				C78CAFAE24486E0A009FE876 /* OptimizelyJSON+ObjC.swift in Sources */,
+				84632F1228049F5C00F06D9C /* AudienceSegmentsHandlerTests.swift in Sources */,
 				6E7517AB22C520D400B2B157 /* Array+Extension.swift in Sources */,
 				6E75186122C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E75172722C520D400B2B157 /* OptimizelyResult.swift in Sources */,
@@ -4720,6 +4725,7 @@
 				6E9B114722C5486E00C22D81 /* OptimizelyErrorTests.swift in Sources */,
 				84F6BABB27FCE4CD004BE62A /* OPTAudienceSegmentHandler.swift in Sources */,
 				6E9B114B22C5486E00C22D81 /* BatchEventBuilderTest.swift in Sources */,
+				84632F1128049F5C00F06D9C /* AudienceSegmentsHandlerTests.swift in Sources */,
 				6E9B115A22C5486E00C22D81 /* DecisionServiceTests_Others.swift in Sources */,
 				6E9B115422C5486E00C22D81 /* LoggerTests.swift in Sources */,
 				6E7518DF22C520D400B2B157 /* ConditionLeaf.swift in Sources */,

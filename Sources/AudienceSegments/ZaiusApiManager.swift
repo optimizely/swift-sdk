@@ -1,8 +1,17 @@
 //
-//  GraphQL.swift
-//  SwiftGraphQL
+// Copyright 2022, Optimizely, Inc. and contributors
 //
-//  Created by Jae Kim on 1/10/22.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 //
 
 import Foundation
@@ -74,7 +83,7 @@ class ZaiusApiManager {
                segmentsToCheck: [String]?,
                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         if userKey != "vuid" {
-            self.logger.e("Currently userKeys other than 'vuid' are not supported yet.")
+            completionHandler([], .fetchSegmentsFailed("Currently userKeys other than 'vuid' are not supported yet."))
             return
         }
         
@@ -95,35 +104,44 @@ class ZaiusApiManager {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue(apiKey, forHTTPHeaderField: "x-api-key")
         
-        let task = URLSession.shared.dataTask(with: urlRequest) { data, _, error in
+        let session = self.getSession()
+        // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
+        defer { session.finishTasksAndInvalidate() }
+
+        let task = session.dataTask(with: urlRequest) { data, _, error in
             if let error = error {
-                self.logger.e("GraphQL download failed: \(error)")
+                self.logger.d {
+                    "GraphQL download failed: \(error)"
+                }
+                completionHandler([], .fetchSegmentsFailed("download failed"))
                 return
             }
             
-            if let data = data {
-                if let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    if let audDict: [[String: Any]] = dict.extractComponent(keyPath: "data.customer.audiences.edges") {
-                        let audiences = audDict.compactMap { ODPAudience($0["node"] as? [String: Any]) }
-                        //print("[GraphQL Response] \(audiences)")
-                        
-                        let segments = audiences.filter { $0.isQualified }.map { $0.name }
-                        //print("[GraphQL Audience Segments] \(segments)")
-                        
-                        completionHandler(segments, nil)
-                        return
-                    }
-                } else {
-                    self.logger.e("GraphQL decode failed: " + String(bytes: data, encoding: .utf8)!)
-                }
-            } else {
-                self.logger.e("GraphQL data empty")
+            guard let data = data else {
+                completionHandler([], .fetchSegmentsFailed("response data empty"))
+                return
             }
             
-            completionHandler([], OptimizelyError.generic)
+            guard let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                  let audDict: [[String: Any]] = dict.extractComponent(keyPath: "data.customer.audiences.edges")
+            else {
+                self.logger.d {
+                    "GraphQL decode failed: " + String(bytes: data, encoding: .utf8)!
+                }
+                completionHandler([], .fetchSegmentsFailed("decode error"))
+                return
+            }
+                    
+            let audiences = audDict.compactMap { ODPAudience($0["node"] as? [String: Any]) }
+            let segments = audiences.filter { $0.isQualified }.map { $0.name }
+            completionHandler(segments, nil)
         }
         
         task.resume()
+    }
+    
+    func getSession() -> URLSession {
+        return URLSession(configuration: .ephemeral)
     }
     
 }

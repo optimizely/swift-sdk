@@ -185,23 +185,19 @@ extension OptimizelyUserContext {
             return
         }
 
-        let userKey = userKey ?? DefaultAudienceSegmentsHandler.reservedUserIdKey
         let userValue = userValue ?? userId
                 
         optimizely.fetchQualifiedSegments(apiKey: apiKey,
                                           userKey: userKey,
                                           userValue: userValue,
                                           options: options) { segments, err in
-            if let err = err {
-                completionHandler(err)
+            guard err == nil, let segments = segments else {
+                let error = err ?? OptimizelyError.fetchSegmentsFailed("invalid segments")
+                self.logger.e(error)
+                completionHandler(error)
                 return
             }
-            
-            guard let segments = segments else {
-                completionHandler(.fetchSegmentsFailed("invalid segments"))
-                return
-            }
-            
+                
             self.atomicQualifiedSegments = AtomicArray(segments)
             completionHandler(nil)
         }

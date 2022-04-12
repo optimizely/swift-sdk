@@ -1,5 +1,5 @@
 //
-// Copyright 2021, Optimizely, Inc. and contributors 
+// Copyright 2022, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -25,16 +25,19 @@ class DefaultAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
     
     static let reservedUserIdKey = "$opt_user_id"
         
-    let zaiusMgr = ZaiusApiManager()
-    let cache = SegmentsCache()
+    var zaiusMgr = ZaiusApiManager()
+    var cache = SegmentsCache()
     let logger = OPTLoggerFactory.getLogger()
 
     func fetchQualifiedSegments(apiKey: String,
-                                userKey: String,
+                                userKey: String?,
                                 userValue: String,
                                 segmentsToCheck: [String]? = nil,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+        
+        let userKey = userKey ?? DefaultAudienceSegmentsHandler.reservedUserIdKey
+
         zaiusMgr.fetch(apiKey: apiKey,
                        userKey: userKey,
                        userValue: userValue,

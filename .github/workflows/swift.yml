@@ -11,18 +11,49 @@ jobs:
     uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@yasir/gitAction
 
   integration_tests:
-    uses: optimizely/swift-sdk/.github/workflows/integration_test.yml@yasir/gitAction
-    secrets:
-      CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
-      TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
+    if: ${{ github.event.inputs.SNAPSHOT != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        # You should create a personal access token and store it in your repository
+        token: ${{ secrets.CI_USER_TOKEN }}
+        repository: 'optimizely/travisci-tools'
+        path: 'home/runner/travisci-tools'
+        ref: 'master'
 
-  fullstack_production_suite:
-    uses: optimizely/swift-sdk/.github/workflows/integration_test.yml@yasir/gitAction
-    with:
-      FULLSTACK_TEST_REPO: ProdTesting
-    secrets:
-      CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
-      TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
+    - name: set SDK Branch if PR
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+        echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+    - name: set SDK Branch if not pull request
+      if: ${{ github.event_name != 'pull_request' }}
+      run: |
+        echo "SDK_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+        echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+    - name: Trigger build
+      env:
+        SDK: swift
+        TESTAPP_TAG: master
+        BUILD_NUMBER: ${{ github.run_id }}
+        TESTAPP_BRANCH: master
+        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+        TRAVIS_EVENT_TYPE: ${{ github.event_name }}
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+        TRAVIS_REPO_SLUG: ${{ github.repository }}
+        TRAVIS_PULL_REQUEST_SLUG: ${{ github.repository }}
+        UPSTREAM_REPO: ${{ github.repository }}
+        TRAVIS_COMMIT: ${{ github.sha }}
+        TRAVIS_PULL_REQUEST_SHA: ${{ github.event.pull_request.head.sha }}
+        TRAVIS_PULL_REQUEST: ${{ github.event.pull_request.number }}
+        UPSTREAM_SHA: ${{ github.sha }}
+        TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
+        EVENT_MESSAGE: ${{ github.event.message }}
+        HOME: 'home/runner'
+      run: |
+        echo "$GITHUB_CONTEXT"
+        home/runner/travisci-tools/trigger-script-with-status-update.sh
 
   lint: 
     runs-on: macos-latest
@@ -34,6 +65,73 @@ jobs:
         gem install cocoapods -v '1.9.3'
         pod spec lint --quick
         curl -sSL https://download.sourceclear.com/ci.sh | bash
+
+  # unittests:
+  #   runs-on: macos-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [14.4, 13.3, 11.4, 12.1]
+  #       device: [iPhone 11, iPhone 8, iPad Air, Apple TV 4K]
+  #   steps:
+  #     - uses: maxim-lobanov/setup-xcode@v1
+  #     - name: PLATFORM='iOS Simulator' OS=${{ matrix.os }} NAME='${{ matrix.device }}'
+  #       env:
+  #         COVERAGE_DIR: ./COVERAGE
+  #         SCHEME: OptimizelySwiftSDK-iOS
+  #         TEST_SDK: iphonesimulator
+  #         PLATFORM: iOS Simulator
+  #         OS: ${{ matrix.os }}
+  #         NAME: ${{ matrix.device }}
+  #       run: |
+  #         gem install coveralls-lcov
+  #         gem install cocoapods -v '1.9.3'
+  #         pod repo update
+  #         pod install
+  #         HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
+  #         Scripts/start_simulator.sh
+  #         Scripts/run_unit_tests.sh
+
+    # - &unittests
+    #   stage: 'Unit Tests'
+    #   language: swift
+    #   os: osx
+    #   osx_image: xcode12.4
+    #   branches:
+    #     only:
+    #       - master
+    #   env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=14.4 NAME='iPhone 11'
+    #   name: PLATFORM='iOS Simulator' OS=14.4 NAME='iPhone 11'
+    #   install:
+    #     #- gem install slather --no-document --quiet
+    #     - gem install coveralls-lcov
+    #     #
+    #     - gem install cocoapods -v '1.9.3'
+    #     - pod repo update
+    #     - pod install
+    #     # install jq without cleaning up
+    #     - HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
+    #     # preload simulator
+    #     - Scripts/start_simulator.sh
+    #   script:
+    #     - Scripts/run_unit_tests.sh
+    #   after_success:
+    #     - Scripts/upload_coveralls.sh
+    #     - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
+    #   after_failure:
+    #     # install travis artifacts uploader
+    #     - sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
+    #     - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
+    #     - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
+    # - <<: *unittests
+    #   env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 8'
+    #   name: PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 8'
+    # - <<: *unittests
+    #   env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPad Air'
+    #   name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPad Air'
+    # - <<: *unittests
+    #   env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
+    #   name: PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
       
   # build:
 

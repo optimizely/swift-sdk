@@ -66,80 +66,70 @@ jobs:
         pod spec lint --quick
         curl -sSL https://download.sourceclear.com/ci.sh | bash
 
-  # unittests:
-  #   runs-on: macos-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [14.4, 13.3, 11.4, 12.1]
-  #       device: [iPhone 11, iPhone 8, iPad Air, Apple TV 4K]
-  #   steps:
-  #     - uses: maxim-lobanov/setup-xcode@v1
-  #     - name: PLATFORM='iOS Simulator' OS=${{ matrix.os }} NAME='${{ matrix.device }}'
-  #       env:
-  #         COVERAGE_DIR: ./COVERAGE
-  #         SCHEME: OptimizelySwiftSDK-iOS
-  #         TEST_SDK: iphonesimulator
-  #         PLATFORM: iOS Simulator
-  #         OS: ${{ matrix.os }}
-  #         NAME: ${{ matrix.device }}
-  #       run: |
-  #         gem install coveralls-lcov
-  #         gem install cocoapods -v '1.9.3'
-  #         pod repo update
-  #         pod install
-  #         HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
-  #         Scripts/start_simulator.sh
-  #         Scripts/run_unit_tests.sh
+  unittests:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [14.4, 13.3, 11.4, 12.1]
+        device: [iPhone 11, iPhone 8, iPad Air, Apple TV 4K]
+        scheme: [OptimizelySwiftSDK-iOS, OptimizelySwiftSDK-iOS, OptimizelySwiftSDK-iOS, OptimizelySwiftSDK-tvOS]
+        sdk: [iphonesimulator, iphonesimulator, iphonesimulator, appletvsimulator]
+        platform: [iOS Simulator, iOS Simulator, iOS Simulator, tvOS Simulator]
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+      - name: PLATFORM='${{ matrix.platform }}' OS=${{ matrix.os }} NAME='${{ matrix.device }}'
+        id: unit_tests
+        env:
+          COVERAGE_DIR: ./COVERAGE
+          SCHEME: ${{ matrix.scheme }}
+          TEST_SDK: ${{ matrix.sdk }}
+          PLATFORM: ${{ matrix.platform }}
+          OS: ${{ matrix.os }}
+          NAME: ${{ matrix.device }}
+        run: |
+          gem install coveralls-lcov
+          gem install cocoapods -v '1.9.3'
+          pod repo update
+          pod install
+          HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
+          Scripts/start_simulator.sh
+          Scripts/run_unit_tests.sh
 
-    # - &unittests
-    #   stage: 'Unit Tests'
-    #   language: swift
-    #   os: osx
-    #   osx_image: xcode12.4
-    #   branches:
-    #     only:
-    #       - master
-    #   env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=14.4 NAME='iPhone 11'
-    #   name: PLATFORM='iOS Simulator' OS=14.4 NAME='iPhone 11'
-    #   install:
-    #     #- gem install slather --no-document --quiet
-    #     - gem install coveralls-lcov
-    #     #
-    #     - gem install cocoapods -v '1.9.3'
-    #     - pod repo update
-    #     - pod install
-    #     # install jq without cleaning up
-    #     - HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
-    #     # preload simulator
-    #     - Scripts/start_simulator.sh
-    #   script:
-    #     - Scripts/run_unit_tests.sh
-    #   after_success:
-    #     - Scripts/upload_coveralls.sh
-    #     - sleep 5 # https://github.com/travis-ci/travis-ci/issues/4725
-    #   after_failure:
-    #     # install travis artifacts uploader
-    #     - sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
-    #     - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
-    #     - artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
-    # - <<: *unittests
-    #   env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 8'
-    #   name: PLATFORM='iOS Simulator' OS=13.3 NAME='iPhone 8'
-    # - <<: *unittests
-    #   env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-iOS TEST_SDK=iphonesimulator PLATFORM='iOS Simulator' OS=11.4 NAME='iPad Air'
-    #   name: PLATFORM='iOS Simulator' OS=11.4 NAME='iPad Air'
-    # - <<: *unittests
-    #   env: COVERAGE_DIR=./COVERAGE SCHEME=OptimizelySwiftSDK-tvOS TEST_SDK=appletvsimulator PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
-    #   name: PLATFORM='tvOS Simulator' OS=12.1 NAME='Apple TV 4K'
-      
-  # build:
+      - name: Check on failures
+        if: steps.unit_tests.outcome != 'success'
+        run: |
+          sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
+          artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
+          artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
 
-  #   runs-on: macos-latest
+      - name: Check on success
+        if: steps.unit_tests.outcome == 'success'
+        run: |
+          Scripts/upload_coveralls.sh
+          sleep 5
 
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Build
-  #     run: swift build -v
-  #   - name: Run tests
-  #     run: swift test -v
+  prepare_for_release: 
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        id: [prepare_for_release, release]
+        name: [Prepare for release, Push to cocoapods.org]
+        script: [run_prep, run_release]
+    steps:
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+      id: ${{ matrix.id }}
+      name: ${{ matrix.name }}
+      env:
+        VERSION: 3.10.1
+      run: |
+        wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
+        gem install cocoapods -v '1.9.3'
+        Scripts/${{ matrix.script }}.sh
+        
+    - name: Check prepare for release failure
+      if: steps.prepare_for_release.outcome != 'success'
+      run: cat /tmp/build.out

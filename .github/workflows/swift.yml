@@ -56,13 +56,14 @@ jobs:
 
   lint: 
     runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: optimizely/swift-sdk/
     steps:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: '12.4'
-    - env: 
-        BUILD_DIR: ${{ github.workspace }}
-      run: |
+    - run: |
         cd $BUILD_DIR
         gem install cocoapods -v '1.9.3'
         pod spec lint --quick

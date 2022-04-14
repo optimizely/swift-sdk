@@ -61,7 +61,7 @@ jobs:
       with:
         xcode-version: '12.4'
     - run: |
-        cd /home/runner/swift-sdk
+        cd /Users/runner/swift-sdk
         ls -la
         gem install cocoapods -v '1.9.3'
         pod spec lint --quick

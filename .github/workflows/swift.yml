@@ -21,16 +21,7 @@ jobs:
         repository: 'optimizely/travisci-tools'
         path: 'home/runner/travisci-tools'
         ref: 'master'
-    - name: set SDK Branch if PR
-      if: ${{ github.event_name == 'pull_request' }}
-      run: |
-        echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-        echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-    - name: set SDK Branch if not pull request
-      if: ${{ github.event_name != 'pull_request' }}
-      run: |
-        echo "SDK_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-        echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+    - uses: optimizely/swift-sdk/.github/workflows/set_sdk_branch.yml@yasir/gitAction
     - name: Trigger build
       env:
         SDK: swift
@@ -81,14 +72,7 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '12.4'
-      - name: set SDK Branch if PR
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-      - name: set SDK Branch if not pull request
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+      - uses: optimizely/swift-sdk/.github/workflows/set_sdk_branch.yml@yasir/gitAction
       - id: unit_tests
         env:
           COVERAGE_DIR: ./COVERAGE
@@ -98,7 +82,7 @@ jobs:
           OS: ${{ matrix.os }}
           NAME: ${{ matrix.device }}
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
-      - run: |
+        run: |
           cd ../../
           pwd
           gem install coveralls-lcov
@@ -125,31 +109,17 @@ jobs:
   prepare_for_release: 
     runs-on: macos-latest
     steps:
-    - name: set SDK Branch if PR
-      if: ${{ github.event_name == 'pull_request' }}
-      run: |
-        echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-    - name: set SDK Branch if not pull request
-      if: ${{ github.event_name != 'pull_request' }}
-      run: |
-        echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '12.4'
-      id: prepare_for_release
+    - uses: optimizely/swift-sdk/.github/workflows/set_sdk_branch.yml@yasir/gitAction
+    - uses: optimizely/swift-sdk/.github/workflows/setup_release.yml@yasir/gitAction
+    - id: prepare_for_release
       name: Prepare for release
       env:
         VERSION: 3.10.1
         HOME: 'home/runner'
         TRAVIS_REPO_SLUG: ${{ github.repository }}
-        GITHUB_USER: optimizely
+        GITHUB_USER: optibot
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: |
-        cd ../../
-        pwd
-        wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
-        gem install cocoapods -v '1.9.3'
-        Scripts/run_prep.sh
+      run: Scripts/run_prep.sh
     - name: Check prepare for release failure
       if: steps.prepare_for_release.outcome != 'success'
       run: cat /tmp/build.out
@@ -157,15 +127,8 @@ jobs:
   release: 
     runs-on: macos-latest
     steps:
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '12.4'
-      name: Push to cocoapods.org
+    - uses: optimizely/swift-sdk/.github/workflows/setup_release.yml@yasir/gitAction
+    - name: Push to cocoapods.org
       env:
         VERSION: 3.10.1
-    - run: |
-        cd ../../
-        pwd
-        wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
-        gem install cocoapods -v '1.9.3'
-        Scripts/run_release.sh
+      run: Scripts/run_release.sh

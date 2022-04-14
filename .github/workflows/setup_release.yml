@@ -1,0 +1,16 @@
+name: Reusable action of setup before release
+
+on: [workflow_call]
+
+jobs:
+  setup_release:
+    runs-on: macos-latest
+    steps:
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '12.4'
+    - run: |
+        cd ../../
+        pwd
+        wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
+        gem install cocoapods -v '1.9.3'

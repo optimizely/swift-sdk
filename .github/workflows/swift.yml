@@ -21,7 +21,6 @@ jobs:
         repository: 'optimizely/travisci-tools'
         path: 'home/runner/travisci-tools'
         ref: 'master'
-
     - name: set SDK Branch if PR
       if: ${{ github.event_name == 'pull_request' }}
       run: |
@@ -60,9 +59,10 @@ jobs:
     steps:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: latest-stable
+        xcode-version: '12.4'
     - run: |
         cd ../../
+        pwd
         gem install cocoapods -v '1.9.3'
         pod spec lint --quick
         curl -sSL https://download.sourceclear.com/ci.sh | bash
@@ -78,6 +78,9 @@ jobs:
         sdk: [iphonesimulator, iphonesimulator, iphonesimulator, appletvsimulator]
         platform: [iOS Simulator, iOS Simulator, iOS Simulator, tvOS Simulator]
     steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '12.4'
       - name: set SDK Branch if PR
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -86,8 +89,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-      - uses: maxim-lobanov/setup-xcode@v1
-        id: unit_tests
+      - id: unit_tests
         env:
           COVERAGE_DIR: ./COVERAGE
           SCHEME: ${{ matrix.scheme }}
@@ -106,14 +108,12 @@ jobs:
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
           Scripts/start_simulator.sh
           Scripts/run_unit_tests.sh
-
       - name: Check on failures
         if: steps.unit_tests.outcome != 'success'
         run: |
           sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
           artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
           artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
-
       - name: Check on success
         if: steps.unit_tests.outcome == 'success'
         run: |
@@ -135,7 +135,7 @@ jobs:
         echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
     - uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: latest-stable
+        xcode-version: '12.4'
       id: prepare_for_release
       name: Prepare for release
       env:
@@ -146,10 +146,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: |
         cd ../../
+        pwd
         wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
         gem install cocoapods -v '1.9.3'
         Scripts/run_prep.sh
-        
     - name: Check prepare for release failure
       if: steps.prepare_for_release.outcome != 'success'
       run: cat /tmp/build.out
@@ -159,12 +159,13 @@ jobs:
     steps:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: latest-stable
+        xcode-version: '12.4'
       name: Push to cocoapods.org
       env:
         VERSION: 3.10.1
     - run: |
         cd ../../
+        pwd
         wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
         gem install cocoapods -v '1.9.3'
         Scripts/run_release.sh

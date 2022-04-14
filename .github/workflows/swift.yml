@@ -96,7 +96,7 @@ jobs:
           OS: ${{ matrix.os }}
           NAME: ${{ matrix.device }}
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
-        run: |
+      - run: |
           cd ../../
           pwd
           gem install coveralls-lcov

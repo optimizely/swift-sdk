@@ -78,8 +78,15 @@ jobs:
         sdk: [iphonesimulator, iphonesimulator, iphonesimulator, appletvsimulator]
         platform: [iOS Simulator, iOS Simulator, iOS Simulator, tvOS Simulator]
     steps:
+      - name: set SDK Branch if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+      - name: set SDK Branch if not pull request
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
       - uses: maxim-lobanov/setup-xcode@v1
-      - name: PLATFORM='${{ matrix.platform }}' OS=${{ matrix.os }} NAME='${{ matrix.device }}'
         id: unit_tests
         env:
           COVERAGE_DIR: ./COVERAGE
@@ -88,8 +95,10 @@ jobs:
           PLATFORM: ${{ matrix.platform }}
           OS: ${{ matrix.os }}
           NAME: ${{ matrix.device }}
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         run: |
           cd ../../
+          pwd
           gem install coveralls-lcov
           gem install cocoapods -v '1.9.3'
           pod repo update
@@ -109,12 +118,21 @@ jobs:
         if: steps.unit_tests.outcome == 'success'
         run: |
           cd ../../
+          pwd
           Scripts/upload_coveralls.sh
           sleep 5
 
   prepare_for_release: 
     runs-on: macos-latest
     steps:
+    - name: set SDK Branch if PR
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+    - name: set SDK Branch if not pull request
+      if: ${{ github.event_name != 'pull_request' }}
+      run: |
+        echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest-stable
@@ -122,6 +140,10 @@ jobs:
       name: Prepare for release
       env:
         VERSION: 3.10.1
+        HOME: 'home/runner'
+        TRAVIS_REPO_SLUG: ${{ github.repository }}
+        GITHUB_USER: optimizely
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: |
         cd ../../
         wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub

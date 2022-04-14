@@ -111,25 +111,33 @@ jobs:
 
   prepare_for_release: 
     runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        id: [prepare_for_release, release]
-        name: [Prepare for release, Push to cocoapods.org]
-        script: [run_prep, run_release]
     steps:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest-stable
-      id: ${{ matrix.id }}
-      name: ${{ matrix.name }}
+      id: prepare_for_release
+      name: Prepare for release
       env:
         VERSION: 3.10.1
     - run: |
         wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
         gem install cocoapods -v '1.9.3'
-        Scripts/${{ matrix.script }}.sh
+        Scripts/run_prep.sh
         
     - name: Check prepare for release failure
       if: steps.prepare_for_release.outcome != 'success'
       run: cat /tmp/build.out
+
+  release: 
+    runs-on: macos-latest
+    steps:
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+      name: Push to cocoapods.org
+      env:
+        VERSION: 3.10.1
+    - run: |
+        wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
+        gem install cocoapods -v '1.9.3'
+        Scripts/run_release.sh

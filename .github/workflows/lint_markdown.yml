@@ -12,8 +12,8 @@ jobs:
       with:
         ruby-version: '2.6'
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-    - name: Install gem
+    - name: Install gem and Run tests
       run: |
+        cd ../../
         gem install awesome_bot
-    - name: Run tests
-      run: find . -type f -name '*.md' -exec awesome_bot {} \;
+        find . -type f -name '*.md' -exec awesome_bot {} \;

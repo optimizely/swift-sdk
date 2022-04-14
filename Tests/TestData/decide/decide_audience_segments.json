@@ -103,21 +103,66 @@
     }
   ],
   "groups": [],
+  "typedAudiences": [
+      {
+          "id": "13389142234",
+          "conditions": [
+              "and",
+              [
+                  "or",
+                  [
+                      "or",
+                      {
+                          "value": "odp-segment-1",
+                          "type": "third_party_dimension",
+                          "name": "odp.audiences",
+                          "match": "qualified"
+                      }
+                  ]
+              ]
+          ],
+          "name": "odp-segment-1"
+      },
+      {
+          "id": "13389130056",
+          "conditions": [
+              "and",
+              [
+                  "or",
+                  [
+                      "or",
+                      {
+                          "value": "odp-segment-2",
+                          "type": "third_party_dimension",
+                          "name": "odp.audiences",
+                          "match": "qualified"
+                      },
+                      {
+                          "value": "us",
+                          "type": "custom_attribute",
+                          "name": "country",
+                          "match": "equal"
+                      }
+                  ],
+                  [
+                      "or",
+                      {
+                          "value": "odp-segment-3",
+                          "type": "third_party_dimension",
+                          "name": "odp.audiences",
+                          "match": "qualified"
+                      }
+                  ]
+              ]
+          ],
+          "name": "odp-segment-2"
+      }
+  ],
   "audiences": [
       {
           "id": "13389141123",
           "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"gt\", \"name\": \"age\", \"type\": \"custom_attribute\", \"value\": 20}]]]",
           "name": "adult"
-      },
-      {
-          "id": "13389142234",
-          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"qualified\", \"name\": \"odp.audiences\", \"type\": \"third_party_dimension\", \"value\": \"odp-segment-1\"}]]]",
-          "name": "odp-segment"
-      },
-      {
-          "id": "13389130056",
-          "conditions": "[\"and\", [\"or\", [\"or\", {\"match\": \"qualified\", \"name\": \"odp.audiences\", \"type\": \"third_party_dimension\", \"value\": \"odp-segment-2\"}]]]",
-          "name": "odp-segment"
       }
   ],
   "attributes": [

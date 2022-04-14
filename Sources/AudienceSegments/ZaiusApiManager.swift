@@ -21,7 +21,7 @@ import Foundation
 
 /* GraphQL Request
  
-curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name is_ready state description}}}}}"}' https://api.zaius.com/v3/graphql
+curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name is_ready state}}}}}"}' https://api.zaius.com/v3/graphql
  
 query MyQuery {
   customer(vuid: "d66a9d81923d4d2f99d8f64338976322") {
@@ -90,7 +90,7 @@ class ZaiusApiManager {
         }
         
         let body = [
-            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state description}}}}}"
+            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state}}}}}"
         ]
         guard let httpBody = try? JSONEncoder().encode(body) else {
             completionHandler([], .fetchSegmentsFailed("Invalid query."))

@@ -55,6 +55,8 @@ class LRUCache<K: Hashable, V> {
 
     func lookup(key: K) -> V? {
         var element: CacheElement? = nil
+        var needReset = false
+        
         queue.sync {
             element = map[key]
             
@@ -66,9 +68,18 @@ class LRUCache<K: Hashable, V> {
                 } else {
                     map[key] = nil
                     element = nil
+                    
+                    // check if all are stale and can be reset.
+                    needReset = !isAllStale()
                 }
             }
         }
+        
+        // reset is called outside the sync block to avoid deadlock
+        if needReset {
+            reset()
+        }
+        
         return element?.value
     }
     
@@ -128,6 +139,11 @@ class LRUCache<K: Hashable, V> {
         
     private func isValid(_ item: CacheElement) -> Bool {
         return (Date.timeIntervalSinceReferenceDate - item.time) < Double(timeoutInSecs)
+    }
+    
+    private func isAllStale() -> Bool {
+        guard let mostRecent = tail.prev else { return false }
+        return (Date.timeIntervalSinceReferenceDate - mostRecent.time) < Double(timeoutInSecs)
     }
 
 }

@@ -18,14 +18,15 @@ import XCTest
 
 class OptimizelyUserContextTests_Segments: XCTestCase {
 
-    var optimizely: OptimizelyClient!
+    var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+    var segmentHandler = MockAudienceSegmentsHandler()
     var user: OptimizelyUserContext!
+    let kApiKey = "any-key"
     let kUserId = "tester"
     let kUserIdKey = "$opt_user_id"
 
     override func setUp() {
-        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
-        optimizely.audienceSegmentsHandler = MockAudienceSegmentsHandler()
+        optimizely.audienceSegmentsHandler = segmentHandler
         user = optimizely.createUserContext(userId: kUserId)
     }
     
@@ -42,9 +43,9 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     
     func testFetchQualifiedSegments_successDefaultUser() {
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: MockAudienceSegmentsHandler.kApiKeyGood) { error in
+        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
             XCTAssertNil(error)
-            XCTAssert(self.user.qualifiedSegments == [MockAudienceSegmentsHandler.kApiKeyGood, self.kUserIdKey, self.kUserId])
+            XCTAssert(self.user.qualifiedSegments == [self.kApiKey, self.kUserIdKey, self.kUserId])
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -54,7 +55,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         user.optimizely = nil
         
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: MockAudienceSegmentsHandler.kApiKeyGood) { error in
+        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
             XCTAssertEqual(OptimizelyError.sdkNotReady.reason, error?.reason)
             XCTAssertNil(self.user.qualifiedSegments)
             sem.signal()
@@ -64,12 +65,37 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     
     func testFetchQualifiedSegments_fetchFailed() {
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: MockAudienceSegmentsHandler.kApiKeyBad) { error in
+        user.fetchQualifiedSegments(apiKey: "invalid-key") { error in
             XCTAssertNotNil(error)
             XCTAssertNil(self.user.qualifiedSegments)
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
+    }
+    
+    func testFetchQualifiedSegments_segmentsToCheck_emptyBeforeStart() {
+        let sem = DispatchSemaphore(value: 0)
+        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
+        
+        XCTAssertNil(segmentHandler.segmentsToCheck)
+    }
+    
+    func testFetchQualifiedSegments_segmentsToCheck_validAfterStart() {
+        let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
+        try? optimizely.start(datafile: datafile)
+
+        // fetch segments after SDK initialized, so segmentsToCheck will be used.
+        
+        let sem = DispatchSemaphore(value: 0)
+        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
+        
+        XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(segmentHandler.segmentsToCheck!))
     }
 
 }
@@ -77,9 +103,8 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
 // MARK: - MockAudienceSegmentsHandler
 
 class MockAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
-    static let kApiKeyGood = "apiKeyGood"
-    static let kApiKeyBad = "apiKeyBad"
-
+    var segmentsToCheck: [String]?
+    
     func fetchQualifiedSegments(apiKey: String,
                                 userKey: String,
                                 userValue: String,
@@ -87,12 +112,14 @@ class MockAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(1)) {
-            if apiKey == MockAudienceSegmentsHandler.kApiKeyGood {
+            self.segmentsToCheck = segmentsToCheck
+            
+            if apiKey == "invalid-key" {
+                completionHandler(nil, OptimizelyError.generic)
+            } else {
                 // pass back [key, userKey, userValue] in segments for validation
                 let sampleSegments = [apiKey, userKey, userValue]
                 completionHandler(sampleSegments, nil)
-            } else {
-                completionHandler(nil, OptimizelyError.generic)
             }
         }
     }

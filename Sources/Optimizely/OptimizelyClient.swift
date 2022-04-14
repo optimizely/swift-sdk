@@ -759,8 +759,7 @@ open class OptimizelyClient: NSObject {
         // instantiate on the first request
         let handler = audienceSegmentsHandler ?? DefaultAudienceSegmentsHandler()
         
-        //let segmentsToCheck = getAllSegmentsForProject()
-        let segmentsToCheck = [String]()
+        let segmentsToCheck = config?.allSegments
 
         handler.fetchQualifiedSegments(apiKey: apiKey,
                                        userKey: userKey,

@@ -127,3 +127,40 @@ extension AudienceTests {
     }
 
 }
+
+// MARK: - Others
+
+extension AudienceTests {
+    
+    func testGetSegments() {
+        let seg1 = ["name": "odp.audiences", "type": "third_party_dimension", "match": "qualified", "value": "seg1"]
+        let seg2 = ["name": "odp.audiences", "type": "third_party_dimension", "match": "qualified", "value": "seg2"]
+        let seg3 = ["name": "odp.audiences", "type": "third_party_dimension", "match": "qualified", "value": "seg3"]
+        let other = ["name": "other", "type": "custom_attribute", "match": "eq", "value": "a"]
+        
+        var audience = makeAudience([seg1])
+        XCTAssertEqual(["seg1"], Set(audience.getSegments()))
+
+        audience = makeAudience(["or", seg1])
+        XCTAssertEqual(["seg1"], Set(audience.getSegments()))
+
+        audience = makeAudience(["and", ["or", seg1]])
+        XCTAssertEqual(["seg1"], Set(audience.getSegments()))
+        
+        audience = makeAudience(["and", ["or", seg1], ["or", seg2], ["and", other]])
+        XCTAssertEqual(["seg1", "seg2"], Set(audience.getSegments()))
+        
+        audience = makeAudience(["and", ["or", seg1, other, seg2]])
+        XCTAssertEqual(["seg1", "seg2"], Set(audience.getSegments()))
+        
+        audience = makeAudience(["and", ["or", seg1, other, seg2], ["and", seg1, seg2, seg3]])
+        XCTAssertEqual(3, audience.getSegments().count)
+        XCTAssertEqual(["seg1", "seg2", "seg3"], Set(audience.getSegments()))
+    }
+    
+    func makeAudience(_ conditions: [Any]) -> Audience {
+        let data: [String: Any] = ["id": "12345", "name": "group-a", "conditions": conditions]
+        return try! OTUtils.model(from: data)
+    }
+    
+}

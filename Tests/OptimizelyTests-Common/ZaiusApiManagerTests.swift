@@ -96,7 +96,7 @@ class ZaiusApiManagerTests: XCTestCase {
         }
         
         let expectedBody = [
-            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state description}}}}}"
+            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state}}}}}"
         ]
         
         XCTAssertEqual("POST", request.httpMethod)

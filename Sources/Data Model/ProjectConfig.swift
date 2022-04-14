@@ -39,6 +39,7 @@ class ProjectConfig {
     var rolloutIdMap = [String: Rollout]()
     var allExperiments = [Experiment]()
     var flagVariationsMap = [String: [Variation]]()
+    var allSegments = [String]()
 
     // MARK: - Init
     
@@ -144,6 +145,11 @@ class ProjectConfig {
             }
             
             return map
+        }()
+        
+        self.allSegments = {
+            let audiences = project.typedAudiences ?? []
+            return audiences.flatMap { $0.getSegments() }
         }()
         
     }

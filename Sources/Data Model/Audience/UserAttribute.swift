@@ -130,6 +130,8 @@ extension UserAttribute {
         }
             
         if matchFinal == .qualified {
+            // NOTE: name ("odp.audiences") and type("third_party_dimension") not used
+
             guard case .string(let strValue) = value else {
                 throw OptimizelyError.evaluateAttributeInvalidCondition(stringRepresentation)
             }

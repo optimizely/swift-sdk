@@ -18,9 +18,10 @@ import Foundation
 
 struct Constants {
     struct Attributes {
-        static let OptimizelyBucketIdAttribute = "$opt_bucketing_id"
-        static let OptimizelyBotFilteringAttribute = "$opt_bot_filtering"
-        static let OptimizelyUserAgent = "$opt_user_agent"
+        static let reservedBucketIdAttribute = "$opt_bucketing_id"
+        static let reservedBotFilteringAttribute = "$opt_bot_filtering"
+        static let reservedUserAgent = "$opt_user_agent"
+        static let reservedUserIdKey = "$opt_user_id"
     }
     
     enum EvaluationLogType: String {

@@ -204,9 +204,9 @@ class BatchEventBuilder {
         
         if let botFiltering = config.project.botFiltering, let eventValue = AttributeValue(value: botFiltering) {
             let botAttr = EventAttribute(value: eventValue,
-                                         key: Constants.Attributes.OptimizelyBotFilteringAttribute,
+                                         key: Constants.Attributes.reservedBotFilteringAttribute,
                                          type: "custom",
-                                         entityID: Constants.Attributes.OptimizelyBotFilteringAttribute)
+                                         entityID: Constants.Attributes.reservedBotFilteringAttribute)
             eventAttributes.append(botAttr)
         }
         

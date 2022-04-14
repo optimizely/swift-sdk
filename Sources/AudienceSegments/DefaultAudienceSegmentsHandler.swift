@@ -17,33 +17,60 @@
 import Foundation
 import UIKit
 
-class DefaultAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
-    
+public class DefaultAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
     // configurable size + timeout
-    static var cacheMaxSize = 1000
-    static var cacheTimeoutInSecs = 10*60
-    
-    static let reservedUserIdKey = "$opt_user_id"
-        
-    var zaiusMgr = ZaiusApiManager()
-    var cache = SegmentsCache()
-    let logger = OPTLoggerFactory.getLogger()
+    public static var cacheMaxSize = 100
+    public static var cacheTimeoutInSecs = 10*60
 
+    var zaiusMgr = ZaiusApiManager()
+    var segmentsCache = LRUCache<String, [String]>(size: DefaultAudienceSegmentsHandler.cacheMaxSize,
+                                                   timeoutInSecs: DefaultAudienceSegmentsHandler.cacheTimeoutInSecs)
+    let logger = OPTLoggerFactory.getLogger()
+    
     func fetchQualifiedSegments(apiKey: String,
-                                userKey: String?,
+                                userKey: String,
                                 userValue: String,
                                 segmentsToCheck: [String]? = nil,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        
-        let userKey = userKey ?? DefaultAudienceSegmentsHandler.reservedUserIdKey
+        let cacheKey = cacheKey(userKey, userValue)
 
+        let ignoreCache = options.contains(.ignoreCache)
+        let resetCache = options.contains(.resetCache)
+        
+        if resetCache {
+            segmentsCache.reset()
+        }
+        
+        if !ignoreCache {
+            if let segments = segmentsCache.lookup(key: cacheKey) {
+                completionHandler(segments, nil)
+                return
+            }
+        }
+        
         zaiusMgr.fetch(apiKey: apiKey,
                        userKey: userKey,
                        userValue: userValue,
                        segmentsToCheck: segmentsToCheck) { segments, err in
+            if err == nil, let segments = segments {
+                if !ignoreCache {
+                    self.segmentsCache.save(key: cacheKey, value: segments)
+                }
+            }
+            
             completionHandler(segments, err)
         }
+    }
+    
+}
+
+// MARK: - Utils
+
+extension DefaultAudienceSegmentsHandler {
+    
+    func cacheKey(_ userKey: String, _ userValue: String) -> String {
+        return userKey + "-$-" + userValue
     }
     
 }

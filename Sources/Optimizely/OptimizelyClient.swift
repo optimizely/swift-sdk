@@ -752,7 +752,7 @@ open class OptimizelyClient: NSObject {
     // MARK: - AudienceSegmentsHandler
 
     func fetchQualifiedSegments(apiKey: String,
-                                userKey: String?,
+                                userKey: String,
                                 userValue: String,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {

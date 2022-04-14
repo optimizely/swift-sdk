@@ -18,7 +18,7 @@ import XCTest
 
 class BatchEventBuilderTests_Attributes: XCTestCase {
     
-    let botFilteringKey = Constants.Attributes.OptimizelyBotFilteringAttribute
+    let botFilteringKey = Constants.Attributes.reservedBotFilteringAttribute
     
     let experimentKey = "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2"
     let userId = "test_user_1"

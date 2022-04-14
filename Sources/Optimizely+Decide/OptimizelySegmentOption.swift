@@ -18,6 +18,8 @@ import Foundation
 
 /// Options controlling audience segments.
 @objc public enum OptimizelySegmentOption: Int {
-    // refresh the cache for the current target user
-    case forceCacheRefresh
+    // ignore cache (save/lookup)
+    case ignoreCache
+    // reset cache
+    case resetCache
 }

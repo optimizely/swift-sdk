@@ -21,6 +21,8 @@ import Foundation
 
 /* GraphQL Request
  
+curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name is_ready state description}}}}}"}' https://api.zaius.com/v3/graphql
+ 
 query MyQuery {
   customer(vuid: "d66a9d81923d4d2f99d8f64338976322") {
     audiences {
@@ -33,12 +35,12 @@ query MyQuery {
         }
       }
     }
-    vuid
   }
 }
 */
 
 /* GraphQL Response
+ 
  {
    "data": {
      "customer": {
@@ -73,10 +75,6 @@ class ZaiusApiManager {
 
     let apiHost = "https://api.zaius.com/v3/graphql"
     
-    /*
-     curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name is_ready state description}}} vuid}}"}' https://api.zaius.com/v3/graphql
-     */
-    
     func fetch(apiKey: String,
                userKey: String,
                userValue: String,
@@ -94,11 +92,13 @@ class ZaiusApiManager {
         let body = [
             "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state description}}}}}"
         ]
-        guard let httpBody = try? JSONEncoder().encode(body) else { return }
+        guard let httpBody = try? JSONEncoder().encode(body) else {
+            completionHandler([], .fetchSegmentsFailed("Invalid query."))
+            return
+        }
 
         let url = URL(string: apiHost)!
         var urlRequest = URLRequest(url: url)
-        
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = httpBody
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -186,7 +186,7 @@ extension Dictionary {
             }
         }
         
-        return current as? T
+        return current == nil ? nil : (current as? T)
     }
     
 }

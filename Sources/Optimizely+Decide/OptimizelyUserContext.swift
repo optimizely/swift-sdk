@@ -185,8 +185,9 @@ extension OptimizelyUserContext {
             return
         }
 
+        let userKey = userKey ?? Constants.Attributes.reservedUserIdKey
         let userValue = userValue ?? userId
-                
+        
         optimizely.fetchQualifiedSegments(apiKey: apiKey,
                                           userKey: userKey,
                                           userValue: userValue,

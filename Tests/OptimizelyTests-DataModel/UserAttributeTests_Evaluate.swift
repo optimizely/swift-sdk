@@ -460,3 +460,41 @@ extension UserAttributeTests_Evaluate {
     }
 
 }
+
+// MARK: - Evaluate (Qualified)
+
+extension UserAttributeTests_Evaluate {
+    
+    func testEvaluateQualifiedTrue() {
+        let user = OTUtils.user()
+        user.qualifiedSegments = ["us", "th"]
+        
+        let model = UserAttribute(name: "odp.audiences", type: "third_party_dimension", match: "qualified", value: .string("us"))
+        XCTAssertTrue(try! model.evaluate(user: user))
+    }
+    
+    func testEvaluateQualifiedFalse() {
+        let user = OTUtils.user()
+        user.qualifiedSegments = ["th"]
+        
+        let model = UserAttribute(name: "odp.audiences", type: "third_party_dimension", match: "qualified", value: .string("us"))
+        XCTAssertFalse(try! model.evaluate(user: user))
+    }
+    
+    func testEvaluateQualified_ignoreName() {
+        let user = OTUtils.user()
+        user.qualifiedSegments = ["us", "th"]
+        
+        let model = UserAttribute(name: "partner-a", type: "third_party_dimension", match: "qualified", value: .string("us"))
+        XCTAssertTrue(try! model.evaluate(user: user), "name should be ignored for forward compatibility")
+    }
+
+    func testEvaluateQualifiedInvalidValueType() {
+        let user = OTUtils.user()
+        user.qualifiedSegments = ["us", "th"]
+        
+        let model = UserAttribute(name: "partner-a", type: "third_party_dimension", match: "qualified", value: .int(100))
+        XCTAssertNil(try? model.evaluate(user: user), "value must be string")
+    }
+
+}

@@ -63,6 +63,12 @@ jobs:
     - run: |
         pwd
         ls -la
+        cd ..
+        pwd
+        ls -la
+        cd ..
+        pwd
+        ls -la
         gem install cocoapods -v '1.9.3'
         pod spec lint --quick
         curl -sSL https://download.sourceclear.com/ci.sh | bash

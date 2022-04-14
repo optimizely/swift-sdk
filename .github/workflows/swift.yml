@@ -60,11 +60,9 @@ jobs:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: '12.4'
-    - env: 
-        BUILD_DIR: ${{ github.workspace }}
-      run: |
-        cd $BUILD_DIR
-        ls
+    - run: |
+        cd /home/runner/swift-sdk
+        ls -la
         gem install cocoapods -v '1.9.3'
         pod spec lint --quick
         curl -sSL https://download.sourceclear.com/ci.sh | bash

@@ -25,7 +25,7 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
       run: |
         echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-        echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+        echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
     - name: set SDK Branch if not pull request
       if: ${{ github.event_name != 'pull_request' }}
       run: |
@@ -107,7 +107,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-          echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+          echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
       - name: set SDK Branch if not pull request
         if: ${{ github.event_name != 'pull_request' }}
         run: |
@@ -145,18 +145,18 @@ jobs:
   prepare_for_release: 
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
     - name: set SDK Branch if PR
       if: ${{ github.event_name == 'pull_request' }}
       run: |
         echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-        echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+        echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
     - name: set SDK Branch if not pull request
       if: ${{ github.event_name != 'pull_request' }}
       run: |
         echo "SDK_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
         echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
     - uses: maxim-lobanov/setup-xcode@v1
+    - uses: actions/checkout@v3
       with:
         xcode-version: '12.4'
     - id: prepare_for_release

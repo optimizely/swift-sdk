@@ -95,13 +95,13 @@ jobs:
             platform: "iOS Simulator"
             os_type: "iOS"
             simulator_xcode: 10.3
-          - os: 12.4
+          - os: 13.2
             device: "Apple TV 4K"
             scheme: "OptimizelySwiftSDK-tvOS"
             sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode: 10.3
+            simulator_xcode: 11.2.1
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1

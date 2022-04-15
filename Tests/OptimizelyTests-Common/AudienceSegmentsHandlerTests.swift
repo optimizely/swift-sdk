@@ -17,7 +17,7 @@
 import XCTest
 
 class AudienceSegmentsHandlerTests: XCTestCase {
-    var handler = AudienceSegmentsHandler()
+    var handler = AudienceSegmentsHandler(cacheSize: 100, cacheTimeoutInSecs: 100)
     var options = [OptimizelySegmentOption]()
     
     var apiKey = "valid"

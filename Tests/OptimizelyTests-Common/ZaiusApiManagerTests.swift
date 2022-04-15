@@ -81,8 +81,8 @@ class ZaiusApiManagerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
             
-    func testGraphQLRequest() {
-        let manager = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
+    func testGraphQLRequest_allSegments() {
+        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200))
 
         let sem = DispatchSemaphore(value: 0)
         manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { _, error in
@@ -105,6 +105,36 @@ class ZaiusApiManagerTests: XCTestCase {
         XCTAssertEqual(apiKey, request.value(forHTTPHeaderField: "x-api-key"))
     }
     
+    func testGraphQLRequest_subsetSegments() {
+        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200))
+
+        let sem = DispatchSemaphore(value: 0)
+        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: ["a", "b"]) { _, error in
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+
+        guard let request = ZaiusApiManagerTests.createdApiRequest else {
+            XCTFail()
+            return
+        }
+        
+        let expectedBody = [
+            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences(subset:[\"a\",\"b\"]) {edges {node {name is_ready state}}}}}"
+        ]
+        
+        XCTAssertEqual(expectedBody, try! JSONDecoder().decode([String: String].self, from: request.httpBody!))
+    }
+
+    func testMakeSubsetFilter() {
+        let manager = ZaiusApiManager()
+
+        XCTAssertEqual("", manager.makeSubsetFilter(segments: nil))
+        XCTAssertEqual("(subset:[])", manager.makeSubsetFilter(segments: []))
+        XCTAssertEqual("(subset:[\"a\"])", manager.makeSubsetFilter(segments: ["a"]))
+        XCTAssertEqual("(subset:[\"a\",\"b\",\"c\"])",manager.makeSubsetFilter(segments: ["a", "b", "c"]))
+    }
+    
     func testExtractComponent() {
         let dict = ["a": ["b": ["c": "v"]]]
         XCTAssertEqual(["b": ["c": "v"]], dict.extractComponent(keyPath: "a"))
@@ -112,6 +142,28 @@ class ZaiusApiManagerTests: XCTestCase {
         XCTAssertEqual("v", dict.extractComponent(keyPath: "a.b.c"))
         XCTAssertNil(dict.extractComponent(keyPath: "a.b.c.d"))
         XCTAssertNil(dict.extractComponent(keyPath: "d"))
+    }
+    
+    // MARK: - Tests with real ODP server
+    
+    // TODO: this test can be flaky. replace it with a good test account or remove it later.
+    
+    func testLiveODPGraphQL() {
+        let testODPApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
+        let testODPUserIdForAudienceSegments = "d66a9d81923d4d2f99d8f64338976322"
+
+        let manager = ZaiusApiManager()
+        
+        let sem = DispatchSemaphore(value: 0)
+        manager.fetch(apiKey: testODPApiKeyForAudienceSegments,
+                      userKey: "vuid",
+                      userValue: testODPUserIdForAudienceSegments,
+                      segmentsToCheck: ["has_email", "has_email_opted_in", "invalid-segment"]) { segments, error in
+            XCTAssertNil(error)
+            XCTAssertEqual(["has_email", "has_email_opted_in"], Array(Set(segments!)))
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
     
     // MARK: - MockZaiusApiManager

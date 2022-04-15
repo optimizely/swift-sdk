@@ -19,7 +19,7 @@ import XCTest
 class OptimizelyUserContextTests_Segments: XCTestCase {
 
     var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
-    var segmentHandler = MockAudienceSegmentsHandler()
+    var segmentHandler = MockAudienceSegmentsHandler(cacheSize: 100, cacheTimeoutInSecs: 100)
     var user: OptimizelyUserContext!
     let kApiKey = "any-key"
     let kUserId = "tester"
@@ -99,10 +99,13 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     }
     
     func testCustomizeAudienceSegmentsHandler()  {
-        optimizely.audienceSegmentsHandler = AudienceSegmentsHandler(cacheMaxSize: 12, cacheTimeoutInSecs: 123)
+        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
+                                          periodicDownloadInterval: 60,
+                                          segmentsCacheSize: 12,
+                                          segmentsCacheTimeout: 123)
 
-        XCTAssertEqual(12, optimizely.audienceSegmentsHandler?.segmentsCache.size)
-        XCTAssertEqual(123, optimizely.audienceSegmentsHandler?.segmentsCache.timeoutInSecs)
+        XCTAssertEqual(12, optimizely.audienceSegmentsHandler.segmentsCache.size)
+        XCTAssertEqual(123, optimizely.audienceSegmentsHandler.segmentsCache.timeoutInSecs)
     }
 
 }

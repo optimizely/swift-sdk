@@ -19,10 +19,17 @@ import Foundation
 // ODP GraphQL API
 // - https://api.zaius.com/v3/graphql
 
+// testODPApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
+// testODPUserIdForAudienceSegments = "d66a9d81923d4d2f99d8f64338976322"
+
 /* GraphQL Request
  
+// fetch all segments
 curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name is_ready state}}}}}"}' https://api.zaius.com/v3/graphql
- 
+
+// fetch info for "has_email" segment only
+curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences(subset:["has_email"]) {edges {node {name is_ready state}}}}}"}' https://api.zaius.com/v3/graphql
+
 query MyQuery {
   customer(vuid: "d66a9d81923d4d2f99d8f64338976322") {
     audiences {
@@ -85,12 +92,10 @@ class ZaiusApiManager {
             return
         }
         
-        if (segmentsToCheck?.count ?? 0) > 0 {
-            self.logger.w("Selective segments fetching is not supported yet.")
-        }
+        let subsetFilter = makeSubsetFilter(segments: segmentsToCheck)
         
         let body = [
-            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state}}}}}"
+            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences\(subsetFilter) {edges {node {name is_ready state}}}}}"
         ]
         guard let httpBody = try? JSONEncoder().encode(body) else {
             completionHandler([], .fetchSegmentsFailed("invalid query."))
@@ -144,13 +149,31 @@ class ZaiusApiManager {
         return URLSession(configuration: .ephemeral)
     }
     
+    func makeSubsetFilter(segments: [String]?) -> String {
+        // segments = nil: (fetch all segments)
+        //   --> subsetFilter = ""
+        // segments = []: (fetch none)
+        //   --> subsetFilter = "(subset:[])"
+        // segments = ["a"]: (fetch one segment)
+        //   --> subsetFilter = "(subset:[\"a\"])"
+
+        var subsetFilter = ""
+        
+        if let segments = segments {
+            let serial = segments.map { "\"\($0)\""}.joined(separator: ",")
+            subsetFilter = "(subset:[\(serial)])"
+        }
+        
+        return subsetFilter
+    }
+    
 }
 
 struct ODPAudience: Decodable {
     let name: String
     let isReady: Bool
     let state: String
-    let description: String
+    let description: String?     // optional so we can add for debugging
     
     var isQualified: Bool {
         isReady && state == "qualified"
@@ -160,13 +183,12 @@ struct ODPAudience: Decodable {
         guard let dict = dict,
                 let name = dict["name"] as? String,
                 let isReady = dict["is_ready"] as? Bool,
-                let state = dict["state"] as? String,
-              let description = dict["description"] as? String else { return nil }
+                let state = dict["state"] as? String else { return nil }
         
         self.name = name
         self.isReady = isReady
         self.state = state
-        self.description = description
+        self.description = dict["description"] as? String
     }
 }
 

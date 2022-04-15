@@ -159,9 +159,6 @@ public class OptimizelyUserContext {
 
 // MARK: - AudienceSegments
 
-let testApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
-let testUserIdForAudienceSegments = "d66a9d81923d4d2f99d8f64338976322"
-
 extension OptimizelyUserContext {
     
     /// Fetch all qualified segments for the given user identifier (**userKey** and **userValue**).

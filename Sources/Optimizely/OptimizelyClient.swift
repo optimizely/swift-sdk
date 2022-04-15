@@ -54,12 +54,14 @@ open class OptimizelyClient: NSObject {
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
 
+    var segmentsCacheSize = 100
+    var segmentsCacheTimeoutInSecs = 600
     private var atomicAudienceSegmentsHandler = AtomicProperty<AudienceSegmentsHandler>()
-    public var audienceSegmentsHandler: AudienceSegmentsHandler {
+    var audienceSegmentsHandler: AudienceSegmentsHandler {
         get {
             // instantiated on the first call (not instantiated when it's not used)
             guard let handler = atomicAudienceSegmentsHandler.property else {
-                let newHandler = AudienceSegmentsHandler()
+                let newHandler = AudienceSegmentsHandler(cacheSize: segmentsCacheSize, cacheTimeoutInSecs: segmentsCacheTimeoutInSecs)
                 atomicAudienceSegmentsHandler.property = newHandler
                 return newHandler
             }
@@ -81,17 +83,27 @@ open class OptimizelyClient: NSObject {
     ///   - datafileHandler: custom datafile handler (optional)
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
-    ///   - defaultDecisionOptions: default decision optiopns (optional)
+    ///   - defaultDecisionOptions: default decision options (optional)
+    ///   - segmentsCacheSize: maximum size (default = 100) of audience segments cache (optional)
+    ///   - segmentsCacheTimeout: timeout in seconds (default = 600) of audience segments cache (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 datafileHandler: OPTDatafileHandler? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
-                defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
+                defaultDecideOptions: [OptimizelyDecideOption]? = nil,
+                segmentsCacheSize: Int? = nil,
+                segmentsCacheTimeout: Int? = nil) {
         
         self.sdkKey = sdkKey
         self.defaultDecideOptions = defaultDecideOptions ?? []
+        if let segmentsCacheSize = segmentsCacheSize {
+            self.segmentsCacheSize = segmentsCacheSize
+        }
+        if let segmentsCacheTimeout = segmentsCacheTimeout {
+            self.segmentsCacheTimeoutInSecs = segmentsCacheTimeout
+        }
         
         super.init()
         

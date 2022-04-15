@@ -56,6 +56,8 @@ extension OptimizelyClient {
     ///         Set this to 0 to disable periodic downloading.
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision optiopns (optional)
+    ///   - segmentsCacheSize: maximum size (default = 100) of audience segments cache (optional)
+    ///   - segmentsCacheTimeout: timeout in seconds (default = 600) of audience segments cache (optional)
     public convenience init(sdkKey: String,
                             logger: OPTLogger? = nil,
                             eventDispatcher: OPTEventDispatcher? = nil,
@@ -63,7 +65,9 @@ extension OptimizelyClient {
                             userProfileService: OPTUserProfileService? = nil,
                             periodicDownloadInterval: Int?,
                             defaultLogLevel: OptimizelyLogLevel? = nil,
-                            defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
+                            defaultDecideOptions: [OptimizelyDecideOption]? = nil,
+                            segmentsCacheSize: Int? = nil,
+                            segmentsCacheTimeout: Int? = nil) {
         
         self.init(sdkKey: sdkKey,
                   logger: logger,
@@ -71,7 +75,9 @@ extension OptimizelyClient {
                   datafileHandler: datafileHandler,
                   userProfileService: userProfileService,
                   defaultLogLevel: defaultLogLevel,
-                  defaultDecideOptions: defaultDecideOptions)
+                  defaultDecideOptions: defaultDecideOptions,
+                  segmentsCacheSize: segmentsCacheSize,
+                  segmentsCacheTimeout: segmentsCacheTimeout)
         
         let interval = periodicDownloadInterval ?? 10 * 60
         if interval > 0 {

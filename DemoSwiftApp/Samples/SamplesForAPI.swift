@@ -16,6 +16,7 @@
 
 import Foundation
 import Optimizely
+import UIKit
 
 class SamplesForAPI {
     
@@ -264,17 +265,26 @@ class SamplesForAPI {
     
     static func checkAudienceSegments(optimizely: OptimizelyClient) {
         // override the default handler if cache size and timeout need to be customized
-        optimizely.audienceSegmentsHandler = AudienceSegmentsHandler(cacheMaxSize: 12, cacheTimeoutInSecs: 123)
-        
-        let user = optimizely.createUserContext(userId: "user_123", attributes: ["location": "NY"])
-        user.fetchQualifiedSegments(apiKey: "sample-api-key", options: [.ignoreCache]) { error in
-            guard error == nil else {
-                print("[AudienceSegments] \(error!.errorDescription!)")
+        let optimizely = OptimizelyClient(sdkKey: "FCnSegiEkRry9rhVMroit4",
+                                          periodicDownloadInterval: 60,
+                                          segmentsCacheSize: 12,
+                                          segmentsCacheTimeout: 123)
+        optimizely.start { result in
+            if case .failure(let error) = result {
+                print("[AudienceSegments] SDK initialization failed: \(error)")
                 return
             }
             
-            let decision = user.decide(key: "show_coupon", options: [.includeReasons])
-            print("[AudienceSegments] decision: \(decision)")
+            let user = optimizely.createUserContext(userId: "user_123", attributes: ["location": "NY"])
+            user.fetchQualifiedSegments(apiKey: "sample-api-key", options: [.ignoreCache]) { error in
+                guard error == nil else {
+                    print("[AudienceSegments] \(error!.errorDescription!)")
+                    return
+                }
+            
+                let decision = user.decide(key: "show_coupon", options: [.includeReasons])
+                print("[AudienceSegments] decision: \(decision)")
+            }
         }
     }
     

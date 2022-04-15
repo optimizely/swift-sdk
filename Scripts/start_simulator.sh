@@ -25,18 +25,12 @@ then
         name="${name}-1080p"
     fi
     
-    # xcrun simctl list runtimes
     xcrun simctl create "custom-device" "com.apple.CoreSimulator.SimDeviceType.$name" "com.apple.CoreSimulator.SimRuntime.$OS_TYPE-$os"
     CUSTOM_SIMULATOR="$(instruments -s devices | grep -m 1 'custom-device' | awk -F'[][]' '{print $2}')"
-    echo $CUSTOM_SIMULATOR
-    # xcrun simctl list devices $SIMULATOR_XCODE
+else
+    CUSTOM_SIMULATOR="$(instruments -s devices | grep -m 1 '$NAME' | awk -F'[][]' '{print $2}')"
 fi
 
-if [ ! $CUSTOM_SIMULATOR ]
-then
-    CUSTOM_SIMULATOR=$NAME
-fi
-
-echo $CUSTOM_SIMULATOR
+xcrun simctl list runtimes
 xcrun simctl boot $CUSTOM_SIMULATOR && sleep 30
 xcrun simctl list | grep Booted

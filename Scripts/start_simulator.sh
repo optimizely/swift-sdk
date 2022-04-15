@@ -9,9 +9,20 @@ set -eou pipefail
 # prep jq arg because it doesnt allow parameter expansion within its single quotes
 echo ".devices.\"com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS/./-}\"" > /tmp/jq_file
 sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
-if [ "$SIMULATOR_XCODE" != 12.4 ]
-then 
+if [ "$SIMULATOR_XCODE" == 10.3 ]
+then
+    os_folder="iPhoneOS"
+    if [ "$NAME" == "Apple TV 4K" ]
+    then
+        os_folder="AppleTVOS"
+    fi
+    sudo ln -s /Applications/Xcode_10.3.app/Contents/Developer/Platforms/$os_folder.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/$OS_TYPE.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE\ $OS.simruntime
+elif [ "$SIMULATOR_XCODE" != 12.4 ]; then 
     sudo ln -s /Applications/Xcode_$SIMULATOR_XCODE.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE\ $OS.simruntime
+fi
+
+if [ "$SIMULATOR_XCODE" != 12.4 ]
+then
     os="${OS/./-}"
     name="${NAME// /-}"
     if [ "$name" == "Apple-TV-4K" ]

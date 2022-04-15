@@ -20,19 +20,21 @@ if [ "$SIMULATOR_XCODE" != 12.4 ]
 then
     os="${OS/./-}"
     name="${NAME// /-}"
-    xcrun simctl list runtimes
-    xcrun simctl create "$NAME" "com.apple.CoreSimulator.SimDeviceType.$name" "com.apple.CoreSimulator.SimRuntime.$OS_TYPE-$os"
-    xcrun simctl list devices $SIMULATOR_XCODE
+    if [ "$name" == "Apple-TV-4K" ]
+    then
+        name="${name}-1080p"
+    fi
+    
+    CUSTOM_SIMULATOR="${NAME}-CUSTOM"
+    # xcrun simctl list runtimes
+    xcrun simctl create "$CUSTOM_SIMULATOR" "com.apple.CoreSimulator.SimDeviceType.$name" "com.apple.CoreSimulator.SimRuntime.$OS_TYPE-$os"
+    # xcrun simctl list devices $SIMULATOR_XCODE
 fi
 
-simulator=$( xcrun simctl list --json devices | jq -f /tmp/jq_file | jq -r '.[] | select(.name==env.NAME) | .udid' )
-if [ -z $simulator ]; then
-    echo "The requested simulator ($PLATFORM $OS $NAME) cannot be found."
-    #xcrun instruments -s device
-    xcrun xctrace list devices
-    sleep 3
-    exit 1
+if [ -z "$CUSTOM_SIMULATOR" ]
+then
+    CUSTOM_SIMULATOR=$NAME
 fi
 
-xcrun simctl boot $simulator && sleep 30
+xcrun simctl boot $CUSTOM_SIMULATOR && sleep 30
 xcrun simctl list | grep Booted

@@ -13,7 +13,7 @@ if [ "$SIMULATOR_XCODE" == 10.3 ]
 then
     sudo ln -s /Applications/Xcode_10.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/$OS_TYPE.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE\ $OS.simruntime
 elif [ "$SIMULATOR_XCODE" != 12.4 ]; then 
-    sudo ln -s /Applications/$SIMULATOR_XCODE.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE\ $OS.simruntime
+    sudo ln -s /Applications/Xcode_$SIMULATOR_XCODE.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE\ $OS.simruntime
 fi
 
 if [ "$SIMULATOR_XCODE" != 12.4 ]

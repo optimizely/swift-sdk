@@ -22,13 +22,13 @@ then
     name="${NAME// /-}"
     if [ "$name" == "Apple-TV-4K" ]
     then
-        name="${name}-1080p"
+        name="${name}-4K"
     fi
     
     xcrun simctl create "custom-device" "com.apple.CoreSimulator.SimDeviceType.$name" "com.apple.CoreSimulator.SimRuntime.$OS_TYPE-$os"
-    CUSTOM_SIMULATOR="$(instruments -s devices | grep -m 1 'custom-device' | awk -F'[][]' '{print $2}')"
+    CUSTOM_SIMULATOR="$(xctrace list  devices | grep -m 1 'custom-device' | awk '{print substr($0,length($0)-36,36)}')"
 else
-    CUSTOM_SIMULATOR="$(instruments -s devices | grep -m 1 '$NAME' | awk -F'[][]' '{print $2}')"
+    CUSTOM_SIMULATOR="$(xctrace list  devices | grep -m 1 '$NAME' | awk '{print substr($0,length($0)-36,36)}')"
 fi
 
 xcrun simctl list runtimes

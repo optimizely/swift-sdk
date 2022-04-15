@@ -52,8 +52,23 @@ open class OptimizelyClient: NSObject {
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService!
-    var audienceSegmentsHandler: OPTAudienceSegmentsHandler?
     public var notificationCenter: OPTNotificationCenter?
+
+    private var atomicAudienceSegmentsHandler = AtomicProperty<AudienceSegmentsHandler>()
+    public var audienceSegmentsHandler: AudienceSegmentsHandler {
+        get {
+            // instantiated on the first call (not instantiated when it's not used)
+            guard let handler = atomicAudienceSegmentsHandler.property else {
+                let newHandler = AudienceSegmentsHandler()
+                atomicAudienceSegmentsHandler.property = newHandler
+                return newHandler
+            }
+            return handler
+        }
+        set {
+            atomicAudienceSegmentsHandler.property = newValue
+        }
+    }
 
     // MARK: - Public interfaces
     
@@ -756,17 +771,14 @@ open class OptimizelyClient: NSObject {
                                 userValue: String,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        // instantiate on the first request
-        let handler = audienceSegmentsHandler ?? DefaultAudienceSegmentsHandler()
-        
         let segmentsToCheck = config?.allSegments
 
-        handler.fetchQualifiedSegments(apiKey: apiKey,
-                                       userKey: userKey,
-                                       userValue: userValue,
-                                       segmentsToCheck: segmentsToCheck,
-                                       options: options,
-                                       completionHandler: completionHandler)
+        audienceSegmentsHandler.fetchQualifiedSegments(apiKey: apiKey,
+                                                       userKey: userKey,
+                                                       userValue: userValue,
+                                                       segmentsToCheck: segmentsToCheck,
+                                                       options: options,
+                                                       completionHandler: completionHandler)
     }
 
 }

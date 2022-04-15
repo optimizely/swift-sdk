@@ -97,15 +97,22 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         
         XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(segmentHandler.segmentsToCheck!))
     }
+    
+    func testCustomizeAudienceSegmentsHandler()  {
+        optimizely.audienceSegmentsHandler = AudienceSegmentsHandler(cacheMaxSize: 12, cacheTimeoutInSecs: 123)
+
+        XCTAssertEqual(12, optimizely.audienceSegmentsHandler?.segmentsCache.size)
+        XCTAssertEqual(123, optimizely.audienceSegmentsHandler?.segmentsCache.timeoutInSecs)
+    }
 
 }
 
 // MARK: - MockAudienceSegmentsHandler
 
-class MockAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
+class MockAudienceSegmentsHandler: AudienceSegmentsHandler {
     var segmentsToCheck: [String]?
     
-    func fetchQualifiedSegments(apiKey: String,
+    override func fetchQualifiedSegments(apiKey: String,
                                 userKey: String,
                                 userValue: String,
                                 segmentsToCheck: [String]?,

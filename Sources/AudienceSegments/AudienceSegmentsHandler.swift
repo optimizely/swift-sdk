@@ -17,15 +17,16 @@
 import Foundation
 import UIKit
 
-public class DefaultAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
-    // configurable size + timeout
-    public static var cacheMaxSize = 100
-    public static var cacheTimeoutInSecs = 10*60
-
+public class AudienceSegmentsHandler: OPTAudienceSegmentsHandler {
     var zaiusMgr = ZaiusApiManager()
-    var segmentsCache = LRUCache<String, [String]>(size: DefaultAudienceSegmentsHandler.cacheMaxSize,
-                                                   timeoutInSecs: DefaultAudienceSegmentsHandler.cacheTimeoutInSecs)
+    var segmentsCache: LRUCache<String, [String]>
     let logger = OPTLoggerFactory.getLogger()
+    
+    // cache size and timeout can be customized by injecting a subclass
+    
+    public init(cacheMaxSize: Int = 100, cacheTimeoutInSecs: Int = 600) {
+        segmentsCache = LRUCache<String, [String]>(size: cacheMaxSize, timeoutInSecs: cacheTimeoutInSecs)
+    }
     
     func fetchQualifiedSegments(apiKey: String,
                                 userKey: String,
@@ -67,7 +68,7 @@ public class DefaultAudienceSegmentsHandler: OPTAudienceSegmentsHandler {
 
 // MARK: - Utils
 
-extension DefaultAudienceSegmentsHandler {
+extension AudienceSegmentsHandler {
     
     func cacheKey(_ userKey: String, _ userValue: String) -> String {
         return userKey + "-$-" + userValue

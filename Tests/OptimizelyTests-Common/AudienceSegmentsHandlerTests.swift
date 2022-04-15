@@ -16,8 +16,8 @@
 
 import XCTest
 
-class DefaultAudienceSegmentsHandlerTests: XCTestCase {
-    var handler = DefaultAudienceSegmentsHandler()
+class AudienceSegmentsHandlerTests: XCTestCase {
+    var handler = AudienceSegmentsHandler()
     var options = [OptimizelySegmentOption]()
     
     var apiKey = "valid"

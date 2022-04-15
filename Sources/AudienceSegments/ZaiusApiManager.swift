@@ -81,7 +81,7 @@ class ZaiusApiManager {
                segmentsToCheck: [String]?,
                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         if userKey != "vuid" {
-            completionHandler([], .fetchSegmentsFailed("Currently userKeys other than 'vuid' are not supported yet."))
+            completionHandler([], .fetchSegmentsFailed("userKeys other than 'vuid' not supported yet"))
             return
         }
         
@@ -93,7 +93,7 @@ class ZaiusApiManager {
             "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state}}}}}"
         ]
         guard let httpBody = try? JSONEncoder().encode(body) else {
-            completionHandler([], .fetchSegmentsFailed("Invalid query."))
+            completionHandler([], .fetchSegmentsFailed("invalid query."))
             return
         }
 

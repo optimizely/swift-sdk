@@ -25,7 +25,7 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
       run: |
         echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-        echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
+        echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
     - name: set SDK Branch if not pull request
       if: ${{ github.event_name != 'pull_request' }}
       run: |
@@ -79,30 +79,30 @@ jobs:
             scheme: "OptimizelySwiftSDK-iOS"
             sdk: "iphonesimulator"
             platform: "iOS Simulator"
-            xcode: 12.4
+            os_type: "iOS"
           - os: 13.3
             device: "iPhone 8"
             scheme: "OptimizelySwiftSDK-iOS"
             sdk: "iphonesimulator"
             platform: "iOS Simulator"
-            xcode: 11.3.1
-          - os: 12.4
+            os_type: "iOS"
+          - os: 11.4
             device: "iPad Air"
             scheme: "OptimizelySwiftSDK-iOS"
             sdk: "iphonesimulator"
             platform: "iOS Simulator"
-            xcode: 10.3
-          - os: 12.4
+            os_type: "iOS"
+          - os: 12.1
             device: "Apple TV 4K"
             scheme: "OptimizelySwiftSDK-tvOS"
             sdk: "appletvsimulator"
             platform: "tvOS Simulator"
-            xcode: 10.3
+            os_type: "tvOS"
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: ${{ matrix.xcode }}
+          xcode-version: 12.4
       - name: set SDK Branch if PR
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -120,6 +120,7 @@ jobs:
           TEST_SDK: ${{ matrix.sdk }}
           PLATFORM: ${{ matrix.platform }}
           OS: ${{ matrix.os }}
+          OS_TYPE: ${{ matrix.os_type }}
           NAME: ${{ matrix.device }}
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         run: |

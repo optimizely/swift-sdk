@@ -26,9 +26,9 @@ then
     fi
     
     xcrun simctl create "custom-device" "com.apple.CoreSimulator.SimDeviceType.$name" "com.apple.CoreSimulator.SimRuntime.$OS_TYPE-$os"
-    CUSTOM_SIMULATOR="$(xctrace list  devices | grep -m 1 'custom-device' | awk '{print substr($0,length($0)-36,36)}')"
+    CUSTOM_SIMULATOR="$(xcrun xctrace list devices | grep -m 1 'custom-device' | awk '{print substr($0,length($0)-36,36)}')"
 else
-    CUSTOM_SIMULATOR="$(xctrace list  devices | grep -m 1 '$NAME' | awk '{print substr($0,length($0)-36,36)}')"
+    CUSTOM_SIMULATOR="$(xcrun xctrace list devices | grep -m 1 '$NAME' | awk '{print substr($0,length($0)-36,36)}')"
 fi
 
 xcrun simctl list runtimes

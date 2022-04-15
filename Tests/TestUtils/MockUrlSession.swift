@@ -54,7 +54,7 @@ class MockUrlSession: URLSession {
     }
 
     init(handler: MockDatafileHandler? = nil, statusCode: Int = 0, withError: Bool = false, localResponseData: String? = nil) {
-        MockUrlSession.validSessions += 1
+        Self.validSessions += 1
         self.handler = handler
         self.statusCode = statusCode
         self.withError = withError
@@ -62,7 +62,7 @@ class MockUrlSession: URLSession {
     }
    
     init(handler: MockDatafileHandler? = nil, settingsMap: [String: (Int, Bool)]) {
-        MockUrlSession.validSessions += 1
+        Self.validSessions += 1
         self.handler = handler
         self.statusCode = 0
         self.withError = false

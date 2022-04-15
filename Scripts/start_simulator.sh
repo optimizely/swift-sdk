@@ -19,7 +19,7 @@ fi
 if [ "$SIMULATOR_XCODE" != 12.4 ]
 then
     os="${OS/./-}"
-    name="${NAME//./-}"
+    name="${NAME// /-}"
     xcrun simctl list runtimes
     xcrun simctl create "$NAME" "com.apple.CoreSimulator.SimDeviceType.$name" "com.apple.CoreSimulator.SimRuntime.$OS_TYPE-$os"
     xcrun simctl list devices $SIMULATOR_XCODE

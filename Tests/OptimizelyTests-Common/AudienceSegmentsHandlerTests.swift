@@ -58,6 +58,22 @@ class AudienceSegmentsHandlerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
+    func testError() {
+        let sem = DispatchSemaphore(value: 0)
+        
+        handler.fetchQualifiedSegments(apiKey: "invalid-key", userKey: userKey, userValue: userValue,
+                                       segmentsToCheck: nil, options: []) { segments, error in
+            XCTAssertNotNil(error)
+            XCTAssert(segments!.isEmpty )
+            sem.signal()
+        }
+        
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+    }
+    
+    // MARK: - OptimizelySegmentOption
+    // NOTE: The "useSubset" option is fully tested in "OptimizelyUserContextTests_Segments", so skip here.
+    
     func testOptions_ignoreCache() {
         setCache(userKey, userValue, ["a"])
         options = [.ignoreCache]
@@ -95,19 +111,6 @@ class AudienceSegmentsHandlerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
 
-    func testError() {
-        let sem = DispatchSemaphore(value: 0)
-        
-        handler.fetchQualifiedSegments(apiKey: "invalid-key", userKey: userKey, userValue: userValue,
-                                       segmentsToCheck: nil, options: []) { segments, error in
-            XCTAssertNotNil(error)
-            XCTAssert(segments!.isEmpty )
-            sem.signal()
-        }
-        
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
-    }
-    
     // MARK: - Utils
     
     func setCache(_ userKey: String, _ userValue: String, _ value: [String]) {

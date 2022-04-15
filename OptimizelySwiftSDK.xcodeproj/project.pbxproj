@@ -2467,6 +2467,7 @@
 				6E6522DD278E4F3800954EA1 /* AudienceSegmentsHandler.swift */,
 				6E6522B9278DF26400954EA1 /* ZaiusApiManager.swift */,
 				6E6522FF278E688B00954EA1 /* LRUCache.swift */,
+				84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */,
 			);
 			path = AudienceSegments;
 			sourceTree = "<group>";
@@ -2879,7 +2880,6 @@
 				6EC6DD4024ABF89B0017D296 /* OptimizelyUserContext.swift */,
 				6EF8DE0A24BD1BB1008B9488 /* OptimizelyDecision.swift */,
 				6EF8DE0B24BD1BB2008B9488 /* OptimizelyDecideOption.swift */,
-				84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */,
 				6E86CEA124FDC836005DAFED /* OptimizelyUserContext+ObjC.swift */,
 			);
 			path = "Optimizely+Decide";

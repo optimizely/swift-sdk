@@ -83,14 +83,37 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         XCTAssertNil(segmentHandler.segmentsToCheck)
     }
     
-    func testFetchQualifiedSegments_segmentsToCheck_validAfterStart() {
+    func testFetchQualifiedSegments_segmentsToCheck_emptyAfterStart() {
+        let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
+        try? optimizely.start(datafile: datafile)
+        
+        let sem = DispatchSemaphore(value: 0)
+        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
+        
+        XCTAssertNil(segmentHandler.segmentsToCheck)
+    }
+    
+    func testFetchQualifiedSegments_segmentsToCheck_emptyBeforeStart_withUseSubsetOption() {
+        let sem = DispatchSemaphore(value: 0)
+        user.fetchQualifiedSegments(apiKey: kApiKey, options: [.useSubset]) { error in
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
+        
+        XCTAssertNil(segmentHandler.segmentsToCheck)
+    }
+    
+    func testFetchQualifiedSegments_segmentsToCheck_validAfterStart_withUseSubsetOption() {
         let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
         try? optimizely.start(datafile: datafile)
 
         // fetch segments after SDK initialized, so segmentsToCheck will be used.
         
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
+        user.fetchQualifiedSegments(apiKey: kApiKey, options: [.useSubset]) { error in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))

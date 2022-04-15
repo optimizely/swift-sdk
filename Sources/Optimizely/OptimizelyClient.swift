@@ -783,7 +783,8 @@ open class OptimizelyClient: NSObject {
                                 userValue: String,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        let segmentsToCheck = config?.allSegments
+        
+        let segmentsToCheck = options.contains(.useSubset) ? config?.allSegments : nil
 
         audienceSegmentsHandler.fetchQualifiedSegments(apiKey: apiKey,
                                                        userKey: userKey,

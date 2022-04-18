@@ -1,6 +1,10 @@
 name: Reusable action of Preparing for release
 
-on: [workflow_call]
+on:
+  workflow_call:
+    secrets:
+      CI_USER_TOKEN:
+        required: true
 
 jobs:
   prepare_for_release: 

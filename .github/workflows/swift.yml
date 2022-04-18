@@ -13,6 +13,9 @@ jobs:
 
   integration_tests:
     uses: optimizely/swift-sdk/.github/workflows/integration_tests.yml@yasir/gitAction
+    secrets:
+      CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+      TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
 
   lint: 
     runs-on: macos-latest
@@ -30,9 +33,13 @@ jobs:
 
   unittests:
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@yasir/gitAction
+    secrets:
+      COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
   prepare_for_release: 
     uses: optimizely/swift-sdk/.github/workflows/prepare_for_release.yml@yasir/gitAction
+    secrets:
+      CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
 
   release: 
     runs-on: macos-latest

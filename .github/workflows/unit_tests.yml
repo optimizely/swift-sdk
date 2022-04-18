@@ -1,6 +1,10 @@
 name: Reusable action of Unit tests
 
-on: [workflow_call]
+on: 
+  workflow_call:
+    secrets:
+      COVERALLS_TOKEN:
+        required: true
 
 jobs:
   unittests:

@@ -1,6 +1,12 @@
 name: Reusable action of Integration tests
 
-on: [workflow_call]
+on: 
+  workflow_call:
+    secrets:
+      CI_USER_TOKEN:
+        required: true
+      TRAVIS_COM_TOKEN:
+        required: true
 
 jobs:
   integration_tests:

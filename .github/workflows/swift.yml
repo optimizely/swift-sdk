@@ -1,10 +1,15 @@
 name: Swift
-
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
+    inputs:
+      SNAPSHOT:
+        required: false
+        type: boolean
+        description: Set SNAPSHOT true to publish
 
 jobs:
 
@@ -12,6 +17,7 @@ jobs:
     uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@yasir/gitAction
 
   integration_tests:
+    if: ${{ (secrets.RUN_COMPAT_SUITE == true) && (secrets.PREP == null) && (secrets.RELEASE == null) }} 
     uses: optimizely/swift-sdk/.github/workflows/integration_tests.yml@yasir/gitAction
     secrets:
       CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
@@ -32,34 +38,37 @@ jobs:
         curl -sSL https://download.sourceclear.com/ci.sh | bash
 
   unittests:
+    if: ${{ (secrets.PREP == null) && (secrets.RELEASE == null) }} 
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@yasir/gitAction
     secrets:
       COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
-  prepare_for_release: 
-    uses: optimizely/swift-sdk/.github/workflows/prepare_for_release.yml@yasir/gitAction
-    secrets:
-      CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+  # prepare_for_release:
+  #   if: ${{ (secrets.PREP == true) && (github.event.inputs.SNAPSHOT == 'true') && (github.event_name == 'workflow_dispatch') }} 
+  #   uses: optimizely/swift-sdk/.github/workflows/prepare_for_release.yml@yasir/gitAction
+  #   secrets:
+  #     CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
 
-  release: 
-    runs-on: macos-latest
-    steps:
-    - name: set SDK Branch if PR
-      if: ${{ github.event_name == 'pull_request' }}
-      run: |
-        echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
-    - name: set SDK Branch if not pull request
-      if: ${{ github.event_name != 'pull_request' }}
-      run: |
-        echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-    - uses: actions/checkout@v3
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '12.4'
-    - name: Push to cocoapods.org
-      env:
-        VERSION: 3.10.1
-        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
-      run: |
-        gem install cocoapods -v '1.9.3'
-        Scripts/run_release.sh
+  # release: 
+  #   if: ${{ (secrets.RELEASE == true) && (github.event.inputs.SNAPSHOT == 'true') && (github.event_name == 'workflow_dispatch') }}
+  #   runs-on: macos-latest
+  #   steps:
+  #   - name: set SDK Branch if PR
+  #     if: ${{ github.event_name == 'pull_request' }}
+  #     run: |
+  #       echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
+  #   - name: set SDK Branch if not pull request
+  #     if: ${{ github.event_name != 'pull_request' }}
+  #     run: |
+  #       echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+  #   - uses: actions/checkout@v3
+  #   - uses: maxim-lobanov/setup-xcode@v1
+  #     with:
+  #       xcode-version: '12.4'
+  #   - name: Push to cocoapods.org
+  #     env:
+  #       VERSION: 3.10.1
+  #       GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+  #     run: |
+  #       gem install cocoapods -v '1.9.3'
+  #       Scripts/run_release.sh

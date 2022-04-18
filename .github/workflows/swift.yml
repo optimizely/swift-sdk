@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       SNAPSHOT:
-        required: false 
+        required: false
         type: boolean
-        description: 'Set SNAPSHOT true to publish'
+        description: Set SNAPSHOT true to publish
 
 jobs:
 
@@ -39,7 +39,7 @@ jobs:
         curl -sSL https://download.sourceclear.com/ci.sh | bash
 
   unittests:
-    if: ${{ (secrets.PREP == null) && (secrets.RELEASE == null) }} 
+    # if: ${{ secrets.PREP == null && secrets.RELEASE == null }} 
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@yasir/gitAction
     secrets:
       COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}

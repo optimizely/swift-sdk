@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # run xcode unit tests
 #

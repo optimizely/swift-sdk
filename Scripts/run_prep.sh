@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
 set -e
 
 # Because `hub` is used, this script expects the following environment variables defined in travis job settings:

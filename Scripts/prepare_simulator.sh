@@ -33,8 +33,8 @@ if [ "$SIMULATOR_XCODE_VERSION" != 12.4 ]; then
         os_folder="${os_folder}.platform/Library/Developer"
     fi
 
-    echo "======================="
-    echo $SIMULATOR_XCODE_VERSION
+    printf "======================="
+    printf "SIMULATOR_XCODE_VERSION: %s\n" "$SIMULATOR_XCODE_VERSION"
 
     # Link and create simulators from older xcode versions which are not part of the current xcode version
     sudo ln -s /Applications/Xcode_$SIMULATOR_XCODE_VERSION.app/Contents/Developer/Platforms/$os_folder/CoreSimulator/Profiles/Runtimes/$OS_TYPE.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE\ $OS.simruntime

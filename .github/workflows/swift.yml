@@ -51,7 +51,7 @@ jobs:
   prepare_for_release: 
     env:
       PREP: ${{ secrets.PREP }} 
-    if: ${{ env.PREP == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}
+    if: "${{ env.PREP == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}"
     runs-on: macos-latest
     steps:
     - name: set SDK Branch if PR
@@ -86,7 +86,7 @@ jobs:
   release:
     env:
       RELEASE: ${{ secrets.RELEASE }} 
-    if: ${{ env.RELEASE == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}
+    if: "${{ env.RELEASE == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}"
     runs-on: macos-latest
     steps:
     - name: set SDK Branch if PR

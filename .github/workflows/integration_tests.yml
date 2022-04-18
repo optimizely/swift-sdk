@@ -16,11 +16,6 @@ on:
 
 jobs:
   integration_tests:
-    env:
-      PREP: ${{ secrets.PREP }} 
-      RELEASE: ${{ secrets.RELEASE }}
-      RUN_COMPAT_SUITE: ${{ secrets.RUN_COMPAT_SUITE }}
-    if: "${{ env.RUN_COMPAT_SUITE == 'true' && env.PREP == '' && env.RELEASE == '' }}"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -59,6 +54,10 @@ jobs:
         TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
         EVENT_MESSAGE: ${{ github.event.message }}
         HOME: 'home/runner'
+        PREP: ${{ secrets.PREP }} 
+        RELEASE: ${{ secrets.RELEASE }}
+        RUN_COMPAT_SUITE: ${{ secrets.RUN_COMPAT_SUITE }}
+      if: "${{ env.RUN_COMPAT_SUITE == 'true' && env.PREP == '' && env.RELEASE == '' }}"
       run: |
         echo "$GITHUB_CONTEXT"
         home/runner/travisci-tools/trigger-script-with-status-update.sh

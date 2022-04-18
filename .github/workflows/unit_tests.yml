@@ -12,10 +12,6 @@ on:
 
 jobs:
   unittests:
-    env:
-      PREP: ${{ secrets.PREP }} 
-      RELEASE: ${{ secrets.RELEASE }}
-    if: "${{ env.PREP == '' && env.RELEASE == '' }}"
     runs-on: macos-10.15
     strategy:
       fail-fast: false
@@ -66,6 +62,8 @@ jobs:
           echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
       - id: unit_tests
         env:
+          PREP: ${{ secrets.PREP }} 
+          RELEASE: ${{ secrets.RELEASE }}
           COVERAGE_DIR: ./COVERAGE
           SCHEME: ${{ matrix.scheme }}
           TEST_SDK: ${{ matrix.test_sdk }}
@@ -75,6 +73,7 @@ jobs:
           SIMULATOR_XCODE_VERSION: ${{ matrix.simulator_xcode_version }}
           NAME: ${{ matrix.device }}
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        if: "${{ env.PREP == '' && env.RELEASE == '' }}"
         run: |
           gem install coveralls-lcov
           gem install cocoapods -v '1.9.3'

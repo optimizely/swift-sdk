@@ -49,9 +49,6 @@ jobs:
       RELEASE: ${{ secrets.RELEASE }}
 
   prepare_for_release: 
-    env:
-      PREP: ${{ secrets.PREP }} 
-    if: "${{ env.PREP == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}"
     runs-on: macos-latest
     steps:
     - name: set SDK Branch if PR
@@ -76,6 +73,8 @@ jobs:
         TRAVIS_REPO_SLUG: ${{ github.repository }}
         GITHUB_USER: optibot
         GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+        PREP: ${{ secrets.PREP }} 
+      if: "${{ env.PREP == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}"
       run: |
         gem install cocoapods -v '1.9.3'
         Scripts/run_prep.sh

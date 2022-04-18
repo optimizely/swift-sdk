@@ -16,7 +16,7 @@
     
 import Foundation
 
-class AtomicDictionary<K, V>: AtomicWrapper where K: Hashable {
+class AtomicDictionary<K: Hashable, V>: AtomicWrapper {
     private var _property: [K: V]
          
     var property: [K: V] {

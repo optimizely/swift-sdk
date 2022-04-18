@@ -21,14 +21,14 @@ public class OptimizelyUserContext {
     weak var optimizely: OptimizelyClient?
     public var userId: String
     
-    var atomicAttributes: AtomicProperty<[String: Any?]>
+    private var atomicAttributes: AtomicProperty<[String: Any?]>
     public var attributes: [String: Any?] {
         return atomicAttributes.property ?? [:]
     }
     
     var forcedDecisions: AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>?
     
-    var atomicQualifiedSegments: AtomicArray<String>?
+    private var atomicQualifiedSegments: AtomicArray<String>?
     public var qualifiedSegments: [String]? {
         get {
             return atomicQualifiedSegments?.property
@@ -222,7 +222,7 @@ public struct OptimizelyDecisionContext: Hashable {
 }
 
 /// Forced Decision
-public struct OptimizelyForcedDecision {
+public struct OptimizelyForcedDecision: Equatable {
     public let variationKey: String
     
     public init(variationKey: String) {
@@ -291,7 +291,9 @@ extension OptimizelyUserContext: Equatable {
     
     public static func == (lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
         return lhs.userId == rhs.userId &&
-            (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes as [AnyHashable: Any])
+        (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes as [AnyHashable: Any]) &&
+        lhs.forcedDecisions?.property == rhs.forcedDecisions?.property &&
+        lhs.qualifiedSegments == rhs.qualifiedSegments
     }
     
 }

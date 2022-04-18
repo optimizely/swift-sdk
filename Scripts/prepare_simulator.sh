@@ -19,9 +19,9 @@ if [ "$SIMULATOR_XCODE_VERSION" != 12.4 ]; then
     sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
 
     # Check if device is Apple tv, update os_folder for linking purposes
-    if [[ "$NAME" = "Apple TV"* ]]
+    if [ "$NAME" == "Apple TV 4K" ]
     then
-        name="${name}-1080p"
+        name="${name}-4K"
         os_folder="AppleTVOS"
     fi
 
@@ -36,7 +36,10 @@ if [ "$SIMULATOR_XCODE_VERSION" != 12.4 ]; then
     # Link and create simulators from older xcode versions which are not part of the current xcode version
     sudo ln -s /Applications/Xcode_$SIMULATOR_XCODE_VERSION.app/Contents/Developer/Platforms/$os_folder/CoreSimulator/Profiles/Runtimes/$OS_TYPE.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/$OS_TYPE\ $OS.simruntime
     xcrun simctl create "custom-device" "com.apple.CoreSimulator.SimDeviceType.$name" "com.apple.CoreSimulator.SimRuntime.$OS_TYPE-$os"
+    UDID="$(instruments -s devices | grep -m 1 'custom-device' | awk -F'[][]' '{print $2}')"
+else
+    echo ".devices.\"com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS/./-}\"" > /tmp/jq_file
+    UDID=$( xcrun simctl list --json devices | jq -f /tmp/jq_file | jq -r '.[] | select(.name==env.NAME) | .udid' )
 fi
-    
-echo ".devices.\"com.apple.CoreSimulator.SimRuntime.${PLATFORM/ Simulator/}-${OS/./-}\"" > /tmp/jq_file
-echo $( xcrun simctl list --json devices | jq -f /tmp/jq_file | jq -r '.[] | select(.name==env.NAME) | .udid' )
+
+echo "$UDID"

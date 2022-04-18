@@ -5,9 +5,17 @@ on:
     secrets:
       COVERALLS_TOKEN:
         required: true
+      PREP:
+        required: true
+      RELEASE:
+        required: true
 
 jobs:
   unittests:
+    env:
+      PREP: ${{ secrets.PREP }} 
+      RELEASE: ${{ secrets.RELEASE }}
+    if: ${{ env.PREP == '' && env.RELEASE == '' }}
     runs-on: macos-10.15
     strategy:
       fail-fast: false

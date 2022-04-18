@@ -18,11 +18,14 @@ jobs:
     uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@yasir/gitAction
 
   integration_tests:
-    # if: ${{ secrets.RUN_COMPAT_SUITE == 'true' && secrets.PREP == null && secrets.RELEASE == null }} 
+    if: ${{ github.event.inputs.SNAPSHOT != 'true' }} 
     uses: optimizely/swift-sdk/.github/workflows/integration_tests.yml@yasir/gitAction
     secrets:
       CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
       TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
+      RUN_COMPAT_SUITE: ${{ secrets.RUN_COMPAT_SUITE }}
+      PREP: ${{ secrets.PREP }}
+      RELEASE: ${{ secrets.RELEASE }}
 
   lint: 
     runs-on: macos-latest
@@ -38,20 +41,52 @@ jobs:
         pod spec lint --quick
         curl -sSL https://download.sourceclear.com/ci.sh | bash
 
-  unittests:
-    # if: ${{ secrets.PREP == null && secrets.RELEASE == null }} 
+  unittests: 
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@yasir/gitAction
     secrets:
       COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+      PREP: ${{ secrets.PREP }}
+      RELEASE: ${{ secrets.RELEASE }}
 
-  prepare_for_release:
-    # if: ${{ secrets.PREP == true && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }} 
-    uses: optimizely/swift-sdk/.github/workflows/prepare_for_release.yml@yasir/gitAction
-    secrets:
-      CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+  prepare_for_release: 
+    env:
+      PREP: ${{ secrets.PREP }} 
+    if: ${{ env.PREP == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}
+    runs-on: macos-latest
+    steps:
+    - name: set SDK Branch if PR
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+        echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
+    - name: set SDK Branch if not pull request
+      if: ${{ github.event_name != 'pull_request' }}
+      run: |
+        echo "SDK_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+        echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+    - uses: maxim-lobanov/setup-xcode@v1
+    - uses: actions/checkout@v3
+      with:
+        xcode-version: '12.4'
+    - id: prepare_for_release
+      name: Prepare for release
+      env:
+        VERSION: 3.10.1
+        HOME: 'home/runner'
+        TRAVIS_REPO_SLUG: ${{ github.repository }}
+        GITHUB_USER: optibot
+        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+      run: |
+        gem install cocoapods -v '1.9.3'
+        Scripts/run_prep.sh
+    - name: Check prepare for release failure
+      if: steps.prepare_for_release.outcome != 'success'
+      run: cat /tmp/build.out
 
-  release: 
-    # if: ${{ secrets.RELEASE == true && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}
+  release:
+    env:
+      RELEASE: ${{ secrets.RELEASE }} 
+    if: ${{ env.RELEASE == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}
     runs-on: macos-latest
     steps:
     - name: set SDK Branch if PR

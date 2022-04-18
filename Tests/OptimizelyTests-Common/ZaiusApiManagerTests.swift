@@ -160,7 +160,7 @@ class ZaiusApiManagerTests: XCTestCase {
                       userValue: testODPUserIdForAudienceSegments,
                       segmentsToCheck: ["has_email", "has_email_opted_in", "invalid-segment"]) { segments, error in
             XCTAssertNil(error)
-            XCTAssertEqual(["has_email", "has_email_opted_in"], Array(Set(segments!)))
+            XCTAssertEqual(Set(["has_email", "has_email_opted_in"]), Set(segments!))
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))

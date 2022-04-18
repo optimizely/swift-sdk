@@ -80,7 +80,7 @@ jobs:
           pod repo update
           pod install
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
-          SIMULATOR_UDID=$(Scripts/prepare_simulator.sh)
+          SIMULATOR_UDID="$(Scripts/prepare_simulator.sh)"
           xcrun simctl boot $SIMULATOR_UDID && sleep 30
           xcrun simctl list | grep Booted
           Scripts/run_unit_tests.sh

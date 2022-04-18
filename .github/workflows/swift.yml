@@ -83,9 +83,6 @@ jobs:
       run: cat /tmp/build.out
 
   release:
-    env:
-      RELEASE: ${{ secrets.RELEASE }} 
-    if: "${{ env.RELEASE == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}"
     runs-on: macos-latest
     steps:
     - name: set SDK Branch if PR
@@ -104,6 +101,8 @@ jobs:
       env:
         VERSION: 3.10.1
         GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+        RELEASE: ${{ secrets.RELEASE }} 
+      if: "${{ env.RELEASE == 'true' && github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}"
       run: |
         gem install cocoapods -v '1.9.3'
         Scripts/run_release.sh

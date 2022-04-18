@@ -12,48 +12,7 @@ jobs:
     uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@yasir/gitAction
 
   integration_tests:
-    if: ${{ github.event.inputs.SNAPSHOT != 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        # You should create a personal access token and store it in your repository
-        token: ${{ secrets.CI_USER_TOKEN }}
-        repository: 'optimizely/travisci-tools'
-        path: 'home/runner/travisci-tools'
-        ref: 'master'
-    - name: set SDK Branch if PR
-      if: ${{ github.event_name == 'pull_request' }}
-      run: |
-        echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-        echo "TRAVIS_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-    - name: set SDK Branch if not pull request
-      if: ${{ github.event_name != 'pull_request' }}
-      run: |
-        echo "SDK_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-        echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-    - name: Trigger build
-      env:
-        SDK: swift
-        TESTAPP_TAG: master
-        BUILD_NUMBER: ${{ github.run_id }}
-        TESTAPP_BRANCH: master
-        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
-        TRAVIS_EVENT_TYPE: ${{ github.event_name }}
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-        TRAVIS_REPO_SLUG: ${{ github.repository }}
-        TRAVIS_PULL_REQUEST_SLUG: ${{ github.repository }}
-        UPSTREAM_REPO: ${{ github.repository }}
-        TRAVIS_COMMIT: ${{ github.sha }}
-        TRAVIS_PULL_REQUEST_SHA: ${{ github.event.pull_request.head.sha }}
-        TRAVIS_PULL_REQUEST: ${{ github.event.pull_request.number }}
-        UPSTREAM_SHA: ${{ github.sha }}
-        TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
-        EVENT_MESSAGE: ${{ github.event.message }}
-        HOME: 'home/runner'
-      run: |
-        echo "$GITHUB_CONTEXT"
-        home/runner/travisci-tools/trigger-script-with-status-update.sh
+    uses: optimizely/swift-sdk/.github/workflows/integration_tests.yml@yasir/gitAction
 
   lint: 
     runs-on: macos-latest
@@ -70,121 +29,22 @@ jobs:
         curl -sSL https://download.sourceclear.com/ci.sh | bash
 
   unittests:
-    runs-on: macos-10.15
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: 14.4
-            device: "iPhone 11"
-            scheme: "OptimizelySwiftSDK-iOS"
-            sdk: "iphonesimulator"
-            platform: "iOS Simulator"
-            os_type: "iOS"
-            simulator_xcode_version: 12.4
-          - os: 13.3
-            device: "iPhone 8"
-            scheme: "OptimizelySwiftSDK-iOS"
-            sdk: "iphonesimulator"
-            platform: "iOS Simulator"
-            os_type: "iOS"
-            simulator_xcode_version: 11.3.1
-          - os: 12.4
-            device: "iPad Air"
-            scheme: "OptimizelySwiftSDK-iOS"
-            sdk: "iphonesimulator"
-            platform: "iOS Simulator"
-            os_type: "iOS"
-            simulator_xcode_version: 10.3
-          - os: 12.4
-            device: "Apple TV 4K"
-            scheme: "OptimizelySwiftSDK-tvOS"
-            sdk: "appletvsimulator"
-            platform: "tvOS Simulator"
-            os_type: "tvOS"
-            simulator_xcode_version: 10.3
-    steps:
-      - uses: actions/checkout@v3
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: 12.4
-      - name: set SDK Branch if PR
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-          echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
-      - name: set SDK Branch if not pull request
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          echo "SDK_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-          echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-      - id: unit_tests
-        env:
-          COVERAGE_DIR: ./COVERAGE
-          SCHEME: ${{ matrix.scheme }}
-          TEST_SDK: ${{ matrix.sdk }}
-          PLATFORM: ${{ matrix.platform }}
-          OS: ${{ matrix.os }}
-          OS_TYPE: ${{ matrix.os_type }}
-          SIMULATOR_XCODE_VERSION: ${{ matrix.simulator_xcode_version }}
-          NAME: ${{ matrix.device }}
-          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
-        run: |
-          gem install coveralls-lcov
-          gem install cocoapods -v '1.9.3'
-          pod repo update
-          pod install
-          HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
-          Scripts/start_simulator.sh
-          Scripts/run_unit_tests.sh
-      - name: Check on failures
-        if: steps.unit_tests.outcome != 'success'
-        run: |
-          sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
-          artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
-          artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
-      - name: Check on success
-        if: steps.unit_tests.outcome == 'success'
-        run: |
-          Scripts/upload_coveralls.sh
-          sleep 5
+    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@yasir/gitAction
 
   prepare_for_release: 
+    uses: optimizely/swift-sdk/.github/workflows/prepare_for_release.yml@yasir/gitAction
+
+  release: 
     runs-on: macos-latest
     steps:
     - name: set SDK Branch if PR
       if: ${{ github.event_name == 'pull_request' }}
       run: |
-        echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
         echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
     - name: set SDK Branch if not pull request
       if: ${{ github.event_name != 'pull_request' }}
       run: |
-        echo "SDK_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
         echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-    - uses: maxim-lobanov/setup-xcode@v1
-    - uses: actions/checkout@v3
-      with:
-        xcode-version: '12.4'
-    - id: prepare_for_release
-      name: Prepare for release
-      env:
-        VERSION: 3.10.1
-        HOME: 'home/runner'
-        TRAVIS_REPO_SLUG: ${{ github.repository }}
-        GITHUB_USER: optibot
-        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
-      run: |
-        wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
-        gem install cocoapods -v '1.9.3'
-        Scripts/run_prep.sh
-    - name: Check prepare for release failure
-      if: steps.prepare_for_release.outcome != 'success'
-      run: cat /tmp/build.out
-
-  release: 
-    runs-on: macos-latest
-    steps:
     - uses: actions/checkout@v3
     - uses: maxim-lobanov/setup-xcode@v1
       with:
@@ -192,7 +52,7 @@ jobs:
     - name: Push to cocoapods.org
       env:
         VERSION: 3.10.1
+        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
       run: |
-        wget https://github.com/github/hub/releases/download/v2.11.2/hub-darwin-amd64-2.11.2.tgz -O /tmp/hub-darwin-amd64-2.11.2.tgz && tar -xvf /tmp/hub-darwin-amd64-2.11.2.tgz -C /usr/local/opt && ln -s /usr/local/opt/hub-darwin-amd64-2.11.2/bin/hub /usr/local/bin/hub
         gem install cocoapods -v '1.9.3'
         Scripts/run_release.sh

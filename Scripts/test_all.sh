@@ -11,7 +11,7 @@ for i in "${!deviceModels[@]}"; do
   export NAME="${deviceModels[$i]}"
   export OS_TYPE="${platforms[$i]}"
   export SIMULATOR_XCODE_VERSION="${xcodeVersions[$i]}"
-  sh Scripts/prepare_simulator.sh
+  Scripts/prepare_simulator.sh
   echo "Testing OptimizelySwiftSDK-${platforms[$i]} (${deviceModels[$i]},OS=${osVersions[$i]})"
   xcrun xcodebuild -workspace OptimizelySwiftSDK.xcworkspace -scheme "OptimizelySwiftSDK-${platforms[$i]}" -sdk "${testSdks[$i]}" -destination "platform=${platforms[$i]} Simulator,name=${deviceModels[$i]},OS=${osVersions[$i]}" test
 done

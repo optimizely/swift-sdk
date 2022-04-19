@@ -246,6 +246,16 @@ extension OptimizelyUserContextTests {
         XCTAssert(timeInMicrosecs < 10, "user context cloning takes too long (\(timeInMicrosecs) microsecs)")
     }
 
+    func testPerformance_decideInvalid() {
+        let user = OptimizelyUserContext(optimizely: expOptimizely, userId: "tester", attributes: ["a1": "b1"])
+                
+        let timeInMicrosecs = measureTime {
+            _ = user.decide(key: "invalid")
+        }
+        
+        XCTAssert(timeInMicrosecs < 10, "user context decide-with-invalid takes too long (\(timeInMicrosecs) microsecs)")
+    }
+
 }
 
 // MARK: - Utils

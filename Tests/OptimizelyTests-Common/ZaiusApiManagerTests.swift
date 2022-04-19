@@ -163,7 +163,7 @@ class ZaiusApiManagerTests: XCTestCase {
             XCTAssertEqual(Set(["has_email", "has_email_opted_in"]), Set(segments!))
             sem.signal()
         }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
     // MARK: - MockZaiusApiManager

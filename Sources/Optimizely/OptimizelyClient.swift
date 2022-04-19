@@ -61,9 +61,9 @@ open class OptimizelyClient: NSObject {
         get {
             // instantiated on the first call (not instantiated when it's not used)
             guard let handler = atomicAudienceSegmentsHandler.property else {
-                let newHandler = AudienceSegmentsHandler(cacheSize: segmentsCacheSize, cacheTimeoutInSecs: segmentsCacheTimeoutInSecs)
-                atomicAudienceSegmentsHandler.property = newHandler
-                return newHandler
+                let defaultHandler = AudienceSegmentsHandler(cacheSize: segmentsCacheSize, cacheTimeoutInSecs: segmentsCacheTimeoutInSecs)
+                atomicAudienceSegmentsHandler.property = defaultHandler
+                return defaultHandler
             }
             return handler
         }

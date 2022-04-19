@@ -20,9 +20,7 @@ import Foundation
 public class OptimizelyUserContext {
     weak var optimizely: OptimizelyClient?
     public var userId: String
-    
-    private let lock = DispatchQueue(label: "user-context")
-    
+        
     private var atomicAttributes: AtomicProperty<[String: Any?]>
     public var attributes: [String: Any?] {
         return atomicAttributes.property ?? [:]
@@ -38,6 +36,7 @@ public class OptimizelyUserContext {
         get {
             return atomicQualifiedSegments.property
         }
+        // keep this public set api for clients to set directly (testing/debugging)
         set {
             atomicQualifiedSegments.property = newValue
         }
@@ -49,11 +48,11 @@ public class OptimizelyUserContext {
         let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
         
         if let fds = forcedDecisions {
-            userContext.atomicForcedDecisions = AtomicProperty(property: fds, lock: lock)
+            userContext.atomicForcedDecisions.property = fds
         }
         
         if let qs = qualifiedSegments {
-            userContext.atomicQualifiedSegments = AtomicProperty(property: qs, lock: lock)
+            userContext.atomicQualifiedSegments.property = qs
         }
         
         return userContext
@@ -72,6 +71,8 @@ public class OptimizelyUserContext {
                 attributes: [String: Any?]? = nil) {
         self.optimizely = optimizely
         self.userId = userId
+        
+        let lock = DispatchQueue(label: "user-context")
         self.atomicAttributes = AtomicProperty(property: attributes ?? [:], lock: lock)
         self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
         self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
@@ -175,7 +176,7 @@ extension OptimizelyUserContext {
     ///   - userKey: The name of the user identifier (optional).
     ///   - userValue: The value of the user identifier (optional).
     ///   - options: A set of options for fetching qualified segments (optional).
-    ///   - completionHandler: A completion handler to be called with the fetch status success/failure. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
+    ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
     public func fetchQualifiedSegments(apiKey: String,
                                        userKey: String? = nil,
                                        userValue: String? = nil,

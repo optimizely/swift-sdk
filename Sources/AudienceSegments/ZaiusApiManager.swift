@@ -88,7 +88,7 @@ class ZaiusApiManager {
                segmentsToCheck: [String]?,
                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         if userKey != "vuid" {
-            completionHandler([], .fetchSegmentsFailed("userKeys other than 'vuid' not supported yet"))
+            completionHandler(nil, .fetchSegmentsFailed("userKeys other than 'vuid' not supported yet"))
             return
         }
         
@@ -98,7 +98,7 @@ class ZaiusApiManager {
             "query": "query {customer(\(userKey): \"\(userValue)\") {audiences\(subsetFilter) {edges {node {name is_ready state}}}}}"
         ]
         guard let httpBody = try? JSONEncoder().encode(body) else {
-            completionHandler([], .fetchSegmentsFailed("invalid query."))
+            completionHandler(nil, .fetchSegmentsFailed("invalid query."))
             return
         }
 
@@ -118,12 +118,12 @@ class ZaiusApiManager {
                 self.logger.d {
                     "GraphQL download failed: \(error)"
                 }
-                completionHandler([], .fetchSegmentsFailed("download failed"))
+                completionHandler(nil, .fetchSegmentsFailed("download failed"))
                 return
             }
             
             guard let data = data else {
-                completionHandler([], .fetchSegmentsFailed("response data empty"))
+                completionHandler(nil, .fetchSegmentsFailed("response data empty"))
                 return
             }
             
@@ -133,7 +133,7 @@ class ZaiusApiManager {
                 self.logger.d {
                     "GraphQL decode failed: " + String(bytes: data, encoding: .utf8)!
                 }
-                completionHandler([], .fetchSegmentsFailed("decode error"))
+                completionHandler(nil, .fetchSegmentsFailed("decode error"))
                 return
             }
                     

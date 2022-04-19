@@ -55,12 +55,13 @@ class ZaiusApiManagerTests: XCTestCase {
         let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.badResponseData))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { _, error in
+        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
             if case .fetchSegmentsFailed("decode error") = error {
                 XCTAssert(true)
             } else {
                 XCTFail()
             }
+            XCTAssertNil(segments)
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
@@ -70,12 +71,13 @@ class ZaiusApiManagerTests: XCTestCase {
         let manager = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { _, error in
+        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
             if case .fetchSegmentsFailed("download failed") = error {
                 XCTAssert(true)
             } else {
                 XCTFail()
             }
+            XCTAssertNil(segments)
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
@@ -85,7 +87,7 @@ class ZaiusApiManagerTests: XCTestCase {
         let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200))
 
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { _, error in
+        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { _, _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
@@ -109,7 +111,7 @@ class ZaiusApiManagerTests: XCTestCase {
         let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200))
 
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: ["a", "b"]) { _, error in
+        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: ["a", "b"]) { _, _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))

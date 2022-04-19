@@ -43,9 +43,10 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     
     func testFetchQualifiedSegments_successDefaultUser() {
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
+        user.fetchQualifiedSegments(apiKey: kApiKey) { segments, error in
             XCTAssertNil(error)
-            XCTAssert(self.user.qualifiedSegments == [self.kApiKey, self.kUserIdKey, self.kUserId])
+            XCTAssert(segments == [self.kApiKey, self.kUserIdKey, self.kUserId])
+            XCTAssert(self.user.qualifiedSegments == segments)
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -55,8 +56,9 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         user.optimizely = nil
         
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
+        user.fetchQualifiedSegments(apiKey: kApiKey) { segments, error in
             XCTAssertEqual(OptimizelyError.sdkNotReady.reason, error?.reason)
+            XCTAssertNil(segments)
             XCTAssertNil(self.user.qualifiedSegments)
             sem.signal()
         }
@@ -65,8 +67,9 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     
     func testFetchQualifiedSegments_fetchFailed() {
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: "invalid-key") { error in
+        user.fetchQualifiedSegments(apiKey: "invalid-key") { segments, error in
             XCTAssertNotNil(error)
+            XCTAssertNil(segments)
             XCTAssertNil(self.user.qualifiedSegments)
             sem.signal()
         }
@@ -75,7 +78,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     
     func testFetchQualifiedSegments_segmentsToCheck_emptyBeforeStart() {
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
+        user.fetchQualifiedSegments(apiKey: kApiKey) { _, _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -88,7 +91,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         try? optimizely.start(datafile: datafile)
         
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey) { error in
+        user.fetchQualifiedSegments(apiKey: kApiKey) { _, _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -98,7 +101,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     
     func testFetchQualifiedSegments_segmentsToCheck_emptyBeforeStart_withUseSubsetOption() {
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey, options: [.useSubset]) { error in
+        user.fetchQualifiedSegments(apiKey: kApiKey, options: [.useSubset]) { _, _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -113,7 +116,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         // fetch segments after SDK initialized, so segmentsToCheck will be used.
         
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey, options: [.useSubset]) { error in
+        user.fetchQualifiedSegments(apiKey: kApiKey, options: [.useSubset]) { _, _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))

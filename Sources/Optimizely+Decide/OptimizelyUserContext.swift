@@ -175,14 +175,14 @@ extension OptimizelyUserContext {
     ///   - userKey: The name of the user identifier (optional).
     ///   - userValue: The value of the user identifier (optional).
     ///   - options: A set of options for fetching qualified segments (optional).
-    ///   - completionHandler: A completion handler to be called with the fetch status success/failure.
+    ///   - completionHandler: A completion handler to be called with the fetch status success/failure. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
     public func fetchQualifiedSegments(apiKey: String,
                                        userKey: String? = nil,
                                        userValue: String? = nil,
                                        options: [OptimizelySegmentOption] = [],
-                                       completionHandler: @escaping (OptimizelyError?) -> Void) {
+                                       completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         guard let optimizely = self.optimizely else {
-            completionHandler(.sdkNotReady)
+            completionHandler(nil, .sdkNotReady)
             return
         }
 
@@ -196,12 +196,12 @@ extension OptimizelyUserContext {
             guard err == nil, let segments = segments else {
                 let error = err ?? OptimizelyError.fetchSegmentsFailed("invalid segments")
                 self.logger.e(error)
-                completionHandler(error)
+                completionHandler(nil, error)
                 return
             }
                 
             self.atomicQualifiedSegments.property = segments
-            completionHandler(nil)
+            completionHandler(segments, nil)
         }
     }
 

@@ -34,7 +34,7 @@ class AudienceSegmentsHandler: OPTAudienceSegmentsHandler {
                                 segmentsToCheck: [String]? = nil,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        let cacheKey = cacheKey(userKey, userValue)
+        let cacheKey = makeCacheKey(userKey, userValue)
 
         let ignoreCache = options.contains(.ignoreCache)
         let resetCache = options.contains(.resetCache)
@@ -70,7 +70,7 @@ class AudienceSegmentsHandler: OPTAudienceSegmentsHandler {
 
 extension AudienceSegmentsHandler {
     
-    func cacheKey(_ userKey: String, _ userValue: String) -> String {
+    func makeCacheKey(_ userKey: String, _ userValue: String) -> String {
         return userKey + "-$-" + userValue
     }
     

@@ -117,14 +117,14 @@ extension UserAttribute {
         }
         
         let attributes = user.attributes
-        let rawAttributeValue = attributes[nameFinal] ?? nil // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
+        let rawValue = attributes[nameFinal] ?? nil // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
      
         if matchFinal == .exists {
-            return !(rawAttributeValue is NSNull || rawAttributeValue == nil)
+            return !(rawValue is NSNull || rawValue == nil)
         }
         
         // all other matches requires valid value
-        
+
         guard let value = value else {
             throw OptimizelyError.userAttributeNilValue(stringRepresentation)
         }
@@ -138,11 +138,13 @@ extension UserAttribute {
             return user.isQualifiedFor(segment: strValue)
         }
         
+        // all other matches requires attribute value
+
         guard attributes.keys.contains(nameFinal) else {
             throw OptimizelyError.missingAttributeValue(stringRepresentation, nameFinal)
         }
-
-        guard let rawAttributeValue = rawAttributeValue else {
+        
+        guard let rawAttributeValue = rawValue else {
             throw OptimizelyError.nilAttributeValue(stringRepresentation, nameFinal)
         }
                 

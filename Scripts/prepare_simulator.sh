@@ -7,9 +7,10 @@ set -eou pipefail
 # NAME (eg. iPad Air)
 # OS_TYPE (eg. iOS)
 # SIMULATOR_XCODE_VERSION (Which Xcode's simulator to use)
-# Since github actions only provide limit simulators with each xcode, we need to link simulators from other versions of xcode to be used by current xcode.
-# We must use old simulators with current xcode since old xcode doesnot support swift 5 required by Swift SDK. 
+# Since github actions only provides limit simulators with each xcode, we need to link simulators from other versions of xcode to be used by current xcode.
+# We must use old simulators with current xcode since older xcode versions do not support swift 5 which is required by Swift SDK. 
 # More about XCode and its compatible simulators can be found here: https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md
+# https://github.com/actions/virtual-environments/issues/551
 
 if [ "$SIMULATOR_XCODE_VERSION" != 12.4 ]; then
     os_folder="iPhoneOS"

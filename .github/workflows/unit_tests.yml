@@ -6,9 +6,9 @@ on:
       COVERALLS_TOKEN:
         required: true
       PREP:
-        required: true
+        required: false
       RELEASE:
-        required: true
+        required: false
 
 jobs:
   unittests:

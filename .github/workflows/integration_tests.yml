@@ -7,8 +7,6 @@ on:
         required: true
       TRAVIS_COM_TOKEN:
         required: true
-      RUN_COMPAT_SUITE:
-        required: true
       PREP:
         required: false
       RELEASE:
@@ -56,8 +54,7 @@ jobs:
         HOME: 'home/runner'
         PREP: ${{ secrets.PREP }} 
         RELEASE: ${{ secrets.RELEASE }}
-        RUN_COMPAT_SUITE: ${{ secrets.RUN_COMPAT_SUITE }}
-      if: "${{ env.RUN_COMPAT_SUITE == 'true' && env.PREP == '' && env.RELEASE == '' }}"
+      if: "${{ env.PREP == '' && env.RELEASE == '' }}"
       run: |
         echo "$GITHUB_CONTEXT"
         home/runner/travisci-tools/trigger-script-with-status-update.sh

@@ -176,7 +176,7 @@ struct ODPAudience: Decodable {
     let description: String?     // optional so we can add for debugging
     
     var isQualified: Bool {
-        isReady && state == "qualified"
+        return isReady && (state == "qualified")
     }
     
     init?(_ dict: [String: Any]?) {

@@ -114,12 +114,12 @@ class AudienceSegmentsHandlerTests: XCTestCase {
     // MARK: - Utils
     
     func setCache(_ userKey: String, _ userValue: String, _ value: [String]) {
-        let cacheKey = handler.cacheKey(userKey, userValue)
+        let cacheKey = handler.makeCacheKey(userKey, userValue)
         handler.segmentsCache.save(key: cacheKey, value: value)
     }
     
     func peekCache(_ userKey: String, _ userValue: String) -> [String]? {
-        let cacheKey = handler.cacheKey(userKey, userValue)
+        let cacheKey = handler.makeCacheKey(userKey, userValue)
         return handler.segmentsCache.peek(key: cacheKey)
     }
     

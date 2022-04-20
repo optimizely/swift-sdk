@@ -7,10 +7,14 @@ on:
     branches: [ master ]
   workflow_dispatch:
     inputs:
-      SNAPSHOT:
+      PREP:
         required: false
         type: boolean
-        description: Set SNAPSHOT true to publish
+        description: prepare to release
+      RELEASE:
+        required: false
+        type: boolean
+        description: release
 
 jobs:
 
@@ -18,13 +22,11 @@ jobs:
     uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@yasir/gitAction
 
   integration_tests:
-    if: ${{ github.event.inputs.SNAPSHOT != 'true' }} 
+    if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}"
     uses: optimizely/swift-sdk/.github/workflows/integration_tests.yml@yasir/gitAction
     secrets:
       CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
       TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
-      PREP: ${{ secrets.PREP }}
-      RELEASE: ${{ secrets.RELEASE }}
 
   lint: 
     runs-on: macos-latest
@@ -41,31 +43,21 @@ jobs:
         curl -sSL https://download.sourceclear.com/ci.sh | bash
 
   unittests: 
+    if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@yasir/gitAction
     secrets:
       COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
-      PREP: ${{ secrets.PREP }}
-      RELEASE: ${{ secrets.RELEASE }}
 
   prepare_for_release:
-    if: "${{ github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}" 
+    if: "${{ github.event.inputs.PREP == 'true' && github.event_name == 'workflow_dispatch' }}" 
     uses: optimizely/swift-sdk/.github/workflows/prepare_for_release.yml@yasir/gitAction
     secrets:
       CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
-      PREP: ${{ secrets.PREP }}
 
   release:
-    if: "${{github.event.inputs.SNAPSHOT == 'true' && github.event_name == 'workflow_dispatch' }}"
+    if: "${{github.event.inputs.RELEASE == 'true' && github.event_name == 'workflow_dispatch' }}"
     runs-on: macos-latest
     steps:
-    - name: set SDK Branch if PR
-      if: ${{ github.event_name == 'pull_request' }}
-      run: |
-        echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
-    - name: set SDK Branch if not pull request
-      if: ${{ github.event_name != 'pull_request' }}
-      run: |
-        echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
     - uses: actions/checkout@v3
     - uses: maxim-lobanov/setup-xcode@v1
       with:
@@ -74,8 +66,7 @@ jobs:
       env:
         VERSION: 3.10.1
         GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
-        RELEASE: ${{ secrets.RELEASE }} 
-      if: "${{ env.RELEASE == 'true' }}"
+        TRAVIS_BRANCH: ${{ github.ref_name }}
       run: |
         gem install cocoapods -v '1.9.3'
         Scripts/run_release.sh

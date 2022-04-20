@@ -5,10 +5,6 @@ on:
     secrets:
       COVERALLS_TOKEN:
         required: true
-      PREP:
-        required: false
-      RELEASE:
-        required: false
 
 jobs:
   unittests:
@@ -53,17 +49,13 @@ jobs:
       - name: set SDK Branch if PR
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
           echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
       - name: set SDK Branch if not pull request
         if: ${{ github.event_name != 'pull_request' }}
         run: |
-          echo "SDK_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
           echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
       - id: unit_tests
         env:
-          PREP: ${{ secrets.PREP }} 
-          RELEASE: ${{ secrets.RELEASE }}
           COVERAGE_DIR: ./COVERAGE
           SCHEME: ${{ matrix.scheme }}
           TEST_SDK: ${{ matrix.test_sdk }}
@@ -73,7 +65,6 @@ jobs:
           SIMULATOR_XCODE_VERSION: ${{ matrix.simulator_xcode_version }}
           NAME: ${{ matrix.device }}
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
-        if: "${{ env.PREP == '' && env.RELEASE == '' }}"
         run: |
           gem install coveralls-lcov
           gem install cocoapods -v '1.9.3'

@@ -80,6 +80,11 @@ jobs:
           artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
           artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
       - name: Check on success
+        env:
+          COVERAGE_DIR: ./COVERAGE
+          PLATFORM: ${{ matrix.platform }}
+          NAME: ${{ matrix.device }}
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         if: steps.unit_tests.outcome == 'success'
         run: |
           Scripts/upload_coveralls.sh

@@ -24,10 +24,24 @@ class LRUCacheTests: XCTestCase {
         XCTAssertEqual(2000, cache.timeoutInSecs)
 
         cache = LRUCache<String, Any>(size: 0, timeoutInSecs: 0)
+        
+        #if DEBUG
         XCTAssertEqual(1, cache.size)
         XCTAssertEqual(1, cache.timeoutInSecs)
+        #else
+        XCTAssertEqual(10, cache.size)
+        XCTAssertEqual(60, cache.timeoutInSecs)
+        #endif
     }
 
+}
+
+// tests below will be skipped in CI (travis/actions) since they use time control and debug-mode configs.
+
+#if DEBUG
+
+extension LRUCacheTests {
+    
     func testSaveAndLookup() {
         let maxSize = 2
         let cache = LRUCache<Int, Int>(size: maxSize, timeoutInSecs: 1000)
@@ -100,3 +114,5 @@ class LRUCacheTests: XCTestCase {
     }
 
 }
+
+#endif

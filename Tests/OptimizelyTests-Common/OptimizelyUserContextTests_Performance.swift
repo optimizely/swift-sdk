@@ -24,8 +24,13 @@ class OptimizelyUserContextTests_Performance: XCTestCase {
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, defaultLogLevel: .error)
         try! optimizely.start(datafile: datafile)
     }
-    
-    // MARK: - Performance
+}
+
+// tests below will be skipped in CI (travis/actions) since they use time control.
+
+#if DEBUG
+
+extension OptimizelyUserContextTests_Performance {
     
     func testPerformance_create() {
         let timeInMicrosecs = measureTime {
@@ -90,7 +95,10 @@ class OptimizelyUserContextTests_Performance: XCTestCase {
         
         XCTAssert(timeInMicrosecs < 300, "user context decide-with-valid takes too long (\(timeInMicrosecs) microsecs)")
     }
+    
 }
+
+#endif
 
 // MARK: - Utils
 

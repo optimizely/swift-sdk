@@ -3,7 +3,7 @@ name: Reusable action of Unit tests
 on: 
   workflow_call:
     secrets:
-      CI_USER_TOKEN:
+      GITHUB_TOKEN:
         required: true
 
 jobs:
@@ -94,5 +94,5 @@ jobs:
         if: steps.coveralls.outcome == 'success'
         uses: coverallsapp/github-action@master
         with:
-          github-token: ${{ secrets.CI_USER_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./xccov2lcov/lcov.info

@@ -3,7 +3,7 @@ name: Reusable action of Unit tests
 on: 
   workflow_call:
     secrets:
-      COVERALLS_TOKEN:
+      CI_USER_TOKEN:
         required: true
 
 jobs:
@@ -64,7 +64,6 @@ jobs:
           OS_TYPE: ${{ matrix.os_type }}
           SIMULATOR_XCODE_VERSION: ${{ matrix.simulator_xcode_version }}
           NAME: ${{ matrix.device }}
-          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         run: |
           gem install coveralls-lcov
           gem install cocoapods -v '1.9.3'
@@ -79,13 +78,18 @@ jobs:
           sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
           artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
           artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
-      - name: Check on success
+      - if: steps.unit_tests.outcome == 'success'
+        id: coveralls
+        name: Check on success
         env:
           COVERAGE_DIR: ./COVERAGE
           PLATFORM: ${{ matrix.platform }}
           NAME: ${{ matrix.device }}
-          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
-        if: steps.unit_tests.outcome == 'success'
         run: |
-          Scripts/upload_coveralls.sh
+          Scripts/prepare_coveralls_report.sh
           sleep 5
+      - if: steps.coveralls.outcome == 'success'
+        name: Upload coveralls report
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.CI_USER_TOKEN }}

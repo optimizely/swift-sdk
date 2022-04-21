@@ -82,7 +82,7 @@ jobs:
         # - use Xcode12.4+ (older Xcode reports a wrong number)
         name: Check on success
         id: coveralls
-        if: ${{ steps.unit_tests.outcome == 'success' && env.TRAVIS_BRANCH == "master" && env.PLATFORM == "iOS Simulator" && env.NAME == "iPhone 11" }}
+        if: ${{ steps.unit_tests.outcome == 'success' && env.TRAVIS_BRANCH == 'master' && env.PLATFORM == 'iOS Simulator' && env.NAME == 'iPhone 11' }}
         env:
           COVERAGE_DIR: ./COVERAGE
           PLATFORM: ${{ matrix.platform }}

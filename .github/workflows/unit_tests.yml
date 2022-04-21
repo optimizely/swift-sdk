@@ -1,10 +1,6 @@
 name: Reusable action of Unit tests
 
-on: 
-  workflow_call:
-    secrets:
-      GITHUB_TOKEN:
-        required: true
+on: [workflow_call]
 
 jobs:
   unittests:

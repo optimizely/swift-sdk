@@ -45,8 +45,6 @@ jobs:
   unittests: 
     if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@yasir/gitAction
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   prepare_for_release:
     if: "${{ github.event.inputs.PREP == 'true' && github.event_name == 'workflow_dispatch' }}" 

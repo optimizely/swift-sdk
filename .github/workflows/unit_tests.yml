@@ -78,9 +78,11 @@ jobs:
           sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
           artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
           artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
-      - if: steps.unit_tests.outcome == 'success'
-        id: coveralls
+      - # - report coverage for PR and iPhone 11 only (avoid redundant ones)
+        # - use Xcode12.4+ (older Xcode reports a wrong number)
         name: Check on success
+        id: coveralls
+        if: ${{ steps.unit_tests.outcome == 'success' && env.TRAVIS_BRANCH == "master" && env.PLATFORM == "iOS Simulator" && env.NAME == "iPhone 11" }}
         env:
           COVERAGE_DIR: ./COVERAGE
           PLATFORM: ${{ matrix.platform }}
@@ -88,8 +90,9 @@ jobs:
         run: |
           Scripts/prepare_coveralls_report.sh
           sleep 5
-      - if: steps.coveralls.outcome == 'success'
-        name: Upload coveralls report
+      - name: Upload coveralls report
+        if: steps.coveralls.outcome == 'success'
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.CI_USER_TOKEN }}
+          path-to-lcov: ./xccov2lcov/lcov.info

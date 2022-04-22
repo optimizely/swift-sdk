@@ -29,6 +29,7 @@ class AudienceSegmentsHandler: OPTAudienceSegmentsHandler {
     }
     
     func fetchQualifiedSegments(apiKey: String,
+                                apiHost: String,
                                 userKey: String,
                                 userValue: String,
                                 segmentsToCheck: [String]? = nil,
@@ -51,6 +52,7 @@ class AudienceSegmentsHandler: OPTAudienceSegmentsHandler {
         }
         
         zaiusMgr.fetch(apiKey: apiKey,
+                       apiHost: apiHost,
                        userKey: userKey,
                        userValue: userValue,
                        segmentsToCheck: segmentsToCheck) { segments, err in

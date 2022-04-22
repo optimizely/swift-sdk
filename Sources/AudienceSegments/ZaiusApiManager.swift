@@ -80,9 +80,8 @@ query MyQuery {
 class ZaiusApiManager {
     let logger = OPTLoggerFactory.getLogger()
 
-    let apiHost = "https://api.zaius.com/v3/graphql"
-    
     func fetch(apiKey: String,
+               apiHost: String,
                userKey: String,
                userValue: String,
                segmentsToCheck: [String]?,
@@ -102,7 +101,8 @@ class ZaiusApiManager {
             return
         }
 
-        let url = URL(string: apiHost)!
+        let apiEndpoint = apiHost + "/v3/graphql"
+        let url = URL(string: apiEndpoint)!
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = httpBody

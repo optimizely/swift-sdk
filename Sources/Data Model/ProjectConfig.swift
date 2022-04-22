@@ -193,6 +193,14 @@ extension ProjectConfig {
         // old versions (< 4) of datafiles not supported
         return ["4"].contains(version)
     }
+    
+    var publicKeyForODP: String? {
+        return project.integrations?.filter { $0.key == "odp" }.first?.publicKey
+    }
+    
+    var hostForODP: String? {
+        return project.integrations?.filter { $0.key == "odp" }.first?.host
+    }
 }
 
 // MARK: - Project Access

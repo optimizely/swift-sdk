@@ -21,6 +21,8 @@ class AudienceSegmentsHandlerTests: XCTestCase {
     var options = [OptimizelySegmentOption]()
     
     var apiKey = "valid"
+    var apiHost = "host"
+
     var userKey = "vuid"
     var userValue = "test-user"
     
@@ -33,7 +35,7 @@ class AudienceSegmentsHandlerTests: XCTestCase {
 
         let sem = DispatchSemaphore(value: 0)
         
-        handler.fetchQualifiedSegments(apiKey: apiKey, userKey: userKey, userValue: userValue,
+        handler.fetchQualifiedSegments(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue,
                                        segmentsToCheck: nil, options: options) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(["new-customer"], segments)
@@ -48,7 +50,7 @@ class AudienceSegmentsHandlerTests: XCTestCase {
 
         let sem = DispatchSemaphore(value: 0)
         
-        handler.fetchQualifiedSegments(apiKey: apiKey, userKey: userKey, userValue: userValue,
+        handler.fetchQualifiedSegments(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue,
                                        segmentsToCheck: nil, options: options) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(["a"], segments)
@@ -61,7 +63,7 @@ class AudienceSegmentsHandlerTests: XCTestCase {
     func testError() {
         let sem = DispatchSemaphore(value: 0)
         
-        handler.fetchQualifiedSegments(apiKey: "invalid-key", userKey: userKey, userValue: userValue,
+        handler.fetchQualifiedSegments(apiKey: "invalid-key", apiHost: apiHost, userKey: userKey, userValue: userValue,
                                        segmentsToCheck: nil, options: []) { segments, error in
             XCTAssertNotNil(error)
             XCTAssert(segments!.isEmpty )
@@ -80,7 +82,7 @@ class AudienceSegmentsHandlerTests: XCTestCase {
 
         let sem = DispatchSemaphore(value: 0)
         
-        handler.fetchQualifiedSegments(apiKey: apiKey, userKey: userKey, userValue: userValue,
+        handler.fetchQualifiedSegments(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue,
                                        segmentsToCheck: nil, options: options) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(["new-customer"], segments, "cache lookup should be skipped")
@@ -99,7 +101,7 @@ class AudienceSegmentsHandlerTests: XCTestCase {
 
         let sem = DispatchSemaphore(value: 0)
         
-        handler.fetchQualifiedSegments(apiKey: apiKey, userKey: userKey, userValue: userValue,
+        handler.fetchQualifiedSegments(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue,
                                        segmentsToCheck: nil, options: options) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(["new-customer"], segments, "cache lookup should be skipped")
@@ -131,6 +133,7 @@ class AudienceSegmentsHandlerTests: XCTestCase {
 
     class MockZaiusApiManager: ZaiusApiManager {
         override func fetch(apiKey: String,
+                            apiHost: String,
                             userKey: String,
                             userValue: String,
                             segmentsToCheck: [String]?,

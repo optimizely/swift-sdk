@@ -19,6 +19,7 @@ import Foundation
 protocol OPTAudienceSegmentsHandler {
     
     func fetchQualifiedSegments(apiKey: String,
+                                apiHost: String, 
                                 userKey: String,
                                 userValue: String,
                                 segmentsToCheck: [String]?,

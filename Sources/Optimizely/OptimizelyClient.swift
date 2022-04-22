@@ -778,15 +778,27 @@ open class OptimizelyClient: NSObject {
 
     // MARK: - AudienceSegmentsHandler
 
-    func fetchQualifiedSegments(apiKey: String,
+    func fetchQualifiedSegments(apiKey: String?,
+                                apiHost: String?,
                                 userKey: String,
                                 userValue: String,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         
+        guard let odpApiKey = apiKey ?? config?.publicKeyForODP else {
+            completionHandler(nil, .fetchSegmentsFailed("apiKey not defined"))
+            return
+        }
+        
+        guard let odpApiHost = apiHost ?? config?.hostForODP else {
+            completionHandler(nil, .fetchSegmentsFailed("apiHost not defined"))
+            return
+        }
+        
         let segmentsToCheck = options.contains(.useSubset) ? config?.allSegments : nil
 
-        audienceSegmentsHandler.fetchQualifiedSegments(apiKey: apiKey,
+        audienceSegmentsHandler.fetchQualifiedSegments(apiKey: odpApiKey,
+                                                       apiHost: odpApiHost,
                                                        userKey: userKey,
                                                        userValue: userValue,
                                                        segmentsToCheck: segmentsToCheck,

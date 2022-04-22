@@ -24,6 +24,7 @@ class ZaiusApiManagerTests: XCTestCase {
     
     let userValue = "test-user-value"
     let apiKey = "test-api-key"
+    let apiHost = "https://test-host"
     
     static var createdApiRequest: URLRequest?
     
@@ -31,19 +32,34 @@ class ZaiusApiManagerTests: XCTestCase {
         let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodResponseData))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
+        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(segments, ["qualified-and-ready"])
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+        
+        guard let request = ZaiusApiManagerTests.createdApiRequest else {
+            XCTFail()
+            return
+        }
+        
+        let expectedBody = [
+            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state}}}}}"
+        ]
+        
+        XCTAssertEqual(apiHost + "/v3/graphql", request.url?.absoluteString)
+        XCTAssertEqual("POST", request.httpMethod)
+        XCTAssertEqual(expectedBody, try! JSONDecoder().decode([String: String].self, from: request.httpBody!))
+        XCTAssertEqual("application/json", request.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertEqual(apiKey, request.value(forHTTPHeaderField: "x-api-key"))
     }
     
     func testFetchQualifiedSegments_successWithEmptySegments() {
         let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodEmptyResponseData))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
+        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(segments, [])
             sem.signal()
@@ -55,7 +71,7 @@ class ZaiusApiManagerTests: XCTestCase {
         let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.badResponseData))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
+        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
             if case .fetchSegmentsFailed("decode error") = error {
                 XCTAssert(true)
             } else {
@@ -71,7 +87,7 @@ class ZaiusApiManagerTests: XCTestCase {
         let manager = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
+        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
             if case .fetchSegmentsFailed("download failed") = error {
                 XCTAssert(true)
             } else {
@@ -83,35 +99,11 @@ class ZaiusApiManagerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
             
-    func testGraphQLRequest_allSegments() {
-        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200))
-
-        let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { _, _ in
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-
-        guard let request = ZaiusApiManagerTests.createdApiRequest else {
-            XCTFail()
-            return
-        }
-        
-        let expectedBody = [
-            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state}}}}}"
-        ]
-        
-        XCTAssertEqual("POST", request.httpMethod)
-        XCTAssertEqual(expectedBody, try! JSONDecoder().decode([String: String].self, from: request.httpBody!))
-        XCTAssertEqual("application/json", request.value(forHTTPHeaderField: "Content-Type"))
-        XCTAssertEqual(apiKey, request.value(forHTTPHeaderField: "x-api-key"))
-    }
-    
     func testGraphQLRequest_subsetSegments() {
         let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200))
 
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, userKey: userKey, userValue: userValue, segmentsToCheck: ["a", "b"]) { _, _ in
+        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: ["a", "b"]) { _, _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
@@ -145,29 +137,7 @@ class ZaiusApiManagerTests: XCTestCase {
         XCTAssertNil(dict.extractComponent(keyPath: "a.b.c.d"))
         XCTAssertNil(dict.extractComponent(keyPath: "d"))
     }
-    
-    // MARK: - Tests with real ODP server
-    
-    // TODO: this test can be flaky. replace it with a good test account or remove it later.
-    
-    func testLiveODPGraphQL() {
-        let testODPApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
-        let testODPUserIdForAudienceSegments = "d66a9d81923d4d2f99d8f64338976322"
-
-        let manager = ZaiusApiManager()
         
-        let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: testODPApiKeyForAudienceSegments,
-                      userKey: "vuid",
-                      userValue: testODPUserIdForAudienceSegments,
-                      segmentsToCheck: ["has_email", "has_email_opted_in", "invalid-segment"]) { segments, error in
-            XCTAssertNil(error)
-            XCTAssertEqual(Set(["has_email", "has_email_opted_in"]), Set(segments!))
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
-    }
-    
     // MARK: - MockZaiusApiManager
     
     class MockZaiusApiManager: ZaiusApiManager {

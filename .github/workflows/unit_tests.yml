@@ -2,6 +2,9 @@ name: Reusable action of Unit tests
 
 on: [workflow_call]
 
+env:
+  COVERAGE_DIR: ./COVERAGE
+
 jobs:
   unittests:
     runs-on: macos-10.15
@@ -45,14 +48,13 @@ jobs:
       - name: set SDK Branch if PR
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          echo "TRAVIS_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
+          echo "BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
       - name: set SDK Branch if not pull request
         if: ${{ github.event_name != 'pull_request' }}
         run: |
-          echo "TRAVIS_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
       - id: unit_tests
         env:
-          COVERAGE_DIR: ./COVERAGE
           SCHEME: ${{ matrix.scheme }}
           TEST_SDK: ${{ matrix.test_sdk }}
           PLATFORM: ${{ matrix.platform }}
@@ -68,19 +70,18 @@ jobs:
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
           Scripts/prepare_simulator.sh
           Scripts/run_unit_tests.sh
-      - name: Check on failures
+      - name: Check on failures (Archive Test Results)
+        uses: actions/upload-artifact@v3
         if: steps.unit_tests.outcome != 'success'
-        run: |
-          sudo curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
-          artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/xcodebuild_logs" $(find /Users/travis/Library/Developer/Xcode/ -name *.xcresult -o -name *.log)
-          artifacts upload --target-paths "/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}/buildoutput" "$TRAVIS_BUILD_DIR/buildoutput"
+        with:
+          name: build-logs-${{ matrix.device }}-${{ matrix.os }}
+          path: build/Logs
       - # - report coverage for PR and iPhone 11 only (avoid redundant ones)
         # - use Xcode12.4+ (older Xcode reports a wrong number)
         name: Check on success
         id: coveralls
-        if: ${{ steps.unit_tests.outcome == 'success' && env.TRAVIS_BRANCH == 'master' && env.PLATFORM == 'iOS Simulator' && env.NAME == 'iPhone 11' }}
+        if: ${{ steps.unit_tests.outcome == 'success' && env.BRANCH == 'master' && env.PLATFORM == 'iOS Simulator' && env.NAME == 'iPhone 11' }}
         env:
-          COVERAGE_DIR: ./COVERAGE
           PLATFORM: ${{ matrix.platform }}
           NAME: ${{ matrix.device }}
         run: |

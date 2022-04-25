@@ -8,7 +8,7 @@ on:
     inputs:
       VERSION:
         required: true
-        type: number
+        type: string
 
 jobs:
   prepare_for_release:

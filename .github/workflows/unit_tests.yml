@@ -1,0 +1,95 @@
+name: Reusable action of Unit tests
+
+on: [workflow_call]
+
+env:
+  COVERAGE_DIR: ./COVERAGE
+
+jobs:
+  unittests:
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: 14.4
+            device: "iPhone 11"
+            scheme: "OptimizelySwiftSDK-iOS"
+            test_sdk: "iphonesimulator"
+            platform: "iOS Simulator"
+            os_type: "iOS"
+            simulator_xcode_version: 12.4
+          - os: 13.3
+            device: "iPhone 8"
+            scheme: "OptimizelySwiftSDK-iOS"
+            test_sdk: "iphonesimulator"
+            platform: "iOS Simulator"
+            os_type: "iOS"
+            simulator_xcode_version: 11.3.1
+          - os: 12.4
+            device: "iPad Air"
+            scheme: "OptimizelySwiftSDK-iOS"
+            test_sdk: "iphonesimulator"
+            platform: "iOS Simulator"
+            os_type: "iOS"
+            simulator_xcode_version: 10.3
+          - os: 12.4
+            device: "Apple TV 4K"
+            scheme: "OptimizelySwiftSDK-tvOS"
+            test_sdk: "appletvsimulator"
+            platform: "tvOS Simulator"
+            os_type: "tvOS"
+            simulator_xcode_version: 10.3
+    steps:
+      - uses: actions/checkout@v3
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 12.4
+      - name: set SDK Branch if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
+      - name: set SDK Branch if not pull request
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          echo "BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+      - id: unit_tests
+        env:
+          SCHEME: ${{ matrix.scheme }}
+          TEST_SDK: ${{ matrix.test_sdk }}
+          PLATFORM: ${{ matrix.platform }}
+          OS: ${{ matrix.os }}
+          OS_TYPE: ${{ matrix.os_type }}
+          SIMULATOR_XCODE_VERSION: ${{ matrix.simulator_xcode_version }}
+          NAME: ${{ matrix.device }}
+        run: |
+          gem install coveralls-lcov
+          gem install cocoapods -v '1.9.3'
+          pod repo update
+          pod install
+          HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
+          Scripts/prepare_simulator.sh
+          Scripts/run_unit_tests.sh
+      - name: Check on failures (Archive Test Results)
+        uses: actions/upload-artifact@v3
+        if: steps.unit_tests.outcome != 'success'
+        with:
+          name: build-logs-${{ matrix.device }}-${{ matrix.os }}
+          path: build/Logs
+      - # - report coverage for PR and iPhone 11 only (avoid redundant ones)
+        # - use Xcode12.4+ (older Xcode reports a wrong number)
+        name: Check on success
+        id: coveralls
+        if: ${{ steps.unit_tests.outcome == 'success' && env.BRANCH == 'master' && env.PLATFORM == 'iOS Simulator' && env.NAME == 'iPhone 11' }}
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          NAME: ${{ matrix.device }}
+        run: |
+          Scripts/prepare_coveralls_report.sh
+          sleep 5
+      - name: Upload coveralls report
+        if: steps.coveralls.outcome == 'success'
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./xccov2lcov/lcov.info

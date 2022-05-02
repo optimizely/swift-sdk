@@ -84,7 +84,7 @@
         }
       ],
       "audienceIds": ["$opt_dummy_audience"],
-      "audienceConditions": ["or", "13389141123", "13389142234"],
+      "audienceConditions": ["or", "13389142234", "13389141123"],
       "variations": [
         {
           "variables": [],
@@ -148,7 +148,7 @@
                           "value": "us",
                           "type": "custom_attribute",
                           "name": "country",
-                          "match": "equal"
+                          "match": "exact"
                       }
                   ],
                   [

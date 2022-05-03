@@ -34,7 +34,7 @@ class ZaiusApiManagerTests: XCTestCase {
         let sem = DispatchSemaphore(value: 0)
         manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
             XCTAssertNil(error)
-            XCTAssertEqual(segments, ["qualified-and-ready"])
+            XCTAssertEqual(segments, ["qualified"])
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
@@ -45,7 +45,7 @@ class ZaiusApiManagerTests: XCTestCase {
         }
         
         let expectedBody = [
-            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name is_ready state}}}}}"
+            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name state}}}}}"
         ]
         
         XCTAssertEqual(apiHost + "/v3/graphql", request.url?.absoluteString)
@@ -114,7 +114,7 @@ class ZaiusApiManagerTests: XCTestCase {
         }
         
         let expectedBody = [
-            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences(subset:[\"a\",\"b\"]) {edges {node {name is_ready state}}}}}"
+            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences(subset:[\"a\",\"b\"]) {edges {node {name state}}}}}"
         ]
         
         XCTAssertEqual(expectedBody, try! JSONDecoder().decode([String: String].self, from: request.httpBody!))
@@ -210,34 +210,16 @@ class ZaiusApiManagerTests: XCTestCase {
                         "edges": [
                             {
                                 "node": {
-                                    "name": "qualified-and-ready",
-                                    "is_ready": true,
+                                    "name": "qualified",
                                     "state": "qualified",
-                                    "description": "qualifed and ready"
+                                    "description": "qualifed sample"
                                 }
                             },
                             {
                                 "node": {
-                                    "name": "qualified-and-not-ready",
-                                    "is_ready": false,
-                                    "state": "qualified",
-                                    "description": "qualified and not-ready"
-                                }
-                            },
-                            {
-                                "node": {
-                                    "name": "not-qualified-and-ready",
-                                    "is_ready": false,
-                                    "state": "qualified",
-                                    "description": "not-qualified and ready"
-                                }
-                            },
-                            {
-                                "node": {
-                                    "name": "not-qualified-and-not-ready",
-                                    "is_ready": false,
-                                    "state": "qualified",
-                                    "description": "not-qualified and not-ready"
+                                    "name": "not-qualified",
+                                    "state": "not_qualified",
+                                    "description": "not-qualified sample"
                                 }
                             }
                         ]

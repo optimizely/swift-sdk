@@ -25,10 +25,10 @@ import Foundation
 /* GraphQL Request
  
 // fetch all segments
-curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name is_ready state}}}}}"}' https://api.zaius.com/v3/graphql
+curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
 // fetch info for "has_email" segment only
-curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences(subset:["has_email"]) {edges {node {name is_ready state}}}}}"}' https://api.zaius.com/v3/graphql
+curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences(subset:["has_email"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
 query MyQuery {
   customer(vuid: "d66a9d81923d4d2f99d8f64338976322") {
@@ -36,7 +36,6 @@ query MyQuery {
       edges {
         node {
           name
-          is_ready
           state
           description
         }
@@ -56,7 +55,6 @@ query MyQuery {
            {
              "node": {
                "name": "has_email",
-               "is_ready": true,
                "state": "qualified",
                "description": "Customers who have an email address (regardless of consent/reachability status)"
              }
@@ -64,7 +62,6 @@ query MyQuery {
            {
              "node": {
                "name": "has_email_opted_in",
-               "is_ready": true,
                "state": "qualified",
                "description": "Customers who have an email address, and it is opted-in"
              }
@@ -94,7 +91,7 @@ class ZaiusApiManager {
         let subsetFilter = makeSubsetFilter(segments: segmentsToCheck)
         
         let body = [
-            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences\(subsetFilter) {edges {node {name is_ready state}}}}}"
+            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences\(subsetFilter) {edges {node {name state}}}}}"
         ]
         guard let httpBody = try? JSONEncoder().encode(body) else {
             completionHandler(nil, .fetchSegmentsFailed("invalid query."))
@@ -171,22 +168,19 @@ class ZaiusApiManager {
 
 struct ODPAudience: Decodable {
     let name: String
-    let isReady: Bool
     let state: String
     let description: String?     // optional so we can add for debugging
     
     var isQualified: Bool {
-        return isReady && (state == "qualified")
+        return (state == "qualified")
     }
     
     init?(_ dict: [String: Any]?) {
         guard let dict = dict,
                 let name = dict["name"] as? String,
-                let isReady = dict["is_ready"] as? Bool,
                 let state = dict["state"] as? String else { return nil }
         
         self.name = name
-        self.isReady = isReady
         self.state = state
         self.description = dict["description"] as? String
     }

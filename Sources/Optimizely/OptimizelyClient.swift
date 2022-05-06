@@ -71,6 +71,8 @@ open class OptimizelyClient: NSObject {
             atomicAudienceSegmentsHandler.property = newValue
         }
     }
+    
+    public var odpManager = ODPManager()
 
     // MARK: - Public interfaces
     

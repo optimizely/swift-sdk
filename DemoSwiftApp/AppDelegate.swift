@@ -130,7 +130,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             @unknown default:
                 print("Optimizely SDK initiliazation failed with unknown result")
             }
-            self.startWithRootViewController()
+            
+            let odp = self.optimizely.odpManager
+            print("VUID: \(odp.vuid)")
+            
+            odp.register { success in
+                guard success else {
+                    print("ODP register failed")
+                    return
+                }
+                
+                print("ODP register done")
+                
+                if odp.isUserRegistered(userId: self.userId) {
+                    print("ODP identify already done - skip identify sync step")
+                } else {
+                    odp.identify(userId: self.userId) { success in
+                        guard success else {
+                            print("ODP identify failed")
+                            return
+                        }
+                        
+                        print("ODP identify done")
+                    }
+                }
+                
+            }
+            
+            
+            //self.startWithRootViewController()
             
             // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
             //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)

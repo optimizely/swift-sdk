@@ -276,7 +276,7 @@ class SamplesForAPI {
             }
             
             let user = optimizely.createUserContext(userId: "user_123", attributes: ["location": "NY"])
-            user.fetchQualifiedSegments(apiKey: "sample-api-key", options: [.ignoreCache]) { error in
+            user.fetchQualifiedSegments(apiKey: "sample-api-key", options: [.ignoreCache]) { _, error in
                 guard error == nil else {
                     print("[AudienceSegments] \(error!.errorDescription!)")
                     return

@@ -18,8 +18,6 @@ import Foundation
 
 /// Options controlling audience segments.
 @objc public enum OptimizelySegmentOption: Int {
-    // fetch subset segments only (used in the project). default is fetch-all-segments
-    case useSubset
     // ignore cache (save/lookup)
     case ignoreCache
     // reset cache

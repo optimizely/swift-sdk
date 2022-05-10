@@ -98,7 +98,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         XCTAssertNil(segmentHandler.segmentsToCheck)
     }
     
-    func testFetchQualifiedSegments_segmentsToCheck_emptyAfterStart() {
+    func testFetchQualifiedSegments_segmentsToCheck_validAfterStart() {
         let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
         try? optimizely.start(datafile: datafile)
         
@@ -108,34 +108,23 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
         
-        XCTAssertNil(segmentHandler.segmentsToCheck)
-    }
-    
-    func testFetchQualifiedSegments_segmentsToCheck_emptyBeforeStart_withUseSubsetOption() {
-        let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey, apiHost: kApiHost, options: [.useSubset]) { _, _ in
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
-        
-        XCTAssertNil(segmentHandler.segmentsToCheck)
-    }
-    
-    func testFetchQualifiedSegments_segmentsToCheck_validAfterStart_withUseSubsetOption() {
-        let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
-        try? optimizely.start(datafile: datafile)
-
-        // fetch segments after SDK initialized, so segmentsToCheck will be used.
-        
-        let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey, apiHost: kApiHost, options: [.useSubset]) { _, _ in
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
-        
         XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(segmentHandler.segmentsToCheck!))
     }
     
+    func testFetchQualifiedSegments_segmentsToCheck_segmentsNotUsed() {
+        let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
+        try? optimizely.start(datafile: datafile)
+        
+        let sem = DispatchSemaphore(value: 0)
+        user.fetchQualifiedSegments(apiKey: kApiKey, apiHost: kApiHost) { _, _ in
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
+        
+        XCTAssertNil(segmentHandler.segmentsToCheck, "empty segmentsToCheck case should be filtered out before calling segmentHandler")
+        XCTAssertEqual([], user.qualifiedSegments)
+    }
+        
     // MARK: - Customisze AudienceSegmentHandler
     
     func testCustomizeAudienceSegmentsHandler()  {

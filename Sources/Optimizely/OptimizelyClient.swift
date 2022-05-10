@@ -795,7 +795,15 @@ open class OptimizelyClient: NSObject {
             return
         }
         
-        let segmentsToCheck = options.contains(.useSubset) ? config?.allSegments : nil
+        let segmentsToCheck = config?.allSegments
+        
+        // filter out empty segmentsToCheck (segments not used in the project).
+        // pass to zaius for non-empty segments or nil (to access all segments) only.
+
+        if let subset = segmentsToCheck, subset.isEmpty {
+            completionHandler([], nil)
+            return
+        }
 
         audienceSegmentsHandler.fetchQualifiedSegments(apiKey: odpApiKey,
                                                        apiHost: odpApiHost,

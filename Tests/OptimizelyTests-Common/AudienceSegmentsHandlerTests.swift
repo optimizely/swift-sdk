@@ -74,7 +74,6 @@ class AudienceSegmentsHandlerTests: XCTestCase {
     }
     
     // MARK: - OptimizelySegmentOption
-    // NOTE: The "useSubset" option is fully tested in "OptimizelyUserContextTests_Segments", so skip here.
     
     func testOptions_ignoreCache() {
         setCache(userKey, userValue, ["a"])

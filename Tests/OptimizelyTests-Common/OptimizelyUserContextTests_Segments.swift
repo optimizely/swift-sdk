@@ -177,7 +177,7 @@ extension OptimizelyUserContextTests_Segments {
         XCTAssertEqual("https://api.zaius.com", optimizely.config?.hostForODP, "apiHost from datafile should be used as a default")
         XCTAssertEqual("$opt_user_id", segmentHandler.userKey, "the reserved user-key should be used as a default")
         XCTAssertEqual(kUserId, segmentHandler.userValue, "userId should be used as a default")
-        XCTAssertEqual(nil, segmentHandler.segmentsToCheck, "segmentsToCheck should be nil as a default")
+        XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(segmentHandler.segmentsToCheck!), "segmentsToCheck should be all-in-project by default")
         XCTAssertEqual([], segmentHandler.options)
     }
 
@@ -268,13 +268,12 @@ class MockAudienceSegmentsHandler: AudienceSegmentsHandler {
 // TODO: this test can be flaky. replace it with a good test account or remove it later.
 
 extension OptimizelyUserContextTests_Segments {
-    
+    var testODPApiHost: String { return "https://api.zaius.com" }
+    var testODPApiKeyForAudienceSegments: String { return "W4WzcEs-ABgXorzY7h1LCQ" }
+    var testODPUserKey: String { return "vuid" }
+    var testODPUserValue: String { return "d66a9d81923d4d2f99d8f64338976322" }
+
     func testLiveODPGraphQL() {
-        let testODPApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
-        let testODPUserValue = "d66a9d81923d4d2f99d8f64338976322"
-        let testODPUserKey = "vuid"
-        let testODPApiHost = "https://api.zaius.com"
-        
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         try! optimizely.start(datafile: datafile)
         let user = optimizely.createUserContext(userId: kUserId)
@@ -285,16 +284,13 @@ extension OptimizelyUserContextTests_Segments {
                                     userKey: testODPUserKey,
                                     userValue: testODPUserValue) { segments, error in
             XCTAssertNil(error)
-            XCTAssert(segments!.contains("has_email"))
+            XCTAssertEqual([], segments, "none of the test segments in the live ODP server")
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
     func testLiveODPGraphQL_defaultParameters() {
-        let testODPUserKey = "vuid"
-        let testODPUserValue = "d66a9d81923d4d2f99d8f64338976322"
-        
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         try! optimizely.start(datafile: datafile)
         let user = optimizely.createUserContext(userId: kUserId)
@@ -303,10 +299,26 @@ extension OptimizelyUserContextTests_Segments {
         user.fetchQualifiedSegments(userKey: testODPUserKey,
                                     userValue: testODPUserValue) { segments, error in
             XCTAssertNil(error)
-            XCTAssert(segments!.contains("has_email"))
+            XCTAssertEqual([], segments, "none of the test segments in the live ODP server")
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
+    func testLiveODPGraphQL_noDatafile() {
+        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        let user = optimizely.createUserContext(userId: kUserId)
+
+        let sem = DispatchSemaphore(value: 0)
+        user.fetchQualifiedSegments(apiKey: testODPApiKeyForAudienceSegments,
+                                    apiHost: testODPApiHost,
+                                    userKey: testODPUserKey,
+                                    userValue: testODPUserValue) { segments, error in
+            XCTAssertNil(error)
+            XCTAssert(segments!.contains("has_email"), "test segments are not passed to ODP, so fetching all segments.")
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+    }
+
 }

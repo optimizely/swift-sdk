@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Because `hub` is used, this script expects the following environment variables defined in travis job settings:
+# Because `hub` is used, this script expects the following environment variables:
 # GITHUB_TOKEN - github api token with repo permissions (display value in build log setting: OFF)
 # GITHUB_USER - github username that GITHUB_TOKEN is associated with (display value in build log setting: ON)
 
@@ -22,7 +22,7 @@ function release_github {
 
   DESCRIPTION=$(awk "/^${NEW_VERSION}$/,/^${LAST_VERSION:-nothingmatched}$/" ${CHANGELOG} | grep -v "^${LAST_VERSION:-nothingmatched}$")
 
-  hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${TRAVIS_BRANCH}"
+  hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${BRANCH}"
 
 }
 

@@ -1,7 +1,7 @@
 # SWIFT SDK
 [![Apache 2.0](https://img.shields.io/github/license/nebula-plugins/gradle-extra-configurations-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/carthage/carthage)
-[![Build Status](https://travis-ci.com/optimizely/swift-sdk.svg?branch=master)](https://travis-ci.com/optimizely/swift-sdk)
+[![Build Status](https://github.com/optimizely/swift-sdk/actions/workflows/swift.yml/badge.svg?branch=yasir/gitAction)](https://github.com/optimizely/swift-sdk/actions)
 [![Coverage Status](https://coveralls.io/repos/github/optimizely/swift-sdk/badge.svg?branch=master)](https://coveralls.io/github/optimizely/swift-sdk?branch=master)
 [![Platforms](https://img.shields.io/cocoapods/p/OptimizelySwiftSDK.svg)](https://img.shields.io/cocoapods/p/OptimizelySwiftSDK.svg)
 [![Podspec](https://img.shields.io/cocoapods/v/OptimizelySwiftSDK.svg)](https://cocoapods.org/pods/OptimizelySwiftSDK)

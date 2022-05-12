@@ -795,7 +795,7 @@ open class OptimizelyClient: NSObject {
             return
         }
         
-        let segmentsToCheck = config?.allSegments
+        let segmentsToCheck = options.contains(.allSegments) ? nil : config?.allSegments
         
         // filter out empty segmentsToCheck (segments not used in the project).
         // pass to zaius for non-empty segments or nil (to access all segments) only.

@@ -21,7 +21,7 @@ struct Constants {
         static let reservedBucketIdAttribute = "$opt_bucketing_id"
         static let reservedBotFilteringAttribute = "$opt_bot_filtering"
         static let reservedUserAgent = "$opt_user_agent"
-        static let reservedUserIdKey = "$opt_user_id"
+        static let reservedUserIdKey = "fs_user_id"
     }
     
     enum EvaluationLogType: String {

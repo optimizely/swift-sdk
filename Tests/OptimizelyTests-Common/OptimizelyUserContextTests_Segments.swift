@@ -175,7 +175,7 @@ extension OptimizelyUserContextTests_Segments {
         
         XCTAssertEqual("W4WzcEs-ABgXorzY7h1LCQ", optimizely.config?.publicKeyForODP, "apiKey from datafile should be used as a default")
         XCTAssertEqual("https://api.zaius.com", optimizely.config?.hostForODP, "apiHost from datafile should be used as a default")
-        XCTAssertEqual("$opt_user_id", segmentHandler.userKey, "the reserved user-key should be used as a default")
+        XCTAssertEqual("fs_user_id", segmentHandler.userKey, "the reserved user-key should be used as a default")
         XCTAssertEqual(kUserId, segmentHandler.userValue, "userId should be used as a default")
         XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(segmentHandler.segmentsToCheck!), "segmentsToCheck should be all-in-project by default")
         XCTAssertEqual([], segmentHandler.options)
@@ -270,13 +270,15 @@ class MockAudienceSegmentsHandler: AudienceSegmentsHandler {
 extension OptimizelyUserContextTests_Segments {
     var testODPApiHost: String { return "https://api.zaius.com" }
     var testODPApiKeyForAudienceSegments: String { return "W4WzcEs-ABgXorzY7h1LCQ" }
+    // {"vuid": "00TEST00VUID00FULLSTACK", "fs_user_id": "tester-101"} bound in ODP server for testing
     var testODPUserKey: String { return "vuid" }
-    var testODPUserValue: String { return "d66a9d81923d4d2f99d8f64338976322" }
+    var testODPUserValue: String { return "00TEST00VUID00FULLSTACK" }
+    var testODPUserId: String { return "tester-101"}
 
     func testLiveODPGraphQL() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         try! optimizely.start(datafile: datafile)
-        let user = optimizely.createUserContext(userId: kUserId)
+        let user = optimizely.createUserContext(userId: testODPUserId)
         
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments(apiKey: testODPApiKeyForAudienceSegments,
@@ -290,14 +292,32 @@ extension OptimizelyUserContextTests_Segments {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
+    func testLiveODPGraphQL_allSegments() {
+        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        try! optimizely.start(datafile: datafile)
+        let user = optimizely.createUserContext(userId: testODPUserId)
+        
+        let sem = DispatchSemaphore(value: 0)
+        user.fetchQualifiedSegments(apiKey: testODPApiKeyForAudienceSegments,
+                                    apiHost: testODPApiHost,
+                                    userKey: testODPUserKey,
+                                    userValue: testODPUserValue,
+                                    options: [.allSegments]) { segments, error in
+            XCTAssertNil(error)
+            XCTAssert(segments!.contains("has_email"), "segmentsToCheck are not passed to ODP, so fetching all segments.")
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+    }
+
+    
     func testLiveODPGraphQL_defaultParameters() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         try! optimizely.start(datafile: datafile)
-        let user = optimizely.createUserContext(userId: kUserId)
+        let user = optimizely.createUserContext(userId: testODPUserId)
 
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(userKey: testODPUserKey,
-                                    userValue: testODPUserValue) { segments, error in
+        user.fetchQualifiedSegments { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual([], segments, "none of the test segments in the live ODP server")
             sem.signal()
@@ -305,9 +325,23 @@ extension OptimizelyUserContextTests_Segments {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
+    func testLiveODPGraphQL_defaultParameters_allSegments() {
+        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        try! optimizely.start(datafile: datafile)
+        let user = optimizely.createUserContext(userId: testODPUserId)
+
+        let sem = DispatchSemaphore(value: 0)
+        user.fetchQualifiedSegments(options: [.allSegments]) { segments, error in
+            XCTAssertNil(error)
+            XCTAssert(segments!.contains("has_email"), "segmentsToCheck are not passed to ODP, so fetching all segments.")
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+    }
+
     func testLiveODPGraphQL_noDatafile() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
-        let user = optimizely.createUserContext(userId: kUserId)
+        let user = optimizely.createUserContext(userId: testODPUserId)
 
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments(apiKey: testODPApiKeyForAudienceSegments,
@@ -315,7 +349,25 @@ extension OptimizelyUserContextTests_Segments {
                                     userKey: testODPUserKey,
                                     userValue: testODPUserValue) { segments, error in
             XCTAssertNil(error)
-            XCTAssert(segments!.contains("has_email"), "test segments are not passed to ODP, so fetching all segments.")
+            XCTAssert(segments!.contains("has_email"), "segmentsToCheck are not passed to ODP, so fetching all segments.")
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+    }
+    
+    func testLiveODPGraphQL_defaultParameters_userNotRegistered() {
+        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        try! optimizely.start(datafile: datafile)
+        let user = optimizely.createUserContext(userId: "not-registered-user")
+
+        let sem = DispatchSemaphore(value: 0)
+        user.fetchQualifiedSegments { segments, error in
+            if case .fetchSegmentsFailed("segments not in json") = error {
+                XCTAssert(true)
+            } else {
+                XCTFail()
+            }
+            XCTAssertNil(segments)
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))

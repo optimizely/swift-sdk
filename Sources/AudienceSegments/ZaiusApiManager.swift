@@ -20,18 +20,17 @@ import Foundation
 // - https://api.zaius.com/v3/graphql
 
 // testODPApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
-// testODPUserIdForAudienceSegments = "d66a9d81923d4d2f99d8f64338976322"
 
 /* GraphQL Request
  
 // fetch all segments
-curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
+curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(fs_user_id: \"tester-101\") {audiences {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
 // fetch info for "has_email" segment only
-curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences(subset:["has_email"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
+curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(fs_user_id: \"tester-101\") {audiences(subset:["has_email"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
 query MyQuery {
-  customer(vuid: "d66a9d81923d4d2f99d8f64338976322") {
+  customer(fs_user_id: "tester-101") {
     audiences {
       edges {
         node {
@@ -83,11 +82,6 @@ class ZaiusApiManager {
                userValue: String,
                segmentsToCheck: [String]?,
                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        if userKey != "vuid" {
-            completionHandler(nil, .fetchSegmentsFailed("userKeys other than 'vuid' not supported yet"))
-            return
-        }
-        
         let subsetFilter = makeSubsetFilter(segments: segmentsToCheck)
         
         let body = [
@@ -128,9 +122,9 @@ class ZaiusApiManager {
                   let audDict: [[String: Any]] = dict.extractComponent(keyPath: "data.customer.audiences.edges")
             else {
                 self.logger.d {
-                    "GraphQL decode failed: " + String(bytes: data, encoding: .utf8)!
+                    "Segments not in GraphQL response JSON (the user may be not registered yet): " + String(bytes: data, encoding: .utf8)!
                 }
-                completionHandler(nil, .fetchSegmentsFailed("decode error"))
+                completionHandler(nil, .fetchSegmentsFailed("segments not in json"))
                 return
             }
                     

@@ -18,10 +18,7 @@ import XCTest
 
 class ZaiusApiManagerTests: XCTestCase {
     
-    // TODO: currently "vuid" only supported
-    //var userKey = "test-user-key"
-    let userKey = "vuid"
-    
+    let userKey = "test-user-key"
     let userValue = "test-user-value"
     let apiKey = "test-api-key"
     let apiHost = "https://test-host"
@@ -72,7 +69,7 @@ class ZaiusApiManagerTests: XCTestCase {
         
         let sem = DispatchSemaphore(value: 0)
         manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
-            if case .fetchSegmentsFailed("decode error") = error {
+            if case .fetchSegmentsFailed("segments not in json") = error {
                 XCTAssert(true)
             } else {
                 XCTFail()

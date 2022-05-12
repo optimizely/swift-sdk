@@ -110,7 +110,7 @@ public class ODPManager {
         let combinedData: [String: Any] = [
             "type": kinds[0],
             "action": kinds[1],
-            "data_source": "fullstack:swift-sdk",
+            //"data_source": "fullstack:swift-sdk",
             "identifiers": identifiers,
             "data": data
         ]
@@ -124,16 +124,27 @@ public class ODPManager {
         request.addValue(odpPublicKey, forHTTPHeaderField: "x-api-key")
         request.addValue("application/json", forHTTPHeaderField: "content-type")
 
-//        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-//            if let error = error {
-//                print("[ODP Event] API error: \(error)")
-//                completion(false)
-//                return
-//            }
-//
-//            completion(true)
-//        }
-//        task.resume()
+        print("[ODP] request body: \(combinedData)")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("[ODP Event] API error: \(error)")
+                completion(false)
+                return
+            }
+            
+            if let response = response as? HTTPURLResponse {
+                if response.statusCode >= 400 {
+                    let message = data != nil ? String(bytes: data!, encoding: .utf8) : "UNKNOWN"
+                    print("[ODP Event] API failed: \(message) \(self.odpPublicKey)")
+                    completion(false)
+                    return
+                }
+            }
+
+            completion(true)
+        }
+        task.resume()
         
         completion(true)
     }

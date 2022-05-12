@@ -142,10 +142,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 print("ODP register done")
                 
-                if odp.isUserRegistered(userId: self.userId) {
+                let testOdpUser = "user-12345"
+                if odp.isUserRegistered(userId: testOdpUser) {
                     print("ODP identify already done - skip identify sync step")
                 } else {
-                    odp.identify(userId: self.userId) { success in
+                    odp.identify(userId: testOdpUser) { success in
                         guard success else {
                             print("ODP identify failed")
                             return

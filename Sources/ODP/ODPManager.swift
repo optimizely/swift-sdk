@@ -89,6 +89,7 @@ public class ODPManager {
         
         if let userId = userId {
             identifiers["fs_user_id"] = userId
+            identifiers["email"] = "\(userId)@optimizely.com"
         }
         
         let kinds = kind.split(separator: ":")

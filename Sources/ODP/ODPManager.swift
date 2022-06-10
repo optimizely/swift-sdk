@@ -17,81 +17,57 @@
 import Foundation
 
 public class ODPManager {
-    let keyForVuid = "vuid"
-    let keyForVuidUsers = "vuid-users"
+    let vuidManager: VUIDManager
+    
+    init(vuidManager: VUIDManager? = nil) {
+        self.vuidManager = vuidManager ?? VUIDManager.shared
+        
+        if !self.vuidManager.isVUIDRegistered {
+            self.register()
+        }
+    }
+        
+    public func register(apiKey: String? = nil,
+                         apiHost: String? = nil,
+                         completion: ((Bool) -> Void)? = nil) {
+        let vuid = self.vuidManager.newVuid
 
-    var odpPublicKey: String {
-        return "W4WzcEs-ABgXorzY7h1LCQ"
-    }
-    var odpHost: String {
-        return "https://api.zaius.com"
-    }
-    
-    public let vuid: String
-    var usersRegistered: Set<String>
-    
-    init() {
-        if let vuid = UserDefaults.standard.string(forKey: keyForVuid) {
-            self.vuid = vuid
-        } else {
-            let vuid = UUID().uuidString.replacingOccurrences(of: "-", with: "")
-            print("vuid generated: \(vuid)")
-            UserDefaults.standard.set(vuid, forKey: keyForVuid)
-            self.vuid = vuid
-        }
-
-        if let users = UserDefaults.standard.object(forKey: keyForVuidUsers) as? [String] {
-            self.usersRegistered = Set(users)
-        } else {
-            self.usersRegistered = []
-        }
-    }
-    
-    public func isUserRegistered(userId: String) -> Bool {
-        return usersRegistered.contains(userId)
-    }
-    
-    private func updateRegisteredUsers(userId: String) {
-        if usersRegistered.count > 10 {
-            usersRegistered = usersRegistered.filter { _ in Bool.random() }
-        }
-              
-        usersRegistered.insert(userId)
-        UserDefaults.standard.set(Array(usersRegistered), forKey: keyForVuidUsers)
-        UserDefaults.standard.synchronize()
-        print("saved users: \(usersRegistered)")
-    }
-    
-    public func register(completion: ((Bool) -> Void)? = nil) {
-        odpEvent(userId: nil, kind: "experimentation:client_initialized") { success in
-            if !success {
-                print("[ODP] register failed")
-            }
-            completion?(success)
-        }
-    }
-    
-    public func identify(userId: String, completion: ((Bool) -> Void)? = nil) {
-        odpEvent(userId: userId, kind: "experimentation:identified") { success in
-            if success {
-                print("[ODP] add idenfier (\(userId)) successfully")
-                
-                self.updateRegisteredUsers(userId: userId)
-            }
-            completion?(success)
-        }
-    }
-    
-    public func odpEvent(userId: String?, kind: String, data: [String: Any] = [:], completion: @escaping (Bool) -> Void) {
-        var identifiers = [
+        let identifiers = [
             "vuid": vuid
         ]
-        
-        if let userId = userId {
-            identifiers["fs_user_id"] = userId
-            identifiers["email"] = "\(userId)@optimizely.com"
+
+        odpEvent(identifiers: identifiers, kind: "experimentation:client_initialized") { success in
+            if success {
+                print("[ODP] vuid registered (\(vuid)) successfully")
+                self.vuidManager.updateRegisteredVUID(vuid)
+            }
+            completion?(success)
+        }
+    }
+    
+    public func identify(apiKey: String? = nil,
+                         apiHost: String? = nil,
+                         userId: String, completion: ((Bool) -> Void)? = nil) {
+        guard let vuid = vuidManager.vuid else {
+            print("invalid vuid for identify")
+            return
         }
         
+        let identifiers = [
+            "vuid": vuid,
+            "fs_user_id": userId
+        ]
+
+        odpEvent(identifiers: identifiers, kind: "experimentation:identified") { success in
+            if success {
+                print("[ODP] add idenfier (\(userId)) successfully")
+                self.vuidManager.updateRegisteredUsers(userId: userId)
+            }
+            completion?(success)
+        }
+    }
+    
+    public func odpEvent(identifiers: [String: Any], kind: String, data: [String: Any] = [:], completion: @escaping (Bool) -> Void) {
         let kinds = kind.split(separator: ":")
         guard kinds.count == 2 else {
             print("[ODP Event] invalid format for kind")
@@ -99,9 +75,33 @@ public class ODPManager {
             return
         }
         
-        guard let url = URL(string: "https://api.zaius.com/v3/events") else {
+        guard let url = URL(string: "\(odpHost)/v3/events") else {
             print("[ODP Event] invalid url")
             completion(false)
+            return
+        }
+        
+        var vuid = self.vuidManager.vuid
+        if vuid == nil {
+            vuid = self.vuidManager.newVuid
+            print("new vuid generated: \(vuid!)")
+        }
+                
+        var identifiers = [
+            "vuid": vuid
+        ]
+        
+        if let userId = userId {
+            identifiers["fs_user_id"] = userId
+        }
+        
+        guard let odpApiKey = apiKey ?? config?.publicKeyForODP else {
+            completionHandler(nil, .fetchSegmentsFailed("apiKey not defined"))
+            return
+        }
+        
+        guard let odpApiHost = apiHost ?? config?.hostForODP else {
+            completionHandler(nil, .fetchSegmentsFailed("apiHost not defined"))
             return
         }
         
@@ -121,6 +121,7 @@ public class ODPManager {
             completion(false)
             return
         }
+        
         request.httpBody = body
         request.addValue(odpPublicKey, forHTTPHeaderField: "x-api-key")
         request.addValue("application/json", forHTTPHeaderField: "content-type")

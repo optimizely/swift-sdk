@@ -68,6 +68,54 @@ class AudienceSegmentsHandler: OPTAudienceSegmentsHandler {
     
 }
 
+// MARK: - VUID
+
+extension AudienceSegmentsHandler {
+    public func register(apiKey: String,
+                         apiHost: String,
+                         userKey: String,
+                         userValue: String,
+                         completion: ((Bool) -> Void)? = nil) {
+        let vuid = self.vuidManager.newVuid
+
+        let identifiers = [
+            "vuid": vuid
+        ]
+
+        odpEvent(identifiers: identifiers, kind: "experimentation:client_initialized") { success in
+            if success {
+                print("[ODP] vuid registered (\(vuid)) successfully")
+                self.vuidManager.updateRegisteredVUID(vuid)
+            }
+            completion?(success)
+        }
+    }
+    
+    public func identify(apiKey: String,
+                         apiHost: String,
+                         userId: String, completion: ((Bool) -> Void)? = nil) {
+        guard let vuid = vuidManager.vuid else {
+            print("invalid vuid for identify")
+            return
+        }
+        
+        let identifiers = [
+            "vuid": vuid,
+            "fs_user_id": userId
+        ]
+
+        odpEvent(identifiers: identifiers, kind: "experimentation:identified") { success in
+            if success {
+                print("[ODP] add idenfier (\(userId)) successfully")
+                self.vuidManager.updateRegisteredUsers(userId: userId)
+            }
+            completion?(success)
+        }
+    }
+    
+
+}
+
 // MARK: - Utils
 
 extension AudienceSegmentsHandler {

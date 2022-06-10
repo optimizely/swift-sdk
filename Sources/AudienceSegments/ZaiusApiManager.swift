@@ -16,36 +16,39 @@
 
 import Foundation
 
+// MARK: - GraphQL API
+
 // ODP GraphQL API
 // - https://api.zaius.com/v3/graphql
 
 // testODPApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
 // testODPUserIdForAudienceSegments = "d66a9d81923d4d2f99d8f64338976322"
 
-/* GraphQL Request
+/*
  
-// fetch all segments
-curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
+ [GraphQL Request]
+ 
+ // fetch all segments
+ curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
-// fetch info for "has_email" segment only
-curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences(subset:["has_email"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
+ // fetch info for "has_email" segment only
+ curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences(subset:["has_email"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
-query MyQuery {
-  customer(vuid: "d66a9d81923d4d2f99d8f64338976322") {
-    audiences {
-      edges {
-        node {
-          name
-          state
-          description
-        }
-      }
-    }
-  }
-}
-*/
+ query MyQuery {
+   customer(vuid: "d66a9d81923d4d2f99d8f64338976322") {
+     audiences {
+       edges {
+         node {
+           name
+           state
+           description
+         }
+       }
+     }
+   }
+ }
 
-/* GraphQL Response
+ [GraphQL Response]
  
  {
    "data": {
@@ -72,7 +75,7 @@ query MyQuery {
      }
    }
  }
- */
+*/
 
 class ZaiusApiManager {
     let logger = OPTLoggerFactory.getLogger()
@@ -165,6 +168,93 @@ class ZaiusApiManager {
     }
     
 }
+
+// MARK: - REST API
+
+extension ZaiusApiManager {
+    
+    public func odpEvent(apiKey: String,
+                         apiHost: String,
+                         identifiers: [String: Any],
+                         kind: String,
+                         data: [String: Any] = [:],
+                         completion: @escaping (Bool) -> Void) {
+        let kinds = kind.split(separator: ":")
+        guard kinds.count == 2 else {
+            print("[ODP Event] invalid format for kind")
+            completion(false)
+            return
+        }
+        
+        var vuid = self.vuidManager.vuid
+        if vuid == nil {
+            vuid = self.vuidManager.newVuid
+            print("new vuid generated: \(vuid!)")
+        }
+                
+        var identifiers = [
+            "vuid": vuid
+        ]
+        
+        if let userId = userId {
+            identifiers["fs_user_id"] = userId
+        }
+        
+        guard let url = URL(string: "\(apiHost)/v3/events") else {
+            print("[ODP Event] invalid url")
+            completion(false)
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        let combinedData: [String: Any] = [
+            "type": kinds[0],
+            "action": kinds[1],
+            //"data_source": "fullstack:swift-sdk",
+            "identifiers": identifiers,
+            "data": data
+        ]
+        
+        guard let body = try? JSONSerialization.data(withJSONObject: combinedData) else {
+            print("[ODP Event] invalid JSON")
+            completion(false)
+            return
+        }
+        
+        request.httpBody = body
+        request.addValue(odpPublicKey, forHTTPHeaderField: "x-api-key")
+        request.addValue("application/json", forHTTPHeaderField: "content-type")
+
+        print("[ODP] request body: \(combinedData)")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("[ODP Event] API error: \(error)")
+                completion(false)
+                return
+            }
+            
+            if let response = response as? HTTPURLResponse {
+                if response.statusCode >= 400 {
+                    let message = data != nil ? String(bytes: data!, encoding: .utf8) : "UNKNOWN"
+                    print("[ODP Event] API failed: \(message) \(self.odpPublicKey)")
+                    completion(false)
+                    return
+                }
+            }
+
+            completion(true)
+        }
+        task.resume()
+        
+        completion(true)
+    }
+
+}
+
+// MARK: - Utils
 
 struct ODPAudience: Decodable {
     let name: String

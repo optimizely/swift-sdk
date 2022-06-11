@@ -80,12 +80,12 @@ import Foundation
 class ZaiusApiManager {
     let logger = OPTLoggerFactory.getLogger()
 
-    func fetch(apiKey: String,
-               apiHost: String,
-               userKey: String,
-               userValue: String,
-               segmentsToCheck: [String]?,
-               completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+    func fetchSegments(apiKey: String,
+                       apiHost: String,
+                       userKey: String,
+                       userValue: String,
+                       segmentsToCheck: [String]?,
+                       completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         if userKey != "vuid" {
             completionHandler(nil, .fetchSegmentsFailed("userKeys other than 'vuid' not supported yet"))
             return
@@ -173,41 +173,22 @@ class ZaiusApiManager {
 
 extension ZaiusApiManager {
     
-    public func odpEvent(apiKey: String,
-                         apiHost: String,
-                         identifiers: [String: Any],
-                         kind: String,
-                         data: [String: Any] = [:],
-                         completion: @escaping (Bool) -> Void) {
+    public func sendODPEvent(apiKey: String,
+                             apiHost: String,
+                             identifiers: [String: Any],
+                             kind: String,
+                             data: [String: Any] = [:],
+                             completionHandler: @escaping (OptimizelyError?) -> Void) {
         let kinds = kind.split(separator: ":")
         guard kinds.count == 2 else {
-            print("[ODP Event] invalid format for kind")
-            completion(false)
+            completionHandler(.odpEventFailed("Invalid format for kind"))
             return
-        }
-        
-        var vuid = self.vuidManager.vuid
-        if vuid == nil {
-            vuid = self.vuidManager.newVuid
-            print("new vuid generated: \(vuid!)")
         }
                 
-        var identifiers = [
-            "vuid": vuid
-        ]
-        
-        if let userId = userId {
-            identifiers["fs_user_id"] = userId
-        }
-        
         guard let url = URL(string: "\(apiHost)/v3/events") else {
-            print("[ODP Event] invalid url")
-            completion(false)
+            completionHandler(.odpEventFailed("Invalid url"))
             return
         }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
         
         let combinedData: [String: Any] = [
             "type": kinds[0],
@@ -218,38 +199,43 @@ extension ZaiusApiManager {
         ]
         
         guard let body = try? JSONSerialization.data(withJSONObject: combinedData) else {
-            print("[ODP Event] invalid JSON")
-            completion(false)
+            completionHandler(.odpEventFailed("Invalid JSON"))
             return
         }
         
-        request.httpBody = body
-        request.addValue(odpPublicKey, forHTTPHeaderField: "x-api-key")
-        request.addValue("application/json", forHTTPHeaderField: "content-type")
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.httpBody = body
+        urlRequest.addValue(apiKey, forHTTPHeaderField: "x-api-key")
+        urlRequest.addValue("application/json", forHTTPHeaderField: "content-type")
 
         print("[ODP] request body: \(combinedData)")
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let session = self.getSession()
+        // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
+        defer { session.finishTasksAndInvalidate() }
+
+        let task = session.dataTask(with: urlRequest) { data, response, error in
             if let error = error {
-                print("[ODP Event] API error: \(error)")
-                completion(false)
+                completionHandler(.odpEventFailed(error.localizedDescription))
                 return
             }
             
             if let response = response as? HTTPURLResponse {
                 if response.statusCode >= 400 {
-                    let message = data != nil ? String(bytes: data!, encoding: .utf8) : "UNKNOWN"
-                    print("[ODP Event] API failed: \(message) \(self.odpPublicKey)")
-                    completion(false)
+                    var message = "UNKNOWN"
+                    if let data = data, let msg = String(bytes: data, encoding: .utf8) {
+                        message = msg
+                    }
+                    completionHandler(.odpEventFailed(message))
                     return
                 }
             }
 
-            completion(true)
+            completionHandler(nil)
         }
-        task.resume()
         
-        completion(true)
+        task.resume()
     }
 
 }

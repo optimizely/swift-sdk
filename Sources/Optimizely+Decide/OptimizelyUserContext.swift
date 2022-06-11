@@ -76,6 +76,12 @@ public class OptimizelyUserContext {
         self.atomicAttributes = AtomicProperty(property: attributes ?? [:], lock: lock)
         self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
         self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
+        
+        self.optimizely?.registerUserToODP(userId: userId) { error in
+            if let error = error {
+                self.logger.e(error)
+            }
+        }
     }
     
     /// Sets an attribute for a given key.
@@ -162,7 +168,7 @@ public class OptimizelyUserContext {
     
 }
 
-// MARK: - AudienceSegments
+// MARK: - ODP
 
 extension OptimizelyUserContext {
     
@@ -178,9 +184,7 @@ extension OptimizelyUserContext {
     ///   - userValue: The value of the user identifier (optional).
     ///   - options: A set of options for fetching qualified segments (optional).
     ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
-    public func fetchQualifiedSegments(apiKey: String? = nil,
-                                       apiHost: String? = nil,
-                                       userKey: String? = nil,
+    public func fetchQualifiedSegments(userKey: String? = nil,
                                        userValue: String? = nil,
                                        options: [OptimizelySegmentOption] = [],
                                        completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
@@ -192,9 +196,7 @@ extension OptimizelyUserContext {
         let userKey = userKey ?? Constants.Attributes.reservedUserIdKey
         let userValue = userValue ?? userId
         
-        optimizely.fetchQualifiedSegments(apiKey: apiKey,
-                                          apiHost: apiHost,
-                                          userKey: userKey,
+        optimizely.fetchQualifiedSegments(userKey: userKey,
                                           userValue: userValue,
                                           options: options) { segments, err in
             guard err == nil, let segments = segments else {

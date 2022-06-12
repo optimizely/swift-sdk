@@ -21,7 +21,8 @@ class VUIDManager {
     
     var vuidMap: VUIDMap
     let queue: DispatchQueue
-    
+    let logger = OPTLoggerFactory.getLogger()
+
     init() {
         self.queue = DispatchQueue(label: "vuid")
         self.vuidMap = VUIDMap()
@@ -65,86 +66,6 @@ class VUIDManager {
         }
     }
     
-}
-
-// MARK: - ODP
-
-extension VUIDManager {
-    
-    public func registerVUID() {
-        if isVUIDRegistered {
-            logger.d("ODP: vuid is registered already.")
-            completionHandler(nil)
-            return
-        }
-
-        guard let odpApiKey = apiKey ?? odpConfig.apiKey else {
-            completionHandler(.odpEventFailed("apiKey not defined"))
-            return
-        }
-        
-        guard let odpApiHost = apiHost ?? odpConfig.apiHost else {
-            completionHandler(.odpEventFailed("apiHost not defined"))
-            return
-        }
-
-        let vuid = self.vuidManager.newVuid
-
-        let identifiers = [
-            "vuid": vuid
-        ]
-        
-        zaiusMgr.sendODPEvent(apiKey: odpApiKey,
-                              apiHost: odpApiHost,
-                              identifiers: identifiers,
-                              kind: "experimentation:client_initialized") { error in
-            if error == nil {
-                self.logger.d("ODP: vuid registered (\(vuid)) successfully")
-                self.vuidManager.updateRegisteredVUID(vuid)
-            }
-            completionHandler(error)
-        }
-    }
-    
-    public func identifyUser(userId: String) {
-        if isUserRegistered(userId: userId) {
-            logger.d("ODP: user (\(userId)) is registered already.")
-            completionHandler(nil)
-            return
-        }
-
-        guard let odpApiKey = apiKey ?? odpConfig.apiKey else {
-            completionHandler(.odpEventFailed("apiKey not defined"))
-            return
-        }
-        
-        guard let odpApiHost = apiHost ?? odpConfig.apiHost else {
-            completionHandler(.odpEventFailed("apiHost not defined"))
-            return
-        }
-
-        guard let vuid = vuidManager.vuid else {
-            completionHandler(.odpEventFailed("invalid vuid for identify"))
-            return
-        }
-        
-        let identifiers = [
-            "vuid": vuid,
-            "fs_user_id": userId
-        ]
-
-        zaiusMgr.sendODPEvent(apiKey: odpApiKey,
-                              apiHost: odpApiHost,
-                              identifiers: identifiers,
-                              kind: "experimentation:identified") { error in
-            if error == nil {
-                self.logger.d("ODP: idenfier (\(userId)) added successfully")
-                self.vuidManager.updateRegisteredUsers(userId: userId)
-            }
-            completionHandler(error)
-        }
-    }
-
 }
 
 // MARK: - VUIDMap
@@ -214,3 +135,4 @@ struct VUIDMap {
         UserDefaults.standard.synchronize()
     }
 }
+

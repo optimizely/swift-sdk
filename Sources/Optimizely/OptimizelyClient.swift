@@ -935,12 +935,8 @@ extension OptimizelyClient {
 
 extension OptimizelyClient {
     
-    func registerUserToODP(userId: String,
-                           completionHandler: @escaping (OptimizelyError?) -> Void) {
-        odpManager.identifyUser(apiKey: config?.publicKeyForODP,
-                                apiHost: config?.hostForODP,
-                                userId: userId,
-                                completionHandler: completionHandler)
+    func registerUserToODP(userId: String) {
+        odpManager.identifyUser(userId: userId)
     }
     
     func fetchQualifiedSegments(userKey: String,

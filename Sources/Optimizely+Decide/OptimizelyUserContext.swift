@@ -77,11 +77,8 @@ public class OptimizelyUserContext {
         self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
         self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
         
-        self.optimizely?.registerUserToODP(userId: userId) { error in
-            if let error = error {
-                self.logger.e(error)
-            }
-        }
+        // USERID only (not VUID)
+        self.optimizely?.registerUserToODP(userId: userId)
     }
     
     /// Sets an attribute for a given key.

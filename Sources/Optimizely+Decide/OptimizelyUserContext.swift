@@ -178,23 +178,22 @@ extension OptimizelyUserContext {
     /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
     ///
     /// - Parameters:
-    ///   - apiKey: The public API key for the ODP account from which the audience segments will be fetched (optional). If not provided, SDK will use the default publicKey in datafile.
-    ///   - apiHost: The host URL for the ODP audience segments API (optional). If not provided, SDK will use the default host in datafile.
     ///   - userKey: The name of the user identifier (optional).
     ///   - userValue: The value of the user identifier (optional).
     ///   - options: A set of options for fetching qualified segments (optional).
     ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
-    public func fetchQualifiedSegments(userKey: String? = nil,
-                                       userValue: String? = nil,
-                                       options: [OptimizelySegmentOption] = [],
+    public func fetchQualifiedSegments(options: [OptimizelySegmentOption] = [],
                                        completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         guard let optimizely = self.optimizely else {
             completionHandler(nil, .sdkNotReady)
             return
         }
 
+        
+        // VUID or USERID  ???
         let userKey = userKey ?? Constants.Attributes.reservedUserIdKey
         let userValue = userValue ?? userId
+        
         
         optimizely.fetchQualifiedSegments(userKey: userKey,
                                           userValue: userValue,

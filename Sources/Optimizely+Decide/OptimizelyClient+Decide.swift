@@ -31,6 +31,12 @@ extension OptimizelyClient {
         return OptimizelyUserContext(optimizely: self, userId: userId, attributes: attributes)
     }
     
+    // VUID-based UserContext
+    public func createUserContext(attributes: [String: Any]? = nil) -> OptimizelyUserContext {
+        let vuid = odpManager.vuidManager.vuid
+        return OptimizelyUserContext(optimizely: self, userId: vuid, attributes: attributes)
+    }
+    
     func createUserContext(userId: String,
                            attributes: OptimizelyAttributes? = nil) -> OptimizelyUserContext {
         return createUserContext(userId: userId,

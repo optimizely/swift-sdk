@@ -16,23 +16,62 @@
 
 import Foundation
 
-public struct OptimizelyODPConfig {
+public class OptimizelyODPConfig {
     /// maximum size (default = 100) of audience segments cache (optional)
     let segmentsCacheSize: Int
     /// timeout in seconds (default = 600) of audience segments cache (optional)
     let segmentsCacheTimeoutInSecs: Int
     /// The host URL for the ODP audience segments API (optional). If not provided, SDK will use the default host in datafile.
-    let apiHost: String?
+    private var _apiHost: String = "https://api.zaius.com"
     /// The public API key for the ODP account from which the audience segments will be fetched (optional). If not provided, SDK will use the default publicKey in datafile.
-    let apiKey: String?
+    private var _apiKey: String?
+
+    let queue = DispatchQueue(label: "odpConfig")
     
     public init(segmentsCacheSize: Int = 100,
                 segmentsCacheTimeoutInSecs: Int = 600,
-                apiHost: String? = "https://api.zaius.com",
+                apiHost: String = "https://api.zaius.com",
                 apiKey: String? = nil) {
         self.segmentsCacheSize = segmentsCacheSize
         self.segmentsCacheTimeoutInSecs = segmentsCacheTimeoutInSecs
-        self.apiHost = apiHost
-        self.apiKey = apiKey
+        self._apiHost = apiHost
+        self._apiKey = apiKey
     }
 }
+
+// MARK: - Thread-safe
+
+extension OptimizelyODPConfig {
+    
+    var apiHost: String {
+        get {
+            var value = ""
+            queue.sync {
+                value = _apiHost
+            }
+            return value
+        }
+        set {
+            queue.async {
+                self._apiHost = newValue
+            }
+        }
+    }
+
+    var apiKey: String? {
+        get {
+            var value: String?
+            queue.sync {
+                value = _apiKey
+            }
+            return value
+        }
+        set {
+            queue.async {
+                self._apiKey = newValue
+            }
+        }
+    }
+
+}
+

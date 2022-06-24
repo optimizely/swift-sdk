@@ -53,23 +53,7 @@ open class OptimizelyClient: NSObject {
     
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
-
-    var odpConfig: OptimizelyODPConfig
-    private var atomicODPManager = AtomicProperty<ODPManager>()
-    var odpManager: ODPManager {
-        get {
-            // instantiated on the first call (not instantiated when it's not used)
-            guard let handler = atomicODPManager.property else {
-                let defaultHandler = ODPManager(odpConfig: odpConfig)
-                atomicODPManager.property = defaultHandler
-                return defaultHandler
-            }
-            return handler
-        }
-        set {
-            atomicODPManager.property = newValue
-        }
-    }
+    var odpManager: ODPManager
     
     // MARK: - Public interfaces
     
@@ -95,7 +79,7 @@ open class OptimizelyClient: NSObject {
         
         self.sdkKey = sdkKey
         self.defaultDecideOptions = defaultDecideOptions ?? []
-        self.odpConfig = odpConfig ?? OptimizelyODPConfig()
+        self.odpManager = ODPManager(odpConfig: odpConfig ?? OptimizelyODPConfig())
         
         super.init()
         
@@ -210,6 +194,8 @@ open class OptimizelyClient: NSObject {
         do {
             self.config = try ProjectConfig(datafile: datafile)
             
+            odpManager.updateODPConfig(apiKey: config?.publicKeyForODP, apiHost: config?.hostForODP)
+
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
                 self.updateConfigFromBackgroundFetch(data: data)
@@ -945,9 +931,7 @@ extension OptimizelyClient {
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         let segmentsToCheck = options.contains(.useSubset) ? config?.allSegments : nil
         
-        odpManager.fetchQualifiedSegments(apiKey: config?.publicKeyForODP,
-                                          apiHost: config?.hostForODP,
-                                          userKey: userKey,
+        odpManager.fetchQualifiedSegments(userKey: userKey,
                                           userValue: userValue,
                                           segmentsToCheck: segmentsToCheck,
                                           options: options,

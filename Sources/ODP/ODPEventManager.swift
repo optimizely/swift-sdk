@@ -23,19 +23,21 @@ struct ODPEvent {
 }
 
 class ODPEventManager {
+    let odpConfig: OptimizelyODPConfig
     var events: [ODPEvent]
     let queue: DispatchQueue
+    let zaiusMgr: ZaiusRestApiManager
+    
+    let logger = OPTLoggerFactory.getLogger()
 
-    init() {
-        self.queue = DispatchQueue(label: "event")
+    init(odpConfig: OptimizelyODPConfig) {
+        self.odpConfig = odpConfig
         self.events = []
+        self.queue = DispatchQueue(label: "event")
+        self.zaiusMgr = ZaiusRestApiManager()
     }
-}
-
-
-// MARK: - ODP
-
-extension ODPEventManager {
+    
+    // MARK: - ODP API
     
     func registerVUID(vuid: String) {
         let identifiers = [
@@ -44,6 +46,7 @@ extension ODPEventManager {
         
         queue.async {
             self.events.append(ODPEvent(kind: "experimentation:client_initialized", identifiers: identifiers, data: [:]))
+            self.flushEvents(self.events)
         }
     }
     
@@ -55,30 +58,38 @@ extension ODPEventManager {
 
         queue.async {
             self.events.append(ODPEvent(kind: "experimentation:identified", identifiers: identifiers, data: [:]))
+            self.flushEvents(self.events)
         }
     }
     
+    // MARK: - Events
+    
     func flush() {
-        var events = [ODPEvent]()
-        queue.sync {
-            events = self.events
+        queue.async {
+            self.flushEvents(self.events)
+        }
+    }
+    
+    private func flushEvents(_ events: [ODPEvent]) {
+        guard let odpApiKey = odpConfig.apiKey else {
+            logger.d("ODP event cannot be dispatched since apiKey not defined")
+            return
         }
         
         for event in events {
-            sendODPEvent(event)
+            sendODPEvent(event, apiKey: odpApiKey, apiHost: odpConfig.apiHost)
         }
     }
     
-    func sendODPEvent(_ event: ODPEvent) {
-        let odpApiKey: String = ""
-        let odpApiHost: String = ""
-        
-        zaiusMgr.sendODPEvent(apiKey: odpApiKey,
-                              apiHost: odpApiHost,
+    func sendODPEvent(_ event: ODPEvent, apiKey: String, apiHost: String) {
+        zaiusMgr.sendODPEvent(apiKey: apiKey,
+                              apiHost: apiHost,
                               identifiers: event.identifiers,
                               kind: event.kind,
                               data: event.data) { error in
-            //
+            if error != nil {
+                self.logger.w("ODP event dispatch failed: \(error!)")
+            }
         }
     }
     

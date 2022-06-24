@@ -15,46 +15,30 @@
 //
 
 import Foundation
-import UIKit
 
-class ODPManager {    
+class ODPSegmentManager {    
     let odpConfig: OptimizelyODPConfig
-    
-    var zaiusMgr = ZaiusApiManager()
-    var segmentsCache: LRUCache<String, [String]>
-    let vuidManager: VUIDManager
-    var eventManager: ODPEventManager
+    let zaiusMgr = ZaiusGraphQLApiManager()
+    let segmentsCache: LRUCache<String, [String]>
     
     let logger = OPTLoggerFactory.getLogger()
 
-    init(odpConfig: OptimizelyODPConfig, vuidManager: VUIDManager? = nil) {
+    init(odpConfig: OptimizelyODPConfig) {
         self.odpConfig = odpConfig
-        self.eventManager = ODPEventManager()
-        self.vuidManager = vuidManager ?? VUIDManager.shared
-        self.segmentsCache = LRUCache<String, [String]>(size: odpConfig.segmentsCacheSize, timeoutInSecs: odpConfig.segmentsCacheTimeoutInSecs)
-        
-        if !self.vuidManager.isVUIDRegistered {
-            eventManager.registerVUID(vuid: self.vuidManager.vuid)
-        }
+        self.segmentsCache = LRUCache<String, [String]>(size: odpConfig.segmentsCacheSize,
+                                                        timeoutInSecs: odpConfig.segmentsCacheTimeoutInSecs)
     }
     
-    func fetchQualifiedSegments(apiKey: String?,
-                                apiHost: String?,
-                                userKey: String,
+    func fetchQualifiedSegments(userKey: String,
                                 userValue: String,
                                 segmentsToCheck: [String]? = nil,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        guard let odpApiKey = apiKey ?? odpConfig.apiKey else {
+        guard let odpApiKey = odpConfig.apiKey else {
             completionHandler(nil, .fetchSegmentsFailed("apiKey not defined"))
             return
         }
         
-        guard let odpApiHost = apiHost ?? odpConfig.apiHost else {
-            completionHandler(nil, .fetchSegmentsFailed("apiHost not defined"))
-            return
-        }
-
         let cacheKey = makeCacheKey(userKey, userValue)
 
         let ignoreCache = options.contains(.ignoreCache)
@@ -72,7 +56,7 @@ class ODPManager {
         }
         
         zaiusMgr.fetchSegments(apiKey: odpApiKey,
-                               apiHost: odpApiHost,
+                               apiHost: odpConfig.apiHost,
                                userKey: userKey,
                                userValue: userValue,
                                segmentsToCheck: segmentsToCheck) { segments, err in
@@ -86,27 +70,11 @@ class ODPManager {
         }
     }
     
-    func identifyUser(userId: String) {
-        if vuidManager.isUserRegistered(userId: userId) {
-            logger.d("ODP: user (\(userId)) is registered already.")
-            return
-        }
-
-        eventManager.identifyUser(vuid: vuidManager.vuid, userId: userId)
-    }
-    
-    func updateODPConfig(apiKey: String?, apiHost: String?) {
-        // updaet apiKey for fetchQualifiedSegments
-        
-        // flush ODPEvents
-        eventManager.flush()
-    }
-    
 }
 
 // MARK: - Utils
 
-extension ODPManager {
+extension ODPSegmentManager {
     
     func makeCacheKey(_ userKey: String, _ userValue: String) -> String {
         return userKey + "-$-" + userValue

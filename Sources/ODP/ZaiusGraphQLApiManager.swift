@@ -86,11 +86,6 @@ class ZaiusGraphQLApiManager {
                        userValue: String,
                        segmentsToCheck: [String]?,
                        completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        if userKey != "vuid" {
-            completionHandler(nil, .fetchSegmentsFailed("userKeys other than 'vuid' not supported yet"))
-            return
-        }
-        
         let subsetFilter = makeSubsetFilter(segments: segmentsToCheck)
         
         let body = [

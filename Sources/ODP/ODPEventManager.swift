@@ -41,7 +41,7 @@ class ODPEventManager {
     
     func registerVUID(vuid: String) {
         let identifiers = [
-            "vuid": vuid
+            Constants.ODP.keyForVuid: vuid
         ]
         
         queue.async {
@@ -52,8 +52,8 @@ class ODPEventManager {
     
     func identifyUser(vuid: String, userId: String) {
         let identifiers = [
-            "vuid": vuid,
-            "fs_user_id": userId
+            Constants.ODP.keyForVuid: vuid,
+            Constants.ODP.keyForUserId: userId
         ]
 
         queue.async {

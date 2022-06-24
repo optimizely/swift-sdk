@@ -57,7 +57,7 @@ public class OptimizelyUserContext {
         
         return userContext
     }
-    
+        
     let logger = OPTLoggerFactory.getLogger()
     
     /// OptimizelyUserContext init
@@ -66,19 +66,35 @@ public class OptimizelyUserContext {
     ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    public init(optimizely: OptimizelyClient,
-                userId: String,
-                attributes: [String: Any?]? = nil) {
+    public convenience init(optimizely: OptimizelyClient,
+                            userId: String,
+                            attributes: [String: Any?]? = nil) {
+        self.init(optimizely: optimizely, userId: userId, attributes: attributes ?? [:])
+        self.optimizely?.registerUserToODP(userId: userId)
+    }
+    
+    /// OptimizelyUserContext init for vuid-based decision
+    ///
+    ///  When a userId is not provided, a user context will be created with the device vuid as a default user id.
+    ///
+    /// - Parameters:
+    ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
+    ///   - attributes: A map of attribute names to current user attribute values.
+    public convenience init(optimizely: OptimizelyClient,
+                            attributes: [String: Any?]? = nil) {
+        self.init(optimizely: optimizely, userId: optimizely.vuid, attributes: attributes ?? [:])
+    }
+
+    init(optimizely: OptimizelyClient,
+         userId: String,
+         attributes: [String: Any?]) {
         self.optimizely = optimizely
         self.userId = userId
         
         let lock = DispatchQueue(label: "user-context")
-        self.atomicAttributes = AtomicProperty(property: attributes ?? [:], lock: lock)
+        self.atomicAttributes = AtomicProperty(property: attributes, lock: lock)
         self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
         self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
-        
-        // USERID only (not VUID)
-        self.optimizely?.registerUserToODP(userId: userId)
     }
     
     /// Sets an attribute for a given key.
@@ -185,16 +201,8 @@ extension OptimizelyUserContext {
             completionHandler(nil, .sdkNotReady)
             return
         }
-
         
-        // VUID or USERID  ???
-        let userKey = userKey ?? Constants.Attributes.reservedUserIdKey
-        let userValue = userValue ?? userId
-        
-        
-        optimizely.fetchQualifiedSegments(userKey: userKey,
-                                          userValue: userValue,
-                                          options: options) { segments, err in
+        optimizely.fetchQualifiedSegments(userId: userId, options: options) { segments, err in
             guard err == nil, let segments = segments else {
                 let error = err ?? OptimizelyError.fetchSegmentsFailed("invalid segments")
                 self.logger.e(error)

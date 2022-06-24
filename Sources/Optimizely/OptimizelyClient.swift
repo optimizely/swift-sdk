@@ -921,18 +921,20 @@ extension OptimizelyClient {
 
 extension OptimizelyClient {
     
+    var vuid: String {
+        return odpManager.vuid
+    }
+    
     func registerUserToODP(userId: String) {
         odpManager.identifyUser(userId: userId)
     }
     
-    func fetchQualifiedSegments(userKey: String,
-                                userValue: String,
+    func fetchQualifiedSegments(userId: String,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         let segmentsToCheck = options.contains(.useSubset) ? config?.allSegments : nil
         
-        odpManager.fetchQualifiedSegments(userKey: userKey,
-                                          userValue: userValue,
+        odpManager.fetchQualifiedSegments(userId: userId,
                                           segmentsToCheck: segmentsToCheck,
                                           options: options,
                                           completionHandler: completionHandler)

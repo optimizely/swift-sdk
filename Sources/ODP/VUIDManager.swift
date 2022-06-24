@@ -65,7 +65,18 @@ class VUIDManager {
             self.vuidMap.save()
         }
     }
+}
+
+// MAKR: - VUID format
+
+extension VUIDManager {
+    static func makeVuid() -> String {
+        return "VUID_" + UUID().uuidString.replacingOccurrences(of: "-", with: "")
+    }
     
+    func isVuid(visitorId: String) -> Bool {
+        return visitorId.starts(with: "VUID")
+    }
 }
 
 // MARK: - VUIDMap
@@ -114,7 +125,7 @@ struct VUIDMap {
         guard let vuids = UserDefaults.standard.dictionary(forKey: keyForVuidMap),
               let oldVuid = vuids[keyForVuid] as? String
         else {
-            self.vuid = "VUID-" + UUID().uuidString.replacingOccurrences(of: "-", with: "")
+            self.vuid = VUIDManager.makeVuid()
             self.registered = false
             self.users = []
             self.usersSet = Set(users)

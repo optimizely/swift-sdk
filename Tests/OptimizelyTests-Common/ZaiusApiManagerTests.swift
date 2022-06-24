@@ -17,9 +17,6 @@
 import XCTest
 
 class ZaiusApiManagerTests: XCTestCase {
-    
-    // TODO: currently "vuid" only supported
-    //var userKey = "test-user-key"
     let userKey = "vuid"
     
     let userValue = "test-user-value"

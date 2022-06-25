@@ -18,15 +18,19 @@ import Foundation
 
 class ODPManager {
     let odpConfig: OptimizelyODPConfig
+    
     let vuidManager: VUIDManager
     let segmentManager: ODPSegmentManager
     let eventManager: ODPEventManager
     
     let logger = OPTLoggerFactory.getLogger()
 
-    init(odpConfig: OptimizelyODPConfig, vuidManager: VUIDManager? = nil, segmentManager: ODPSegmentManager? = nil, eventManager: ODPEventManager? = nil) {
+    init(odpConfig: OptimizelyODPConfig,
+         vuidManager: VUIDManager? = nil,
+         segmentManager: ODPSegmentManager? = nil,
+         eventManager: ODPEventManager? = nil) {
         self.odpConfig = odpConfig
-        self.vuidManager = vuidManager ?? VUIDManager.shared
+        self.vuidManager = vuidManager ?? VUIDManager()
         self.segmentManager = segmentManager ?? ODPSegmentManager(odpConfig: odpConfig)
         self.eventManager = eventManager ?? ODPEventManager(odpConfig: odpConfig)
         
@@ -68,7 +72,7 @@ class ODPManager {
         odpConfig.apiHost = apiHost
 
         // flush all ODP events waiting for apiKey
-        eventManager.flush()
+        eventManager.flushEvents()
     }
     
     var vuid: String {

@@ -16,83 +16,128 @@
 
 import Foundation
 
-struct ODPEvent {
-    let kind: String
-    let identifiers: [String: Any]
-    let data: [String: Any]
+
+struct ODPEvent: Codable {
+    let type: String
+    let action: String
+    // TODO: change to [String: Any] to support arbitary value types
+    let identifiers: [String: String]
+    let data: [String: String]
+    
+    //let data_source = "fullstack:swift-sdk"
 }
 
 class ODPEventManager {
     let odpConfig: OptimizelyODPConfig
-    var events: [ODPEvent]
-    let queue: DispatchQueue
     let zaiusMgr: ZaiusRestApiManager
     
+    let maxQueueSize = 100
+    let maxFailureCount = 3
+    let queueLock: DispatchQueue
+    let eventQueue: DataStoreQueueStackImpl<ODPEvent>
+
     let logger = OPTLoggerFactory.getLogger()
 
     init(odpConfig: OptimizelyODPConfig) {
         self.odpConfig = odpConfig
-        self.events = []
-        self.queue = DispatchQueue(label: "event")
         self.zaiusMgr = ZaiusRestApiManager()
+        
+        self.queueLock = DispatchQueue(label: "event")
+        self.eventQueue = DataStoreQueueStackImpl<ODPEvent>(queueStackName: "odp",
+                                                            dataStore: DataStoreFile<[Data]>(storeName: "OPT-ODPEvent"))
     }
     
     // MARK: - ODP API
     
     func registerVUID(vuid: String) {
-        let identifiers = [
-            Constants.ODP.keyForVuid: vuid
-        ]
-        
-        queue.async {
-            self.events.append(ODPEvent(kind: "experimentation:client_initialized", identifiers: identifiers, data: [:]))
-            self.flushEvents(self.events)
-        }
+        let event = ODPEvent(type: "experimentation",
+                             action: "client_initialized",
+                             identifiers: [
+                                Constants.ODP.keyForVuid: vuid
+                             ],
+                             data: [:])
+        dispatchEvent(event)
     }
     
     func identifyUser(vuid: String, userId: String) {
-        let identifiers = [
-            Constants.ODP.keyForVuid: vuid,
-            Constants.ODP.keyForUserId: userId
-        ]
-
-        queue.async {
-            self.events.append(ODPEvent(kind: "experimentation:identified", identifiers: identifiers, data: [:]))
-            self.flushEvents(self.events)
+        let event = ODPEvent(type: "experimentation",
+                             action: "identified",
+                             identifiers: [
+                                Constants.ODP.keyForVuid: vuid,
+                                Constants.ODP.keyForUserId: userId
+                             ],
+                             data: [:])
+        dispatchEvent(event)
+    }
+    
+    func dispatchEvent(_ event: ODPEvent) {
+        guard eventQueue.count < maxQueueSize else {
+            let error = OptimizelyError.eventDispatchFailed("ODP EventQueue is full")
+            self.logger.e(error)
+            return
         }
+        
+        eventQueue.save(item: event)
+        flushEvents()
     }
     
     // MARK: - Events
     
-    func flush() {
-        queue.async {
-            self.flushEvents(self.events)
-        }
-    }
-    
-    private func flushEvents(_ events: [ODPEvent]) {
+    func flushEvents() {
         guard let odpApiKey = odpConfig.apiKey else {
-            logger.d("ODP event cannot be dispatched since apiKey not defined")
+            logger.d("ODP: event cannot be dispatched since apiKey not defined")
             return
         }
-        
-        for event in events {
-            sendODPEvent(event, apiKey: odpApiKey, apiHost: odpConfig.apiHost)
-        }
-    }
-    
-    func sendODPEvent(_ event: ODPEvent, apiKey: String, apiHost: String) {
-        zaiusMgr.sendODPEvent(apiKey: apiKey,
-                              apiHost: apiHost,
-                              identifiers: event.identifiers,
-                              kind: event.kind,
-                              data: event.data) { error in
-            if error != nil {
-                self.logger.w("ODP event dispatch failed: \(error!)")
+
+        queueLock.async {
+            func removeStoredEvents(num: Int) {
+                if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
+                    // avoid event-log-message preparation overheads with closure-logging
+                    self.logger.d({ "ODP: Removed stored \(num) events starting with \(removedItem.first!)" })
+                } else {
+                    self.logger.e("ODP: Failed to removed \(num) events")
+                }
+            }
+            
+            // notify group used to ensure that the sendEvent is synchronous.
+            // used in flushEvents
+            let notify = DispatchGroup()
+
+            let maxBatchEvents = 10
+            var failureCount = 0
+
+            while let events: [ODPEvent] = self.eventQueue.getFirstItems(count: maxBatchEvents) {
+                let numEvents = events.count
+
+                // we've exhuasted our failure count.  Give up and try the next time a event
+                // is queued or someone calls flush (changed to >= so that retried exactly "maxFailureCount" times).
+                if failureCount >= self.maxFailureCount {
+                    self.logger.e("ODP: Failed to send event with max retried")
+                    break
+                }
+                
+                // make the send event synchronous. enter our notify
+                notify.enter()
+                
+                self.zaiusMgr.sendODPEvents(apiKey: odpApiKey,
+                                            apiHost: self.odpConfig.apiHost,
+                                            events: events) { error in
+                    if error != nil {
+                        self.logger.e(error!.reason)
+                        failureCount += 1
+                    } else {
+                        removeStoredEvents(num: numEvents)
+                        failureCount = 0
+                    }
+                    
+                    // our send is done.
+                    notify.leave()
+                }
+                
+                // wait for send
+                notify.wait()
             }
         }
     }
     
 }
-
-

@@ -17,8 +17,6 @@
 import Foundation
 
 class VUIDManager {
-    static let shared = VUIDManager()
-    
     var vuidMap: VUIDMap
     let queue: DispatchQueue
     let logger = OPTLoggerFactory.getLogger()

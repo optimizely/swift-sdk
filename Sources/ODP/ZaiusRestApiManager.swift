@@ -20,32 +20,16 @@ import Foundation
 
 class ZaiusRestApiManager {
     
-    func sendODPEvent(apiKey: String,
-                      apiHost: String,
-                      identifiers: [String: Any],
-                      kind: String,
-                      data: [String: Any] = [:],
-                      completionHandler: @escaping (OptimizelyError?) -> Void) {
-        let kinds = kind.split(separator: ":")
-        guard kinds.count == 2 else {
-            completionHandler(.odpEventFailed("Invalid format for kind"))
-            return
-        }
-                
+    func sendODPEvents(apiKey: String,
+                       apiHost: String,
+                       events: [ODPEvent],
+                       completionHandler: @escaping (OptimizelyError?) -> Void) {
         guard let url = URL(string: "\(apiHost)/v3/events") else {
             completionHandler(.odpEventFailed("Invalid url"))
             return
         }
         
-        let combinedData: [String: Any] = [
-            "type": kinds[0],
-            "action": kinds[1],
-            //"data_source": "fullstack:swift-sdk",
-            "identifiers": identifiers,
-            "data": data
-        ]
-        
-        guard let body = try? JSONSerialization.data(withJSONObject: combinedData) else {
+        guard let body = try? JSONSerialization.data(withJSONObject: events) else {
             completionHandler(.odpEventFailed("Invalid JSON"))
             return
         }
@@ -55,8 +39,6 @@ class ZaiusRestApiManager {
         urlRequest.httpBody = body
         urlRequest.addValue(apiKey, forHTTPHeaderField: "x-api-key")
         urlRequest.addValue("application/json", forHTTPHeaderField: "content-type")
-
-        print("[ODP] request body: \(combinedData)")
         
         let session = self.getSession()
         // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867

@@ -79,7 +79,8 @@ open class OptimizelyClient: NSObject {
         
         self.sdkKey = sdkKey
         self.defaultDecideOptions = defaultDecideOptions ?? []
-        self.odpManager = ODPManager(odpConfig: odpConfig ?? OptimizelyODPConfig())
+        self.odpManager = ODPManager(sdkKey: sdkKey,
+                                     odpConfig: odpConfig ?? OptimizelyODPConfig())
         
         super.init()
         

@@ -16,7 +16,6 @@
 
 import Foundation
 
-
 struct ODPEvent: Codable {
     let type: String
     let action: String
@@ -24,7 +23,10 @@ struct ODPEvent: Codable {
     let identifiers: [String: String]
     let data: [String: String]
     
-    //let data_source = "fullstack:swift-sdk"
+    // TODO: need data source later
+    // let data_source = "fullstack:swift-sdk"
+    
+    var completion: (() -> Void)?
 }
 
 class ODPEventManager {
@@ -38,35 +40,40 @@ class ODPEventManager {
 
     let logger = OPTLoggerFactory.getLogger()
 
-    init(odpConfig: OptimizelyODPConfig) {
+    init(sdkKey: String, odpConfig: OptimizelyODPConfig) {
         self.odpConfig = odpConfig
         self.zaiusMgr = ZaiusRestApiManager()
         
         self.queueLock = DispatchQueue(label: "event")
+        
+        // a separate event queue for each sdkKey (which may have own ODP public key)
+        let storeName = "OPDEvent-\(sdkKey)"
         self.eventQueue = DataStoreQueueStackImpl<ODPEvent>(queueStackName: "odp",
-                                                            dataStore: DataStoreFile<[Data]>(storeName: "OPT-ODPEvent"))
+                                                            dataStore: DataStoreFile<[Data]>(storeName: storeName))
     }
     
     // MARK: - ODP API
     
-    func registerVUID(vuid: String) {
+    func registerVUID(vuid: String, completion: @escaping () -> Void) {
         let event = ODPEvent(type: "experimentation",
                              action: "client_initialized",
                              identifiers: [
                                 Constants.ODP.keyForVuid: vuid
                              ],
-                             data: [:])
+                             data: [:],
+                             completion: completion)
         dispatchEvent(event)
     }
     
-    func identifyUser(vuid: String, userId: String) {
+    func identifyUser(vuid: String, userId: String, completion: @escaping () -> Void) {
         let event = ODPEvent(type: "experimentation",
                              action: "identified",
                              identifiers: [
                                 Constants.ODP.keyForVuid: vuid,
                                 Constants.ODP.keyForUserId: userId
                              ],
-                             data: [:])
+                             data: [:],
+                             completion: completion)
         dispatchEvent(event)
     }
     

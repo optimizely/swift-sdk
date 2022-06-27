@@ -61,6 +61,10 @@ class ZaiusRestApiManager {
                 }
             }
 
+            events.forEach { event in
+                event.completion?()
+            }
+            
             completionHandler(nil)
         }
         

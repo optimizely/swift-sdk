@@ -21,6 +21,9 @@ class VUIDManager {
     let queue: DispatchQueue
     let logger = OPTLoggerFactory.getLogger()
 
+    // a single instance (vuid as a device id) should be shared for all SDK instances
+    static let shared = VUIDManager()
+    
     init() {
         self.queue = DispatchQueue(label: "vuid")
         self.vuidMap = VUIDMap()
@@ -144,4 +147,3 @@ struct VUIDMap {
         UserDefaults.standard.synchronize()
     }
 }
-

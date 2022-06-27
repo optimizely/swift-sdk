@@ -25,17 +25,22 @@ class ODPManager {
     
     let logger = OPTLoggerFactory.getLogger()
 
-    init(odpConfig: OptimizelyODPConfig,
+    init(sdkKey: String,
+         odpConfig: OptimizelyODPConfig,
          vuidManager: VUIDManager? = nil,
          segmentManager: ODPSegmentManager? = nil,
          eventManager: ODPEventManager? = nil) {
         self.odpConfig = odpConfig
-        self.vuidManager = vuidManager ?? VUIDManager()
+        self.vuidManager = vuidManager ?? VUIDManager.shared
         self.segmentManager = segmentManager ?? ODPSegmentManager(odpConfig: odpConfig)
-        self.eventManager = eventManager ?? ODPEventManager(odpConfig: odpConfig)
+        self.eventManager = eventManager ?? ODPEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
         
         if !self.vuidManager.isVUIDRegistered {
-            self.eventManager.registerVUID(vuid: self.vuidManager.vuid)
+            let vuid = self.vuidManager.vuid
+            self.eventManager.registerVUID(vuid: vuid) {
+                self.logger.d("ODP: vuid has been registered (\(vuid)).")
+                self.vuidManager.setVUIDRegistered()
+            }
         }
     }
     
@@ -59,7 +64,10 @@ class ODPManager {
             return
         }
 
-        eventManager.identifyUser(vuid: vuidManager.vuid, userId: userId)
+        eventManager.identifyUser(vuid: vuidManager.vuid, userId: userId) {
+            self.logger.d("ODP: userId (\(userId)) has been bound to (\(self.vuidManager.vuid)).")
+            self.vuidManager.addRegisteredUser(userId: userId)
+        }
     }
     
     func updateODPConfig(apiKey: String?, apiHost: String?) {

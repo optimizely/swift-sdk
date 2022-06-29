@@ -19,7 +19,7 @@ import XCTest
 class OptimizelyUserContextTests_Segments: XCTestCase {
 
     var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
-    var segmentHandler = MockAudienceSegmentsHandler(cacheSize: 100, cacheTimeoutInSecs: 100)
+    var odpManager = MockODPManager(cacheSize: 100, cacheTimeoutInSecs: 100)
     var user: OptimizelyUserContext!
     let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
 
@@ -30,7 +30,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     let kUserValue = "custom_id_value"
 
     override func setUp() {
-        optimizely.audienceSegmentsHandler = segmentHandler
+        optimizely.odpManager = odpManager
         user = optimizely.createUserContext(userId: kUserId)
     }
     
@@ -127,14 +127,14 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         
     // MARK: - Customisze AudienceSegmentHandler
     
-    func testCustomizeAudienceSegmentsHandler()  {
+    func testCustomizeODPManager()  {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
                                           periodicDownloadInterval: 60,
                                           segmentsCacheSize: 12,
                                           segmentsCacheTimeout: 123)
 
-        XCTAssertEqual(12, optimizely.audienceSegmentsHandler.segmentsCache.size)
-        XCTAssertEqual(123, optimizely.audienceSegmentsHandler.segmentsCache.timeoutInSecs)
+        XCTAssertEqual(12, optimizely.odpManager.segmentsCache.size)
+        XCTAssertEqual(123, optimizely.odpManager.segmentsCache.timeoutInSecs)
     }
 
 }
@@ -228,9 +228,9 @@ extension OptimizelyUserContextTests_Segments {
 
 }
 
-// MARK: - MockAudienceSegmentsHandler
+// MARK: - MockODPManager
 
-class MockAudienceSegmentsHandler: AudienceSegmentsHandler {
+class MockODPManager: ODPManager {
     var apiKey: String?
     var apiHost: String?
     var userKey: String?

@@ -17,8 +17,8 @@
 import XCTest
 
 class ZaiusApiManagerTests: XCTestCase {
+    let userKey = "vuid"
     
-    let userKey = "test-user-key"
     let userValue = "test-user-value"
     let apiKey = "test-api-key"
     let apiHost = "https://test-host"

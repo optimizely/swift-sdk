@@ -147,17 +147,17 @@ class SamplesForAPI {
         
         // (1) set a forced decision for a flag
 
-        var success = user.setForcedDecision(context: context1, decision: forced1)
+        _ = user.setForcedDecision(context: context1, decision: forced1)
         decision = user.decide(key: "flag-1")
 
         // (2) set a forced decision for an ab-test rule
 
-        success = user.setForcedDecision(context: context2, decision: forced2)
+        _ = user.setForcedDecision(context: context2, decision: forced2)
         decision = user.decide(key: "flag-1")
 
         // (3) set a forced variation for a delivery rule
 
-        success = user.setForcedDecision(context: context3,
+        _ = user.setForcedDecision(context: context3,
                                          decision: forced3)
         decision = user.decide(key: "flag-1")
 
@@ -168,8 +168,8 @@ class SamplesForAPI {
 
         // (5) remove forced variations
 
-        success = user.removeForcedDecision(context: context2)
-        success = user.removeAllForcedDecisions()
+        _ = user.removeForcedDecision(context: context2)
+        _ = user.removeAllForcedDecisions()
     }
     
     // MARK: - OptimizelyConfig
@@ -267,8 +267,9 @@ class SamplesForAPI {
         // override the default handler if cache size and timeout need to be customized
         let optimizely = OptimizelyClient(sdkKey: "FCnSegiEkRry9rhVMroit4",
                                           periodicDownloadInterval: 60,
-                                          segmentsCacheSize: 12,
-                                          segmentsCacheTimeout: 123)
+                                          odpConfig: OptimizelyODPConfig(segmentsCacheSize: 12,
+                                                                         segmentsCacheTimeoutInSecs: 123,
+                                                                         apiKey: "sample-api-key"))
         optimizely.start { result in
             if case .failure(let error) = result {
                 print("[AudienceSegments] SDK initialization failed: \(error)")
@@ -276,7 +277,7 @@ class SamplesForAPI {
             }
             
             let user = optimizely.createUserContext(userId: "user_123", attributes: ["location": "NY"])
-            user.fetchQualifiedSegments(apiKey: "sample-api-key", options: [.ignoreCache]) { _, error in
+            user.fetchQualifiedSegments(options: [.ignoreCache]) { _, error in
                 guard error == nil else {
                     print("[AudienceSegments] \(error!.errorDescription!)")
                     return

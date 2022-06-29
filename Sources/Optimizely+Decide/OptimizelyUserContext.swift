@@ -32,6 +32,7 @@ public class OptimizelyUserContext {
     }
     
     private var atomicQualifiedSegments: AtomicProperty<[String]>
+    /// an array of segment names that the user is qualified for. The result of **fetchQualifiedSegments()** will be saved here.
     public var qualifiedSegments: [String]? {
         get {
             return atomicQualifiedSegments.property
@@ -57,7 +58,7 @@ public class OptimizelyUserContext {
         
         return userContext
     }
-    
+        
     let logger = OPTLoggerFactory.getLogger()
     
     /// OptimizelyUserContext init
@@ -66,14 +67,33 @@ public class OptimizelyUserContext {
     ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    public init(optimizely: OptimizelyClient,
-                userId: String,
-                attributes: [String: Any?]? = nil) {
+    public convenience init(optimizely: OptimizelyClient,
+                            userId: String,
+                            attributes: [String: Any?]? = nil) {
+        self.init(optimizely: optimizely, userId: userId, attributes: attributes ?? [:])
+        self.optimizely?.registerUserToODP(userId: userId)
+    }
+    
+    /// OptimizelyUserContext init for vuid-based decision
+    ///
+    ///  When a userId is not provided, a user context will be created with the device vuid as a default user id.
+    ///
+    /// - Parameters:
+    ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
+    ///   - attributes: A map of attribute names to current user attribute values.
+    public convenience init(optimizely: OptimizelyClient,
+                            attributes: [String: Any?]? = nil) {
+        self.init(optimizely: optimizely, userId: optimizely.vuid, attributes: attributes ?? [:])
+    }
+
+    init(optimizely: OptimizelyClient,
+         userId: String,
+         attributes: [String: Any?]) {
         self.optimizely = optimizely
         self.userId = userId
         
         let lock = DispatchQueue(label: "user-context")
-        self.atomicAttributes = AtomicProperty(property: attributes ?? [:], lock: lock)
+        self.atomicAttributes = AtomicProperty(property: attributes, lock: lock)
         self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
         self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
     }
@@ -162,41 +182,25 @@ public class OptimizelyUserContext {
     
 }
 
-// MARK: - AudienceSegments
+// MARK: - ODP
 
 extension OptimizelyUserContext {
     
-    /// Fetch all qualified segments for the given user identifier (**userKey** and **userValue**).
+    /// Fetch all qualified segments for the user context.
     ///
-    /// The **userId** of this context will be used by default when the user identifier is not provided.
     /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
     ///
     /// - Parameters:
-    ///   - apiKey: The public API key for the ODP account from which the audience segments will be fetched (optional). If not provided, SDK will use the default publicKey in datafile.
-    ///   - apiHost: The host URL for the ODP audience segments API (optional). If not provided, SDK will use the default host in datafile.
-    ///   - userKey: The name of the user identifier (optional).
-    ///   - userValue: The value of the user identifier (optional).
     ///   - options: A set of options for fetching qualified segments (optional).
     ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
-    public func fetchQualifiedSegments(apiKey: String? = nil,
-                                       apiHost: String? = nil,
-                                       userKey: String? = nil,
-                                       userValue: String? = nil,
-                                       options: [OptimizelySegmentOption] = [],
+    public func fetchQualifiedSegments(options: [OptimizelySegmentOption] = [],
                                        completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         guard let optimizely = self.optimizely else {
             completionHandler(nil, .sdkNotReady)
             return
         }
-
-        let userKey = userKey ?? Constants.Attributes.reservedUserIdKey
-        let userValue = userValue ?? userId
         
-        optimizely.fetchQualifiedSegments(apiKey: apiKey,
-                                          apiHost: apiHost,
-                                          userKey: userKey,
-                                          userValue: userValue,
-                                          options: options) { segments, err in
+        optimizely.fetchQualifiedSegments(userId: userId, options: options) { segments, err in
             guard err == nil, let segments = segments else {
                 let error = err ?? OptimizelyError.fetchSegmentsFailed("invalid segments")
                 self.logger.e(error)
@@ -208,8 +212,11 @@ extension OptimizelyUserContext {
             completionHandler(segments, nil)
         }
     }
-
-    // true if the user is qualified for the given segment name
+    
+    /// Check is the user qualified for the given segment.
+    ///
+    /// - Parameter segment: the segment name to check qualification for..
+    /// - Returns: true if qualified.
     public func isQualifiedFor(segment: String) -> Bool {
         return atomicQualifiedSegments.property?.contains(segment) ?? false
     }

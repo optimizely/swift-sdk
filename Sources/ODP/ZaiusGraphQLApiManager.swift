@@ -16,35 +16,38 @@
 
 import Foundation
 
+// MARK: - GraphQL API
+
 // ODP GraphQL API
 // - https://api.zaius.com/v3/graphql
 
 // testODPApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
 
-/* GraphQL Request
+/*
  
-// fetch all segments
-curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(fs_user_id: \"tester-101\") {audiences {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
+ [GraphQL Request]
+ 
+ // fetch all segments
+ curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
-// fetch info for "has_email" segment only
-curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(fs_user_id: \"tester-101\") {audiences(subset:["has_email"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
+ // fetch info for ["has_email", "has_email_opted_in", "push_on_sale"] segments
+ curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences(subset:["has_email", "has_email_opted_in", "push_on_sale"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
-query MyQuery {
-  customer(fs_user_id: "tester-101") {
-    audiences {
-      edges {
-        node {
-          name
-          state
-          description
-        }
-      }
-    }
-  }
-}
-*/
+ query MyQuery {
+   customer(vuid: "d66a9d81923d4d2f99d8f64338976322") {
+     audiences {
+       edges {
+         node {
+           name
+           state
+           description
+         }
+       }
+     }
+   }
+ }
 
-/* GraphQL Response
+ [GraphQL Response]
  
  {
    "data": {
@@ -71,17 +74,17 @@ query MyQuery {
      }
    }
  }
- */
+*/
 
-class ZaiusApiManager {
+class ZaiusGraphQLApiManager {
     let logger = OPTLoggerFactory.getLogger()
 
-    func fetch(apiKey: String,
-               apiHost: String,
-               userKey: String,
-               userValue: String,
-               segmentsToCheck: [String]?,
-               completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+    func fetchSegments(apiKey: String,
+                       apiHost: String,
+                       userKey: String,
+                       userValue: String,
+                       segmentsToCheck: [String]?,
+                       completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         let subsetFilter = makeSubsetFilter(segments: segmentsToCheck)
         
         let body = [
@@ -159,6 +162,8 @@ class ZaiusApiManager {
     }
     
 }
+
+// MARK: - Utils
 
 struct ODPAudience: Decodable {
     let name: String

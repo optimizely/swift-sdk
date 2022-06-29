@@ -193,14 +193,6 @@ extension ProjectConfig {
         // old versions (< 4) of datafiles not supported
         return ["4"].contains(version)
     }
-    
-    var publicKeyForODP: String? {
-        return project.integrations?.filter { $0.key == "odp" }.first?.publicKey
-    }
-    
-    var hostForODP: String? {
-        return project.integrations?.filter { $0.key == "odp" }.first?.host
-    }
 }
 
 // MARK: - Project Access
@@ -212,6 +204,20 @@ extension ProjectConfig {
      */
     var sendFlagDecisions: Bool {
         return project.sendFlagDecisions ?? false
+    }
+    
+    /**
+     * ODP API server publicKey.
+     */
+    var publicKeyForODP: String? {
+        return project.integrations?.filter { $0.key == "odp" }.first?.publicKey
+    }
+    
+    /**
+     * ODP API server host.
+     */
+    var hostForODP: String? {
+        return project.integrations?.filter { $0.key == "odp" }.first?.host
     }
     
     /**
@@ -375,5 +381,4 @@ extension ProjectConfig {
         
         return nil
     }
-
 }

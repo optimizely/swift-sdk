@@ -16,8 +16,8 @@
 
 import XCTest
 
-class AudienceSegmentsHandlerTests: XCTestCase {
-    var handler = AudienceSegmentsHandler(cacheSize: 100, cacheTimeoutInSecs: 100)
+class ODPManagerTests: XCTestCase {
+    var handler = ODPManager(odpConfig: OptimizelyODPConfig(segmentsCacheSize: 100, segmentsCacheTimeoutInSecs: 100))
     var options = [OptimizelySegmentOption]()
     
     var apiKey = "valid"

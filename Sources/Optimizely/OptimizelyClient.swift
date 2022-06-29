@@ -53,25 +53,8 @@ open class OptimizelyClient: NSObject {
     
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
-
-    var segmentsCacheSize = 100
-    var segmentsCacheTimeoutInSecs = 600
-    private var atomicAudienceSegmentsHandler = AtomicProperty<AudienceSegmentsHandler>()
-    var audienceSegmentsHandler: AudienceSegmentsHandler {
-        get {
-            // instantiated on the first call (not instantiated when it's not used)
-            guard let handler = atomicAudienceSegmentsHandler.property else {
-                let defaultHandler = AudienceSegmentsHandler(cacheSize: segmentsCacheSize, cacheTimeoutInSecs: segmentsCacheTimeoutInSecs)
-                atomicAudienceSegmentsHandler.property = defaultHandler
-                return defaultHandler
-            }
-            return handler
-        }
-        set {
-            atomicAudienceSegmentsHandler.property = newValue
-        }
-    }
-
+    var odpManager: ODPManager
+    
     // MARK: - Public interfaces
     
     /// OptimizelyClient init
@@ -84,8 +67,7 @@ open class OptimizelyClient: NSObject {
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision options (optional)
-    ///   - segmentsCacheSize: maximum size (default = 100) of audience segments cache (optional)
-    ///   - segmentsCacheTimeout: timeout in seconds (default = 600) of audience segments cache (optional)
+    ///   - odpConfig: ODP configuration (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
@@ -93,17 +75,12 @@ open class OptimizelyClient: NSObject {
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
                 defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                segmentsCacheSize: Int? = nil,
-                segmentsCacheTimeout: Int? = nil) {
+                odpConfig: OptimizelyODPConfig? = nil) {
         
         self.sdkKey = sdkKey
         self.defaultDecideOptions = defaultDecideOptions ?? []
-        if let segmentsCacheSize = segmentsCacheSize {
-            self.segmentsCacheSize = segmentsCacheSize
-        }
-        if let segmentsCacheTimeout = segmentsCacheTimeout {
-            self.segmentsCacheTimeoutInSecs = segmentsCacheTimeout
-        }
+        self.odpManager = ODPManager(sdkKey: sdkKey,
+                                     odpConfig: odpConfig ?? OptimizelyODPConfig())
         
         super.init()
         
@@ -123,7 +100,7 @@ open class OptimizelyClient: NSObject {
         self.datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
-
+        
         logger.d("SDK Version: \(version)")
     }
     
@@ -218,6 +195,8 @@ open class OptimizelyClient: NSObject {
         do {
             self.config = try ProjectConfig(datafile: datafile)
             
+            odpManager.updateODPConfig(apiKey: config?.publicKeyForODP, apiHost: config?.hostForODP)
+
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
                 self.updateConfigFromBackgroundFetch(data: data)
@@ -776,44 +755,6 @@ open class OptimizelyClient: NSObject {
         return OptimizelyConfigImp(projectConfig: config)
     }
 
-    // MARK: - AudienceSegmentsHandler
-
-    func fetchQualifiedSegments(apiKey: String?,
-                                apiHost: String?,
-                                userKey: String,
-                                userValue: String,
-                                options: [OptimizelySegmentOption],
-                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        
-        guard let odpApiKey = apiKey ?? config?.publicKeyForODP else {
-            completionHandler(nil, .fetchSegmentsFailed("apiKey not defined"))
-            return
-        }
-        
-        guard let odpApiHost = apiHost ?? config?.hostForODP else {
-            completionHandler(nil, .fetchSegmentsFailed("apiHost not defined"))
-            return
-        }
-        
-        let segmentsToCheck = options.contains(.allSegments) ? nil : config?.allSegments
-        
-        // filter out empty segmentsToCheck (segments not used in the project).
-        // pass to zaius for non-empty segments or nil (to access all segments) only.
-
-        if let subset = segmentsToCheck, subset.isEmpty {
-            completionHandler([], nil)
-            return
-        }
-
-        audienceSegmentsHandler.fetchQualifiedSegments(apiKey: odpApiKey,
-                                                       apiHost: odpApiHost,
-                                                       userKey: userKey,
-                                                       userValue: userValue,
-                                                       segmentsToCheck: segmentsToCheck,
-                                                       options: options,
-                                                       completionHandler: completionHandler)
-    }
-
 }
 
 // MARK: - Send Events
@@ -973,6 +914,51 @@ extension OptimizelyClient {
         } else {
             notify()
         }
+    }
+    
+}
+
+// MARK: - ODP
+
+extension OptimizelyClient {
+    
+    /// Send an event to the ODP server.
+    ///
+    /// - Parameters:
+    ///   - type: the event type (default = "fullstack").
+    ///   - action: the event action name.
+    ///   - identifiers: a dictionary for identifiers.
+    ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
+    public func sendODPEvent(type: String? = nil,
+                             action: String,
+                             identifiers: [String: String] = [:],
+                             data: [String: Any] = [:]) {
+        odpManager.sendEvent(type: type ?? Constants.ODP.eventType,
+                             action: action,
+                             identifiers: identifiers,
+                             data: data)
+    }
+
+    var vuid: String {
+        return odpManager.vuid
+    }
+    
+    func registerUserToODP(userId: String) {
+        odpManager.identifyUser(userId: userId)
+    }
+    
+    func fetchQualifiedSegments(userId: String,
+                                options: [OptimizelySegmentOption],
+                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+        guard let segmentsToCheck = config?.allSegments else {
+            completionHandler(nil, .sdkNotReady)
+            return
+        }
+        
+        odpManager.fetchQualifiedSegments(userId: userId,
+                                          segmentsToCheck: segmentsToCheck,
+                                          options: options,
+                                          completionHandler: completionHandler)
     }
     
 }

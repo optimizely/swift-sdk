@@ -32,6 +32,7 @@ public class OptimizelyUserContext {
     }
     
     private var atomicQualifiedSegments: AtomicProperty<[String]>
+    /// an array of segment names that the user is qualified for. The result of **fetchQualifiedSegments()** will be saved here.
     public var qualifiedSegments: [String]? {
         get {
             return atomicQualifiedSegments.property
@@ -185,14 +186,11 @@ public class OptimizelyUserContext {
 
 extension OptimizelyUserContext {
     
-    /// Fetch all qualified segments for the given user identifier (**userKey** and **userValue**).
+    /// Fetch all qualified segments for the user context.
     ///
-    /// The **userId** of this context will be used by default when the user identifier is not provided.
     /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
     ///
     /// - Parameters:
-    ///   - userKey: The name of the user identifier (optional).
-    ///   - userValue: The value of the user identifier (optional).
     ///   - options: A set of options for fetching qualified segments (optional).
     ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
     public func fetchQualifiedSegments(options: [OptimizelySegmentOption] = [],
@@ -214,8 +212,11 @@ extension OptimizelyUserContext {
             completionHandler(segments, nil)
         }
     }
-
-    // true if the user is qualified for the given segment name
+    
+    /// Check is the user qualified for the given segment.
+    ///
+    /// - Parameter segment: the segment name to check qualification for..
+    /// - Returns: true if qualified.
     public func isQualifiedFor(segment: String) -> Bool {
         return atomicQualifiedSegments.property?.contains(segment) ?? false
     }

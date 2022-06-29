@@ -35,13 +35,7 @@ class ODPManager {
         self.segmentManager = segmentManager ?? ODPSegmentManager(odpConfig: odpConfig)
         self.eventManager = eventManager ?? ODPEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
         
-        if !self.vuidManager.isVUIDRegistered {
-            let vuid = self.vuidManager.vuid
-            self.eventManager.registerVUID(vuid: vuid) {
-                self.logger.d("ODP: vuid has been registered (\(vuid)).")
-                self.vuidManager.setVUIDRegistered()
-            }
-        }
+        self.eventManager.registerVUID(vuid: self.vuidManager.vuid)
     }
     
     func fetchQualifiedSegments(userId: String,
@@ -59,15 +53,11 @@ class ODPManager {
     }
     
     func identifyUser(userId: String) {
-        if vuidManager.isUserRegistered(userId: userId) {
-            logger.d("ODP: user (\(userId)) is registered already.")
-            return
-        }
-
-        eventManager.identifyUser(vuid: vuidManager.vuid, userId: userId) {
-            self.logger.d("ODP: userId (\(userId)) has been bound to (\(self.vuidManager.vuid)).")
-            self.vuidManager.addRegisteredUser(userId: userId)
-        }
+        eventManager.identifyUser(vuid: vuidManager.vuid, userId: userId)
+    }
+    
+    func sendEvent(type: String, action: String, identifiers: [String: Any], data: [String: Any]) {
+        eventManager.sendEvent(type: type, action: action, identifiers: identifiers, data: data)
     }
     
     func updateODPConfig(apiKey: String?, apiHost: String?) {

@@ -31,7 +31,10 @@ extension OptimizelyClient {
         return OptimizelyUserContext(optimizely: self, userId: userId, attributes: attributes)
     }
     
-    // VUID-based UserContext
+    /// Create a context with the device vuid for which decision APIs will be called.
+    ///
+    /// - Parameter attributes: A map of attribute names to current user attribute values.
+    /// - Returns: An OptimizelyUserContext associated with this OptimizelyClient
     public func createUserContext(attributes: [String: Any]? = nil) -> OptimizelyUserContext {
         let vuid = odpManager.vuidManager.vuid
         return OptimizelyUserContext(optimizely: self, userId: vuid, attributes: attributes)

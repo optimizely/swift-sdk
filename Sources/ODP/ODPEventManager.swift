@@ -16,19 +16,6 @@
 
 import Foundation
 
-struct ODPEvent: Codable {
-    let type: String
-    let action: String
-    // TODO: change to [String: Any] to support arbitary value types
-    let identifiers: [String: String]
-    let data: [String: String]
-    
-    // TODO: need data source later
-    // let data_source = "fullstack:swift-sdk"
-    
-    var completion: (() -> Void)?
-}
-
 class ODPEventManager {
     let odpConfig: OptimizelyODPConfig
     let zaiusMgr: ZaiusRestApiManager
@@ -52,45 +39,60 @@ class ODPEventManager {
                                                             dataStore: DataStoreFile<[Data]>(storeName: storeName))
     }
     
-    // MARK: - ODP API
+    // MARK: - events
     
-    func registerVUID(vuid: String, completion: @escaping () -> Void) {
-        let event = ODPEvent(type: "experimentation",
+    func registerVUID(vuid: String) {
+        let event = ODPEvent(type: Constants.ODP.eventType,
                              action: "client_initialized",
                              identifiers: [
                                 Constants.ODP.keyForVuid: vuid
                              ],
-                             data: [:],
-                             completion: completion)
-        dispatchEvent(event)
+                             data: addCommonEventData())
+        dispatch(event)
     }
     
-    func identifyUser(vuid: String, userId: String, completion: @escaping () -> Void) {
-        let event = ODPEvent(type: "experimentation",
+    func identifyUser(vuid: String, userId: String) {
+        let event = ODPEvent(type: Constants.ODP.eventType,
                              action: "identified",
                              identifiers: [
                                 Constants.ODP.keyForVuid: vuid,
                                 Constants.ODP.keyForUserId: userId
                              ],
-                             data: [:],
-                             completion: completion)
-        dispatchEvent(event)
+                             data: addCommonEventData())
+        dispatch(event)
+    }
+        
+    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) {
+        let event = ODPEvent(type: type,
+                             action: action,
+                             identifiers: identifiers,
+                             data: addCommonEventData(data))
+        dispatch(event)
     }
     
-    func dispatchEvent(_ event: ODPEvent) {
+    func dispatch(_ event: ODPEvent) {
         guard eventQueue.count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("ODP EventQueue is full")
             self.logger.e(error)
             return
         }
-        
+
         eventQueue.save(item: event)
-        flushEvents()
+        flush()
     }
     
-    // MARK: - Events
-    
-    func flushEvents() {
+    func addCommonEventData(_ customData: [String: Any] = [:]) -> [String: Any] {
+        let commonData = [
+            "source": "swift-sdk"
+            // others?
+        ]
+        
+        var data = customData
+        data.merge(commonData) { (current, _) in current }   // keep custom data if conflicts
+        return data
+    }
+        
+    func flush() {
         guard let odpApiKey = odpConfig.apiKey else {
             logger.d("ODP: event cannot be dispatched since apiKey not defined")
             return

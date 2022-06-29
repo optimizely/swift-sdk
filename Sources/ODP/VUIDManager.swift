@@ -17,61 +17,17 @@
 import Foundation
 
 class VUIDManager {
-    var vuidMap: VUIDMap
-    let queue: DispatchQueue
+    var vuid: String = ""
     let logger = OPTLoggerFactory.getLogger()
 
-    // a single instance (vuid as a device id) should be shared for all SDK instances
+    // a single vuid should be shared for all SDK instances
     static let shared = VUIDManager()
     
     init() {
-        self.queue = DispatchQueue(label: "vuid")
-        self.vuidMap = VUIDMap()
+        self.vuid = load()
     }
     
-    var vuid: String {
-        var vuid = ""
-        queue.sync {
-            vuid = self.vuidMap.vuid
-        }
-        return vuid
-    }
-    
-    var isVUIDRegistered: Bool {
-        var registered = false
-        queue.sync {
-            registered = self.vuidMap.registered
-        }
-        return registered
-    }
-    
-    func setVUIDRegistered() {
-        queue.async {
-            self.vuidMap.registered = true
-            self.vuidMap.save()
-        }
-    }
-
-    func isUserRegistered(userId: String) -> Bool {
-        var registered = false
-        queue.sync {
-            registered = self.vuidMap.usersSet.contains(userId)
-        }
-        return registered
-    }
-    
-    func addRegisteredUser(userId: String) {
-        queue.async {
-            self.vuidMap.addUser(userId)
-            self.vuidMap.save()
-        }
-    }
-}
-
-// MAKR: - VUID format
-
-extension VUIDManager {
-    static func makeVuid() -> String {
+    func makeVuid() -> String {
         return "VUID_" + UUID().uuidString.replacingOccurrences(of: "-", with: "")
     }
     
@@ -80,70 +36,37 @@ extension VUIDManager {
     }
 }
 
-// MARK: - VUIDMap
+// MARK: - VUID Store
 
-struct VUIDMap {
-    var vuid: String = ""
-    var registered: Bool = false
-    var users = [String]()
-    var usersSet = Set<String>()
-    
-    let maxUsersRegistered = 10
-    
-    init() {
-        self.load()
-    }
-    
-    mutating func addUser(_ userId: String) {
-        if self.usersSet.contains(userId) {
-            return
-        }
-
-        if users.count > maxUsersRegistered {
-            users.removeFirst()
-        }
-        users.append(userId)
-        
-        usersSet = Set(users)
-        save()
-    }
-    
-    // MARK: - UserDefaults
+extension VUIDManager {
     
     // UserDefaults format: (keep the most recent vuid info only)
-    //      "optimizely-vuids": {
-    //          "vuid": "vuid1",
-    //          "registered": true,
-    //          "users": ["userId1", "userId2"]
+    //      "optimizely-odp": {
+    //          "vuid": "vuid1"
     //      }
-    
-    var keyForVuidMap = "optimizely-vuid-map"
-    var keyForVuid = "vuid"
-    var keyForRegistered = "registered"
-    var keyForUsers = "users"
 
-    mutating func load() {
-        guard let vuids = UserDefaults.standard.dictionary(forKey: keyForVuidMap),
-              let oldVuid = vuids[keyForVuid] as? String
-        else {
-            self.vuid = VUIDManager.makeVuid()
-            self.registered = false
-            self.users = []
-            self.usersSet = Set(users)
-            save()
-            return
+    private var keyForVuidMap: String {
+        return "optimizely-odp"
+    }
+    private var keyForVuid: String {
+        "vuid"
+    }
+    
+    private func load() -> String {
+        if let vuids = UserDefaults.standard.dictionary(forKey: keyForVuidMap),
+           let oldVuid = vuids[keyForVuid] as? String {
+            return oldVuid
         }
         
-        self.vuid = oldVuid
-        self.registered = (vuids[keyForRegistered] as? Bool) ?? false
-        self.users = (vuids[keyForUsers] as? [String]) ?? []
-        self.usersSet = Set(users)
+        let vuid = makeVuid()
+        save(vuid: vuid)
+        return vuid
     }
 
-    func save() {
-        let dict: [String: Any] = [keyForVuid: vuid, keyForRegistered: registered, keyForUsers: users]
+    private func save(vuid: String) {
+        let dict: [String: Any] = [keyForVuid: vuid]
         UserDefaults.standard.set(dict, forKey: keyForVuidMap)
-        print("saved vuidMap: \(dict)")
         UserDefaults.standard.synchronize()
     }
+    
 }

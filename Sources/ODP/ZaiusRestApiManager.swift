@@ -29,7 +29,7 @@ class ZaiusRestApiManager {
             return
         }
         
-        guard let body = try? JSONSerialization.data(withJSONObject: events) else {
+        guard let body = try? JSONSerialization.data(withJSONObject: events.map{ $0.dict }) else {
             completionHandler(.odpEventFailed("Invalid JSON"))
             return
         }
@@ -61,10 +61,6 @@ class ZaiusRestApiManager {
                 }
             }
 
-            events.forEach { event in
-                event.completion?()
-            }
-            
             completionHandler(nil)
         }
         

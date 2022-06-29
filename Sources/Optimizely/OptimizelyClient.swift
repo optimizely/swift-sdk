@@ -922,6 +922,23 @@ extension OptimizelyClient {
 
 extension OptimizelyClient {
     
+    /// Send an event to the ODP server.
+    ///
+    /// - Parameters:
+    ///   - type: the event type (default = "fullstack").
+    ///   - action: the event action name.
+    ///   - identifiers: a dictionary for identifiers.
+    ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
+    public func sendODPEvent(type: String? = nil,
+                             action: String,
+                             identifiers: [String: String] = [:],
+                             data: [String: Any] = [:]) {
+        odpManager.sendEvent(type: type ?? Constants.ODP.eventType,
+                             action: action,
+                             identifiers: identifiers,
+                             data: data)
+    }
+
     var vuid: String {
         return odpManager.vuid
     }
@@ -933,14 +950,17 @@ extension OptimizelyClient {
     func fetchQualifiedSegments(userId: String,
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        let segmentsToCheck = options.contains(.useSubset) ? config?.allSegments : nil
+        guard let segmentsToCheck = config?.allSegments else {
+            completionHandler(nil, .sdkNotReady)
+            return
+        }
         
         odpManager.fetchQualifiedSegments(userId: userId,
                                           segmentsToCheck: segmentsToCheck,
                                           options: options,
                                           completionHandler: completionHandler)
     }
-
+    
 }
 
 // MARK: - For test support

@@ -39,21 +39,15 @@ class LRUCache<K: Hashable, V> {
     let size: Int
     let timeoutInSecs: Int
     
-    #if DEBUG
-    let minSize = 1
-    let minTimeoutInSecs = 1
-    #else
-    let minSize = 10
-    let minTimeoutInSecs = 60
-    #endif
-
     init(size: Int, timeoutInSecs: Int) {
-        self.size = max(size, minSize)
-        self.timeoutInSecs = max(timeoutInSecs, minTimeoutInSecs)
+        self.size = size
+        self.timeoutInSecs = timeoutInSecs
         self.reset()
     }
 
     func lookup(key: K) -> V? {
+        if size == 0 { return nil }
+        
         var element: CacheElement? = nil
         var needReset = false
         
@@ -84,6 +78,8 @@ class LRUCache<K: Hashable, V> {
     }
     
     func save(key: K, value: V) {
+        if size == 0 { return }
+
         queue.async(flags: .barrier) {
             let oldSegments = self.map[key]
             let newSegments = CacheElement(key: key, value: value)
@@ -104,6 +100,8 @@ class LRUCache<K: Hashable, V> {
     
     // read cache contents without order update
     func peek(key: K) -> V? {
+        if size == 0 { return nil }
+
         var element: CacheElement? = nil
         queue.sync {
             element = map[key]
@@ -112,6 +110,8 @@ class LRUCache<K: Hashable, V> {
     }
     
     func reset() {
+        if size == 0 { return }
+
         queue.sync {
             map = [K: CacheElement]()
             head = CacheElement()

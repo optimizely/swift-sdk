@@ -15,12 +15,27 @@
 //
 
 import Foundation
+import UIKit
 
 class Utils {
     
     // from auto-generated variable OPTIMIZELYSDKVERSION
     static var sdkVersion: String = OPTIMIZELYSDKVERSION
+    static let swiftSdkClientName = "swift-sdk"
     
+    static let os = UIDevice.current.systemName
+    static let osVersion = UIDevice.current.systemVersion
+    static let deviceModel = UIDevice.current.model
+    static var deviceType: String {
+        switch UIDevice.current.userInterfaceIdiom {
+        case .phone: return "Phone"
+        case .pad: return "Tablet"
+        case .tv: return "TV"
+        case .mac: return "PC"
+        default: return "Others"
+        }
+    }
+
     private static let jsonEncoder = JSONEncoder()
     
     // @objc NSNumber can be casted either Bool, Int, or Double

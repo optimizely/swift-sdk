@@ -16,7 +16,19 @@
 
 import Foundation
 
-// MARK: - REST API
+// ODP REST Events API
+// - https://api.zaius.com/v3/events
+// - test ODP public API key = "W4WzcEs-ABgXorzY7h1LCQ"
+
+/*
+ [Event Request]
+
+ curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"type":"fullstack","action":"identified","identifiers":{"vuid": "123","fs_user_id": "abc"},"data":{"idempotence_id":"xyz","source":"swift-sdk"}}' https://api.zaius.com/v3/events
+
+ [Event Response]
+
+ {"title":"Accepted","status":202,"timestamp":"2022-06-30T20:59:52.046Z"}
+*/
 
 class ZaiusRestApiManager {
     

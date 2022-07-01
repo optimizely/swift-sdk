@@ -16,9 +16,7 @@
 
 import Foundation
 
-class BatchEventBuilder {
-    static private let swiftSdkClientName = "swift-sdk"
-    
+class BatchEventBuilder {    
     static private var logger = OPTLoggerFactory.getLogger()
     
     // MARK: - Impression Event
@@ -99,7 +97,7 @@ class BatchEventBuilder {
                                     clientVersion: Utils.sdkVersion,
                                     visitors: [visitor],
                                     projectID: config.project.projectId,
-                                    clientName: swiftSdkClientName,
+                                    clientName: Utils.swiftSdkClientName,
                                     anonymizeIP: config.project.anonymizeIP,
                                     enrichDecisions: true)
         

@@ -15,6 +15,7 @@
 //
 
 import Foundation
+import UIKit
 
 class ODPEventManager {
     let odpConfig: OptimizelyODPConfig
@@ -27,9 +28,9 @@ class ODPEventManager {
 
     let logger = OPTLoggerFactory.getLogger()
 
-    init(sdkKey: String, odpConfig: OptimizelyODPConfig) {
+    init(sdkKey: String, odpConfig: OptimizelyODPConfig, apiManager: ZaiusRestApiManager? = nil) {
         self.odpConfig = odpConfig
-        self.zaiusMgr = ZaiusRestApiManager()
+        self.zaiusMgr = apiManager ?? ZaiusRestApiManager()
         
         self.queueLock = DispatchQueue(label: "event")
         
@@ -70,6 +71,29 @@ class ODPEventManager {
         dispatch(event)
     }
     
+    func addCommonEventData(_ customData: [String: Any] = [:]) -> [String: Any] {
+        var data: [String: Any] = [
+            "idempotence_id": UUID().uuidString,
+            
+            "data_source_type": "sdk",
+            "data_source": Utils.swiftSdkClientName,        // "swift-sdk"
+            "data_source_version": Utils.sdkVersion,        // "3.10.2"
+            
+            "os": Utils.os,                                 // "iOS", "Android", “Web”
+            "os_version": Utils.osVersion,                  // "13.2"
+            "device_type": Utils.deviceType,                // "Phone", "Tablet", "TV", “PC”
+            "model": Utils.deviceModel                      // "iPhone 12", "Pixel 2 XL"
+
+            // [optional]
+            // "data_source_instance": <sub>,               // if need subtypes of data_source
+        ]
+        
+        data.merge(customData) { (_, custom) in custom }    // keep custom data if conflicts
+        return data
+    }
+        
+    // MARK: - dispatch
+    
     func dispatch(_ event: ODPEvent) {
         guard eventQueue.count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("ODP EventQueue is full")
@@ -81,17 +105,6 @@ class ODPEventManager {
         flush()
     }
     
-    func addCommonEventData(_ customData: [String: Any] = [:]) -> [String: Any] {
-        let commonData = [
-            "source": "swift-sdk"
-            // others?
-        ]
-        
-        var data = customData
-        data.merge(commonData) { (current, _) in current }   // keep custom data if conflicts
-        return data
-    }
-        
     func flush() {
         guard let odpApiKey = odpConfig.apiKey else {
             logger.d("ODP: event cannot be dispatched since apiKey not defined")

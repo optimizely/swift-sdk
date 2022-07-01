@@ -16,12 +16,9 @@
 
 import Foundation
 
-// MARK: - GraphQL API
-
 // ODP GraphQL API
 // - https://api.zaius.com/v3/graphql
-
-// testODPApiKeyForAudienceSegments = "W4WzcEs-ABgXorzY7h1LCQ"
+// - test ODP public API key = "W4WzcEs-ABgXorzY7h1LCQ"
 
 /*
  
@@ -74,6 +71,31 @@ import Foundation
      }
    }
  }
+ 
+ [GraphQL Error Response]
+
+ {
+   "errors": [
+     {
+       "message": "Exception while fetching data (/customer) : java.lang.RuntimeException: could not resolve _fs_user_id = asdsdaddddd",
+       "locations": [
+         {
+           "line": 2,
+           "column": 3
+         }
+       ],
+       "path": [
+         "customer"
+       ],
+       "extensions": {
+         "classification": "InvalidIdentifierException"
+       }
+     }
+   ],
+   "data": {
+     "customer": null
+   }
+ }
 */
 
 class ZaiusGraphQLApiManager {
@@ -83,7 +105,7 @@ class ZaiusGraphQLApiManager {
                        apiHost: String,
                        userKey: String,
                        userValue: String,
-                       segmentsToCheck: [String]?,
+                       segmentsToCheck: [String],
                        completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         let subsetFilter = makeSubsetFilter(segments: segmentsToCheck)
         
@@ -108,26 +130,33 @@ class ZaiusGraphQLApiManager {
         defer { session.finishTasksAndInvalidate() }
 
         let task = session.dataTask(with: urlRequest) { data, _, error in
-            if let error = error {
+            guard error != nil, let data = data else {
+                let msg = error?.localizedDescription ?? "invalid data"
                 self.logger.d {
-                    "GraphQL download failed: \(error)"
+                    "GraphQL download failed: \(msg)"
                 }
-                completionHandler(nil, .fetchSegmentsFailed("download failed"))
+                completionHandler(nil, .fetchSegmentsFailed("network error"))
                 return
             }
             
-            guard let data = data else {
-                completionHandler(nil, .fetchSegmentsFailed("response data empty"))
+            guard let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                completionHandler(nil, .fetchSegmentsFailed("decode error"))
                 return
             }
             
-            guard let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                  let audDict: [[String: Any]] = dict.extractComponent(keyPath: "data.customer.audiences.edges")
-            else {
-                self.logger.d {
-                    "Segments not in GraphQL response JSON (the user may be not registered yet): " + String(bytes: data, encoding: .utf8)!
+            if let odpErrors: [[String: Any]] = dict.extractComponent(keyPath: "errors") {
+                if let odpError = odpErrors.first, let errorClass: String = odpError.extractComponent(keyPath: "extension.classification") {
+                    if errorClass == "InvalidIdentifierException" {
+                        completionHandler(nil, .invalidSegmentIdentifier)
+                    } else {
+                        completionHandler(nil, .fetchSegmentsFailed(errorClass))
+                    }
+                    return
                 }
-                completionHandler(nil, .fetchSegmentsFailed("segments not in json"))
+            }
+            
+            guard let audDict: [[String: Any]] = dict.extractComponent(keyPath: "data.customer.audiences.edges") else {
+                completionHandler(nil, .fetchSegmentsFailed("decode error"))
                 return
             }
                     
@@ -143,22 +172,14 @@ class ZaiusGraphQLApiManager {
         return URLSession(configuration: .ephemeral)
     }
     
-    func makeSubsetFilter(segments: [String]?) -> String {
-        // segments = nil: (fetch all segments)
-        //   --> subsetFilter = ""
+    func makeSubsetFilter(segments: [String]) -> String {
         // segments = []: (fetch none)
         //   --> subsetFilter = "(subset:[])"
         // segments = ["a"]: (fetch one segment)
         //   --> subsetFilter = "(subset:[\"a\"])"
 
-        var subsetFilter = ""
-        
-        if let segments = segments {
-            let serial = segments.map { "\"\($0)\""}.joined(separator: ",")
-            subsetFilter = "(subset:[\(serial)])"
-        }
-        
-        return subsetFilter
+        let serial = segments.map { "\"\($0)\""}.joined(separator: ",")
+        return "(subset:[\(serial)])"
     }
     
 }

@@ -82,6 +82,7 @@ public enum OptimizelyError: Error {
     
     // MARK: - AudienceSegements Errors
     
+    case invalidSegmentIdentifier
     case fetchSegmentsFailed(_ hint: String)
     case odpEventFailed(_ hint: String)
 }
@@ -153,8 +154,9 @@ extension OptimizelyError: CustomStringConvertible, ReasonProtocol {
         case .eventDispatchFailed(let hint):                message = "Event dispatch failed (\(hint))."
         case .eventDispatcherConfigError(let hint):         message = "EventDispatcher config error (\(hint))."
             
-        case .fetchSegmentsFailed(let hint):                message = "ODP: Audience segments fetch failed (\(hint))."
-        case .odpEventFailed(let hint):                     message = "ODP: Event send failed (\(hint))."
+        case .invalidSegmentIdentifier:                     message = "Audience segments fetch failed (invalid identifier)"
+        case .fetchSegmentsFailed(let hint):                message = "Audience segments fetch failed (\(hint))."
+        case .odpEventFailed(let hint):                     message = "ODP event send failed (\(hint))."
         }
         
         return message

@@ -18,8 +18,8 @@ import XCTest
 
 class OptimizelyUserContextTests_Segments: XCTestCase {
 
-    var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
-    var odpManager = MockODPManager(cacheSize: 100, cacheTimeoutInSecs: 100)
+    var optimizely: OptimizelyClient!
+    var odpConfig: OptimizelyODPConfig!
     var user: OptimizelyUserContext!
     let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
 
@@ -30,7 +30,11 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     let kUserValue = "custom_id_value"
 
     override func setUp() {
-        optimizely.odpManager = odpManager
+        odpConfig = OptimizelyODPConfig(segmentsCacheSize: 100,
+                                        segmentsCacheTimeoutInSecs: 100,
+                                        apiHost: kApiHost,
+                                        apiKey: kApiKey)
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, odpConfig: odpConfig)
         user = optimizely.createUserContext(userId: kUserId)
     }
     
@@ -51,7 +55,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     
     func testFetchQualifiedSegments_successDefaultUser() {
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey, apiHost: kApiHost) { segments, error in
+        user.fetchQualifiedSegments { segments, error in
             XCTAssertNil(error)
             XCTAssert(segments == ["segment-1"])
             XCTAssert(self.user.qualifiedSegments == segments)
@@ -66,7 +70,7 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
         user.optimizely = nil
         
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey, apiHost: kApiHost) { segments, error in
+        user.fetchQualifiedSegments { segments, error in
             XCTAssertEqual(OptimizelyError.sdkNotReady.reason, error?.reason)
             XCTAssertNil(segments)
             XCTAssertNil(self.user.qualifiedSegments)
@@ -77,7 +81,10 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     
     func testFetchQualifiedSegments_fetchFailed() {
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: "invalid-key", apiHost: kApiHost) { segments, error in
+        
+        odpConfig.apiKey = "invalid-key"
+        
+        user.fetchQualifiedSegments { segments, error in
             XCTAssertNotNil(error)
             XCTAssertNil(segments)
             XCTAssertNil(self.user.qualifiedSegments)
@@ -88,22 +95,12 @@ class OptimizelyUserContextTests_Segments: XCTestCase {
     
     // MARK: - SegmentsToCheck
     
-    func testFetchQualifiedSegments_segmentsToCheck_emptyBeforeStart() {
-        let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey, apiHost: kApiHost) { _, _ in
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
-        
-        XCTAssertNil(segmentHandler.segmentsToCheck)
-    }
-    
     func testFetchQualifiedSegments_segmentsToCheck_validAfterStart() {
         let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
         try? optimizely.start(datafile: datafile)
         
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: kApiKey, apiHost: kApiHost) { _, _ in
+        user.fetchQualifiedSegments { _, _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -231,30 +228,16 @@ extension OptimizelyUserContextTests_Segments {
 // MARK: - MockODPManager
 
 class MockODPManager: ODPManager {
-    var apiKey: String?
-    var apiHost: String?
-    var userKey: String?
-    var userValue: String?
-    var segmentsToCheck: [String]?
-    var options: [OptimizelySegmentOption]?
-        
-    override func fetchQualifiedSegments(apiKey: String,
-                                         apiHost: String,
-                                         userKey: String,
-                                         userValue: String,
-                                         segmentsToCheck: [String]?,
+    var segmentsToCheck: [String]!
+    
+    override func fetchQualifiedSegments(userId: String,
+                                         segmentsToCheck: [String],
                                          options: [OptimizelySegmentOption],
                                          completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        
-        self.apiKey = apiKey
-        self.apiHost = apiHost
-        self.userKey = userKey
-        self.userValue = userValue
         self.segmentsToCheck = segmentsToCheck
-        self.options = options
-
+        
         DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(1)) {
-            if apiKey == "invalid-key" {
+            if self.odpConfig.apiKey == "invalid-key" {
                 completionHandler(nil, OptimizelyError.generic)
             } else {
                 let sampleSegments = ["segment-1"]

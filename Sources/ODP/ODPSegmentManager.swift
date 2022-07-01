@@ -18,20 +18,22 @@ import Foundation
 
 class ODPSegmentManager {    
     let odpConfig: OptimizelyODPConfig
-    let zaiusMgr = ZaiusGraphQLApiManager()
+    let zaiusMgr: ZaiusGraphQLApiManager
     let segmentsCache: LRUCache<String, [String]>
     
     let logger = OPTLoggerFactory.getLogger()
 
-    init(odpConfig: OptimizelyODPConfig) {
+    init(odpConfig: OptimizelyODPConfig, apiManager: ZaiusGraphQLApiManager? = nil) {
         self.odpConfig = odpConfig
+        self.zaiusMgr = apiManager ?? ZaiusGraphQLApiManager()
+        
         self.segmentsCache = LRUCache<String, [String]>(size: odpConfig.segmentsCacheSize,
                                                         timeoutInSecs: odpConfig.segmentsCacheTimeoutInSecs)
     }
     
     func fetchQualifiedSegments(userKey: String,
                                 userValue: String,
-                                segmentsToCheck: [String]? = nil,
+                                segmentsToCheck: [String],
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         guard let odpApiKey = odpConfig.apiKey else {

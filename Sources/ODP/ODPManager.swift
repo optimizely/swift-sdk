@@ -39,7 +39,7 @@ class ODPManager {
     }
     
     func fetchQualifiedSegments(userId: String,
-                                segmentsToCheck: [String]? = nil,
+                                segmentsToCheck: [String],
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         let userKey = vuidManager.isVuid(visitorId: userId) ? Constants.ODP.keyForVuid : Constants.ODP.keyForUserId
@@ -56,7 +56,7 @@ class ODPManager {
         eventManager.identifyUser(vuid: vuidManager.vuid, userId: userId)
     }
     
-    func sendEvent(type: String, action: String, identifiers: [String: Any], data: [String: Any]) {
+    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) {
         eventManager.sendEvent(type: type, action: action, identifiers: identifiers, data: data)
     }
     
@@ -70,7 +70,7 @@ class ODPManager {
         odpConfig.apiHost = apiHost
 
         // flush all ODP events waiting for apiKey
-        eventManager.flushEvents()
+        eventManager.flush()
     }
     
     var vuid: String {

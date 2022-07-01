@@ -16,9 +16,8 @@
 
 import XCTest
 
-class ZaiusApiManagerTests: XCTestCase {
+class ZaiusGraphQLApiManagerTests: XCTestCase {
     let userKey = "vuid"
-    
     let userValue = "test-user-value"
     let apiKey = "test-api-key"
     let apiHost = "https://test-host"
@@ -26,17 +25,21 @@ class ZaiusApiManagerTests: XCTestCase {
     static var createdApiRequest: URLRequest?
     
     func testFetchQualifiedSegments_success() {
-        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodResponseData))
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodResponseData))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
+        api.fetchSegments(apiKey: apiKey,
+                          apiHost: apiHost,
+                          userKey: userKey,
+                          userValue: userValue,
+                          segmentsToCheck: []) { segments, error in
             XCTAssertNil(error)
-            XCTAssertEqual(segments, ["qualified"])
+            XCTAssertEqual(segments, ["a"])
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
         
-        guard let request = ZaiusApiManagerTests.createdApiRequest else {
+        guard let request = ZaiusGraphQLApiManagerTests.createdApiRequest else {
             XCTFail()
             return
         }
@@ -53,10 +56,14 @@ class ZaiusApiManagerTests: XCTestCase {
     }
     
     func testFetchQualifiedSegments_successWithEmptySegments() {
-        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodEmptyResponseData))
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodEmptyResponseData))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
+        api.fetchSegments(apiKey: apiKey,
+                          apiHost: apiHost,
+                          userKey: userKey,
+                          userValue: userValue,
+                          segmentsToCheck: []) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(segments, [])
             sem.signal()
@@ -65,10 +72,14 @@ class ZaiusApiManagerTests: XCTestCase {
     }
     
     func testFetchQualifiedSegments_badResponse() {
-        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.badResponseData))
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.badResponseData))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
+        api.fetchSegments(apiKey: apiKey,
+                          apiHost: apiHost,
+                          userKey: userKey,
+                          userValue: userValue,
+                          segmentsToCheck: []) { segments, error in
             if case .fetchSegmentsFailed("segments not in json") = error {
                 XCTAssert(true)
             } else {
@@ -81,10 +92,14 @@ class ZaiusApiManagerTests: XCTestCase {
     }
     
     func testFetchQualifiedSegments_networkError() {
-        let manager = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
+        let api = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
         
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: nil) { segments, error in
+        api.fetchSegments(apiKey: apiKey,
+                          apiHost: apiHost,
+                          userKey: userKey,
+                          userValue: userValue,
+                          segmentsToCheck: []) { segments, error in
             if case .fetchSegmentsFailed("download failed") = error {
                 XCTAssert(true)
             } else {
@@ -95,17 +110,21 @@ class ZaiusApiManagerTests: XCTestCase {
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
-            
+    
     func testGraphQLRequest_subsetSegments() {
-        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200))
-
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200))
+        
         let sem = DispatchSemaphore(value: 0)
-        manager.fetch(apiKey: apiKey, apiHost: apiHost, userKey: userKey, userValue: userValue, segmentsToCheck: ["a", "b"]) { _, _ in
+        api.fetchSegments(apiKey: apiKey,
+                          apiHost: apiHost,
+                          userKey: userKey,
+                          userValue: userValue,
+                          segmentsToCheck: ["a", "b"]) { _, _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-
-        guard let request = ZaiusApiManagerTests.createdApiRequest else {
+        
+        guard let request = ZaiusGraphQLApiManagerTests.createdApiRequest else {
             XCTFail()
             return
         }
@@ -116,14 +135,13 @@ class ZaiusApiManagerTests: XCTestCase {
         
         XCTAssertEqual(expectedBody, try! JSONDecoder().decode([String: String].self, from: request.httpBody!))
     }
-
+    
     func testMakeSubsetFilter() {
-        let manager = ZaiusApiManager()
-
-        XCTAssertEqual("", manager.makeSubsetFilter(segments: nil))
-        XCTAssertEqual("(subset:[])", manager.makeSubsetFilter(segments: []))
-        XCTAssertEqual("(subset:[\"a\"])", manager.makeSubsetFilter(segments: ["a"]))
-        XCTAssertEqual("(subset:[\"a\",\"b\",\"c\"])",manager.makeSubsetFilter(segments: ["a", "b", "c"]))
+        let api = ZaiusGraphQLApiManager()
+        
+        XCTAssertEqual("(subset:[])", api.makeSubsetFilter(segments: []))
+        XCTAssertEqual("(subset:[\"a\"])", api.makeSubsetFilter(segments: ["a"]))
+        XCTAssertEqual("(subset:[\"a\",\"b\",\"c\"])",api.makeSubsetFilter(segments: ["a", "b", "c"]))
     }
     
     func testExtractComponent() {
@@ -134,10 +152,10 @@ class ZaiusApiManagerTests: XCTestCase {
         XCTAssertNil(dict.extractComponent(keyPath: "a.b.c.d"))
         XCTAssertNil(dict.extractComponent(keyPath: "d"))
     }
-        
+    
     // MARK: - MockZaiusApiManager
     
-    class MockZaiusApiManager: ZaiusApiManager {
+    class MockZaiusApiManager: ZaiusGraphQLApiManager {
         let mockUrlSession: URLSession
         
         init(_ urlSession: URLSession) {
@@ -177,7 +195,7 @@ class ZaiusApiManagerTests: XCTestCase {
         }
         
         override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-            ZaiusApiManagerTests.createdApiRequest = request
+            ZaiusGraphQLApiManagerTests.createdApiRequest = request
             
             return MockDataTask() {
                 let statusCode = self.statusCode != 0 ? self.statusCode : 200
@@ -207,14 +225,14 @@ class ZaiusApiManagerTests: XCTestCase {
                         "edges": [
                             {
                                 "node": {
-                                    "name": "qualified",
+                                    "name": "a",
                                     "state": "qualified",
                                     "description": "qualifed sample"
                                 }
                             },
                             {
                                 "node": {
-                                    "name": "not-qualified",
+                                    "name": "b",
                                     "state": "not_qualified",
                                     "description": "not-qualified sample"
                                 }
@@ -235,6 +253,31 @@ class ZaiusApiManagerTests: XCTestCase {
                     }
                 }
             }
+        }
+        """
+        
+        static let goodErrorResponseData: String = """
+        {
+          "errors": [
+            {
+              "message": "Exception while fetching data (/customer) : java.lang.RuntimeException: could not resolve _fs_user_id = asdsdaddddd",
+              "locations": [
+                {
+                  "line": 2,
+                  "column": 3
+                }
+              ],
+              "path": [
+                "customer"
+              ],
+              "extensions": {
+                "classification": "InvalidIdentifierException"
+              }
+            }
+          ],
+          "data": {
+            "customer": null
+          }
         }
         """
         

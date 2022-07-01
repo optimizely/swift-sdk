@@ -79,10 +79,11 @@ class ODPEventManager {
             "data_source": Utils.swiftSdkClientName,        // "swift-sdk"
             "data_source_version": Utils.sdkVersion,        // "3.10.2"
             
-            "os": Utils.os,                                 // ("iOS", "Android", “Web”)
+            // [optional] client sdks only
+            "os": Utils.os,                                 // ("iOS", "Android", "Mac OS", "Windows", "Linux", ...)
             "os_version": Utils.osVersion,                  // "13.2", ...
-            "device_type": Utils.deviceType,                // ("Phone", "Tablet", "Smart TV", “PC”, "Other")
-            "model": Utils.deviceModel                      // "iPhone 12", "Pixel 2 XL"
+            "device_type": Utils.deviceType,                // fixed set = ("Phone", "Tablet", "Smart TV", “PC”, "Other")
+            "model": Utils.deviceModel                      // ("iPhone 12", "iPad 2", "Pixel 2", "SM-A515F", ...)
 
             // [optional]
             // "data_source_instance": <sub>,               // if need subtypes of data_source

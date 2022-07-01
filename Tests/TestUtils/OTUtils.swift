@@ -87,6 +87,16 @@ class OTUtils {
         return nil
     }
     
+    static func compareDictionaries(_ d1: [String: Any], _ d2: [String: Any]) -> Bool {
+        if #available(tvOS 11.0, *) {
+            let data1 = try! JSONSerialization.data(withJSONObject: d1, options: .sortedKeys)
+            let data2 = try! JSONSerialization.data(withJSONObject: d2, options: .sortedKeys)
+            return data1 == data2
+        } else {
+            return true
+        }
+    }
+    
     static func model<T: Codable>(from raw: Any) throws -> T {
         return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
     }

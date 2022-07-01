@@ -16,254 +16,165 @@
 
 import XCTest
 
-//class ZaiusRestApiManagerTests: XCTestCase {
-//    let userKey = "vuid"
-//    
-//    let userValue = "test-user-value"
-//    let apiKey = "test-api-key"
-//    let apiHost = "https://test-host"
-//    
-//    static var createdApiRequest: URLRequest?
-//    
-//    func testFetchQualifiedSegments_success() {
-//        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodResponseData))
-//        
-//        let sem = DispatchSemaphore(value: 0)
-//        manager.fetchSegments(apiKey: apiKey,
-//                              apiHost: apiHost,
-//                              userKey: userKey,
-//                              userValue: userValue,
-//                              segmentsToCheck: []) { segments, error in
-//            XCTAssertNil(error)
-//            XCTAssertEqual(segments, ["qualified"])
-//            sem.signal()
-//        }
-//        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-//        
-//        guard let request = ODPSegmentManagerTests.createdApiRequest else {
-//            XCTFail()
-//            return
-//        }
-//        
-//        let expectedBody = [
-//            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences {edges {node {name state}}}}}"
-//        ]
-//        
-//        XCTAssertEqual(apiHost + "/v3/graphql", request.url?.absoluteString)
-//        XCTAssertEqual("POST", request.httpMethod)
-//        XCTAssertEqual(expectedBody, try! JSONDecoder().decode([String: String].self, from: request.httpBody!))
-//        XCTAssertEqual("application/json", request.value(forHTTPHeaderField: "Content-Type"))
-//        XCTAssertEqual(apiKey, request.value(forHTTPHeaderField: "x-api-key"))
-//    }
-//    
-//    func testFetchQualifiedSegments_successWithEmptySegments() {
-//        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodEmptyResponseData))
-//        
-//        let sem = DispatchSemaphore(value: 0)
-//        manager.fetchSegments(apiKey: apiKey,
-//                              apiHost: apiHost,
-//                              userKey: userKey,
-//                              userValue: userValue,
-//                              segmentsToCheck: []) { segments, error in
-//            XCTAssertNil(error)
-//            XCTAssertEqual(segments, [])
-//            sem.signal()
-//        }
-//        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-//    }
-//    
-//    func testFetchQualifiedSegments_badResponse() {
-//        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.badResponseData))
-//        
-//        let sem = DispatchSemaphore(value: 0)
-//        manager.fetchSegments(apiKey: apiKey,
-//                              apiHost: apiHost,
-//                              userKey: userKey,
-//                              userValue: userValue,
-//                              segmentsToCheck: []) { segments, error in
-//            if case .fetchSegmentsFailed("segments not in json") = error {
-//                XCTAssert(true)
-//            } else {
-//                XCTFail()
-//            }
-//            XCTAssertNil(segments)
-//            sem.signal()
-//        }
-//        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-//    }
-//    
-//    func testFetchQualifiedSegments_networkError() {
-//        let manager = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
-//        
-//        let sem = DispatchSemaphore(value: 0)
-//        manager.fetchSegments(apiKey: apiKey,
-//                              apiHost: apiHost,
-//                              userKey: userKey,
-//                              userValue: userValue,
-//                              segmentsToCheck: []) { segments, error in
-//            if case .fetchSegmentsFailed("download failed") = error {
-//                XCTAssert(true)
-//            } else {
-//                XCTFail()
-//            }
-//            XCTAssertNil(segments)
-//            sem.signal()
-//        }
-//        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-//    }
-//            
-//    func testGraphQLRequest_subsetSegments() {
-//        let manager = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200))
-//
-//        let sem = DispatchSemaphore(value: 0)
-//        manager.fetchSegments(apiKey: apiKey,
-//                              apiHost: apiHost,
-//                              userKey: userKey,
-//                              userValue: userValue,
-//                              segmentsToCheck: ["a", "b"]) { _, _ in
-//            sem.signal()
-//        }
-//        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-//
-//        guard let request = ODPSegmentManagerTests.createdApiRequest else {
-//            XCTFail()
-//            return
-//        }
-//        
-//        let expectedBody = [
-//            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences(subset:[\"a\",\"b\"]) {edges {node {name state}}}}}"
-//        ]
-//        
-//        XCTAssertEqual(expectedBody, try! JSONDecoder().decode([String: String].self, from: request.httpBody!))
-//    }
-//
-//    func testMakeSubsetFilter() {
-//        let manager = ZaiusGraphQLApiManager()
-//
-//        XCTAssertEqual("", manager.makeSubsetFilter(segments: nil))
-//        XCTAssertEqual("(subset:[])", manager.makeSubsetFilter(segments: []))
-//        XCTAssertEqual("(subset:[\"a\"])", manager.makeSubsetFilter(segments: ["a"]))
-//        XCTAssertEqual("(subset:[\"a\",\"b\",\"c\"])",manager.makeSubsetFilter(segments: ["a", "b", "c"]))
-//    }
-//    
-//    func testExtractComponent() {
-//        let dict = ["a": ["b": ["c": "v"]]]
-//        XCTAssertEqual(["b": ["c": "v"]], dict.extractComponent(keyPath: "a"))
-//        XCTAssertEqual(["c": "v"], dict.extractComponent(keyPath: "a.b"))
-//        XCTAssertEqual("v", dict.extractComponent(keyPath: "a.b.c"))
-//        XCTAssertNil(dict.extractComponent(keyPath: "a.b.c.d"))
-//        XCTAssertNil(dict.extractComponent(keyPath: "d"))
-//    }
-//        
-//    // MARK: - MockZaiusApiManager
-//    
-//    class MockZaiusApiManager: ZaiusGraphQLApiManager {
-//        let mockUrlSession: URLSession
-//        
-//        init(_ urlSession: URLSession) {
-//            mockUrlSession = urlSession
-//        }
-//        
-//        override func getSession() -> URLSession {
-//            return mockUrlSession
-//        }
-//    }
-//    
-//    // MARK: - MockZaiusUrlSession
-//    
-//    class MockZaiusUrlSession: URLSession {
-//        static var validSessions = 0
-//        var statusCode: Int
-//        var withError: Bool
-//        var responseData: String?
-//        
-//        class MockDataTask: URLSessionDataTask {
-//            var task: () -> Void
-//            
-//            init(_ task: @escaping () -> Void) {
-//                self.task = task
-//            }
-//            
-//            override func resume() {
-//                task()
-//            }
-//        }
-//        
-//        init(statusCode: Int = 0, withError: Bool = false, responseData: String? = nil) {
-//            Self.validSessions += 1
-//            self.statusCode = statusCode
-//            self.withError = withError
-//            self.responseData = responseData ?? MockZaiusUrlSession.goodResponseData
-//        }
-//        
-//        override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-//            ODPSegmentManagerTests.createdApiRequest = request
-//            
-//            return MockDataTask() {
-//                let statusCode = self.statusCode != 0 ? self.statusCode : 200
-//                let response = HTTPURLResponse(url: request.url!,
-//                                               statusCode: statusCode,
-//                                               httpVersion: nil,
-//                                               headerFields: [String: String]())
-//                
-//                let data = self.responseData?.data(using: .utf8)
-//                let error = self.withError ? OptimizelyError.generic : nil
-//                
-//                completionHandler(data, response, error)
-//            }
-//        }
-//        
-//        override func finishTasksAndInvalidate() {
-//            Self.validSessions -= 1
-//        }
-//        
-//        // MARK: - Utils
-//        
-//        static let goodResponseData: String = """
-//        {
-//            "data": {
-//                "customer": {
-//                    "audiences": {
-//                        "edges": [
-//                            {
-//                                "node": {
-//                                    "name": "qualified",
-//                                    "state": "qualified",
-//                                    "description": "qualifed sample"
-//                                }
-//                            },
-//                            {
-//                                "node": {
-//                                    "name": "not-qualified",
-//                                    "state": "not_qualified",
-//                                    "description": "not-qualified sample"
-//                                }
-//                            }
-//                        ]
-//                    }
-//                }
-//            }
-//        }
-//        """
-//        
-//        static let goodEmptyResponseData: String = """
-//        {
-//            "data": {
-//                "customer": {
-//                    "audiences": {
-//                        "edges": []
-//                    }
-//                }
-//            }
-//        }
-//        """
-//        
-//        static let badResponseData: String = """
-//        {
-//            "data": {}
-//        }
-//        """
-//        
-//    }
-//    
-//}
+class ZaiusRestApiManagerTests: XCTestCase {
+    let userKey = "vuid"
+    let userValue = "test-user-value"
+    let apiKey = "test-api-key"
+    let apiHost = "test-host"
+    
+    let events: [ODPEvent] = [
+        ODPEvent(type: "fullstack", action: "a", identifiers: ["id-key-1": "id-value-1"], data: ["key-1": "value-1"])
+    ]
+    
+    static var createdApiRequest: URLRequest?
+    
+    func testSendODPEvents_validRequest() {
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200,
+                                                          responseData: MockZaiusUrlSession.successResponseData))
+        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { _ in }
+
+        let request = ZaiusRestApiManagerTests.createdApiRequest!
+
+        XCTAssertEqual(apiHost + "/v3/events", request.url?.absoluteString)
+        XCTAssertEqual("POST", request.httpMethod)
+        XCTAssertEqual("application/json", request.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertEqual(apiKey, request.value(forHTTPHeaderField: "x-api-key"))
+        
+        let bodyArray = try! JSONSerialization.jsonObject(with: request.httpBody!, options: []) as! [[String: Any]]
+        let expectedArray = events.map { $0.dict }
+        XCTAssertEqual(2, bodyArray.count)
+        for i in 0..<bodyArray.count {
+            XCTAssert(OTUtils.compareDictionaries(expectedArray[i], bodyArray[i]))
+        }
+    }
+
+    func testSendODPEvents_success() {
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200,
+                                                          responseData: MockZaiusUrlSession.successResponseData))
+        let sem = DispatchSemaphore(value: 0)
+        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
+            XCTAssertNil(error)
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+    }
+    
+    func testSendODPEvents_networkError_retry() {
+        let api = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
+        
+        let sem = DispatchSemaphore(value: 0)
+        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
+            if case .odpEventFailed(_, let canRetry) = error {
+                XCTAssertTrue(canRetry)
+            } else {
+                XCTFail()
+            }
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+    }
+            
+    func testSendODPEvents_400_noRetry() {
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 400, responseData: MockZaiusUrlSession.failureResponseData))
+
+        let sem = DispatchSemaphore(value: 0)
+        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
+            if case .odpEventFailed(_, let canRetry) = error {
+                XCTAssertFalse(canRetry)
+            } else {
+                XCTFail()
+            }
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+    }
+    
+    func testSendODPEvents_500_retry() {
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 500, responseData: "server error"))
+
+        let sem = DispatchSemaphore(value: 0)
+        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
+            if case .odpEventFailed(_, let canRetry) = error {
+                XCTAssertTrue(canRetry)
+            } else {
+                XCTFail()
+            }
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+    }
+
+    // MARK: - MockZaiusApiManager
+    
+    class MockZaiusApiManager: ZaiusRestApiManager {
+        let mockUrlSession: URLSession
+        
+        init(_ urlSession: URLSession) {
+            mockUrlSession = urlSession
+        }
+        
+        override func getSession() -> URLSession {
+            return mockUrlSession
+        }
+    }
+    
+    // MARK: - MockZaiusUrlSession
+    
+    class MockZaiusUrlSession: URLSession {
+        static var validSessions = 0
+        var statusCode: Int
+        var withError: Bool
+        var responseData: String?
+        
+        class MockDataTask: URLSessionDataTask {
+            var task: () -> Void
+            
+            init(_ task: @escaping () -> Void) {
+                self.task = task
+            }
+            
+            override func resume() {
+                task()
+            }
+        }
+        
+        init(statusCode: Int = 0, withError: Bool = false, responseData: String? = nil) {
+            Self.validSessions += 1
+            self.statusCode = statusCode
+            self.withError = withError
+            self.responseData = responseData ?? MockZaiusUrlSession.successResponseData
+        }
+        
+        override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+            ZaiusRestApiManagerTests.createdApiRequest = request
+            
+            return MockDataTask() {
+                let statusCode = self.statusCode != 0 ? self.statusCode : 200
+                let response = HTTPURLResponse(url: request.url!,
+                                               statusCode: statusCode,
+                                               httpVersion: nil,
+                                               headerFields: [String: String]())
+                
+                let data = self.responseData?.data(using: .utf8)
+                let error = self.withError ? OptimizelyError.generic : nil
+                
+                completionHandler(data, response, error)
+            }
+        }
+        
+        override func finishTasksAndInvalidate() {
+            Self.validSessions -= 1
+        }
+        
+        // MARK: - Utils
+        
+        static let successResponseData: String = """
+        {"title":"Accepted","status":202,"timestamp":"2022-07-01T16:04:06.786Z"}
+        """
+
+        static let failureResponseData: String = """
+        {"title":"Bad Request","status":400,"timestamp":"2022-07-01T20:44:00.945Z","detail":{"invalids":[{"event":0,"message":"missing 'type' field"}]}}
+        """
+    }
+    
+}

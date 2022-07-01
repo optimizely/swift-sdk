@@ -18,26 +18,28 @@ import XCTest
 
 class ODPSegmentManagerTests: XCTestCase {
     var manager: ODPSegmentManager!
-    var odpConfig = OptimizelyODPConfig()
+    var odpConfig: OptimizelyODPConfig!
     
     var options = [OptimizelySegmentOption]()
     
-    var apiKey = "valid"
-    var apiHost = "host"
-
     var userKey = "vuid"
     var userValue = "test-user"
+    static var receivedApiKey: String?
+    static var receivedApiHost: String?
     
     override func setUp() {
+        odpConfig = OptimizelyODPConfig()
+        odpConfig.apiKey = "valid"
+        odpConfig.apiHost = "host"
+        
         manager = ODPSegmentManager(odpConfig: odpConfig,
                                     apiManager: MockZaiusApiManager())
     }
     
-    func testSuccess_cacheMiss() {
+    func testFetchSegmentsSuccess_cacheMiss() {
         setCache(userKey, "123", ["a"])
 
         let sem = DispatchSemaphore(value: 0)
-        
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
                                        segmentsToCheck: [],
@@ -46,15 +48,13 @@ class ODPSegmentManagerTests: XCTestCase {
             XCTAssertEqual(["new-customer"], segments)
             sem.signal()
         }
-        
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
-    func testSuccess_cacheHit() {
+    func testFetchSegmentsSuccess_cacheHit() {
         setCache(userKey, userValue, ["a"])
 
         let sem = DispatchSemaphore(value: 0)
-        
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
                                        segmentsToCheck: [],
@@ -63,25 +63,57 @@ class ODPSegmentManagerTests: XCTestCase {
             XCTAssertEqual(["a"], segments)
             sem.signal()
         }
-        
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
     
-    func testError() {
-        let sem = DispatchSemaphore(value: 0)
-        
+    func testFetchSegmentsError() {
         odpConfig.apiKey = "invalid-key"
         
+        let sem = DispatchSemaphore(value: 0)
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
                                        segmentsToCheck: [],
                                        options: []) { segments, error in
             XCTAssertNotNil(error)
-            XCTAssert(segments!.isEmpty )
+            XCTAssertNil(segments)
             sem.signal()
         }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+    }
+    
+    // MARK: - OdpConfig
+    
+    func testOdpConfig() {
+        // default
         
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+        odpConfig = OptimizelyODPConfig()
+        manager = ODPSegmentManager(odpConfig: odpConfig, apiManager: MockZaiusApiManager())
+        manager.fetchQualifiedSegments(userKey: userKey,
+                                       userValue: userValue,
+                                       segmentsToCheck: [],
+                                       options: options) { _, _ in }
+        
+        XCTAssertEqual(100, manager.segmentsCache.size)
+        XCTAssertEqual(600, manager.segmentsCache.timeoutInSecs)
+        XCTAssertNil(ODPSegmentManagerTests.receivedApiHost)
+        XCTAssertNil(ODPSegmentManagerTests.receivedApiKey)
+
+        // custom configuration
+        
+        odpConfig = OptimizelyODPConfig(segmentsCacheSize: 3,
+                                        segmentsCacheTimeoutInSecs: 30,
+                                        apiHost: "test-host",
+                                        apiKey: "test-key")
+        manager = ODPSegmentManager(odpConfig: odpConfig, apiManager: MockZaiusApiManager())
+        manager.fetchQualifiedSegments(userKey: userKey,
+                                       userValue: userValue,
+                                       segmentsToCheck: [],
+                                       options: options) { _, _ in }
+        
+        XCTAssertEqual(3, manager.segmentsCache.size)
+        XCTAssertEqual(39, manager.segmentsCache.timeoutInSecs)
+        XCTAssertEqual("test-host", ODPSegmentManagerTests.receivedApiHost)
+        XCTAssertEqual("test-key", ODPSegmentManagerTests.receivedApiKey)
     }
     
     // MARK: - OptimizelySegmentOption
@@ -91,7 +123,6 @@ class ODPSegmentManagerTests: XCTestCase {
         options = [.ignoreCache]
 
         let sem = DispatchSemaphore(value: 0)
-        
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
                                        segmentsToCheck: [],
@@ -101,8 +132,7 @@ class ODPSegmentManagerTests: XCTestCase {
             XCTAssertEqual(1, self.cacheCount, "cache save should be skipped as well")
             sem.signal()
         }
-
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
     
     func testOptions_resetCache() {
@@ -112,7 +142,6 @@ class ODPSegmentManagerTests: XCTestCase {
         options = [.resetCache]
 
         let sem = DispatchSemaphore(value: 0)
-        
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
                                        segmentsToCheck: [],
@@ -123,8 +152,11 @@ class ODPSegmentManagerTests: XCTestCase {
             XCTAssertEqual(1, self.cacheCount, "cache should be reset and then add a new one")
             sem.signal()
         }
-
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+    }
+    
+    func testMakeCacheKey() {
+        XCTAssertEqual("vuid-$-test-user", manager.makeCacheKey(userKey, userValue))
     }
 
     // MARK: - Utils
@@ -153,9 +185,12 @@ class ODPSegmentManagerTests: XCTestCase {
                                     userValue: String,
                                     segmentsToCheck: [String],
                                     completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+            ODPSegmentManagerTests.receivedApiKey = apiKey
+            ODPSegmentManagerTests.receivedApiHost = apiHost
+            
             DispatchQueue.global().async {
                 if apiKey == "invalid-key" {
-                    completionHandler([], OptimizelyError.fetchSegmentsFailed("invalid key"))
+                    completionHandler([], OptimizelyError.fetchSegmentsFailed("403"))
                 } else {
                     completionHandler(["new-customer"], nil)
                 }

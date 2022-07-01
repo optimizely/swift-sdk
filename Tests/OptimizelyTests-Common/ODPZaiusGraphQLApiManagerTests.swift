@@ -163,6 +163,46 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
     
+    func testFetchQualifiedSegments_400() {
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 403, responseData: "Bad Request"))
+
+        let sem = DispatchSemaphore(value: 0)
+        api.fetchSegments(apiKey: apiKey,
+                          apiHost: apiHost,
+                          userKey: userKey,
+                          userValue: userValue,
+                          segmentsToCheck: []) { segments, error in
+            if case .fetchSegmentsFailed("403") = error {
+                XCTAssert(true)
+            } else {
+                XCTFail()
+            }
+            XCTAssertNil(segments)
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+    }
+
+    func testFetchQualifiedSegments_500() {
+        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 500, responseData: "Server Error"))
+
+        let sem = DispatchSemaphore(value: 0)
+        api.fetchSegments(apiKey: apiKey,
+                          apiHost: apiHost,
+                          userKey: userKey,
+                          userValue: userValue,
+                          segmentsToCheck: []) { segments, error in
+            if case .fetchSegmentsFailed("500") = error {
+                XCTAssert(true)
+            } else {
+                XCTFail()
+            }
+            XCTAssertNil(segments)
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+    }
+    
     // MARK: - Others
     
     func testMakeSubsetFilter() {

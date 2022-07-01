@@ -129,13 +129,19 @@ class ZaiusGraphQLApiManager {
         // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
         defer { session.finishTasksAndInvalidate() }
 
-        let task = session.dataTask(with: urlRequest) { data, _, error in
-            guard error != nil, let data = data else {
-                let msg = error?.localizedDescription ?? "invalid data"
+        let task = session.dataTask(with: urlRequest) { data, response, error in
+            guard error != nil, let data = data, let response = response as? HTTPURLResponse else {
+                let msg = error?.localizedDescription ?? "invalid response"
                 self.logger.d {
                     "GraphQL download failed: \(msg)"
                 }
                 completionHandler(nil, .fetchSegmentsFailed("network error"))
+                return
+            }
+            
+            let status = response.statusCode
+            guard status < 400 else {
+                completionHandler(nil, .fetchSegmentsFailed("\(status)"))
                 return
             }
             

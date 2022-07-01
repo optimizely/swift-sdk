@@ -30,9 +30,9 @@ class Utils {
         switch UIDevice.current.userInterfaceIdiom {
         case .phone: return "Phone"
         case .pad: return "Tablet"
-        case .tv: return "TV"
+        case .tv: return "Smart TV"
         case .mac: return "PC"
-        default: return "Others"
+        default: return "Other"
         }
     }
 

@@ -84,7 +84,7 @@ public enum OptimizelyError: Error {
     
     case invalidSegmentIdentifier
     case fetchSegmentsFailed(_ hint: String)
-    case odpEventFailed(_ hint: String)
+    case odpEventFailed(_ hint: String, _ canRetry: Bool)
 }
 
 // MARK: - CustomStringConvertible
@@ -156,7 +156,7 @@ extension OptimizelyError: CustomStringConvertible, ReasonProtocol {
             
         case .invalidSegmentIdentifier:                     message = "Audience segments fetch failed (invalid identifier)"
         case .fetchSegmentsFailed(let hint):                message = "Audience segments fetch failed (\(hint))."
-        case .odpEventFailed(let hint):                     message = "ODP event send failed (\(hint))."
+        case .odpEventFailed(let hint, _):                  message = "ODP event send failed (\(hint))."
         }
         
         return message

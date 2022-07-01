@@ -79,9 +79,9 @@ class ODPEventManager {
             "data_source": Utils.swiftSdkClientName,        // "swift-sdk"
             "data_source_version": Utils.sdkVersion,        // "3.10.2"
             
-            "os": Utils.os,                                 // "iOS", "Android", “Web”
-            "os_version": Utils.osVersion,                  // "13.2"
-            "device_type": Utils.deviceType,                // "Phone", "Tablet", "TV", “PC”
+            "os": Utils.os,                                 // ("iOS", "Android", “Web”)
+            "os_version": Utils.osVersion,                  // "13.2", ...
+            "device_type": Utils.deviceType,                // ("Phone", "Tablet", "Smart TV", “PC”, "Other")
             "model": Utils.deviceModel                      // "iPhone 12", "Pixel 2 XL"
 
             // [optional]
@@ -144,20 +144,30 @@ class ODPEventManager {
                 self.zaiusMgr.sendODPEvents(apiKey: odpApiKey,
                                             apiHost: self.odpConfig.apiHost,
                                             events: events) { error in
-                    if error != nil {
-                        self.logger.e(error!.reason)
-                        failureCount += 1
-                    } else {
-                        removeStoredEvents(num: numEvents)
-                        failureCount = 0
+                    defer {
+                        notify.leave()  // our send is done.
                     }
                     
-                    // our send is done.
-                    notify.leave()
+                    if let error = error {
+                        self.logger.e(error.reason)
+                        
+                        // retry only if needed (non-permanent)
+                        if case .odpEventFailed(_, let canRetry) = error {
+                            if canRetry {
+                                failureCount += 1
+                                return
+                            } else {
+                                // permanent errors (400 response or invalid events, etc)
+                                // discard these events so not they do not block following valid events
+                            }
+                        }
+                    }
+                        
+                    removeStoredEvents(num: numEvents)
+                    failureCount = 0
                 }
                 
-                // wait for send
-                notify.wait()
+                notify.wait()  // wait for send completed
             }
         }
     }

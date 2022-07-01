@@ -37,12 +37,14 @@ class ZaiusRestApiManager {
                        events: [ODPEvent],
                        completionHandler: @escaping (OptimizelyError?) -> Void) {
         guard let url = URL(string: "\(apiHost)/v3/events") else {
-            completionHandler(.odpEventFailed("Invalid url"))
+            let canRetry = false
+            completionHandler(.odpEventFailed("Invalid url", canRetry))
             return
         }
         
         guard let body = try? JSONSerialization.data(withJSONObject: events.map{ $0.dict }) else {
-            completionHandler(.odpEventFailed("Invalid JSON"))
+            let canRetry = false
+            completionHandler(.odpEventFailed("Invalid JSON", canRetry))
             return
         }
         
@@ -57,23 +59,36 @@ class ZaiusRestApiManager {
         defer { session.finishTasksAndInvalidate() }
 
         let task = session.dataTask(with: urlRequest) { data, response, error in
+            var errMessage: String?
+            var canRetry: Bool = true
+            
+            defer {
+                if let errMessage = errMessage {
+                    completionHandler(.odpEventFailed(errMessage, canRetry))
+                } else {
+                    completionHandler(nil)
+                }
+            }
+            
             if let error = error {
-                completionHandler(.odpEventFailed(error.localizedDescription))
+                errMessage = error.localizedDescription
                 return
             }
             
-            if let response = response as? HTTPURLResponse {
-                if response.statusCode >= 400 {
-                    var message = "UNKNOWN"
-                    if let data = data, let msg = String(bytes: data, encoding: .utf8) {
-                        message = msg
-                    }
-                    completionHandler(.odpEventFailed(message))
-                    return
-                }
+            guard let response = response as? HTTPURLResponse else {
+                errMessage = "invalid response"
+                return
             }
-
-            completionHandler(nil)
+            
+            switch response.statusCode {
+            case ..<400:
+                errMessage = nil    // success
+            case 400..<500:
+                errMessage = "\(response.statusCode)"
+                canRetry = false   // no retry (client error)
+            default:
+                errMessage = "\(response.statusCode)"
+            }
         }
         
         task.resume()

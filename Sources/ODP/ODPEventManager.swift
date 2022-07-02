@@ -43,24 +43,22 @@ class ODPEventManager {
     // MARK: - events
     
     func registerVUID(vuid: String) {
-        let event = ODPEvent(type: Constants.ODP.eventType,
-                             action: "client_initialized",
-                             identifiers: [
-                                Constants.ODP.keyForVuid: vuid
-                             ],
-                             data: addCommonEventData())
-        dispatch(event)
+        sendEvent(type: Constants.ODP.eventType,
+                  action: "client_initialized",
+                  identifiers: [
+                    Constants.ODP.keyForVuid: vuid
+                  ],
+                  data: [:])
     }
     
     func identifyUser(vuid: String, userId: String) {
-        let event = ODPEvent(type: Constants.ODP.eventType,
-                             action: "identified",
-                             identifiers: [
-                                Constants.ODP.keyForVuid: vuid,
-                                Constants.ODP.keyForUserId: userId
-                             ],
-                             data: addCommonEventData())
-        dispatch(event)
+        sendEvent(type: Constants.ODP.eventType,
+                  action: "identified",
+                  identifiers: [
+                    Constants.ODP.keyForVuid: vuid,
+                    Constants.ODP.keyForUserId: userId
+                  ],
+                  data: [:])
     }
         
     func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) {
@@ -80,7 +78,7 @@ class ODPEventManager {
             "data_source_version": Utils.sdkVersion,        // "3.10.2"
             
             // [optional] client sdks only
-            "os": Utils.os,                                 // ("iOS", "Android", "Mac OS", "Windows", "Linux", ...)
+            "os": "iOS",                                    // ("iOS", "Android", "Mac OS", "Windows", "Linux", ...)
             "os_version": Utils.osVersion,                  // "13.2", ...
             "device_type": Utils.deviceType,                // fixed set = ("Phone", "Tablet", "Smart TV", “PC”, "Other")
             "model": Utils.deviceModel                      // ("iPhone 12", "iPad 2", "Pixel 2", "SM-A515F", ...)

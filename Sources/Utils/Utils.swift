@@ -23,7 +23,6 @@ class Utils {
     static var sdkVersion: String = OPTIMIZELYSDKVERSION
     static let swiftSdkClientName = "swift-sdk"
     
-    static let os = UIDevice.current.systemName
     static let osVersion = UIDevice.current.systemVersion
     static let deviceModel = UIDevice.current.model
     static var deviceType: String {

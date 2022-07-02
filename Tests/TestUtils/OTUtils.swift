@@ -233,8 +233,8 @@ class OTUtils {
     }
     
     static func clearAllEventQueues() {
-        removeAllFiles(including: "OPTEventQueue", in: .documentDirectory)
-        removeAllFiles(including: "OPTEventQueue", in: .cachesDirectory)
+        removeAllFiles(including: "OPTEvent", in: .documentDirectory)
+        removeAllFiles(including: "OPTEvent", in: .cachesDirectory)
     }
 
     // MARK: - datafiles

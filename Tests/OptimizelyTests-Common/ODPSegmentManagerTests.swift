@@ -175,7 +175,7 @@ class ODPSegmentManagerTests: XCTestCase {
         return manager.segmentsCache.map.count
     }
 
-    // MARK: - MockSegmentManager
+    // MARK: - MockZaiusApiManager
 
     class MockZaiusApiManager: ZaiusGraphQLApiManager {
         

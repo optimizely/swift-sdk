@@ -65,4 +65,16 @@ struct ODPEvent: Codable {
             "data": data
         ]
     }
+
+}
+
+extension ODPEvent: Equatable {
+    
+    public static func == (lhs: ODPEvent, rhs: ODPEvent) -> Bool {
+        return lhs.type == rhs.type &&
+            lhs.action == rhs.action &&
+            lhs.identifiers == rhs.identifiers &&
+            lhs.dataSerial == rhs.dataSerial
+    }
+    
 }

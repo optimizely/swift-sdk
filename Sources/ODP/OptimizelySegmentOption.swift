@@ -22,6 +22,4 @@ import Foundation
     case ignoreCache
     // reset cache
     case resetCache
-    // fetch all segments
-    case allSegments
 }

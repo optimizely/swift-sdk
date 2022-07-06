@@ -22,20 +22,27 @@ public class OptimizelyODPConfig {
     /// timeout in seconds (default = 600) of audience segments cache (optional)
     let segmentsCacheTimeoutInSecs: Int
     /// The host URL for the ODP audience segments API (optional). If not provided, SDK will use the default host in datafile.
-    private var _apiHost: String = "https://api.zaius.com"
+    private var _apiHost: String?
     /// The public API key for the ODP account from which the audience segments will be fetched (optional). If not provided, SDK will use the default publicKey in datafile.
     private var _apiKey: String?
+    /// enabled by default (disabled when datafile has no ODP key/host settings)
+    private var _enabled = true
 
     let queue = DispatchQueue(label: "odpConfig")
     
     public init(segmentsCacheSize: Int = 100,
-                segmentsCacheTimeoutInSecs: Int = 600,
-                apiHost: String = "https://api.zaius.com",
-                apiKey: String? = nil) {
+                segmentsCacheTimeoutInSecs: Int = 600) {
         self.segmentsCacheSize = segmentsCacheSize
         self.segmentsCacheTimeoutInSecs = segmentsCacheTimeoutInSecs
-        self._apiHost = apiHost
-        self._apiKey = apiKey
+    }
+    
+    func update(apiKey: String?, apiHost: String?) {
+        self.apiKey = apiKey
+        self.apiHost = apiHost
+        
+        // disable future event queueing if datafile has no ODP settings
+    
+        self.enabled = (apiKey != nil) && (apiHost != nil)
     }
 }
 
@@ -43,9 +50,9 @@ public class OptimizelyODPConfig {
 
 extension OptimizelyODPConfig {
     
-    var apiHost: String {
+    var apiHost: String? {
         get {
-            var value = ""
+            var value: String?
             queue.sync {
                 value = _apiHost
             }
@@ -72,6 +79,21 @@ extension OptimizelyODPConfig {
             }
         }
     }
-
+    
+    var enabled: Bool {
+        get {
+            var value = false
+            queue.sync {
+                value = _enabled
+            }
+            return value
+        }
+        set {
+            queue.async {
+                self._enabled = newValue
+            }
+        }
+    }
+    
 }
 

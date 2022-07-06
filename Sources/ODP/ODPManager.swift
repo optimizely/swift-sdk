@@ -19,7 +19,7 @@ import Foundation
 class ODPManager {
     let odpConfig: OptimizelyODPConfig
     
-    let vuidManager: VUIDManager
+    let vuidManager: ODPVUIDManager
     let segmentManager: ODPSegmentManager
     let eventManager: ODPEventManager
     
@@ -27,11 +27,11 @@ class ODPManager {
 
     init(sdkKey: String,
          odpConfig: OptimizelyODPConfig,
-         vuidManager: VUIDManager? = nil,
+         vuidManager: ODPVUIDManager? = nil,
          segmentManager: ODPSegmentManager? = nil,
          eventManager: ODPEventManager? = nil) {
         self.odpConfig = odpConfig
-        self.vuidManager = vuidManager ?? VUIDManager.shared
+        self.vuidManager = vuidManager ?? ODPVUIDManager.shared
         self.segmentManager = segmentManager ?? ODPSegmentManager(odpConfig: odpConfig)
         self.eventManager = eventManager ?? ODPEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
         
@@ -57,19 +57,16 @@ class ODPManager {
     }
     
     func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) {
-        eventManager.sendEvent(type: type, action: action, identifiers: identifiers, data: data)
+        var identifiersWithVuid = identifiers
+        if identifiers[Constants.ODP.keyForVuid] == nil {
+            identifiersWithVuid[Constants.ODP.keyForVuid] = vuidManager.vuid
+        }
+        
+        eventManager.sendEvent(type: type, action: action, identifiers: identifiersWithVuid, data: data)
     }
     
     func updateODPConfig(apiKey: String?, apiHost: String?) {
-        guard let apiKey = apiKey, let apiHost = apiHost else {
-            logger.w("ODP: invalid apiKey or apiHost")
-            return
-        }
-        
-        odpConfig.apiKey = apiKey
-        odpConfig.apiHost = apiHost
-
-        // flush all ODP events waiting for apiKey
+        odpConfig.update(apiKey: apiKey, apiHost: apiHost)
         eventManager.flush()
     }
     

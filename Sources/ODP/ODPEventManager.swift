@@ -25,7 +25,7 @@ class ODPEventManager {
     let maxFailureCount = 3
     let queueLock: DispatchQueue
     let eventQueue: DataStoreQueueStackImpl<ODPEvent>
-
+        
     let logger = OPTLoggerFactory.getLogger()
 
     init(sdkKey: String, odpConfig: OptimizelyODPConfig, apiManager: ZaiusRestApiManager? = nil) {
@@ -94,6 +94,11 @@ class ODPEventManager {
     // MARK: - dispatch
     
     func dispatch(_ event: ODPEvent) {
+        guard odpConfig.enabled else {
+            logger.d("ODP has been disabled.")
+            return
+        }
+
         guard eventQueue.count < maxQueueSize else {
             let error = OptimizelyError.eventDispatchFailed("ODP EventQueue is full")
             self.logger.e(error)
@@ -105,8 +110,13 @@ class ODPEventManager {
     }
     
     func flush() {
-        guard let odpApiKey = odpConfig.apiKey else {
-            logger.d("ODP: event cannot be dispatched since apiKey not defined")
+        guard let odpApiKey = odpConfig.apiKey, let odpApiHost = odpConfig.apiHost else {
+            if !odpConfig.enabled {
+                queueLock.async {
+                    // clean up pending events if ODP is disabled
+                    _ = self.eventQueue.removeFirstItems(count: self.maxQueueSize)
+                }
+            }
             return
         }
 
@@ -141,7 +151,7 @@ class ODPEventManager {
                 notify.enter()
                 
                 self.zaiusMgr.sendODPEvents(apiKey: odpApiKey,
-                                            apiHost: self.odpConfig.apiHost,
+                                            apiHost: odpApiHost,
                                             events: events) { error in
                     defer {
                         notify.leave()  // our send is done.

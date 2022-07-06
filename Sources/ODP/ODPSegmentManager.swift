@@ -36,8 +36,8 @@ class ODPSegmentManager {
                                 segmentsToCheck: [String],
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        guard let odpApiKey = odpConfig.apiKey else {
-            completionHandler(nil, .fetchSegmentsFailed("apiKey not defined"))
+        guard let odpApiKey = odpConfig.apiKey, let odpApiHost = odpConfig.apiHost else {
+            completionHandler(nil, .fetchSegmentsFailed("apiKey/apiHost not defined"))
             return
         }
         
@@ -58,7 +58,7 @@ class ODPSegmentManager {
         }
         
         zaiusMgr.fetchSegments(apiKey: odpApiKey,
-                               apiHost: odpConfig.apiHost,
+                               apiHost: odpApiHost,
                                userKey: userKey,
                                userValue: userValue,
                                segmentsToCheck: segmentsToCheck) { segments, err in

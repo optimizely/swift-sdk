@@ -938,8 +938,9 @@ extension OptimizelyClient {
                              identifiers: identifiers,
                              data: data)
     }
-
-    var vuid: String {
+    
+    /// the device vuid (read only)
+    public var vuid: String {
         return odpManager.vuid
     }
     

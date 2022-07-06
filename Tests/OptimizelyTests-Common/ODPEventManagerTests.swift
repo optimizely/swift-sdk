@@ -19,13 +19,12 @@ import XCTest
 class ODPEventManagerTests: XCTestCase {
     var manager: ODPEventManager!
     var odpConfig: OptimizelyODPConfig!
-    
+    var apiManager = MockZaiusApiManager()
+
     var options = [OptimizelySegmentOption]()
     
     var userKey = "vuid"
     var userValue = "test-user"
-    static var receivedApiKey: String?
-    static var receivedApiHost: String?
     
     let customData: [String: Any] = ["key-1": "value-1",
                                      "key-2": 12.5,
@@ -39,7 +38,7 @@ class ODPEventManagerTests: XCTestCase {
         
         manager = ODPEventManager(sdkKey: "any",
                                   odpConfig: odpConfig,
-                                  apiManager: MockZaiusApiManager())
+                                  apiManager: apiManager)
     }
     
     override func tearDown() {
@@ -89,12 +88,11 @@ class ODPEventManagerTests: XCTestCase {
     
     func testSendEvent_apiKey() {
         odpConfig = OptimizelyODPConfig()
-        odpConfig.apiKey = "valid"
-        odpConfig.apiHost = "host"
+        odpConfig.update(apiKey: "valid", apiHost: "host")
         
         manager = ODPEventManager(sdkKey: "any",
                                   odpConfig: odpConfig,
-                                  apiManager: MockZaiusApiManager())
+                                  apiManager: apiManager)
         manager.sendEvent(type: "t1",
                           action: "a1",
                           identifiers: ["id-key-1": "id-value-1"],
@@ -122,57 +120,116 @@ class ODPEventManagerTests: XCTestCase {
 
         // apiKey is ready
         
-        odpConfig.apiKey = "valid"
-        odpConfig.apiHost = "host"
-        
+        odpConfig.update(apiKey: "valid", apiHost: "host")
+
         manager.flush()
         
         sleep(1)
         XCTAssertEqual(0, manager.eventQueue.count)
     }
     
+    // MARK: - batch
+
     func testFlush_batch_1() {
-        XCTFail()
+        let events = [
+            ODPEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+        ]
+        manager.dispatch(events[0])
+        
+        odpConfig.update(apiKey: "valid", apiHost: "host")
+        sleep(1)
+        XCTAssertEqual(1, apiManager.receivedBatchEvents.count)
+        XCTAssertEqual(1, apiManager.receivedBatchEvents[0].count)
+        validateEvents(events, apiManager.receivedBatchEvents[0])
     }
  
     func testFlush_batch_3() {
-        XCTFail()
+        let events = [
+            ODPEvent(type: "t1", action: "a1", identifiers: [:], data: [:]),
+            ODPEvent(type: "t2", action: "a2", identifiers: [:], data: [:]),
+            ODPEvent(type: "t3", action: "a3", identifiers: [:], data: [:])
+        ]
+
+        for e in events {
+            manager.dispatch(e)
+        }
+
+        odpConfig.update(apiKey: "valid", apiHost: "host")
+        sleep(1)
+        XCTAssertEqual(1, apiManager.receivedBatchEvents.count)
+        XCTAssertEqual(3, apiManager.receivedBatchEvents[0].count)
+        validateEvents(events, apiManager.receivedBatchEvents[0])
     }
 
     func testFlush_batch_moreThanBatchSize() {
-        XCTFail()
+        let event = ODPEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+        let events = [ODPEvent](repeating: event, count: 11)
+        
+        for e in events {
+            manager.dispatch(e)
+        }
+        
+        odpConfig.update(apiKey: "valid", apiHost: "host")
+        sleep(1)
+        XCTAssertEqual(2, apiManager.receivedBatchEvents.count)
+        XCTAssertEqual(10, apiManager.receivedBatchEvents[0].count)
+        XCTAssertEqual(1, apiManager.receivedBatchEvents[1].count)
+        validateEvents(events, apiManager.receivedBatchEvents[0] + apiManager.receivedBatchEvents[1])
     }
 
     func testFlush_emptyQueue() {
-        XCTFail()
+        odpConfig.update(apiKey: "valid", apiHost: "host")
+        sleep(1)
+        XCTAssertEqual(0, apiManager.receivedBatchEvents.count)
     }
 
-    // MARK: - Errors
+    // MARK: - errors
 
     func testFlushError_retry() {
-        XCTFail()
+        let event = ODPEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+        let events = [ODPEvent](repeating: event, count: 2)
+
+        for e in events {
+            manager.dispatch(e)
+        }
+
+        odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host")
+        sleep(1)
+        XCTAssertEqual(3, apiManager.receivedBatchEvents.count, "should be retried 3 times (a batch of 2 events)")
+        XCTAssertEqual(2, manager.eventQueue.count, "the events should remain after giving up")
     }
     
     func testFlushError_noRetry() {
-        XCTFail()
+        let event = ODPEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+        let events = [ODPEvent](repeating: event, count: 15)
+
+        for e in events {
+            manager.dispatch(e)
+        }
+        
+        odpConfig.update(apiKey: "invalid-key-no-retry", apiHost: "host")
+        sleep(1)
+        XCTAssertEqual(2, apiManager.receivedBatchEvents.count, "should not be retried (only once for each of batch events)")
+        XCTAssertEqual(10, apiManager.receivedBatchEvents[0].count)
+        XCTAssertEqual(5, apiManager.receivedBatchEvents[1].count)
+        XCTAssertEqual(0, manager.eventQueue.count, "all the events should be discarded")
     }
 
     // MARK: - OdpConfig
     
     func testOdpConfig() {
-        odpConfig.apiHost = "test-host"
-        odpConfig.apiKey = "test-key"
-        
+        odpConfig.update(apiKey: "test-key", apiHost: "test-host")
+
         manager = ODPEventManager(sdkKey: "any",
                                   odpConfig: odpConfig,
-                                  apiManager: MockZaiusApiManager())
+                                  apiManager: apiManager)
 
         let event = ODPEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
         manager.dispatch(event)
         manager.flush()
         
-        XCTAssertEqual("test-host", ODPEventManagerTests.receivedApiHost)
-        XCTAssertEqual("test-key", ODPEventManagerTests.receivedApiKey)
+        XCTAssertEqual("test-host", apiManager.receivedApiHost)
+        XCTAssertEqual("test-key", apiManager.receivedApiKey)
     }
     
     // MARK: - Utils
@@ -198,17 +255,28 @@ class ODPEventManagerTests: XCTestCase {
         XCTAssert((data["key-2"] as! Double) == 12.5)
     }
     
+    func validateEvents(_ lhs: [ODPEvent], _ rhs: [ODPEvent]) {
+        XCTAssertEqual(lhs.count, rhs.count)
+        for i in 0..<lhs.count {
+            XCTAssert(OTUtils.compareDictionaries(lhs[i].dict, rhs[i].dict))
+        }
+    }
+    
     // MARK: - MockZaiusApiManager
 
     class MockZaiusApiManager: ZaiusRestApiManager {
-        
+        var receivedApiKey: String!
+        var receivedApiHost: String!
+        var receivedBatchEvents = [[ODPEvent]]()
+
         override func sendODPEvents(apiKey: String,
                                     apiHost: String,
                                     events: [ODPEvent],
                                     completionHandler: @escaping (OptimizelyError?) -> Void) {
-            ODPEventManagerTests.receivedApiKey = apiKey
-            ODPEventManagerTests.receivedApiHost = apiHost
-            
+            receivedApiKey = apiKey
+            receivedApiHost = apiHost
+            receivedBatchEvents.append(events)
+
             DispatchQueue.global().async {
                 if apiKey == "invalid-key-no-retry" {
                     completionHandler(OptimizelyError.odpEventFailed("403", false))

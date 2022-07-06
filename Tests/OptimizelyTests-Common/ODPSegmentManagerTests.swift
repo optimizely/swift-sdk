@@ -19,21 +19,19 @@ import XCTest
 class ODPSegmentManagerTests: XCTestCase {
     var manager: ODPSegmentManager!
     var odpConfig: OptimizelyODPConfig!
+    var apiManager = MockZaiusApiManager()
     
     var options = [OptimizelySegmentOption]()
     
     var userKey = "vuid"
     var userValue = "test-user"
-    static var receivedApiKey: String?
-    static var receivedApiHost: String?
     
     override func setUp() {
         odpConfig = OptimizelyODPConfig()
-        odpConfig.apiKey = "valid"
-        odpConfig.apiHost = "host"
+        odpConfig.update(apiKey: "valid", apiHost: "host")
         
         manager = ODPSegmentManager(odpConfig: odpConfig,
-                                    apiManager: MockZaiusApiManager())
+                                    apiManager: apiManager)
     }
     
     func testFetchSegmentsSuccess_cacheMiss() {
@@ -86,8 +84,7 @@ class ODPSegmentManagerTests: XCTestCase {
     func testOdpConfig() {
         // default
         
-        odpConfig = OptimizelyODPConfig()
-        manager = ODPSegmentManager(odpConfig: odpConfig, apiManager: MockZaiusApiManager())
+        manager = ODPSegmentManager(odpConfig: odpConfig, apiManager: apiManager)
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
                                        segmentsToCheck: [],
@@ -95,16 +92,14 @@ class ODPSegmentManagerTests: XCTestCase {
         
         XCTAssertEqual(100, manager.segmentsCache.size)
         XCTAssertEqual(600, manager.segmentsCache.timeoutInSecs)
-        XCTAssertNil(ODPSegmentManagerTests.receivedApiHost)
-        XCTAssertNil(ODPSegmentManagerTests.receivedApiKey)
 
         // custom configuration
         
+        odpConfig.update(apiKey: "test-key", apiHost: "test-host")
+
         odpConfig = OptimizelyODPConfig(segmentsCacheSize: 3,
-                                        segmentsCacheTimeoutInSecs: 30,
-                                        apiHost: "test-host",
-                                        apiKey: "test-key")
-        manager = ODPSegmentManager(odpConfig: odpConfig, apiManager: MockZaiusApiManager())
+                                        segmentsCacheTimeoutInSecs: 30)
+        manager = ODPSegmentManager(odpConfig: odpConfig, apiManager: apiManager)
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
                                        segmentsToCheck: [],
@@ -112,8 +107,8 @@ class ODPSegmentManagerTests: XCTestCase {
         
         XCTAssertEqual(3, manager.segmentsCache.size)
         XCTAssertEqual(39, manager.segmentsCache.timeoutInSecs)
-        XCTAssertEqual("test-host", ODPSegmentManagerTests.receivedApiHost)
-        XCTAssertEqual("test-key", ODPSegmentManagerTests.receivedApiKey)
+        XCTAssertEqual("test-key", apiManager.receivedApiKey)
+        XCTAssertEqual("test-host", apiManager.receivedApiHost)
     }
     
     // MARK: - OptimizelySegmentOption
@@ -178,15 +173,17 @@ class ODPSegmentManagerTests: XCTestCase {
     // MARK: - MockZaiusApiManager
 
     class MockZaiusApiManager: ZaiusGraphQLApiManager {
-        
+        var receivedApiKey: String!
+        var receivedApiHost: String!
+
         override func fetchSegments(apiKey: String,
                                     apiHost: String,
                                     userKey: String,
                                     userValue: String,
                                     segmentsToCheck: [String],
                                     completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-            ODPSegmentManagerTests.receivedApiKey = apiKey
-            ODPSegmentManagerTests.receivedApiHost = apiHost
+            receivedApiKey = apiKey
+            receivedApiHost = apiHost
             
             DispatchQueue.global().async {
                 if apiKey == "invalid-key" {

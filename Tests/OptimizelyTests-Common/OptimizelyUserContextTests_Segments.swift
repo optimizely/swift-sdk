@@ -275,25 +275,6 @@ extension OptimizelyUserContextTests_Segments {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
-    func testLiveODPGraphQL_allSegments() {
-        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
-        try! optimizely.start(datafile: datafile)
-        let user = optimizely.createUserContext(userId: testODPUserId)
-        
-        let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(apiKey: testODPApiKeyForAudienceSegments,
-                                    apiHost: testODPApiHost,
-                                    userKey: testODPUserKey,
-                                    userValue: testODPUserValue,
-                                    options: [.allSegments]) { segments, error in
-            XCTAssertNil(error)
-            XCTAssert(segments!.contains("has_email"), "segmentsToCheck are not passed to ODP, so fetching all segments.")
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
-    }
-
-    
     func testLiveODPGraphQL_defaultParameters() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         try! optimizely.start(datafile: datafile)
@@ -308,20 +289,6 @@ extension OptimizelyUserContextTests_Segments {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
-    func testLiveODPGraphQL_defaultParameters_allSegments() {
-        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
-        try! optimizely.start(datafile: datafile)
-        let user = optimizely.createUserContext(userId: testODPUserId)
-
-        let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(options: [.allSegments]) { segments, error in
-            XCTAssertNil(error)
-            XCTAssert(segments!.contains("has_email"), "segmentsToCheck are not passed to ODP, so fetching all segments.")
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
-    }
-
     func testLiveODPGraphQL_noDatafile() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         let user = optimizely.createUserContext(userId: testODPUserId)

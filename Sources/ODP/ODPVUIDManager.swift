@@ -16,12 +16,12 @@
 
 import Foundation
 
-class VUIDManager {
+class ODPVUIDManager {
     var vuid: String = ""
     let logger = OPTLoggerFactory.getLogger()
 
     // a single vuid should be shared for all SDK instances
-    static let shared = VUIDManager()
+    static let shared = ODPVUIDManager()
     
     init() {
         self.vuid = load()
@@ -38,7 +38,7 @@ class VUIDManager {
 
 // MARK: - VUID Store
 
-extension VUIDManager {
+extension ODPVUIDManager {
     
     // UserDefaults format: (keep the most recent vuid info only)
     //      "optimizely-odp": {

@@ -23,17 +23,16 @@ class ZaiusRestApiManagerTests: XCTestCase {
     let apiHost = "test-host"
     
     let events: [ODPEvent] = [
-        ODPEvent(type: "fullstack", action: "a", identifiers: ["id-key-1": "id-value-1"], data: ["key-1": "value-1"])
+        ODPEvent(type: "t1", action: "a1", identifiers: ["id-key-1": "id-value-1"], data: ["key-1": "value-1"]),
+        ODPEvent(type: "t2", action: "a2", identifiers: ["id-key-2": "id-value-2"], data: ["key-2": "value-2"])
     ]
     
-    static var createdApiRequest: URLRequest?
-    
     func testSendODPEvents_validRequest() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200,
-                                                          responseData: MockZaiusUrlSession.successResponseData))
+        let session = MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.successResponseData)
+        let api = MockZaiusApiManager(session)
         api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { _ in }
 
-        let request = ZaiusRestApiManagerTests.createdApiRequest!
+        let request = session.receivedApiRequest!
 
         XCTAssertEqual(apiHost + "/v3/events", request.url?.absoluteString)
         XCTAssertEqual("POST", request.httpMethod)
@@ -116,6 +115,9 @@ class ZaiusRestApiManagerTests: XCTestCase {
         override func getSession() -> URLSession {
             return mockUrlSession
         }
+        
+        override func sendODPEvents(apiKey: String, apiHost: String, events: [ODPEvent], completionHandler: @escaping (OptimizelyError?) -> Void) {
+        }
     }
     
     // MARK: - MockZaiusUrlSession
@@ -125,6 +127,7 @@ class ZaiusRestApiManagerTests: XCTestCase {
         var statusCode: Int
         var withError: Bool
         var responseData: String?
+        var receivedApiRequest: URLRequest?
         
         class MockDataTask: URLSessionDataTask {
             var task: () -> Void
@@ -146,7 +149,7 @@ class ZaiusRestApiManagerTests: XCTestCase {
         }
         
         override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-            ZaiusRestApiManagerTests.createdApiRequest = request
+            receivedApiRequest = request
             
             return MockDataTask() {
                 let statusCode = self.statusCode != 0 ? self.statusCode : 200

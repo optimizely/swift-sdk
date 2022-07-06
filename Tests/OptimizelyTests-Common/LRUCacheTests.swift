@@ -24,14 +24,8 @@ class LRUCacheTests: XCTestCase {
         XCTAssertEqual(2000, cache.timeoutInSecs)
 
         cache = LRUCache<String, Any>(size: 0, timeoutInSecs: 0)
-        
-        #if DEBUG
-        XCTAssertEqual(1, cache.size)
-        XCTAssertEqual(1, cache.timeoutInSecs)
-        #else
         XCTAssertEqual(10, cache.size)
         XCTAssertEqual(60, cache.timeoutInSecs)
-        #endif
     }
 
 }
@@ -113,6 +107,13 @@ extension LRUCacheTests {
         XCTAssert(cache.map.isEmpty, "cache should be reset when detected that all items are stale")
     }
 
+    func testZeroSize() {
+        let cache = LRUCache<Int, Int>(size: 0, timeoutInSecs: 1000)
+        
+        XCTAssertNil(cache.lookup(key: 1))
+        cache.save(key: 1, value: 100)              // [1]
+        XCTAssertNil(cache.lookup(key: 1))
+    }
 }
 
 #endif

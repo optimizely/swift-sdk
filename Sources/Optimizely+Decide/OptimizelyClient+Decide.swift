@@ -36,7 +36,6 @@ extension OptimizelyClient {
     /// - Parameter attributes: A map of attribute names to current user attribute values.
     /// - Returns: An OptimizelyUserContext associated with this OptimizelyClient
     public func createUserContext(attributes: [String: Any]? = nil) -> OptimizelyUserContext {
-        let vuid = odpManager.vuidManager.vuid
         return OptimizelyUserContext(optimizely: self, userId: vuid, attributes: attributes)
     }
     

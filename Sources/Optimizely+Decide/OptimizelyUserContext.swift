@@ -71,21 +71,9 @@ public class OptimizelyUserContext {
                             userId: String,
                             attributes: [String: Any?]? = nil) {
         self.init(optimizely: optimizely, userId: userId, attributes: attributes ?? [:])
-        self.optimizely?.registerUserToOdp(userId: userId)
+        self.optimizely?.identifyUserToOdp(userId: userId)
     }
     
-    /// OptimizelyUserContext init for vuid-based decision
-    ///
-    ///  When a userId is not provided, a user context will be created with the device vuid as a default user id.
-    ///
-    /// - Parameters:
-    ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
-    ///   - attributes: A map of attribute names to current user attribute values.
-    public convenience init(optimizely: OptimizelyClient,
-                            attributes: [String: Any?]? = nil) {
-        self.init(optimizely: optimizely, userId: optimizely.vuid, attributes: attributes ?? [:])
-    }
-
     init(optimizely: OptimizelyClient,
          userId: String,
          attributes: [String: Any?]) {

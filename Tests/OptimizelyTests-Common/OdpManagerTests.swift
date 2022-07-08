@@ -68,7 +68,7 @@ class OdpManagerTests: XCTestCase {
             XCTAssertEqual(error?.reason, OptimizelyError.odpNotEnabled.reason)
             sem.signal()
         }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
         
         manager.updateOdpConfig(apiKey: "valid", apiHost: "host")
         XCTAssertNil(manager.odpConfig.apiKey)
@@ -103,14 +103,14 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(segmentManager.receivedOptions, [])
     }
     
-    func testRegisterVUIDCalled() {
+    func testRegisterVUIDCalledAutomatically() {
         XCTAssertEqual(eventManager.receivedVuid, manager.vuid, "registerVUID is implicitly called on OdpManager init")
     }
 
     func testIdentifyUser() {
         manager.identifyUser(userId: "user-1")
         
-        XCTAssertEqual(eventManager.receivedVuid, manager.vuid)
+        XCTAssertEqual(eventManager.receivedVuid, manager.vuid, "vuid should be added implicitly")
         XCTAssertEqual(eventManager.receivedUserId, "user-1")
     }
     

@@ -949,7 +949,7 @@ extension OptimizelyClient {
         return odpManager.vuid
     }
     
-    func registerUserToOdp(userId: String) {
+    func identifyUserToOdp(userId: String) {
         odpManager.identifyUser(userId: userId)
     }
     

@@ -37,6 +37,13 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         user = optimizely.createUserContext(userId: kUserId)
     }
     
+    // MARK: - identify
+    
+    func testIdentifyCalledAutomatically() {
+        XCTAssertEqual(true, odpManager.identifyCalled, "identifyUser is implicitly called on UserContext init")
+        XCTAssertEqual(kUserId, odpManager.userId)
+    }
+    
     // MARK: - isQualifiedFor
 
     func testIsQualifiedFor() {
@@ -121,17 +128,6 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
     }
         
-    // MARK: - Customisze OdpManager
-    
-    func testCustomizeOdpManager()  {
-        let sdkSettings = OptimizelySdkSettings(segmentsCacheSize: 12, segmentsCacheTimeoutInSecs: 345)
-        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey,
-                                          settings: sdkSettings)
-
-        XCTAssertEqual(12, optimizely.odpManager.segmentManager?.segmentsCache.size)
-        XCTAssertEqual(345, optimizely.odpManager.segmentManager?.segmentsCache.timeoutInSecs)
-    }
-
 }
 
 // MARK: - Optional parameters
@@ -235,6 +231,7 @@ class MockOdpManager: OdpManager {
     var userId: String?
     var segmentsToCheck: [String]!
     var options: [OptimizelySegmentOption]!
+    var identifyCalled = false
     
     var apiKey: String?
     var apiHost: String?
@@ -255,6 +252,11 @@ class MockOdpManager: OdpManager {
                 completionHandler(sampleSegments, nil)
             }
         }
+    }
+    
+    override func identifyUser(userId: String) {
+        self.userId = userId
+        self.identifyCalled = true
     }
     
 }

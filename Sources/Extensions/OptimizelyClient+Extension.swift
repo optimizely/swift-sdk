@@ -56,7 +56,7 @@ extension OptimizelyClient {
     ///         Set this to 0 to disable periodic downloading.
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision optiopns (optional)
-    ///   - odpConfig: ODP configuration (optional)
+    ///   - settings: SDK configuration (optional)
     public convenience init(sdkKey: String,
                             logger: OPTLogger? = nil,
                             eventDispatcher: OPTEventDispatcher? = nil,
@@ -65,7 +65,7 @@ extension OptimizelyClient {
                             periodicDownloadInterval: Int?,
                             defaultLogLevel: OptimizelyLogLevel? = nil,
                             defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                            odpConfig: OptimizelyODPConfig? = nil) {
+                            settings: OptimizelySdkSettings? = nil) {
 
         self.init(sdkKey: sdkKey,
                   logger: logger,
@@ -74,7 +74,7 @@ extension OptimizelyClient {
                   userProfileService: userProfileService,
                   defaultLogLevel: defaultLogLevel,
                   defaultDecideOptions: defaultDecideOptions,
-                  odpConfig: odpConfig)
+                  settings: settings)
         
         let interval = periodicDownloadInterval ?? 10 * 60
         if interval > 0 {

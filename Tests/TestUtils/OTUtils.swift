@@ -88,7 +88,7 @@ class OTUtils {
     }
     
     static func compareDictionaries(_ d1: [String: Any], _ d2: [String: Any]) -> Bool {
-        if #available(tvOS 11.0, *) {
+        if #available(iOS 11.0, tvOS 11.0, *) {
             let data1 = try! JSONSerialization.data(withJSONObject: d1, options: .sortedKeys)
             let data2 = try! JSONSerialization.data(withJSONObject: d2, options: .sortedKeys)
             return data1 == data2
@@ -233,6 +233,7 @@ class OTUtils {
     }
     
     static func clearAllEventQueues() {
+        // clear all FS + ODP event queues
         removeAllFiles(including: "OPTEvent", in: .documentDirectory)
         removeAllFiles(including: "OPTEvent", in: .cachesDirectory)
     }

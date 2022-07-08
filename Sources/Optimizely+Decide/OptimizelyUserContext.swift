@@ -71,7 +71,7 @@ public class OptimizelyUserContext {
                             userId: String,
                             attributes: [String: Any?]? = nil) {
         self.init(optimizely: optimizely, userId: userId, attributes: attributes ?? [:])
-        self.optimizely?.registerUserToODP(userId: userId)
+        self.optimizely?.registerUserToOdp(userId: userId)
     }
     
     /// OptimizelyUserContext init for vuid-based decision

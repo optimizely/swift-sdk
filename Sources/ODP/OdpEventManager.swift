@@ -17,26 +17,26 @@
 import Foundation
 import UIKit
 
-class ODPEventManager {
-    let odpConfig: OptimizelyODPConfig
+class OdpEventManager {
+    let odpConfig: OdpConfig
     let zaiusMgr: ZaiusRestApiManager
     
     let maxQueueSize = 100
     let maxFailureCount = 3
     let queueLock: DispatchQueue
-    let eventQueue: DataStoreQueueStackImpl<ODPEvent>
+    let eventQueue: DataStoreQueueStackImpl<OdpEvent>
         
     let logger = OPTLoggerFactory.getLogger()
 
-    init(sdkKey: String, odpConfig: OptimizelyODPConfig, apiManager: ZaiusRestApiManager? = nil) {
+    init(sdkKey: String, odpConfig: OdpConfig, apiManager: ZaiusRestApiManager? = nil) {
         self.odpConfig = odpConfig
         self.zaiusMgr = apiManager ?? ZaiusRestApiManager()
         
         self.queueLock = DispatchQueue(label: "event")
         
         // a separate event queue for each sdkKey (which may have own ODP public key)
-        let storeName = "OPDEvent-\(sdkKey)"
-        self.eventQueue = DataStoreQueueStackImpl<ODPEvent>(queueStackName: "odp",
+        let storeName = "OPTEvent-ODP-\(sdkKey)"
+        self.eventQueue = DataStoreQueueStackImpl<OdpEvent>(queueStackName: "odp",
                                                             dataStore: DataStoreFile<[Data]>(storeName: storeName))
     }
     
@@ -62,7 +62,7 @@ class ODPEventManager {
     }
         
     func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) {
-        let event = ODPEvent(type: type,
+        let event = OdpEvent(type: type,
                              action: action,
                              identifiers: identifiers,
                              data: addCommonEventData(data))
@@ -93,8 +93,9 @@ class ODPEventManager {
         
     // MARK: - dispatch
     
-    func dispatch(_ event: ODPEvent) {
-        guard odpConfig.enabled else {
+    func dispatch(_ event: OdpEvent) {
+        // do not queue events if datafile has no ODP public key (not integrated)
+        guard odpConfig.odpServiceIntegrated else {
             logger.d("ODP has been disabled.")
             return
         }
@@ -109,14 +110,18 @@ class ODPEventManager {
         flush()
     }
     
+    func clearEvents() {
+        
+    }
+    
     func flush() {
+        guard odpConfig.odpServiceIntegrated else {
+            // clean up all pending events if datafile has no ODP public key (not integrated)
+            _ = eventQueue.removeFirstItems(count: self.maxQueueSize)
+            return
+        }
+
         guard let odpApiKey = odpConfig.apiKey, let odpApiHost = odpConfig.apiHost else {
-            if !odpConfig.enabled {
-                queueLock.async {
-                    // clean up pending events if ODP is disabled
-                    _ = self.eventQueue.removeFirstItems(count: self.maxQueueSize)
-                }
-            }
             return
         }
 
@@ -137,7 +142,7 @@ class ODPEventManager {
             let maxBatchEvents = 10
             var failureCount = 0
 
-            while let events: [ODPEvent] = self.eventQueue.getFirstItems(count: maxBatchEvents) {
+            while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: maxBatchEvents) {
                 let numEvents = events.count
 
                 // we've exhuasted our failure count.  Give up and try the next time a event
@@ -150,7 +155,7 @@ class ODPEventManager {
                 // make the send event synchronous. enter our notify
                 notify.enter()
                 
-                self.zaiusMgr.sendODPEvents(apiKey: odpApiKey,
+                self.zaiusMgr.sendOdpEvents(apiKey: odpApiKey,
                                             apiHost: odpApiHost,
                                             events: events) { error in
                     defer {

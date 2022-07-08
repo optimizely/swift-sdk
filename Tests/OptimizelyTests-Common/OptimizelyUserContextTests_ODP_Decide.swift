@@ -16,7 +16,7 @@
 
 import XCTest
 
-class OptimizelyUserContextTests_Segments_Decide: XCTestCase {
+class OptimizelyUserContextTests_ODP_Decide: XCTestCase {
 
     var optimizely: OptimizelyClient!
     var user: OptimizelyUserContext!

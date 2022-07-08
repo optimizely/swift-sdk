@@ -16,9 +16,9 @@
 
 import XCTest
 
-class ODPSegmentManagerTests: XCTestCase {
-    var manager: ODPSegmentManager!
-    var odpConfig: OptimizelyODPConfig!
+class OdpSegmentManagerTests: XCTestCase {
+    var manager: OdpSegmentManager!
+    var odpConfig: OdpConfig!
     var apiManager = MockZaiusApiManager()
     
     var options = [OptimizelySegmentOption]()
@@ -27,14 +27,17 @@ class ODPSegmentManagerTests: XCTestCase {
     var userValue = "test-user"
     
     override func setUp() {
-        odpConfig = OptimizelyODPConfig()
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        odpConfig = OdpConfig()
         
-        manager = ODPSegmentManager(odpConfig: odpConfig,
+        manager = OdpSegmentManager(cacheSize: 10,
+                                    cacheTimeoutInSecs: 10,
+                                    odpConfig: odpConfig,
                                     apiManager: apiManager)
     }
     
     func testFetchSegmentsSuccess_cacheMiss() {
+        odpConfig.update(apiKey: "valid", apiHost: "host")
+
         setCache(userKey, "123", ["a"])
 
         let sem = DispatchSemaphore(value: 0)
@@ -47,9 +50,14 @@ class ODPSegmentManagerTests: XCTestCase {
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+        
+        XCTAssertEqual("valid", apiManager.receivedApiKey)
+        XCTAssertEqual("host", apiManager.receivedApiHost)
     }
     
     func testFetchSegmentsSuccess_cacheHit() {
+        odpConfig.update(apiKey: "valid", apiHost: "host")
+
         setCache(userKey, userValue, ["a"])
 
         let sem = DispatchSemaphore(value: 0)
@@ -65,8 +73,8 @@ class ODPSegmentManagerTests: XCTestCase {
     }
     
     func testFetchSegmentsError() {
-        odpConfig.apiKey = "invalid-key"
-        
+        odpConfig.update(apiKey: "invalid-key", apiHost: "host")
+
         let sem = DispatchSemaphore(value: 0)
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
@@ -79,41 +87,11 @@ class ODPSegmentManagerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
     
-    // MARK: - OdpConfig
-    
-    func testOdpConfig() {
-        // default
-        
-        manager = ODPSegmentManager(odpConfig: odpConfig, apiManager: apiManager)
-        manager.fetchQualifiedSegments(userKey: userKey,
-                                       userValue: userValue,
-                                       segmentsToCheck: [],
-                                       options: options) { _, _ in }
-        
-        XCTAssertEqual(100, manager.segmentsCache.size)
-        XCTAssertEqual(600, manager.segmentsCache.timeoutInSecs)
-
-        // custom configuration
-        
-        odpConfig.update(apiKey: "test-key", apiHost: "test-host")
-
-        odpConfig = OptimizelyODPConfig(segmentsCacheSize: 3,
-                                        segmentsCacheTimeoutInSecs: 30)
-        manager = ODPSegmentManager(odpConfig: odpConfig, apiManager: apiManager)
-        manager.fetchQualifiedSegments(userKey: userKey,
-                                       userValue: userValue,
-                                       segmentsToCheck: [],
-                                       options: options) { _, _ in }
-        
-        XCTAssertEqual(3, manager.segmentsCache.size)
-        XCTAssertEqual(39, manager.segmentsCache.timeoutInSecs)
-        XCTAssertEqual("test-key", apiManager.receivedApiKey)
-        XCTAssertEqual("test-host", apiManager.receivedApiHost)
-    }
-    
     // MARK: - OptimizelySegmentOption
     
     func testOptions_ignoreCache() {
+        odpConfig.update(apiKey: "valid", apiHost: "host")
+
         setCache(userKey, userValue, ["a"])
         options = [.ignoreCache]
 
@@ -131,6 +109,8 @@ class ODPSegmentManagerTests: XCTestCase {
     }
     
     func testOptions_resetCache() {
+        odpConfig.update(apiKey: "valid", apiHost: "host")
+
         setCache(userKey, userValue, ["a"])
         setCache(userKey, "123", ["a"])
         setCache(userKey, "456", ["a"])
@@ -187,7 +167,7 @@ class ODPSegmentManagerTests: XCTestCase {
             
             DispatchQueue.global().async {
                 if apiKey == "invalid-key" {
-                    completionHandler([], OptimizelyError.fetchSegmentsFailed("403"))
+                    completionHandler(nil, OptimizelyError.fetchSegmentsFailed("403"))
                 } else {
                     completionHandler(["new-customer"], nil)
                 }

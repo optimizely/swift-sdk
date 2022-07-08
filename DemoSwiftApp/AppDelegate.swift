@@ -130,16 +130,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             @unknown default:
                 print("Optimizely SDK initiliazation failed with unknown result")
             }
-            
-
-            
-            
-            //self.startWithRootViewController()
+        
+            self.startWithRootViewController()
             
             // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
-            //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
-            //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
-            //SamplesForAPI.checkAudienceSegments(optimizely: self.optimizely)
+//            SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
+//            SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
+//            SamplesForAPI.checkAudienceSegments(optimizely: self.optimizely)
         }
     }
     

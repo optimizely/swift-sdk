@@ -16,16 +16,77 @@
 
 import XCTest
 
-class ODPManagerTests: XCTestCase {
-    var manager: ODPManager!
+class OdpManagerTests: XCTestCase {
     let sdkKey = "any"
-    let odpConfig = OptimizelyODPConfig()
+    let odpConfig = OdpConfig()
+    let cacheSize = 10
+    let cacheTimeout = 20
+    var segmentManager: MockOdpSegmentManager!
+    var eventManager: MockOdpEventManager!
+    var manager: OdpManager!
+
+    override func setUp() {
+        OTUtils.clearAllEventQueues()
+        segmentManager = MockOdpSegmentManager(cacheSize: cacheSize,
+                                               cacheTimeoutInSecs: cacheTimeout,
+                                               odpConfig: odpConfig)
+        eventManager = MockOdpEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
+        manager = OdpManager(sdkKey: sdkKey,
+                             enable: true,
+                             cacheSize: cacheSize,
+                             cacheTimeoutInSecs: cacheTimeout,
+                             segmentManager: segmentManager,
+                             eventManager: eventManager)
+    }
+    
+    override func tearDown() {
+        OTUtils.clearAllEventQueues()
+    }
+
+    // MARK: - Configurables
+    
+    func testConfigurations_cache() {
+        let manager = OdpManager(sdkKey: sdkKey,
+                                 enable: true,
+                                 cacheSize: cacheSize,
+                                 cacheTimeoutInSecs: cacheTimeout)
+        XCTAssertEqual(manager.segmentManager?.segmentsCache.size,  cacheSize)
+        XCTAssertEqual(manager.segmentManager?.segmentsCache.timeoutInSecs, cacheTimeout)
+    }
+    
+    func testConfigurations_enable() {
+        let manager = OdpManager(sdkKey: sdkKey,
+                                 enable: false,
+                                 cacheSize: cacheSize,
+                                 cacheTimeoutInSecs: cacheTimeout)
+        
+        XCTAssertTrue(manager.vuid.starts(with: "vuid_"), "vuid should be serverved even when ODP is disabled.")
+
+        let sem = DispatchSemaphore(value: 0)
+        manager.fetchQualifiedSegments(userId: "user1", segmentsToCheck: [], options: []) { segments, error in
+            XCTAssertNil(segments)
+            XCTAssertEqual(error?.reason, OptimizelyError.odpNotEnabled.reason)
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+        
+        manager.updateOdpConfig(apiKey: "valid", apiHost: "host")
+        XCTAssertNil(manager.odpConfig.apiKey)
+        XCTAssertNil(manager.odpConfig.apiHost)
+
+        // these calls should be dropped gracefully with nil
+        
+        manager.identifyUser(userId: "user1")
+        manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+        
+        XCTAssertNil(manager.eventManager)
+        XCTAssertNil(manager.segmentManager)
+    }
+    
+    // MARK: - APIs
     
     func testFetchQualifiedSegments() {
-        let segmentManager = MockODPSegmentManager(odpConfig: odpConfig)
-        manager = ODPManager(sdkKey: sdkKey, odpConfig: odpConfig, segmentManager: segmentManager)
-        
-        let vuid = "VUID_123"
+        let vuid = "vuid_123"
         manager.fetchQualifiedSegments(userId: vuid, segmentsToCheck: ["seg-1"], options: [.ignoreCache]) { _, _ in }
         
         XCTAssertEqual(segmentManager.receivedUserKey, "vuid")
@@ -43,18 +104,10 @@ class ODPManagerTests: XCTestCase {
     }
     
     func testRegisterVUIDCalled() {
-        let eventManager = MockODPEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
-        manager = ODPManager(sdkKey: sdkKey, odpConfig: odpConfig, eventManager: eventManager)
-
-        // registerVUID is implicitly called on ODPManager init
-        
-        XCTAssertEqual(eventManager.receivedVuid, manager.vuid)
+        XCTAssertEqual(eventManager.receivedVuid, manager.vuid, "registerVUID is implicitly called on OdpManager init")
     }
 
     func testIdentifyUser() {
-        let eventManager = MockODPEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
-        manager = ODPManager(sdkKey: sdkKey, odpConfig: odpConfig, eventManager: eventManager)
-        
         manager.identifyUser(userId: "user-1")
         
         XCTAssertEqual(eventManager.receivedVuid, manager.vuid)
@@ -62,9 +115,6 @@ class ODPManagerTests: XCTestCase {
     }
     
     func testSendEvent() {
-        let eventManager = MockODPEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
-        manager = ODPManager(sdkKey: sdkKey, odpConfig: odpConfig, eventManager: eventManager)
-        
         // vuid is implicitly added to identifers
         
         manager.sendEvent(type: "t1", action: "a1", identifiers: ["id-key1": "id-val-1"], data: ["key1" : "val1"])
@@ -82,43 +132,49 @@ class ODPManagerTests: XCTestCase {
         XCTAssertEqual(eventManager.receivedIdentifiers, ["vuid": "vuid-fixed", "id-key1": "id-val-1"])
     }
     
-    func testUpdateODPConfig() {
-        let eventManager = MockODPEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
-        manager = ODPManager(sdkKey: sdkKey, odpConfig: odpConfig, eventManager: eventManager)
-        
-        // flush on valid apiKey updated (apiKey/apiHost propagated into submanagers)
-        
-        manager.updateODPConfig(apiKey: "key-1", apiHost: "host-1")
+    func testUpdateOdpConfig_flushCalled() {
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1")
         XCTAssertTrue(eventManager.flushCalled)
                 
-        XCTAssertEqual(manager.segmentManager.odpConfig.apiKey, "key-1")
-        XCTAssertEqual(manager.segmentManager.odpConfig.apiHost, "host-1")
-        XCTAssertTrue(manager.segmentManager.odpConfig.enabled)
-        XCTAssertEqual(manager.eventManager.odpConfig.apiKey, "key-1")
-        XCTAssertEqual(manager.eventManager.odpConfig.apiHost, "host-1")
-        XCTAssertTrue(manager.eventManager.odpConfig.enabled)
+        manager.updateOdpConfig(apiKey: nil, apiHost: nil)
+        XCTAssertTrue(eventManager.flushCalled)
+    }
+    
+    func testUpdateOdpConfig_odpConfigPropagatedProperly() {
+        let manager = OdpManager(sdkKey: sdkKey,
+                                 enable: true,
+                                 cacheSize: cacheSize,
+                                 cacheTimeoutInSecs: cacheTimeout)
+
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1")
+                
+        XCTAssertEqual(manager.segmentManager?.odpConfig.apiKey, "key-1")
+        XCTAssertEqual(manager.segmentManager?.odpConfig.apiHost, "host-1")
+        XCTAssertEqual(manager.segmentManager?.odpConfig.odpServiceIntegrated, true)
+        XCTAssertEqual(manager.eventManager?.odpConfig.apiKey, "key-1")
+        XCTAssertEqual(manager.eventManager?.odpConfig.apiHost, "host-1")
+        XCTAssertEqual(manager.eventManager?.odpConfig.odpServiceIntegrated, true)
         
         // odp disabled with invalid apiKey (apiKey/apiHost propagated into submanagers)
         
-        manager.updateODPConfig(apiKey: nil, apiHost: nil)
-        XCTAssertTrue(eventManager.flushCalled)
+        manager.updateOdpConfig(apiKey: nil, apiHost: nil)
         
-        XCTAssertEqual(manager.segmentManager.odpConfig.apiKey, nil)
-        XCTAssertEqual(manager.segmentManager.odpConfig.apiHost, nil)
-        XCTAssertFalse(manager.segmentManager.odpConfig.enabled)
-        XCTAssertEqual(manager.eventManager.odpConfig.apiKey, nil)
-        XCTAssertEqual(manager.eventManager.odpConfig.apiHost, nil)
-        XCTAssertFalse(manager.eventManager.odpConfig.enabled)
+        XCTAssertEqual(manager.segmentManager?.odpConfig.apiKey, nil)
+        XCTAssertEqual(manager.segmentManager?.odpConfig.apiHost, nil)
+        XCTAssertEqual(manager.segmentManager?.odpConfig.odpServiceIntegrated, false)
+        XCTAssertEqual(manager.eventManager?.odpConfig.apiKey, nil)
+        XCTAssertEqual(manager.eventManager?.odpConfig.apiHost, nil)
+        XCTAssertEqual(manager.eventManager?.odpConfig.odpServiceIntegrated, false)
     }
+
     
     func testVuid() {
-        manager = ODPManager(sdkKey: sdkKey, odpConfig: odpConfig)
         XCTAssertEqual(manager.vuid, manager.vuidManager.vuid)
     }
 
     // MARK: - Helpers
     
-    class MockODPEventManager: ODPEventManager {
+    class MockOdpEventManager: OdpEventManager {
         var receivedVuid: String!
         var receivedUserId: String!
         
@@ -150,7 +206,7 @@ class ODPManagerTests: XCTestCase {
         }
     }
     
-    class MockODPSegmentManager: ODPSegmentManager {
+    class MockOdpSegmentManager: OdpSegmentManager {
         var receivedUserKey: String!
         var receivedUserValue: String!
         var receivedSegmentsToCheck: [String]!

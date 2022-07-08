@@ -22,15 +22,15 @@ class ZaiusRestApiManagerTests: XCTestCase {
     let apiKey = "test-api-key"
     let apiHost = "test-host"
     
-    let events: [ODPEvent] = [
-        ODPEvent(type: "t1", action: "a1", identifiers: ["id-key-1": "id-value-1"], data: ["key-1": "value-1"]),
-        ODPEvent(type: "t2", action: "a2", identifiers: ["id-key-2": "id-value-2"], data: ["key-2": "value-2"])
+    let events: [OdpEvent] = [
+        OdpEvent(type: "t1", action: "a1", identifiers: ["id-key-1": "id-value-1"], data: ["key-1": "value-1"]),
+        OdpEvent(type: "t2", action: "a2", identifiers: ["id-key-2": "id-value-2"], data: ["key-2": "value-2"])
     ]
     
-    func testSendODPEvents_validRequest() {
+    func testSendOdpEvents_validRequest() {
         let session = MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.successResponseData)
         let api = MockZaiusApiManager(session)
-        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { _ in }
+        api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { _ in }
 
         let request = session.receivedApiRequest!
 
@@ -47,22 +47,22 @@ class ZaiusRestApiManagerTests: XCTestCase {
         }
     }
 
-    func testSendODPEvents_success() {
+    func testSendOdpEvents_success() {
         let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200,
                                                           responseData: MockZaiusUrlSession.successResponseData))
         let sem = DispatchSemaphore(value: 0)
-        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
+        api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
             XCTAssertNil(error)
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
     
-    func testSendODPEvents_networkError_retry() {
+    func testSendOdpEvents_networkError_retry() {
         let api = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
         
         let sem = DispatchSemaphore(value: 0)
-        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
+        api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
             if case .odpEventFailed(_, let canRetry) = error {
                 XCTAssertTrue(canRetry)
             } else {
@@ -73,11 +73,11 @@ class ZaiusRestApiManagerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
             
-    func testSendODPEvents_400_noRetry() {
+    func testSendOdpEvents_400_noRetry() {
         let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 400, responseData: MockZaiusUrlSession.failureResponseData))
 
         let sem = DispatchSemaphore(value: 0)
-        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
+        api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
             if case .odpEventFailed(_, let canRetry) = error {
                 XCTAssertFalse(canRetry)
             } else {
@@ -88,11 +88,11 @@ class ZaiusRestApiManagerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
     
-    func testSendODPEvents_500_retry() {
+    func testSendOdpEvents_500_retry() {
         let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 500, responseData: "server error"))
 
         let sem = DispatchSemaphore(value: 0)
-        api.sendODPEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
+        api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
             if case .odpEventFailed(_, let canRetry) = error {
                 XCTAssertTrue(canRetry)
             } else {
@@ -116,7 +116,7 @@ class ZaiusRestApiManagerTests: XCTestCase {
             return mockUrlSession
         }
         
-        override func sendODPEvents(apiKey: String, apiHost: String, events: [ODPEvent], completionHandler: @escaping (OptimizelyError?) -> Void) {
+        override func sendOdpEvents(apiKey: String, apiHost: String, events: [OdpEvent], completionHandler: @escaping (OptimizelyError?) -> Void) {
         }
     }
     

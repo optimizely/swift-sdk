@@ -53,7 +53,8 @@ open class OptimizelyClient: NSObject {
     
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
-    var odpManager: ODPManager
+    var odpManager: OdpManager
+    let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
     
@@ -67,7 +68,7 @@ open class OptimizelyClient: NSObject {
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision options (optional)
-    ///   - odpConfig: ODP configuration (optional)
+    ///   - settings: SDK configuration (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
@@ -75,12 +76,16 @@ open class OptimizelyClient: NSObject {
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
                 defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                odpConfig: OptimizelyODPConfig? = nil) {
+                settings: OptimizelySdkSettings? = nil) {
         
         self.sdkKey = sdkKey
+        self.sdkSettings = settings ?? OptimizelySdkSettings()
         self.defaultDecideOptions = defaultDecideOptions ?? []
-        self.odpManager = ODPManager(sdkKey: sdkKey,
-                                     odpConfig: odpConfig ?? OptimizelyODPConfig())
+        
+        self.odpManager = OdpManager(sdkKey: sdkKey,
+                                     enable: sdkSettings.enableOdp,
+                                     cacheSize: sdkSettings.segmentsCacheSize,
+                                     cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs)
         
         super.init()
         
@@ -195,7 +200,7 @@ open class OptimizelyClient: NSObject {
         do {
             self.config = try ProjectConfig(datafile: datafile)
             
-            odpManager.updateODPConfig(apiKey: config?.publicKeyForODP, apiHost: config?.hostForODP)
+            odpManager.updateOdpConfig(apiKey: config?.publicKeyForODP, apiHost: config?.hostForODP)
 
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
@@ -929,7 +934,7 @@ extension OptimizelyClient {
     ///   - action: the event action name.
     ///   - identifiers: a dictionary for identifiers.
     ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
-    public func sendODPEvent(type: String? = nil,
+    public func sendOdpEvent(type: String? = nil,
                              action: String,
                              identifiers: [String: String] = [:],
                              data: [String: Any] = [:]) {
@@ -944,7 +949,7 @@ extension OptimizelyClient {
         return odpManager.vuid
     }
     
-    func registerUserToODP(userId: String) {
+    func registerUserToOdp(userId: String) {
         odpManager.identifyUser(userId: userId)
     }
     
@@ -953,6 +958,12 @@ extension OptimizelyClient {
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         guard let segmentsToCheck = config?.allSegments else {
             completionHandler(nil, .sdkNotReady)
+            return
+        }
+        
+        // emtpy segmentsToCheck (no ODP audiences found in datafile) is not an error.
+        guard segmentsToCheck.count > 0 else {
+            completionHandler([], nil)
             return
         }
         

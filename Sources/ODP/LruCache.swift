@@ -16,7 +16,7 @@
 
 import Foundation
 
-class LRUCache<K: Hashable, V> {
+class LruCache<K: Hashable, V> {
         
     class CacheElement {
         var prev: CacheElement?

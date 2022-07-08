@@ -166,7 +166,7 @@ class ZaiusGraphQLApiManager {
                 return
             }
                     
-            let audiences = audDict.compactMap { ODPAudience($0["node"] as? [String: Any]) }
+            let audiences = audDict.compactMap { OdpAudience($0["node"] as? [String: Any]) }
             let segments = audiences.filter { $0.isQualified }.map { $0.name }
             completionHandler(segments, nil)
         }
@@ -192,7 +192,7 @@ class ZaiusGraphQLApiManager {
 
 // MARK: - Utils
 
-struct ODPAudience: Decodable {
+struct OdpAudience: Decodable {
     let name: String
     let state: String
     let description: String?     // optional so we can add for debugging

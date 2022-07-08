@@ -16,29 +16,21 @@
 
 import XCTest
 
-class LRUCacheTests: XCTestCase {
+class LruCacheTests: XCTestCase {
     
     func testMinConfig() {
-        var cache = LRUCache<String, Any>(size: 1000, timeoutInSecs: 2000)
+        var cache = LruCache<String, Any>(size: 1000, timeoutInSecs: 2000)
         XCTAssertEqual(1000, cache.size)
         XCTAssertEqual(2000, cache.timeoutInSecs)
 
-        cache = LRUCache<String, Any>(size: 0, timeoutInSecs: 0)
-        XCTAssertEqual(10, cache.size)
-        XCTAssertEqual(60, cache.timeoutInSecs)
+        cache = LruCache<String, Any>(size: 0, timeoutInSecs: 0)
+        XCTAssertEqual(0, cache.size)
+        XCTAssertEqual(0, cache.timeoutInSecs)
     }
-
-}
-
-// tests below will be skipped in CI (travis/actions) since they use time control and debug-mode configs.
-
-#if DEBUG
-
-extension LRUCacheTests {
     
     func testSaveAndLookup() {
         let maxSize = 2
-        let cache = LRUCache<Int, Int>(size: maxSize, timeoutInSecs: 1000)
+        let cache = LruCache<Int, Int>(size: maxSize, timeoutInSecs: 1000)
         
         XCTAssertNil(cache.peek(key: 1))
         cache.save(key: 1, value: 100)              // [1]
@@ -67,7 +59,7 @@ extension LRUCacheTests {
         XCTAssertNil(cache.peek(key: 2))
         XCTAssertEqual(302, cache.peek(key: 3))
         
-        var node: LRUCache.CacheElement? = cache.head
+        var node: LruCache.CacheElement? = cache.head
         var count = 0
         while node != nil {
             count += 1
@@ -76,10 +68,25 @@ extension LRUCacheTests {
         XCTAssertEqual(maxSize, count - 2)   // subtract 2 (head, tail)
         XCTAssertEqual(cache.map.count, cache.size)
     }
+    
+    func testZeroSize() {
+        let cache = LruCache<Int, Int>(size: 0, timeoutInSecs: 1000)
+        
+        XCTAssertNil(cache.lookup(key: 1))
+        cache.save(key: 1, value: 100)              // [1]
+        XCTAssertNil(cache.lookup(key: 1))
+    }
+
+}
+
+// tests below will be skipped in CI (travis/actions) since they can be flaky (depend on timing).
+#if DEBUG
+
+extension LruCacheTests {
 
     func testTimeout() {
         let maxTimeout = 1
-        let cache = LRUCache<Int, Int>(size: 1000, timeoutInSecs: maxTimeout)
+        let cache = LruCache<Int, Int>(size: 1000, timeoutInSecs: maxTimeout)
         
         cache.save(key: 1, value: 100)              // [1]
         cache.save(key: 2, value: 200)              // [1, 2]
@@ -96,7 +103,7 @@ extension LRUCacheTests {
     
     func testAllStale() {
         let maxTimeout = 1
-        let cache = LRUCache<Int, Int>(size: 1000, timeoutInSecs: maxTimeout)
+        let cache = LruCache<Int, Int>(size: 1000, timeoutInSecs: maxTimeout)
         
         cache.save(key: 1, value: 100)              // [1]
         cache.save(key: 2, value: 200)              // [1, 2]
@@ -107,13 +114,6 @@ extension LRUCacheTests {
         XCTAssert(cache.map.isEmpty, "cache should be reset when detected that all items are stale")
     }
 
-    func testZeroSize() {
-        let cache = LRUCache<Int, Int>(size: 0, timeoutInSecs: 1000)
-        
-        XCTAssertNil(cache.lookup(key: 1))
-        cache.save(key: 1, value: 100)              // [1]
-        XCTAssertNil(cache.lookup(key: 1))
-    }
 }
 
 #endif

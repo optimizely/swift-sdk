@@ -32,9 +32,9 @@ import Foundation
 
 class ZaiusRestApiManager {
     
-    func sendODPEvents(apiKey: String,
+    func sendOdpEvents(apiKey: String,
                        apiHost: String,
-                       events: [ODPEvent],
+                       events: [OdpEvent],
                        completionHandler: @escaping (OptimizelyError?) -> Void) {
         guard let url = URL(string: "\(apiHost)/v3/events") else {
             let canRetry = false

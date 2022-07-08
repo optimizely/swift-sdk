@@ -16,39 +16,34 @@
 
 import Foundation
 
-public class OptimizelyODPConfig {
-    /// maximum size (default = 100) of audience segments cache (optional)
-    let segmentsCacheSize: Int
-    /// timeout in seconds (default = 600) of audience segments cache (optional)
-    let segmentsCacheTimeoutInSecs: Int
+class OdpConfig {
     /// The host URL for the ODP audience segments API (optional). If not provided, SDK will use the default host in datafile.
     private var _apiHost: String?
     /// The public API key for the ODP account from which the audience segments will be fetched (optional). If not provided, SDK will use the default publicKey in datafile.
     private var _apiKey: String?
-    /// enabled by default (disabled when datafile has no ODP key/host settings)
-    private var _enabled = true
-
+    /// assumed integrated by default (set to false when datafile has no ODP key/host settings)
+    private var _odpServiceIntegrated = true
+    
     let queue = DispatchQueue(label: "odpConfig")
     
-    public init(segmentsCacheSize: Int = 100,
-                segmentsCacheTimeoutInSecs: Int = 600) {
-        self.segmentsCacheSize = segmentsCacheSize
-        self.segmentsCacheTimeoutInSecs = segmentsCacheTimeoutInSecs
+    init(apiKey: String? = nil, apiHost: String? = nil) {
+        self._apiKey = apiKey
+        self._apiHost = apiHost
     }
-    
+
     func update(apiKey: String?, apiHost: String?) {
         self.apiKey = apiKey
         self.apiHost = apiHost
         
-        // disable future event queueing if datafile has no ODP settings
+        // disable future event queueing if datafile has no ODP integrations.
     
-        self.enabled = (apiKey != nil) && (apiHost != nil)
+        self.odpServiceIntegrated = (apiKey != nil) && (apiHost != nil)
     }
 }
 
 // MARK: - Thread-safe
 
-extension OptimizelyODPConfig {
+extension OdpConfig {
     
     var apiHost: String? {
         get {
@@ -80,17 +75,17 @@ extension OptimizelyODPConfig {
         }
     }
     
-    var enabled: Bool {
+    var odpServiceIntegrated: Bool {
         get {
             var value = false
             queue.sync {
-                value = _enabled
+                value = _odpServiceIntegrated
             }
             return value
         }
         set {
             queue.async {
-                self._enabled = newValue
+                self._odpServiceIntegrated = newValue
             }
         }
     }

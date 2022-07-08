@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct ODPEvent: Codable {
+struct OdpEvent: Codable {
     let type: String
     let action: String
     let identifiers: [String: String]
@@ -68,9 +68,9 @@ struct ODPEvent: Codable {
 
 }
 
-extension ODPEvent: Equatable {
+extension OdpEvent: Equatable {
     
-    public static func == (lhs: ODPEvent, rhs: ODPEvent) -> Bool {
+    public static func == (lhs: OdpEvent, rhs: OdpEvent) -> Bool {
         return lhs.type == rhs.type &&
             lhs.action == rhs.action &&
             lhs.identifiers == rhs.identifiers &&

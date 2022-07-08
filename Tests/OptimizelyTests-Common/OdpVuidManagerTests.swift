@@ -16,29 +16,29 @@
 
 import XCTest
 
-class ODPVUIDManagerTests: XCTestCase {
-    var manager = ODPVUIDManager()
+class OdpVuidManagerTests: XCTestCase {
+    var manager = OdpVuidManager()
     
     func testMakeVuid() {
         let vuid = manager.makeVuid()
         
-        XCTAssertTrue(vuid.starts(with: "VUID_"))
+        XCTAssertTrue(vuid.starts(with: "vuid_"))
         XCTAssertTrue(vuid.count > 20)
     }
     
     func testIsVuid() {
-        XCTAssertTrue(manager.isVuid(visitorId: "VUID_123"))
-        XCTAssertFalse(manager.isVuid(visitorId: "VUID-123"))
+        XCTAssertTrue(manager.isVuid(visitorId: "vuid_123"))
+        XCTAssertFalse(manager.isVuid(visitorId: "vuid-123"))
         XCTAssertFalse(manager.isVuid(visitorId: "123"))
     }
     
     func testAutoSaveAndLoad() {
         UserDefaults.standard.removeObject(forKey: "optimizely-odp")
         
-        manager = ODPVUIDManager()
+        manager = OdpVuidManager()
         let vuid1 = manager.vuid
         
-        manager = ODPVUIDManager()
+        manager = OdpVuidManager()
         let vuid2 = manager.vuid
 
         XCTAssertTrue(vuid1 == vuid2)
@@ -47,7 +47,7 @@ class ODPVUIDManagerTests: XCTestCase {
         
         UserDefaults.standard.removeObject(forKey: "optimizely-odp")
         
-        manager = ODPVUIDManager()
+        manager = OdpVuidManager()
         let vuid3 = manager.vuid
 
         XCTAssertTrue(vuid1 != vuid3)

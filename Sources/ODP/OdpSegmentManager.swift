@@ -16,19 +16,22 @@
 
 import Foundation
 
-class ODPSegmentManager {    
-    let odpConfig: OptimizelyODPConfig
+class OdpSegmentManager {    
+    let odpConfig: OdpConfig
     let zaiusMgr: ZaiusGraphQLApiManager
-    let segmentsCache: LRUCache<String, [String]>
+    let segmentsCache: LruCache<String, [String]>
     
     let logger = OPTLoggerFactory.getLogger()
 
-    init(odpConfig: OptimizelyODPConfig, apiManager: ZaiusGraphQLApiManager? = nil) {
+    init(cacheSize: Int,
+         cacheTimeoutInSecs: Int,
+         odpConfig: OdpConfig,
+         apiManager: ZaiusGraphQLApiManager? = nil) {
         self.odpConfig = odpConfig
         self.zaiusMgr = apiManager ?? ZaiusGraphQLApiManager()
         
-        self.segmentsCache = LRUCache<String, [String]>(size: odpConfig.segmentsCacheSize,
-                                                        timeoutInSecs: odpConfig.segmentsCacheTimeoutInSecs)
+        self.segmentsCache = LruCache<String, [String]>(size: cacheSize,
+                                                        timeoutInSecs: cacheTimeoutInSecs)
     }
     
     func fetchQualifiedSegments(userKey: String,
@@ -76,7 +79,7 @@ class ODPSegmentManager {
 
 // MARK: - Utils
 
-extension ODPSegmentManager {
+extension OdpSegmentManager {
     
     func makeCacheKey(_ userKey: String, _ userValue: String) -> String {
         return userKey + "-$-" + userValue

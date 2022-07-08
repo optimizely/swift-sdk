@@ -1214,7 +1214,7 @@ class FakeManager: OptimizelyClient {
                   userProfileService: OPTUserProfileService? = nil,
                   defaultLogLevel: OptimizelyLogLevel? = nil,
                   defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                  odpConfig: OptimizelyODPConfig? = nil) {
+                  settings: OptimizelySdkSettings? = nil) {
         
         // clear shared handlers
         HandlerRegistryService.shared.removeAll()
@@ -1226,7 +1226,7 @@ class FakeManager: OptimizelyClient {
                    userProfileService: userProfileService,
                    defaultLogLevel: defaultLogLevel,
                    defaultDecideOptions: defaultDecideOptions,
-                   odpConfig: odpConfig)
+                   settings: settings)
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         self.decisionService = FakeDecisionService(userProfileService: userProfileService)

@@ -177,7 +177,7 @@ extension OptimizelyUserContextTests_ODP {
     
 }
 
-// MARK: - Tests with real ODP server
+// MARK: - Tests with live ODP server
 
 // tests below will be skipped in CI (travis/actions) since they use the live ODP server.
 #if DEBUG
@@ -201,19 +201,6 @@ extension OptimizelyUserContextTests_ODP {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
-    func testLiveOdpGraphQL_noDatafile() {
-        let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
-        let user = optimizely.createUserContext(userId: testOdpUserId)
-
-        let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments { segments, error in
-            XCTAssertNil(error)
-            XCTAssert(segments!.contains("has_email"), "segmentsToCheck are not passed to ODP, so fetching all segments.")
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
-    }
-    
     func testLiveOdpGraphQL_defaultParameters_userNotRegistered() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         try! optimizely.start(datafile: datafile)
@@ -221,7 +208,13 @@ extension OptimizelyUserContextTests_ODP {
 
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments { segments, error in
-            if case .fetchSegmentsFailed("segments not in json") = error {
+            if case .invalidSegmentIdentifier = error {
+                XCTAssert(true)
+            
+            // [TODO] ODP server will fix to add this "InvalidSegmentIdentifier" later.
+            //        Until then, use the old error format ("DataFetchingException").
+                
+            } else if case .fetchSegmentsFailed("DataFetchingException") = error {
                 XCTAssert(true)
             } else {
                 XCTFail()

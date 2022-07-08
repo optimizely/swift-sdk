@@ -112,7 +112,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
                           userKey: userKey,
                           userValue: userValue,
                           segmentsToCheck: []) { segments, error in
-            if case .invalidSegmentIdentifier = error {
+            if case .fetchSegmentsFailed("TestExceptionClass") = error {
                 XCTAssert(true)
             } else {
                 XCTFail()
@@ -132,7 +132,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
                           userKey: userKey,
                           userValue: userValue,
                           segmentsToCheck: []) { segments, error in
-            if case .fetchSegmentsFailed("TestExceptionClass") = error {
+            if case .fetchSegmentsFailed("decode error") = error {
                 XCTAssert(true)
             } else {
                 XCTFail()
@@ -222,7 +222,67 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
         XCTAssertNil(dict.extractComponent(keyPath: "d"))
     }
     
-    // MARK: - MockZaiusApiManager
+    
+}
+
+// MARK: - Tests with live ODP server
+// tests below will be skipped in CI (travis/actions) since they use the live ODP server.
+#if DEBUG
+
+extension ZaiusGraphQLApiManagerTests {
+    
+    var odpApiKey: String { return "W4WzcEs-ABgXorzY7h1LCQ" }
+    var odpApiHost: String { return "https://api.zaius.com" }
+    var odpValidUserId: String { return "tester-101"}
+
+    func testLiveOdpGraphQL() {
+        let manager = ZaiusGraphQLApiManager()
+        
+        let sem = DispatchSemaphore(value: 0)
+        manager.fetchSegments(apiKey: odpApiKey,
+                              apiHost: odpApiHost,
+                              userKey: "fs_user_id",
+                              userValue: odpValidUserId,
+                              segmentsToCheck: ["segment-1"]) { segments, error in
+            XCTAssertNil(error)
+            XCTAssertEqual([], segments, "none of the test segments in the live ODP server")
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+    }
+    
+    func testLiveOdpGraphQL_defaultParameters_userNotRegistered() {
+        let manager = ZaiusGraphQLApiManager()
+        
+        let sem = DispatchSemaphore(value: 0)
+        manager.fetchSegments(apiKey: odpApiKey,
+                              apiHost: odpApiHost,
+                              userKey: "fs_user_id",
+                              userValue: "not-registered-user",
+                              segmentsToCheck: ["segment-1"]) { segments, error in
+            if case .invalidSegmentIdentifier = error {
+                XCTAssert(true)
+            
+            // [TODO] ODP server will fix to add this "InvalidSegmentIdentifier" later.
+            //        Until then, use the old error format ("DataFetchingException").
+                
+            } else if case .fetchSegmentsFailed("DataFetchingException") = error {
+                XCTAssert(true)
+            } else {
+                XCTFail()
+            }
+            XCTAssertNil(segments)
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+    }
+}
+
+#endif
+
+// MARK: - MockZaiusApiManager
+
+extension ZaiusGraphQLApiManagerTests {
     
     class MockZaiusApiManager: ZaiusGraphQLApiManager {
         let mockUrlSession: URLSession
@@ -287,91 +347,89 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
         // MARK: - Utils
         
         static let goodResponseData: String = """
-        {
-            "data": {
-                "customer": {
-                    "audiences": {
-                        "edges": [
-                            {
-                                "node": {
-                                    "name": "a",
-                                    "state": "qualified",
-                                    "description": "qualifed sample"
-                                }
-                            },
-                            {
-                                "node": {
-                                    "name": "b",
-                                    "state": "not_qualified",
-                                    "description": "not-qualified sample"
-                                }
+    {
+        "data": {
+            "customer": {
+                "audiences": {
+                    "edges": [
+                        {
+                            "node": {
+                                "name": "a",
+                                "state": "qualified",
+                                "description": "qualifed sample"
                             }
-                        ]
-                    }
+                        },
+                        {
+                            "node": {
+                                "name": "b",
+                                "state": "not_qualified",
+                                "description": "not-qualified sample"
+                            }
+                        }
+                    ]
                 }
             }
         }
-        """
+    }
+    """
         
         static let goodEmptyResponseData: String = """
-        {
-            "data": {
-                "customer": {
-                    "audiences": {
-                        "edges": []
-                    }
+    {
+        "data": {
+            "customer": {
+                "audiences": {
+                    "edges": []
                 }
             }
         }
-        """
+    }
+    """
         
         static let invalidIdentifierResponseData: String = """
+    {
+      "errors": [
         {
-          "errors": [
+          "message": "Exception while fetching data (/customer) : java.lang.RuntimeException: could not resolve _fs_user_id = asdsdaddddd",
+          "locations": [
             {
-              "message": "Exception while fetching data (/customer) : java.lang.RuntimeException: could not resolve _fs_user_id = asdsdaddddd",
-              "locations": [
-                {
-                  "line": 2,
-                  "column": 3
-                }
-              ],
-              "path": [
-                "customer"
-              ],
-              "extensions": {
-                "classification": "InvalidIdentifierException"
-              }
+              "line": 2,
+              "column": 3
             }
           ],
-          "data": {
-            "customer": null
+          "path": [
+            "customer"
+          ],
+          "extensions": {
+            "classification": "InvalidIdentifierException"
           }
         }
-        """
+      ],
+      "data": {
+        "customer": null
+      }
+    }
+    """
         
         static let otherExceptionResponseData: String = """
+    {
+      "errors": [
         {
-          "errors": [
-            {
-              "message": "Exception while fetching data (/customer) : java.lang.RuntimeException: could not resolve _fs_user_id = asdsdaddddd",
-              "extensions": {
-                "classification": "TestExceptionClass"
-              }
-            }
-          ],
-          "data": {
-            "customer": null
+          "message": "Exception while fetching data (/customer) : java.lang.RuntimeException: could not resolve _fs_user_id = asdsdaddddd",
+          "extensions": {
+            "classification": "TestExceptionClass"
           }
         }
-        """
-
-        static let badResponseData: String = """
-        {
-            "data": {}
-        }
-        """
-        
+      ],
+      "data": {
+        "customer": null
+      }
     }
-    
+    """
+        
+        static let badResponseData: String = """
+    {
+        "data": {}
+    }
+    """
+    }
 }

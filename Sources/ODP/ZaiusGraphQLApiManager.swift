@@ -130,45 +130,52 @@ class ZaiusGraphQLApiManager {
         defer { session.finishTasksAndInvalidate() }
 
         let task = session.dataTask(with: urlRequest) { data, response, error in
-            guard error != nil, let data = data, let response = response as? HTTPURLResponse else {
+            var returnError: OptimizelyError?
+            var returnSegments: [String]?
+            
+            defer {
+                completionHandler(returnSegments, returnError)
+            }
+
+            guard error == nil, let data = data, let response = response as? HTTPURLResponse else {
                 let msg = error?.localizedDescription ?? "invalid response"
                 self.logger.d {
                     "GraphQL download failed: \(msg)"
                 }
-                completionHandler(nil, .fetchSegmentsFailed("network error"))
+                returnError = .fetchSegmentsFailed("network error")
                 return
             }
             
             let status = response.statusCode
             guard status < 400 else {
-                completionHandler(nil, .fetchSegmentsFailed("\(status)"))
+                returnError = .fetchSegmentsFailed("\(status)")
                 return
             }
             
             guard let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-                completionHandler(nil, .fetchSegmentsFailed("decode error"))
+                returnError = .fetchSegmentsFailed("decode error")
                 return
             }
             
+            // most meaningful ODP errors are returned in 200 success JSON under {"errors": ...}
             if let odpErrors: [[String: Any]] = dict.extractComponent(keyPath: "errors") {
-                if let odpError = odpErrors.first, let errorClass: String = odpError.extractComponent(keyPath: "extension.classification") {
+                if let odpError = odpErrors.first, let errorClass: String = odpError.extractComponent(keyPath: "extensions.classification") {
                     if errorClass == "InvalidIdentifierException" {
-                        completionHandler(nil, .invalidSegmentIdentifier)
+                        returnError = .invalidSegmentIdentifier
                     } else {
-                        completionHandler(nil, .fetchSegmentsFailed(errorClass))
+                        returnError = .fetchSegmentsFailed(errorClass)
                     }
                     return
                 }
             }
             
             guard let audDict: [[String: Any]] = dict.extractComponent(keyPath: "data.customer.audiences.edges") else {
-                completionHandler(nil, .fetchSegmentsFailed("decode error"))
+                returnError = .fetchSegmentsFailed("decode error")
                 return
             }
                     
             let audiences = audDict.compactMap { OdpAudience($0["node"] as? [String: Any]) }
-            let segments = audiences.filter { $0.isQualified }.map { $0.name }
-            completionHandler(segments, nil)
+            returnSegments = audiences.filter { $0.isQualified }.map { $0.name }
         }
         
         task.resume()

@@ -80,11 +80,16 @@ class ZaiusRestApiManager {
                 return
             }
             
+            var dataStr: String?
+            if let data = data, let str = String(bytes: data, encoding: .utf8) {
+                dataStr = str
+            }
+            
             switch response.statusCode {
             case ..<400:
                 errMessage = nil    // success
             case 400..<500:
-                errMessage = "\(response.statusCode)"
+                errMessage = dataStr ?? "\(response.statusCode)"
                 canRetry = false   // no retry (client error)
             default:
                 errMessage = "\(response.statusCode)"

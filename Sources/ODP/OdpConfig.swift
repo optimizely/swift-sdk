@@ -22,13 +22,14 @@ class OdpConfig {
     /// The public API key for the ODP account from which the audience segments will be fetched (optional). If not provided, SDK will use the default publicKey in datafile.
     private var _apiKey: String?
     /// assumed integrated by default (set to false when datafile has no ODP key/host settings)
-    private var _odpServiceIntegrated = true
+    private var _odpServiceIntegrated: Bool
     
     let queue = DispatchQueue(label: "odpConfig")
     
-    init(apiKey: String? = nil, apiHost: String? = nil) {
+    init(apiKey: String? = nil, apiHost: String? = nil, odpServiceIntegrated: Bool = true) {
         self._apiKey = apiKey
         self._apiHost = apiHost
+        self._odpServiceIntegrated = odpServiceIntegrated
     }
 
     func update(apiKey: String?, apiHost: String?) {

@@ -32,7 +32,7 @@ class OdpVuidManager {
     }
     
     func isVuid(visitorId: String) -> Bool {
-        return visitorId.starts(with: "vuid")
+        return visitorId.starts(with: "vuid_")
     }
 }
 

@@ -30,7 +30,12 @@ class ZaiusRestApiManagerTests: XCTestCase {
     func testSendOdpEvents_validRequest() {
         let session = MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.successResponseData)
         let api = MockZaiusApiManager(session)
-        api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { _ in }
+
+        let sem = DispatchSemaphore(value: 0)
+        api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { _ in
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
 
         let request = session.receivedApiRequest!
 
@@ -103,7 +108,56 @@ class ZaiusRestApiManagerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
 
-    // MARK: - MockZaiusApiManager
+}
+
+// MARK: - Tests with live ODP server
+// tests below will be skipped in CI (travis/actions) since they use the live ODP server.
+#if DEBUG
+
+extension ZaiusRestApiManagerTests {
+    
+    var odpApiKey: String { return "W4WzcEs-ABgXorzY7h1LCQ" }
+    var odpApiHost: String { return "https://api.zaius.com" }
+    var odpValidUserId: String { return "tester-101"}
+
+    func testLiveOdpRest() {
+        let manager = ZaiusRestApiManager()
+        
+        let sem = DispatchSemaphore(value: 0)
+        manager.sendOdpEvents(apiKey: odpApiKey,
+                              apiHost: odpApiHost,
+                              events: [OdpEvent(type: "t1",
+                                                action: "a1",
+                                                identifiers: ["vuid": "idv1"],
+                                                data: [:])]) { error in
+            XCTAssertNil(error)
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+    }
+    
+    func testLiveOdpRest_error() {
+        let manager = ZaiusRestApiManager()
+        
+        let sem = DispatchSemaphore(value: 0)
+        manager.sendOdpEvents(apiKey: odpApiKey,
+                              apiHost: odpApiHost,
+                              events: [OdpEvent(type: "t1",
+                                                action: "a1",
+                                                identifiers: [:],
+                                                data: [:])]) { error in
+            XCTAssertNotNil(error, "empty identifiers not allowed in ODP")
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
+    }
+}
+
+#endif
+
+// MARK: - MockZaiusApiManager
+
+extension ZaiusRestApiManagerTests {
     
     class MockZaiusApiManager: ZaiusRestApiManager {
         let mockUrlSession: URLSession
@@ -115,12 +169,7 @@ class ZaiusRestApiManagerTests: XCTestCase {
         override func getSession() -> URLSession {
             return mockUrlSession
         }
-        
-        override func sendOdpEvents(apiKey: String, apiHost: String, events: [OdpEvent], completionHandler: @escaping (OptimizelyError?) -> Void) {
-        }
     }
-    
-    // MARK: - MockZaiusUrlSession
     
     class MockZaiusUrlSession: URLSession {
         static var validSessions = 0
@@ -172,12 +221,11 @@ class ZaiusRestApiManagerTests: XCTestCase {
         // MARK: - Utils
         
         static let successResponseData: String = """
-        {"title":"Accepted","status":202,"timestamp":"2022-07-01T16:04:06.786Z"}
-        """
-
+    {"title":"Accepted","status":202,"timestamp":"2022-07-01T16:04:06.786Z"}
+    """
+        
         static let failureResponseData: String = """
-        {"title":"Bad Request","status":400,"timestamp":"2022-07-01T20:44:00.945Z","detail":{"invalids":[{"event":0,"message":"missing 'type' field"}]}}
-        """
+    {"title":"Bad Request","status":400,"timestamp":"2022-07-01T20:44:00.945Z","detail":{"invalids":[{"event":0,"message":"missing 'type' field"}]}}
+    """
     }
-    
 }

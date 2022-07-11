@@ -29,7 +29,7 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
     let sdkKey = OTUtils.randomSdkKey
     
     override func setUp() {
-        odpManager = MockOdpManager(sdkKey: sdkKey, enable: true, cacheSize: 10, cacheTimeoutInSecs: 10)
+        odpManager = MockOdpManager(sdkKey: sdkKey, disable: false, cacheSize: 10, cacheTimeoutInSecs: 10)
 
         optimizely = OptimizelyClient(sdkKey: sdkKey)
         optimizely.odpManager = odpManager

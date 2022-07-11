@@ -21,14 +21,14 @@ public struct OptimizelySdkSettings {
     let segmentsCacheSize: Int
     /// timeout in seconds (default = 600) of audience segments cache (optional)
     let segmentsCacheTimeoutInSecs: Int
-    /// set this flag to false (default = true) to disable ODP features
-    let enableOdp: Bool
+    /// set this flag to true (default = false) to disable ODP features
+    let disableOdp: Bool
     
     public init(segmentsCacheSize: Int = 100,
                 segmentsCacheTimeoutInSecs: Int = 600,
-                enableOdp: Bool = true) {
+                disableOdp: Bool = false) {
         self.segmentsCacheSize = segmentsCacheSize
         self.segmentsCacheTimeoutInSecs = segmentsCacheTimeoutInSecs
-        self.enableOdp = enableOdp
+        self.disableOdp = disableOdp
     }
 }

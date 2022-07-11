@@ -44,13 +44,13 @@ class OptimizelyClientTests_ODP: XCTestCase {
         XCTAssertEqual(12, optimizely.odpManager.segmentManager?.segmentsCache.size)
         XCTAssertEqual(345, optimizely.odpManager.segmentManager?.segmentsCache.timeoutInSecs)
         
-        sdkSettings = OptimizelySdkSettings(enableOdp: false)
+        sdkSettings = OptimizelySdkSettings(disableOdp: true)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
         XCTAssertEqual(false, optimizely.odpManager.enabled)
     }
     
     func testSendOdpEvent() {
-        let odpManager = MockOdpManager(sdkKey: "any", enable: true, cacheSize: 12, cacheTimeoutInSecs: 123)
+        let odpManager = MockOdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
 
         optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
@@ -77,7 +77,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     // MARK: - OdpConfig Update
     
     func testUpdateOpdConfigCalled_synchronous_success() {
-        let odpManager = MockOdpManager(sdkKey: "any", enable: true, cacheSize: 12, cacheTimeoutInSecs: 123)
+        let odpManager = MockOdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
         
         XCTAssertNil(odpManager.apiKey)
@@ -91,7 +91,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     }
     
     func testUpdateOpdConfigCalled_synchronous_failure() {
-        let odpManager = MockOdpManager(sdkKey: "any", enable: true, cacheSize: 12, cacheTimeoutInSecs: 123)
+        let odpManager = MockOdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
         
         XCTAssertNil(odpManager.apiKey)
@@ -107,7 +107,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     func testUpdateOpdConfigCalled_asynchronous_success() {
         let sdkKey = "valid"
         let optimizely = OptimizelyClient(sdkKey: sdkKey, datafileHandler: MockDatafileHandler())
-        let odpManager = MockOdpManager(sdkKey: sdkKey, enable: true, cacheSize: 12, cacheTimeoutInSecs: 123)
+        let odpManager = MockOdpManager(sdkKey: sdkKey, disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
         
         XCTAssertNil(odpManager.apiKey)
@@ -126,7 +126,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     func testUpdateOpdConfigCalled_asynchronous_failure() {
         let sdkKey = "invalid"
         let optimizely = OptimizelyClient(sdkKey: sdkKey, datafileHandler: MockDatafileHandler())
-        let odpManager = MockOdpManager(sdkKey: sdkKey, enable: true, cacheSize: 12, cacheTimeoutInSecs: 123)
+        let odpManager = MockOdpManager(sdkKey: sdkKey, disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
         
         XCTAssertNil(odpManager.apiKey)

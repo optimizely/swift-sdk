@@ -83,7 +83,7 @@ open class OptimizelyClient: NSObject {
         self.defaultDecideOptions = defaultDecideOptions ?? []
         
         self.odpManager = OdpManager(sdkKey: sdkKey,
-                                     enable: sdkSettings.enableOdp,
+                                     disable: sdkSettings.disableOdp,
                                      cacheSize: sdkSettings.segmentsCacheSize,
                                      cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs)
         

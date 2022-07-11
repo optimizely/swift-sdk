@@ -32,7 +32,7 @@ class OdpManagerTests: XCTestCase {
                                                odpConfig: odpConfig)
         eventManager = MockOdpEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
         manager = OdpManager(sdkKey: sdkKey,
-                             enable: true,
+                             disable: false,
                              cacheSize: cacheSize,
                              cacheTimeoutInSecs: cacheTimeout,
                              segmentManager: segmentManager,
@@ -47,16 +47,16 @@ class OdpManagerTests: XCTestCase {
     
     func testConfigurations_cache() {
         let manager = OdpManager(sdkKey: sdkKey,
-                                 enable: true,
+                                 disable: false,
                                  cacheSize: cacheSize,
                                  cacheTimeoutInSecs: cacheTimeout)
         XCTAssertEqual(manager.segmentManager?.segmentsCache.size,  cacheSize)
         XCTAssertEqual(manager.segmentManager?.segmentsCache.timeoutInSecs, cacheTimeout)
     }
     
-    func testConfigurations_enable() {
+    func testConfigurations_disableOdp() {
         let manager = OdpManager(sdkKey: sdkKey,
-                                 enable: false,
+                                 disable: true,
                                  cacheSize: cacheSize,
                                  cacheTimeoutInSecs: cacheTimeout)
         
@@ -142,7 +142,7 @@ class OdpManagerTests: XCTestCase {
     
     func testUpdateOdpConfig_odpConfigPropagatedProperly() {
         let manager = OdpManager(sdkKey: sdkKey,
-                                 enable: true,
+                                 disable: false,
                                  cacheSize: cacheSize,
                                  cacheTimeoutInSecs: cacheTimeout)
 

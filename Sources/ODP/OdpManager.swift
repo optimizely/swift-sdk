@@ -31,17 +31,17 @@ class OdpManager {
     }
     
     init(sdkKey: String,
-         enable: Bool,
+         disable: Bool,
          cacheSize: Int,
          cacheTimeoutInSecs: Int,
          segmentManager: OdpSegmentManager? = nil,
          eventManager: OdpEventManager? = nil) {
         
-        self.enabled = enable
+        self.enabled = !disable
         self.odpConfig = OdpConfig()
         self.vuidManager = OdpVuidManager.shared
         
-        if enable {
+        if enabled {
             self.segmentManager = segmentManager ?? OdpSegmentManager(cacheSize: cacheSize,
                                                                       cacheTimeoutInSecs: cacheTimeoutInSecs,
                                                                       odpConfig: odpConfig)

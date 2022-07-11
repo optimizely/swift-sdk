@@ -38,7 +38,7 @@ static NSString * datafile;
 
 // MARK: - UserContext
 
-- (void)testCXX_UserContext {
+- (void)testUserContext {
     OptimizelyUserContext *user = [self.optimizely createUserContextWithUserId:kUserId attributes:nil];
     XCTAssert([user.optimizely isEqual:self.optimizely]);
     XCTAssert([user.userId isEqualToString:kUserId]);
@@ -60,7 +60,7 @@ static NSString * datafile;
     XCTAssert([user.attributes[@"age"] isEqualToString:@"18"]);
 }
 
-- (void)testCXX_UserContext_setAttribute {
+- (void)testUserContext_setAttribute {
     OptimizelyUserContext *user = [self.optimizely createUserContextWithUserId:kUserId attributes:nil];
     [user setAttributeWithKey:@"country" value:@"US"];
     [user setAttributeWithKey:@"age" value:@"18"];

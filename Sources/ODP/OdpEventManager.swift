@@ -22,7 +22,7 @@ class OdpEventManager {
     let zaiusMgr: ZaiusRestApiManager
     
     let maxQueueSize = 100
-    let maxFailureCount = 3
+    let maxFailureCount = 1
     let queueLock: DispatchQueue
     let eventQueue: DataStoreQueueStackImpl<OdpEvent>
         
@@ -110,10 +110,6 @@ class OdpEventManager {
         flush()
     }
     
-    func clearEvents() {
-        
-    }
-    
     func flush() {
         guard odpConfig.odpServiceIntegrated else {
             // clean up all pending events if datafile has no ODP public key (not integrated)
@@ -145,10 +141,14 @@ class OdpEventManager {
             while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: maxBatchEvents) {
                 let numEvents = events.count
 
+                // multiple retires are disabled for now (maxFailureCount = 1)
+                // - this may be too much since they'll be retried any way when next events arrive.
+                // - also, no guaranee on success after multiple retris, so it helps minimal with extra complexity.
+                
                 // we've exhuasted our failure count.  Give up and try the next time a event
                 // is queued or someone calls flush (changed to >= so that retried exactly "maxFailureCount" times).
                 if failureCount >= self.maxFailureCount {
-                    self.logger.e("ODP: Failed to send event with max retried")
+                    self.logger.i("ODP: Failed to send event with max retried")
                     break
                 }
                 

@@ -15,7 +15,11 @@
 //
 
 import Foundation
+#if os(watchOS)
+import WatchKit
+#else
 import UIKit
+#endif
 
 class Utils {
     
@@ -36,8 +40,23 @@ class Utils {
         return "Other"
         #endif
     }
-    static let osVersion = UIDevice.current.systemVersion
-    static let deviceModel = UIDevice.current.model
+    
+    static var osVersion: String {
+        #if os(watchOS)
+        return WKInterfaceDevice.current().systemVersion
+        #else
+        return UIDevice.current.systemVersion
+        #endif
+    }
+    
+    static var deviceModel: String {
+        #if os(watchOS)
+        return WKInterfaceDevice.current().model
+        #else
+        return UIDevice.current.model
+        #endif
+    }
+    
     static var deviceType: String {
         // UIUserInterfaceIdiom is an alternative solution, but some (.mac, etc) behaves in an unexpected way.
         #if os(iOS)

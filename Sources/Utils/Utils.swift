@@ -23,16 +23,34 @@ class Utils {
     static var sdkVersion: String = OPTIMIZELYSDKVERSION
     static let swiftSdkClientName = "swift-sdk"
     
+    static var os: String {
+        #if os(iOS)
+        return "iOS"
+        #elseif os(tvOS)
+        return "tvOS"
+        #elseif os(macOS)
+        return "macOS"
+        #elseif os(watchOS)
+        return "watchOS"
+        #else
+        return "Other"
+        #endif
+    }
     static let osVersion = UIDevice.current.systemVersion
     static let deviceModel = UIDevice.current.model
     static var deviceType: String {
-        switch UIDevice.current.userInterfaceIdiom {
-        case .phone: return "Phone"
-        case .pad: return "Tablet"
-        case .tv: return "Smart TV"
-        case .mac: return "PC"
-        default: return "Other"
-        }
+        // UIUserInterfaceIdiom is an alternative solution, but some (.mac, etc) behaves in an unexpected way.
+        #if os(iOS)
+        return (UIDevice.current.userInterfaceIdiom == .phone) ? "Phone" : "Tablet"
+        #elseif os(tvOS)
+        return "Smart TV"
+        #elseif os(macOS)
+        return "PC"
+        #elseif os(watchOS)
+        return "Watch"
+        #else
+        return "Other"
+        #endif
     }
 
     private static let jsonEncoder = JSONEncoder()

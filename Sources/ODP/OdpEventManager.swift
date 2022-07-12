@@ -78,9 +78,9 @@ class OdpEventManager {
             "data_source_version": Utils.sdkVersion,        // "3.10.2"
             
             // [optional] client sdks only
-            "os": "iOS",                                    // ("iOS", "Android", "Mac OS", "Windows", "Linux", ...)
+            "os": Utils.os,                                    // ("iOS", "tvOS", "watchOS", "macOS", "Android", "Windows", "Linux", ...)
             "os_version": Utils.osVersion,                  // "13.2", ...
-            "device_type": Utils.deviceType,                // fixed set = ("Phone", "Tablet", "Smart TV", “PC”, "Other")
+            "device_type": Utils.deviceType,                // fixed set = ("Phone", "Tablet", "Smart TV", "Watch", “PC”, "Other")
             "model": Utils.deviceModel                      // ("iPhone 12", "iPad 2", "Pixel 2", "SM-A515F", ...)
 
             // [optional]

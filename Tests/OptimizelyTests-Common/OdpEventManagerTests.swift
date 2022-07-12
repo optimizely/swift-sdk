@@ -55,10 +55,11 @@ class OdpEventManagerTests: XCTestCase {
                           data: customData)
 
         XCTAssertEqual(1, manager.eventQueue.count)
-        sleep(3)
+        sleep(1)
         XCTAssertEqual(1, manager.eventQueue.count, "not flushed since apiKey is not ready")
         
         let evt = manager.eventQueue.getFirstItem()!
+        
         XCTAssertEqual("t1", evt.type)
         XCTAssertEqual("a1", evt.action)
         XCTAssertEqual(["id-key-1": "id-value-1"], evt.identifiers)
@@ -69,7 +70,10 @@ class OdpEventManagerTests: XCTestCase {
         manager.registerVUID(vuid: "v1")
         
         XCTAssertEqual(1, manager.eventQueue.count)
+        
         let evt = manager.eventQueue.getFirstItem()!
+        print("[ODP event default data] ", evt.data)
+        
         XCTAssertEqual("fullstack", evt.type)
         XCTAssertEqual("client_initialized", evt.action)
         XCTAssertEqual(["vuid": "v1"], evt.identifiers)
@@ -103,7 +107,7 @@ class OdpEventManagerTests: XCTestCase {
         sleep(1)
         XCTAssertEqual(0, manager.eventQueue.count, "flushed since apiKey is ready")
     }
-    
+        
     // MARK: - flush
 
     func testFlush_apiKey() {
@@ -296,11 +300,36 @@ class OdpEventManagerTests: XCTestCase {
         XCTAssert((data["data_source_type"] as! String) == "sdk")
         XCTAssert((data["data_source"] as! String) == "swift-sdk")
         XCTAssert((data["data_source_version"] as! String).count > 3)
-        XCTAssert((data["os"] as! String) == "iOS")
         XCTAssert((data["os_version"] as! String).count > 3)
-        XCTAssert((data["device_type"] as! String).count > 3)
+        
+        // os-dependent
+        
+        let dataOS = data["os"] as! String
+        let dataDeviceType = data["device_type"] as! String
+        
+        #if os(iOS)
+        XCTAssertEqual(dataOS, "iOS")
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            XCTAssertEqual(dataDeviceType, "Phone")
+        } else {
+            XCTAssertEqual(dataDeviceType, "Tablet")
+        }
+        #elseif os(tvOS)
+        XCTAssertEqual(dataOS, "tvOS")
+        XCTAssertEqual(dataDeviceType, "Smart TV")
+        #elseif os(watchOS)
+        XCTAssertEqual(dataOS, "watchOS")
+        XCTAssertEqual(dataDeviceType, "Watch")
+        #elseif os(macOS)
+        XCTAssertEqual(dataOS, "macOS")
+        XCTAssertEqual(dataDeviceType, "PC")
+        #else
+        XCTAssertEqual(dataOS, "Other")
+        XCTAssertEqual(dataDeviceType, "Other")
+        #endif
         
         // overruled ("model") or other custom data
+        
         if customData.isEmpty {
             XCTAssert((data["model"] as! String).count > 3)
             XCTAssertNil(data["key-1"])

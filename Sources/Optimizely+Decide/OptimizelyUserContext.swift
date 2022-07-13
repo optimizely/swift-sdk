@@ -81,7 +81,7 @@ public class OptimizelyUserContext {
         self.userId = userId
         
         let lock = DispatchQueue(label: "user-context")
-        self.atomicAttributes = AtomicProperty(property: attributes ?? [:], lock: lock)
+        self.atomicAttributes = AtomicProperty(property: attributes, lock: lock)
         self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
         self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
         

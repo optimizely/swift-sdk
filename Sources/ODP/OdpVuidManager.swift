@@ -49,7 +49,7 @@ extension OdpVuidManager {
         return "optimizely-odp"
     }
     private var keyForVuid: String {
-        "vuid"
+        return "vuid"
     }
     
     private func load() -> String {

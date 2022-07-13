@@ -67,25 +67,23 @@ public class OptimizelyUserContext {
     ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    public convenience init(optimizely: OptimizelyClient,
+    public init(optimizely: OptimizelyClient,
                             userId: String,
                             attributes: [String: Any?]? = nil) {
-        self.init(optimizely: optimizely, userId: userId, attributes: attributes ?? [:])
-        self.optimizely?.identifyUserToOdp(userId: userId)
-    }
-    
-    init(optimizely: OptimizelyClient,
-         userId: String,
-         attributes: [String: Any?]) {
         self.optimizely = optimizely
         self.userId = userId
         
         let lock = DispatchQueue(label: "user-context")
-        self.atomicAttributes = AtomicProperty(property: attributes, lock: lock)
+        self.atomicAttributes = AtomicProperty(property: attributes ?? [:], lock: lock)
         self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
         self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
+
+        // async call so event building overhead is not blocking context creation
+        lock.async {
+            self.optimizely?.identifyUserToOdp(userId: userId)
+        }
     }
-    
+        
     /// Sets an attribute for a given key.
     /// - Parameters:
     ///   - key: An attribute key

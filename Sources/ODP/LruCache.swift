@@ -64,7 +64,7 @@ class LruCache<K: Hashable, V> {
                     element = nil
                     
                     // check if all are stale and can be reset.
-                    needReset = !isAllStale()
+                    needReset = isAllStale()
                 }
             }
         }
@@ -138,12 +138,15 @@ class LruCache<K: Hashable, V> {
     }
         
     private func isValid(_ item: CacheElement) -> Bool {
+        if timeoutInSecs <= 0 { return true }
         return (Date.timeIntervalSinceReferenceDate - item.time) < Double(timeoutInSecs)
     }
     
+    /// Check if all items in the cache is too old
+    /// - Returns: true if the most recent item is stale
     private func isAllStale() -> Bool {
         guard let mostRecent = tail.prev else { return false }
-        return (Date.timeIntervalSinceReferenceDate - mostRecent.time) < Double(timeoutInSecs)
+        return !isValid(mostRecent)
     }
 
 }

@@ -69,7 +69,7 @@ class LruCacheTests: XCTestCase {
         XCTAssertEqual(cache.map.count, cache.size)
     }
     
-    func testZeroSize() {
+    func testSize_zero() {
         let cache = LruCache<Int, Int>(size: 0, timeoutInSecs: 1000)
         
         XCTAssertNil(cache.lookup(key: 1))
@@ -91,7 +91,7 @@ extension LruCacheTests {
         cache.save(key: 1, value: 100)              // [1]
         cache.save(key: 2, value: 200)              // [1, 2]
         cache.save(key: 3, value: 300)              // [1, 2, 3]
-        sleep(2)
+        sleep(2)  // wait to expire
         cache.save(key: 4, value: 400)              // [1, 2, 3]
         cache.save(key: 1, value: 101)              // [1]
                 
@@ -101,6 +101,19 @@ extension LruCacheTests {
         XCTAssertEqual(400, cache.lookup(key: 4))
     }
     
+    func testTimeout_zero() {
+        let maxTimeout = 0
+        let cache = LruCache<Int, Int>(size: 1000, timeoutInSecs: maxTimeout)
+        
+        cache.save(key: 1, value: 100)              // [1]
+        cache.save(key: 2, value: 200)              // [1, 2]
+        sleep(2)  // wait to expire
+                
+        XCTAssertEqual(100, cache.lookup(key: 1), "should not expire when timeout is 0")
+        XCTAssertEqual(200, cache.lookup(key: 2))
+    }
+
+    
     func testAllStale() {
         let maxTimeout = 1
         let cache = LruCache<Int, Int>(size: 1000, timeoutInSecs: maxTimeout)
@@ -108,9 +121,10 @@ extension LruCacheTests {
         cache.save(key: 1, value: 100)              // [1]
         cache.save(key: 2, value: 200)              // [1, 2]
         cache.save(key: 3, value: 300)              // [1, 2, 3]
-        sleep(2)
-                
-        XCTAssertNil(cache.lookup(key: 1))
+        sleep(2)  // wait to expire
+        XCTAssertEqual(cache.map.count, 3)
+
+        XCTAssertNil(cache.lookup(key: 1))   // this will reset cache (allStale)
         XCTAssert(cache.map.isEmpty, "cache should be reset when detected that all items are stale")
     }
 

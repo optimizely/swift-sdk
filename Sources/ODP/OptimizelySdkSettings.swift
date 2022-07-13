@@ -17,9 +17,9 @@
 import Foundation
 
 public struct OptimizelySdkSettings {
-    /// maximum size (default = 100) of audience segments cache (optional)
+    /// maximum size (default = 100) of audience segments cache (optional). Set to zero to disable caching.
     let segmentsCacheSize: Int
-    /// timeout in seconds (default = 600) of audience segments cache (optional)
+    /// timeout in seconds (default = 600) of audience segments cache (optional). Set to zero to disable timeout.
     let segmentsCacheTimeoutInSecs: Int
     /// set this flag to true (default = false) to disable ODP features
     let disableOdp: Bool

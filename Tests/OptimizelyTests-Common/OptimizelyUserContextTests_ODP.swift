@@ -40,6 +40,7 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
     // MARK: - identify
     
     func testIdentifyCalledAutomatically() {
+        sleep(1)
         XCTAssertEqual(true, odpManager.identifyCalled, "identifyUser is implicitly called on UserContext init")
         XCTAssertEqual(kUserId, odpManager.userId)
     }

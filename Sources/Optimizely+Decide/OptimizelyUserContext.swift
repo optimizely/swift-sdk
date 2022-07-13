@@ -46,7 +46,7 @@ public class OptimizelyUserContext {
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
         
-        let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
+        let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes, identify: false)
         
         if let fds = forcedDecisions {
             userContext.atomicForcedDecisions.property = fds
@@ -67,9 +67,16 @@ public class OptimizelyUserContext {
     ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    public init(optimizely: OptimizelyClient,
+    public convenience init(optimizely: OptimizelyClient,
                             userId: String,
                             attributes: [String: Any?]? = nil) {
+        self.init(optimizely: optimizely, userId: userId, attributes: attributes ?? [:], identify: true)
+    }
+    
+    init(optimizely: OptimizelyClient,
+         userId: String,
+         attributes: [String: Any?],
+         identify: Bool) {
         self.optimizely = optimizely
         self.userId = userId
         
@@ -77,10 +84,12 @@ public class OptimizelyUserContext {
         self.atomicAttributes = AtomicProperty(property: attributes ?? [:], lock: lock)
         self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
         self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
-
-        // async call so event building overhead is not blocking context creation
-        lock.async {
-            self.optimizely?.identifyUserToOdp(userId: userId)
+        
+        if identify {
+            // async call so event building overhead is not blocking context creation
+            lock.async {
+                self.optimizely?.identifyUserToOdp(userId: userId)
+            }
         }
     }
         

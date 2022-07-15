@@ -2949,6 +2949,7 @@
 				6E7519A022C5211100B2B157 /* VariableTests.swift */,
 				6E7519A122C5211100B2B157 /* FeatureFlagTests.swift */,
 				6E7519A222C5211100B2B157 /* AudienceTests.swift */,
+				84640880281320F000CCF97D /* IntegrationTests.swift */,
 				6E7519A322C5211100B2B157 /* ConditionLeafTests.swift */,
 				6E7519A422C5211100B2B157 /* AudienceTests_Evaluate.swift */,
 				6E7519A522C5211100B2B157 /* UserAttributeTests_Evaluate.swift */,
@@ -2992,7 +2993,6 @@
 		6E7519B922C5211100B2B157 /* OptimizelyTests-APIs */ = {
 			isa = PBXGroup;
 			children = (
-				84640880281320F000CCF97D /* IntegrationTests.swift */,
 				6E7519BC22C5211100B2B157 /* OptimizelyErrorTests.swift */,
 				6E5AB69223F6130D007A82B1 /* OptimizelyClientTests_Init_Async.swift */,
 				6E5AB69123F6130C007A82B1 /* OptimizelyClientTests_Init_Sync.swift */,

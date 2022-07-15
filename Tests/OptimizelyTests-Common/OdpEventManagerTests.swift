@@ -253,9 +253,8 @@ class OdpEventManagerTests: XCTestCase {
         manager.flush()
         sleep(1)
         
-        let maxRetries = 1   // multiple retries disabled
-        XCTAssertEqual(maxRetries, apiManager.receivedBatchEvents.count, "should be retried \(maxRetries) times (a batch of 2 events)")
-        XCTAssertEqual(2, manager.eventQueue.count, "the events should remain after giving up")
+        XCTAssertEqual(1, apiManager.receivedBatchEvents.count, "should be not retried immediately (a batch of 2 events)")
+        XCTAssertEqual(2, manager.eventQueue.count, "the events should remain in the queue after giving up for later retries")
     }
     
     func testFlushError_noRetry() {

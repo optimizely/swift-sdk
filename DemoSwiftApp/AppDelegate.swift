@@ -21,9 +21,9 @@ import Optimizely
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let logLevel = OptimizelyLogLevel.debug
     
-    let sdkKey = "FCnSegiEkRry9rhVMroit4"
+    let sdkKey = "5L6MJs1JnPSfNgsGhw5Afu"
     let datafileName = "demoTestDatafile"
-    let featureKey = "decide_demo"
+    let featureKey = "buy_now_feature"
     let experimentKey = "background_experiment_decide"
     let eventKey = "sample_conversion"
     

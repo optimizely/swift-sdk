@@ -22,7 +22,6 @@ class OdpEventManager {
     let zaiusMgr: ZaiusRestApiManager
     
     let maxQueueSize = 100
-    let maxFailureCount = 1
     let queueLock: DispatchQueue
     let eventQueue: DataStoreQueueStackImpl<OdpEvent>
         
@@ -131,57 +130,46 @@ class OdpEventManager {
                 }
             }
             
-            // notify group used to ensure that the sendEvent is synchronous.
+            // sync group used to ensure that the sendEvent is synchronous.
             // used in flushEvents
-            let notify = DispatchGroup()
+            let sync = DispatchGroup()
 
             let maxBatchEvents = 10
-            var failureCount = 0
 
             while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: maxBatchEvents) {
                 let numEvents = events.count
 
-                // multiple retires are disabled for now (maxFailureCount = 1)
+                // multiple auto-retires are disabled for now
                 // - this may be too much since they'll be retried any way when next events arrive.
                 // - also, no guaranee on success after multiple retris, so it helps minimal with extra complexity.
+                        
+                var odpError: OptimizelyError?
                 
-                // we've exhuasted our failure count.  Give up and try the next time a event
-                // is queued or someone calls flush (changed to >= so that retried exactly "maxFailureCount" times).
-                if failureCount >= self.maxFailureCount {
-                    self.logger.i("ODP: Failed to send event with max retried")
-                    break
-                }
-                
-                // make the send event synchronous. enter our notify
-                notify.enter()
-                
+                sync.enter()  // make the send event synchronous. enter our notify
                 self.zaiusMgr.sendOdpEvents(apiKey: odpApiKey,
                                             apiHost: odpApiHost,
                                             events: events) { error in
-                    defer {
-                        notify.leave()  // our send is done.
-                    }
+                    odpError = error
+                    sync.leave()  // our send is done.
+                }
+                sync.wait()  // wait for send completed
+                
+                if let error = odpError {
+                    self.logger.e(error.reason)
                     
-                    if let error = error {
-                        self.logger.e(error.reason)
-                        
-                        // retry only if needed (non-permanent)
-                        if case .odpEventFailed(_, let canRetry) = error {
-                            if canRetry {
-                                failureCount += 1
-                                return
-                            } else {
-                                // permanent errors (400 response or invalid events, etc)
-                                // discard these events so not they do not block following valid events
-                            }
+                    // retry only if needed (non-permanent)
+                    if case .odpEventFailed(_, let canRetry) = error {
+                        if canRetry {
+                            // keep the failed event queue so it can be re-sent later
+                            break
+                        } else {
+                            // permanent errors (400 response or invalid events, etc)
+                            // discard these events so that they do not block following valid events
                         }
                     }
-                        
-                    removeStoredEvents(num: numEvents)
-                    failureCount = 0
                 }
-                
-                notify.wait()  // wait for send completed
+                    
+                removeStoredEvents(num: numEvents)
             }
         }
     }

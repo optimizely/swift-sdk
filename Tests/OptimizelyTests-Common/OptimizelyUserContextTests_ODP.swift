@@ -77,6 +77,7 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
     
     func testFetchQualifiedSegments_sdkNotReady() {
         user.optimizely = nil
+        user.qualifiedSegments = ["dummy"]
         
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments { segments, error in
@@ -89,10 +90,11 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
     }
     
     func testFetchQualifiedSegments_fetchFailed() {
-        let sem = DispatchSemaphore(value: 0)
-        
+        user.qualifiedSegments = ["dummy"]
+
         // ODP apiKey is not available
                 
+        let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments { segments, error in
             XCTAssertNotNil(error)
             XCTAssertNil(segments)

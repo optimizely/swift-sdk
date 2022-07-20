@@ -193,6 +193,9 @@ extension OptimizelyUserContext {
     ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
     public func fetchQualifiedSegments(options: [OptimizelySegmentOption] = [],
                                        completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+        // on failure, qualifiedSegments should be reset if a previous value exists.
+        self.atomicQualifiedSegments.property = nil
+
         guard let optimizely = self.optimizely else {
             completionHandler(nil, .sdkNotReady)
             return

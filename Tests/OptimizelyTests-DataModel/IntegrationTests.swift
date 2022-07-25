@@ -58,6 +58,15 @@ extension IntegrationTests {
         XCTAssertNil(model.publicKey)
     }
     
+    func testDecodeSuccessWithJSONValid4() {
+        let data: [String: Any] = ["key": "partner", "any-int": 10, "any-bool": true, "any-string": "any-str"]
+        let model: Integration = try! OTUtils.model(from: data)
+        
+        XCTAssert(model.key == "partner")
+        XCTAssertNil(model.host)
+        XCTAssertNil(model.publicKey)
+    }
+
     func testDecodeFailWithMissingKey() {
         let data: [String: Any] = ["host": "https://google.com"]
         let model: Integration? = try? OTUtils.model(from: data)

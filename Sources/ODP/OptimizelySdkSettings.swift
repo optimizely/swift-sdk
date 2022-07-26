@@ -17,13 +17,19 @@
 import Foundation
 
 public struct OptimizelySdkSettings {
-    /// maximum size (default = 100) of audience segments cache (optional). Set to zero to disable caching.
+    /// The maximum size of audience segments cache - cache is disabled if this is set to zero.
     let segmentsCacheSize: Int
-    /// timeout in seconds (default = 600) of audience segments cache (optional). Set to zero to disable timeout.
+    /// The timeout in seconds of audience segments cache - timeout is disabled if this is set to zero.
     let segmentsCacheTimeoutInSecs: Int
-    /// set this flag to true (default = false) to disable ODP features
+    /// ODP features are disabled if this is set to true.
     let disableOdp: Bool
     
+    /// Optimizely SDK Settings
+    ///
+    /// - Parameters:
+    ///   - segmentsCacheSize: The maximum size of audience segments cache (optional. default = 100). Set to zero to disable caching.
+    ///   - segmentsCacheTimeoutInSecs: The timeout in seconds of audience segments cache (optional. default = 600). Set to zero to disable timeout.
+    ///   - disableOdp: Set this flag to true (default = false) to disable ODP features
     public init(segmentsCacheSize: Int = 100,
                 segmentsCacheTimeoutInSecs: Int = 600,
                 disableOdp: Bool = false) {

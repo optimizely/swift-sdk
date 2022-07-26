@@ -46,7 +46,7 @@ class LruCache<K: Hashable, V> {
     }
 
     func lookup(key: K) -> V? {
-        if size == 0 { return nil }
+        if size <= 0 { return nil }
         
         var element: CacheElement? = nil
         var needReset = false
@@ -78,7 +78,7 @@ class LruCache<K: Hashable, V> {
     }
     
     func save(key: K, value: V) {
-        if size == 0 { return }
+        if size <= 0 { return }
 
         queue.async(flags: .barrier) {
             let oldSegments = self.map[key]
@@ -100,7 +100,7 @@ class LruCache<K: Hashable, V> {
     
     // read cache contents without order update
     func peek(key: K) -> V? {
-        if size == 0 { return nil }
+        if size <= 0 { return nil }
 
         var element: CacheElement? = nil
         queue.sync {
@@ -110,7 +110,7 @@ class LruCache<K: Hashable, V> {
     }
     
     func reset() {
-        if size == 0 { return }
+        if size <= 0 { return }
 
         queue.sync {
             map = [K: CacheElement]()

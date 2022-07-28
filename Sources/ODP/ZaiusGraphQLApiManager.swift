@@ -25,14 +25,14 @@ import Foundation
  [GraphQL Request]
  
  // fetch info with fs_user_id for ["has_email", "has_email_opted_in", "push_on_sale"] segments
- curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(fs_user_id: \"tester-101\") {audiences(subset:[\"has_email\", \"has_email_opted_in\", \"push_on_sale\"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
+ curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(fs_user_id: \"tester-101\") {audiences(subset:[\"has_email\",\"has_email_opted_in\",\"push_on_sale\"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
  // fetch info with vuid for ["has_email", "has_email_opted_in", "push_on_sale"] segments
- curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences(subset:[\"has_email\", \"has_email_opted_in\", \"push_on_sale\"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
+ curl -i -H 'Content-Type: application/json' -H 'x-api-key: W4WzcEs-ABgXorzY7h1LCQ' -X POST -d '{"query":"query {customer(vuid: \"d66a9d81923d4d2f99d8f64338976322\") {audiences(subset:[\"has_email\",\"has_email_opted_in\",\"push_on_sale\"]) {edges {node {name state}}}}}"}' https://api.zaius.com/v3/graphql
 
  query MyQuery {
    customer(vuid: "d66a9d81923d4d2f99d8f64338976322") {
-     audiences(subset:["has_email", "has_email_opted_in", "push_on_sale"]) {
+     audiences(subset:["has_email","has_email_opted_in","push_on_sale"]) {
        edges {
          node {
            name

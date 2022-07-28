@@ -49,8 +49,7 @@ class LruCache<K: Hashable, V> {
         if size <= 0 { return nil }
         
         var element: CacheElement? = nil
-        var needReset = false
-        
+
         queue.sync {
             element = map[key]
             

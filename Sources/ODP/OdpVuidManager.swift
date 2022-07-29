@@ -28,7 +28,12 @@ class OdpVuidManager {
     }
     
     func makeVuid() -> String {
-        return "vuid_" + UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased()
+        let maxLength = 32   // required by ODP server
+        
+        // make sure UUIDv4 is used (not UUIDv1 or UUIDv6) since the trailing 5 chars will be truncated. See TDD for details.
+        let vuidFull = "vuid_" + UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased()
+        let vuid = (vuidFull.count <= maxLength) ? vuidFull : String(vuidFull.prefix(maxLength))
+        return vuid
     }
     
     func isVuid(visitorId: String) -> Bool {

@@ -7,7 +7,7 @@ env:
 
 jobs:
   unittests:
-    runs-on: macos-10.15
+    runs-on: macos-11
     strategy:
       fail-fast: false
       matrix:

@@ -66,7 +66,7 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments { segments, error in
             XCTAssertNil(error)
-            XCTAssertEqual(["segment-1"], segments)
+            XCTAssertEqual(["odp-segment-1"], segments)
             XCTAssertEqual(self.user.qualifiedSegments, segments)
             sem.signal()
         }
@@ -143,7 +143,7 @@ extension OptimizelyUserContextTests_ODP {
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments(options: [.ignoreCache]) { segments, error in
             XCTAssertNil(error)
-            XCTAssertEqual(segments, ["segment-1"])
+            XCTAssertEqual(segments, ["odp-segment-1"])
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -274,11 +274,8 @@ class MockZaiusApiManager: ZaiusGraphQLApiManager {
         receivedApiHost = apiHost
         
         DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(1)) {
-            if apiKey == nil {
-                completionHandler(nil, OptimizelyError.fetchSegmentsFailed("403"))
-            } else {
-                completionHandler(["segment-1"], nil)
-            }
+            let qualified = segmentsToCheck.isEmpty ? [] : [segmentsToCheck.first!]
+            completionHandler(qualified, nil)
         }
     }
 }

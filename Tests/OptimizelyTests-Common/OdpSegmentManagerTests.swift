@@ -36,7 +36,7 @@ class OdpSegmentManagerTests: XCTestCase {
     }
     
     func testFetchSegmentsSuccess_cacheMiss() {
-        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["x"])
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["new-customer"])
 
         setCache(userKey, "123", ["a"])
 
@@ -55,7 +55,7 @@ class OdpSegmentManagerTests: XCTestCase {
     }
     
     func testFetchSegmentsSuccess_cacheHit() {
-        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["x"])
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["new-customer"])
 
         setCache(userKey, userValue, ["a"])
 
@@ -71,7 +71,7 @@ class OdpSegmentManagerTests: XCTestCase {
     }
     
     func testFetchSegmentsError() {
-        _ = odpConfig.update(apiKey: "invalid-key", apiHost: "host", segmentsToCheck: ["x"])
+        _ = odpConfig.update(apiKey: "invalid-key", apiHost: "host", segmentsToCheck: ["new-customer"])
 
         let sem = DispatchSemaphore(value: 0)
         manager.fetchQualifiedSegments(userKey: userKey,
@@ -87,7 +87,7 @@ class OdpSegmentManagerTests: XCTestCase {
     // MARK: - OptimizelySegmentOption
     
     func testOptions_ignoreCache() {
-        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["x"])
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["new-customer"])
 
         setCache(userKey, userValue, ["a"])
         options = [.ignoreCache]
@@ -105,7 +105,7 @@ class OdpSegmentManagerTests: XCTestCase {
     }
     
     func testOptions_resetCache() {
-        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["x"])
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["new-customer"])
 
         setCache(userKey, userValue, ["a"])
         setCache(userKey, "123", ["a"])
@@ -164,7 +164,8 @@ class OdpSegmentManagerTests: XCTestCase {
                 if apiKey == "invalid-key" {
                     completionHandler(nil, OptimizelyError.fetchSegmentsFailed("403"))
                 } else {
-                    completionHandler(["new-customer"], nil)
+                    let qualified = segmentsToCheck.isEmpty ? [] : [segmentsToCheck.first!]
+                    completionHandler(qualified, nil)
                 }
             }
         }

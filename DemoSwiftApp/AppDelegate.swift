@@ -21,9 +21,9 @@ import Optimizely
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let logLevel = OptimizelyLogLevel.debug
     
-    let sdkKey = "5L6MJs1JnPSfNgsGhw5Afu"
+    let sdkKey = "FCnSegiEkRry9rhVMroit4"
     let datafileName = "demoTestDatafile"
-    let featureKey = "buy_now_feature"
+    let featureKey = "decide_demo"
     let experimentKey = "background_experiment_decide"
     let eventKey = "sample_conversion"
     
@@ -134,9 +134,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.startWithRootViewController()
             
             // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
-//            SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
-//            SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
-//            SamplesForAPI.checkAudienceSegments(optimizely: self.optimizely)
+            //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
+            //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
+            //SamplesForAPI.checkAudienceSegments(optimizely: self.optimizely)
         }
     }
     

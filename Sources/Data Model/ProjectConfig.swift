@@ -55,7 +55,8 @@ class ProjectConfig {
             throw OptimizelyError.dataFileVersionInvalid(project.version)
         }
 
-        defer { self.project = project }  // deferred-init will call "didSet"
+        self.project = project
+        updateProjectDependentProps()  // project:didSet is not fired in init. explicitly called.
     }
     
     convenience init(datafile: String) throws {

@@ -200,7 +200,11 @@ open class OptimizelyClient: NSObject {
         do {
             self.config = try ProjectConfig(datafile: datafile)
             
-            odpManager.updateOdpConfig(apiKey: config?.publicKeyForODP, apiHost: config?.hostForODP)
+            guard let config = self.config else { throw OptimizelyError.dataFileInvalid }
+            
+            odpManager.updateOdpConfig(apiKey: config.publicKeyForODP,
+                                       apiHost: config.hostForODP,
+                                       segmentsToCheck: config.allSegments)
 
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
@@ -955,20 +959,8 @@ extension OptimizelyClient {
     
     func fetchQualifiedSegments(userId: String,
                                 options: [OptimizelySegmentOption],
-                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        guard let segmentsToCheck = config?.allSegments else {
-            completionHandler(nil, .sdkNotReady)
-            return
-        }
-        
-        // emtpy segmentsToCheck (no ODP audiences found in datafile) is not an error.
-        guard segmentsToCheck.count > 0 else {
-            completionHandler([], nil)
-            return
-        }
-        
+                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {        
         odpManager.fetchQualifiedSegments(userId: userId,
-                                          segmentsToCheck: segmentsToCheck,
                                           options: options,
                                           completionHandler: completionHandler)
     }

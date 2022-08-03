@@ -52,7 +52,6 @@ class OdpManager {
     }
     
     func fetchQualifiedSegments(userId: String,
-                                segmentsToCheck: [String],
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         guard enabled else {
@@ -65,7 +64,6 @@ class OdpManager {
     
         segmentManager?.fetchQualifiedSegments(userKey: userKey,
                                                userValue: userValue,
-                                               segmentsToCheck: segmentsToCheck,
                                                options: options,
                                                completionHandler: completionHandler)
     }
@@ -93,13 +91,23 @@ class OdpManager {
         eventManager?.sendEvent(type: type, action: action, identifiers: identifiersWithVuid, data: data)
     }
     
-    func updateOdpConfig(apiKey: String?, apiHost: String?) {
+    func updateOdpConfig(apiKey: String?, apiHost: String?, segmentsToCheck: [String]) {
         guard enabled else {
             return
         }
 
-        odpConfig.update(apiKey: apiKey, apiHost: apiHost)
+        // flush old events before updating odp integration values
         eventManager?.flush()
+
+        let configChanged = odpConfig.update(apiKey: apiKey, apiHost: apiHost, segmentsToCheck: segmentsToCheck)
+        
+        if configChanged {
+            // reset events cache when odp integration or segmentsToCheck changed
+            segmentManager?.reset()
+            
+            // flush old events with the new integration values if events still remain in the queue (when we get the first datafile ready)
+            eventManager?.flush()
+        }
     }
     
 }

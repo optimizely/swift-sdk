@@ -23,22 +23,30 @@ class OdpConfig {
     private var _apiKey: String?
     /// assumed integrated by default (set to false when datafile has no ODP key/host settings)
     private var _odpServiceIntegrated: Bool
+    /// an array of all ODP segments used in the current datafile (associated with apiHost/apiKey).
+    private var _segmentsToCheck: [String]
     
     let queue = DispatchQueue(label: "odpConfig")
     
-    init(apiKey: String? = nil, apiHost: String? = nil, odpServiceIntegrated: Bool = true) {
+    init(apiKey: String? = nil, apiHost: String? = nil, segmentsToCheck: [String] = [], odpServiceIntegrated: Bool = true) {
         self._apiKey = apiKey
         self._apiHost = apiHost
-        self._odpServiceIntegrated = odpServiceIntegrated
+        self._segmentsToCheck = segmentsToCheck
+        self._odpServiceIntegrated = odpServiceIntegrated  // initially assumed true until the first datafile is parsed
     }
 
-    func update(apiKey: String?, apiHost: String?) {
+    func update(apiKey: String?, apiHost: String?, segmentsToCheck: [String]) -> Bool {
+        // disable future event queueing if datafile has no ODP integrations.
+        self.odpServiceIntegrated = (apiKey != nil) && (apiHost != nil)
+
+        if self.apiKey == apiKey, self.apiHost == apiHost, self.segmentsToCheck == segmentsToCheck {
+            return false
+        }
+        
         self.apiKey = apiKey
         self.apiHost = apiHost
-        
-        // disable future event queueing if datafile has no ODP integrations.
-    
-        self.odpServiceIntegrated = (apiKey != nil) && (apiHost != nil)
+        self.segmentsToCheck = segmentsToCheck
+        return true
     }
 }
 
@@ -76,6 +84,21 @@ extension OdpConfig {
         }
     }
     
+    var segmentsToCheck: [String] {
+        get {
+            var value = [String]()
+            queue.sync {
+                value = _segmentsToCheck
+            }
+            return value
+        }
+        set {
+            queue.async {
+                self._segmentsToCheck = newValue
+            }
+        }
+    }
+    
     var odpServiceIntegrated: Bool {
         get {
             var value = false
@@ -90,6 +113,5 @@ extension OdpConfig {
             }
         }
     }
-    
 }
 

@@ -1790,6 +1790,30 @@
 		8464087F28130D3200CCF97D /* Integration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8464086F28130D3200CCF97D /* Integration.swift */; };
 		84640881281320F000CCF97D /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84640880281320F000CCF97D /* IntegrationTests.swift */; };
 		84640882281320F000CCF97D /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84640880281320F000CCF97D /* IntegrationTests.swift */; };
+		846414A2289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414A3289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414A4289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414A5289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414A6289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414A7289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414A8289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414A9289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414AA289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414AB289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414AC289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414AD289B2D0700C45EE2 /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464149F289B2D0700C45EE2 /* decide_audience_segments.json */; };
+		846414AE289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414AF289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B0289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B1289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B2289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B3289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B4289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B5289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B6289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B7289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B8289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
+		846414B9289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */; };
 		848617C82863DC2700B7F41B /* OdpSegmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617C72863DC2700B7F41B /* OdpSegmentManager.swift */; };
 		848617C92863DC2700B7F41B /* OdpSegmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617C72863DC2700B7F41B /* OdpSegmentManager.swift */; };
 		848617CA2863DC2700B7F41B /* OdpSegmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617C72863DC2700B7F41B /* OdpSegmentManager.swift */; };
@@ -1950,12 +1974,6 @@
 		84E7ABCA27D2A1F100447CAE /* ThreadSafeLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E7ABBA27D2A1F100447CAE /* ThreadSafeLogger.swift */; };
 		84F6BAB327FCC5CF004BE62A /* OptimizelyUserContextTests_ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BAB227FCC5CF004BE62A /* OptimizelyUserContextTests_ODP.swift */; };
 		84F6BAB427FCC5CF004BE62A /* OptimizelyUserContextTests_ODP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BAB227FCC5CF004BE62A /* OptimizelyUserContextTests_ODP.swift */; };
-		84F6BACC27FCFAD7004BE62A /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 84F6BAC627FCFAD7004BE62A /* decide_audience_segments.json */; };
-		84F6BAD727FCFB14004BE62A /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 84F6BAC627FCFAD7004BE62A /* decide_audience_segments.json */; };
-		84F6BAD827FCFB15004BE62A /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 84F6BAC627FCFAD7004BE62A /* decide_audience_segments.json */; };
-		84F6BAD927FCFB17004BE62A /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 84F6BAC627FCFAD7004BE62A /* decide_audience_segments.json */; };
-		84F6BADA27FCFB18004BE62A /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 84F6BAC627FCFAD7004BE62A /* decide_audience_segments.json */; };
-		84F6BADB27FCFB21004BE62A /* decide_audience_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 84F6BAC627FCFAD7004BE62A /* decide_audience_segments.json */; };
 		84F6BADD27FD011B004BE62A /* OptimizelyUserContextTests_ODP_Decide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BADC27FD011B004BE62A /* OptimizelyUserContextTests_ODP_Decide.swift */; };
 		84F6BADE27FD011B004BE62A /* OptimizelyUserContextTests_ODP_Decide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BADC27FD011B004BE62A /* OptimizelyUserContextTests_ODP_Decide.swift */; };
 		BD1C3E8524E4399C0084B4DA /* SemanticVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B97DD93249D327F003DE606 /* SemanticVersion.swift */; };
@@ -2373,6 +2391,8 @@
 		84518B20287737070023F104 /* OdpConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpConfig.swift; sourceTree = "<group>"; };
 		8464086F28130D3200CCF97D /* Integration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Integration.swift; sourceTree = "<group>"; };
 		84640880281320F000CCF97D /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
+		8464149F289B2D0700C45EE2 /* decide_audience_segments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = decide_audience_segments.json; sourceTree = "<group>"; };
+		846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = odp_integrated_no_segments.json; sourceTree = "<group>"; };
 		848617C72863DC2700B7F41B /* OdpSegmentManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpSegmentManager.swift; sourceTree = "<group>"; };
 		848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZaiusGraphQLApiManager.swift; sourceTree = "<group>"; };
 		848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZaiusRestApiManager.swift; sourceTree = "<group>"; };
@@ -2390,7 +2410,6 @@
 		84E2E9712855875E001114AB /* OdpEventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OdpEventManager.swift; sourceTree = "<group>"; };
 		84E7ABBA27D2A1F100447CAE /* ThreadSafeLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSafeLogger.swift; sourceTree = "<group>"; };
 		84F6BAB227FCC5CF004BE62A /* OptimizelyUserContextTests_ODP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_ODP.swift; sourceTree = "<group>"; };
-		84F6BAC627FCFAD7004BE62A /* decide_audience_segments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = decide_audience_segments.json; sourceTree = "<group>"; };
 		84F6BADC27FD011B004BE62A /* OptimizelyUserContextTests_ODP_Decide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_ODP_Decide.swift; sourceTree = "<group>"; };
 		BD6485812491474500F30986 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C78CAF572445AD8D009FE876 /* OptimizelyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyJSON.swift; sourceTree = "<group>"; };
@@ -2838,6 +2857,7 @@
 				6E75196322C5211100B2B157 /* benchmark */,
 				6E6BE008237F547200FE8274 /* optimizelyConfig */,
 				6EF8DE0924B8DA5D008B9488 /* decide */,
+				8464149E289B2D0700C45EE2 /* odp */,
 				6E75196222C5211100B2B157 /* optimizely_6372300739_v4.json */,
 				6E75196722C5211100B2B157 /* feature_rollout_toggle_on.json */,
 				6E75196822C5211100B2B157 /* feature_rollout_toggle_off.json */,
@@ -3042,7 +3062,6 @@
 			isa = PBXGroup;
 			children = (
 				6EF8DE0524B8DA58008B9488 /* decide_datafile.json */,
-				84F6BAC627FCFAD7004BE62A /* decide_audience_segments.json */,
 			);
 			path = decide;
 			sourceTree = "<group>";
@@ -3053,6 +3072,15 @@
 				75C71C3825E45A2B0084187E /* WatchBackgroundNotifier.swift */,
 			);
 			path = watchOS;
+			sourceTree = "<group>";
+		};
+		8464149E289B2D0700C45EE2 /* odp */ = {
+			isa = PBXGroup;
+			children = (
+				8464149F289B2D0700C45EE2 /* decide_audience_segments.json */,
+				846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */,
+			);
+			path = odp;
 			sourceTree = "<group>";
 		};
 		87DE4DE091B80D1F13BBD781 /* Frameworks */ = {
@@ -3519,7 +3547,9 @@
 				6E14CDB72423FA0800010234 /* feature_management_experiment_bucketing.json in Resources */,
 				6E14CDBA2423FA0800010234 /* api_datafile.json in Resources */,
 				6E14CDC52423FA0800010234 /* bucketer_test.json in Resources */,
+				846414A5289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E14CDC62423FA0800010234 /* bucketer_test2.json in Resources */,
+				846414B1289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E14CDBF2423FA0800010234 /* typed_audience_datafile.json in Resources */,
 				6E14CDAE2423F9FC00010234 /* 50_entities.json in Resources */,
 				6E14CDB02423FA0800010234 /* optimizely_6372300739_v4.json in Resources */,
@@ -3548,6 +3578,7 @@
 				6EE592C4264DF4A70013AD66 /* 100_entities.json in Resources */,
 				6EE5929D264DF4990013AD66 /* feature_variables.json in Resources */,
 				6EE592B1264DF4990013AD66 /* forced_variation.json in Resources */,
+				846414B0289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6EE592A1264DF4990013AD66 /* typed_audience_datafile.json in Resources */,
 				6EE59297264DF4990013AD66 /* bot_filtering_enabled.json in Resources */,
 				6EE592AB264DF4990013AD66 /* empty_datafile_new_project_id.json in Resources */,
@@ -3556,13 +3587,13 @@
 				6EE59299264DF4990013AD66 /* bucketer_test2.json in Resources */,
 				6EE592AC264DF4990013AD66 /* unsupported_datafile.json in Resources */,
 				6EE592A8264DF4990013AD66 /* optimizely_6372300739_v4.json in Resources */,
-				84F6BADB27FCFB21004BE62A /* decide_audience_segments.json in Resources */,
 				6EE5929F264DF4990013AD66 /* rollout_bucketing.json in Resources */,
 				6EE592A0264DF4990013AD66 /* feature_management_experiment_bucketing.json in Resources */,
 				6EE59298264DF4990013AD66 /* bucketer_test.json in Resources */,
 				6EE592AE264DF4990013AD66 /* bucketing_id.json in Resources */,
 				6EE59296264DF4990013AD66 /* feature_exp.json in Resources */,
 				6EE5929B264DF4990013AD66 /* audience_targeting.json in Resources */,
+				846414A4289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6EE592A5264DF4990013AD66 /* feature_rollout_toggle_off.json in Resources */,
 				6EE592A3264DF4990013AD66 /* empty_datafile.json in Resources */,
 			);
@@ -3606,7 +3637,9 @@
 				6E12B26B22C55A290005E9E6 /* empty_datafile.json in Resources */,
 				6E12B26D22C55A290005E9E6 /* bucketer_test2.json in Resources */,
 				6E12B26A22C55A290005E9E6 /* feature_exp.json in Resources */,
+				846414AA289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E12B25F22C55A290005E9E6 /* unsupported_datafile.json in Resources */,
+				846414B6289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B26522C55A290005E9E6 /* feature_flag.json in Resources */,
 				6E12B26122C55A290005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
 				6E12B2CD22C55A370005E9E6 /* 50_entities.json in Resources */,
@@ -3625,6 +3658,7 @@
 				6E12B20022C55A270005E9E6 /* rollout_bucketing.json in Resources */,
 				6E12B20222C55A270005E9E6 /* bucketing_id.json in Resources */,
 				6E12B2C022C55A340005E9E6 /* 10_entities.json in Resources */,
+				846414B2289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B1FE22C55A270005E9E6 /* forced_variation.json in Resources */,
 				6E12B20422C55A270005E9E6 /* api_datafile.json in Resources */,
 				6E12B21022C55A270005E9E6 /* simple_datafile.json in Resources */,
@@ -3637,9 +3671,9 @@
 				6EA0FB22251A5AEC00EC002D /* bucketer_test3.json in Resources */,
 				6E12B20E22C55A270005E9E6 /* ab_experiments.json in Resources */,
 				6E12B20622C55A270005E9E6 /* grouped_experiments.json in Resources */,
+				846414A6289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E34A629231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */,
 				6E12B20322C55A270005E9E6 /* feature_variables.json in Resources */,
-				84F6BAD727FCFB14004BE62A /* decide_audience_segments.json in Resources */,
 				6E12B20822C55A270005E9E6 /* audience_targeting.json in Resources */,
 				6E12B1FB22C55A270005E9E6 /* feature_rollout_toggle_on.json in Resources */,
 				6E12B1FC22C55A270005E9E6 /* feature_rollout_toggle_off.json in Resources */,
@@ -3688,7 +3722,9 @@
 				6E12B25322C55A280005E9E6 /* empty_datafile.json in Resources */,
 				6E12B25522C55A280005E9E6 /* bucketer_test2.json in Resources */,
 				6E12B25222C55A280005E9E6 /* feature_exp.json in Resources */,
+				846414A9289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E12B24722C55A280005E9E6 /* unsupported_datafile.json in Resources */,
+				846414B5289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B24D22C55A280005E9E6 /* feature_flag.json in Resources */,
 				6E12B24922C55A280005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
 				6E12B2CA22C55A360005E9E6 /* 50_entities.json in Resources */,
@@ -3717,6 +3753,7 @@
 				6EF8DE0824B8DA58008B9488 /* decide_datafile.json in Resources */,
 				6E12B27E22C55A290005E9E6 /* grouped_experiments.json in Resources */,
 				6E34A62E231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */,
+				846414B7289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B27B22C55A290005E9E6 /* feature_variables.json in Resources */,
 				6E12B28022C55A290005E9E6 /* audience_targeting.json in Resources */,
 				6E12B27322C55A290005E9E6 /* feature_rollout_toggle_on.json in Resources */,
@@ -3725,13 +3762,13 @@
 				6E12B27522C55A290005E9E6 /* feature_experiments.json in Resources */,
 				6E12B28722C55A290005E9E6 /* bot_filtering_enabled.json in Resources */,
 				6E12B28422C55A290005E9E6 /* bucketer_test.json in Resources */,
-				84F6BAD927FCFB17004BE62A /* decide_audience_segments.json in Resources */,
 				6E12B28322C55A290005E9E6 /* empty_datafile.json in Resources */,
 				6E12B28522C55A290005E9E6 /* bucketer_test2.json in Resources */,
 				6E12B28222C55A290005E9E6 /* feature_exp.json in Resources */,
 				6E12B27722C55A290005E9E6 /* unsupported_datafile.json in Resources */,
 				6E12B27D22C55A290005E9E6 /* feature_flag.json in Resources */,
 				6E12B27922C55A290005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				846414AB289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E12B2D022C55A370005E9E6 /* 50_entities.json in Resources */,
 				6E34A647231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */,
 			);
@@ -3758,6 +3795,7 @@
 				6E12B29E22C55A2A0005E9E6 /* ab_experiments.json in Resources */,
 				6E12B29622C55A2A0005E9E6 /* grouped_experiments.json in Resources */,
 				6E34A62F231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */,
+				846414B8289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B29322C55A2A0005E9E6 /* feature_variables.json in Resources */,
 				6E12B29822C55A2A0005E9E6 /* audience_targeting.json in Resources */,
 				6E12B28B22C55A2A0005E9E6 /* feature_rollout_toggle_on.json in Resources */,
@@ -3766,13 +3804,13 @@
 				6E12B28D22C55A2A0005E9E6 /* feature_experiments.json in Resources */,
 				6E12B29F22C55A2A0005E9E6 /* bot_filtering_enabled.json in Resources */,
 				6E12B29C22C55A2A0005E9E6 /* bucketer_test.json in Resources */,
-				84F6BADA27FCFB18004BE62A /* decide_audience_segments.json in Resources */,
 				6E12B29B22C55A2A0005E9E6 /* empty_datafile.json in Resources */,
 				6E12B29D22C55A2A0005E9E6 /* bucketer_test2.json in Resources */,
 				6E12B29A22C55A2A0005E9E6 /* feature_exp.json in Resources */,
 				6E12B28F22C55A2A0005E9E6 /* unsupported_datafile.json in Resources */,
 				6E12B29522C55A2A0005E9E6 /* feature_flag.json in Resources */,
 				6E12B29122C55A2A0005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				846414AC289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E12B2D322C55A380005E9E6 /* 50_entities.json in Resources */,
 				6E34A648231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */,
 			);
@@ -3799,6 +3837,7 @@
 				6EF8DE0624B8DA58008B9488 /* decide_datafile.json in Resources */,
 				6E12B1EE22C55A260005E9E6 /* grouped_experiments.json in Resources */,
 				6E34A628231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */,
+				846414AF289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B1EB22C55A260005E9E6 /* feature_variables.json in Resources */,
 				6E12B1F022C55A260005E9E6 /* audience_targeting.json in Resources */,
 				6E12B1E322C55A260005E9E6 /* feature_rollout_toggle_on.json in Resources */,
@@ -3807,13 +3846,13 @@
 				6E12B1E522C55A260005E9E6 /* feature_experiments.json in Resources */,
 				6E12B1F722C55A260005E9E6 /* bot_filtering_enabled.json in Resources */,
 				6E12B1F422C55A260005E9E6 /* bucketer_test.json in Resources */,
-				84F6BACC27FCFAD7004BE62A /* decide_audience_segments.json in Resources */,
 				6E12B1F322C55A260005E9E6 /* empty_datafile.json in Resources */,
 				6E12B1F522C55A260005E9E6 /* bucketer_test2.json in Resources */,
 				6E12B1F222C55A260005E9E6 /* feature_exp.json in Resources */,
 				6E12B1E722C55A260005E9E6 /* unsupported_datafile.json in Resources */,
 				6E12B1ED22C55A260005E9E6 /* feature_flag.json in Resources */,
 				6E12B1E922C55A260005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				846414A3289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E12B2BE22C55A330005E9E6 /* 50_entities.json in Resources */,
 				6E34A641231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */,
 			);
@@ -3840,6 +3879,7 @@
 				6E12B22622C55A270005E9E6 /* ab_experiments.json in Resources */,
 				6E12B21E22C55A270005E9E6 /* grouped_experiments.json in Resources */,
 				6E34A62A231ED04900BAE302 /* empty_datafile_new_project_id.json in Resources */,
+				846414B3289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B21B22C55A270005E9E6 /* feature_variables.json in Resources */,
 				6E12B22022C55A270005E9E6 /* audience_targeting.json in Resources */,
 				6E12B21322C55A270005E9E6 /* feature_rollout_toggle_on.json in Resources */,
@@ -3848,13 +3888,13 @@
 				6E12B21522C55A270005E9E6 /* feature_experiments.json in Resources */,
 				6E12B22722C55A270005E9E6 /* bot_filtering_enabled.json in Resources */,
 				6E12B22422C55A270005E9E6 /* bucketer_test.json in Resources */,
-				84F6BAD827FCFB15004BE62A /* decide_audience_segments.json in Resources */,
 				6E12B22322C55A270005E9E6 /* empty_datafile.json in Resources */,
 				6E12B22522C55A270005E9E6 /* bucketer_test2.json in Resources */,
 				6E12B22222C55A270005E9E6 /* feature_exp.json in Resources */,
 				6E12B21722C55A270005E9E6 /* unsupported_datafile.json in Resources */,
 				6E12B21D22C55A270005E9E6 /* feature_flag.json in Resources */,
 				6E12B21922C55A270005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
+				846414A7289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E12B2C422C55A350005E9E6 /* 50_entities.json in Resources */,
 				6E34A643231ED28600BAE302 /* empty_datafile_new_account_id.json in Resources */,
 			);
@@ -3891,7 +3931,9 @@
 				6E12B23B22C55A280005E9E6 /* empty_datafile.json in Resources */,
 				6E12B23D22C55A280005E9E6 /* bucketer_test2.json in Resources */,
 				6E12B23A22C55A280005E9E6 /* feature_exp.json in Resources */,
+				846414A8289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E12B22F22C55A280005E9E6 /* unsupported_datafile.json in Resources */,
+				846414B4289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B23522C55A280005E9E6 /* feature_flag.json in Resources */,
 				6E12B23122C55A280005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
 				6E12B2C722C55A350005E9E6 /* 50_entities.json in Resources */,
@@ -3930,7 +3972,9 @@
 				6E12B2B322C55A2A0005E9E6 /* empty_datafile.json in Resources */,
 				6E12B2B522C55A2B0005E9E6 /* bucketer_test2.json in Resources */,
 				6E12B2B222C55A2A0005E9E6 /* feature_exp.json in Resources */,
+				846414AD289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E12B2A722C55A2A0005E9E6 /* unsupported_datafile.json in Resources */,
+				846414B9289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B2AD22C55A2A0005E9E6 /* feature_flag.json in Resources */,
 				6E12B2A922C55A2A0005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
 				6E12B2D622C55A380005E9E6 /* 50_entities.json in Resources */,
@@ -3976,7 +4020,9 @@
 				6E12B1DB22C55A250005E9E6 /* empty_datafile.json in Resources */,
 				6E12B1DD22C55A250005E9E6 /* bucketer_test2.json in Resources */,
 				6E12B1DA22C55A250005E9E6 /* feature_exp.json in Resources */,
+				846414A2289B2D0700C45EE2 /* decide_audience_segments.json in Resources */,
 				6E12B1CF22C55A250005E9E6 /* unsupported_datafile.json in Resources */,
+				846414AE289B2D0700C45EE2 /* odp_integrated_no_segments.json in Resources */,
 				6E12B1D522C55A250005E9E6 /* feature_flag.json in Resources */,
 				6E12B1D122C55A250005E9E6 /* feature_management_experiment_bucketing.json in Resources */,
 				6E12B2BB22C55A330005E9E6 /* 50_entities.json in Resources */,

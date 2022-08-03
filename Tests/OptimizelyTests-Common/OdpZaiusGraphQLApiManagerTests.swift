@@ -258,7 +258,7 @@ extension ZaiusGraphQLApiManagerTests {
         manager.fetchSegments(apiKey: odpApiKey,
                               apiHost: odpApiHost,
                               userKey: "fs_user_id",
-                              userValue: "not-registered-user",
+                              userValue: "not-registered-user-1",
                               segmentsToCheck: ["segment-1"]) { segments, error in
             if case .invalidSegmentIdentifier = error {
                 XCTAssert(true)

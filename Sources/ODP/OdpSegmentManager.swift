@@ -18,9 +18,9 @@ import Foundation
 
 class OdpSegmentManager {    
     let odpConfig: OdpConfig
-    let zaiusMgr: ZaiusGraphQLApiManager
     let segmentsCache: LruCache<String, [String]>
-    
+    var zaiusMgr: ZaiusGraphQLApiManager
+
     let logger = OPTLoggerFactory.getLogger()
 
     init(cacheSize: Int,
@@ -36,11 +36,17 @@ class OdpSegmentManager {
     
     func fetchQualifiedSegments(userKey: String,
                                 userValue: String,
-                                segmentsToCheck: [String],
                                 options: [OptimizelySegmentOption],
                                 completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         guard let odpApiKey = odpConfig.apiKey, let odpApiHost = odpConfig.apiHost else {
             completionHandler(nil, .fetchSegmentsFailed("apiKey/apiHost not defined"))
+            return
+        }
+        
+        // emtpy segmentsToCheck (no ODP audiences found in datafile) is not an error. return immediately without checking with the ODP server.
+        let segmentsToCheck = odpConfig.segmentsToCheck
+        guard segmentsToCheck.count > 0 else {
+            completionHandler([], nil)
             return
         }
         
@@ -50,7 +56,7 @@ class OdpSegmentManager {
         let resetCache = options.contains(.resetCache)
         
         if resetCache {
-            segmentsCache.reset()
+            reset()
         }
         
         if !ignoreCache {
@@ -75,6 +81,9 @@ class OdpSegmentManager {
         }
     }
     
+    func reset() {
+        segmentsCache.reset()
+    }
 }
 
 // MARK: - Utils

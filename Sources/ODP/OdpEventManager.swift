@@ -111,7 +111,7 @@ class OdpEventManager {
     
     func flush() {
         guard odpConfig.odpServiceIntegrated else {
-            // clean up all pending events if datafile has no ODP public key (not integrated)
+            // clean up all pending events if datafile is ready but has no ODP public key (not integrated)
             _ = eventQueue.removeFirstItems(count: self.maxQueueSize)
             return
         }

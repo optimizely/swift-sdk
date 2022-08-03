@@ -36,14 +36,13 @@ class OdpSegmentManagerTests: XCTestCase {
     }
     
     func testFetchSegmentsSuccess_cacheMiss() {
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["x"])
 
         setCache(userKey, "123", ["a"])
 
         let sem = DispatchSemaphore(value: 0)
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
-                                       segmentsToCheck: [],
                                        options: options) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(["new-customer"], segments)
@@ -56,14 +55,13 @@ class OdpSegmentManagerTests: XCTestCase {
     }
     
     func testFetchSegmentsSuccess_cacheHit() {
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["x"])
 
         setCache(userKey, userValue, ["a"])
 
         let sem = DispatchSemaphore(value: 0)
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
-                                       segmentsToCheck: [],
                                        options: options) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(["a"], segments)
@@ -73,12 +71,11 @@ class OdpSegmentManagerTests: XCTestCase {
     }
     
     func testFetchSegmentsError() {
-        odpConfig.update(apiKey: "invalid-key", apiHost: "host")
+        _ = odpConfig.update(apiKey: "invalid-key", apiHost: "host", segmentsToCheck: ["x"])
 
         let sem = DispatchSemaphore(value: 0)
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
-                                       segmentsToCheck: [],
                                        options: []) { segments, error in
             XCTAssertNotNil(error)
             XCTAssertNil(segments)
@@ -90,7 +87,7 @@ class OdpSegmentManagerTests: XCTestCase {
     // MARK: - OptimizelySegmentOption
     
     func testOptions_ignoreCache() {
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["x"])
 
         setCache(userKey, userValue, ["a"])
         options = [.ignoreCache]
@@ -98,7 +95,6 @@ class OdpSegmentManagerTests: XCTestCase {
         let sem = DispatchSemaphore(value: 0)
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
-                                       segmentsToCheck: [],
                                        options: options) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(["new-customer"], segments, "cache lookup should be skipped")
@@ -109,7 +105,7 @@ class OdpSegmentManagerTests: XCTestCase {
     }
     
     func testOptions_resetCache() {
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: ["x"])
 
         setCache(userKey, userValue, ["a"])
         setCache(userKey, "123", ["a"])
@@ -119,7 +115,6 @@ class OdpSegmentManagerTests: XCTestCase {
         let sem = DispatchSemaphore(value: 0)
         manager.fetchQualifiedSegments(userKey: userKey,
                                        userValue: userValue,
-                                       segmentsToCheck: [],
                                        options: options) { segments, error in
             XCTAssertNil(error)
             XCTAssertEqual(["new-customer"], segments, "cache lookup should be skipped")

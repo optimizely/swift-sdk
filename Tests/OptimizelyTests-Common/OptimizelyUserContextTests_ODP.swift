@@ -66,8 +66,8 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments { segments, error in
             XCTAssertNil(error)
-            XCTAssert(segments == ["segment-1"])
-            XCTAssert(self.user.qualifiedSegments == segments)
+            XCTAssertEqual(["segment-1"], segments)
+            XCTAssertEqual(self.user.qualifiedSegments, segments)
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -115,11 +115,11 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
         
-        XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(odpManager.segmentsToCheck!))
+        XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(odpManager.odpConfig.segmentsToCheck))
     }
     
     func testFetchQualifiedSegments_segmentsNotUsed() {
-        let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
+        let datafile = OTUtils.loadJSONDatafile("odp_integrated_no_segments")!
         try? optimizely.start(datafile: datafile)
         
         let sem = DispatchSemaphore(value: 0)
@@ -149,7 +149,7 @@ extension OptimizelyUserContextTests_ODP {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
 
         XCTAssertEqual(kUserId, odpManager.userId, "userId should be used as a default")
-        XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(odpManager.segmentsToCheck!), "segmentsToCheck should be all-in-project by default")
+        XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(odpManager.odpConfig.segmentsToCheck), "segmentsToCheck should be all-in-project by default")
         XCTAssertEqual([.ignoreCache], odpManager.options)
     }
     
@@ -200,6 +200,10 @@ extension OptimizelyUserContextTests_ODP {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
     
+    /*
+     this test is not good since createUserContext with not-registered-user will auto register the user.
+     the same live odp test with not-registered-user will be done in ZaiusGraphQLApiManagerTests, so skipped here.
+     
     func testLiveOdpGraphQL_defaultParameters_userNotRegistered() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         try! optimizely.start(datafile: datafile)
@@ -223,7 +227,7 @@ extension OptimizelyUserContextTests_ODP {
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))
     }
-
+     */
 }
 
 #endif
@@ -232,35 +236,49 @@ extension OptimizelyUserContextTests_ODP {
 
 class MockOdpManager: OdpManager {
     var userId: String?
-    var segmentsToCheck: [String]!
     var options: [OptimizelySegmentOption]!
     var identifyCalled = false
     
-    var apiKey: String?
-    var apiHost: String?
+    init(sdkKey: String, disable: Bool, cacheSize: Int, cacheTimeoutInSecs: Int) {
+        super.init(sdkKey: sdkKey, disable: disable, cacheSize: cacheSize, cacheTimeoutInSecs: cacheTimeoutInSecs)
+        self.segmentManager?.zaiusMgr = MockZaiusApiManager()
+    }
     
     override func fetchQualifiedSegments(userId: String,
-                                         segmentsToCheck: [String],
                                          options: [OptimizelySegmentOption],
                                          completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         self.userId = userId
-        self.segmentsToCheck = segmentsToCheck
         self.options = options
-        
-        DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(1)) {
-            if self.odpConfig.apiKey == nil {
-                completionHandler(nil, OptimizelyError.generic)
-            } else {
-                let sampleSegments = ["segment-1"]
-                completionHandler(sampleSegments, nil)
-            }
-        }
+        super.fetchQualifiedSegments(userId: userId, options: options, completionHandler: completionHandler)
     }
     
     override func identifyUser(userId: String) {
         self.userId = userId
         self.identifyCalled = true
     }
-    
 }
 
+// MARK: - MockZaiusApiManager
+
+class MockZaiusApiManager: ZaiusGraphQLApiManager {
+    var receivedApiKey: String!
+    var receivedApiHost: String!
+
+    override func fetchSegments(apiKey: String,
+                                apiHost: String,
+                                userKey: String,
+                                userValue: String,
+                                segmentsToCheck: [String],
+                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+        receivedApiKey = apiKey
+        receivedApiHost = apiHost
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(1)) {
+            if apiKey == nil {
+                completionHandler(nil, OptimizelyError.fetchSegmentsFailed("403"))
+            } else {
+                completionHandler(["segment-1"], nil)
+            }
+        }
+    }
+}

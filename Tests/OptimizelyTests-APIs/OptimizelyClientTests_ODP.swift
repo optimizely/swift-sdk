@@ -165,7 +165,7 @@ extension OptimizelyClientTests_ODP {
             self.eventData = data
         }
         
-        override func updateOdpConfig(apiKey: String?, apiHost: String?) {
+        override func updateOdpConfig(apiKey: String?, apiHost: String?, segmentsToCheck: [String]) {
             self.apiKey = apiKey
             self.apiHost = apiHost
         }

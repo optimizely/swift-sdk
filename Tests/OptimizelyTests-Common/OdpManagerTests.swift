@@ -63,14 +63,14 @@ class OdpManagerTests: XCTestCase {
         XCTAssertTrue(manager.vuid.starts(with: "vuid_"), "vuid should be serverved even when ODP is disabled.")
 
         let sem = DispatchSemaphore(value: 0)
-        manager.fetchQualifiedSegments(userId: "user1", segmentsToCheck: [], options: []) { segments, error in
+        manager.fetchQualifiedSegments(userId: "user1", options: []) { segments, error in
             XCTAssertNil(segments)
             XCTAssertEqual(error?.reason, OptimizelyError.odpNotEnabled.reason)
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
         
-        manager.updateOdpConfig(apiKey: "valid", apiHost: "host")
+        manager.updateOdpConfig(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         XCTAssertNil(manager.odpConfig.apiKey)
         XCTAssertNil(manager.odpConfig.apiHost)
 
@@ -87,19 +87,17 @@ class OdpManagerTests: XCTestCase {
     
     func testFetchQualifiedSegments() {
         let vuid = "vuid_123"
-        manager.fetchQualifiedSegments(userId: vuid, segmentsToCheck: ["seg-1"], options: [.ignoreCache]) { _, _ in }
+        manager.fetchQualifiedSegments(userId: vuid, options: [.ignoreCache]) { _, _ in }
         
         XCTAssertEqual(segmentManager.receivedUserKey, "vuid")
         XCTAssertEqual(segmentManager.receivedUserValue, vuid)
-        XCTAssertEqual(segmentManager.receivedSegmentsToCheck, ["seg-1"])
         XCTAssertEqual(segmentManager.receivedOptions, [.ignoreCache])
 
         let userId = "user-1"
-        manager.fetchQualifiedSegments(userId: userId, segmentsToCheck: [], options: []) { _, _ in }
+        manager.fetchQualifiedSegments(userId: userId, options: []) { _, _ in }
 
         XCTAssertEqual(segmentManager.receivedUserKey, "fs_user_id")
         XCTAssertEqual(segmentManager.receivedUserValue, "user-1")
-        XCTAssertEqual(segmentManager.receivedSegmentsToCheck, [])
         XCTAssertEqual(segmentManager.receivedOptions, [])
     }
     
@@ -133,10 +131,10 @@ class OdpManagerTests: XCTestCase {
     }
     
     func testUpdateOdpConfig_flushCalled() {
-        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1")
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
         XCTAssertTrue(eventManager.flushCalled)
                 
-        manager.updateOdpConfig(apiKey: nil, apiHost: nil)
+        manager.updateOdpConfig(apiKey: nil, apiHost: nil, segmentsToCheck: [])
         XCTAssertTrue(eventManager.flushCalled)
     }
     
@@ -146,7 +144,7 @@ class OdpManagerTests: XCTestCase {
                                  cacheSize: cacheSize,
                                  cacheTimeoutInSecs: cacheTimeout)
 
-        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1")
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
                 
         XCTAssertEqual(manager.segmentManager?.odpConfig.apiKey, "key-1")
         XCTAssertEqual(manager.segmentManager?.odpConfig.apiHost, "host-1")
@@ -157,7 +155,7 @@ class OdpManagerTests: XCTestCase {
         
         // odp disabled with invalid apiKey (apiKey/apiHost propagated into submanagers)
         
-        manager.updateOdpConfig(apiKey: nil, apiHost: nil)
+        manager.updateOdpConfig(apiKey: nil, apiHost: nil, segmentsToCheck: [])
         
         XCTAssertEqual(manager.segmentManager?.odpConfig.apiKey, nil)
         XCTAssertEqual(manager.segmentManager?.odpConfig.apiHost, nil)
@@ -209,17 +207,14 @@ class OdpManagerTests: XCTestCase {
     class MockOdpSegmentManager: OdpSegmentManager {
         var receivedUserKey: String!
         var receivedUserValue: String!
-        var receivedSegmentsToCheck: [String]!
         var receivedOptions: [OptimizelySegmentOption]!
         
         override func fetchQualifiedSegments(userKey: String,
                                              userValue: String,
-                                             segmentsToCheck: [String],
                                              options: [OptimizelySegmentOption],
                                              completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
             self.receivedUserKey = userKey
             self.receivedUserValue = userValue
-            self.receivedSegmentsToCheck = segmentsToCheck
             self.receivedOptions = options
         }
     }

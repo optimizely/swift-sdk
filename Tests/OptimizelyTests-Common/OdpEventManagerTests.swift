@@ -93,7 +93,7 @@ class OdpEventManagerTests: XCTestCase {
     
     func testSendEvent_apiKey() {
         odpConfig = OdpConfig()
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         
         manager = OdpEventManager(sdkKey: "any",
                                   odpConfig: odpConfig,
@@ -125,7 +125,7 @@ class OdpEventManagerTests: XCTestCase {
 
         // apiKey is ready
         
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
@@ -140,7 +140,7 @@ class OdpEventManagerTests: XCTestCase {
         ]
         manager.dispatch(events[0])
         
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
@@ -160,7 +160,7 @@ class OdpEventManagerTests: XCTestCase {
             manager.dispatch(e)
         }
 
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
@@ -177,7 +177,7 @@ class OdpEventManagerTests: XCTestCase {
             manager.dispatch(e)
         }
         
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
@@ -188,7 +188,7 @@ class OdpEventManagerTests: XCTestCase {
     }
 
     func testFlush_emptyQueue() {
-        odpConfig.update(apiKey: "valid", apiHost: "host")
+        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
@@ -221,7 +221,7 @@ class OdpEventManagerTests: XCTestCase {
         XCTAssertEqual(0, apiManager1.receivedBatchEvents.count)
         XCTAssertEqual(0, apiManager2.receivedBatchEvents.count)
 
-        odpConfig1.update(apiKey: "valid", apiHost: "host")
+        odpConfig1.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager1.flush()
         sleep(1)
 
@@ -229,7 +229,7 @@ class OdpEventManagerTests: XCTestCase {
         XCTAssertEqual(2, apiManager1.receivedBatchEvents[0].count)
         XCTAssertEqual(0, apiManager2.receivedBatchEvents.count)
 
-        odpConfig2.update(apiKey: "valid", apiHost: "host")
+        odpConfig2.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager2.flush()
         sleep(1)
 
@@ -249,7 +249,7 @@ class OdpEventManagerTests: XCTestCase {
             manager.dispatch(e)
         }
 
-        odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host")
+        odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
@@ -265,7 +265,7 @@ class OdpEventManagerTests: XCTestCase {
             manager.dispatch(e)
         }
         
-        odpConfig.update(apiKey: "invalid-key-no-retry", apiHost: "host")
+        odpConfig.update(apiKey: "invalid-key-no-retry", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
@@ -278,7 +278,7 @@ class OdpEventManagerTests: XCTestCase {
     // MARK: - OdpConfig
     
     func testOdpConfig() {
-        odpConfig.update(apiKey: "test-key", apiHost: "test-host")
+        odpConfig.update(apiKey: "test-key", apiHost: "test-host", segmentsToCheck: [])
 
         manager = OdpEventManager(sdkKey: "any",
                                   odpConfig: odpConfig,

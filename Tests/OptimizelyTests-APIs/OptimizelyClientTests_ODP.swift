@@ -76,72 +76,38 @@ class OptimizelyClientTests_ODP: XCTestCase {
     
     // MARK: - OdpConfig Update
     
-    func testUpdateOpdConfigCalled_synchronous_success() {
+    func testUpdateOpdConfigCalled_wheneverProjectConfigUpdated_initialOrPolling() {
         let odpManager = MockOdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
         
         XCTAssertNil(odpManager.apiKey)
         XCTAssertNil(odpManager.apiHost)
+        XCTAssertEqual([], odpManager.segmentsToCheck)
+
+        // ODP integrated in datafile
         
-        let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
-        try? optimizely.start(datafile: datafile)
+        var datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
+        updateProjectConfig(optimizely: optimizely, datafile: datafile)
         
         XCTAssertEqual("W4WzcEs-ABgXorzY7h1LCQ", odpManager.apiKey, "updateOdpConfig should be called when datafile parsed ok")
         XCTAssertEqual("https://api.zaius.com", odpManager.apiHost)
+        XCTAssertEqual(["odp-segment-1", "odp-segment-2", "odp-segment-3"], odpManager.segmentsToCheck.sorted())
+        
+        // ODP not integrated in datafile
+        
+        datafile = OTUtils.loadJSONDatafile("decide_datafile")!
+        updateProjectConfig(optimizely: optimizely, datafile: datafile)
+
+        XCTAssertNil(odpManager.apiKey, "updateOdpConfig should be called when datafile parsed ok, but no odp integrated")
+        XCTAssertNil(odpManager.apiHost)
+        XCTAssertEqual([], odpManager.segmentsToCheck)
     }
     
-    func testUpdateOpdConfigCalled_synchronous_failure() {
-        let odpManager = MockOdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
-        optimizely.odpManager = odpManager
-        
-        XCTAssertNil(odpManager.apiKey)
-        XCTAssertNil(odpManager.apiHost)
-        
-        let datafile = OTUtils.loadJSONDatafile("unsupported_datafile")!
-        try? optimizely.start(datafile: datafile)
-        
-        XCTAssertNil(odpManager.apiKey, "updateOdpConfig should not be called when datafile parse failed")
-        XCTAssertNil(odpManager.apiHost)
-    }
+    // MARK: - Utils
     
-    func testUpdateOpdConfigCalled_asynchronous_success() {
-        let sdkKey = "valid"
-        let optimizely = OptimizelyClient(sdkKey: sdkKey, datafileHandler: MockDatafileHandler())
-        let odpManager = MockOdpManager(sdkKey: sdkKey, disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
-        optimizely.odpManager = odpManager
-        
-        XCTAssertNil(odpManager.apiKey)
-        XCTAssertNil(odpManager.apiHost)
-        
-        let sem = DispatchSemaphore(value: 0)
-        optimizely.start { result in
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-
-        XCTAssertEqual("W4WzcEs-ABgXorzY7h1LCQ", odpManager.apiKey, "updateOdpConfig should be called when datafile fetched")
-        XCTAssertEqual("https://api.zaius.com", odpManager.apiHost)
+    func updateProjectConfig(optimizely: OptimizelyClient, datafile: Data) {
+        optimizely.config = try! ProjectConfig(datafile: datafile)
     }
-    
-    func testUpdateOpdConfigCalled_asynchronous_failure() {
-        let sdkKey = "invalid"
-        let optimizely = OptimizelyClient(sdkKey: sdkKey, datafileHandler: MockDatafileHandler())
-        let odpManager = MockOdpManager(sdkKey: sdkKey, disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
-        optimizely.odpManager = odpManager
-        
-        XCTAssertNil(odpManager.apiKey)
-        XCTAssertNil(odpManager.apiHost)
-        
-        let sem = DispatchSemaphore(value: 0)
-        optimizely.start { result in
-            sem.signal()
-        }
-        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-
-        XCTAssertNil(odpManager.apiKey, "updateOdpConfig should not be called on datafile fetch failed")
-        XCTAssertNil(odpManager.apiHost)
-    }
-
 
 }
 
@@ -157,6 +123,7 @@ extension OptimizelyClientTests_ODP {
         
         var apiKey: String?
         var apiHost: String?
+        var segmentsToCheck = [String]()
 
         override func sendEvent(type: String, action: String, identifiers: [String : String], data: [String : Any]) {
             self.eventType = type
@@ -168,23 +135,8 @@ extension OptimizelyClientTests_ODP {
         override func updateOdpConfig(apiKey: String?, apiHost: String?, segmentsToCheck: [String]) {
             self.apiKey = apiKey
             self.apiHost = apiHost
+            self.segmentsToCheck = segmentsToCheck
         }
-    }
-    
-    class MockDatafileHandler: DefaultDatafileHandler {
-        
-        override func downloadDatafile(sdkKey: String,
-                                       returnCacheIfNoChange: Bool,
-                                       resourceTimeoutInterval: Double?,
-                                       completionHandler: @escaping DatafileDownloadCompletionHandler) {
-            if sdkKey == "valid" {
-                let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
-                completionHandler(.success(datafile))
-            } else {
-                completionHandler(.failure(.generic))
-            }
-        }
-        
     }
     
 }

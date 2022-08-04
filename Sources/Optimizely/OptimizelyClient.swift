@@ -32,6 +32,12 @@ open class OptimizelyClient: NSObject {
         }
         set {
             atomicConfig.property = newValue
+            
+            if let newValue = newValue {
+                odpManager.updateOdpConfig(apiKey: newValue.publicKeyForODP,
+                                           apiHost: newValue.hostForODP,
+                                           segmentsToCheck: newValue.allSegments)
+            }
         }
     }
     
@@ -199,13 +205,7 @@ open class OptimizelyClient: NSObject {
     func configSDK(datafile: Data) throws {
         do {
             self.config = try ProjectConfig(datafile: datafile)
-            
-            guard let config = self.config else { throw OptimizelyError.dataFileInvalid }
-            
-            odpManager.updateOdpConfig(apiKey: config.publicKeyForODP,
-                                       apiHost: config.hostForODP,
-                                       segmentsToCheck: config.allSegments)
-
+                        
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
                 self.updateConfigFromBackgroundFetch(data: data)

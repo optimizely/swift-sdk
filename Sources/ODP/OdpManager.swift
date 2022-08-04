@@ -96,13 +96,16 @@ class OdpManager {
             return
         }
 
-        // flush old events using old key before updating odp integration key
+        // flush old events using old odp publicKey (if exists) before updating odp key.
+        // NOTE: It should be rare but possible that odp public key is changed for the same datafile(sdkKey).
+        //       Try to send all old events with the previous public key.
+        //       If it fails to flush all the old events here (network error), remaning events may be dispatched with the new odp key later.
         eventManager?.flush()
 
         let configChanged = odpConfig.update(apiKey: apiKey, apiHost: apiHost, segmentsToCheck: segmentsToCheck)
         guard configChanged else { return }
         
-        // reset events cache when odp integration or segmentsToCheck changed
+        // reset segments cache when odp integration or segmentsToCheck are changed
         segmentManager?.reset()
             
         // flush events with the new integration key if events still remain in the queue (when we get the first datafile ready)

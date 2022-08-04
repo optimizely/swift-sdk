@@ -186,8 +186,8 @@ class OdpManagerTests: XCTestCase {
 
         manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-1", segmentsToCheck: [])
         XCTAssertEqual(eventManager.flushApiKeys.count, 2)
-        XCTAssertEqual(eventManager.flushApiKeys[0], "key-1")
-        XCTAssertEqual(eventManager.flushApiKeys[1], "key-2")
+        XCTAssertEqual(eventManager.flushApiKeys[0], "key-1", "old events must be flushed with the old odp key")
+        XCTAssertEqual(eventManager.flushApiKeys[1], "key-2", "remaining events must be flushed with the new odp key")
 
         eventManager.flushApiKeys.removeAll()
 

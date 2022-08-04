@@ -164,8 +164,7 @@ class OdpSegmentManagerTests: XCTestCase {
                 if apiKey == "invalid-key" {
                     completionHandler(nil, OptimizelyError.fetchSegmentsFailed("403"))
                 } else {
-                    let qualified = segmentsToCheck.isEmpty ? [] : [segmentsToCheck.first!]
-                    completionHandler(qualified, nil)
+                    completionHandler(segmentsToCheck, nil)
                 }
             }
         }

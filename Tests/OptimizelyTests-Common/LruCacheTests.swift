@@ -20,11 +20,11 @@ class LruCacheTests: XCTestCase {
     
     func testMinConfig() {
         var cache = LruCache<String, Any>(size: 1000, timeoutInSecs: 2000)
-        XCTAssertEqual(1000, cache.size)
+        XCTAssertEqual(1000, cache.maxSize)
         XCTAssertEqual(2000, cache.timeoutInSecs)
 
         cache = LruCache<String, Any>(size: 0, timeoutInSecs: 0)
-        XCTAssertEqual(0, cache.size)
+        XCTAssertEqual(0, cache.maxSize)
         XCTAssertEqual(0, cache.timeoutInSecs)
     }
     
@@ -66,14 +66,55 @@ class LruCacheTests: XCTestCase {
             node = node?.next
         }
         XCTAssertEqual(maxSize, count - 2)   // subtract 2 (head, tail)
-        XCTAssertEqual(cache.map.count, cache.size)
+        XCTAssertEqual(cache.map.count, cache.maxSize)
     }
     
+    func testReset() {
+        let maxSize = 2
+        let cache = LruCache<Int, Int>(size: maxSize, timeoutInSecs: 1000)
+        
+        cache.save(key: 1, value: 100)              // [1]
+        cache.save(key: 2, value: 200)              // [1, 2]
+        sleep(1)
+        
+        XCTAssertEqual(cache.map.count, 2)
+        
+        // cache reset
+        
+        cache.reset()
+        sleep(1)
+        
+        XCTAssertEqual(cache.map.count, 0)
+        
+        // validate cache fully functional after reset
+        
+        cache.save(key: 3, value: 300)              // [3]
+        cache.save(key: 2, value: 400)              // [3, 2]
+
+        XCTAssertNil(cache.peek(key: 1))
+        XCTAssertEqual(400, cache.peek(key: 2))
+        XCTAssertEqual(300, cache.peek(key: 3))
+        
+        cache.save(key: 3, value: 600)              // [2, 3]
+        cache.save(key: 1, value: 500)              // [3, 1]
+        XCTAssertNil(cache.peek(key: 2))
+        XCTAssertEqual(600, cache.peek(key: 3))
+        XCTAssertEqual(500, cache.peek(key: 1))
+        
+        _ = cache.lookup(key: 3)                    // [1, 3]
+        cache.save(key: 2, value: 700)              // [3, 2]
+        XCTAssertNil(cache.peek(key: 1))
+        XCTAssertEqual(600, cache.peek(key: 3))
+        XCTAssertEqual(700, cache.peek(key: 2))
+    }
+
     func testSize_zero() {
         let cache = LruCache<Int, Int>(size: 0, timeoutInSecs: 1000)
         
         XCTAssertNil(cache.lookup(key: 1))
         cache.save(key: 1, value: 100)              // [1]
+        XCTAssertNil(cache.lookup(key: 1))
+        cache.reset()
         XCTAssertNil(cache.lookup(key: 1))
     }
 

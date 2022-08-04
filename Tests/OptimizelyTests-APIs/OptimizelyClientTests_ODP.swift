@@ -33,7 +33,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     func testConfigurableSettings_default()  {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
 
-        XCTAssertEqual(100, optimizely.odpManager.segmentManager?.segmentsCache.size)
+        XCTAssertEqual(100, optimizely.odpManager.segmentManager?.segmentsCache.maxSize)
         XCTAssertEqual(600, optimizely.odpManager.segmentManager?.segmentsCache.timeoutInSecs)
         XCTAssertEqual(true, optimizely.odpManager.enabled)
     }
@@ -41,7 +41,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     func testConfigurableSettings_custom()  {
         var sdkSettings = OptimizelySdkSettings(segmentsCacheSize: 12, segmentsCacheTimeoutInSecs: 345)
         var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
-        XCTAssertEqual(12, optimizely.odpManager.segmentManager?.segmentsCache.size)
+        XCTAssertEqual(12, optimizely.odpManager.segmentManager?.segmentsCache.maxSize)
         XCTAssertEqual(345, optimizely.odpManager.segmentManager?.segmentsCache.timeoutInSecs)
         
         sdkSettings = OptimizelySdkSettings(disableOdp: true)

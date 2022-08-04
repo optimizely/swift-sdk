@@ -49,7 +49,7 @@ class OdpManagerTests: XCTestCase {
                                  disable: false,
                                  cacheSize: cacheSize,
                                  cacheTimeoutInSecs: cacheTimeout)
-        XCTAssertEqual(manager.segmentManager?.segmentsCache.size,  cacheSize)
+        XCTAssertEqual(manager.segmentManager?.segmentsCache.maxSize, cacheSize)
         XCTAssertEqual(manager.segmentManager?.segmentsCache.timeoutInSecs, cacheTimeout)
     }
     

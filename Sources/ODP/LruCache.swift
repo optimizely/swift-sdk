@@ -36,17 +36,17 @@ class LruCache<K: Hashable, V> {
     var head: CacheElement!
     var tail: CacheElement!
     let queue = DispatchQueue(label: "LRU")
-    let size: Int
+    let maxSize: Int
     let timeoutInSecs: Int
     
     init(size: Int, timeoutInSecs: Int) {
-        self.size = size
+        self.maxSize = size
         self.timeoutInSecs = timeoutInSecs
         self.reset()
     }
 
     func lookup(key: K) -> V? {
-        if size <= 0 { return nil }
+        if maxSize <= 0 { return nil }
         
         var element: CacheElement? = nil
 
@@ -69,7 +69,7 @@ class LruCache<K: Hashable, V> {
     }
     
     func save(key: K, value: V) {
-        if size <= 0 { return }
+        if maxSize <= 0 { return }
 
         queue.async(flags: .barrier) {
             let oldSegments = self.map[key]
@@ -81,7 +81,7 @@ class LruCache<K: Hashable, V> {
             }
             self.addToLink(newSegments)
             
-            while self.map.count > self.size {
+            while self.map.count > self.maxSize {
                 guard let old = self.head.next, let oldKey = old.key else { break }
                 self.removeFromLink(old)
                 self.map[oldKey] = nil
@@ -91,7 +91,7 @@ class LruCache<K: Hashable, V> {
     
     // read cache contents without order update
     func peek(key: K) -> V? {
-        if size <= 0 { return nil }
+        if maxSize <= 0 { return nil }
 
         var element: CacheElement? = nil
         queue.sync {
@@ -101,7 +101,7 @@ class LruCache<K: Hashable, V> {
     }
     
     func reset() {
-        if size <= 0 { return }
+        if maxSize <= 0 { return }
 
         queue.sync {
             map = [K: CacheElement]()

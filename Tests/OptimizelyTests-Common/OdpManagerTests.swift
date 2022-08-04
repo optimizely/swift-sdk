@@ -18,7 +18,6 @@ import XCTest
 
 class OdpManagerTests: XCTestCase {
     let sdkKey = "any"
-    let odpConfig = OdpConfig()
     let cacheSize = 10
     let cacheTimeout = 20
     var segmentManager: MockOdpSegmentManager!
@@ -29,14 +28,16 @@ class OdpManagerTests: XCTestCase {
         OTUtils.clearAllEventQueues()
         segmentManager = MockOdpSegmentManager(cacheSize: cacheSize,
                                                cacheTimeoutInSecs: cacheTimeout,
-                                               odpConfig: odpConfig)
-        eventManager = MockOdpEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
+                                               odpConfig: OdpConfig())
+        eventManager = MockOdpEventManager(sdkKey: sdkKey, odpConfig: OdpConfig())
         manager = OdpManager(sdkKey: sdkKey,
                              disable: false,
                              cacheSize: cacheSize,
                              cacheTimeoutInSecs: cacheTimeout,
                              segmentManager: segmentManager,
                              eventManager: eventManager)
+        segmentManager.odpConfig = manager.odpConfig
+        eventManager.odpConfig = manager.odpConfig
     }
     
     override func tearDown() {
@@ -130,12 +131,76 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(eventManager.receivedIdentifiers, ["vuid": "vuid-fixed", "id-key1": "id-val-1"])
     }
     
+    func testUpdateOdpConfig_resetCalled() {
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
+        XCTAssertTrue(segmentManager.resetCalled)
+        
+        segmentManager.resetCalled = false
+        
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
+        XCTAssertFalse(segmentManager.resetCalled, "no change, so reset should not be called")
+
+        segmentManager.resetCalled = false
+
+        manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-1", segmentsToCheck: [])
+        XCTAssertTrue(segmentManager.resetCalled)
+
+        segmentManager.resetCalled = false
+
+        manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-2", segmentsToCheck: [])
+        XCTAssertTrue(segmentManager.resetCalled)
+
+        segmentManager.resetCalled = false
+
+        manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-2", segmentsToCheck: ["a"])
+        XCTAssertTrue(segmentManager.resetCalled)
+
+        segmentManager.resetCalled = false
+
+        manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-2", segmentsToCheck: ["a", "b"])
+        XCTAssertTrue(segmentManager.resetCalled)
+
+        segmentManager.resetCalled = false
+
+        manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-2", segmentsToCheck: ["c"])
+        XCTAssertTrue(segmentManager.resetCalled)
+        
+        segmentManager.resetCalled = false
+
+        manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-2", segmentsToCheck: ["c"])
+        XCTAssertFalse(segmentManager.resetCalled, "no change, so reset should not be called")
+        
+        segmentManager.resetCalled = false
+
+        manager.updateOdpConfig(apiKey: nil, apiHost: nil, segmentsToCheck: [])
+        XCTAssertTrue(segmentManager.resetCalled)
+    }
+
     func testUpdateOdpConfig_flushCalled() {
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
-        XCTAssertTrue(eventManager.flushCalled)
-                
+        XCTAssertEqual(eventManager.flushApiKeys.count, 2, "flush called before and after update")
+        XCTAssertEqual(eventManager.flushApiKeys[0], nil)
+        XCTAssertEqual(eventManager.flushApiKeys[1], "key-1")
+        
+        eventManager.flushApiKeys.removeAll()
+
+        manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-1", segmentsToCheck: [])
+        XCTAssertEqual(eventManager.flushApiKeys.count, 2)
+        XCTAssertEqual(eventManager.flushApiKeys[0], "key-1")
+        XCTAssertEqual(eventManager.flushApiKeys[1], "key-2")
+
+        eventManager.flushApiKeys.removeAll()
+
+        manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-1", segmentsToCheck: [])
+        XCTAssertEqual(eventManager.flushApiKeys.count, 1, "flush called once when no change")
+        XCTAssertEqual(eventManager.flushApiKeys[0], "key-2")
+
+        eventManager.flushApiKeys.removeAll()
+
         manager.updateOdpConfig(apiKey: nil, apiHost: nil, segmentsToCheck: [])
-        XCTAssertTrue(eventManager.flushCalled)
+        XCTAssertEqual(eventManager.flushApiKeys.count, 2)
+        XCTAssertEqual(eventManager.flushApiKeys[0], "key-2")
+        XCTAssertEqual(eventManager.flushApiKeys[1], nil)
     }
     
     func testUpdateOdpConfig_odpConfigPropagatedProperly() {
@@ -148,10 +213,10 @@ class OdpManagerTests: XCTestCase {
                 
         XCTAssertEqual(manager.segmentManager?.odpConfig.apiKey, "key-1")
         XCTAssertEqual(manager.segmentManager?.odpConfig.apiHost, "host-1")
-        XCTAssertEqual(manager.segmentManager?.odpConfig.odpServiceIntegrated, true)
+        XCTAssertEqual(manager.segmentManager?.odpConfig.eventQueueingAllowed, true)
         XCTAssertEqual(manager.eventManager?.odpConfig.apiKey, "key-1")
         XCTAssertEqual(manager.eventManager?.odpConfig.apiHost, "host-1")
-        XCTAssertEqual(manager.eventManager?.odpConfig.odpServiceIntegrated, true)
+        XCTAssertEqual(manager.eventManager?.odpConfig.eventQueueingAllowed, true)
         
         // odp disabled with invalid apiKey (apiKey/apiHost propagated into submanagers)
         
@@ -159,10 +224,10 @@ class OdpManagerTests: XCTestCase {
         
         XCTAssertEqual(manager.segmentManager?.odpConfig.apiKey, nil)
         XCTAssertEqual(manager.segmentManager?.odpConfig.apiHost, nil)
-        XCTAssertEqual(manager.segmentManager?.odpConfig.odpServiceIntegrated, false)
+        XCTAssertEqual(manager.segmentManager?.odpConfig.eventQueueingAllowed, false)
         XCTAssertEqual(manager.eventManager?.odpConfig.apiKey, nil)
         XCTAssertEqual(manager.eventManager?.odpConfig.apiHost, nil)
-        XCTAssertEqual(manager.eventManager?.odpConfig.odpServiceIntegrated, false)
+        XCTAssertEqual(manager.eventManager?.odpConfig.eventQueueingAllowed, false)
     }
 
     
@@ -181,7 +246,7 @@ class OdpManagerTests: XCTestCase {
         var receivedIdentifiers: [String: String]!
         var receivedData: [String: Any]!
         
-        var flushCalled = false
+        var flushApiKeys = [String?]()
         
         override func registerVUID(vuid: String) {
             self.receivedVuid = vuid
@@ -200,7 +265,7 @@ class OdpManagerTests: XCTestCase {
         }
         
         override func flush() {
-            self.flushCalled = true
+            self.flushApiKeys.append(odpConfig.apiKey)
         }
     }
     
@@ -209,6 +274,8 @@ class OdpManagerTests: XCTestCase {
         var receivedUserValue: String!
         var receivedOptions: [OptimizelySegmentOption]!
         
+        var resetCalled = false
+
         override func fetchQualifiedSegments(userKey: String,
                                              userValue: String,
                                              options: [OptimizelySegmentOption],
@@ -216,6 +283,10 @@ class OdpManagerTests: XCTestCase {
             self.receivedUserKey = userKey
             self.receivedUserValue = userValue
             self.receivedOptions = options
+        }
+        
+        override func reset() {
+            self.resetCalled = true
         }
     }
 

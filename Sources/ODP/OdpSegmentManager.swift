@@ -17,8 +17,8 @@
 import Foundation
 
 class OdpSegmentManager {    
-    let odpConfig: OdpConfig
-    let segmentsCache: LruCache<String, [String]>
+    var odpConfig: OdpConfig
+    var segmentsCache: LruCache<String, [String]>
     var zaiusMgr: ZaiusGraphQLApiManager
 
     let logger = OPTLoggerFactory.getLogger()

@@ -96,18 +96,17 @@ class OdpManager {
             return
         }
 
-        // flush old events before updating odp integration values
+        // flush old events using old key before updating odp integration key
         eventManager?.flush()
 
         let configChanged = odpConfig.update(apiKey: apiKey, apiHost: apiHost, segmentsToCheck: segmentsToCheck)
+        guard configChanged else { return }
         
-        if configChanged {
-            // reset events cache when odp integration or segmentsToCheck changed
-            segmentManager?.reset()
+        // reset events cache when odp integration or segmentsToCheck changed
+        segmentManager?.reset()
             
-            // flush old events with the new integration values if events still remain in the queue (when we get the first datafile ready)
-            eventManager?.flush()
-        }
+        // flush events with the new integration key if events still remain in the queue (when we get the first datafile ready)
+        eventManager?.flush()
     }
     
 }

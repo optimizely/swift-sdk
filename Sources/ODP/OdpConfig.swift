@@ -21,32 +21,42 @@ class OdpConfig {
     private var _apiHost: String?
     /// The public API key for the ODP account from which the audience segments will be fetched (optional). If not provided, SDK will use the default publicKey in datafile.
     private var _apiKey: String?
-    /// assumed integrated by default (set to false when datafile has no ODP key/host settings)
-    private var _odpServiceIntegrated: Bool
-    /// an array of all ODP segments used in the current datafile (associated with apiHost/apiKey).
+    /// An array of all ODP segments used in the current datafile (associated with apiHost/apiKey).
     private var _segmentsToCheck: [String]
+    /// An enum value indicating that odp is integrated for the project or not
+    private var _odpServiceIntegrated: OdpConfigState
+
+    enum OdpConfigState {
+        case notDetermined
+        case integrated
+        case notIntegrated
+    }
     
     let queue = DispatchQueue(label: "odpConfig")
     
-    init(apiKey: String? = nil, apiHost: String? = nil, segmentsToCheck: [String] = [], odpServiceIntegrated: Bool = true) {
+    init(apiKey: String? = nil, apiHost: String? = nil, segmentsToCheck: [String] = []) {
         self._apiKey = apiKey
         self._apiHost = apiHost
         self._segmentsToCheck = segmentsToCheck
-        self._odpServiceIntegrated = odpServiceIntegrated  // initially assumed true until the first datafile is parsed
+        self._odpServiceIntegrated = .notDetermined  // initially queueing allowed until the first datafile is parsed
     }
 
     func update(apiKey: String?, apiHost: String?, segmentsToCheck: [String]) -> Bool {
-        // disable future event queueing if datafile has no ODP integrations.
-        self.odpServiceIntegrated = (apiKey != nil) && (apiHost != nil)
+        if (apiKey != nil) && (apiHost != nil) {
+            self.odpServiceIntegrated = OdpConfigState.integrated
+        } else {
+            // disable future event queueing if datafile has no ODP integrations.
+            self.odpServiceIntegrated = OdpConfigState.notIntegrated
+        }
 
         if self.apiKey == apiKey, self.apiHost == apiHost, self.segmentsToCheck == segmentsToCheck {
             return false
+        } else {
+            self.apiKey = apiKey
+            self.apiHost = apiHost
+            self.segmentsToCheck = segmentsToCheck
+            return true
         }
-        
-        self.apiKey = apiKey
-        self.apiHost = apiHost
-        self.segmentsToCheck = segmentsToCheck
-        return true
     }
 }
 
@@ -99,9 +109,9 @@ extension OdpConfig {
         }
     }
     
-    var odpServiceIntegrated: Bool {
+    var odpServiceIntegrated: OdpConfigState {
         get {
-            var value = false
+            var value = OdpConfigState.notDetermined
             queue.sync {
                 value = _odpServiceIntegrated
             }
@@ -112,6 +122,17 @@ extension OdpConfig {
                 self._odpServiceIntegrated = newValue
             }
         }
+    }
+    
+    var eventQueueingAllowed: Bool {
+        var value = true
+        queue.sync {
+            switch _odpServiceIntegrated {
+            case .notDetermined, .integrated: value = true
+            case .notIntegrated: value = false
+            }
+        }
+        return value
     }
 }
 

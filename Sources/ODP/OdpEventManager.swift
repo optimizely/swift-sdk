@@ -18,8 +18,8 @@ import Foundation
 import UIKit
 
 class OdpEventManager {
-    let odpConfig: OdpConfig
-    let zaiusMgr: ZaiusRestApiManager
+    var odpConfig: OdpConfig
+    var zaiusMgr: ZaiusRestApiManager
     
     let maxQueueSize = 100
     let queueLock: DispatchQueue
@@ -94,8 +94,8 @@ class OdpEventManager {
     
     func dispatch(_ event: OdpEvent) {
         // do not queue events if datafile has no ODP public key (not integrated)
-        guard odpConfig.odpServiceIntegrated else {
-            logger.d("ODP has been disabled.")
+        guard odpConfig.eventQueueingAllowed else {
+            logger.d("ODP event has been disabled.")
             return
         }
 
@@ -110,7 +110,7 @@ class OdpEventManager {
     }
     
     func flush() {
-        guard odpConfig.odpServiceIntegrated else {
+        guard odpConfig.eventQueueingAllowed else {
             // clean up all pending events if datafile is ready but has no ODP public key (not integrated)
             _ = eventQueue.removeFirstItems(count: self.maxQueueSize)
             return

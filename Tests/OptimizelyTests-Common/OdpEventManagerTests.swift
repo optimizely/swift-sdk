@@ -25,7 +25,7 @@ class OdpEventManagerTests: XCTestCase {
     
     var userKey = "vuid"
     var userValue = "test-user"
-    
+    let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
     let customData: [String: Any] = ["key-1": "value-1",
                                      "key-2": 12.5,
                                      "model": "overruled"]
@@ -93,7 +93,7 @@ class OdpEventManagerTests: XCTestCase {
     
     func testSendEvent_apiKey() {
         odpConfig = OdpConfig()
-        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         
         manager = OdpEventManager(sdkKey: "any",
                                   odpConfig: odpConfig,
@@ -110,26 +110,70 @@ class OdpEventManagerTests: XCTestCase {
         
     // MARK: - flush
 
-    func testFlush_apiKey() {
-        let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+    func testFlush_odpIntegrated() {
+        // apiKey is not ready initially
         
-        // apiKey is not ready
-        
+        XCTAssertTrue(manager.odpConfig.eventQueueingAllowed, "initially datafile not ready and assumed queueing is allowed")
+
+        manager.dispatch(event)    // each of these will try to flush
         manager.dispatch(event)
         manager.dispatch(event)
-        manager.dispatch(event)
-                
+                        
         XCTAssertEqual(3, manager.eventQueue.count)
         sleep(1)
         XCTAssertEqual(3, manager.eventQueue.count, "not flushed since apiKey is not ready")
 
-        // apiKey is ready
+        // apiKey is available in datafile (so ODP integrated)
+
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
+        XCTAssertTrue(manager.odpConfig.eventQueueingAllowed, "datafile ready and odp integrated. event queueing is allowed.")
+        manager.flush()   // need manual flush here since OdpManager is not connected
         
-        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
-        manager.flush()
         sleep(1)
-        
         XCTAssertEqual(0, manager.eventQueue.count)
+        XCTAssertEqual(3, apiManager.totalDispatchedEvents)
+        apiManager.dispatchedBatchEvents.removeAll()
+
+        // new events should be dispatched immediately
+        
+        manager.dispatch(event)    // each of these will try to flush
+        manager.dispatch(event)    // each of these will try to flush
+
+        XCTAssertEqual(2, manager.eventQueue.count)
+        sleep(1)
+        XCTAssertEqual(0, manager.eventQueue.count, "auto flushed since apiKey is ready")
+        XCTAssertEqual(2, apiManager.totalDispatchedEvents)
+    }
+    
+    func testFlush_odpNotIntegrated() {
+        // apiKey is not ready
+        
+        XCTAssertTrue(manager.odpConfig.eventQueueingAllowed, "initially datafile not ready and assumed queueing is allowed")
+
+        manager.dispatch(event)    // each of these will try to flush
+        manager.dispatch(event)
+        manager.dispatch(event)
+                        
+        XCTAssertEqual(3, manager.eventQueue.count)
+        sleep(1)
+        XCTAssertEqual(3, manager.eventQueue.count, "not flushed since apiKey is not ready")
+        
+        // apiKey is not available in datafile (so ODP not integrated)
+        
+        _ = odpConfig.update(apiKey: nil, apiHost: nil, segmentsToCheck: [])
+        XCTAssertFalse(manager.odpConfig.eventQueueingAllowed, "datafile ready and odp not integrated. event queueing is not allowed.")
+        
+        manager.flush()   // need manual flush here since OdpManager is not connected
+        XCTAssertEqual(0, manager.eventQueue.count, "all old events are discarded since event queueing not allowed")
+        XCTAssertEqual(0, apiManager.totalDispatchedEvents, "all events discarded")
+
+        manager.dispatch(event)    // each of these will try to flush
+        manager.dispatch(event)    // each of these will try to flush
+
+        XCTAssertEqual(0, manager.eventQueue.count)
+        sleep(1)
+        XCTAssertEqual(0, manager.eventQueue.count, "all news events are discarded since event queueing not allowed")
+        XCTAssertEqual(0, apiManager.totalDispatchedEvents, "all events discarded")
     }
     
     // MARK: - batch
@@ -140,13 +184,13 @@ class OdpEventManagerTests: XCTestCase {
         ]
         manager.dispatch(events[0])
         
-        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
-        XCTAssertEqual(1, apiManager.receivedBatchEvents.count)
-        XCTAssertEqual(1, apiManager.receivedBatchEvents[0].count)
-        validateEvents(events, apiManager.receivedBatchEvents[0])
+        XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count)
+        XCTAssertEqual(1, apiManager.dispatchedBatchEvents[0].count)
+        validateEvents(events, apiManager.dispatchedBatchEvents[0])
     }
  
     func testFlush_batch_3() {
@@ -160,13 +204,13 @@ class OdpEventManagerTests: XCTestCase {
             manager.dispatch(e)
         }
 
-        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
-        XCTAssertEqual(1, apiManager.receivedBatchEvents.count)
-        XCTAssertEqual(3, apiManager.receivedBatchEvents[0].count)
-        validateEvents(events, apiManager.receivedBatchEvents[0])
+        XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count)
+        XCTAssertEqual(3, apiManager.dispatchedBatchEvents[0].count)
+        validateEvents(events, apiManager.dispatchedBatchEvents[0])
     }
 
     func testFlush_batch_moreThanBatchSize() {
@@ -177,22 +221,22 @@ class OdpEventManagerTests: XCTestCase {
             manager.dispatch(e)
         }
         
-        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
-        XCTAssertEqual(2, apiManager.receivedBatchEvents.count)
-        XCTAssertEqual(10, apiManager.receivedBatchEvents[0].count)
-        XCTAssertEqual(1, apiManager.receivedBatchEvents[1].count)
-        validateEvents(events, apiManager.receivedBatchEvents[0] + apiManager.receivedBatchEvents[1])
+        XCTAssertEqual(2, apiManager.dispatchedBatchEvents.count)
+        XCTAssertEqual(10, apiManager.dispatchedBatchEvents[0].count)
+        XCTAssertEqual(1, apiManager.dispatchedBatchEvents[1].count)
+        validateEvents(events, apiManager.dispatchedBatchEvents[0] + apiManager.dispatchedBatchEvents[1])
     }
 
     func testFlush_emptyQueue() {
-        odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
-        XCTAssertEqual(0, apiManager.receivedBatchEvents.count)
+        XCTAssertEqual(0, apiManager.dispatchedBatchEvents.count)
     }
     
     // MARK: - multiple skdKeys
@@ -218,25 +262,25 @@ class OdpEventManagerTests: XCTestCase {
         
         manager2.dispatch(event2)
         
-        XCTAssertEqual(0, apiManager1.receivedBatchEvents.count)
-        XCTAssertEqual(0, apiManager2.receivedBatchEvents.count)
+        XCTAssertEqual(0, apiManager1.dispatchedBatchEvents.count)
+        XCTAssertEqual(0, apiManager2.dispatchedBatchEvents.count)
 
-        odpConfig1.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
+        _ = odpConfig1.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager1.flush()
         sleep(1)
 
-        XCTAssertEqual(1, apiManager1.receivedBatchEvents.count)
-        XCTAssertEqual(2, apiManager1.receivedBatchEvents[0].count)
-        XCTAssertEqual(0, apiManager2.receivedBatchEvents.count)
+        XCTAssertEqual(1, apiManager1.dispatchedBatchEvents.count)
+        XCTAssertEqual(2, apiManager1.dispatchedBatchEvents[0].count)
+        XCTAssertEqual(0, apiManager2.dispatchedBatchEvents.count)
 
-        odpConfig2.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
+        _ = odpConfig2.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         manager2.flush()
         sleep(1)
 
-        XCTAssertEqual(1, apiManager1.receivedBatchEvents.count)
-        XCTAssertEqual(2, apiManager1.receivedBatchEvents[0].count)
-        XCTAssertEqual(1, apiManager2.receivedBatchEvents.count)
-        XCTAssertEqual(1, apiManager2.receivedBatchEvents[0].count)
+        XCTAssertEqual(1, apiManager1.dispatchedBatchEvents.count)
+        XCTAssertEqual(2, apiManager1.dispatchedBatchEvents[0].count)
+        XCTAssertEqual(1, apiManager2.dispatchedBatchEvents.count)
+        XCTAssertEqual(1, apiManager2.dispatchedBatchEvents[0].count)
     }
 
     // MARK: - errors
@@ -249,11 +293,11 @@ class OdpEventManagerTests: XCTestCase {
             manager.dispatch(e)
         }
 
-        odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
+        _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
-        XCTAssertEqual(1, apiManager.receivedBatchEvents.count, "should be not retried immediately (a batch of 2 events)")
+        XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count, "should be not retried immediately (a batch of 2 events)")
         XCTAssertEqual(2, manager.eventQueue.count, "the events should remain in the queue after giving up for later retries")
     }
     
@@ -265,20 +309,20 @@ class OdpEventManagerTests: XCTestCase {
             manager.dispatch(e)
         }
         
-        odpConfig.update(apiKey: "invalid-key-no-retry", apiHost: "host", segmentsToCheck: [])
+        _ = odpConfig.update(apiKey: "invalid-key-no-retry", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
-        XCTAssertEqual(2, apiManager.receivedBatchEvents.count, "should not be retried (only once for each of batch events)")
-        XCTAssertEqual(10, apiManager.receivedBatchEvents[0].count)
-        XCTAssertEqual(5, apiManager.receivedBatchEvents[1].count)
+        XCTAssertEqual(2, apiManager.dispatchedBatchEvents.count, "should not be retried (only once for each of batch events)")
+        XCTAssertEqual(10, apiManager.dispatchedBatchEvents[0].count)
+        XCTAssertEqual(5, apiManager.dispatchedBatchEvents[1].count)
         XCTAssertEqual(0, manager.eventQueue.count, "all the events should be discarded")
     }
 
     // MARK: - OdpConfig
     
     func testOdpConfig() {
-        odpConfig.update(apiKey: "test-key", apiHost: "test-host", segmentsToCheck: [])
+        _ = odpConfig.update(apiKey: "test-key", apiHost: "test-host", segmentsToCheck: [])
 
         manager = OdpEventManager(sdkKey: "any",
                                   odpConfig: odpConfig,
@@ -352,7 +396,11 @@ class OdpEventManagerTests: XCTestCase {
     class MockZaiusApiManager: ZaiusRestApiManager {
         var receivedApiKey: String!
         var receivedApiHost: String!
-        var receivedBatchEvents = [[OdpEvent]]()
+        var dispatchedBatchEvents = [[OdpEvent]]()
+        
+        var totalDispatchedEvents: Int {
+            return dispatchedBatchEvents.reduce(0) { $0 + $1.count }
+        }
 
         override func sendOdpEvents(apiKey: String,
                                     apiHost: String,
@@ -360,7 +408,7 @@ class OdpEventManagerTests: XCTestCase {
                                     completionHandler: @escaping (OptimizelyError?) -> Void) {
             receivedApiKey = apiKey
             receivedApiHost = apiHost
-            receivedBatchEvents.append(events)
+            dispatchedBatchEvents.append(events)
 
             DispatchQueue.global().async {
                 if apiKey == "invalid-key-no-retry" {

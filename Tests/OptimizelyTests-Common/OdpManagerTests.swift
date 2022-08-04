@@ -36,8 +36,6 @@ class OdpManagerTests: XCTestCase {
                              cacheTimeoutInSecs: cacheTimeout,
                              segmentManager: segmentManager,
                              eventManager: eventManager)
-        segmentManager.odpConfig = manager.odpConfig
-        eventManager.odpConfig = manager.odpConfig
     }
     
     override func tearDown() {

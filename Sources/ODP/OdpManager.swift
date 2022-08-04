@@ -42,10 +42,21 @@ class OdpManager {
         self.vuidManager = OdpVuidManager.shared
         
         if enabled {
-            self.segmentManager = segmentManager ?? OdpSegmentManager(cacheSize: cacheSize,
-                                                                      cacheTimeoutInSecs: cacheTimeoutInSecs,
-                                                                      odpConfig: odpConfig)
-            self.eventManager = eventManager ?? OdpEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
+            if let segmentManager = segmentManager {
+                segmentManager.odpConfig = odpConfig
+                self.segmentManager = segmentManager
+            } else {
+                self.segmentManager = OdpSegmentManager(cacheSize: cacheSize,
+                                                        cacheTimeoutInSecs: cacheTimeoutInSecs,
+                                                        odpConfig: odpConfig)
+            }
+            
+            if let eventManager = eventManager {
+                eventManager.odpConfig = odpConfig
+                self.eventManager = eventManager
+            } else {
+                self.eventManager = OdpEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
+            }
             
             self.eventManager?.registerVUID(vuid: self.vuidManager.vuid)
         }

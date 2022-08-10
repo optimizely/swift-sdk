@@ -150,7 +150,7 @@ class ProjectConfig {
         
         self.allSegments = {
             let audiences = project.typedAudiences ?? []
-            return audiences.flatMap { $0.getSegments() }
+            return Array(Set(audiences.flatMap { $0.getSegments() }))
         }()
         
     }

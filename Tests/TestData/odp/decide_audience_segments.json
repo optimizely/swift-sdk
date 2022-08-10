@@ -128,7 +128,7 @@
                   ]
               ]
           ],
-          "name": "odp-segment-1"
+          "name": "odp-audience-1"
       },
       {
           "id": "13389130056",
@@ -162,7 +162,26 @@
                   ]
               ]
           ],
-          "name": "odp-segment-2"
+          "name": "odp-audience-2"
+      },
+      {
+          "id": "13389130056",
+          "conditions": [
+              "and",
+              [
+                  "or",
+                  [
+                      "or",
+                      {
+                          "value": "odp-segment-2",
+                          "type": "third_party_dimension",
+                          "name": "odp.audiences",
+                          "match": "qualified"
+                      }
+                  ]
+              ]
+          ],
+          "name": "odp-audience-3"
       }
   ],
   "audiences": [

@@ -103,7 +103,7 @@ class ProjectConfigTests: XCTestCase {
                                           userProfileService: OTUtils.createClearUserProfileService())
         try! optimizely.start(datafile: datafile)
         let segments = optimizely.config!.allSegments
-        XCTAssertEqual(3, segments.count)
+        XCTAssertEqual(3, segments.count, "redundant items should be filtered out")
         XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(segments))
     }
     

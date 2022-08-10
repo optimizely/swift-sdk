@@ -274,7 +274,7 @@ class MockZaiusApiManager: ZaiusGraphQLApiManager {
         receivedApiHost = apiHost
         
         DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(1)) {
-            let qualified = segmentsToCheck.isEmpty ? [] : [segmentsToCheck.first!]
+            let qualified = segmentsToCheck.isEmpty ? [] : [segmentsToCheck.sorted{ $0 < $1 }.first!]
             completionHandler(qualified, nil)
         }
     }

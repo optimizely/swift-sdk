@@ -13,6 +13,7 @@ set -eou pipefail
 # https://github.com/actions/virtual-environments/issues/551
 
 # Older than Xcode 12 (12.4?) has different paths
+MAJOR_SIMULATOR_XCODE_VERSION=$(echo $SIMULATOR_XCODE_VERSION | cut -d. -f1)
 if [ "$MAJOR_SIMULATOR_XCODE_VERSION" -lt 12 ]; then
     os_folder="iPhoneOS"
     os="${OS/./-}"

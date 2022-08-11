@@ -12,13 +12,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: 14.4
+          - os: 15.2
             device: "iPhone 11"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 12.4
+            simulator_xcode_version: 13.2
           - os: 13.3
             device: "iPhone 8"
             scheme: "OptimizelySwiftSDK-iOS"
@@ -68,6 +68,13 @@ jobs:
           pod repo update
           pod install
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
+
+
+          #debug
+          ls /Applications/
+          xcrun simctl list --json devices
+
+
           Scripts/prepare_simulator.sh
           Scripts/run_unit_tests.sh
       - name: Check on failures (Archive Test Results)

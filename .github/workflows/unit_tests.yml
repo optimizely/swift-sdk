@@ -72,6 +72,7 @@ jobs:
 
           #debug
           ls /Applications/
+          sudo xcode-select -switch /Applications/Xcode_$SIMULATOR_XCODE_VERSION.app
           xcrun simctl list --json devices
 
 

@@ -25,7 +25,7 @@ jobs:
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 11.3.1
+            simulator_xcode_version: 11.7
           - os: 12.4
             device: "iPad Air"
             scheme: "OptimizelySwiftSDK-iOS"

@@ -19,27 +19,27 @@ jobs:
             platform: "iOS Simulator"
             os_type: "iOS"
             simulator_xcode_version: 13.2
-          - os: 13.3
+          - os: 14.4
             device: "iPhone 8"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 11.7
-          - os: 12.4
+            simulator_xcode_version: 12.4
+          - os: 13.7
             device: "iPad Air"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 10.3
-          - os: 12.4
+            simulator_xcode_version: 11.7
+          - os: 13.4
             device: "Apple TV 4K"
             scheme: "OptimizelySwiftSDK-tvOS"
             test_sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode_version: 10.3
+            simulator_xcode_version: 11.7
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1

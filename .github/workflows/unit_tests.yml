@@ -27,7 +27,7 @@ jobs:
             os_type: "iOS"
             simulator_xcode_version: 12.4
           - os: 13.7
-            device: "iPad Air"
+            device: "iPad Air (3rd generation)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"

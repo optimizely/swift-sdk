@@ -48,7 +48,8 @@ jobs:
 
   unittests: 
     if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
-    # TODO change to @master again
+
+    # [jae] TODO: change to @master again
     #uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@test-actions
 

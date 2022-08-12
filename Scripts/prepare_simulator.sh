@@ -17,7 +17,7 @@ MAJOR_SIMULATOR_XCODE_VERSION=$(echo $SIMULATOR_XCODE_VERSION | cut -d. -f1)
 if [ "$MAJOR_SIMULATOR_XCODE_VERSION" -lt 12 ]; then
     os_folder="iPhoneOS"
     os="${OS/./-}"
-    name="${NAME// /-}"
+    name="${NAME//[ ()]/-}"
 
     sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
 

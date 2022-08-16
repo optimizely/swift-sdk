@@ -11,6 +11,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # github actions are very poor in supporting iOS simulators:
+        # - multiple Xcode versions are pre installed (not all versions and they change supported xcode versions frequently)
+        # - each xcode version has own simulator os versions.
+        # - so to run tests with the target simulator, we have to find a proper xcode version pre-installed and support the target simulator os version.
+        #   also, the xcode version (simulator_xcode_version) and simulator os versions (os) are moving target. We have to change these time to time.
         include:
           - os: 15.2
             device: "iPhone 11"
@@ -27,6 +32,7 @@ jobs:
             os_type: "iOS"
             simulator_xcode_version: 12.4
           - os: 13.7
+            # good to have tests with older OS versions, but it looks like this is min OS+xcode versions supported by github actions
             device: "iPad Air (3rd generation)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
@@ -70,16 +76,10 @@ jobs:
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
 
           # github actions are very poor in supporting iOS simulators:
-          # - multiple Xcode versions are pre installed (not all versions and they change supported xcode versions frequently)
-          # - each xcode version has own simulator os versions.
-          # - so to run tests with the target simulator, we have to find a proper xcode version pre-installed and support the target simulator os version.
-          #   also, the xcode version (simulator_xcode_version) and simulator os versions (os) are moving target. We have to change these time to time.
-          #
-          # to find pre-installed xcode version, run this:
-          #> ls /Applications/
-          #
-          # to find supported simulator os versions, run this (and find simulator with non-error "datapath")
-          #> xcrun simctl list --json devices
+          # - to find pre-installed xcode version, run this:
+          # > ls /Applications/
+          # - to find supported simulator os versions, run this (and find simulator with non-error "datapath")
+          # > xcrun simctl list --json devices
 
           # switch to the target xcode version
           sudo xcode-select -switch /Applications/Xcode_$SIMULATOR_XCODE_VERSION.app

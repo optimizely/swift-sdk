@@ -45,21 +45,12 @@ class OdpVuidManager {
 
 extension OdpVuidManager {
     
-    // UserDefaults format: (keep the most recent vuid info only)
-    //      "optimizely-odp": {
-    //          "vuid": "vuid1"
-    //      }
-
-    private var keyForVuidMap: String {
-        return "optimizely-odp"
-    }
     private var keyForVuid: String {
-        return "vuid"
+        return "optimizely-vuid"
     }
     
     private func load() -> String {
-        if let vuids = UserDefaults.standard.dictionary(forKey: keyForVuidMap),
-           let oldVuid = vuids[keyForVuid] as? String {
+        if let oldVuid = UserDefaults.standard.string(forKey: keyForVuid) {
             return oldVuid
         }
         
@@ -69,8 +60,7 @@ extension OdpVuidManager {
     }
 
     private func save(vuid: String) {
-        let dict: [String: Any] = [keyForVuid: vuid]
-        UserDefaults.standard.set(dict, forKey: keyForVuidMap)
+        UserDefaults.standard.set(vuid, forKey: keyForVuid)
         UserDefaults.standard.synchronize()
     }
     

@@ -17,9 +17,9 @@
 import Foundation
 
 class OdpConfig {
-    /// The host URL for the ODP audience segments API (optional). If not provided, SDK will use the default host in datafile.
+    /// The host URL for the ODP audience segments API (optional).
     private var _apiHost: String?
-    /// The public API key for the ODP account from which the audience segments will be fetched (optional). If not provided, SDK will use the default publicKey in datafile.
+    /// The public API key for the ODP account from which the audience segments will be fetched (optional).
     private var _apiKey: String?
     /// An array of all ODP segments used in the current datafile (associated with apiHost/apiKey).
     private var _segmentsToCheck: [String]

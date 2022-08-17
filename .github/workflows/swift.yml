@@ -50,7 +50,7 @@ jobs:
 
     #[TODO]: change to @master again
     #uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
-    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@test-actions
+    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@jae/version-update
 
   prepare_for_release:
     runs-on: macos-latest

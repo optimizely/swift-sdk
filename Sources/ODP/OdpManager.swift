@@ -88,12 +88,20 @@ class OdpManager {
         eventManager?.identifyUser(vuid: vuidManager.vuid, userId: userId)
     }
     
-    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) {
-        guard enabled else {
-            logger.d("ODP is not enabled.")
-            return
-        }
-
+    /// Send an event to the ODP server.
+    ///
+    /// - Parameters:
+    ///   - type: the event type.
+    ///   - action: the event action name.
+    ///   - identifiers: a dictionary for identifiers.
+    ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
+    /// - Throws: `OptimizelyError` if error is detected
+    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) throws {
+        
+        guard enabled else { throw OptimizelyError.odpNotEnabled }
+        
+        guard odpConfig.isOdpIntegrated else { throw OptimizelyError.odpNotIntegrated }
+        
         var identifiersWithVuid = identifiers
         if identifiers[Constants.ODP.keyForVuid] == nil {
             identifiersWithVuid[Constants.ODP.keyForVuid] = vuidManager.vuid
@@ -122,5 +130,5 @@ class OdpManager {
         // flush events with the new integration key if events still remain in the queue (when we get the first datafile ready)
         eventManager?.flush()
     }
-    
+        
 }

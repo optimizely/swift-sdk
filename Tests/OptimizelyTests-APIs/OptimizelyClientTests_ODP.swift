@@ -28,7 +28,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
         try! optimizely.start(datafile: datafile)
     }
     
-    // MARK: - public APIs
+    // MARK: - ODP configuration
     
     func testConfigurableSettings_default()  {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
@@ -49,11 +49,13 @@ class OptimizelyClientTests_ODP: XCTestCase {
         XCTAssertEqual(false, optimizely.odpManager.enabled)
     }
     
-    func testSendOdpEvent() {
+    // MARK: - sendOdpEvent
+    
+    func testSendOdpEvent_success() {
         let odpManager = MockOdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
 
-        optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
+        try? optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
         
         XCTAssertEqual("t1", odpManager.eventType)
         XCTAssertEqual("a1", odpManager.eventAction)
@@ -62,13 +64,64 @@ class OptimizelyClientTests_ODP: XCTestCase {
         
         // default event props
         
-        optimizely.sendOdpEvent(action: "a2")
+        try? optimizely.sendOdpEvent(action: "a2")
         
         XCTAssertEqual("fullstack", odpManager.eventType)
         XCTAssertEqual("a2", odpManager.eventAction)
         XCTAssertEqual([:], odpManager.eventIdentifiers)
         XCTAssertEqual([:], odpManager.eventData as! [String: String])
     }
+    
+    func testSendOdpEvent_error() {
+        var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+
+        do {
+            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
+            XCTFail()
+        } catch OptimizelyError.sdkNotReady {
+            XCTAssert(true)
+        } catch {
+            XCTFail()
+        }
+        
+        var datafile = OTUtils.loadJSONDatafile("empty_datafile")!
+        try! optimizely.start(datafile: datafile)
+
+        do {
+            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
+            XCTFail()
+        } catch OptimizelyError.odpNotIntegrated {
+            XCTAssert(true)
+        } catch {
+            XCTFail()
+        }
+        
+        datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
+        try! optimizely.start(datafile: datafile)
+
+        do {
+            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
+            XCTAssert(true)
+        } catch {
+            XCTFail()
+        }
+        
+        let sdkSettings = OptimizelySdkSettings(disableOdp: true)
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
+        datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
+        try! optimizely.start(datafile: datafile)
+
+        do {
+            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
+            XCTAssert(true)
+        } catch OptimizelyError.odpNotEnabled {
+            XCTAssert(true)
+        } catch {
+            XCTFail()
+        }
+    }
+    
+    // MARK: - vuid
     
     func testVuid() {
         XCTAssert(optimizely.vuid.starts(with: "vuid_"))

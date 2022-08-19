@@ -76,7 +76,7 @@ class OdpManagerTests: XCTestCase {
         // these calls should be dropped gracefully with nil
         
         manager.identifyUser(userId: "user1")
-        manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+        try? manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
         
         XCTAssertNil(manager.eventManager)
         XCTAssertNil(manager.segmentManager)
@@ -114,7 +114,9 @@ class OdpManagerTests: XCTestCase {
     func testSendEvent() {
         // vuid is implicitly added to identifers
         
-        manager.sendEvent(type: "t1", action: "a1", identifiers: ["id-key1": "id-val-1"], data: ["key1" : "val1"])
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
+
+        try? manager.sendEvent(type: "t1", action: "a1", identifiers: ["id-key1": "id-val-1"], data: ["key1" : "val1"])
         
         XCTAssertEqual(eventManager.receivedType, "t1")
         XCTAssertEqual(eventManager.receivedAction, "a1")
@@ -124,7 +126,7 @@ class OdpManagerTests: XCTestCase {
         
         // user-provided vuid should not be replaced
         
-        manager.sendEvent(type: "t1", action: "a1", identifiers: ["vuid": "vuid-fixed", "id-key1": "id-val-1"], data: ["key1" : "val1"])
+        try? manager.sendEvent(type: "t1", action: "a1", identifiers: ["vuid": "vuid-fixed", "id-key1": "id-val-1"], data: ["key1" : "val1"])
 
         XCTAssertEqual(eventManager.receivedIdentifiers, ["vuid": "vuid-fixed", "id-key1": "id-val-1"])
     }

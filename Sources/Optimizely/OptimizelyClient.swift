@@ -938,11 +938,14 @@ extension OptimizelyClient {
     ///   - action: the event action name.
     ///   - identifiers: a dictionary for identifiers.
     ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
+    /// - Throws: `OptimizelyError` if error is detected
     public func sendOdpEvent(type: String? = nil,
                              action: String,
                              identifiers: [String: String] = [:],
-                             data: [String: Any] = [:]) {
-        odpManager.sendEvent(type: type ?? Constants.ODP.eventType,
+                             data: [String: Any] = [:]) throws {
+        guard self.config != nil else { throw OptimizelyError.sdkNotReady }
+
+        try odpManager.sendEvent(type: type ?? Constants.ODP.eventType,
                              action: action,
                              identifiers: identifiers,
                              data: data)

@@ -12,10 +12,12 @@ set -eou pipefail
 # More about XCode and its compatible simulators can be found here: https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md
 # https://github.com/actions/virtual-environments/issues/551
 
-if [ "$SIMULATOR_XCODE_VERSION" != 12.4 ]; then
+# Older than Xcode 12 (12.4?) has different paths
+MAJOR_SIMULATOR_XCODE_VERSION=$(echo $SIMULATOR_XCODE_VERSION | cut -d. -f1)
+if [ "$MAJOR_SIMULATOR_XCODE_VERSION" -lt 12 ]; then
     os_folder="iPhoneOS"
     os="${OS/./-}"
-    name="${NAME// /-}"
+    name="${NAME//[ ()]/-}"
 
     sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
 

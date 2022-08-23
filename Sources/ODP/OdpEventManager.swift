@@ -93,25 +93,19 @@ class OdpEventManager {
     // MARK: - dispatch
     
     func dispatch(_ event: OdpEvent) {
-        // do not queue events if datafile has no ODP public key (not integrated)
-        guard odpConfig.eventQueueingAllowed else {
-            logger.d("ODP event has been disabled.")
-            return
-        }
-
-        guard eventQueue.count < maxQueueSize else {
+        if eventQueue.count < maxQueueSize {
+            eventQueue.save(item: event)
+        } else {
             let error = OptimizelyError.eventDispatchFailed("ODP EventQueue is full")
             self.logger.e(error)
-            return
         }
 
-        eventQueue.save(item: event)
         flush()
     }
     
     func flush() {
         guard odpConfig.eventQueueingAllowed else {
-            // clean up all pending events if datafile is ready but has no ODP public key (not integrated)
+            // clean up all pending events if datafile becomes ready but has no ODP public key (not integrated)
             _ = eventQueue.removeFirstItems(count: self.maxQueueSize)
             return
         }

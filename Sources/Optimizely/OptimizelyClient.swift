@@ -943,8 +943,6 @@ extension OptimizelyClient {
                              action: String,
                              identifiers: [String: String] = [:],
                              data: [String: Any] = [:]) throws {
-        guard self.config != nil else { throw OptimizelyError.sdkNotReady }
-
         try odpManager.sendEvent(type: type ?? Constants.ODP.eventType,
                              action: action,
                              identifiers: identifiers,

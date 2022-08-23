@@ -81,7 +81,12 @@ class OdpManager {
     
     func identifyUser(userId: String) {
         guard enabled else {
-            logger.d("ODP is not enabled.")
+            logger.d("ODP identify event is not dispatched (ODP disabled).")
+            return
+        }
+        
+        guard odpConfig.eventQueueingAllowed else {
+            logger.d("ODP identify event is not dispatched (ODP not integrated).")
             return
         }
 
@@ -97,11 +102,9 @@ class OdpManager {
     ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
     /// - Throws: `OptimizelyError` if error is detected
     func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) throws {
-        
         guard enabled else { throw OptimizelyError.odpNotEnabled }
-        
-        guard odpConfig.isOdpIntegrated else { throw OptimizelyError.odpNotIntegrated }
-        
+        guard odpConfig.eventQueueingAllowed else { throw OptimizelyError.odpNotIntegrated }
+
         var identifiersWithVuid = identifiers
         if identifiers[Constants.ODP.keyForVuid] == nil {
             identifiersWithVuid[Constants.ODP.keyForVuid] = vuidManager.vuid

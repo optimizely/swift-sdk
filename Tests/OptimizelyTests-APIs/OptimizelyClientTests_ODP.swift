@@ -77,9 +77,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
 
         do {
             try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
-            XCTFail()
-        } catch OptimizelyError.sdkNotReady {
-            XCTAssert(true)
+            XCTAssert(true, "event must be queued if datafile is not ready")
         } catch {
             XCTFail()
         }
@@ -91,7 +89,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
             try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
             XCTFail()
         } catch OptimizelyError.odpNotIntegrated {
-            XCTAssert(true)
+            XCTAssert(true, "OptimizelyError expected if ODP is not integrated.")
         } catch {
             XCTFail()
         }
@@ -115,7 +113,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
             try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
             XCTAssert(true)
         } catch OptimizelyError.odpNotEnabled {
-            XCTAssert(true)
+            XCTAssert(true, "OptimizelyError expected if ODP is disabled.")
         } catch {
             XCTFail()
         }

@@ -11,35 +11,41 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # github actions are very poor in supporting iOS simulators:
+        # - multiple Xcode versions are pre installed (not all versions and they change supported xcode versions frequently)
+        # - each xcode version has own simulator os versions.
+        # - so to run tests with the target simulator, we have to find a proper xcode version pre-installed and support the target simulator os version.
+        #   also, the xcode version (simulator_xcode_version) and simulator os versions (os) are moving target. We have to change these time to time.
         include:
-          - os: 14.4
+          - os: 15.2
             device: "iPhone 11"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 12.4
-          - os: 13.3
+            simulator_xcode_version: 13.2
+          - os: 14.4
             device: "iPhone 8"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 11.3.1
-          - os: 12.4
-            device: "iPad Air"
+            simulator_xcode_version: 12.4
+          - os: 13.7
+            # good to have tests with older OS versions, but it looks like this is min OS+xcode versions supported by github actions
+            device: "iPad Air (3rd generation)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 10.3
-          - os: 12.4
+            simulator_xcode_version: 11.7
+          - os: 13.4
             device: "Apple TV 4K"
             scheme: "OptimizelySwiftSDK-tvOS"
             test_sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode_version: 10.3
+            simulator_xcode_version: 11.7
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1
@@ -68,6 +74,16 @@ jobs:
           pod repo update
           pod install
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
+
+          # github actions are very poor in supporting iOS simulators:
+          # - to find pre-installed xcode version, run this:
+          # > ls /Applications/
+          # - to find supported simulator os versions, run this (and find simulator with non-error "datapath")
+          # > xcrun simctl list --json devices
+
+          # switch to the target xcode version
+          sudo xcode-select -switch /Applications/Xcode_$SIMULATOR_XCODE_VERSION.app
+
           Scripts/prepare_simulator.sh
           Scripts/run_unit_tests.sh
       - name: Check on failures (Archive Test Results)

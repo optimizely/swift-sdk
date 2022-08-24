@@ -53,6 +53,8 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(manager.segmentManager?.segmentsCache.timeoutInSecs, cacheTimeout)
     }
     
+    // MARK: - diable ODP
+    
     func testConfigurations_disableOdp() {
         let manager = OdpManager(sdkKey: sdkKey,
                                  disable: true,
@@ -82,7 +84,7 @@ class OdpManagerTests: XCTestCase {
         XCTAssertNil(manager.segmentManager)
     }
     
-    // MARK: - APIs
+    // MARK: - fetchQualifiedSegments
     
     func testFetchQualifiedSegments() {
         let vuid = "vuid_123"
@@ -100,22 +102,57 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(segmentManager.receivedOptions, [])
     }
     
+    // MARK: - registerVuid
+    
     func testRegisterVUIDCalledAutomatically() {
         XCTAssertEqual(eventManager.receivedVuid, manager.vuid, "registerVUID is implicitly called on OdpManager init")
     }
 
-    func testIdentifyUser() {
+    func testRegisterVUIDCalledAutomatically_odpDisabled() {
+        let newEventManager = MockOdpEventManager(sdkKey: sdkKey, odpConfig: OdpConfig())
+        
+        _ = OdpManager(sdkKey: sdkKey,
+                       disable: true,
+                       cacheSize: cacheSize,
+                       cacheTimeoutInSecs: cacheTimeout,
+                       segmentManager: segmentManager,
+                       eventManager: newEventManager)
+        
+        XCTAssertNil(newEventManager.receivedVuid, "registerVUID should not implicitly called when ODP disabled")
+    }
+    
+    // MARK: - identifyUser
+
+    func testIdentifyUser_datafileNotReady() {
         manager.identifyUser(userId: "user-1")
         
-        XCTAssertEqual(eventManager.receivedVuid, manager.vuid, "vuid should be added implicitly")
         XCTAssertEqual(eventManager.receivedUserId, "user-1")
     }
     
-    func testSendEvent() {
-        // vuid is implicitly added to identifers
-        
+    func testIdentifyUser_odpIntegrated() {
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
+        manager.identifyUser(userId: "user-1")
+        
+        XCTAssertEqual(eventManager.receivedUserId, "user-1")
+    }
+    
+    func testIdentifyUser_odpNotIntegrated() {
+        manager.updateOdpConfig(apiKey: nil, apiHost: nil, segmentsToCheck: [])
+        manager.identifyUser(userId: "user-1")
+        
+        XCTAssertNil(eventManager.receivedUserId, "identifyUser event requeut should be discarded if ODP not integrated.")
+    }
 
+    func testIdentifyUser_odpDisabled() {
+        manager.enabled = false
+        manager.identifyUser(userId: "user-1")
+        
+        XCTAssertNil(eventManager.receivedUserId, "identifyUser event requeut should be discarded if ODP disabled.")
+    }
+    
+    // MARK: - sendEvent
+    
+    func testSendEvent_datafileNotReady() {
         try? manager.sendEvent(type: "t1", action: "a1", identifiers: ["id-key1": "id-val-1"], data: ["key1" : "val1"])
         
         XCTAssertEqual(eventManager.receivedType, "t1")
@@ -130,6 +167,29 @@ class OdpManagerTests: XCTestCase {
 
         XCTAssertEqual(eventManager.receivedIdentifiers, ["vuid": "vuid-fixed", "id-key1": "id-val-1"])
     }
+    
+    func testSendEvent_odpIntegrated() {
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
+        try? manager.sendEvent(type: "t1", action: "a1", identifiers: ["id-key1": "id-val-1"], data: ["key1" : "val1"])
+
+        XCTAssertEqual(eventManager.receivedType, "t1")
+    }
+    
+    func testSendEvent_odpNotIntegrated() {
+        manager.updateOdpConfig(apiKey: nil, apiHost: nil, segmentsToCheck: [])
+        try? manager.sendEvent(type: "t1", action: "a1", identifiers: ["id-key1": "id-val-1"], data: ["key1" : "val1"])
+
+        XCTAssertNil(eventManager.receivedType, "sendEvent requeut should be discarded if ODP not integrated.")
+    }
+
+    func testSendEvent_odpDisabled() {
+        manager.enabled = false
+        try? manager.sendEvent(type: "t1", action: "a1", identifiers: ["id-key1": "id-val-1"], data: ["key1" : "val1"])
+
+        XCTAssertNil(eventManager.receivedType, "sendEvent requeut should be discarded if ODP disabled.")
+    }
+
+    // MARK: - updateConfig
     
     func testUpdateOdpConfig_resetCalled() {
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
@@ -230,6 +290,7 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(manager.eventManager?.odpConfig.eventQueueingAllowed, false)
     }
 
+    // MARK: - vuid
     
     func testVuid() {
         XCTAssertEqual(manager.vuid, manager.vuidManager.vuid)

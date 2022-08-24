@@ -17,10 +17,10 @@
 import Foundation
 
 class OdpManager {
-    let enabled: Bool
-    let odpConfig: OdpConfig
+    var enabled: Bool
+    var odpConfig: OdpConfig
     
-    let vuidManager: OdpVuidManager
+    var vuidManager: OdpVuidManager
     var segmentManager: OdpSegmentManager?
     var eventManager: OdpEventManager?
     

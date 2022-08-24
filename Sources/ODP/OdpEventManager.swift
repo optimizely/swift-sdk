@@ -21,7 +21,7 @@ class OdpEventManager {
     var odpConfig: OdpConfig
     var zaiusMgr: ZaiusRestApiManager
     
-    let maxQueueSize = 100
+    var maxQueueSize = 100
     let queueLock: DispatchQueue
     let eventQueue: DataStoreQueueStackImpl<OdpEvent>
         

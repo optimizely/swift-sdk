@@ -107,7 +107,7 @@ class OdpEventManagerTests: XCTestCase {
         sleep(1)
         XCTAssertEqual(0, manager.eventQueue.count, "flushed since apiKey is ready")
     }
-        
+    
     // MARK: - flush
 
     func testFlush_odpIntegrated() {
@@ -115,10 +115,10 @@ class OdpEventManagerTests: XCTestCase {
         
         XCTAssertTrue(manager.odpConfig.eventQueueingAllowed, "initially datafile not ready and assumed queueing is allowed")
 
-        manager.dispatch(event)    // each of these will try to flush
-        manager.dispatch(event)
-        manager.dispatch(event)
-                        
+        manager.registerVUID(vuid: "v1")    // each of these will try to flush
+        manager.identifyUser(vuid: "v1", userId: "u1")
+        manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+
         XCTAssertEqual(3, manager.eventQueue.count)
         sleep(1)
         XCTAssertEqual(3, manager.eventQueue.count, "not flushed since apiKey is not ready")
@@ -150,10 +150,10 @@ class OdpEventManagerTests: XCTestCase {
         
         XCTAssertTrue(manager.odpConfig.eventQueueingAllowed, "initially datafile not ready and assumed queueing is allowed")
 
-        manager.dispatch(event)    // each of these will try to flush
-        manager.dispatch(event)
-        manager.dispatch(event)
-                        
+        manager.registerVUID(vuid: "v1")    // each of these will try to flush
+        manager.identifyUser(vuid: "v1", userId: "u1")
+        manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+
         XCTAssertEqual(3, manager.eventQueue.count)
         sleep(1)
         XCTAssertEqual(3, manager.eventQueue.count, "not flushed since apiKey is not ready")
@@ -174,6 +174,29 @@ class OdpEventManagerTests: XCTestCase {
         sleep(1)
         XCTAssertEqual(0, manager.eventQueue.count, "all news events are discarded since event queueing not allowed")
         XCTAssertEqual(0, apiManager.totalDispatchedEvents, "all events discarded")
+    }
+    
+    // MARK: - queue overflow
+    
+    func testFlush_maxSize() {
+        manager.maxQueueSize = 2
+        
+        manager.registerVUID(vuid: "v1")    // each of these will try to flush
+        manager.identifyUser(vuid: "v1", userId: "u1")
+        manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+
+        sleep(1)
+        XCTAssertEqual(2, manager.eventQueue.count, "an event discarded since queue overflowed")
+                
+        // apiKey is available in datafile (so ODP integrated)
+
+        _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
+        
+        manager.dispatch(event)    // each of these will try to flush
+        
+        sleep(1)
+        XCTAssertEqual(0, manager.eventQueue.count, "flush is called even when an event is discarded because queue is overflowed")
+        XCTAssertEqual(2, apiManager.totalDispatchedEvents)
     }
     
     // MARK: - batch

@@ -104,13 +104,14 @@ class OdpManager {
     func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) throws {
         guard enabled else { throw OptimizelyError.odpNotEnabled }
         guard odpConfig.eventQueueingAllowed else { throw OptimizelyError.odpNotIntegrated }
-
+        guard let eventManager = eventManager, eventManager.isDataValidType(data) else { throw OptimizelyError.odpInvalidData }
+        
         var identifiersWithVuid = identifiers
         if identifiers[Constants.ODP.keyForVuid] == nil {
             identifiersWithVuid[Constants.ODP.keyForVuid] = vuidManager.vuid
         }
         
-        eventManager?.sendEvent(type: type, action: action, identifiers: identifiersWithVuid, data: data)
+        eventManager.sendEvent(type: type, action: action, identifiers: identifiersWithVuid, data: data)
     }
     
     func updateOdpConfig(apiKey: String?, apiHost: String?, segmentsToCheck: [String]) {

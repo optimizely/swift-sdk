@@ -23,9 +23,11 @@ class ZaiusRestApiManagerTests: XCTestCase {
     let apiHost = "test-host"
     
     let events: [OdpEvent] = [
-        OdpEvent(type: "t1", action: "a1", identifiers: ["id-key-1": "id-value-1"], data: ["key-1": "value-1"]),
-        OdpEvent(type: "t2", action: "a2", identifiers: ["id-key-2": "id-value-2"], data: ["key-2": "value-2"])
+        OdpEvent(type: "t1", action: "a1", identifiers: ["id-key-1": "id-value-1"], data: ["key11": "value-1", "key12": true, "key13": 3.5]),
+        OdpEvent(type: "t2", action: "a2", identifiers: ["id-key-2": "id-value-2"], data: ["key2": "value-2"])
     ]
+    
+    // MARK: - success
     
     func testSendOdpEvents_validRequest() {
         let session = MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.successResponseData)
@@ -62,6 +64,8 @@ class ZaiusRestApiManagerTests: XCTestCase {
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
+    
+    // MARK: - errors
     
     func testSendOdpEvents_networkError_retry() {
         let api = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
@@ -107,7 +111,33 @@ class ZaiusRestApiManagerTests: XCTestCase {
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
+    
+    // MARK: - null values
+    
+    func testSendData_nullValuesPassThrough() {
+        let events: [OdpEvent] = [
+            // - <nil> data value is converted to NSNull (<null>) after saving into and retrieving from the event queue.
+            // - validate both for nil and NSNull
+            OdpEvent(type: "t1", action: "a1", identifiers: ["id1": "value1"], data: ["key1": "value1", "key2": nil, "key3": NSNull()]),
+        ]
 
+        let session = MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.successResponseData)
+        let api = MockZaiusApiManager(session)
+
+        let sem = DispatchSemaphore(value: 0)
+        api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { _ in
+            sem.signal()
+        }
+        XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
+
+        let request = session.receivedApiRequest!
+        
+        let jsonDispatched = String(bytes: request.httpBody!, encoding: .utf8)!
+        // [{"data":{"key2":null,"key3":null,"key1":"value1"},"type":"t1","identifiers":{"id1":"value1"},"action":"a1"}]
+        XCTAssert(jsonDispatched.contains("\"key2\":null"))
+        XCTAssert(jsonDispatched.contains("\"key3\":null"))
+    }
+    
 }
 
 // MARK: - Tests with live ODP server
@@ -129,7 +159,7 @@ extension ZaiusRestApiManagerTests {
                               events: [OdpEvent(type: "t1",
                                                 action: "a1",
                                                 identifiers: ["vuid": "idv1"],
-                                                data: [:])]) { error in
+                                                data: ["key1": "value1", "key2": 3.5, "key3": false, "key4": nil])]) { error in
             XCTAssertNil(error)
             sem.signal()
         }

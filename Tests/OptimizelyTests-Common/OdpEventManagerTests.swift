@@ -46,6 +46,25 @@ class OdpEventManagerTests: XCTestCase {
         OTUtils.clearAllEventQueues()
     }
     
+    // MARK: - save and restore events
+    
+    func testSaveAndRestoreEvents() {
+        manager.sendEvent(type: "t1",
+                          action: "a1",
+                          identifiers: ["id-key-1": "id-value-1"],
+                          data: ["key1": "value1", "key2": 3.5, "key3": true, "key4": nil])
+        
+        let evt = manager.eventQueue.getFirstItems(count: 1)!.first!
+        XCTAssertEqual("t1", evt.type)
+        XCTAssertEqual("a1", evt.action)
+        XCTAssertEqual(["id-key-1": "id-value-1"], evt.identifiers)
+        XCTAssertEqual("value1", evt.data["key1"] as! String)
+        XCTAssertEqual(3.5, evt.data["key2"] as! Double)
+        XCTAssertEqual(true, evt.data["key3"] as! Bool)
+        // <nil> data value is converted to NSNull (<null>) after saving into and retrieving from the event queue.
+        XCTAssert(evt.data["key4"] is NSNull)
+    }
+    
     // MARK: - sendEvent
 
     func testSendEvent_noApiKey() {

@@ -168,4 +168,18 @@ class OdpEventManager {
         }
     }
     
+    // MARK: - Utils
+    
+    func isDataValidType(_ data: [String: Any]) -> Bool {
+        for val in data.values {
+            print(val)
+            if Utils.isStringType(val) || Utils.isIntType(val) || Utils.isDoubleType(val) || Utils.isBoolType(val) || Utils.isNullType(val) {
+                continue
+            } else {
+                return false
+            }
+        }
+        
+        return true
+    }
 }

@@ -102,6 +102,14 @@ class Utils {
         return isSwiftNumType || isNSNumberDoubleType(value)
     }
     
+    static func isStringType(_ value: Any) -> Bool {
+        return (value is String)
+    }
+    
+    static func isNullType(_ value: Any?) -> Bool {
+        return (value is NSNull || value == nil)
+    }
+    
     // MARK: - NSNumber
     
     static func isNSNumberBoolType(_ value: Any) -> Bool {

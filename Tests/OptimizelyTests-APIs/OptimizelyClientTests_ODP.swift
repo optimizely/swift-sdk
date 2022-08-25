@@ -54,14 +54,19 @@ class OptimizelyClientTests_ODP: XCTestCase {
     func testSendOdpEvent_success() {
         let odpManager = MockOdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
-
-        try? optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": "v2"])
         
+        try? optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k21": "v2", "k22": true, "k23": 3.5, "k24": nil])
+
         XCTAssertEqual("t1", odpManager.eventType)
         XCTAssertEqual("a1", odpManager.eventAction)
         XCTAssertEqual(["k1": "v1"], odpManager.eventIdentifiers)
-        XCTAssertEqual(["k2": "v2"], odpManager.eventData as! [String: String])
-        
+        XCTAssertEqual("v2", odpManager.eventData!["k21"] as! String)
+        XCTAssertEqual(true, odpManager.eventData!["k22"] as! Bool)
+        XCTAssertEqual(3.5, odpManager.eventData!["k23"] as! Double)
+        // swift handles <nil> in Any type in a weird way. It's a nil but cannot be AssertNil. Use stringify to validate nil.
+        let valueForNil = odpManager.eventData!["k24"]!
+        XCTAssertEqual("\(valueForNil)", "nil")
+
         // default event props
         
         try? optimizely.sendOdpEvent(action: "a2")
@@ -119,6 +124,33 @@ class OptimizelyClientTests_ODP: XCTestCase {
         }
     }
     
+    func testSendOdpEvent_invalidDataTypes() {
+        do {
+            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": [11, 12]])
+            XCTFail()
+        } catch OptimizelyError.odpInvalidData {
+            XCTAssert(true)
+        } catch {
+            XCTFail("OptimizelyError expected if data has invalid types.")
+        }
+        
+        do {
+            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": ["embed": 12]])
+            XCTFail()
+        } catch OptimizelyError.odpInvalidData {
+            XCTAssert(true)
+        } catch {
+            XCTFail("OptimizelyError expected if data has invalid types.")
+        }
+        
+        do {
+            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: [:], data: ["k1": "v1", "k2": true, "k3": 3.5, "k4": 10, "k5": nil, "k6": NSNull()])
+            XCTAssert(true)
+        } catch {
+            XCTFail("Should accept all valid data value types.")
+        }
+    }
+
     // MARK: - vuid
     
     func testVuid() {

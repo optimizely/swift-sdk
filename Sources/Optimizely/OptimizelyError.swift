@@ -87,6 +87,7 @@ public enum OptimizelyError: Error {
     case odpEventFailed(_ hint: String, _ canRetry: Bool)
     case odpNotIntegrated
     case odpNotEnabled
+    case odpInvalidData
 }
 
 // MARK: - CustomStringConvertible
@@ -161,6 +162,7 @@ extension OptimizelyError: CustomStringConvertible, ReasonProtocol {
         case .odpEventFailed(let hint, _):                  message = "ODP event send failed (\(hint))."
         case .odpNotIntegrated:                             message = "ODP is not integrated."
         case .odpNotEnabled:                                message = "ODP is not enabled."
+        case .odpInvalidData:                               message = "ODP data is not valid."
         }
         
         return message

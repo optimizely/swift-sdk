@@ -942,7 +942,7 @@ extension OptimizelyClient {
     public func sendOdpEvent(type: String? = nil,
                              action: String,
                              identifiers: [String: String] = [:],
-                             data: [String: Any] = [:]) throws {
+                             data: [String: Any?] = [:]) throws {
         try odpManager.sendEvent(type: type ?? Constants.ODP.eventType,
                              action: action,
                              identifiers: identifiers,

@@ -101,7 +101,7 @@ class OdpManager {
     ///   - identifiers: a dictionary for identifiers.
     ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
     /// - Throws: `OptimizelyError` if error is detected
-    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) throws {
+    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any?]) throws {
         guard enabled else { throw OptimizelyError.odpNotEnabled }
         guard odpConfig.eventQueueingAllowed else { throw OptimizelyError.odpNotIntegrated }
         guard let eventManager = eventManager, eventManager.isDataValidType(data) else { throw OptimizelyError.odpInvalidData }

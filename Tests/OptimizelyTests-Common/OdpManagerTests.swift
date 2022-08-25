@@ -305,7 +305,7 @@ class OdpManagerTests: XCTestCase {
         var receivedType: String!
         var receivedAction: String!
         var receivedIdentifiers: [String: String]!
-        var receivedData: [String: Any]!
+        var receivedData: [String: Any?]!
         
         var flushApiKeys = [String?]()
         
@@ -318,7 +318,7 @@ class OdpManagerTests: XCTestCase {
             self.receivedUserId = userId
         }
         
-        override func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) {
+        override func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any?]) {
             self.receivedType = type
             self.receivedAction = action
             self.receivedIdentifiers = identifiers

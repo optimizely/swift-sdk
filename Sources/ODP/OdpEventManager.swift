@@ -60,7 +60,7 @@ class OdpEventManager {
                   data: [:])
     }
         
-    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any]) {
+    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any?]) {
         let event = OdpEvent(type: type,
                              action: action,
                              identifiers: identifiers,
@@ -68,8 +68,8 @@ class OdpEventManager {
         dispatch(event)
     }
     
-    func addCommonEventData(_ customData: [String: Any] = [:]) -> [String: Any] {
-        var data: [String: Any] = [
+    func addCommonEventData(_ customData: [String: Any?] = [:]) -> [String: Any?] {
+        var data: [String: Any?] = [
             "idempotence_id": UUID().uuidString,
             
             "data_source_type": "sdk",
@@ -170,13 +170,19 @@ class OdpEventManager {
     
     // MARK: - Utils
     
-    func isDataValidType(_ data: [String: Any]) -> Bool {
-        for val in data.values {
-            print(val)
-            if Utils.isStringType(val) || Utils.isIntType(val) || Utils.isDoubleType(val) || Utils.isBoolType(val) || Utils.isNullType(val) {
-                continue
+    /// Validate if data has all valid types only (string, integer, float, boolean, and nil),
+    /// - Parameter data: a dictionary.
+    /// - Returns: true if all values are valid types.
+    func isDataValidType(_ data: [String: Any?]) -> Bool {
+        for value in data.values {
+            if let v = value {
+                if Utils.isStringType(v) || Utils.isIntType(v) || Utils.isDoubleType(v) || Utils.isBoolType(v) {
+                    continue
+                } else {
+                    return false // not a nil or a valid type
+                }
             } else {
-                return false
+                continue // nil should be accepted
             }
         }
         

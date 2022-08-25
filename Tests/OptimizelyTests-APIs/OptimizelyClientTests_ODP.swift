@@ -126,7 +126,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     
     func testSendOdpEvent_invalidDataTypes() {
         do {
-            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k2": [11, 12]])
+            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k21": "valid", "k22": ["invalid"]])
             XCTFail()
         } catch OptimizelyError.odpInvalidData {
             XCTAssert(true)
@@ -144,7 +144,14 @@ class OptimizelyClientTests_ODP: XCTestCase {
         }
         
         do {
-            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: [:], data: ["k1": "v1", "k2": true, "k3": 3.5, "k4": 10, "k5": nil, "k6": NSNull()])
+            try optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: [:],
+                                        data: ["k1": "v1",
+                                               "k2": true,
+                                               "k3": 3.5,
+                                               "k4": 10,
+                                               "k5": nil
+                                              ])
+                                               
             XCTAssert(true)
         } catch {
             XCTFail("Should accept all valid data value types.")
@@ -208,7 +215,7 @@ extension OptimizelyClientTests_ODP {
         var apiHost: String?
         var segmentsToCheck = [String]()
 
-        override func sendEvent(type: String, action: String, identifiers: [String : String], data: [String : Any]) {
+        override func sendEvent(type: String, action: String, identifiers: [String : String], data: [String : Any?]) {
             self.eventType = type
             self.eventAction = action
             self.eventIdentifiers = identifiers

@@ -289,6 +289,14 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(manager.eventManager?.odpConfig.apiHost, nil)
         XCTAssertEqual(manager.eventManager?.odpConfig.eventQueueingAllowed, false)
     }
+    
+    // MARK: - flush on EnterBackground
+    
+    func testFlushWhenAppGoesToBackground() {
+        XCTAssertEqual(eventManager.flushApiKeys.count, 0)
+        manager.applicationDidEnterBackground()
+        XCTAssertEqual(eventManager.flushApiKeys.count, 1, "flush called when app goes to background")
+    }
 
     // MARK: - vuid
     

@@ -136,3 +136,13 @@ class OdpManager {
     }
         
 }
+
+extension OdpManager: BackgroundingCallbacks {
+    func applicationDidEnterBackground() {
+        eventManager?.flush()
+    }
+    
+    func applicationDidBecomeActive() {
+        // no actions here for now
+    }
+}

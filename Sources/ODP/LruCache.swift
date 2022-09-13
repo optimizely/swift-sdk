@@ -48,7 +48,7 @@ class LruCache<K: Hashable, V> {
     func lookup(key: K) -> V? {
         if maxSize <= 0 { return nil }
         
-        var element: CacheElement? = nil
+        var element: CacheElement?
 
         queue.sync {
             element = map[key]
@@ -93,7 +93,7 @@ class LruCache<K: Hashable, V> {
     func peek(key: K) -> V? {
         if maxSize <= 0 { return nil }
 
-        var element: CacheElement? = nil
+        var element: CacheElement?
         queue.sync {
             element = map[key]
         }

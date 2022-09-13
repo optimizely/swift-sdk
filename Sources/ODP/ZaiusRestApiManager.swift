@@ -42,7 +42,7 @@ class ZaiusRestApiManager {
             return
         }
         
-        guard let body = try? JSONSerialization.data(withJSONObject: events.map{ $0.dict }) else {
+        guard let body = try? JSONSerialization.data(withJSONObject: events.map { $0.dict }) else {
             let canRetry = false
             completionHandler(.odpEventFailed("Invalid JSON", canRetry))
             return

@@ -64,8 +64,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
         XCTAssertEqual(true, odpManager.eventData!["k22"] as! Bool)
         XCTAssertEqual(3.5, odpManager.eventData!["k23"] as! Double)
         // swift handles <nil> in Any type in a weird way. It's a nil but cannot be AssertNil. Use stringify to validate nil.
-        let valueForNil = odpManager.eventData!["k24"]!
-        XCTAssertEqual("\(valueForNil)", "nil")
+        XCTAssertNil(odpManager.eventData!["k24"]!)
 
         // default event props
         
@@ -209,7 +208,7 @@ extension OptimizelyClientTests_ODP {
         var eventType: String?
         var eventAction: String?
         var eventIdentifiers: [String: String]?
-        var eventData: [String: Any]?
+        var eventData: [String: Any?]?
         
         var apiKey: String?
         var apiHost: String?

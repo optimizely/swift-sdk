@@ -21,11 +21,11 @@ struct OdpEvent: Codable {
     let action: String
     let identifiers: [String: String]
     
-    // [String: Any] is not Codable. Serialize it before storing and then deserialize when reading back.
-    let data: [String: Any]
+    // [String: Any?] is not Codable. Serialize it before storing and then deserialize when reading back.
+    let data: [String: Any?]
     let dataSerial: Data
     
-    init(type: String, action: String, identifiers: [String: String], data: [String: Any]) {
+    init(type: String, action: String, identifiers: [String: String], data: [String: Any?]) {
         self.type = type
         self.action = action
         self.identifiers = identifiers

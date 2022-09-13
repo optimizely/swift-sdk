@@ -380,7 +380,7 @@ class OdpEventManagerTests: XCTestCase {
     
     // MARK: - Utils
     
-    func validateData(_ data: [String: Any], customData: [String: Any]) {
+    func validateData(_ data: [String: Any?], customData: [String: Any?]) {
         XCTAssert((data["idempotence_id"] as! String).count > 3)
         XCTAssert((data["data_source_type"] as! String) == "sdk")
         XCTAssert((data["data_source"] as! String) == "swift-sdk")
@@ -417,8 +417,8 @@ class OdpEventManagerTests: XCTestCase {
         
         if customData.isEmpty {
             XCTAssert((data["model"] as! String).count > 3)
-            XCTAssertNil(data["key-1"])
-            XCTAssertNil(data["key-2"])
+            XCTAssertNil(data["key-1"] as? String)
+            XCTAssertNil(data["key-2"] as? String)
         } else {
             XCTAssert((data["model"] as! String) == "overruled")
             XCTAssert((data["key-1"] as! String) == "value-1")

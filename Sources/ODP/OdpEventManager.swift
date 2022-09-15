@@ -106,7 +106,7 @@ class OdpEventManager {
     func flush() {
         guard odpConfig.eventQueueingAllowed else {
             // clean up all pending events if datafile becomes ready but has no ODP public key (not integrated)
-            _ = eventQueue.removeFirstItems(count: self.maxQueueSize)
+            reset()
             return
         }
 
@@ -166,6 +166,10 @@ class OdpEventManager {
                 removeStoredEvents(num: numEvents)
             }
         }
+    }
+    
+    func reset() {
+        _ = eventQueue.removeFirstItems(count: self.maxQueueSize)
     }
     
     // MARK: - Utils

@@ -360,6 +360,23 @@ class OdpEventManagerTests: XCTestCase {
         XCTAssertEqual(5, apiManager.dispatchedBatchEvents[1].count)
         XCTAssertEqual(0, manager.eventQueue.count, "all the events should be discarded")
     }
+    
+    func testReset() {
+        let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+        let events = [OdpEvent](repeating: event, count: 3)
+
+        manager.reset()
+        XCTAssertEqual(0, manager.eventQueue.count)
+
+        for e in events {
+            manager.dispatch(e)
+        }
+        
+        XCTAssertEqual(3, manager.eventQueue.count)
+
+        manager.reset()
+        XCTAssertEqual(0, manager.eventQueue.count)
+    }
 
     // MARK: - OdpConfig
     

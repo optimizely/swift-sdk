@@ -59,6 +59,8 @@ class OdpManager {
             }
             
             self.eventManager?.registerVUID(vuid: self.vuidManager.vuid)
+        } else {
+            logger.i(.odpNotEnabled)
         }
     }
     

@@ -27,8 +27,8 @@ class OdpEventManager {
         
     let logger = OPTLoggerFactory.getLogger()
 
-    init(sdkKey: String, odpConfig: OdpConfig, apiManager: ZaiusRestApiManager? = nil) {
-        self.odpConfig = odpConfig
+    init(sdkKey: String, odpConfig: OdpConfig? = nil, apiManager: ZaiusRestApiManager? = nil) {
+        self.odpConfig = odpConfig ?? OdpConfig()
         self.zaiusMgr = apiManager ?? ZaiusRestApiManager()
         
         self.queueLock = DispatchQueue(label: "event")

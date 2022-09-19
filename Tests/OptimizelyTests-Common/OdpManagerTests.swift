@@ -27,9 +27,8 @@ class OdpManagerTests: XCTestCase {
     override func setUp() {
         OTUtils.clearAllEventQueues()
         segmentManager = MockOdpSegmentManager(cacheSize: cacheSize,
-                                               cacheTimeoutInSecs: cacheTimeout,
-                                               odpConfig: OdpConfig())
-        eventManager = MockOdpEventManager(sdkKey: sdkKey, odpConfig: OdpConfig())
+                                               cacheTimeoutInSecs: cacheTimeout)
+        eventManager = MockOdpEventManager(sdkKey: sdkKey)
         manager = OdpManager(sdkKey: sdkKey,
                              disable: false,
                              cacheSize: cacheSize,
@@ -72,8 +71,7 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
         
         manager.updateOdpConfig(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
-        XCTAssertNil(manager.odpConfig.apiKey)
-        XCTAssertNil(manager.odpConfig.apiHost)
+        XCTAssertNil(manager.odpConfig)
 
         // these calls should be dropped gracefully with nil
         

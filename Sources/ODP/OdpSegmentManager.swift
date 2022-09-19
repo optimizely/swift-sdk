@@ -25,9 +25,9 @@ class OdpSegmentManager {
 
     init(cacheSize: Int,
          cacheTimeoutInSecs: Int,
-         odpConfig: OdpConfig,
+         odpConfig: OdpConfig? = nil,
          apiManager: ZaiusGraphQLApiManager? = nil) {
-        self.odpConfig = odpConfig
+        self.odpConfig = odpConfig ?? OdpConfig()
         self.zaiusMgr = apiManager ?? ZaiusGraphQLApiManager()
         
         self.segmentsCache = LruCache<String, [String]>(size: cacheSize,

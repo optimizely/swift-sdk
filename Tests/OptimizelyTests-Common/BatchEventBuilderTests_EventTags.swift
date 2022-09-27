@@ -70,42 +70,6 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
         XCTAssertEqual(de["value"] as! Double, 32.5, "value field must be copied")
     }
 
-    func testEventTagsWhenRevenueAndValue_acceptedNumbers() {
-        let eventKey = "event_single_targeted_exp"
-        let eventTags: [String: Any] = ["browser": "chrome",
-                                        "revenue": 123.4,
-                                        "value": 325]
-        
-        try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
-        
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
-
-        XCTAssertEqual(tags["browser"] as! String, "chrome")
-        XCTAssertEqual(tags["revenue"] as! Double, 123.4)
-        XCTAssertEqual(tags["value"] as! Int, 325)
-        XCTAssertEqual(de["revenue"] as! Int, 123, "double is accepted revenue type, but converted to an integer")
-        XCTAssertEqual(de["value"] as! Double, 325, "integer is accepted value type, but convereted to a double")
-    }
-
-    func testEventTagsWhenRevenueAndValue_invalidStrings() {
-        let eventKey = "event_single_targeted_exp"
-        let eventTags: [String: Any] = ["browser": "chrome",
-                                        "revenue": "123",
-                                        "value": "32.5"]
-        
-        try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
-        
-        let de = getDispatchEvent(dispatcher: eventDispatcher)!
-        let tags = de["tags"] as! [String: Any]
-
-        XCTAssertEqual(tags["browser"] as! String, "chrome")
-        XCTAssertEqual(tags["revenue"] as! String, "123")
-        XCTAssertEqual(tags["value"] as! String, "32.5")
-        XCTAssertNil(de["revenue"], "invalid revenue type not extracted")
-        XCTAssertNil(de["value"], "invalid value type not extracted")
-    }
-
 }
 
 // MARK: - invalid types in tags

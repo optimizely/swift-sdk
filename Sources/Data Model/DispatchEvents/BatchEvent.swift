@@ -120,8 +120,8 @@ struct DispatchEvent: Codable, Equatable {
     let timestamp: Int64
     let uuid: String
     var tags: [String: AttributeValue]?
-    var revenue: AttributeValue?
-    var value: AttributeValue?
+    var revenue: Int64?
+    var value: Double?
     
     enum CodingKeys: String, CodingKey {
         case entityID = "entity_id"
@@ -138,8 +138,8 @@ struct DispatchEvent: Codable, Equatable {
          entityID: String,
          uuid: String,
          tags: [String: AttributeValue]? = [:],
-         value: AttributeValue? = nil,
-         revenue: AttributeValue? = nil) {
+         value: Double? = nil,
+         revenue: Int64? = nil) {
         
         // TODO: add validation and throw here for invalid value (int, double) and revenue (int) types
        

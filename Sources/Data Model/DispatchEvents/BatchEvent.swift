@@ -140,9 +140,7 @@ struct DispatchEvent: Codable, Equatable {
          tags: [String: AttributeValue]? = [:],
          value: Double? = nil,
          revenue: Int64? = nil) {
-        
-        // TODO: add validation and throw here for invalid value (int, double) and revenue (int) types
-       
+               
         self.timestamp = timestamp
         self.key = key
         self.entityID = entityID

@@ -315,7 +315,36 @@ extension BatchEventBuilderTests_EventTags {
         XCTAssertEqual(de["revenue"] as! Int, 40, "value must be valid for revenue")
         XCTAssertEqual(de["value"] as! Double, 32, "value must be valid for value")
     }
-
+    
+    func testEventTagsWithRevenueAndValue_toJSON() {
+        
+        // valid revenue/value types
+        
+        let conversion1 = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!, eventKey: eventKey, userId: userId, attributes: [:],
+                                                                  eventTags: ["browser": "chrome",
+                                                                              "revenue": 123,
+                                                                              "value": 32.5])
+        
+        // invalid revenue/value types
+        
+        let conversion2 = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!, eventKey: eventKey, userId: userId, attributes: [:],
+                                                                  eventTags: ["browser": "chrome",
+                                                                              "revenue": true,
+                                                                              "value": "invalid"])
+        
+        // deserialized from JSON
+        let batchEvent1 = try? JSONDecoder().decode(BatchEvent.self, from: conversion1!)
+        let batchEvent2 = try? JSONDecoder().decode(BatchEvent.self, from: conversion2!)
+        
+        XCTAssertEqual(batchEvent1?.visitors[0].visitorID, userId)
+        XCTAssertEqual(batchEvent1?.visitors[0].snapshots[0].events[0].revenue, 123)
+        XCTAssertEqual(batchEvent1?.visitors[0].snapshots[0].events[0].value, 32.5)
+        
+        XCTAssertEqual(batchEvent2?.visitors[0].visitorID, userId)
+        XCTAssertNil(batchEvent2?.visitors[0].snapshots[0].events[0].revenue, "invalid type not extracted")
+        XCTAssertNil(batchEvent2?.visitors[0].snapshots[0].events[0].value, "invalid type not extracted")
+    }
+    
 }
 
 // MARK: - Utils

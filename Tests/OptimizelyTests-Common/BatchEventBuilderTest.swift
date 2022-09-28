@@ -43,9 +43,7 @@ class BatchEventBuilderTests: XCTestCase {
                                                                  eventKey: eventWithNoExperimentKey,
                                                                  userId: userId,
                                                                  attributes: ["anyattribute": "value", "broswer_type": "firefox"],
-                                                                 eventTags: ["browser": "chrome",
-                                                                             "revenue": 123,
-                                                                             "value": 32.5])
+                                                                 eventTags: ["browser": "chrome"])
         
         XCTAssertNotNil(conversion)
         
@@ -56,8 +54,6 @@ class BatchEventBuilderTests: XCTestCase {
         
         XCTAssert((batchEvent?.enrichDecisions)! == true)
         XCTAssertEqual(batchEvent?.visitors[0].visitorID, userId)
-        XCTAssertEqual(batchEvent?.visitors[0].snapshots[0].events[0].revenue, 123)
-        XCTAssertEqual(batchEvent?.visitors[0].snapshots[0].events[0].value, 32.5)
     }
 
 }

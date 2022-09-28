@@ -38,16 +38,26 @@ class BatchEventBuilderTests: XCTestCase {
     }
 
     func testConversionEventWithNoExperiment() {
-        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!, eventKey: eventWithNoExperimentKey, userId: userId, attributes: ["anyattribute": "value", "broswer_type": "firefox"], eventTags: nil)
+        // serialized to JSON
+        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!,
+                                                                 eventKey: eventWithNoExperimentKey,
+                                                                 userId: userId,
+                                                                 attributes: ["anyattribute": "value", "broswer_type": "firefox"],
+                                                                 eventTags: ["browser": "chrome",
+                                                                             "revenue": 123,
+                                                                             "value": 32.5])
         
         XCTAssertNotNil(conversion)
         
+        // deserialized from JSON
         let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: conversion!)
         
         XCTAssertNotNil(batchEvent)
         
         XCTAssert((batchEvent?.enrichDecisions)! == true)
-        
+        XCTAssertEqual(batchEvent?.visitors[0].visitorID, userId)
+        XCTAssertEqual(batchEvent?.visitors[0].snapshots[0].events[0].revenue, 123)
+        XCTAssertEqual(batchEvent?.visitors[0].snapshots[0].events[0].value, 32.5)
     }
 
 }

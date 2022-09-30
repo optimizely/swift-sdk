@@ -52,7 +52,7 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(manager.segmentManager?.segmentsCache.timeoutInSecs, cacheTimeout)
     }
     
-    // MARK: - diable ODP
+    // MARK: - disable ODP
     
     func testConfigurations_disableOdp() {
         let manager = OdpManager(sdkKey: sdkKey,

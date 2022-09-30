@@ -43,7 +43,7 @@ class OdpSegmentManager {
             return
         }
         
-        // emtpy segmentsToCheck (no ODP audiences found in datafile) is not an error. return immediately without checking with the ODP server.
+        // empty segmentsToCheck (no ODP audiences found in datafile) is not an error. return immediately without checking with the ODP server.
         let segmentsToCheck = odpConfig.segmentsToCheck
         guard segmentsToCheck.count > 0 else {
             completionHandler([], nil)

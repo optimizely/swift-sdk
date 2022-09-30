@@ -214,9 +214,9 @@ extension OptimizelyUserContext {
         }
     }
     
-    /// Check is the user qualified for the given segment.
+    /// Check if the user is qualified for the given segment.
     ///
-    /// - Parameter segment: the segment name to check qualification for..
+    /// - Parameter segment: the segment name to check qualification for.
     /// - Returns: true if qualified.
     public func isQualifiedFor(segment: String) -> Bool {
         return atomicQualifiedSegments.property?.contains(segment) ?? false

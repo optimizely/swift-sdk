@@ -117,6 +117,21 @@ class LruCacheTests: XCTestCase {
         cache.reset()
         XCTAssertNil(cache.lookup(key: 1))
     }
+    
+    func testThreadSafe() {
+        let numThreads = 100
+        let numIterationPerThread = 1000
+        
+        let cache = LruCache<Int, Int>(size: 3, timeoutInSecs: 1)
+        let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 10) { idx in
+            for i in 0..<numIterationPerThread {
+                let v = i * 10
+                cache.save(key: i, value: v)
+                XCTAssertEqual(cache.lookup(key: i), v)
+            }
+        }
+        XCTAssertTrue(result, "Concurrent tasks timed out")
+    }
 
 }
 

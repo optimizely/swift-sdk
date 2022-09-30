@@ -34,8 +34,8 @@ class OptimizelyClientTests_Evaluation: XCTestCase {
         let userId = "test_user_1"
         
         let attributes: [String: Any?] = [
-            "i_42": Int64(-9007199254740994)
-       ]
+            "i_42": -9007199254740994
+        ]
         
         let variationKey = try? optimizely.activate(experimentKey: experimentKey, userId: userId, attributes: attributes)
         XCTAssertNil(variationKey)

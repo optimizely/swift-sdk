@@ -22,6 +22,7 @@ class OdpEventManager {
     var zaiusMgr: ZaiusRestApiManager
     
     var maxQueueSize = 100
+    let maxBatchEvents = 10
     let queueLock: DispatchQueue
     let eventQueue: DataStoreQueueStackImpl<OdpEvent>
         
@@ -128,14 +129,12 @@ class OdpEventManager {
             // used in flushEvents
             let sync = DispatchGroup()
 
-            let maxBatchEvents = 10
-
-            while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: maxBatchEvents) {
+            while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: self.maxBatchEvents) {
                 let numEvents = events.count
 
-                // multiple auto-retires are disabled for now
+                // multiple auto-retries are disabled for now
                 // - this may be too much since they'll be retried any way when next events arrive.
-                // - also, no guaranee on success after multiple retris, so it helps minimal with extra complexity.
+                // - also, no guarantee on success after multiple retries, so it helps minimal with extra complexity.
                         
                 var odpError: OptimizelyError?
                 

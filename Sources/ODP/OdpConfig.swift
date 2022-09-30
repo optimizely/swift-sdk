@@ -134,12 +134,5 @@ extension OdpConfig {
         }
         return value
     }
-    
-    var isOdpIntegrated: Bool {
-        var value = true
-        queue.sync {
-            value = _odpServiceIntegrated == .integrated
-        }
-        return value
-    }
+
 }

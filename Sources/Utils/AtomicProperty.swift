@@ -38,8 +38,8 @@ class AtomicProperty<T> {
         self._property = property
         self.lock = lock ?? {
             var name = "AtomicProperty" + String(Int.random(in: 0...100000))
-            let clzzName = String(describing: T.self)
-            name += clzzName
+            let className = String(describing: T.self)
+            name += className
             return DispatchQueue(label: name, attributes: .concurrent)
         }()
     }

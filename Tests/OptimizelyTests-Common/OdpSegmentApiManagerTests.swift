@@ -16,7 +16,7 @@
 
 import XCTest
 
-class ZaiusGraphQLApiManagerTests: XCTestCase {
+class OdpSegmentApiManagerTests: XCTestCase {
     let userKey = "vuid"
     let userValue = "test-user-value"
     let apiKey = "test-api-key"
@@ -27,7 +27,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     // MARK: - Request
 
     func testFetchQualifiedSegments_validRequest() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodResponseData))
+        let api = MockOdpSegmentApiManager(MockOdpUrlSession(statusCode: 200, responseData: MockOdpUrlSession.goodResponseData))
         
         api.fetchSegments(apiKey: apiKey,
                           apiHost: apiHost,
@@ -35,7 +35,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
                           userValue: userValue,
                           segmentsToCheck: ["a", "b", "c"]) {_,_ in }
         
-        let request = ZaiusGraphQLApiManagerTests.createdApiRequest!
+        let request = OdpSegmentApiManagerTests.createdApiRequest!
         let expectedBody = [
             "query": "query {customer(\(userKey): \"\(userValue)\") {audiences(subset:[\"a\",\"b\",\"c\"]) {edges {node {name state}}}}}"
         ]
@@ -50,7 +50,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     // MARK: - Success
 
     func testFetchQualifiedSegments_success() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodResponseData))
+        let api = MockOdpSegmentApiManager(MockOdpUrlSession(statusCode: 200, responseData: MockOdpUrlSession.goodResponseData))
         
         let sem = DispatchSemaphore(value: 0)
         api.fetchSegments(apiKey: apiKey,
@@ -66,7 +66,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     }
     
     func testFetchQualifiedSegments_successWithEmptySegments() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.goodEmptyResponseData))
+        let api = MockOdpSegmentApiManager(MockOdpUrlSession(statusCode: 200, responseData: MockOdpUrlSession.goodEmptyResponseData))
         
         let sem = DispatchSemaphore(value: 0)
         api.fetchSegments(apiKey: apiKey,
@@ -84,7 +84,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     // MARK: - Failure
     
     func testFetchQualifiedSegments_invalidIdentifier() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.invalidIdentifierResponseData))
+        let api = MockOdpSegmentApiManager(MockOdpUrlSession(statusCode: 200, responseData: MockOdpUrlSession.invalidIdentifierResponseData))
         
         let sem = DispatchSemaphore(value: 0)
         api.fetchSegments(apiKey: apiKey,
@@ -104,7 +104,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     }
 
     func testFetchQualifiedSegments_otherException() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.otherExceptionResponseData))
+        let api = MockOdpSegmentApiManager(MockOdpUrlSession(statusCode: 200, responseData: MockOdpUrlSession.otherExceptionResponseData))
         
         let sem = DispatchSemaphore(value: 0)
         api.fetchSegments(apiKey: apiKey,
@@ -124,7 +124,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     }
 
     func testFetchQualifiedSegments_badResponse() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.badResponseData))
+        let api = MockOdpSegmentApiManager(MockOdpUrlSession(statusCode: 200, responseData: MockOdpUrlSession.badResponseData))
         
         let sem = DispatchSemaphore(value: 0)
         api.fetchSegments(apiKey: apiKey,
@@ -144,7 +144,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     }
     
     func testFetchQualifiedSegments_networkError() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
+        let api = MockOdpSegmentApiManager(MockOdpUrlSession(withError: true))
         
         let sem = DispatchSemaphore(value: 0)
         api.fetchSegments(apiKey: apiKey,
@@ -164,7 +164,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     }
     
     func testFetchQualifiedSegments_400() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 403, responseData: "Bad Request"))
+        let api = MockOdpSegmentApiManager(MockOdpUrlSession(statusCode: 403, responseData: "Bad Request"))
 
         let sem = DispatchSemaphore(value: 0)
         api.fetchSegments(apiKey: apiKey,
@@ -184,7 +184,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     }
 
     func testFetchQualifiedSegments_500() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 500, responseData: "Server Error"))
+        let api = MockOdpSegmentApiManager(MockOdpUrlSession(statusCode: 500, responseData: "Server Error"))
 
         let sem = DispatchSemaphore(value: 0)
         api.fetchSegments(apiKey: apiKey,
@@ -206,7 +206,7 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
     // MARK: - Others
     
     func testMakeSubsetFilter() {
-        let api = ZaiusGraphQLApiManager()
+        let api = OdpSegmentApiManager()
         
         XCTAssertEqual("(subset:[])", api.makeSubsetFilter(segments: []))
         XCTAssertEqual("(subset:[\"a\"])", api.makeSubsetFilter(segments: ["a"]))
@@ -229,14 +229,14 @@ class ZaiusGraphQLApiManagerTests: XCTestCase {
 // tests below will be skipped in CI (travis/actions) since they use the live ODP server.
 #if DEBUG
 
-extension ZaiusGraphQLApiManagerTests {
+extension OdpSegmentApiManagerTests {
     
     var odpApiKey: String { return "W4WzcEs-ABgXorzY7h1LCQ" }
     var odpApiHost: String { return "https://api.zaius.com" }
     var odpValidUserId: String { return "tester-101"}
 
     func testLiveOdpGraphQL() {
-        let manager = ZaiusGraphQLApiManager()
+        let manager = OdpSegmentApiManager()
         
         let sem = DispatchSemaphore(value: 0)
         manager.fetchSegments(apiKey: odpApiKey,
@@ -252,7 +252,7 @@ extension ZaiusGraphQLApiManagerTests {
     }
     
     func testLiveOdpGraphQL_defaultParameters_userNotRegistered() {
-        let manager = ZaiusGraphQLApiManager()
+        let manager = OdpSegmentApiManager()
         
         let sem = DispatchSemaphore(value: 0)
         manager.fetchSegments(apiKey: odpApiKey,
@@ -280,11 +280,11 @@ extension ZaiusGraphQLApiManagerTests {
 
 #endif
 
-// MARK: - MockZaiusApiManager
+// MARK: - MockOdpSegmentApiManager
 
-extension ZaiusGraphQLApiManagerTests {
+extension OdpSegmentApiManagerTests {
     
-    class MockZaiusApiManager: ZaiusGraphQLApiManager {
+    class MockOdpSegmentApiManager: OdpSegmentApiManager {
         let mockUrlSession: URLSession
         
         init(_ urlSession: URLSession) {
@@ -296,9 +296,9 @@ extension ZaiusGraphQLApiManagerTests {
         }
     }
     
-    // MARK: - MockZaiusUrlSession
+    // MARK: - MockOdpUrlSession
     
-    class MockZaiusUrlSession: URLSession {
+    class MockOdpUrlSession: URLSession {
         static var validSessions = 0
         var statusCode: Int
         var withError: Bool
@@ -320,11 +320,11 @@ extension ZaiusGraphQLApiManagerTests {
             Self.validSessions += 1
             self.statusCode = statusCode
             self.withError = withError
-            self.responseData = responseData ?? MockZaiusUrlSession.goodResponseData
+            self.responseData = responseData ?? MockOdpUrlSession.goodResponseData
         }
         
         override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-            ZaiusGraphQLApiManagerTests.createdApiRequest = request
+            OdpSegmentApiManagerTests.createdApiRequest = request
             
             return MockDataTask() {
                 let statusCode = self.statusCode != 0 ? self.statusCode : 200

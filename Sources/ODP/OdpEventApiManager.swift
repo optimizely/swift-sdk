@@ -30,7 +30,7 @@ import Foundation
  {"title":"Accepted","status":202,"timestamp":"2022-06-30T20:59:52.046Z"}
 */
 
-class ZaiusRestApiManager {
+class OdpEventApiManager {
     
     func sendOdpEvents(apiKey: String,
                        apiHost: String,

@@ -1830,38 +1830,38 @@
 		848617D52863DC2700B7F41B /* OdpSegmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617C72863DC2700B7F41B /* OdpSegmentManager.swift */; };
 		848617D62863DC2700B7F41B /* OdpSegmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617C72863DC2700B7F41B /* OdpSegmentManager.swift */; };
 		848617D72863DC2700B7F41B /* OdpSegmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617C72863DC2700B7F41B /* OdpSegmentManager.swift */; };
-		848617DA2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617DB2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617DC2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617DD2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617DE2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617DF2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E02863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E12863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E22863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E32863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E42863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E52863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E62863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E72863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E82863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617E92863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */; };
-		848617EA2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617EB2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617EC2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617ED2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617EE2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617EF2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F02863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F12863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F22863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F32863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F42863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F52863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F62863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F72863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F82863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
-		848617F92863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */; };
+		848617DA2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617DB2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617DC2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617DD2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617DE2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617DF2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E02863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E12863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E22863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E32863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E42863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E52863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E62863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E72863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E82863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617E92863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */; };
+		848617EA2863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617EB2863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617EC2863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617ED2863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617EE2863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617EF2863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F02863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F12863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F22863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F32863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F42863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F52863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F62863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F72863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F82863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
+		848617F92863E21200B7F41B /* OdpEventApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617D92863E21200B7F41B /* OdpEventApiManager.swift */; };
 		848617FB286CF33700B7F41B /* OdpEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617FA286CF33700B7F41B /* OdpEvent.swift */; };
 		848617FC286CF33700B7F41B /* OdpEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617FA286CF33700B7F41B /* OdpEvent.swift */; };
 		848617FD286CF33700B7F41B /* OdpEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848617FA286CF33700B7F41B /* OdpEvent.swift */; };
@@ -1886,10 +1886,10 @@
 		84861816286D0B8900B7F41B /* OdpVuidManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486180F286D0B8900B7F41B /* OdpVuidManagerTests.swift */; };
 		84861817286D0B8900B7F41B /* OdpEventManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84861810286D0B8900B7F41B /* OdpEventManagerTests.swift */; };
 		84861818286D0B8900B7F41B /* OdpEventManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84861810286D0B8900B7F41B /* OdpEventManagerTests.swift */; };
-		8486181B286D188B00B7F41B /* OdpZaiusGraphQLApiManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84861819286D188B00B7F41B /* OdpZaiusGraphQLApiManagerTests.swift */; };
-		8486181C286D188B00B7F41B /* OdpZaiusGraphQLApiManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84861819286D188B00B7F41B /* OdpZaiusGraphQLApiManagerTests.swift */; };
-		8486181D286D188B00B7F41B /* OdpZaiusRestApiManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486181A286D188B00B7F41B /* OdpZaiusRestApiManagerTests.swift */; };
-		8486181E286D188B00B7F41B /* OdpZaiusRestApiManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486181A286D188B00B7F41B /* OdpZaiusRestApiManagerTests.swift */; };
+		8486181B286D188B00B7F41B /* OdpSegmentApiManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84861819286D188B00B7F41B /* OdpSegmentApiManagerTests.swift */; };
+		8486181C286D188B00B7F41B /* OdpSegmentApiManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84861819286D188B00B7F41B /* OdpSegmentApiManagerTests.swift */; };
+		8486181D286D188B00B7F41B /* OdpEventApiManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486181A286D188B00B7F41B /* OdpEventApiManagerTests.swift */; };
+		8486181E286D188B00B7F41B /* OdpEventApiManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486181A286D188B00B7F41B /* OdpEventApiManagerTests.swift */; };
 		84958C5E280F22FE008655C7 /* OptimizelyUserContextTests_Performance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84958C5D280F22FE008655C7 /* OptimizelyUserContextTests_Performance.swift */; };
 		84958C5F280F22FE008655C7 /* OptimizelyUserContextTests_Performance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84958C5D280F22FE008655C7 /* OptimizelyUserContextTests_Performance.swift */; };
 		84B4D75027E2A7550078CDA4 /* OptimizelySegmentOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */; };
@@ -2394,15 +2394,15 @@
 		8464149F289B2D0700C45EE2 /* decide_audience_segments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = decide_audience_segments.json; sourceTree = "<group>"; };
 		846414A0289B2D0700C45EE2 /* odp_integrated_no_segments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = odp_integrated_no_segments.json; sourceTree = "<group>"; };
 		848617C72863DC2700B7F41B /* OdpSegmentManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpSegmentManager.swift; sourceTree = "<group>"; };
-		848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZaiusGraphQLApiManager.swift; sourceTree = "<group>"; };
-		848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZaiusRestApiManager.swift; sourceTree = "<group>"; };
+		848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpSegmentApiManager.swift; sourceTree = "<group>"; };
+		848617D92863E21200B7F41B /* OdpEventApiManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpEventApiManager.swift; sourceTree = "<group>"; };
 		848617FA286CF33700B7F41B /* OdpEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpEvent.swift; sourceTree = "<group>"; };
 		8486180D286D0B8900B7F41B /* OdpSegmentManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpSegmentManagerTests.swift; sourceTree = "<group>"; };
 		8486180E286D0B8900B7F41B /* OdpManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpManagerTests.swift; sourceTree = "<group>"; };
 		8486180F286D0B8900B7F41B /* OdpVuidManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpVuidManagerTests.swift; sourceTree = "<group>"; };
 		84861810286D0B8900B7F41B /* OdpEventManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpEventManagerTests.swift; sourceTree = "<group>"; };
-		84861819286D188B00B7F41B /* OdpZaiusGraphQLApiManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpZaiusGraphQLApiManagerTests.swift; sourceTree = "<group>"; };
-		8486181A286D188B00B7F41B /* OdpZaiusRestApiManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpZaiusRestApiManagerTests.swift; sourceTree = "<group>"; };
+		84861819286D188B00B7F41B /* OdpSegmentApiManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpSegmentApiManagerTests.swift; sourceTree = "<group>"; };
+		8486181A286D188B00B7F41B /* OdpEventApiManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OdpEventApiManagerTests.swift; sourceTree = "<group>"; };
 		84958C5D280F22FE008655C7 /* OptimizelyUserContextTests_Performance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Performance.swift; sourceTree = "<group>"; };
 		84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptimizelySegmentOption.swift; sourceTree = "<group>"; };
 		84E2E9412852A378001114AB /* OdpVuidManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OdpVuidManager.swift; sourceTree = "<group>"; };
@@ -2626,12 +2626,12 @@
 				84E2E9412852A378001114AB /* OdpVuidManager.swift */,
 				848617C72863DC2700B7F41B /* OdpSegmentManager.swift */,
 				84E2E9712855875E001114AB /* OdpEventManager.swift */,
+				848617D82863E21200B7F41B /* OdpSegmentApiManager.swift */,
+				848617D92863E21200B7F41B /* OdpEventApiManager.swift */,
 				848617FA286CF33700B7F41B /* OdpEvent.swift */,
-				84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */,
 				84518B20287737070023F104 /* OdpConfig.swift */,
+				84B4D74F27E2A7550078CDA4 /* OptimizelySegmentOption.swift */,
 				6E6522FF278E688B00954EA1 /* LruCache.swift */,
-				848617D82863E21200B7F41B /* ZaiusGraphQLApiManager.swift */,
-				848617D92863E21200B7F41B /* ZaiusRestApiManager.swift */,
 			);
 			path = ODP;
 			sourceTree = "<group>";
@@ -2934,8 +2934,8 @@
 				8486180E286D0B8900B7F41B /* OdpManagerTests.swift */,
 				8486180D286D0B8900B7F41B /* OdpSegmentManagerTests.swift */,
 				8486180F286D0B8900B7F41B /* OdpVuidManagerTests.swift */,
-				84861819286D188B00B7F41B /* OdpZaiusGraphQLApiManagerTests.swift */,
-				8486181A286D188B00B7F41B /* OdpZaiusRestApiManagerTests.swift */,
+				84861819286D188B00B7F41B /* OdpSegmentApiManagerTests.swift */,
+				8486181A286D188B00B7F41B /* OdpEventApiManagerTests.swift */,
 				6E27EC9A266EF11000B4A6D4 /* OptimizelyDecisionTests.swift */,
 				6E75198122C5211100B2B157 /* OptimizelyErrorTests.swift */,
 				6EC6DD6824AE94820017D296 /* OptimizelyUserContextTests.swift */,
@@ -4102,7 +4102,7 @@
 				6E14CDAA2423F9C300010234 /* SDKVersion.swift in Sources */,
 				845945C3287758A100D13E11 /* OdpConfig.swift in Sources */,
 				6E14CD832423F9A100010234 /* DataStoreQueueStackImpl.swift in Sources */,
-				848617F12863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F12863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E14CD812423F9A100010234 /* DataStoreUserDefaults.swift in Sources */,
 				6E14CD802423F9A100010234 /* DataStoreMemory.swift in Sources */,
 				6E14CDA02423F9C300010234 /* OptimizelyClient+Extension.swift in Sources */,
@@ -4165,7 +4165,7 @@
 				6E14CD872423F9A100010234 /* Audience.swift in Sources */,
 				6E14CD7D2423F98D00010234 /* DefaultBucketer.swift in Sources */,
 				6E14CD792423F98D00010234 /* OPTLogger.swift in Sources */,
-				848617E12863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E12863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E14CD992423F9C300010234 /* OPTNotificationCenter.swift in Sources */,
 				6E14CD722423F96B00010234 /* OptimizelyClient+ObjC.swift in Sources */,
 				6E14CDA62423F9C300010234 /* HandlerRegistryService.swift in Sources */,
@@ -4211,7 +4211,7 @@
 				6E424CF426324B620081004A /* DecisionInfo.swift in Sources */,
 				6E5D120D2638DCE1000ABFC3 /* EventDispatcherTests_MultiClients.swift in Sources */,
 				6E424CF526324B620081004A /* DefaultBucketer.swift in Sources */,
-				848617E02863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E02863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6EE5911A2649CF640013AD66 /* LoggerTests_MultiClients.swift in Sources */,
 				84E2E96728540B5E001114AB /* OptimizelySdkSettings.swift in Sources */,
 				6E424D5426324C4D0081004A /* OptimizelyUserContext.swift in Sources */,
@@ -4287,7 +4287,7 @@
 				6E424CBB26324B1D0081004A /* MurmurHash3.swift in Sources */,
 				8464087628130D3200CCF97D /* Integration.swift in Sources */,
 				848617CE2863DC2700B7F41B /* OdpSegmentManager.swift in Sources */,
-				848617F02863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F02863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E424CBC26324B1D0081004A /* HandlerRegistryService.swift in Sources */,
 				6E424CBD26324B1D0081004A /* LogMessage.swift in Sources */,
 				6E424CBE26324B1D0081004A /* AtomicProperty.swift in Sources */,
@@ -4337,7 +4337,7 @@
 				6E75186522C520D400B2B157 /* Rollout.swift in Sources */,
 				6E86CEA324FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E75190122C520D500B2B157 /* Attribute.swift in Sources */,
-				848617DB2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617DB2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E7516B322C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				84E2E9432852A378001114AB /* OdpVuidManager.swift in Sources */,
 				6E75183522C520D400B2B157 /* EventForDispatch.swift in Sources */,
@@ -4353,7 +4353,7 @@
 				6E75185922C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E4544AB270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
 				6E7517ED22C520D400B2B157 /* DataStoreMemory.swift in Sources */,
-				848617EB2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617EB2863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E75172B22C520D400B2B157 /* Constants.swift in Sources */,
 				6E7516BF22C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
 				6E424BDE263228E90081004A /* AtomicArray.swift in Sources */,
@@ -4406,7 +4406,7 @@
 				6E7516BA22C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				845945C7287758A300D13E11 /* OdpConfig.swift in Sources */,
 				6E75175622C520D400B2B157 /* LogMessage.swift in Sources */,
-				848617F62863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F62863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E75193822C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75191422C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
 				6E75172622C520D400B2B157 /* OptimizelyResult.swift in Sources */,
@@ -4469,7 +4469,7 @@
 				6E7518B422C520D400B2B157 /* Group.swift in Sources */,
 				6E7518CC22C520D400B2B157 /* Audience.swift in Sources */,
 				6E75176E22C520D400B2B157 /* Utils.swift in Sources */,
-				848617E62863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E62863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E75182422C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
 				6E75174A22C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
 				6E7516F622C520D400B2B157 /* OptimizelyError.swift in Sources */,
@@ -4523,7 +4523,7 @@
 				6E75181422C520D400B2B157 /* DataStoreQueueStackImpl.swift in Sources */,
 				6E593FB625BB9C5500EC72BC /* OptimizelyClientTests_Decide.swift in Sources */,
 				6E7516C222C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
-				848617F22863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F22863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E75188022C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E9B11DD22C548A200C22D81 /* OptimizelyClientTests_Valid.swift in Sources */,
 				0B97DDA0249D4A24003DE606 /* SemanticVersion.swift in Sources */,
@@ -4594,7 +4594,7 @@
 				6E4544B2270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
 				6E75184422C520D400B2B157 /* Event.swift in Sources */,
 				6E75194022C520D500B2B157 /* OPTDecisionService.swift in Sources */,
-				848617E22863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E22863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E7518E022C520D400B2B157 /* ConditionLeaf.swift in Sources */,
 				6E7518B022C520D400B2B157 /* Group.swift in Sources */,
 				6E75185022C520D400B2B157 /* ProjectConfig.swift in Sources */,
@@ -4640,9 +4640,9 @@
 				6E994B3D25A3E6EA00999262 /* DecisionResponse.swift in Sources */,
 				6E75170D22C520D400B2B157 /* OptimizelyClient.swift in Sources */,
 				6E75177922C520D400B2B157 /* SDKVersion.swift in Sources */,
-				848617F52863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F52863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				0B97DDA2249D4A25003DE606 /* SemanticVersion.swift in Sources */,
-				848617E52863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E52863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E7516C522C520D400B2B157 /* DefaultEventDispatcher.swift in Sources */,
 				6E75189B22C520D400B2B157 /* Experiment.swift in Sources */,
 				845945C6287758A300D13E11 /* OdpConfig.swift in Sources */,
@@ -4723,7 +4723,7 @@
 			files = (
 				6E7E9B382523F8BF009E4426 /* OptimizelyUserContextTests_Decide_Reasons.swift in Sources */,
 				6E9B117022C5487100C22D81 /* DecisionListenerTests.swift in Sources */,
-				848617F72863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F72863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E9B116122C5487100C22D81 /* OptimizelyErrorTests.swift in Sources */,
 				6E9B116522C5487100C22D81 /* BatchEventBuilderTest.swift in Sources */,
 				84861808286CF33700B7F41B /* OdpEvent.swift in Sources */,
@@ -4784,7 +4784,7 @@
 				6EA2CC2D2345618E001E7531 /* OptimizelyConfig.swift in Sources */,
 				C78CAFAE24486E0A009FE876 /* OptimizelyJSON+ObjC.swift in Sources */,
 				6E7517AB22C520D400B2B157 /* Array+Extension.swift in Sources */,
-				8486181E286D188B00B7F41B /* OdpZaiusRestApiManagerTests.swift in Sources */,
+				8486181E286D188B00B7F41B /* OdpEventApiManagerTests.swift in Sources */,
 				6E75186122C520D400B2B157 /* FeatureVariable.swift in Sources */,
 				6E75172722C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				6E7518FD22C520D500B2B157 /* UserAttribute.swift in Sources */,
@@ -4816,7 +4816,7 @@
 				6E9B116622C5487100C22D81 /* DecisionServiceTests_UserProfiles.swift in Sources */,
 				6E34A6202319EBB800BAE302 /* Notifications.swift in Sources */,
 				6E75173322C520D400B2B157 /* Constants.swift in Sources */,
-				8486181C286D188B00B7F41B /* OdpZaiusGraphQLApiManagerTests.swift in Sources */,
+				8486181C286D188B00B7F41B /* OdpSegmentApiManagerTests.swift in Sources */,
 				6E7518A922C520D400B2B157 /* FeatureFlag.swift in Sources */,
 				84B4D75D27E2A7550078CDA4 /* OptimizelySegmentOption.swift in Sources */,
 				6E0A72D526C5B9AE00FF92B5 /* OptimizelyUserContextTests_ForcedDecisions.swift in Sources */,
@@ -4829,7 +4829,7 @@
 				6E75179322C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
 				6E9B117122C5487100C22D81 /* DecisionServiceTests_Features.swift in Sources */,
 				6E9B116F22C5487100C22D81 /* BucketTests_BucketVariation.swift in Sources */,
-				848617E72863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E72863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E994B3F25A3E6EA00999262 /* DecisionResponse.swift in Sources */,
 				6E75174B22C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
 				6E6522EB278E4F3800954EA1 /* OdpManager.swift in Sources */,
@@ -4914,7 +4914,7 @@
 				6E7516E022C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E34A6212319EBB800BAE302 /* Notifications.swift in Sources */,
 				6E9B119D22C5488300C22D81 /* UserAttributeTests.swift in Sources */,
-				848617F82863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F82863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E5D12292638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E75183E22C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E9B11A022C5488300C22D81 /* ExperimentTests.swift in Sources */,
@@ -4973,7 +4973,7 @@
 				6E75189222C520D400B2B157 /* Project.swift in Sources */,
 				6E7516F822C520D400B2B157 /* OptimizelyError.swift in Sources */,
 				84B4D75E27E2A7550078CDA4 /* OptimizelySegmentOption.swift in Sources */,
-				848617E82863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E82863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E424C09263228FD0081004A /* AtomicDictionary.swift in Sources */,
 				6E75189E22C520D400B2B157 /* Experiment.swift in Sources */,
 				6E75178822C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
@@ -5061,7 +5061,7 @@
 				6E9B114F22C5486E00C22D81 /* DefaultUserProfileServiceTests.swift in Sources */,
 				6E7518F722C520D500B2B157 /* UserAttribute.swift in Sources */,
 				6E75174522C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
-				8486181B286D188B00B7F41B /* OdpZaiusGraphQLApiManagerTests.swift in Sources */,
+				8486181B286D188B00B7F41B /* OdpSegmentApiManagerTests.swift in Sources */,
 				6E8A3D492637408500DAEA13 /* MockDatafileHandler.swift in Sources */,
 				6E981FC2232C363300FADDD6 /* DecisionListenerTests_Datafile.swift in Sources */,
 				6E9B114A22C5486E00C22D81 /* BucketTests_Others.swift in Sources */,
@@ -5071,14 +5071,14 @@
 				6E7518D322C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E0A72D426C5B9AE00FF92B5 /* OptimizelyUserContextTests_ForcedDecisions.swift in Sources */,
 				6EF41A332522BE1900EAADF1 /* OptimizelyUserContextTests_Decide.swift in Sources */,
-				848617EF2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617EF2863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E27ECBE266FD78600B4A6D4 /* DecisionReasonsTests.swift in Sources */,
 				6E9B115E22C5486E00C22D81 /* DataStoreTests.swift in Sources */,
 				6E4544AF270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
 				6E75177522C520D400B2B157 /* SDKVersion.swift in Sources */,
 				848617CD2863DC2700B7F41B /* OdpSegmentManager.swift in Sources */,
 				6E75180722C520D400B2B157 /* DataStoreFile.swift in Sources */,
-				8486181D286D188B00B7F41B /* OdpZaiusRestApiManagerTests.swift in Sources */,
+				8486181D286D188B00B7F41B /* OdpEventApiManagerTests.swift in Sources */,
 				6E75183722C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E9B115D22C5486E00C22D81 /* BatchEventBuilderTests_EventTags.swift in Sources */,
 				6E75173922C520D400B2B157 /* MurmurHash3.swift in Sources */,
@@ -5096,7 +5096,7 @@
 				6E9B115722C5486E00C22D81 /* DecisionServiceTests_Features.swift in Sources */,
 				6E9B115522C5486E00C22D81 /* BucketTests_BucketVariation.swift in Sources */,
 				6E994B3825A3E6EA00999262 /* DecisionResponse.swift in Sources */,
-				848617DF2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617DF2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				84861813286D0B8900B7F41B /* OdpManagerTests.swift in Sources */,
 				6E7516FD22C520D400B2B157 /* OptimizelyLogLevel.swift in Sources */,
 				6E75187322C520D400B2B157 /* Variation.swift in Sources */,
@@ -5180,7 +5180,7 @@
 				6E7516DB22C520D400B2B157 /* OPTUserProfileService.swift in Sources */,
 				6E34A61C2319EBB800BAE302 /* Notifications.swift in Sources */,
 				6E9B118722C5488100C22D81 /* UserAttributeTests.swift in Sources */,
-				848617F32863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F32863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E5D12242638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E75183922C520D400B2B157 /* EventForDispatch.swift in Sources */,
 				6E9B118A22C5488100C22D81 /* ExperimentTests.swift in Sources */,
@@ -5239,7 +5239,7 @@
 				6E75188D22C520D400B2B157 /* Project.swift in Sources */,
 				6E7516F322C520D400B2B157 /* OptimizelyError.swift in Sources */,
 				84B4D75927E2A7550078CDA4 /* OptimizelySegmentOption.swift in Sources */,
-				848617E32863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E32863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E424C04263228FD0081004A /* AtomicDictionary.swift in Sources */,
 				6E75189922C520D400B2B157 /* Experiment.swift in Sources */,
 				6E75178322C520D400B2B157 /* ArrayEventForDispatch+Extension.swift in Sources */,
@@ -5275,7 +5275,7 @@
 				6EC6DD4924ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				6E75188222C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E5D12252638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
-				848617F42863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F42863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6ECB60D0234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
 				6E9B11E322C548AF00C22D81 /* ThrowableConditionListTest.swift in Sources */,
 				6E75176022C520D400B2B157 /* AtomicProperty.swift in Sources */,
@@ -5316,7 +5316,7 @@
 				84E7ABC527D2A1F100447CAE /* ThreadSafeLogger.swift in Sources */,
 				6E7518BE22C520D400B2B157 /* Variable.swift in Sources */,
 				6E7518CA22C520D400B2B157 /* Audience.swift in Sources */,
-				848617E42863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E42863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E75187622C520D400B2B157 /* Variation.swift in Sources */,
 				6E7517F222C520D400B2B157 /* DataStoreMemory.swift in Sources */,
 				6E9B11AF22C5489400C22D81 /* MockUrlSession.swift in Sources */,
@@ -5376,7 +5376,7 @@
 				6EC6DD4E24ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				6E75188722C520D400B2B157 /* TrafficAllocation.swift in Sources */,
 				6E5D122A2638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
-				848617F92863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617F92863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6ECB60D5234D5D9C00016D41 /* OptimizelyConfig+ObjC.swift in Sources */,
 				6E9B11E522C548B100C22D81 /* ThrowableConditionListTest.swift in Sources */,
 				6E75176522C520D400B2B157 /* AtomicProperty.swift in Sources */,
@@ -5417,7 +5417,7 @@
 				84E7ABCA27D2A1F100447CAE /* ThreadSafeLogger.swift in Sources */,
 				6E7518C322C520D400B2B157 /* Variable.swift in Sources */,
 				6E7518CF22C520D400B2B157 /* Audience.swift in Sources */,
-				848617E92863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617E92863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E75187B22C520D400B2B157 /* Variation.swift in Sources */,
 				6E7517F722C520D400B2B157 /* DataStoreMemory.swift in Sources */,
 				6E9B11B922C5489700C22D81 /* MockUrlSession.swift in Sources */,
@@ -5483,7 +5483,7 @@
 				6E75180422C520D400B2B157 /* DataStoreFile.swift in Sources */,
 				6E86CEA224FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				6E75195422C520D500B2B157 /* OPTBucketer.swift in Sources */,
-				848617DA2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617DA2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E75171E22C520D400B2B157 /* OptimizelyResult.swift in Sources */,
 				84E2E9422852A378001114AB /* OdpVuidManager.swift in Sources */,
 				6E75172A22C520D400B2B157 /* Constants.swift in Sources */,
@@ -5499,7 +5499,7 @@
 				6E7517F822C520D400B2B157 /* DataStoreUserDefaults.swift in Sources */,
 				6E4544AA270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
 				6E7517A222C520D400B2B157 /* Array+Extension.swift in Sources */,
-				848617EA2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617EA2863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E75194822C520D500B2B157 /* OPTDatafileHandler.swift in Sources */,
 				6E7518E822C520D400B2B157 /* ConditionHolder.swift in Sources */,
 				6E424BDD263228E90081004A /* AtomicArray.swift in Sources */,
@@ -5552,7 +5552,7 @@
 				6E7516B422C520D400B2B157 /* DefaultUserProfileService.swift in Sources */,
 				845945C02877589F00D13E11 /* OdpConfig.swift in Sources */,
 				6E75175022C520D400B2B157 /* LogMessage.swift in Sources */,
-				848617EE2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617EE2863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				6E75193222C520D500B2B157 /* OPTDataStore.swift in Sources */,
 				6E75190E22C520D500B2B157 /* BackgroundingCallbacks.swift in Sources */,
 				6E75172022C520D400B2B157 /* OptimizelyResult.swift in Sources */,
@@ -5615,7 +5615,7 @@
 				6E7518AE22C520D400B2B157 /* Group.swift in Sources */,
 				6E7518C622C520D400B2B157 /* Audience.swift in Sources */,
 				6E75176822C520D400B2B157 /* Utils.swift in Sources */,
-				848617DE2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617DE2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				6E75181E22C520D400B2B157 /* BatchEventBuilder.swift in Sources */,
 				6E75174422C520D400B2B157 /* HandlerRegistryService.swift in Sources */,
 				6E7516F022C520D400B2B157 /* OptimizelyError.swift in Sources */,
@@ -5711,7 +5711,7 @@
 				75C71A3025E454460084187E /* FeatureFlag.swift in Sources */,
 				75C71A3125E454460084187E /* Group.swift in Sources */,
 				75C71A3225E454460084187E /* Variable.swift in Sources */,
-				848617DD2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617DD2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				75C71A3325E454460084187E /* Attribute.swift in Sources */,
 				75C71A3425E454460084187E /* BackgroundingCallbacks.swift in Sources */,
 				75C71A3525E454460084187E /* OPTNotificationCenter.swift in Sources */,
@@ -5728,7 +5728,7 @@
 				75C71A3F25E454460084187E /* Constants.swift in Sources */,
 				75C71A4025E454460084187E /* Notifications.swift in Sources */,
 				75C71A4125E454460084187E /* MurmurHash3.swift in Sources */,
-				848617ED2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617ED2863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				848617FE286CF33700B7F41B /* OdpEvent.swift in Sources */,
 				75C71A4225E454460084187E /* HandlerRegistryService.swift in Sources */,
 				75C71A4325E454460084187E /* LogMessage.swift in Sources */,
@@ -5772,7 +5772,7 @@
 				BD64854F2491474500F30986 /* DataStoreFile.swift in Sources */,
 				6E86CEA424FDC836005DAFED /* OptimizelyUserContext+ObjC.swift in Sources */,
 				BD6485502491474500F30986 /* OPTBucketer.swift in Sources */,
-				848617DC2863E21200B7F41B /* ZaiusGraphQLApiManager.swift in Sources */,
+				848617DC2863E21200B7F41B /* OdpSegmentApiManager.swift in Sources */,
 				BD6485512491474500F30986 /* OptimizelyResult.swift in Sources */,
 				84E2E9442852A378001114AB /* OdpVuidManager.swift in Sources */,
 				BD6485522491474500F30986 /* Constants.swift in Sources */,
@@ -5788,7 +5788,7 @@
 				BD64855C2491474500F30986 /* DataStoreUserDefaults.swift in Sources */,
 				6E4544AC270E67C800F2CEBC /* NetworkReachability.swift in Sources */,
 				BD64855D2491474500F30986 /* Array+Extension.swift in Sources */,
-				848617EC2863E21200B7F41B /* ZaiusRestApiManager.swift in Sources */,
+				848617EC2863E21200B7F41B /* OdpEventApiManager.swift in Sources */,
 				BD64855E2491474500F30986 /* OPTDatafileHandler.swift in Sources */,
 				BD64855F2491474500F30986 /* ConditionHolder.swift in Sources */,
 				6E424BDF263228E90081004A /* AtomicArray.swift in Sources */,

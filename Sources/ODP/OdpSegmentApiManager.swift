@@ -95,7 +95,7 @@ import Foundation
  }
 */
 
-class ZaiusGraphQLApiManager {
+class OdpSegmentApiManager {
     let logger = OPTLoggerFactory.getLogger()
 
     func fetchSegments(apiKey: String,

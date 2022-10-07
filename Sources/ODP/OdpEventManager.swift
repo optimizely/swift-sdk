@@ -19,18 +19,18 @@ import UIKit
 
 class OdpEventManager {
     var odpConfig: OdpConfig
-    var zaiusMgr: ZaiusRestApiManager
+    var apiMgr: OdpEventApiManager
     
     var maxQueueSize = 100
     let maxBatchEvents = 10
     let queueLock: DispatchQueue
     let eventQueue: DataStoreQueueStackImpl<OdpEvent>
-        
+    
     let logger = OPTLoggerFactory.getLogger()
-
-    init(sdkKey: String, odpConfig: OdpConfig? = nil, apiManager: ZaiusRestApiManager? = nil) {
+    
+    init(sdkKey: String, odpConfig: OdpConfig? = nil, apiManager: OdpEventApiManager? = nil) {
         self.odpConfig = odpConfig ?? OdpConfig()
-        self.zaiusMgr = apiManager ?? ZaiusRestApiManager()
+        self.apiMgr = apiManager ?? OdpEventApiManager()
         
         self.queueLock = DispatchQueue(label: "event")
         
@@ -60,7 +60,7 @@ class OdpEventManager {
                   ],
                   data: [:])
     }
-        
+    
     func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any?]) {
         let event = OdpEvent(type: type,
                              action: action,
@@ -82,7 +82,7 @@ class OdpEventManager {
             "os_version": Utils.osVersion,                  // "13.2", ...
             "device_type": Utils.deviceType,                // fixed set = ("Phone", "Tablet", "Smart TV", "Watch", “PC”, "Other")
             "model": Utils.deviceModel                      // ("iPhone 12", "iPad 2", "Pixel 2", "SM-A515F", ...)
-
+            
             // [optional]
             // "data_source_instance": <sub>,               // if need subtypes of data_source
         ]
@@ -90,7 +90,7 @@ class OdpEventManager {
         data.merge(customData) { (_, custom) in custom }    // keep custom data if conflicts
         return data
     }
-        
+    
     // MARK: - dispatch
     
     func dispatch(_ event: OdpEvent) {
@@ -100,7 +100,7 @@ class OdpEventManager {
             let error = OptimizelyError.eventDispatchFailed("ODP EventQueue is full")
             self.logger.e(error)
         }
-
+        
         flush()
     }
     
@@ -110,11 +110,11 @@ class OdpEventManager {
             reset()
             return
         }
-
+        
         guard let odpApiKey = odpConfig.apiKey, let odpApiHost = odpConfig.apiHost else {
             return
         }
-
+        
         queueLock.async {
             func removeStoredEvents(num: Int) {
                 if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
@@ -128,20 +128,20 @@ class OdpEventManager {
             // sync group used to ensure that the sendEvent is synchronous.
             // used in flushEvents
             let sync = DispatchGroup()
-
+            
             while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: self.maxBatchEvents) {
                 let numEvents = events.count
-
+                
                 // multiple auto-retries are disabled for now
                 // - this may be too much since they'll be retried any way when next events arrive.
                 // - also, no guarantee on success after multiple retries, so it helps minimal with extra complexity.
-                        
+                
                 var odpError: OptimizelyError?
                 
                 sync.enter()  // make the send event synchronous. enter our notify
-                self.zaiusMgr.sendOdpEvents(apiKey: odpApiKey,
-                                            apiHost: odpApiHost,
-                                            events: events) { error in
+                self.apiMgr.sendOdpEvents(apiKey: odpApiKey,
+                                          apiHost: odpApiHost,
+                                          events: events) { error in
                     odpError = error
                     sync.leave()  // our send is done.
                 }
@@ -161,7 +161,7 @@ class OdpEventManager {
                         }
                     }
                 }
-                    
+                
                 removeStoredEvents(num: numEvents)
             }
         }

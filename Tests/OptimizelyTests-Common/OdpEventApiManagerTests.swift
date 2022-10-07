@@ -16,7 +16,7 @@
 
 import XCTest
 
-class ZaiusRestApiManagerTests: XCTestCase {
+class OdpEventApiManagerTests: XCTestCase {
     let userKey = "vuid"
     let userValue = "test-user-value"
     let apiKey = "test-api-key"
@@ -30,17 +30,17 @@ class ZaiusRestApiManagerTests: XCTestCase {
     // MARK: - success
     
     func testSendOdpEvents_validRequest() {
-        let session = MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.successResponseData)
-        let api = MockZaiusApiManager(session)
-
+        let session = MockOdpUrlSession(statusCode: 200, responseData: MockOdpUrlSession.successResponseData)
+        let api = MockOdpEventApiManager(session)
+        
         let sem = DispatchSemaphore(value: 0)
         api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-
+        
         let request = session.receivedApiRequest!
-
+        
         XCTAssertEqual(apiHost + "/v3/events", request.url?.absoluteString)
         XCTAssertEqual("POST", request.httpMethod)
         XCTAssertEqual("application/json", request.value(forHTTPHeaderField: "Content-Type"))
@@ -53,10 +53,10 @@ class ZaiusRestApiManagerTests: XCTestCase {
             XCTAssert(OTUtils.compareDictionaries(expectedArray[i], bodyArray[i]))
         }
     }
-
+    
     func testSendOdpEvents_success() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 200,
-                                                          responseData: MockZaiusUrlSession.successResponseData))
+        let api = MockOdpEventApiManager(MockOdpUrlSession(statusCode: 200,
+                                                           responseData: MockOdpUrlSession.successResponseData))
         let sem = DispatchSemaphore(value: 0)
         api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
             XCTAssertNil(error)
@@ -68,7 +68,7 @@ class ZaiusRestApiManagerTests: XCTestCase {
     // MARK: - errors
     
     func testSendOdpEvents_networkError_retry() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(withError: true))
+        let api = MockOdpEventApiManager(MockOdpUrlSession(withError: true))
         
         let sem = DispatchSemaphore(value: 0)
         api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
@@ -81,10 +81,10 @@ class ZaiusRestApiManagerTests: XCTestCase {
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
-            
+    
     func testSendOdpEvents_400_noRetry() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 400, responseData: MockZaiusUrlSession.failureResponseData))
-
+        let api = MockOdpEventApiManager(MockOdpUrlSession(statusCode: 400, responseData: MockOdpUrlSession.failureResponseData))
+        
         let sem = DispatchSemaphore(value: 0)
         api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
             if case .odpEventFailed(_, let canRetry) = error {
@@ -98,8 +98,8 @@ class ZaiusRestApiManagerTests: XCTestCase {
     }
     
     func testSendOdpEvents_500_retry() {
-        let api = MockZaiusApiManager(MockZaiusUrlSession(statusCode: 500, responseData: "server error"))
-
+        let api = MockOdpEventApiManager(MockOdpUrlSession(statusCode: 500, responseData: "server error"))
+        
         let sem = DispatchSemaphore(value: 0)
         api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { error in
             if case .odpEventFailed(_, let canRetry) = error {
@@ -120,16 +120,16 @@ class ZaiusRestApiManagerTests: XCTestCase {
             // - validate both for nil and NSNull
             OdpEvent(type: "t1", action: "a1", identifiers: ["id1": "value1"], data: ["key1": "value1", "key2": nil, "key3": NSNull()]),
         ]
-
-        let session = MockZaiusUrlSession(statusCode: 200, responseData: MockZaiusUrlSession.successResponseData)
-        let api = MockZaiusApiManager(session)
-
+        
+        let session = MockOdpUrlSession(statusCode: 200, responseData: MockOdpUrlSession.successResponseData)
+        let api = MockOdpEventApiManager(session)
+        
         let sem = DispatchSemaphore(value: 0)
         api.sendOdpEvents(apiKey: apiKey, apiHost: apiHost, events: events) { _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
-
+        
         let request = session.receivedApiRequest!
         
         let jsonDispatched = String(bytes: request.httpBody!, encoding: .utf8)!
@@ -144,14 +144,14 @@ class ZaiusRestApiManagerTests: XCTestCase {
 // tests below will be skipped in CI (travis/actions) since they use the live ODP server.
 #if DEBUG
 
-extension ZaiusRestApiManagerTests {
+extension OdpEventApiManagerTests {
     
     var odpApiKey: String { return "W4WzcEs-ABgXorzY7h1LCQ" }
     var odpApiHost: String { return "https://api.zaius.com" }
     var odpValidUserId: String { return "tester-101"}
-
+    
     func testLiveOdpRest() {
-        let manager = ZaiusRestApiManager()
+        let manager = OdpEventApiManager()
         
         let sem = DispatchSemaphore(value: 0)
         manager.sendOdpEvents(apiKey: odpApiKey,
@@ -167,7 +167,7 @@ extension ZaiusRestApiManagerTests {
     }
     
     func testLiveOdpRest_error() {
-        let manager = ZaiusRestApiManager()
+        let manager = OdpEventApiManager()
         
         let sem = DispatchSemaphore(value: 0)
         manager.sendOdpEvents(apiKey: odpApiKey,
@@ -185,11 +185,11 @@ extension ZaiusRestApiManagerTests {
 
 #endif
 
-// MARK: - MockZaiusApiManager
+// MARK: - MockOdpEventApiManager
 
-extension ZaiusRestApiManagerTests {
+extension OdpEventApiManagerTests {
     
-    class MockZaiusApiManager: ZaiusRestApiManager {
+    class MockOdpEventApiManager: OdpEventApiManager {
         let mockUrlSession: URLSession
         
         init(_ urlSession: URLSession) {
@@ -201,7 +201,7 @@ extension ZaiusRestApiManagerTests {
         }
     }
     
-    class MockZaiusUrlSession: URLSession {
+    class MockOdpUrlSession: URLSession {
         static var validSessions = 0
         var statusCode: Int
         var withError: Bool
@@ -224,7 +224,7 @@ extension ZaiusRestApiManagerTests {
             Self.validSessions += 1
             self.statusCode = statusCode
             self.withError = withError
-            self.responseData = responseData ?? MockZaiusUrlSession.successResponseData
+            self.responseData = responseData ?? MockOdpUrlSession.successResponseData
         }
         
         override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {

@@ -265,8 +265,9 @@ class SamplesForAPI {
     
     static func checkAudienceSegments(optimizely: OptimizelyClient) {
         // override the default handler if cache size and timeout need to be customized
-        let optimizely = OptimizelyClient(sdkKey: "FCnSegiEkRry9rhVMroit4",
-                                          periodicDownloadInterval: 60)
+        let optimizely = OptimizelyClient(sdkKey: "VivZyCGPHY369D4z8T9yG",    // odp-test
+                                          periodicDownloadInterval: 60,
+                                          defaultLogLevel: .debug)
         optimizely.start { result in
             if case .failure(let error) = result {
                 print("[AudienceSegments] SDK initialization failed: \(error)")

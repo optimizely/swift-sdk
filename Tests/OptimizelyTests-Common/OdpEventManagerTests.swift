@@ -19,7 +19,7 @@ import XCTest
 class OdpEventManagerTests: XCTestCase {
     var manager: OdpEventManager!
     var odpConfig: OdpConfig!
-    var apiManager = MockZaiusApiManager()
+    var apiManager = MockOdpEventApiManager()
 
     var options = [OptimizelySegmentOption]()
     
@@ -284,8 +284,8 @@ class OdpEventManagerTests: XCTestCase {
     // MARK: - multiple skdKeys
     
     func testMultipleSdkKeys_doNotInterfere() {
-        let apiManager1 = MockZaiusApiManager()
-        let apiManager2 = MockZaiusApiManager()
+        let apiManager1 = MockOdpEventApiManager()
+        let apiManager2 = MockOdpEventApiManager()
         let odpConfig1 = OdpConfig()
         let odpConfig2 = OdpConfig()
 
@@ -450,9 +450,9 @@ class OdpEventManagerTests: XCTestCase {
         }
     }
     
-    // MARK: - MockZaiusApiManager
+    // MARK: - MockOdpEventApiManager
 
-    class MockZaiusApiManager: ZaiusRestApiManager {
+    class MockOdpEventApiManager: OdpEventApiManager {
         var receivedApiKey: String!
         var receivedApiHost: String!
         var dispatchedBatchEvents = [[OdpEvent]]()

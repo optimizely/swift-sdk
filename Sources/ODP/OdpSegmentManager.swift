@@ -19,16 +19,16 @@ import Foundation
 class OdpSegmentManager {    
     var odpConfig: OdpConfig
     var segmentsCache: LruCache<String, [String]>
-    var zaiusMgr: ZaiusGraphQLApiManager
-
+    var apiMgr: OdpSegmentApiManager
+    
     let logger = OPTLoggerFactory.getLogger()
-
+    
     init(cacheSize: Int,
          cacheTimeoutInSecs: Int,
          odpConfig: OdpConfig? = nil,
-         apiManager: ZaiusGraphQLApiManager? = nil) {
+         apiManager: OdpSegmentApiManager? = nil) {
         self.odpConfig = odpConfig ?? OdpConfig()
-        self.zaiusMgr = apiManager ?? ZaiusGraphQLApiManager()
+        self.apiMgr = apiManager ?? OdpSegmentApiManager()
         
         self.segmentsCache = LruCache<String, [String]>(size: cacheSize,
                                                         timeoutInSecs: cacheTimeoutInSecs)
@@ -51,7 +51,7 @@ class OdpSegmentManager {
         }
         
         let cacheKey = makeCacheKey(userKey, userValue)
-
+        
         let ignoreCache = options.contains(.ignoreCache)
         let resetCache = options.contains(.resetCache)
         
@@ -66,11 +66,11 @@ class OdpSegmentManager {
             }
         }
         
-        zaiusMgr.fetchSegments(apiKey: odpApiKey,
-                               apiHost: odpApiHost,
-                               userKey: userKey,
-                               userValue: userValue,
-                               segmentsToCheck: segmentsToCheck) { segments, err in
+        apiMgr.fetchSegments(apiKey: odpApiKey,
+                             apiHost: odpApiHost,
+                             userKey: userKey,
+                             userValue: userValue,
+                             segmentsToCheck: segmentsToCheck) { segments, err in
             if err == nil, let segments = segments {
                 if !ignoreCache {
                     self.segmentsCache.save(key: cacheKey, value: segments)

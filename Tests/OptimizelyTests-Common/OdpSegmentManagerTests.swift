@@ -19,7 +19,7 @@ import XCTest
 class OdpSegmentManagerTests: XCTestCase {
     var manager: OdpSegmentManager!
     var odpConfig: OdpConfig!
-    var apiManager = MockZaiusApiManager()
+    var apiManager = MockOdpSegmentApiManager()
     
     var options = [OptimizelySegmentOption]()
     
@@ -145,9 +145,9 @@ class OdpSegmentManagerTests: XCTestCase {
         return manager.segmentsCache.map.count
     }
 
-    // MARK: - MockZaiusApiManager
+    // MARK: - MockOdpSegmentApiManager
 
-    class MockZaiusApiManager: ZaiusGraphQLApiManager {
+    class MockOdpSegmentApiManager: OdpSegmentApiManager {
         var receivedApiKey: String!
         var receivedApiHost: String!
 

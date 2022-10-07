@@ -202,7 +202,7 @@ extension OptimizelyUserContextTests_ODP {
     
     /*
      this test is not good since createUserContext with not-registered-user will auto register the user.
-     the same live odp test with not-registered-user will be done in ZaiusGraphQLApiManagerTests, so skipped here.
+     the same live odp test with not-registered-user will be done in OdpSegmentApiManagerTests, so skipped here.
      
     func testLiveOdpGraphQL_defaultParameters_userNotRegistered() {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
@@ -241,7 +241,7 @@ class MockOdpManager: OdpManager {
     
     init(sdkKey: String, disable: Bool, cacheSize: Int, cacheTimeoutInSecs: Int) {
         super.init(sdkKey: sdkKey, disable: disable, cacheSize: cacheSize, cacheTimeoutInSecs: cacheTimeoutInSecs)
-        self.segmentManager?.zaiusMgr = MockZaiusApiManager()
+        self.segmentManager?.apiMgr = MockOdpSegmentApiManager()
     }
     
     override func fetchQualifiedSegments(userId: String,
@@ -258,9 +258,9 @@ class MockOdpManager: OdpManager {
     }
 }
 
-// MARK: - MockZaiusApiManager
+// MARK: - MockOdpSegmentApiManager
 
-class MockZaiusApiManager: ZaiusGraphQLApiManager {
+class MockOdpSegmentApiManager: OdpSegmentApiManager {
     var receivedApiKey: String!
     var receivedApiHost: String!
 

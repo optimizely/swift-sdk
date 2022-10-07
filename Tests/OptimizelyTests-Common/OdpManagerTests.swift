@@ -189,7 +189,12 @@ class OdpManagerTests: XCTestCase {
 
     // MARK: - updateConfig
     
-    func testUpdateOdpConfig_resetCalled() {
+    func testUpdateOdpConfig_segmentResetCalled() {
+        // initially
+        // - apiKey = nil
+        // - apiHost = nil
+        // - segmentsToCheck = []
+
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
         XCTAssertTrue(segmentManager.resetCalled)
         
@@ -235,10 +240,14 @@ class OdpManagerTests: XCTestCase {
     }
 
     func testUpdateOdpConfig_flushCalled() {
+        // initially
+        // - apiKey = nil
+        // - apiHost = nil
+        // - segmentsToCheck = []
+
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
         XCTAssertEqual(eventManager.flushApiKeys.count, 1, "flush called before")
         XCTAssertEqual(eventManager.flushApiKeys[0], nil)
-        XCTAssertTrue(eventManager.resetCalled, "reset called after to discard remaining events")
 
         eventManager.flushApiKeys.removeAll()
         eventManager.resetCalled = false
@@ -246,7 +255,6 @@ class OdpManagerTests: XCTestCase {
         manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-1", segmentsToCheck: [])
         XCTAssertEqual(eventManager.flushApiKeys.count, 1)
         XCTAssertEqual(eventManager.flushApiKeys[0], "key-1", "old events must be flushed with the old odp key")
-        XCTAssertTrue(eventManager.resetCalled)
 
         eventManager.flushApiKeys.removeAll()
         eventManager.resetCalled = false
@@ -254,7 +262,6 @@ class OdpManagerTests: XCTestCase {
         manager.updateOdpConfig(apiKey: "key-2", apiHost: "host-1", segmentsToCheck: [])
         XCTAssertEqual(eventManager.flushApiKeys.count, 1)
         XCTAssertEqual(eventManager.flushApiKeys[0], "key-2")
-        XCTAssertFalse(eventManager.resetCalled, "reset should not be called if config not changed")
 
         eventManager.flushApiKeys.removeAll()
         eventManager.resetCalled = false
@@ -262,7 +269,6 @@ class OdpManagerTests: XCTestCase {
         manager.updateOdpConfig(apiKey: nil, apiHost: nil, segmentsToCheck: [])
         XCTAssertEqual(eventManager.flushApiKeys.count, 1)
         XCTAssertEqual(eventManager.flushApiKeys[0], "key-2")
-        XCTAssertTrue(eventManager.resetCalled, "reset called after to discard remaining events")
     }
     
     func testUpdateOdpConfig_odpConfigPropagatedProperly() {

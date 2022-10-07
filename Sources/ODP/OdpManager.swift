@@ -127,14 +127,13 @@ class OdpManager {
         //       If it fails to flush all the old events here (network error), remaning events will be discarded.
         eventManager.flush()
 
-        let configChanged = odpConfig.update(apiKey: apiKey, apiHost: apiHost, segmentsToCheck: segmentsToCheck)
-        guard configChanged else { return }
-        
-        // reset segments cache when odp integration or segmentsToCheck are changed
-        segmentManager.reset()
-        
-        // reset all remaining events for old config
-        eventManager.reset()
+        let configChanged = odpConfig.update(apiKey: apiKey,
+                                             apiHost: apiHost,
+                                             segmentsToCheck: segmentsToCheck)
+        if configChanged {
+            // reset segments cache when odp integration or segmentsToCheck are changed
+            segmentManager.reset()
+        }
     }
         
 }

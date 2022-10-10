@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,16 +38,22 @@ class BatchEventBuilderTests: XCTestCase {
     }
 
     func testConversionEventWithNoExperiment() {
-        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!, eventKey: eventWithNoExperimentKey, userId: userId, attributes: ["anyattribute": "value", "broswer_type": "firefox"], eventTags: nil)
+        // serialized to JSON
+        let conversion = BatchEventBuilder.createConversionEvent(config: (optimizely?.config)!,
+                                                                 eventKey: eventWithNoExperimentKey,
+                                                                 userId: userId,
+                                                                 attributes: ["anyattribute": "value", "broswer_type": "firefox"],
+                                                                 eventTags: ["browser": "chrome"])
         
         XCTAssertNotNil(conversion)
         
+        // deserialized from JSON
         let batchEvent = try? JSONDecoder().decode(BatchEvent.self, from: conversion!)
         
         XCTAssertNotNil(batchEvent)
         
         XCTAssert((batchEvent?.enrichDecisions)! == true)
-        
+        XCTAssertEqual(batchEvent?.visitors[0].visitorID, userId)
     }
 
 }

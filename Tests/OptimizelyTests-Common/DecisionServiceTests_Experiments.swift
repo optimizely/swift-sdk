@@ -349,22 +349,19 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(result, "attribute should be matched to audienceConditions")
         
         // (2) matching false
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryNotMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryNotMatch)).result
         XCTAssertFalse(result, "attribute should be matched to audienceConditions")
         
         // (3) other attribute
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         XCTAssertFalse(result, "no matching attribute provided")
     }
     
@@ -380,22 +377,19 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(result, "attribute should be matched to audienceConditions")
         
         // (2) matching false
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryNotMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryNotMatch)).result
         XCTAssertFalse(result, "attribute should be matched to audienceConditions")
         
         // (3) other attribute
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         XCTAssertFalse(result, "no matching attribute provided")
     }
     
@@ -408,8 +402,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(result, "empty conditions is true always")
     }
     
@@ -422,8 +415,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(result, "empty conditions is true always")
     }
     
@@ -441,14 +433,12 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(result)
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesEmpty).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesEmpty)).result
         XCTAssertFalse(result)
         
         // (2) invalid string in "audienceConditions"
@@ -458,8 +448,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(result)
         
         // (2) invalid string in "audienceConditions"
@@ -469,8 +458,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
         XCTAssert(result)
     }
     
@@ -490,8 +478,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -507,8 +494,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -524,8 +510,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -541,8 +526,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesCountryMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -558,8 +542,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -575,8 +558,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: ["age": nil]).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: ["age": nil])).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -592,8 +574,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -609,8 +590,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: ["country": ["invalid"]]).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: ["country": ["invalid"]])).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -626,8 +606,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: ["age": Double.infinity]).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: ["age": Double.infinity])).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -643,8 +622,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -660,8 +638,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: ["age": ["invalid"]]).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: ["age": ["invalid"]])).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -677,8 +654,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -694,8 +670,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: ["age": ["invalid"]]).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: ["age": ["invalid"]])).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -711,8 +686,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: kAttributesAgeMatch).result
+                                                                 user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
@@ -728,9 +702,7 @@ extension DecisionServiceTests_Experiments {
         
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
-                                                                 userId: kUserId,
-                                                                 attributes: ["age": ["invalid"]]).result
-        
+                                                                 user: OTUtils.user(userId: kUserId, attributes: ["age": ["invalid"]])).result
         XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
     }

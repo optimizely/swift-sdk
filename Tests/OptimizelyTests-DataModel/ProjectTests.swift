@@ -31,6 +31,7 @@ class ProjectTests: XCTestCase {
                                             "anonymizeIP": true,
                                             "rollouts": [RolloutTests.sampleData],
                                             "typedAudiences": [AudienceTests.sampleData],
+                                            "integrations": [IntegrationTests.sampleData],
                                             "featureFlags": [FeatureFlagTests.sampleData],
                                             "botFiltering": false,
                                             "sendFlagDecisions": true]
@@ -57,7 +58,8 @@ extension ProjectTests {
         XCTAssert(model.anonymizeIP == true)
         XCTAssert(model.rollouts == [try! OTUtils.model(from: RolloutTests.sampleData)])
         XCTAssert(model.typedAudiences == [try! OTUtils.model(from: AudienceTests.sampleData)])
-        XCTAssert(model.featureFlags == [try OTUtils.model(from: FeatureFlagTests.sampleData)])
+        XCTAssert(model.integrations == [try! OTUtils.model(from: IntegrationTests.sampleData)])
+        XCTAssert(model.featureFlags == [try! OTUtils.model(from: FeatureFlagTests.sampleData)])
         XCTAssert(model.botFiltering == false)
         XCTAssert(model.sendFlagDecisions == true)
         XCTAssert(model.sdkKey == nil)
@@ -178,6 +180,16 @@ extension ProjectTests {
         
         let model: Project = try! OTUtils.model(from: data)
         XCTAssert(model.projectId == "11111")
+        XCTAssertNil(model.typedAudiences)
+    }
+    
+    func testDecodeSuccessWithMissingIntegrations() {
+        var data: [String: Any] = ProjectTests.sampleData
+        data["integrations"] = nil
+        
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssert(model.projectId == "11111")
+        XCTAssertNil(model.integrations)
     }
     
     func testDecodeSuccessWithMissingBotFiltering() {
@@ -186,6 +198,7 @@ extension ProjectTests {
         
         let model: Project = try! OTUtils.model(from: data)
         XCTAssert(model.projectId == "11111")
+        XCTAssertNil(model.botFiltering)
     }
     
     func testDecodeSuccessWithMissingSendFlagDecisions() {
@@ -194,6 +207,7 @@ extension ProjectTests {
         
         let model: Project = try! OTUtils.model(from: data)
         XCTAssert(model.projectId == "11111")
+        XCTAssertNil(model.sendFlagDecisions)
     }
     
 }

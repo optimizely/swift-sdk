@@ -61,14 +61,14 @@ enum ConditionHolder: Codable, Equatable {
         }
     }
     
-    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, user: OptimizelyUserContext) throws -> Bool {
         switch self {
         case .logicalOp:
             throw OptimizelyError.conditionInvalidFormat("Logical operation not evaluated")
         case .leaf(let conditionLeaf):
-            return try conditionLeaf.evaluate(project: project, attributes: attributes)
+            return try conditionLeaf.evaluate(project: project, user: user)
         case .array(let conditions):
-            return try conditions.evaluate(project: project, attributes: attributes)
+            return try conditions.evaluate(project: project, user: user)
         }
     }
     
@@ -111,24 +111,24 @@ extension ConditionHolder {
 
 extension Array where Element == ConditionHolder {
     
-    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluate(project: ProjectProtocol?, user: OptimizelyUserContext) throws -> Bool {
         guard let firstItem = self.first else {
             throw OptimizelyError.conditionInvalidFormat("Empty condition array")
         }
         
         switch firstItem {
         case .logicalOp(let op):
-            return try evaluate(op: op, project: project, attributes: attributes)
+            return try evaluate(op: op, project: project, user: user)
         case .leaf:
             // special case - no logical operator
             // implicit or
-            return try [[ConditionHolder.logicalOp(.or)], self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, attributes: attributes)
+            return try [[ConditionHolder.logicalOp(.or)], self].flatMap({$0}).evaluate(op: LogicalOp.or, project: project, user: user)
         default:
             throw OptimizelyError.conditionInvalidFormat("Invalid first item")
         }
     }
     
-    func evaluate(op: LogicalOp, project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluate(op: LogicalOp, project: ProjectProtocol?, user: OptimizelyUserContext) throws -> Bool {
         guard self.count > 0 else {
             throw OptimizelyError.conditionInvalidFormat("Empty condition array")
         }
@@ -138,7 +138,7 @@ extension Array where Element == ConditionHolder {
         // create closure array for delayed evaluations to avoid unnecessary ops
         let evalList = itemsAfterOpTrimmed.map { holder -> ThrowableCondition in
             return {
-                return try holder.evaluate(project: project, attributes: attributes)
+                return try holder.evaluate(project: project, user: user)
             }
         }
         

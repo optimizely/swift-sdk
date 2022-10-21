@@ -1,0 +1,153 @@
+//
+// Copyright 2022, Optimizely, Inc. and contributors 
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");  
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at   
+// 
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+import Foundation
+
+class OdpManager {
+    var enabled: Bool
+    var vuidManager: OdpVuidManager
+
+    var odpConfig: OdpConfig!
+    var segmentManager: OdpSegmentManager!
+    var eventManager: OdpEventManager!
+    
+    let logger = OPTLoggerFactory.getLogger()
+
+    var vuid: String {
+        return vuidManager.vuid
+    }
+    
+    init(sdkKey: String,
+         disable: Bool,
+         cacheSize: Int,
+         cacheTimeoutInSecs: Int,
+         segmentManager: OdpSegmentManager? = nil,
+         eventManager: OdpEventManager? = nil) {
+        
+        self.enabled = !disable
+        self.vuidManager = OdpVuidManager.shared
+        
+        guard enabled else {
+            logger.i(.odpNotEnabled)
+            return
+        }
+        
+        self.odpConfig = OdpConfig()
+
+        if let segmentManager = segmentManager {
+            segmentManager.odpConfig = odpConfig
+            self.segmentManager = segmentManager
+        } else {
+            self.segmentManager = OdpSegmentManager(cacheSize: cacheSize,
+                                                    cacheTimeoutInSecs: cacheTimeoutInSecs,
+                                                    odpConfig: odpConfig)
+        }
+        
+        if let eventManager = eventManager {
+            eventManager.odpConfig = odpConfig
+            self.eventManager = eventManager
+        } else {
+            self.eventManager = OdpEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
+        }
+        
+        self.eventManager.registerVUID(vuid: self.vuidManager.vuid)
+    }
+    
+    func fetchQualifiedSegments(userId: String,
+                                options: [OptimizelySegmentOption],
+                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+        guard enabled else {
+            completionHandler(nil, .odpNotEnabled)
+            return
+        }
+        
+        let userKey = vuidManager.isVuid(visitorId: userId) ? Constants.ODP.keyForVuid : Constants.ODP.keyForUserId
+        let userValue = userId
+    
+        segmentManager.fetchQualifiedSegments(userKey: userKey,
+                                               userValue: userValue,
+                                               options: options,
+                                               completionHandler: completionHandler)
+    }
+    
+    func identifyUser(userId: String) {
+        guard enabled else {
+            logger.d("ODP identify event is not dispatched (ODP disabled).")
+            return
+        }
+        
+        guard odpConfig.eventQueueingAllowed else {
+            logger.d("ODP identify event is not dispatched (ODP not integrated).")
+            return
+        }
+
+        eventManager.identifyUser(vuid: vuidManager.vuid, userId: userId)
+    }
+    
+    /// Send an event to the ODP server.
+    ///
+    /// - Parameters:
+    ///   - type: the event type.
+    ///   - action: the event action name.
+    ///   - identifiers: a dictionary for identifiers.
+    ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
+    /// - Throws: `OptimizelyError` if error is detected
+    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any?]) throws {
+        guard enabled else { throw OptimizelyError.odpNotEnabled }
+        guard odpConfig.eventQueueingAllowed else { throw OptimizelyError.odpNotIntegrated }
+        guard eventManager.isDataValidType(data) else { throw OptimizelyError.odpInvalidData }
+        
+        var identifiersWithVuid = identifiers
+        if identifiers[Constants.ODP.keyForVuid] == nil {
+            identifiersWithVuid[Constants.ODP.keyForVuid] = vuidManager.vuid
+        }
+        
+        eventManager.sendEvent(type: type, action: action, identifiers: identifiersWithVuid, data: data)
+    }
+    
+    func updateOdpConfig(apiKey: String?, apiHost: String?, segmentsToCheck: [String]) {
+        guard enabled else { return }
+
+        // flush old events using old odp publicKey (if exists) before updating odp key.
+        // NOTE: It should be rare but possible that odp public key is changed for the same datafile (sdkKey).
+        //       Try to send all old events with the previous public key.
+        //       If it fails to flush all the old events here (network error), remaning events will be discarded.
+        eventManager.flush()
+
+        let configChanged = odpConfig.update(apiKey: apiKey,
+                                             apiHost: apiHost,
+                                             segmentsToCheck: segmentsToCheck)
+        if configChanged {
+            // reset segments cache when odp integration or segmentsToCheck are changed
+            segmentManager.reset()
+        }
+    }
+        
+}
+
+extension OdpManager: BackgroundingCallbacks {
+    func applicationDidEnterBackground() {
+        guard enabled else { return }
+
+        eventManager.flush()
+    }
+    
+    func applicationDidBecomeActive() {
+        guard enabled else { return }
+
+        // no actions here for now
+    }
+}

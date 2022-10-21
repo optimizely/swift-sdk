@@ -70,8 +70,36 @@ struct Audience: Codable, Equatable, OptimizelyAudience {
         try container.encode(conditionHolder, forKey: .conditions)
     }
     
-    func evaluate(project: ProjectProtocol?, attributes: OptimizelyAttributes?) throws -> Bool {
-        return try conditionHolder.evaluate(project: project, attributes: attributes)
+    func evaluate(project: ProjectProtocol?, user: OptimizelyUserContext) throws -> Bool {
+        return try conditionHolder.evaluate(project: project, user: user)
+    }
+    
+    /// Extract all audience segments used in this audience conditions.
+    /// - Returns: a String array of segment names.
+    func getSegments() -> [String] {
+        let segments = getSegments(condition: conditionHolder)
+        return Array(Set(segments))
+    }
+    
+    func getSegments(condition: ConditionHolder) -> [String] {
+        var segments = [String]()
+        
+        switch condition {
+        case .logicalOp:
+            return []
+        case .leaf(let leaf):
+            if case .attribute(let userAttribute) = leaf {
+                if userAttribute.matchSupported == .qualified, let strValue = userAttribute.value?.stringValue {
+                    segments.append(strValue)
+                }
+            }
+        case .array(let conditions):
+            conditions.forEach {
+                segments.append(contentsOf: getSegments(condition: $0))
+            }
+        }
+        
+        return segments
     }
 
 }

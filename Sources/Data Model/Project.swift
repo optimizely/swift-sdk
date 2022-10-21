@@ -17,7 +17,7 @@
 import Foundation
 
 protocol ProjectProtocol {
-    func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool
+    func evaluateAudience(audienceId: String, user: OptimizelyUserContext) throws -> Bool
 }
 
 // [REF]: datafile schema
@@ -39,6 +39,7 @@ struct Project: Codable, Equatable {
     var anonymizeIP: Bool
     // V4
     var rollouts: [Rollout]
+    var integrations: [Integration]?
     var typedAudiences: [Audience]?
     var featureFlags: [FeatureFlag]
     var botFiltering: Bool?
@@ -55,7 +56,7 @@ struct Project: Codable, Equatable {
         // V3
         case anonymizeIP
         // V4
-        case rollouts, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey
+        case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey
     }
     
     // Required since logger is not equatable
@@ -63,14 +64,15 @@ struct Project: Codable, Equatable {
         return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments &&
             lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes &&
             lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision &&
-            lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts && lhs.typedAudiences == rhs.typedAudiences &&
+            lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts &&
+            lhs.integrations == rhs.integrations && lhs.typedAudiences == rhs.typedAudiences &&
             lhs.featureFlags == rhs.featureFlags && lhs.botFiltering == rhs.botFiltering && lhs.sendFlagDecisions == rhs.sendFlagDecisions && lhs.sdkKey == rhs.sdkKey && lhs.environmentKey == rhs.environmentKey
     }
 }
 
 extension Project: ProjectProtocol {
     
-    func evaluateAudience(audienceId: String, attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluateAudience(audienceId: String, user: OptimizelyUserContext) throws -> Bool {
         guard let audience = getAudience(id: audienceId) else {
             throw OptimizelyError.conditionNoMatchingAudience(audienceId)
         }
@@ -78,7 +80,7 @@ extension Project: ProjectProtocol {
             return LogMessage.audienceEvaluationStarted(audienceId, Utils.getConditionString(conditions: audience.conditionHolder)).description
         }
         
-        let result = try audience.evaluate(project: self, attributes: attributes)
+        let result = try audience.evaluate(project: self, user: user)
         logger.d(.audienceEvaluationResult(audienceId, result.description))
         return result
     }

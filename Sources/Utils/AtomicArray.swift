@@ -16,7 +16,7 @@
 
 import Foundation
 
-class AtomicArray<T>: AtomicWrapper {
+class AtomicArray<T: Equatable>: AtomicWrapper {
     private var _property: [T]
     
     var property: [T] {
@@ -65,6 +65,12 @@ class AtomicArray<T>: AtomicWrapper {
         performAtomic {
             self._property.append(contentsOf: items)
         }
+    }
+    
+    func contains(_ item: T) -> Bool {
+        return getAtomic {
+            _property.contains(item)
+        } ?? false
     }
     
     func firstIndex(where predicate: (T) throws -> Bool) rethrows -> Int? {

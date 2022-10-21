@@ -39,6 +39,7 @@ class ProjectConfig {
     var rolloutIdMap = [String: Rollout]()
     var allExperiments = [Experiment]()
     var flagVariationsMap = [String: [Variation]]()
+    var allSegments = [String]()
 
     // MARK: - Init
     
@@ -54,7 +55,8 @@ class ProjectConfig {
             throw OptimizelyError.dataFileVersionInvalid(project.version)
         }
 
-        defer { self.project = project }  // deferred-init will call "didSet"
+        self.project = project
+        updateProjectDependentProps()  // project:didSet is not fired in init. explicitly called.
     }
     
     convenience init(datafile: String) throws {
@@ -146,6 +148,11 @@ class ProjectConfig {
             return map
         }()
         
+        self.allSegments = {
+            let audiences = project.typedAudiences ?? []
+            return Array(Set(audiences.flatMap { $0.getSegments() }))
+        }()
+        
     }
     
     func getAllRulesForFlag(_ flag: FeatureFlag) -> [Experiment] {
@@ -198,6 +205,20 @@ extension ProjectConfig {
      */
     var sendFlagDecisions: Bool {
         return project.sendFlagDecisions ?? false
+    }
+    
+    /**
+     * ODP API server publicKey.
+     */
+    var publicKeyForODP: String? {
+        return project.integrations?.filter { $0.key == "odp" }.first?.publicKey
+    }
+    
+    /**
+     * ODP API server host.
+     */
+    var hostForODP: String? {
+        return project.integrations?.filter { $0.key == "odp" }.first?.host
     }
     
     /**
@@ -361,5 +382,4 @@ extension ProjectConfig {
         
         return nil
     }
-
 }

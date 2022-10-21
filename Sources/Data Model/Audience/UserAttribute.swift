@@ -37,6 +37,7 @@ struct UserAttribute: Codable, Equatable {
     
     enum ConditionType: String, Codable {
         case customAttribute = "custom_attribute"
+        case thirdPartyDimension = "third_party_dimension"
     }
     
     enum ConditionMatch: String, Codable {
@@ -52,6 +53,7 @@ struct UserAttribute: Codable, Equatable {
         case semver_le
         case semver_gt
         case semver_ge
+        case qualified
     }
     
     var typeSupported: ConditionType? {
@@ -98,7 +100,7 @@ struct UserAttribute: Codable, Equatable {
 
 extension UserAttribute {
     
-    func evaluate(attributes: OptimizelyAttributes?) throws -> Bool {
+    func evaluate(user: OptimizelyUserContext) throws -> Bool {
         
         // invalid type - parsed for forward compatibility only (but evaluation fails)
         if typeSupported == nil {
@@ -114,63 +116,77 @@ extension UserAttribute {
             throw OptimizelyError.userAttributeInvalidName(stringRepresentation)
         }
         
-        let attributes = attributes ?? OptimizelyAttributes()
-        
-        let rawAttributeValue = attributes[nameFinal] ?? nil // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
+        let attributes = user.attributes
+        let rawValue = attributes[nameFinal] ?? nil // default to nil to avoid warning "coerced from 'Any??' to 'Any?'"
      
-        if matchFinal != .exists {
-            if !attributes.keys.contains(nameFinal) {
-                throw OptimizelyError.missingAttributeValue(stringRepresentation, nameFinal)
-            }
-
-            if value == nil {
-                throw OptimizelyError.userAttributeNilValue(stringRepresentation)
-            }
-            
-            if rawAttributeValue == nil {
-                throw OptimizelyError.nilAttributeValue(stringRepresentation, nameFinal)
-            }
+        if matchFinal == .exists {
+            return !(rawValue is NSNull || rawValue == nil)
         }
         
+        // all other matches requires valid value
+
+        guard let value = value else {
+            throw OptimizelyError.userAttributeNilValue(stringRepresentation)
+        }
+            
+        if matchFinal == .qualified {
+            // NOTE: name ("odp.audiences") and type("third_party_dimension") not used
+
+            guard case .string(let strValue) = value else {
+                throw OptimizelyError.evaluateAttributeInvalidCondition(stringRepresentation)
+            }
+            return user.isQualifiedFor(segment: strValue)
+        }
+        
+        // all other matches requires attribute value
+
+        guard attributes.keys.contains(nameFinal) else {
+            throw OptimizelyError.missingAttributeValue(stringRepresentation, nameFinal)
+        }
+        
+        guard let rawAttributeValue = rawValue else {
+            throw OptimizelyError.nilAttributeValue(stringRepresentation, nameFinal)
+        }
+                
         switch matchFinal {
-        case .exists:
-            return !(rawAttributeValue is NSNull || rawAttributeValue == nil)
         case .exact:
-            return try value!.isExactMatch(with: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
+            return try value.isExactMatch(with: rawAttributeValue, condition: stringRepresentation, name: nameFinal)
         case .substring:
-            return try value!.isSubstring(of: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
+            return try value.isSubstring(of: rawAttributeValue, condition: stringRepresentation, name: nameFinal)
         case .lt:
             // user attribute "less than" this condition value
             // so evaluate if this condition value "isGreater" than the user attribute value
-            return try value!.isGreater(than: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
+            return try value.isGreater(than: rawAttributeValue, condition: stringRepresentation, name: nameFinal)
         case .le:
             // user attribute "less than" or equal this condition value
             // so evaluate if this condition value "isGreater" than or equal the user attribute value
-            return try value!.isGreaterOrEqual(than: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
+            return try value.isGreaterOrEqual(than: rawAttributeValue, condition: stringRepresentation, name: nameFinal)
         case .gt:
             // user attribute "greater than" this condition value
             // so evaluate if this condition value "isLess" than the user attribute value
-            return try value!.isLess(than: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
+            return try value.isLess(than: rawAttributeValue, condition: stringRepresentation, name: nameFinal)
         case .ge:
             // user attribute "greater than or equal" this condition value
             // so evaluate if this condition value "isLess" than or equal the user attribute value
-            return try value!.isLessOrEqual(than: rawAttributeValue!, condition: stringRepresentation, name: nameFinal)
+            return try value.isLessOrEqual(than: rawAttributeValue, condition: stringRepresentation, name: nameFinal)
         // semantic versioning seems unique.  the comarison is to compare verion but the passed in version is the target version.
         case .semver_eq:
             let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
-            return try targetValue.isSemanticVersionEqual(than: value!.stringValue)
+            return try targetValue.isSemanticVersionEqual(than: value.stringValue)
         case .semver_lt:
             let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
-            return try targetValue.isSemanticVersionLess(than: value!.stringValue)
+            return try targetValue.isSemanticVersionLess(than: value.stringValue)
         case .semver_le:
             let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
-            return try targetValue.isSemanticVersionLessOrEqual(than: value!.stringValue)
+            return try targetValue.isSemanticVersionLessOrEqual(than: value.stringValue)
         case .semver_gt:
             let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
-            return try targetValue.isSemanticVersionGreater(than: value!.stringValue)
+            return try targetValue.isSemanticVersionGreater(than: value.stringValue)
         case .semver_ge:
             let targetValue = try targetAsAttributeValue(value: rawAttributeValue, attribute: value, nameFinal: nameFinal)
-            return try targetValue.isSemanticVersionGreaterOrEqual(than: value!.stringValue)
+            return try targetValue.isSemanticVersionGreaterOrEqual(than: value.stringValue)
+        default:
+            throw OptimizelyError.userAttributeInvalidMatch(stringRepresentation)
         }
     }
     

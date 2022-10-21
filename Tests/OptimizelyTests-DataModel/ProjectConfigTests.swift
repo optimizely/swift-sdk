@@ -97,6 +97,18 @@ class ProjectConfigTests: XCTestCase {
         XCTAssertEqual(variations3, [])
     }
     
+    func testAllSegments() {
+        let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
+        let optimizely = OptimizelyClient(sdkKey: "12345",
+                                          userProfileService: OTUtils.createClearUserProfileService())
+        try! optimizely.start(datafile: datafile)
+        let segments = optimizely.config!.allSegments
+        XCTAssertEqual(3, segments.count, "redundant items should be filtered out")
+        XCTAssertEqual(Set(["odp-segment-1", "odp-segment-2", "odp-segment-3"]), Set(segments))
+        XCTAssertEqual("W4WzcEs-ABgXorzY7h1LCQ", optimizely.config!.publicKeyForODP)
+        XCTAssertEqual("https://api.zaius.com", optimizely.config!.hostForODP)
+    }
+    
 }
 
 // MARK: - Others

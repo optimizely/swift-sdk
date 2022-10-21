@@ -129,7 +129,7 @@ class ConditionHolderTests: XCTestCase {
 
         XCTAssertNotNil(data)
         let testHolder = try? JSONDecoder().decode(ConditionHolder.self, from: data!)
-        let bool = try? testHolder!.evaluate(project: nil, attributes: nil)
+        let bool = try? testHolder!.evaluate(project: nil, user: OTUtils.user())
         XCTAssertNil(bool)
     }
 }
@@ -299,7 +299,7 @@ extension ConditionHolderTests {
     func testOperaterOnEmptyConditionArray() {
         let array: [ConditionHolder] = []
         
-        let result = try? array.evaluate(op: .and, project: nil, attributes: nil)
+        let result = try? array.evaluate(op: .and, project: nil, user: OTUtils.user())
         XCTAssertTrue(result == nil)
     }
     

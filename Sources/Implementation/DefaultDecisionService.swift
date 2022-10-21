@@ -102,8 +102,7 @@ class DefaultDecisionService: OPTDecisionService {
         // ---- check if the user passes audience targeting before bucketing ----
         let audienceResponse = doesMeetAudienceConditions(config: config,
                                                           experiment: experiment,
-                                                          userId: userId,
-                                                          attributes: attributes)
+                                                          user: user)
         reasons.merge(audienceResponse.reasons)
         if audienceResponse.result ?? false {
             // bucket user into a variation
@@ -138,8 +137,7 @@ class DefaultDecisionService: OPTDecisionService {
     
     func doesMeetAudienceConditions(config: ProjectConfig,
                                     experiment: Experiment,
-                                    userId: String,
-                                    attributes: OptimizelyAttributes,
+                                    user: OptimizelyUserContext,
                                     logType: Constants.EvaluationLogType = .experiment,
                                     loggingKey: String? = nil) -> DecisionResponse<Bool> {
         let reasons = DecisionReasons()
@@ -156,13 +154,13 @@ class DefaultDecisionService: OPTDecisionService {
                 switch conditions {
                 case .array(let arrConditions):
                     if arrConditions.count > 0 {
-                        result = try conditions.evaluate(project: config.project, attributes: attributes)
+                        result = try conditions.evaluate(project: config.project, user: user)
                     } else {
                         // empty conditions (backward compatibility with "audienceIds" is ignored if exists even though empty
                         result = true
                     }
                 case .leaf:
-                    result = try conditions.evaluate(project: config.project, attributes: attributes)
+                    result = try conditions.evaluate(project: config.project, user: user)
                 default:
                     result = true
                 }
@@ -177,7 +175,7 @@ class DefaultDecisionService: OPTDecisionService {
                 logger.d { () -> String in
                     return LogMessage.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: holder)).description
                 }
-                result = try holder.evaluate(project: config.project, attributes: attributes)
+                result = try holder.evaluate(project: config.project, user: user)
             }
         } catch {
             if let error = error as? OptimizelyError {
@@ -376,8 +374,7 @@ class DefaultDecisionService: OPTDecisionService {
         
         let audienceDecisionResponse = doesMeetAudienceConditions(config: config,
                                                                   experiment: rule,
-                                                                  userId: userId,
-                                                                  attributes: attributes,
+                                                                  user: user,
                                                                   logType: .rolloutRule,
                                                                   loggingKey: loggingKey)
         reasons.merge(audienceDecisionResponse.reasons)
@@ -420,7 +417,7 @@ class DefaultDecisionService: OPTDecisionService {
         var bucketingId = userId
         // If the bucketing ID key is defined in attributes, then use that
         // in place of the userID for the murmur hash key
-        if let newBucketingId = attributes[Constants.Attributes.OptimizelyBucketIdAttribute] as? String {
+        if let newBucketingId = attributes[Constants.Attributes.reservedBucketIdAttribute] as? String {
             bucketingId = newBucketingId
         }
         

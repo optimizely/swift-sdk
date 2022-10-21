@@ -88,17 +88,11 @@ class AttributeValueTests: XCTestCase {
         
         // Float80 (CLongDouble) is not supported JSON parser (it's not expected to see this from datafile, but it still
         // can be passed as attribute values from client app
-        let testsAttributesOnly = [
-            [CLongDouble(value), Double(value)]
-        ]
+        let inputValue = CLongDouble(value)
+        let expModel2Value = Double(value)
         
-        for (idx, test) in testsAttributesOnly.enumerated() {
-            let inputValue = test[0]
-            let expModel2Value = test[1] as! Double
-            
-            let model2 = AttributeValue(value: inputValue)
-            XCTAssert(model2 == AttributeValue.double(expModel2Value), "num type error with index = \(idx)")
-        }
+        let model2 = AttributeValue(value: inputValue)
+        XCTAssert(model2 == AttributeValue.double(expModel2Value), "num type error")
     }
     
     func testDecodeSuccessWithAllBoolTypes() {

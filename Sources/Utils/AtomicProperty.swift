@@ -32,24 +32,25 @@ class AtomicProperty<T> {
             }
         }
     }
-    private let lock: DispatchQueue = {
-        var name = "AtomicProperty" + String(Int.random(in: 0...100000))
-        let clzzName = String(describing: T.self)
-        name += clzzName
-        return DispatchQueue(label: name, attributes: .concurrent)
-    }()
+    private let lock: DispatchQueue
 
-    init(property: T) {
-        self.property = property
+    init(property: T?, lock: DispatchQueue? = nil) {
+        self._property = property
+        self.lock = lock ?? {
+            var name = "AtomicProperty" + String(Int.random(in: 0...100000))
+            let className = String(describing: T.self)
+            name += className
+            return DispatchQueue(label: name, attributes: .concurrent)
+        }()
     }
 
-    init() {
-
+    convenience init() {
+        self.init(property: nil, lock: nil)
     }
     
     // perform an atomic operation on the atomic property
     // the operation will not run if the property is nil.
-    public func performAtomic(atomicOperation: ((_ prop:inout T) -> Void)) {
+    func performAtomic(atomicOperation: (_ prop:inout T) -> Void) {
         lock.sync(flags: DispatchWorkItemFlags.barrier) {
             if var prop = _property {
                 atomicOperation(&prop)

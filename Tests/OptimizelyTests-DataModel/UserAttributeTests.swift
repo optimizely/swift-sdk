@@ -183,7 +183,7 @@ extension UserAttributeTests {
         let model: UserAttribute = try! OTUtils.model(from: json)
         var tmpError: Error?
         do {
-            _ = try model.evaluate(attributes: ["country": "us"])
+            _ = try model.evaluate(user: OTUtils.user(attributes: ["country": "us"]))
         } catch {
             tmpError = error
         }
@@ -195,7 +195,7 @@ extension UserAttributeTests {
         let model: UserAttribute = try! OTUtils.model(from: json)
         var tmpError: Error?
         do {
-            _ = try model.evaluate(attributes: ["name": "geo"])
+            _ = try model.evaluate(user: OTUtils.user(attributes: ["name": "geo"]))
         } catch {
             tmpError = error
         }

@@ -15,12 +15,63 @@
 //
 
 import Foundation
+#if os(watchOS)
+import WatchKit
+#else
+import UIKit
+#endif
 
 class Utils {
     
     // from auto-generated variable OPTIMIZELYSDKVERSION
     static var sdkVersion: String = OPTIMIZELYSDKVERSION
+    static let swiftSdkClientName = "swift-sdk"
     
+    static var os: String {
+        #if os(iOS)
+        return "iOS"
+        #elseif os(tvOS)
+        return "tvOS"
+        #elseif os(macOS)
+        return "macOS"
+        #elseif os(watchOS)
+        return "watchOS"
+        #else
+        return "Other"
+        #endif
+    }
+    
+    static var osVersion: String {
+        #if os(watchOS)
+        return WKInterfaceDevice.current().systemVersion
+        #else
+        return UIDevice.current.systemVersion
+        #endif
+    }
+    
+    static var deviceModel: String {
+        #if os(watchOS)
+        return WKInterfaceDevice.current().model
+        #else
+        return UIDevice.current.model
+        #endif
+    }
+    
+    static var deviceType: String {
+        // UIUserInterfaceIdiom is an alternative solution, but some (.mac, etc) behaves in an unexpected way.
+        #if os(iOS)
+        return (UIDevice.current.userInterfaceIdiom == .phone) ? "Phone" : "Tablet"
+        #elseif os(tvOS)
+        return "Smart TV"
+        #elseif os(macOS)
+        return "PC"
+        #elseif os(watchOS)
+        return "Watch"
+        #else
+        return "Other"
+        #endif
+    }
+
     private static let jsonEncoder = JSONEncoder()
     
     // @objc NSNumber can be casted either Bool, Int, or Double
@@ -51,6 +102,10 @@ class Utils {
         return isSwiftNumType || isNSNumberDoubleType(value)
     }
     
+    static func isStringType(_ value: Any) -> Bool {
+        return (value is String)
+    }
+        
     // MARK: - NSNumber
     
     static func isNSNumberBoolType(_ value: Any) -> Bool {

@@ -45,6 +45,22 @@ class OptimizelyClientTests_Decide: XCTestCase {
         XCTAssert(user.attributes["old"] as! Bool == true)
     }
     
+    func testCreateUserContext_vuid() {
+        let attributes: [String: Any] = [
+            "country": "us",
+            "age": 100,
+            "old": true
+        ]
+        
+        let user = optimizely.createUserContext(attributes: attributes)
+        
+        XCTAssert(user.optimizely == optimizely)
+        XCTAssert(user.userId == optimizely.vuid, "vuid should be used as the default userId when not given")
+        XCTAssert(user.attributes["country"] as! String == "us")
+        XCTAssert(user.attributes["age"] as! Int == 100)
+        XCTAssert(user.attributes["old"] as! Bool == true)
+    }
+    
     func testCreateUserContext_multiple() {
         let attributes: [String: Any] = [
             "country": "us",

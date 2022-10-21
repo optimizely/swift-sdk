@@ -53,7 +53,7 @@ class ConditionLeafTests: XCTestCase {
         let model: [ConditionLeaf] = try! OTUtils.model(from: [audienceId])
         var tmpError: Error?
         do {
-            let _ = try model[0].evaluate(project: nil, attributes: ["country": "us"])
+            let _ = try model[0].evaluate(project: nil, user: OTUtils.user(attributes: ["country": "us"]))
         } catch {
             tmpError = error
         }

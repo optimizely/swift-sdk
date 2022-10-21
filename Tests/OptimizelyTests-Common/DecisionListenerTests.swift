@@ -1213,7 +1213,8 @@ class FakeManager: OptimizelyClient {
                   datafileHandler: OPTDatafileHandler? = nil,
                   userProfileService: OPTUserProfileService? = nil,
                   defaultLogLevel: OptimizelyLogLevel? = nil,
-                  defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
+                  defaultDecideOptions: [OptimizelyDecideOption]? = nil,
+                  settings: OptimizelySdkSettings? = nil) {
         
         // clear shared handlers
         HandlerRegistryService.shared.removeAll()
@@ -1224,7 +1225,8 @@ class FakeManager: OptimizelyClient {
                    datafileHandler: datafileHandler,
                    userProfileService: userProfileService,
                    defaultLogLevel: defaultLogLevel,
-                   defaultDecideOptions: defaultDecideOptions)
+                   defaultDecideOptions: defaultDecideOptions,
+                   settings: settings)
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         self.decisionService = FakeDecisionService(userProfileService: userProfileService)

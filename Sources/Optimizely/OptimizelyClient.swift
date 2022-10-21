@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,6 +32,12 @@ open class OptimizelyClient: NSObject {
         }
         set {
             atomicConfig.property = newValue
+            
+            if let newValue = newValue {
+                odpManager.updateOdpConfig(apiKey: newValue.publicKeyForODP,
+                                           apiHost: newValue.hostForODP,
+                                           segmentsToCheck: newValue.allSegments)
+            }
         }
     }
     
@@ -48,11 +54,13 @@ open class OptimizelyClient: NSObject {
     var logger: OPTLogger!
     var eventDispatcher: OPTEventDispatcher?
     public var datafileHandler: OPTDatafileHandler?
-    
+        
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
+    var odpManager: OdpManager
+    let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
     
@@ -65,17 +73,25 @@ open class OptimizelyClient: NSObject {
     ///   - datafileHandler: custom datafile handler (optional)
     ///   - userProfileService: custom UserProfileService (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
-    ///   - defaultDecisionOptions: default decision optiopns (optional)
+    ///   - defaultDecisionOptions: default decision options (optional)
+    ///   - settings: SDK configuration (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
                 datafileHandler: OPTDatafileHandler? = nil,
                 userProfileService: OPTUserProfileService? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
-                defaultDecideOptions: [OptimizelyDecideOption]? = nil) {
+                defaultDecideOptions: [OptimizelyDecideOption]? = nil,
+                settings: OptimizelySdkSettings? = nil) {
         
         self.sdkKey = sdkKey
+        self.sdkSettings = settings ?? OptimizelySdkSettings()
         self.defaultDecideOptions = defaultDecideOptions ?? []
+        
+        self.odpManager = OdpManager(sdkKey: sdkKey,
+                                     disable: sdkSettings.disableOdp,
+                                     cacheSize: sdkSettings.segmentsCacheSize,
+                                     cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs)
         
         super.init()
         
@@ -95,7 +111,7 @@ open class OptimizelyClient: NSObject {
         self.datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
-
+        
         logger.d("SDK Version: \(version)")
     }
     
@@ -189,7 +205,7 @@ open class OptimizelyClient: NSObject {
     func configSDK(datafile: Data) throws {
         do {
             self.config = try ProjectConfig(datafile: datafile)
-            
+                        
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
                 self.updateConfigFromBackgroundFetch(data: data)
@@ -747,6 +763,7 @@ open class OptimizelyClient: NSObject {
         
         return OptimizelyConfigImp(projectConfig: config)
     }
+
 }
 
 // MARK: - Send Events
@@ -906,6 +923,47 @@ extension OptimizelyClient {
         } else {
             notify()
         }
+    }
+    
+}
+
+// MARK: - ODP
+
+extension OptimizelyClient {
+    
+    /// Send an event to the ODP server.
+    ///
+    /// - Parameters:
+    ///   - type: the event type (default = "fullstack").
+    ///   - action: the event action name.
+    ///   - identifiers: a dictionary for identifiers.
+    ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
+    /// - Throws: `OptimizelyError` if error is detected
+    public func sendOdpEvent(type: String? = nil,
+                             action: String,
+                             identifiers: [String: String] = [:],
+                             data: [String: Any?] = [:]) throws {
+        try odpManager.sendEvent(type: type ?? Constants.ODP.eventType,
+                             action: action,
+                             identifiers: identifiers,
+                             data: data)
+    }
+    
+    /// the device vuid (read only)
+    public var vuid: String {
+        return odpManager.vuid
+    }
+    
+    func identifyUserToOdp(userId: String) {
+        odpManager.identifyUser(userId: userId)
+    }
+    
+    func fetchQualifiedSegments(userId: String,
+                                options: [OptimizelySegmentOption],
+                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {        
+        odpManager.fetchQualifiedSegments(userId: userId,
+                                          options: options,
+                                          completionHandler: completionHandler)
     }
     
 }

@@ -39,16 +39,12 @@ static NSString * datafile;
 // MARK: - UserContext
 
 - (void)testUserContext {
-    OptimizelyUserContext *user = [[OptimizelyUserContext alloc] initWithOptimizely:self.optimizely
-                                                                             userId:kUserId
-                                                                         attributes:nil];
+    OptimizelyUserContext *user = [self.optimizely createUserContextWithUserId:kUserId attributes:nil];
     XCTAssert([user.optimizely isEqual:self.optimizely]);
     XCTAssert([user.userId isEqualToString:kUserId]);
     XCTAssert(user.attributes.count == 0);
     
-    user = [[OptimizelyUserContext alloc] initWithOptimizely:self.optimizely
-                                                      userId:kUserId
-                                              attributes:@{@"country": @"US", @"age": @"18"}];
+    user = [self.optimizely createUserContextWithUserId:kUserId attributes:@{@"country": @"US", @"age": @"18"}];
     XCTAssert([user.optimizely isEqual:self.optimizely]);
     XCTAssert([user.userId isEqualToString:kUserId]);
     XCTAssert([user.attributes[@"country"] isEqualToString:@"US"]);

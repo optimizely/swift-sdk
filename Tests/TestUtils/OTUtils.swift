@@ -87,6 +87,16 @@ class OTUtils {
         return nil
     }
     
+    static func compareDictionaries(_ d1: [String: Any], _ d2: [String: Any]) -> Bool {
+        if #available(iOS 11.0, tvOS 11.0, *) {
+            let data1 = try! JSONSerialization.data(withJSONObject: d1, options: .sortedKeys)
+            let data2 = try! JSONSerialization.data(withJSONObject: d2, options: .sortedKeys)
+            return data1 == data2
+        } else {
+            return true
+        }
+    }
+    
     static func model<T: Codable>(from raw: Any) throws -> T {
         return try JSONDecoder().decode(T.self, from: jsonDataFromNative(raw))
     }
@@ -223,8 +233,9 @@ class OTUtils {
     }
     
     static func clearAllEventQueues() {
-        removeAllFiles(including: "OPTEventQueue", in: .documentDirectory)
-        removeAllFiles(including: "OPTEventQueue", in: .cachesDirectory)
+        // clear all FS + ODP event queues
+        removeAllFiles(including: "OPTEvent", in: .documentDirectory)
+        removeAllFiles(including: "OPTEvent", in: .cachesDirectory)
     }
 
     // MARK: - datafiles
@@ -308,6 +319,14 @@ class OTUtils {
             //print("[OTUtils] removed UserDefaults: '\(itemKey)'")
         }
         UserDefaults.standard.synchronize()
+    }
+    
+    // MARK: - decide
+    
+    static func user(userId: String? = nil, attributes: [String: Any?]? = nil) -> OptimizelyUserContext {
+        return OptimizelyUserContext(optimizely: OptimizelyClient(sdkKey: "any-key"),
+                                     userId: userId ?? "any-user",
+                                     attributes: attributes)
     }
     
     // MARK: - concurrency

@@ -42,37 +42,37 @@ class ConditionHolderTests_Evaluate: XCTestCase {
 
     func testEvaluate_I() {
         let model = ConditionHolder.leaf(.audienceId("11111"))
-        XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertTrue(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_A() {
         let model = ConditionHolder.logicalOp(.and)
-        XCTAssertNil(try? model.evaluate(project: project, attributes: attributeData))
+        XCTAssertNil(try? model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_O() {
         let model = ConditionHolder.logicalOp(.or)
-        XCTAssertNil(try? model.evaluate(project: project, attributes: attributeData))
+        XCTAssertNil(try? model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_N() {
         let model = ConditionHolder.logicalOp(.not)
-        XCTAssertNil(try? model.evaluate(project: project, attributes: attributeData))
+        XCTAssertNil(try? model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_AinArray() {
         let model = ConditionHolder.array([.logicalOp(.and)])
-        XCTAssertNil(try? model.evaluate(project: project, attributes: attributeData))
+        XCTAssertNil(try? model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_OinArray() {
         let model = ConditionHolder.array([.logicalOp(.or)])
-        XCTAssertFalse(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertFalse(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_NinArray() {
         let model = ConditionHolder.array([.logicalOp(.not)])
-        XCTAssertNil(try? model.evaluate(project: project, attributes: attributeData))
+        XCTAssertNil(try? model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
 
     func testEvaluate_AI() {
@@ -80,7 +80,7 @@ class ConditionHolderTests_Evaluate: XCTestCase {
             .logicalOp(.and),
             .leaf(.audienceId("11111"))]
             )
-        XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertTrue(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_OI() {
@@ -88,7 +88,7 @@ class ConditionHolderTests_Evaluate: XCTestCase {
             .logicalOp(.or),
             .leaf(.audienceId("11111"))]
         )
-        XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertTrue(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_NI() {
@@ -96,7 +96,7 @@ class ConditionHolderTests_Evaluate: XCTestCase {
             .logicalOp(.not),
             .leaf(.audienceId("11111"))]
         )
-        XCTAssertFalse(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertFalse(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_A_AI() {
@@ -105,7 +105,7 @@ class ConditionHolderTests_Evaluate: XCTestCase {
             .array([.logicalOp(.and),
                     .leaf(.audienceId("11111"))])
             ])
-        XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertTrue(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_A_OI() {
@@ -114,7 +114,7 @@ class ConditionHolderTests_Evaluate: XCTestCase {
             .array([.logicalOp(.or),
                     .leaf(.audienceId("11111"))])
             ])
-        XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertTrue(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_A_NI() {
@@ -123,7 +123,7 @@ class ConditionHolderTests_Evaluate: XCTestCase {
             .array([.logicalOp(.not),
                     .leaf(.audienceId("11111"))])
             ])
-        XCTAssertFalse(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertFalse(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_A_I_AII() {
@@ -134,7 +134,7 @@ class ConditionHolderTests_Evaluate: XCTestCase {
                     .leaf(.audienceId("33333")),
                     .leaf(.audienceId("44444"))])
             ])
-        XCTAssertFalse(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertFalse(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
     func testEvaluate_O__A_I_OII__O_AII_NI() {
@@ -152,7 +152,7 @@ class ConditionHolderTests_Evaluate: XCTestCase {
                     .array([.logicalOp(.not),
                             .leaf(.audienceId("66666"))])])
             ])
-        XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertTrue(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
     
 }
@@ -163,17 +163,17 @@ extension ConditionHolderTests_Evaluate {
 
     func testEvaluate_U() {
         let model: ConditionHolder = try! OTUtils.model(from: userAttributeData)
-        XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertTrue(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
 
     func testEvaluate_AU() {
         let model: ConditionHolder = try! OTUtils.model(from: ["and", userAttributeData])
-        XCTAssertTrue(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertTrue(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
 
     func testEvaluate_NU() {
         let model: ConditionHolder = try! OTUtils.model(from: ["not", userAttributeData])
-        XCTAssertFalse(try! model.evaluate(project: project, attributes: attributeData))
+        XCTAssertFalse(try! model.evaluate(project: project, user: OTUtils.user(attributes: attributeData)))
     }
 
 }
@@ -185,7 +185,7 @@ extension ConditionHolderTests_Evaluate {
     func testEvaluate_Empty() {
         let model: ConditionHolder = try! OTUtils.model(from: [])
         do {
-            _ = try model.evaluate(project: project, attributes: attributeData)
+            _ = try model.evaluate(project: project, user: OTUtils.user(attributes: attributeData))
             XCTAssert(false, "cannot evaluate empty condtion")
         } catch {
             XCTAssert(true)
@@ -195,7 +195,7 @@ extension ConditionHolderTests_Evaluate {
     func testEvaluate_InvalidFirstItem() {
         let model: ConditionHolder = try! OTUtils.model(from: [["and", userAttributeData]])
         do {
-            _ = try model.evaluate(project: project, attributes: attributeData)
+            _ = try model.evaluate(project: project, user: OTUtils.user(attributes: attributeData))
             XCTAssert(false, "only operator or leaf node can be the first item")
         } catch {
             XCTAssert(true)
@@ -205,7 +205,7 @@ extension ConditionHolderTests_Evaluate {
     func testEvaluate_OperatorOnly() {
         let model: ConditionHolder = try! OTUtils.model(from: ["and"])
         do {
-            _ = try model.evaluate(project: project, attributes: attributeData)
+            _ = try model.evaluate(project: project, user: OTUtils.user(attributes: attributeData))
             XCTAssert(false, "only operator or leaf node can be the first item")
         } catch {
             XCTAssert(true)

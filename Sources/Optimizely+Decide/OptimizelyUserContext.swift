@@ -20,25 +20,45 @@ import Foundation
 public class OptimizelyUserContext {
     weak var optimizely: OptimizelyClient?
     public var userId: String
-    
-    var atomicAttributes: AtomicProperty<[String: Any?]>
+        
+    private var atomicAttributes: AtomicProperty<[String: Any?]>
     public var attributes: [String: Any?] {
         return atomicAttributes.property ?? [:]
     }
     
-    var forcedDecisions: AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>?
+    private var atomicForcedDecisions: AtomicProperty<[OptimizelyDecisionContext: OptimizelyForcedDecision]>
+    var forcedDecisions: [OptimizelyDecisionContext: OptimizelyForcedDecision]? {
+        return atomicForcedDecisions.property
+    }
     
+    private var atomicQualifiedSegments: AtomicProperty<[String]>
+    /// an array of segment names that the user is qualified for. The result of **fetchQualifiedSegments()** will be saved here.
+    public var qualifiedSegments: [String]? {
+        get {
+            return atomicQualifiedSegments.property
+        }
+        // keep this public set api for clients to set directly (testing/debugging)
+        set {
+            atomicQualifiedSegments.property = newValue
+        }
+    }
+
     var clone: OptimizelyUserContext? {
         guard let optimizely = self.optimizely else { return nil }
         
-        let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes)
+        let userContext = OptimizelyUserContext(optimizely: optimizely, userId: userId, attributes: attributes, identify: false)
+        
         if let fds = forcedDecisions {
-            userContext.forcedDecisions = AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>(fds.property)
+            userContext.atomicForcedDecisions.property = fds
+        }
+        
+        if let qs = qualifiedSegments {
+            userContext.atomicQualifiedSegments.property = qs
         }
         
         return userContext
     }
-    
+        
     let logger = OPTLoggerFactory.getLogger()
     
     /// OptimizelyUserContext init
@@ -47,14 +67,32 @@ public class OptimizelyUserContext {
     ///   - optimizely: An instance of OptimizelyClient to be used for decisions.
     ///   - userId: The user ID to be used for bucketing.
     ///   - attributes: A map of attribute names to current user attribute values.
-    public init(optimizely: OptimizelyClient,
-                userId: String,
-                attributes: [String: Any?]? = nil) {
-        self.optimizely = optimizely
-        self.userId = userId
-        self.atomicAttributes = AtomicProperty(property: attributes ?? [:])
+    public convenience init(optimizely: OptimizelyClient,
+                            userId: String,
+                            attributes: [String: Any?]? = nil) {
+        self.init(optimizely: optimizely, userId: userId, attributes: attributes ?? [:], identify: true)
     }
     
+    init(optimizely: OptimizelyClient,
+         userId: String,
+         attributes: [String: Any?],
+         identify: Bool) {
+        self.optimizely = optimizely
+        self.userId = userId
+        
+        let lock = DispatchQueue(label: "user-context")
+        self.atomicAttributes = AtomicProperty(property: attributes, lock: lock)
+        self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
+        self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
+        
+        if identify {
+            // async call so event building overhead is not blocking context creation
+            lock.async {
+                self.optimizely?.identifyUserToOdp(userId: userId)
+            }
+        }
+    }
+        
     /// Sets an attribute for a given key.
     /// - Parameters:
     ///   - key: An attribute key
@@ -139,6 +177,53 @@ public class OptimizelyUserContext {
     
 }
 
+// MARK: - ODP
+
+extension OptimizelyUserContext {
+    
+    /// Fetch all qualified segments for the user context.
+    ///
+    /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
+    /// On failure, **qualifiedSegments** will be nil and one of these errors will be returned:
+    /// - OptimizelyError.invalidSegmentIdentifier
+    /// - OptimizelyError.fetchSegmentsFailed(String)
+    ///
+    /// - Parameters:
+    ///   - options: A set of options for fetching qualified segments (optional).
+    ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
+    public func fetchQualifiedSegments(options: [OptimizelySegmentOption] = [],
+                                       completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+        // on failure, qualifiedSegments should be reset if a previous value exists.
+        self.atomicQualifiedSegments.property = nil
+
+        guard let optimizely = self.optimizely else {
+            completionHandler(nil, .sdkNotReady)
+            return
+        }
+        
+        optimizely.fetchQualifiedSegments(userId: userId, options: options) { segments, err in
+            guard err == nil, let segments = segments else {
+                let error = err ?? OptimizelyError.fetchSegmentsFailed("invalid segments")
+                self.logger.e(error)
+                completionHandler(nil, error)
+                return
+            }
+                
+            self.atomicQualifiedSegments.property = segments
+            completionHandler(segments, nil)
+        }
+    }
+    
+    /// Check if the user is qualified for the given segment.
+    ///
+    /// - Parameter segment: the segment name to check qualification for.
+    /// - Returns: true if qualified.
+    public func isQualifiedFor(segment: String) -> Bool {
+        return atomicQualifiedSegments.property?.contains(segment) ?? false
+    }
+    
+}
+
 // MARK: - ForcedDecisions
 
 /// Decision Context
@@ -153,7 +238,7 @@ public struct OptimizelyDecisionContext: Hashable {
 }
 
 /// Forced Decision
-public struct OptimizelyForcedDecision {
+public struct OptimizelyForcedDecision: Equatable {
     public let variationKey: String
     
     public init(variationKey: String) {
@@ -172,10 +257,13 @@ extension OptimizelyUserContext {
         // create on the first setForcedDecision call
         
         if forcedDecisions == nil {
-            forcedDecisions = AtomicDictionary<OptimizelyDecisionContext, OptimizelyForcedDecision>()
+            atomicForcedDecisions.property = [:]
         }
         
-        forcedDecisions![context] = decision
+        atomicForcedDecisions.performAtomic { property in
+            property[context] = decision
+        }
+        
         return true
     }
     
@@ -184,9 +272,7 @@ extension OptimizelyUserContext {
     ///   - context: A decision context
     /// - Returns: A forced decision or nil if forced decisions are not set for the decision context.
     public func getForcedDecision(context: OptimizelyDecisionContext) -> OptimizelyForcedDecision? {
-        guard let fds = forcedDecisions else { return nil }
-        
-        return fds[context]
+        return atomicForcedDecisions.property?[context]
     }
     
     /// Removes the forced decision for a given decision context.
@@ -194,23 +280,19 @@ extension OptimizelyUserContext {
     ///   - context: A decision context.
     /// - Returns: true if the forced decision has been removed successfully.
     public func removeForcedDecision(context: OptimizelyDecisionContext) -> Bool {
-        guard let fds = forcedDecisions else { return false }
-
-        if getForcedDecision(context: context) != nil {
-            fds[context] = nil
-            return true
+        var exist = false
+        atomicForcedDecisions.performAtomic { property in
+            exist = property[context] != nil
+            property[context] = nil
         }
         
-        return false
+        return exist
     }
     
     /// Removes all forced decisions bound to this user context.
     /// - Returns: true if forced decisions have been removed successfully.
     public func removeAllForcedDecisions() -> Bool {
-        if let fds = forcedDecisions {
-            fds.removeAll()
-        }
-        
+        atomicForcedDecisions.property = nil
         return true
     }
     
@@ -222,7 +304,9 @@ extension OptimizelyUserContext: Equatable {
     
     public static func == (lhs: OptimizelyUserContext, rhs: OptimizelyUserContext) -> Bool {
         return lhs.userId == rhs.userId &&
-            (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes as [AnyHashable: Any])
+        (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes as [AnyHashable: Any]) &&
+        lhs.forcedDecisions == rhs.forcedDecisions &&
+        lhs.qualifiedSegments == rhs.qualifiedSegments
     }
     
 }

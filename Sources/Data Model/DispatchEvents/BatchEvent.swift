@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -120,8 +120,8 @@ struct DispatchEvent: Codable, Equatable {
     let timestamp: Int64
     let uuid: String
     var tags: [String: AttributeValue]?
-    var revenue: AttributeValue?
-    var value: AttributeValue?
+    var revenue: Int64?
+    var value: Double?
     
     enum CodingKeys: String, CodingKey {
         case entityID = "entity_id"
@@ -138,11 +138,9 @@ struct DispatchEvent: Codable, Equatable {
          entityID: String,
          uuid: String,
          tags: [String: AttributeValue]? = [:],
-         value: AttributeValue? = nil,
-         revenue: AttributeValue? = nil) {
-        
-        // TODO: add validation and throw here for invalid value (int, double) and revenue (int) types
-       
+         value: Double? = nil,
+         revenue: Int64? = nil) {
+               
         self.timestamp = timestamp
         self.key = key
         self.entityID = entityID

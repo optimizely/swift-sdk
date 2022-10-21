@@ -1,5 +1,5 @@
 //
-// Copyright 2019, 2021, Optimizely, Inc. and contributors
+// Copyright 2019, 2021-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ class BatchEventBuilder {
     
     // MARK: - Event Tags
     
-    static func filterEventTags(_ eventTags: [String: Any]?) -> ([String: AttributeValue], AttributeValue?, AttributeValue?) {
+    static func filterEventTags(_ eventTags: [String: Any]?) -> ([String: AttributeValue], Double?, Int64?) {
         guard let eventTags = eventTags else {
             return ([:], nil, nil)
         }
@@ -122,28 +122,27 @@ class BatchEventBuilder {
     }
     
     static func filterTagsWithInvalidTypes(_ eventTags: [String: Any]) -> [String: AttributeValue] {
-        let filteredTags = eventTags.mapValues { AttributeValue(value: $0) }.filter { $0.value != nil } as? [String: AttributeValue]
-        return filteredTags ?? [:]
+        return eventTags.compactMapValues { AttributeValue(value: $0) }
     }
     
-    static func extractValueEventTag(_ eventTags: [String: AttributeValue]) -> AttributeValue? {
+    static func extractValueEventTag(_ eventTags: [String: AttributeValue]) -> Double? {
         guard let valueFromTags = eventTags[DispatchEvent.valueKey] else { return nil }
         
         // export {value, revenue} only for {double, int64} types
-        var value: AttributeValue?
+        var value: Double?
         
         switch valueFromTags {
-        case .double:
+        case .double(let attrValue):
             // valid value type
-            value = valueFromTags
-        case .int(let int64Value):
-            value = AttributeValue(value: Double(int64Value))
+            value = attrValue
+        case .int(let attrValue):
+            value = Double(attrValue)
         default:
             value = nil
         }
         
         if let value = value {
-            logger.i(.extractValueFromEventTags(value.stringValue))
+            logger.i(.extractValueFromEventTags("\(value)"))
         } else {
             logger.i(.failedToExtractValueFromEventTags(valueFromTags.stringValue))
         }
@@ -151,25 +150,25 @@ class BatchEventBuilder {
         return value
     }
     
-    static func extractRevenueEventTag(_ eventTags: [String: AttributeValue]) -> AttributeValue? {
+    static func extractRevenueEventTag(_ eventTags: [String: AttributeValue]) -> Int64? {
         guard let revenueFromTags = eventTags[DispatchEvent.revenueKey] else { return nil }
         
         // export {value, revenue} only for {double, int64} types
-        var revenue: AttributeValue?
+        var revenue: Int64?
         
         switch revenueFromTags {
-        case .int:
+        case .int(let value):
             // valid revenue type
-            revenue = revenueFromTags
-        case .double(let doubleValue):
+            revenue = Int64(value)
+        case .double(let value):
             // not accurate but acceptable ("3.14" -> "3")
-            revenue = AttributeValue(value: Int64(doubleValue))
+            revenue = Int64(value)
         default:
             revenue = nil
         }
         
         if let revenue = revenue {
-            logger.i(.extractRevenueFromEventTags(revenue.stringValue))
+            logger.i(.extractRevenueFromEventTags("\(revenue)"))
         } else {
             logger.i(.failedToExtractRevenueFromEventTags(revenueFromTags.stringValue))
         }

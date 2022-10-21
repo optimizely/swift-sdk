@@ -36,15 +36,21 @@ class OdpSegmentApiManagerTests: XCTestCase {
                           segmentsToCheck: ["a", "b", "c"]) {_,_ in }
         
         let request = OdpSegmentApiManagerTests.createdApiRequest!
-        let expectedBody = [
-            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences(subset:[\"a\",\"b\",\"c\"]) {edges {node {name state}}}}}"
+        let expectedBody: [String: Any] = [
+            "query": "query($userId: String, $audiences: [String]) {customer(\(userKey): $userId) {audiences(subset: $audiences) {edges {node {name state}}}}}",
+            "variables": [
+                "userId": userValue,
+                "audiences": ["a", "b", "c"]
+            ]
         ]
 
         XCTAssertEqual(apiHost + "/v3/graphql", request.url?.absoluteString)
         XCTAssertEqual("POST", request.httpMethod)
-        XCTAssertEqual(expectedBody, try! JSONDecoder().decode([String: String].self, from: request.httpBody!))
         XCTAssertEqual("application/json", request.value(forHTTPHeaderField: "Content-Type"))
         XCTAssertEqual(apiKey, request.value(forHTTPHeaderField: "x-api-key"))
+        
+        let requestDict = try? JSONSerialization.jsonObject(with: request.httpBody!) as? [String: Any]
+        XCTAssert(OTUtils.compareDictionaries(expectedBody, requestDict!))
     }
 
     // MARK: - Success
@@ -205,12 +211,30 @@ class OdpSegmentApiManagerTests: XCTestCase {
     
     // MARK: - Others
     
-    func testMakeSubsetFilter() {
+    func testMakeQuery() {
         let api = OdpSegmentApiManager()
         
-        XCTAssertEqual("(subset:[])", api.makeSubsetFilter(segments: []))
-        XCTAssertEqual("(subset:[\"a\"])", api.makeSubsetFilter(segments: ["a"]))
-        XCTAssertEqual("(subset:[\"a\",\"b\",\"c\"])",api.makeSubsetFilter(segments: ["a", "b", "c"]))
+        let inputsForSegmentsToCheck = [
+            [],
+            ["a", "b"]
+        ]
+        
+        let template = "query($userId: String, $audiences: [String]) {customer(key-1: $userId) {audiences(subset: $audiences) {edges {node {name state}}}}}"
+        let expectedBody = [
+            [
+                "query": template,
+                "variables":[ "audiences": [], "userId":"value-1"]
+            ],
+            [
+                "query": template,
+                "variables":[ "audiences": ["a", "b"], "userId":"value-1"]
+            ]
+        ]
+        
+        for i in inputsForSegmentsToCheck.indices {
+            let query = api.makeQuery(userKey: "key-1", userValue: "value-1", segmentsToCheck: inputsForSegmentsToCheck[i])
+            XCTAssert(OTUtils.compareDictionaries(expectedBody[i], query))
+        }
     }
     
     func testExtractComponent() {
@@ -221,7 +245,6 @@ class OdpSegmentApiManagerTests: XCTestCase {
         XCTAssertNil(dict.extractComponent(keyPath: "a.b.c.d"))
         XCTAssertNil(dict.extractComponent(keyPath: "d"))
     }
-    
     
 }
 

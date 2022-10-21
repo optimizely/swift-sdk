@@ -104,16 +104,13 @@ class OdpSegmentApiManager {
                        userValue: String,
                        segmentsToCheck: [String],
                        completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
-        let subsetFilter = makeSubsetFilter(segments: segmentsToCheck)
         
-        let body = [
-            "query": "query {customer(\(userKey): \"\(userValue)\") {audiences\(subsetFilter) {edges {node {name state}}}}}"
-        ]
-        guard let httpBody = try? JSONEncoder().encode(body) else {
+        let query = makeQuery(userKey: userKey, userValue: userValue, segmentsToCheck: segmentsToCheck)
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: query) else {
             completionHandler(nil, .fetchSegmentsFailed("invalid query."))
             return
         }
-
+        
         let apiEndpoint = apiHost + "/v3/graphql"
         let url = URL(string: apiEndpoint)!
         var urlRequest = URLRequest(url: url)
@@ -182,14 +179,14 @@ class OdpSegmentApiManager {
         return URLSession(configuration: .ephemeral)
     }
     
-    func makeSubsetFilter(segments: [String]) -> String {
-        // segments = []: (fetch none)
-        //   --> subsetFilter = "(subset:[])"
-        // segments = ["a"]: (fetch one segment)
-        //   --> subsetFilter = "(subset:[\"a\"])"
-
-        let serial = segments.map { "\"\($0)\""}.joined(separator: ",")
-        return "(subset:[\(serial)])"
+    func makeQuery(userKey: String, userValue: String, segmentsToCheck: [String]) -> [String: Any] {
+        return [
+            "query": "query($userId: String, $audiences: [String]) {customer(\(userKey): $userId) {audiences(subset: $audiences) {edges {node {name state}}}}}",
+            "variables": [
+                "userId": userValue,
+                "audiences": segmentsToCheck
+            ]
+        ]
     }
     
 }

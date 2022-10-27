@@ -127,9 +127,9 @@
 
 -(NSDictionary*)dictForOptimizelyFeature: (id <OptimizelyFeature>)feature {
     NSMutableDictionary *expMap = [NSMutableDictionary new];
-    for(NSString *key in feature.experimentsMap.allKeys){
-        id<OptimizelyExperiment> value = feature.experimentsMap[key];
-        expMap[key] = [self dictForOptimizelyExperiment:value];
+    for(id<OptimizelyExperiment> exp in feature.experimentRules){
+        NSString *key = exp.key;
+        expMap[key] = [self dictForOptimizelyExperiment:exp];
     }
     
     NSMutableDictionary *varMap = [NSMutableDictionary new];

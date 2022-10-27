@@ -115,7 +115,7 @@ extension AttributeValue {
     
     func isExactMatch(with target: Any, condition: String = "", name: String = "") throws -> Bool {
         
-        if !self.isValidForExactMatcher() || (self.doubleValue?.isInfinite ?? false) {
+        if !self.isValidForExactMatcher || (self.doubleValue?.isInfinite ?? false) {
             throw OptimizelyError.evaluateAttributeInvalidCondition(condition)
         }
         
@@ -265,7 +265,7 @@ extension AttributeValue {
         }
     }
     
-    func isValidForExactMatcher() -> Bool {
+    var isValidForExactMatcher: Bool {
         switch self {
         case (.string): return true
         case (.int): return true

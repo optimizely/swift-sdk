@@ -158,17 +158,11 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let feature1 = optimizelyConfig.featuresMap["mutex_group_feature"]!
         let feature2 = optimizelyConfig.featuresMap["feature_exp_no_traffic"]!
 
-        // FeatureFlag: experimentsMap
-        
-        XCTAssertEqual(feature1.experimentsMap.count, 2)
-        XCTAssertEqual(feature2.experimentsMap.count, 1)
+        // FeatureFlag: experiments
+                
+        var experiment1 = feature1.experimentRules[0]
+        var experiment2 = feature1.experimentRules[1]
 
-        print("   Feature1 > Experiments: \(feature1.experimentsMap.keys)")
-        print("   Feature2 > Experiments: \(feature2.experimentsMap.keys)")
-
-        var experiment1 = feature1.experimentsMap["experiment_4000"]!
-        var experiment2 = feature1.experimentsMap["duplicate_experiment_key"]!
-        
         XCTAssertEqual(experiment1.variationsMap.count, 2)
         XCTAssertEqual(experiment2.variationsMap.count, 1)
 
@@ -308,7 +302,7 @@ extension OptimizelyFeature {
             "id": self.id,
             "experimentRules": self.experimentRules.map{ $0.dict },
             "deliveryRules": self.deliveryRules.map{ $0.dict },
-            "experimentsMap": self.experimentsMap.mapValues{ $0.dict },
+            "experimentsMap": Dictionary(uniqueKeysWithValues: self.experimentRules.map { ($0.key, $0.dict) }), // experimentsMap is deprecated. do not use it.
             "variablesMap": self.variablesMap.mapValues{ $0.dict }
         ]
     }

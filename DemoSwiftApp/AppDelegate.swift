@@ -21,7 +21,7 @@ import Optimizely
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let logLevel = OptimizelyLogLevel.debug
     
-    let sdkKey = "FCnSegiEkRry9rhVMroit4"
+    let sdkKey = "AqLkkcss3wRGUbftnKNgh2"
     let datafileName = "demoTestDatafile"
     let featureKey = "decide_demo"
     let experimentKey = "background_experiment_decide"
@@ -53,6 +53,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // (2) synchronous SDK initialization
         //     - initialize immediately with the given JSON datafile or its cached copy
         //     - no network delay, but the local copy is not guaranteed to be in sync with the server experiment settings
+        
+        
+        UIApplication.shared.setMinimumBackgroundFetchInterval(60)
+
+        
         
         initializeOptimizelySDKWithCustomization()
     }
@@ -104,7 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // You can enable background datafile polling by setting periodicDownloadInterval (polling is disabled by default)
         // 60 sec interval may be too frequent. This is for demo purpose. (You can set this to nil to use the recommended value of 600 secs).
-        let downloadIntervalInSecs: Int? = 60
+        let downloadIntervalInSecs: Int? = 60 * 15
         
         // You can turn off event batching with 0 timerInterval (this means that events are sent out immediately to the server instead of saving in the local queue for batching)
         let eventDispatcher = DefaultEventDispatcher(timerInterval: 0)
@@ -113,7 +118,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let customLogger = CustomLogger()
         
         optimizely = OptimizelyClient(sdkKey: sdkKey,
-                                      logger: customLogger,
+                                      //logger: customLogger,
                                       eventDispatcher: eventDispatcher,
                                       periodicDownloadInterval: downloadIntervalInSecs,
                                       defaultLogLevel: logLevel)
@@ -239,6 +244,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // add background fetch task here
         
+        print("[OPTIMIZELY DEMOAPP] background mode fetch starts")
+        let sync = DispatchSemaphore(value: 0)
+        optimizely.datafileHandler?.downloadDatafile(sdkKey: sdkKey,
+                                                     returnCacheIfNoChange: false,
+                                                     resourceTimeoutInterval: 20) { _ in
+            // (1) set less resourceTimeoutInterval to than 30secs (max background fetch task)
+            // (2) no action here (like updateConfig) since we want to cache datafile updated so can start with it on next app starts)
+            
+            sync.signal()
+        }
+        
+        sync.wait()
         completionHandler(.newData)
+
     }
 }

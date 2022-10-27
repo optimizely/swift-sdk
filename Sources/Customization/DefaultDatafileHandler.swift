@@ -277,7 +277,13 @@ extension DefaultDatafileHandler {
                 interval = 0
             }
             
-            self.logger.d("next datafile download is \(interval) seconds \(Date())")
+            let currentDateTime = Date()
+            let formatter = DateFormatter()
+            formatter.timeStyle = .medium
+            formatter.dateStyle = .short
+            let dateStr = formatter.string(from: currentDateTime)
+            self.logger.d("next datafile download is \(interval) seconds later from \(dateStr)")
+            
             self.startPeriodicUpdates(sdkKey: sdkKey, updateInterval: interval, datafileChangeNotification: datafileChangeNotification)
         }
         

@@ -435,7 +435,7 @@
 		6EF7496721E40467008B22A0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = Optimizely;
 				TargetAttributes = {
 					6EF7498D21E404BB008B22A0 = {

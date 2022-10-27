@@ -174,6 +174,24 @@ extension UserAttribute {
         }
     }
     
+    private func validateTypes() throws -> (ConditionMatch, String) {
+        // invalid type - parsed for forward compatibility only (but evaluation fails)
+        if typeSupported == nil {
+            throw OptimizelyError.userAttributeInvalidType(stringRepresentation)
+        }
+        
+        // invalid match - parsed for forward compatibility only (but evaluation fails)
+        guard let matchFinal = matchSupported else {
+            throw OptimizelyError.userAttributeInvalidMatch(stringRepresentation)
+        }
+        
+        guard let nameFinal = name else {
+            throw OptimizelyError.userAttributeInvalidName(stringRepresentation)
+        }
+        
+        return (matchFinal, nameFinal)
+    }
+
     private func targetAsAttributeValue(value: Any?, attribute: AttributeValue?, nameFinal: String) throws -> AttributeValue {
         guard let targetValue = AttributeValue(value: value), targetValue.isComparable(with: attribute!) else {
             throw OptimizelyError.evaluateAttributeInvalidCondition("attribute value \(nameFinal) invalid type")

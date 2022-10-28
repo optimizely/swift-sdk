@@ -94,7 +94,15 @@ class OdpManager {
             return
         }
 
-        eventManager.identifyUser(vuid: vuidManager.vuid, userId: userId)
+        var vuid = vuidManager.vuid
+        var fsUserId: String? = userId
+        if OdpVuidManager.isVuid(userId) {
+            // overwrite if userId is vuid (when userContext is created with vuid)
+            vuid = userId
+            fsUserId = nil
+        }
+        
+        eventManager.identifyUser(vuid: vuid, userId: fsUserId)
     }
     
     /// Send an event to the ODP server.

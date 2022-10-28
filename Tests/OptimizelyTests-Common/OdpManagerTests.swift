@@ -131,7 +131,18 @@ class OdpManagerTests: XCTestCase {
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
         manager.identifyUser(userId: "user-1")
         
+        XCTAssert(OdpVuidManager.isVuid(eventManager.receivedIdentifyVuid))
         XCTAssertEqual(eventManager.receivedIdentifyUserId, "user-1")
+    }
+    
+    func testIdentifyUser_odpIntegrated_vuidAsUserId() {
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
+        
+        let vuidAsUserId = OdpVuidManager.newVuid
+        manager.identifyUser(userId: vuidAsUserId)
+        
+        XCTAssertEqual(eventManager.receivedIdentifyVuid, vuidAsUserId)
+        XCTAssertNil(eventManager.receivedIdentifyUserId)
     }
     
     func testIdentifyUser_odpNotIntegrated() {
@@ -318,7 +329,7 @@ class OdpManagerTests: XCTestCase {
         var receivedRegisterVuid: String!
         
         var receivedIdentifyVuid: String!
-        var receivedIdentifyUserId: String!
+        var receivedIdentifyUserId: String?
 
         var receivedType: String!
         var receivedAction: String!
@@ -333,7 +344,7 @@ class OdpManagerTests: XCTestCase {
             self.receivedRegisterVuid = vuid
         }
         
-        override func identifyUser(vuid: String, userId: String) {
+        override func identifyUser(vuid: String, userId: String?) {
             self.receivedIdentifyVuid = vuid
             self.receivedIdentifyUserId = userId
         }

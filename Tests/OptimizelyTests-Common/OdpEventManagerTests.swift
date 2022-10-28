@@ -110,6 +110,18 @@ class OdpEventManagerTests: XCTestCase {
         validateData(evt.data, customData: [:])
     }
     
+    func testIdentifyUser_noApiKey_overwriteIfUserIdIsVuid() {
+        let vuidAsUserId = OdpVuidManager.newVuid
+        manager.identifyUser(vuid: "v1", userId: vuidAsUserId)
+        
+        XCTAssertEqual(1, manager.eventQueue.count)
+        let evt = manager.eventQueue.getFirstItem()!
+        XCTAssertEqual("fullstack", evt.type)
+        XCTAssertEqual("identified", evt.action)
+        XCTAssertEqual(["vuid": vuidAsUserId], evt.identifiers)
+        validateData(evt.data, customData: [:])
+    }
+    
     func testSendEvent_apiKey() {
         odpConfig = OdpConfig()
         _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])

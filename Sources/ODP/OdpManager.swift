@@ -74,7 +74,7 @@ class OdpManager {
             return
         }
         
-        let userKey = vuidManager.isVuid(visitorId: userId) ? Constants.ODP.keyForVuid : Constants.ODP.keyForUserId
+        let userKey = OdpVuidManager.isVuid(userId) ? Constants.ODP.keyForVuid : Constants.ODP.keyForUserId
         let userValue = userId
     
         segmentManager.fetchQualifiedSegments(userKey: userKey,

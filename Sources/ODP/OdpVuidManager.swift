@@ -27,7 +27,7 @@ class OdpVuidManager {
         self.vuid = load()
     }
     
-    func makeVuid() -> String {
+    static var newVuid: String {
         let maxLength = 32   // required by ODP server
         
         // make sure UUIDv4 is used (not UUIDv1 or UUIDv6) since the trailing 5 chars will be truncated. See TDD for details.
@@ -36,9 +36,10 @@ class OdpVuidManager {
         return vuid
     }
     
-    func isVuid(visitorId: String) -> Bool {
+    static func isVuid(_ visitorId: String) -> Bool {
         return visitorId.starts(with: "vuid_")
     }
+    
 }
 
 // MARK: - VUID Store
@@ -54,7 +55,7 @@ extension OdpVuidManager {
             return oldVuid
         }
         
-        let vuid = makeVuid()
+        let vuid = Self.newVuid
         save(vuid: vuid)
         return vuid
     }

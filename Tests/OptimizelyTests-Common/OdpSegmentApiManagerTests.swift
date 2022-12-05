@@ -209,6 +209,18 @@ class OdpSegmentApiManagerTests: XCTestCase {
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(1)))
     }
     
+    // MARK: - timeout
+    
+    func testTimeout() {
+        let api = OdpSegmentApiManager(timeout: 3)
+        XCTAssertEqual(3, api.getSession().configuration.timeoutIntervalForResource)
+    }
+    
+    func testTimeout_useOSDefaultIfTimeoutIsNotProvided() {
+        let api = OdpSegmentApiManager()
+        XCTAssertEqual(604800, api.getSession().configuration.timeoutIntervalForResource)
+    }
+
     // MARK: - Others
     
     func testMakeQuery() {

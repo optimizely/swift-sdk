@@ -31,7 +31,15 @@ import Foundation
 */
 
 class OdpEventApiManager {
-    
+    let resourceTimeoutInSecs: Int?
+
+    /// OdpEventApiManager init
+    /// - Parameters:
+    ///   - timeout: timeout for segment fetch
+    init(timeout: Int? = nil) {
+        self.resourceTimeoutInSecs = timeout
+    }
+
     func sendOdpEvents(apiKey: String,
                        apiHost: String,
                        events: [OdpEvent],
@@ -99,8 +107,12 @@ class OdpEventApiManager {
         task.resume()
     }
 
-    func getSession() -> URLSession {
-        return URLSession(configuration: .ephemeral)
+    open func getSession() -> URLSession {
+        let config = URLSessionConfiguration.ephemeral
+        if let timeout = resourceTimeoutInSecs, timeout > 0 {
+            config.timeoutIntervalForResource = TimeInterval(timeout)
+        }
+        return URLSession(configuration: config)
     }
-    
+
 }

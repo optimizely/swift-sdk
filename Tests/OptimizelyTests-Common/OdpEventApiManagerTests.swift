@@ -138,6 +138,18 @@ class OdpEventApiManagerTests: XCTestCase {
         XCTAssert(jsonDispatched.contains("\"key3\":null"))
     }
     
+    // MARK: - timeout
+    
+    func testTimeout() {
+        let api = OdpEventApiManager(timeout: 3)
+        XCTAssertEqual(3, api.getSession().configuration.timeoutIntervalForResource)
+    }
+    
+    func testTimeout_useOSDefaultIfTimeoutIsNotProvided() {
+        let api = OdpEventApiManager()
+        XCTAssertEqual(604800, api.getSession().configuration.timeoutIntervalForResource)
+    }
+    
 }
 
 // MARK: - Tests with live ODP server

@@ -30,10 +30,22 @@ class OdpManager {
         return vuidManager.vuid
     }
     
+    /// OdpManager init
+    /// - Parameters:
+    ///   - sdkKey: datafile sdkKey
+    ///   - disable: disable ODP
+    ///   - cacheSize: segment cache size
+    ///   - cacheTimeoutInSecs: segment cache timeout
+    ///   - timeoutForSegmentFetchInSecs: timeout for segment fetch
+    ///   - timeoutForEventDispatchInSecs: timeout for event dispatch
+    ///   - segmentManager: ODPSegmentManager
+    ///   - eventManager: ODPEventManager
     init(sdkKey: String,
          disable: Bool,
          cacheSize: Int,
          cacheTimeoutInSecs: Int,
+         timeoutForSegmentFetchInSecs: Int? = nil,
+         timeoutForEventDispatchInSecs: Int? = nil,
          segmentManager: OdpSegmentManager? = nil,
          eventManager: OdpEventManager? = nil) {
         
@@ -53,14 +65,17 @@ class OdpManager {
         } else {
             self.segmentManager = OdpSegmentManager(cacheSize: cacheSize,
                                                     cacheTimeoutInSecs: cacheTimeoutInSecs,
-                                                    odpConfig: odpConfig)
+                                                    odpConfig: odpConfig,
+                                                    resourceTimeoutInSecs: timeoutForSegmentFetchInSecs)
         }
         
         if let eventManager = eventManager {
             eventManager.odpConfig = odpConfig
             self.eventManager = eventManager
         } else {
-            self.eventManager = OdpEventManager(sdkKey: sdkKey, odpConfig: odpConfig)
+            self.eventManager = OdpEventManager(sdkKey: sdkKey,
+                                                odpConfig: odpConfig,
+                                                resourceTimeoutInSecs: timeoutForEventDispatchInSecs)
         }
         
         self.eventManager.registerVUID(vuid: self.vuidManager.vuid)

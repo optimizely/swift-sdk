@@ -30,20 +30,29 @@ class OptimizelyClientTests_ODP: XCTestCase {
     
     // MARK: - ODP configuration
     
-    func testConfigurableSettings_default()  {
+    func testSdkSettings_default()  {
         let optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
 
         XCTAssertEqual(100, optimizely.odpManager.segmentManager?.segmentsCache.maxSize)
         XCTAssertEqual(600, optimizely.odpManager.segmentManager?.segmentsCache.timeoutInSecs)
+        XCTAssertEqual(10, optimizely.odpManager.segmentManager?.apiMgr.resourceTimeoutInSecs)
+        XCTAssertEqual(10, optimizely.odpManager.eventManager?.apiMgr.resourceTimeoutInSecs)
         XCTAssertEqual(true, optimizely.odpManager.enabled)
     }
     
-    func testConfigurableSettings_custom()  {
-        var sdkSettings = OptimizelySdkSettings(segmentsCacheSize: 12, segmentsCacheTimeoutInSecs: 345)
+    func testSdkSettings_custom()  {
+        var sdkSettings = OptimizelySdkSettings(segmentsCacheSize: 12,
+                                                segmentsCacheTimeoutInSecs: 345)
         var optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
         XCTAssertEqual(12, optimizely.odpManager.segmentManager?.segmentsCache.maxSize)
         XCTAssertEqual(345, optimizely.odpManager.segmentManager?.segmentsCache.timeoutInSecs)
         
+        sdkSettings = OptimizelySdkSettings(timeoutForSegmentFetchInSecs: 34,
+                                            timeoutForOdpEventInSecs: 45)
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
+        XCTAssertEqual(34, optimizely.odpManager.segmentManager?.apiMgr.resourceTimeoutInSecs)
+        XCTAssertEqual(45, optimizely.odpManager.eventManager?.apiMgr.resourceTimeoutInSecs)
+
         sdkSettings = OptimizelySdkSettings(disableOdp: true)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: sdkSettings)
         XCTAssertEqual(false, optimizely.odpManager.enabled)

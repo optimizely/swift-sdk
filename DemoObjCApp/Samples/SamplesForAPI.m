@@ -217,13 +217,12 @@
         
         // enumerate feature experiments
         
-        NSDictionary<NSString*, id<OptimizelyExperiment>> *experimentsMap = featuresMap[featKey].experimentsMap;
-        NSArray *experimentKeys = experimentsMap.allKeys;
+        NSArray *experiments = featuresMap[featKey].experimentRules;
         
-        for(NSString *expKey in experimentKeys) {
-            NSLog(@"[OptimizelyConfig]   - experimentKey = %@", expKey);
+        for(id<OptimizelyExperiment> exp in experiments) {
+            NSLog(@"[OptimizelyConfig]   - experimentKey = %@", exp.key);
             
-            NSDictionary<NSString*, id<OptimizelyVariation>> *variationsMap = experimentsMap[expKey].variationsMap;
+            NSDictionary<NSString*, id<OptimizelyVariation>> *variationsMap = exp.variationsMap;
             NSArray *variationKeys = variationsMap.allKeys;
             
             for(NSString *varKey in variationKeys) {

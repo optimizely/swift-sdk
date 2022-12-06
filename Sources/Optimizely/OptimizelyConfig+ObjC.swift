@@ -137,7 +137,10 @@ class ObjcFeature: NSObject, ObjcOptimizelyFeature {
         self.key = feature.key
         self.experimentRules = feature.experimentRules.map { ObjcExperiment($0) }
         self.deliveryRules = feature.deliveryRules.map { ObjcExperiment($0) }
-        self.experimentsMap = feature.experimentsMap.mapValues { ObjcExperiment($0) }
+        
+        let expKeyValuePair = feature.experimentRules.map { ($0.key, ObjcExperiment($0)) }
+        self.experimentsMap = Dictionary(uniqueKeysWithValues: expKeyValuePair)
+
         self.variablesMap = feature.variablesMap.mapValues { ObjcVariable($0) }
     }
 }

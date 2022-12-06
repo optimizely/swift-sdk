@@ -471,15 +471,15 @@ extension AttributeValueTests {
     
     func testIsValidForExactMatcher() {
         var attr = AttributeValue.string("valid")
-        XCTAssertTrue(attr.isValidForExactMatcher())
+        XCTAssertTrue(attr.isValidForExactMatcher)
         attr = AttributeValue.int(1)
-        XCTAssertTrue(attr.isValidForExactMatcher())
+        XCTAssertTrue(attr.isValidForExactMatcher)
         attr = AttributeValue.double(1)
-        XCTAssertTrue(attr.isValidForExactMatcher())
+        XCTAssertTrue(attr.isValidForExactMatcher)
         attr = AttributeValue.bool(true)
-        XCTAssertTrue(attr.isValidForExactMatcher())
+        XCTAssertTrue(attr.isValidForExactMatcher)
         attr = AttributeValue.others
-        XCTAssertFalse(attr.isValidForExactMatcher())
+        XCTAssertFalse(attr.isValidForExactMatcher)
     }
     
     

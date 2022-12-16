@@ -51,13 +51,15 @@ class OdpEventManager {
                   data: [:])
     }
     
-    func identifyUser(vuid: String, userId: String) {
+    func identifyUser(vuid: String, userId: String?) {
+        var identifiers = [Constants.ODP.keyForVuid: vuid]
+        if let userId = userId {
+            identifiers[Constants.ODP.keyForUserId] = userId
+        }
+        
         sendEvent(type: Constants.ODP.eventType,
                   action: "identified",
-                  identifiers: [
-                    Constants.ODP.keyForVuid: vuid,
-                    Constants.ODP.keyForUserId: userId
-                  ],
+                  identifiers: identifiers,
                   data: [:])
     }
     

@@ -103,7 +103,7 @@ class OdpManagerTests: XCTestCase {
     // MARK: - registerVuid
     
     func testRegisterVUIDCalledAutomatically() {
-        XCTAssertEqual(eventManager.receivedVuid, manager.vuid, "registerVUID is implicitly called on OdpManager init")
+        XCTAssertEqual(eventManager.receivedRegisterVuid, manager.vuid, "registerVUID is implicitly called on OdpManager init")
     }
 
     func testRegisterVUIDCalledAutomatically_odpDisabled() {
@@ -116,7 +116,7 @@ class OdpManagerTests: XCTestCase {
                        segmentManager: segmentManager,
                        eventManager: newEventManager)
         
-        XCTAssertNil(newEventManager.receivedVuid, "registerVUID should not implicitly called when ODP disabled")
+        XCTAssertNil(newEventManager.receivedRegisterVuid, "registerVUID should not implicitly called when ODP disabled")
     }
     
     // MARK: - identifyUser
@@ -124,28 +124,39 @@ class OdpManagerTests: XCTestCase {
     func testIdentifyUser_datafileNotReady() {
         manager.identifyUser(userId: "user-1")
         
-        XCTAssertEqual(eventManager.receivedUserId, "user-1")
+        XCTAssertEqual(eventManager.receivedIdentifyUserId, "user-1")
     }
     
     func testIdentifyUser_odpIntegrated() {
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
         manager.identifyUser(userId: "user-1")
         
-        XCTAssertEqual(eventManager.receivedUserId, "user-1")
+        XCTAssert(OdpVuidManager.isVuid(eventManager.receivedIdentifyVuid))
+        XCTAssertEqual(eventManager.receivedIdentifyUserId, "user-1")
+    }
+    
+    func testIdentifyUser_odpIntegrated_vuidAsUserId() {
+        manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
+        
+        let vuidAsUserId = OdpVuidManager.newVuid
+        manager.identifyUser(userId: vuidAsUserId)
+        
+        XCTAssertEqual(eventManager.receivedIdentifyVuid, vuidAsUserId)
+        XCTAssertNil(eventManager.receivedIdentifyUserId)
     }
     
     func testIdentifyUser_odpNotIntegrated() {
         manager.updateOdpConfig(apiKey: nil, apiHost: nil, segmentsToCheck: [])
         manager.identifyUser(userId: "user-1")
         
-        XCTAssertNil(eventManager.receivedUserId, "identifyUser event requeut should be discarded if ODP not integrated.")
+        XCTAssertNil(eventManager.receivedIdentifyUserId, "identifyUser event requeut should be discarded if ODP not integrated.")
     }
 
     func testIdentifyUser_odpDisabled() {
         manager.enabled = false
         manager.identifyUser(userId: "user-1")
         
-        XCTAssertNil(eventManager.receivedUserId, "identifyUser event requeut should be discarded if ODP disabled.")
+        XCTAssertNil(eventManager.receivedIdentifyUserId, "identifyUser event requeut should be discarded if ODP disabled.")
     }
     
     // MARK: - sendEvent
@@ -315,9 +326,11 @@ class OdpManagerTests: XCTestCase {
     // MARK: - Helpers
     
     class MockOdpEventManager: OdpEventManager {
-        var receivedVuid: String!
-        var receivedUserId: String!
+        var receivedRegisterVuid: String!
         
+        var receivedIdentifyVuid: String!
+        var receivedIdentifyUserId: String?
+
         var receivedType: String!
         var receivedAction: String!
         var receivedIdentifiers: [String: String]!
@@ -328,12 +341,12 @@ class OdpManagerTests: XCTestCase {
         var resetCalled = false
 
         override func registerVUID(vuid: String) {
-            self.receivedVuid = vuid
+            self.receivedRegisterVuid = vuid
         }
         
-        override func identifyUser(vuid: String, userId: String) {
-            self.receivedVuid = vuid
-            self.receivedUserId = userId
+        override func identifyUser(vuid: String, userId: String?) {
+            self.receivedIdentifyVuid = vuid
+            self.receivedIdentifyUserId = userId
         }
         
         override func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any?]) {

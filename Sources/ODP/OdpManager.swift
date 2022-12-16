@@ -74,7 +74,7 @@ class OdpManager {
             return
         }
         
-        let userKey = vuidManager.isVuid(visitorId: userId) ? Constants.ODP.keyForVuid : Constants.ODP.keyForUserId
+        let userKey = OdpVuidManager.isVuid(userId) ? Constants.ODP.keyForVuid : Constants.ODP.keyForUserId
         let userValue = userId
     
         segmentManager.fetchQualifiedSegments(userKey: userKey,
@@ -94,7 +94,15 @@ class OdpManager {
             return
         }
 
-        eventManager.identifyUser(vuid: vuidManager.vuid, userId: userId)
+        var vuid = vuidManager.vuid
+        var fsUserId: String? = userId
+        if OdpVuidManager.isVuid(userId) {
+            // overwrite if userId is vuid (when userContext is created with vuid)
+            vuid = userId
+            fsUserId = nil
+        }
+        
+        eventManager.identifyUser(vuid: vuid, userId: fsUserId)
     }
     
     /// Send an event to the ODP server.

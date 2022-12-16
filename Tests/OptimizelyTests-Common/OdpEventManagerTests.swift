@@ -110,6 +110,17 @@ class OdpEventManagerTests: XCTestCase {
         validateData(evt.data, customData: [:])
     }
     
+    func testIdentifyUser_noApiKey_nilUserId() {
+        manager.identifyUser(vuid: "v1", userId: nil)
+        
+        XCTAssertEqual(1, manager.eventQueue.count)
+        let evt = manager.eventQueue.getFirstItem()!
+        XCTAssertEqual("fullstack", evt.type)
+        XCTAssertEqual("identified", evt.action)
+        XCTAssertEqual(["vuid": "v1"], evt.identifiers)
+        validateData(evt.data, customData: [:])
+    }
+    
     func testSendEvent_apiKey() {
         odpConfig = OdpConfig()
         _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])

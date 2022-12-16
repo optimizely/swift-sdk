@@ -47,6 +47,7 @@ jobs:
 
   unittests: 
     if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
+    # restore back to master after merging.
     #uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@jae/ats-timeout
 

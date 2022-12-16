@@ -23,12 +23,20 @@ class OdpSegmentManager {
     
     let logger = OPTLoggerFactory.getLogger()
     
+    /// OdpSegmentManager init
+    /// - Parameters:
+    ///   - cacheSize: segment cache size
+    ///   - cacheTimeoutInSecs: segment cache timeout
+    ///   - odpConfig: ODP config (apiKey, apiHost, ...)
+    ///   - apiManager: OdpSegmentApiManager
+    ///   - resourceTimeoutInSecs: timeout for segment fetch
     init(cacheSize: Int,
          cacheTimeoutInSecs: Int,
          odpConfig: OdpConfig? = nil,
-         apiManager: OdpSegmentApiManager? = nil) {
+         apiManager: OdpSegmentApiManager? = nil,
+         resourceTimeoutInSecs: Int? = nil) {
         self.odpConfig = odpConfig ?? OdpConfig()
-        self.apiMgr = apiManager ?? OdpSegmentApiManager()
+        self.apiMgr = apiManager ?? OdpSegmentApiManager(timeout: resourceTimeoutInSecs)
         
         self.segmentsCache = LruCache<String, [String]>(size: cacheSize,
                                                         timeoutInSecs: cacheTimeoutInSecs)

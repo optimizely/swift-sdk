@@ -21,6 +21,10 @@ public struct OptimizelySdkSettings {
     let segmentsCacheSize: Int
     /// The timeout in seconds of audience segments cache - timeout is disabled if this is set to zero.
     let segmentsCacheTimeoutInSecs: Int
+    /// The timeout in seconds of odp segment fetch - OS default timeout will be used if this is set to zero.
+    let timeoutForSegmentFetchInSecs: Int
+    /// The timeout in seconds of odp event dispatch - OS default timeout will be used if this is set to zero.
+    let timeoutForOdpEventInSecs: Int
     /// ODP features are disabled if this is set to true.
     let disableOdp: Bool
     
@@ -29,12 +33,18 @@ public struct OptimizelySdkSettings {
     /// - Parameters:
     ///   - segmentsCacheSize: The maximum size of audience segments cache (optional. default = 100). Set to zero to disable caching.
     ///   - segmentsCacheTimeoutInSecs: The timeout in seconds of audience segments cache (optional. default = 600). Set to zero to disable timeout.
+    ///   - timeoutForSegmentFetchInSecs: The timeout in seconds of odp segment fetch (optional. default = 10) - OS default timeout will be used if this is set to zero.
+    ///   - timeoutForOdpEventInSecs: The timeout in seconds of odp event dispatch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - disableOdp: Set this flag to true (default = false) to disable ODP features
     public init(segmentsCacheSize: Int = 100,
                 segmentsCacheTimeoutInSecs: Int = 600,
+                timeoutForSegmentFetchInSecs: Int = 10,
+                timeoutForOdpEventInSecs: Int = 10,
                 disableOdp: Bool = false) {
         self.segmentsCacheSize = segmentsCacheSize
         self.segmentsCacheTimeoutInSecs = segmentsCacheTimeoutInSecs
+        self.timeoutForSegmentFetchInSecs = timeoutForSegmentFetchInSecs
+        self.timeoutForOdpEventInSecs = timeoutForOdpEventInSecs
         self.disableOdp = disableOdp
     }
 }

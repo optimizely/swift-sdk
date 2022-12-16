@@ -59,7 +59,6 @@ class OdpManagerTests: XCTestCase {
                                  disable: true,
                                  cacheSize: cacheSize,
                                  cacheTimeoutInSecs: cacheTimeout)
-        
         XCTAssertTrue(manager.vuid.starts(with: "vuid_"), "vuid should be serverved even when ODP is disabled.")
 
         let sem = DispatchSemaphore(value: 0)

@@ -28,9 +28,18 @@ class OdpEventManager {
     
     let logger = OPTLoggerFactory.getLogger()
     
-    init(sdkKey: String, odpConfig: OdpConfig? = nil, apiManager: OdpEventApiManager? = nil) {
+    /// OdpEventManager init
+    /// - Parameters:
+    ///   - sdkKey: datafile sdkKey
+    ///   - odpConfig: ODP config (apiKey, apiHost, ...)
+    ///   - apiManager: OdpEventApiManager
+    ///   - resourceTimeoutInSecs: timeout for event dispatch
+    init(sdkKey: String,
+         odpConfig: OdpConfig? = nil,
+         apiManager: OdpEventApiManager? = nil,
+         resourceTimeoutInSecs: Int? = nil) {
         self.odpConfig = odpConfig ?? OdpConfig()
-        self.apiMgr = apiManager ?? OdpEventApiManager()
+        self.apiMgr = apiManager ?? OdpEventApiManager(timeout: resourceTimeoutInSecs)
         
         self.queueLock = DispatchQueue(label: "event")
         

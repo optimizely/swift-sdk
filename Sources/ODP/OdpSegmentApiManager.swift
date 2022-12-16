@@ -97,6 +97,14 @@ import Foundation
 
 class OdpSegmentApiManager {
     let logger = OPTLoggerFactory.getLogger()
+    let resourceTimeoutInSecs: Int?
+
+    /// OdpSegmentApiManager init
+    /// - Parameters:
+    ///   - timeout: timeout for segment fetch
+    init(timeout: Int? = nil) {
+        self.resourceTimeoutInSecs = timeout
+    }
 
     func fetchSegments(apiKey: String,
                        apiHost: String,
@@ -175,8 +183,12 @@ class OdpSegmentApiManager {
         task.resume()
     }
     
-    func getSession() -> URLSession {
-        return URLSession(configuration: .ephemeral)
+    open func getSession() -> URLSession {
+        let config = URLSessionConfiguration.ephemeral
+        if let timeout = resourceTimeoutInSecs, timeout > 0 {
+            config.timeoutIntervalForResource = TimeInterval(timeout)
+        }
+        return URLSession(configuration: config)
     }
     
     func makeQuery(userKey: String, userValue: String, segmentsToCheck: [String]) -> [String: Any] {

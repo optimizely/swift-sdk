@@ -91,7 +91,9 @@ open class OptimizelyClient: NSObject {
         self.odpManager = OdpManager(sdkKey: sdkKey,
                                      disable: sdkSettings.disableOdp,
                                      cacheSize: sdkSettings.segmentsCacheSize,
-                                     cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs)
+                                     cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
+                                     timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
+                                     timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
         
         super.init()
         

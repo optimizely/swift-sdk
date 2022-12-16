@@ -32,7 +32,7 @@ jobs:
       TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
 
   lint: 
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v3
     - uses: maxim-lobanov/setup-xcode@v1
@@ -47,10 +47,12 @@ jobs:
 
   unittests: 
     if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
-    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
+    # restore back to master after merging.
+    #uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
+    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@jae/ats-timeout
 
   prepare_for_release:
-    runs-on: macos-latest
+    runs-on: macos-12
     if: "${{ github.event.inputs.PREP == 'true' && github.event_name == 'workflow_dispatch' }}" 
     steps:
     - uses: actions/checkout@v3
@@ -74,7 +76,7 @@ jobs:
 
   release:
     if: "${{github.event.inputs.RELEASE == 'true' && github.event_name == 'workflow_dispatch' }}"
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v3
     - uses: maxim-lobanov/setup-xcode@v1

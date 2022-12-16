@@ -55,7 +55,7 @@ extension OdpVuidManager {
             return oldVuid
         }
         
-        let vuid = Self.newVuid
+        let vuid = OdpVuidManager.newVuid
         save(vuid: vuid)
         return vuid
     }

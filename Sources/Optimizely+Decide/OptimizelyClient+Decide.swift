@@ -45,6 +45,20 @@ extension OptimizelyClient {
                                  attributes: (attributes ?? [:]) as [String: Any])
     }
     
+    
+    /// Create a user context to be used internally without sending an ODP identify event.
+    ///
+    /// - Parameters:
+    ///   - userId: The user ID to be used for bucketing.
+    ///   - attributes: A map of attribute names to current user attribute values.
+    /// - Returns: An OptimizelyUserContext associated with this OptimizelyClient
+    func makeInternalUserContext(userId: String,
+                                 attributes: OptimizelyAttributes? = nil) -> OptimizelyUserContext {
+        return OptimizelyUserContext(optimizely: self, userId: userId,
+                                     attributes: (attributes ?? [:]) as [String: Any],
+                                     identify: false)
+    }
+    
     func decide(user: OptimizelyUserContext,
                 key: String,
                 options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {

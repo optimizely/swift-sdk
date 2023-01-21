@@ -317,8 +317,7 @@ open class OptimizelyClient: NSObject {
         
         let variation = decisionService.getVariation(config: config,
                                                      experiment: experiment,
-                                                     user: createUserContext(userId: userId,
-                                                                             attributes: attributes),
+                                                     user: makeInternalUserContext(userId: userId, attributes: attributes),
                                                      options: nil).result
         
         let decisionType: Constants.DecisionType = config.isFeatureExperiment(id: experiment.id) ? .featureTest : .abTest
@@ -401,8 +400,7 @@ open class OptimizelyClient: NSObject {
         
         let pair = decisionService.getVariationForFeature(config: config,
                                                           featureFlag: featureFlag,
-                                                          user: createUserContext(userId: userId,
-                                                                                  attributes: attributes),
+                                                          user: makeInternalUserContext(userId: userId, attributes: attributes),
                                                           options: nil).result
         
         let source = pair?.source ?? Constants.DecisionSource.rollout.rawValue
@@ -553,8 +551,7 @@ open class OptimizelyClient: NSObject {
         
         let decision = decisionService.getVariationForFeature(config: config,
                                                               featureFlag: featureFlag,
-                                                              user: createUserContext(userId: userId,
-                                                                                      attributes: attributes),
+                                                              user: makeInternalUserContext(userId: userId, attributes: attributes),
                                                               options: nil).result
         if let decision = decision {
             if let featureVariable = decision.variation.variables?.filter({$0.id == variable.id}).first {
@@ -645,8 +642,7 @@ open class OptimizelyClient: NSObject {
         
         let decision = decisionService.getVariationForFeature(config: config,
                                                               featureFlag: featureFlag,
-                                                              user: createUserContext(userId: userId,
-                                                                                      attributes: attributes),
+                                                              user: makeInternalUserContext(userId: userId, attributes: attributes),
                                                               options: nil).result
         if let featureEnabled = decision?.variation.featureEnabled {
             enabled = featureEnabled

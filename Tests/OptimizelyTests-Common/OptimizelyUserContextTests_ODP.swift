@@ -33,25 +33,38 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
 
         optimizely = OptimizelyClient(sdkKey: sdkKey)
         optimizely.odpManager = odpManager
-
-        user = optimizely.createUserContext(userId: kUserId)
     }
     
     // MARK: - identify
     
     func testIdentifyCalledAutomatically() {
+        user = optimizely.createUserContext(userId: kUserId)
         sleep(1)
-        XCTAssertEqual(true, odpManager.identifyCalled, "identifyUser is implicitly called on UserContext init")
+        XCTAssert(odpManager.identifyCalled, "identifyUser is implicitly called on UserContext init")
         XCTAssertEqual(kUserId, odpManager.userId)
+    }
+    
+    func testIdentifyNotCalledForLegacyAPIs() {
+        try? optimizely.start(datafile: datafile)
+        _ = try? optimizely.activate(experimentKey: "experiment-segment", userId: kUserId)
+        _ = try? optimizely.getVariation(experimentKey: "experiment-segment", userId: kUserId)
+        _ = try? optimizely.getAllFeatureVariables(featureKey: "flag-segment", userId: kUserId)
+        _ = optimizely.isFeatureEnabled(featureKey: "flag-segment", userId: kUserId)
+        try? optimizely.track(eventKey: "event1", userId: kUserId)
+        
+        sleep(1)
+        XCTAssertFalse(odpManager.identifyCalled, "identifyUser is implicitly called on UserContext init")
     }
     
     // MARK: - isQualifiedFor
 
     func testIsQualifiedFor() {
+        user = optimizely.createUserContext(userId: kUserId)
+
         XCTAssertFalse(user.isQualifiedFor(segment: "a"))
 
         user.qualifiedSegments = ["a", "b"]
-        XCTAssertTrue(user.isQualifiedFor(segment: "a"))
+        XCTAssert(user.isQualifiedFor(segment: "a"))
         XCTAssertFalse(user.isQualifiedFor(segment: "x"))
         
         user.qualifiedSegments = []
@@ -62,6 +75,7 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
     
     func testFetchQualifiedSegments_successDefaultUser() {
         try? optimizely.start(datafile: datafile)
+        user = optimizely.createUserContext(userId: kUserId)
 
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments { segments, error in
@@ -76,6 +90,7 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
     // MARK: - Failure
     
     func testFetchQualifiedSegments_sdkNotReady() {
+        user = optimizely.createUserContext(userId: kUserId)
         user.optimizely = nil
         user.qualifiedSegments = ["dummy"]
         
@@ -90,6 +105,7 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
     }
     
     func testFetchQualifiedSegments_fetchFailed() {
+        user = optimizely.createUserContext(userId: kUserId)
         user.qualifiedSegments = ["dummy"]
 
         // ODP apiKey is not available
@@ -108,7 +124,8 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
     
     func testFetchQualifiedSegments_segmentsToCheck_validAfterStart() {
         try? optimizely.start(datafile: datafile)
-        
+        user = optimizely.createUserContext(userId: kUserId)
+
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments { _, _ in
             sem.signal()
@@ -121,7 +138,8 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
     func testFetchQualifiedSegments_segmentsNotUsed() {
         let datafile = OTUtils.loadJSONDatafile("odp_integrated_no_segments")!
         try? optimizely.start(datafile: datafile)
-        
+        user = optimizely.createUserContext(userId: kUserId)
+
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments { segments, error in
             XCTAssertNil(error)
@@ -139,6 +157,7 @@ extension OptimizelyUserContextTests_ODP {
     
     func testFetchQualifiedSegments_parameters() {
         try? optimizely.start(datafile: datafile)
+        user = optimizely.createUserContext(userId: kUserId)
 
         let sem = DispatchSemaphore(value: 0)
         user.fetchQualifiedSegments(options: [.ignoreCache]) { segments, error in
@@ -158,6 +177,7 @@ extension OptimizelyUserContextTests_ODP {
         XCTAssertNil(odpManager.odpConfig.apiHost)
 
         try? optimizely.start(datafile: "invalid")
+        user = optimizely.createUserContext(userId: kUserId)
 
         XCTAssertNil(odpManager.odpConfig.apiKey)
         XCTAssertNil(odpManager.odpConfig.apiHost)

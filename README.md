@@ -35,6 +35,8 @@ Add the dependency on the Optimizely Swift SDK with Swift Package Manager in `Xc
 2. Enter `https://github.com/optimizely/swift-sdk`.
 3. Accept the default rules (`Version: 'Up to Next Major'`).
 
+If you have a name conflict with other swift packages when you add the Optimizely swift-sdk dependency to Xcode, you can also try with its aliased repo: "https://github.com/optimizely/optimizely-swift-sdk.git".
+
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 ```use_frameworks!```

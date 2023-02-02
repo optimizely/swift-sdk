@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import Foundation
 import UIKit
 
-class OdpEventManager {
+open class OdpEventManager {
     var odpConfig: OdpConfig
     var apiMgr: OdpEventApiManager
     
@@ -34,10 +34,10 @@ class OdpEventManager {
     ///   - odpConfig: ODP config (apiKey, apiHost, ...)
     ///   - apiManager: OdpEventApiManager
     ///   - resourceTimeoutInSecs: timeout for event dispatch
-    init(sdkKey: String,
-         odpConfig: OdpConfig? = nil,
-         apiManager: OdpEventApiManager? = nil,
-         resourceTimeoutInSecs: Int? = nil) {
+    public init(sdkKey: String,
+                odpConfig: OdpConfig? = nil,
+                apiManager: OdpEventApiManager? = nil,
+                resourceTimeoutInSecs: Int? = nil) {
         self.odpConfig = odpConfig ?? OdpConfig()
         self.apiMgr = apiManager ?? OdpEventApiManager(timeout: resourceTimeoutInSecs)
         
@@ -104,7 +104,7 @@ class OdpEventManager {
     
     // MARK: - dispatch
     
-    func dispatch(_ event: OdpEvent) {
+    open func dispatch(_ event: OdpEvent) {
         if eventQueue.count < maxQueueSize {
             eventQueue.save(item: event)
         } else {

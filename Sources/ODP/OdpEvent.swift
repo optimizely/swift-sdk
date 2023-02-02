@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct OdpEvent: Codable {
+public struct OdpEvent: Codable {
     let type: String
     let action: String
     let identifiers: [String: String]
@@ -25,7 +25,7 @@ struct OdpEvent: Codable {
     let data: [String: Any?]
     let dataSerial: Data
     
-    init(type: String, action: String, identifiers: [String: String], data: [String: Any?]) {
+    public init(type: String, action: String, identifiers: [String: String], data: [String: Any?]) {
         self.type = type
         self.action = action
         self.identifiers = identifiers
@@ -44,7 +44,7 @@ struct OdpEvent: Codable {
         case dataSerial
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
         self.type = try values.decode(String.self, forKey: .type)
@@ -57,7 +57,7 @@ struct OdpEvent: Codable {
     
     // For JSON encoding (POST request body)
     
-    var dict: [String: Any] {
+    public var dict: [String: Any] {
         return [
             "type": type,
             "action": action,

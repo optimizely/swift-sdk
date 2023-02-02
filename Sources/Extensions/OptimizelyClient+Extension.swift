@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2021,2023 Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,6 +62,7 @@ extension OptimizelyClient {
                             eventDispatcher: OPTEventDispatcher? = nil,
                             datafileHandler: OPTDatafileHandler? = nil,
                             userProfileService: OPTUserProfileService? = nil,
+                            odpManager: OdpManager? = nil,
                             periodicDownloadInterval: Int?,
                             defaultLogLevel: OptimizelyLogLevel? = nil,
                             defaultDecideOptions: [OptimizelyDecideOption]? = nil,
@@ -72,6 +73,7 @@ extension OptimizelyClient {
                   eventDispatcher: eventDispatcher,
                   datafileHandler: datafileHandler,
                   userProfileService: userProfileService,
+                  odpManager: odpManager,
                   defaultLogLevel: defaultLogLevel,
                   defaultDecideOptions: defaultDecideOptions,
                   settings: settings)

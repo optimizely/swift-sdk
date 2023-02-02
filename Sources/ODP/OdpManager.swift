@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import Foundation
 
-class OdpManager {
+public class OdpManager {
     var enabled: Bool
     var vuidManager: OdpVuidManager
 
@@ -40,14 +40,14 @@ class OdpManager {
     ///   - timeoutForEventDispatchInSecs: timeout for event dispatch
     ///   - segmentManager: ODPSegmentManager
     ///   - eventManager: ODPEventManager
-    init(sdkKey: String,
-         disable: Bool,
-         cacheSize: Int,
-         cacheTimeoutInSecs: Int,
-         timeoutForSegmentFetchInSecs: Int? = nil,
-         timeoutForEventDispatchInSecs: Int? = nil,
-         segmentManager: OdpSegmentManager? = nil,
-         eventManager: OdpEventManager? = nil) {
+    public init(sdkKey: String,
+                disable: Bool,
+                cacheSize: Int,
+                cacheTimeoutInSecs: Int,
+                timeoutForSegmentFetchInSecs: Int? = nil,
+                timeoutForEventDispatchInSecs: Int? = nil,
+                segmentManager: OdpSegmentManager? = nil,
+                eventManager: OdpEventManager? = nil) {
         
         self.enabled = !disable
         self.vuidManager = OdpVuidManager.shared

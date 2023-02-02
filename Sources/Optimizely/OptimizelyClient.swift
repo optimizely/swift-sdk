@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2022, Optimizely, Inc. and contributors
+// Copyright 2019-2023, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ open class OptimizelyClient: NSObject {
     
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
-    var odpManager: OdpManager
+    var odpManager: OdpManager!
     let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
@@ -80,6 +80,7 @@ open class OptimizelyClient: NSObject {
                 eventDispatcher: OPTEventDispatcher? = nil,
                 datafileHandler: OPTDatafileHandler? = nil,
                 userProfileService: OPTUserProfileService? = nil,
+                odpManager: OdpManager? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
                 defaultDecideOptions: [OptimizelyDecideOption]? = nil,
                 settings: OptimizelySdkSettings? = nil) {
@@ -87,16 +88,15 @@ open class OptimizelyClient: NSObject {
         self.sdkKey = sdkKey
         self.sdkSettings = settings ?? OptimizelySdkSettings()
         self.defaultDecideOptions = defaultDecideOptions ?? []
-        
-        self.odpManager = OdpManager(sdkKey: sdkKey,
-                                     disable: sdkSettings.disableOdp,
-                                     cacheSize: sdkSettings.segmentsCacheSize,
-                                     cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
-                                     timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
-                                     timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
-        
+
         super.init()
         
+        self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
+                                                   disable: sdkSettings.disableOdp,
+                                                   cacheSize: sdkSettings.segmentsCacheSize,
+                                                   cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
+                                                   timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
+                                                   timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info

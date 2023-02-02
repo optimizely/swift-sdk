@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ class OdpManagerTests: XCTestCase {
     }
 
     func testRegisterVUIDCalledAutomatically_odpDisabled() {
-        let newEventManager = MockOdpEventManager(sdkKey: sdkKey, odpConfig: OdpConfig())
+        let newEventManager = MockOdpEventManager(sdkKey: sdkKey)
         
         _ = OdpManager(sdkKey: sdkKey,
                        disable: true,

@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors
+// Copyright 2022-2023, Optimizely, Inc. and contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ class OptimizelyUserContextTests_ODP_2: XCTestCase {
                                     cacheSize: 10,
                                     cacheTimeoutInSecs: 10,
                                     eventManager: OdpEventManager(sdkKey: sdkKey,
-                                                                  odpConfig: nil,
                                                                   apiManager: odpEventApiManager))
         
         // identified event will sent but wait in the queue until project config is ready

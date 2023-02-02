@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -57,26 +57,14 @@ class OdpManager {
             return
         }
         
+        self.segmentManager = segmentManager ?? OdpSegmentManager(cacheSize: cacheSize,
+                                                                  cacheTimeoutInSecs: cacheTimeoutInSecs,
+                                                                  resourceTimeoutInSecs: timeoutForSegmentFetchInSecs)
+        self.eventManager = eventManager ?? OdpEventManager(sdkKey: sdkKey,
+                                                            resourceTimeoutInSecs: timeoutForEventDispatchInSecs)        
         self.odpConfig = OdpConfig()
-
-        if let segmentManager = segmentManager {
-            segmentManager.odpConfig = odpConfig
-            self.segmentManager = segmentManager
-        } else {
-            self.segmentManager = OdpSegmentManager(cacheSize: cacheSize,
-                                                    cacheTimeoutInSecs: cacheTimeoutInSecs,
-                                                    odpConfig: odpConfig,
-                                                    resourceTimeoutInSecs: timeoutForSegmentFetchInSecs)
-        }
-        
-        if let eventManager = eventManager {
-            eventManager.odpConfig = odpConfig
-            self.eventManager = eventManager
-        } else {
-            self.eventManager = OdpEventManager(sdkKey: sdkKey,
-                                                odpConfig: odpConfig,
-                                                resourceTimeoutInSecs: timeoutForEventDispatchInSecs)
-        }
+        self.segmentManager.odpConfig = odpConfig
+        self.eventManager.odpConfig = odpConfig
         
         self.eventManager.registerVUID(vuid: self.vuidManager.vuid)
     }

@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import Foundation
 
 class OdpSegmentManager {    
-    var odpConfig: OdpConfig
+    var odpConfig = OdpConfig()
     var segmentsCache: LruCache<String, [String]>
     var apiMgr: OdpSegmentApiManager
     
@@ -27,15 +27,12 @@ class OdpSegmentManager {
     /// - Parameters:
     ///   - cacheSize: segment cache size
     ///   - cacheTimeoutInSecs: segment cache timeout
-    ///   - odpConfig: ODP config (apiKey, apiHost, ...)
     ///   - apiManager: OdpSegmentApiManager
     ///   - resourceTimeoutInSecs: timeout for segment fetch
     init(cacheSize: Int,
          cacheTimeoutInSecs: Int,
-         odpConfig: OdpConfig? = nil,
          apiManager: OdpSegmentApiManager? = nil,
          resourceTimeoutInSecs: Int? = nil) {
-        self.odpConfig = odpConfig ?? OdpConfig()
         self.apiMgr = apiManager ?? OdpSegmentApiManager(timeout: resourceTimeoutInSecs)
         
         self.segmentsCache = LruCache<String, [String]>(size: cacheSize,

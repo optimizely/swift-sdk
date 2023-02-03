@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ import Foundation
 import UIKit
 
 class OdpEventManager {
-    var odpConfig: OdpConfig
+    var odpConfig = OdpConfig()
     var apiMgr: OdpEventApiManager
-    
+
     var maxQueueSize = 100
     let maxBatchEvents = 10
     let queueLock: DispatchQueue
@@ -31,14 +31,11 @@ class OdpEventManager {
     /// OdpEventManager init
     /// - Parameters:
     ///   - sdkKey: datafile sdkKey
-    ///   - odpConfig: ODP config (apiKey, apiHost, ...)
     ///   - apiManager: OdpEventApiManager
     ///   - resourceTimeoutInSecs: timeout for event dispatch
     init(sdkKey: String,
-         odpConfig: OdpConfig? = nil,
          apiManager: OdpEventApiManager? = nil,
          resourceTimeoutInSecs: Int? = nil) {
-        self.odpConfig = odpConfig ?? OdpConfig()
         self.apiMgr = apiManager ?? OdpEventApiManager(timeout: resourceTimeoutInSecs)
         
         self.queueLock = DispatchQueue(label: "event")

@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -38,8 +38,8 @@ class OdpEventManagerTests: XCTestCase {
         odpConfig = OdpConfig()
         
         manager = OdpEventManager(sdkKey: "any",
-                                  odpConfig: odpConfig,
                                   apiManager: apiManager)
+        manager.odpConfig = odpConfig
     }
     
     override func tearDown() {
@@ -126,8 +126,9 @@ class OdpEventManagerTests: XCTestCase {
         _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
         
         manager = OdpEventManager(sdkKey: "any",
-                                  odpConfig: odpConfig,
                                   apiManager: apiManager)
+        manager.odpConfig = odpConfig
+        
         manager.sendEvent(type: "t1",
                           action: "a1",
                           identifiers: ["id-key-1": "id-value-1"],
@@ -301,11 +302,12 @@ class OdpEventManagerTests: XCTestCase {
         let odpConfig2 = OdpConfig()
 
         let manager1 = OdpEventManager(sdkKey: "sdkKey-1",
-                                       odpConfig: odpConfig1,
                                        apiManager: apiManager1)
+        manager1.odpConfig = odpConfig1
+        
         let manager2 = OdpEventManager(sdkKey: "sdkKey-2",
-                                       odpConfig: odpConfig2,
                                        apiManager: apiManager2)
+        manager2.odpConfig = odpConfig2
         
         let event1 = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
         let event2 = OdpEvent(type: "t2", action: "a2", identifiers: [:], data: [:])
@@ -395,8 +397,8 @@ class OdpEventManagerTests: XCTestCase {
         _ = odpConfig.update(apiKey: "test-key", apiHost: "test-host", segmentsToCheck: [])
 
         manager = OdpEventManager(sdkKey: "any",
-                                  odpConfig: odpConfig,
                                   apiManager: apiManager)
+        manager.odpConfig = odpConfig
 
         let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
         manager.dispatch(event)

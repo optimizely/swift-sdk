@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2023, Optimizely, Inc. and contributors 
+// Copyright 2022, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class OdpConfig {
+class OdpConfig {
     /// The host URL for the ODP audience segments API (optional).
     private var _apiHost: String?
     /// The public API key for the ODP account from which the audience segments will be fetched (optional).
@@ -34,7 +34,7 @@ public class OdpConfig {
     
     let queue = DispatchQueue(label: "odpConfig")
     
-    public init(apiKey: String? = nil, apiHost: String? = nil, segmentsToCheck: [String] = []) {
+    init(apiKey: String? = nil, apiHost: String? = nil, segmentsToCheck: [String] = []) {
         self._apiKey = apiKey
         self._apiHost = apiHost
         self._segmentsToCheck = segmentsToCheck

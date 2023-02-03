@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ class OdpSegmentManagerTests: XCTestCase {
         
         manager = OdpSegmentManager(cacheSize: 10,
                                     cacheTimeoutInSecs: 10,
-                                    odpConfig: odpConfig,
                                     apiManager: apiManager)
+        manager.odpConfig = odpConfig
     }
     
     func testFetchSegmentsSuccess_cacheMiss() {

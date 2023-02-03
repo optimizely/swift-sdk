@@ -18,9 +18,9 @@ import Foundation
 import UIKit
 
 open class OdpEventManager {
-    var odpConfig: OdpConfig
+    var odpConfig = OdpConfig()
     var apiMgr: OdpEventApiManager
-    
+
     var maxQueueSize = 100
     let maxBatchEvents = 10
     let queueLock: DispatchQueue
@@ -31,14 +31,11 @@ open class OdpEventManager {
     /// OdpEventManager init
     /// - Parameters:
     ///   - sdkKey: datafile sdkKey
-    ///   - odpConfig: ODP config (apiKey, apiHost, ...)
     ///   - apiManager: OdpEventApiManager
     ///   - resourceTimeoutInSecs: timeout for event dispatch
     public init(sdkKey: String,
-                odpConfig: OdpConfig? = nil,
                 apiManager: OdpEventApiManager? = nil,
                 resourceTimeoutInSecs: Int? = nil) {
-        self.odpConfig = odpConfig ?? OdpConfig()
         self.apiMgr = apiManager ?? OdpEventApiManager(timeout: resourceTimeoutInSecs)
         
         self.queueLock = DispatchQueue(label: "event")

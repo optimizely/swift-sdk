@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors
+// Copyright 2022-2023, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@ import Foundation
  {"title":"Accepted","status":202,"timestamp":"2022-06-30T20:59:52.046Z"}
 */
 
-class OdpEventApiManager {
+public class OdpEventApiManager {
     let resourceTimeoutInSecs: Int?
 
     /// OdpEventApiManager init
     /// - Parameters:
     ///   - timeout: timeout for segment fetch
-    init(timeout: Int? = nil) {
+    public init(timeout: Int? = nil) {
         self.resourceTimeoutInSecs = timeout
     }
 

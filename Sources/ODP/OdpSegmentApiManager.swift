@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors
+// Copyright 2022-2023, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -95,23 +95,23 @@ import Foundation
  }
 */
 
-class OdpSegmentApiManager {
+open class OdpSegmentApiManager {
     let logger = OPTLoggerFactory.getLogger()
     let resourceTimeoutInSecs: Int?
 
     /// OdpSegmentApiManager init
     /// - Parameters:
     ///   - timeout: timeout for segment fetch
-    init(timeout: Int? = nil) {
+    public init(timeout: Int? = nil) {
         self.resourceTimeoutInSecs = timeout
     }
 
-    func fetchSegments(apiKey: String,
-                       apiHost: String,
-                       userKey: String,
-                       userValue: String,
-                       segmentsToCheck: [String],
-                       completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+    open func fetchSegments(apiKey: String,
+                            apiHost: String,
+                            userKey: String,
+                            userValue: String,
+                            segmentsToCheck: [String],
+                            completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         
         let query = makeQuery(userKey: userKey, userValue: userValue, segmentsToCheck: segmentsToCheck)
         guard let httpBody = try? JSONSerialization.data(withJSONObject: query) else {

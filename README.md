@@ -6,19 +6,18 @@
 [![Platforms](https://img.shields.io/cocoapods/p/OptimizelySwiftSDK.svg)](https://img.shields.io/cocoapods/p/OptimizelySwiftSDK.svg)
 [![Podspec](https://img.shields.io/cocoapods/v/OptimizelySwiftSDK.svg)](https://cocoapods.org/pods/OptimizelySwiftSDK)
 
-This repository houses the Swift SDK for use with Optimizely Full Stack and Optimizely Rollouts for Mobile and OTT.
+This repository houses the Swift SDK for use with Optimizely Feature Experimentation, Optimizely Full Stack (legacy), and Optimizely Rollouts for Mobile and OTT.
 
-Optimizely Full Stack is A/B testing and feature flag management for product development teams. Experiment in any application. Make every feature on your roadmap an opportunity to learn. Learn more at https://www.optimizely.com/platform/full-stack/, or see the [documentation](https://docs.developers.optimizely.com/experimentation/v4.0.0-full-stack/docs/welcome).
+Optimizely Feature Experimentation is an A/B testing and feature flag management tool for product development teams, letting you experiment at every step. Using Optimizely Feature Experimentation allows for every feature on your roadmap to be an opportunity to discover hidden insights. Learn more at [Optimizely.com](https://www.optimizely.com/products/experiment/feature-experimentation/), or see the [developer documentation](https://docs.developers.optimizely.com/experimentation/v4.0.0-full-stack/docs/welcome).
 
-Optimizely Rollouts is free feature flags for development teams. Easily roll out and roll back features in any application without code deploys. Mitigate risk for every feature on your roadmap. Learn more at https://www.optimizely.com/rollouts/, or see the [documentation](https://docs.developers.optimizely.com/experimentation/v3.1.0-full-stack/docs/introduction-to-rollouts).
+Optimizely Rollouts is [free feature flags](https://www.optimizely.com/free-feature-flagging/) for development teams. You can easily roll out and roll back features in any application without code deploys, mitigating risk for every feature on your roadmap.
 
 
-## Getting Started
+## Get started
 
 ### Using the SDK
 
-See the [Swift SDK developer documentation](https://docs.developers.optimizely.com/experimentation/v4.0.0-full-stack/docs/swift-sdk) to learn how to set
-up an Optimizely project and start using the SDK.
+See the [Swift SDK's developer documentation](https://docs.developers.optimizely.com/experimentation/v4.0.0-full-stack/docs/swift-sdk) for detailed instructions on getting started with using the SDK.
 
 ### Requirements
 * iOS 10.0+ / tvOS 10.0+ / watchOS 3.0+
@@ -40,7 +39,7 @@ If you have a name conflict with other swift packages when you add the Optimizel
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 ```use_frameworks!```
-```pod 'OptimizelySwiftSDK', '~> 3.10.1'```
+```pod 'OptimizelySwiftSDK', '~> 3.10.2'```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -48,7 +47,7 @@ If you have a name conflict with other swift packages when you add the Optimizel
 Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.10.1```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.10.2```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 
@@ -64,6 +63,12 @@ Further installation instructions for Cocoapods: https://guides.cocoapods.org/us
       ```$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Optimizely.framework```</pre>
 
 Futher installation instructions for Carthage: https://github.com/Carthage/Carthage
+
+### Feature Management Access
+
+To access the Feature Management configuration in the Optimizely dashboard, please contact your Optimizely account executive.
+
+## Use the Swift SDK
 
 ### Samples
 
@@ -82,6 +87,8 @@ optimizely.start{ result in
 }
 ```
 
+See the Optimizely Feature Experimentation [developer documentation](https://docs.developers.optimizely.com/experimentation/v4.0-full-stack/docs/swift-sdk) to learn how to set up your first Swift project and use the SDK.
+
 
 ### Contributing
 Please see [CONTRIBUTING](CONTRIBUTING.md).
@@ -92,7 +99,7 @@ First-party code (under OptimizelySwiftSDK is copyright Optimizely, Inc. and con
 
 ### Additional Code
 
-This software incorporates code from the following open source repo:
+This software incorporates code from the following open source projects:
 
 For the SDK:
 MurmurHash3:https://github.com/jpedrosa/sua/blob/master/Sources/murmurhash3.swift License (Apache 2.0):https://github.com/jpedrosa/sua/blob/master/LICENSE.txt
@@ -101,3 +108,26 @@ Ported to Swift4.
 SwiftLint:https://github.com/realm/SwiftLint License (MIT):https://github.com/realm/SwiftLint/blob/master/LICENSE
 Used to enforce Swift style and conventions.
 
+### Other Optimzely SDKs
+
+- Agent - https://github.com/optimizely/agent
+
+- Android - https://github.com/optimizely/android-sdk
+
+- C# - https://github.com/optimizely/csharp-sdk
+
+- Flutter - https://github.com/optimizely/optimizely-flutter-sdk
+
+- Go - https://github.com/optimizely/go-sdk
+
+- Java - https://github.com/optimizely/java-sdk
+
+- JavaScript - https://github.com/optimizely/javascript-sdk
+
+- PHP - https://github.com/optimizely/php-sdk
+
+- Python - https://github.com/optimizely/python-sdk
+
+- React - https://github.com/optimizely/react-sdk
+
+- Ruby - https://github.com/optimizely/ruby-sdk

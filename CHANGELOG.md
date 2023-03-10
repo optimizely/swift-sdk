@@ -1,5 +1,10 @@
 # Optimizely Swift SDK Changelog
 
+## 3.10.2
+March 10, 2023
+
+* Update readme. ([#479](https://github.com/optimizely/swift-sdk/pull/479)).
+
 ## 3.10.1
 April 8, 2022
 

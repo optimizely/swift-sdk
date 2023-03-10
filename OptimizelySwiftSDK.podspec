@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.module_name	            = "Optimizely"
   s.version                 = "3.10.2"
   s.summary                 = "Optimizely experiment framework for iOS/tvOS/watchOS"
-  s.homepage                = "https://docs.developers.optimizely.com/full-stack/docs"
+  s.homepage                = "https://docs.developers.optimizely.com/experimentation/v4.0.0-full-stack/docs"
   s.license                 = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
   s.author                  = { "Optimizely" => "support@optimizely.com" }
   s.ios.deployment_target   = "10.0"

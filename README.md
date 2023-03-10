@@ -1,4 +1,4 @@
-# SWIFT SDK
+# Optimizely Swift SDK
 [![Apache 2.0](https://img.shields.io/github/license/nebula-plugins/gradle-extra-configurations-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/carthage/carthage)
 [![Build Status](https://github.com/optimizely/swift-sdk/actions/workflows/swift.yml/badge.svg?branch=master)](https://github.com/optimizely/swift-sdk/actions)
@@ -23,7 +23,7 @@ Refer to the [Swift SDK's developer documentation](https://docs.developers.optim
 * iOS 10.0+ / tvOS 10.0+ / watchOS 3.0+
 * Swift 5+
 
-### Installing the SDK
+### Install the SDK
  
 Please note below that _\<platform\>_ is used to represent the platform on which you are building your app. Currently, we support ```iOS```, ```tvOS```, and ```watchOS``` platforms.
 
@@ -107,7 +107,7 @@ Ported to Swift4.
 SwiftLint:https://github.com/realm/SwiftLint License (MIT):https://github.com/realm/SwiftLint/blob/master/LICENSE
 Used to enforce Swift style and conventions.
 
-### Other Optimzely SDKs
+### Other Optimizely SDKs
 
 - Agent - https://github.com/optimizely/agent
 

@@ -1,5 +1,10 @@
 # Optimizely Swift SDK Changelog
 
+## 3.10.2
+March 14, 2023
+
+* We updated our README.md and other non-functional code to reflect that this SDK supports both Optimizely Feature Experimentation and Optimizely Full Stack. ([#479](https://github.com/optimizely/swift-sdk/pull/479)).
+
 ## 3.10.1
 April 8, 2022
 

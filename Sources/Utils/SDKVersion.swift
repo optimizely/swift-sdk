@@ -1,5 +1,5 @@
 //
-// Copyright 2019, 2021, Optimizely, Inc. and contributors
+// Copyright 2019, 2021, 2023 Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,4 +17,4 @@
 /// Do not edit this field.
 /// - It is auto updated (Scripts/updated_version.sh) to reflect the current version
 /// - Do not put underscores in the name (Swiftlint can modify unexpectedly)
-let OPTIMIZELYSDKVERSION = "3.10.1"
+let OPTIMIZELYSDKVERSION = "3.10.2"

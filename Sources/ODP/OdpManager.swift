@@ -140,7 +140,7 @@ public class OdpManager {
             if [Constants.ODP.keyForUserId, Constants.ODP.keyForUserIdAlias].contains(idKey.lowercased()) {
                 identifiersUpdated.removeValue(forKey: idKey)
                 identifiersUpdated[Constants.ODP.keyForUserId] = idValue
-                break;
+                break
             }
         }
         

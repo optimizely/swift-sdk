@@ -59,7 +59,7 @@ open class OptimizelyClient: NSObject {
     
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
-    var odpManager: OdpManager!
+    public var odpManager: OdpManager!
     let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
@@ -72,6 +72,7 @@ open class OptimizelyClient: NSObject {
     ///   - eventDispatcher: custom EventDispatcher (optional)
     ///   - datafileHandler: custom datafile handler (optional)
     ///   - userProfileService: custom UserProfileService (optional)
+    ///   - odpManager: custom OdpManager (optional)
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision options (optional)
     ///   - settings: SDK configuration (optional)

@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class OdpSegmentManager {    
+open class OdpSegmentManager {    
     var odpConfig = OdpConfig()
     var segmentsCache: LruCache<String, [String]>
     var apiMgr: OdpSegmentApiManager
@@ -33,7 +33,6 @@ public class OdpSegmentManager {
                 cacheTimeoutInSecs: Int,
                 apiManager: OdpSegmentApiManager? = nil,
                 resourceTimeoutInSecs: Int? = nil) {
-        self.odpConfig = odpConfig ?? OdpConfig()
         self.apiMgr = apiManager ?? OdpSegmentApiManager(timeout: resourceTimeoutInSecs)
         
         self.segmentsCache = LruCache<String, [String]>(size: cacheSize,

@@ -941,7 +941,7 @@ extension OptimizelyClient {
                              action: String,
                              identifiers: [String: String] = [:],
                              data: [String: Any?] = [:]) throws {
-        try odpManager.sendEvent(type: type ?? Constants.ODP.eventType,
+        try odpManager.sendEvent(type: type,
                              action: action,
                              identifiers: identifiers,
                              data: data)

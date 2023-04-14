@@ -26,6 +26,7 @@ open class OdpEventManager {
     let queueLock: DispatchQueue
     let eventQueue: DataStoreQueueStackImpl<OdpEvent>
     
+    let reachability = NetworkReachability(maxContiguousFails: 1)
     let logger = OPTLoggerFactory.getLogger()
     
     /// OdpEventManager init
@@ -136,6 +137,7 @@ open class OdpEventManager {
             // sync group used to ensure that the sendEvent is synchronous.
             // used in flushEvents
             let sync = DispatchGroup()
+            var retriesCnt = 0
             
             while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: self.maxBatchEvents) {
                 let numEvents = events.count
@@ -155,14 +157,14 @@ open class OdpEventManager {
                 }
                 sync.wait()  // wait for send completed
                 
+                
                 if let error = odpError {
                     self.logger.e(error.reason)
                     
                     // retry only if needed (non-permanent)
                     if case .odpEventFailed(_, let canRetry) = error {
                         if canRetry {
-                            // keep the failed event queue so it can be re-sent later
-                            break
+                            retriesCnt += 1
                         } else {
                             // permanent errors (400 response or invalid events, etc)
                             // discard these events so that they do not block following valid events
@@ -170,10 +172,17 @@ open class OdpEventManager {
                     }
                 }
                 
-                removeStoredEvents(num: numEvents)
+                self.reachability.updateNumContiguousFails(isError: (odpError != nil))
+                
+                if retriesCnt == 0 || retriesCnt >= 3 {
+                    removeStoredEvents(num: numEvents)
+                    retriesCnt = 0
+                }
             }
         }
     }
+    
+    fund sendEvent
     
     func reset() {
         _ = eventQueue.removeFirstItems(count: self.maxQueueSize)

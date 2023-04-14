@@ -342,18 +342,26 @@ class OdpEventManagerTests: XCTestCase {
 
     func testFlushError_retry() {
         let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
-        let events = [OdpEvent](repeating: event, count: 2)
-
-        for e in events {
-            manager.dispatch(e)
-        }
+        manager.dispatch(event)
 
         _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
-        XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count, "should be not retried immediately (a batch of 2 events)")
-        XCTAssertEqual(2, manager.eventQueue.count, "the events should remain in the queue after giving up for later retries")
+        XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should be retried max 3 times")
+        XCTAssertEqual(0, manager.eventQueue.count, "the events should be removed after 3 retries")
+    }
+    
+    func testFlushError_noRetryAndDropIfNetworkIsDown() {
+        let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+        manager.dispatch(event)
+
+        _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
+        manager.flush()
+        sleep(1)
+        
+        XCTAssertEqual(0, apiManager.dispatchedBatchEvents.count, "should not try to send/discard if network is down")
+        XCTAssertEqual(1, manager.eventQueue.count, "the events should stay in the queue")
     }
     
     func testFlushError_noRetry() {

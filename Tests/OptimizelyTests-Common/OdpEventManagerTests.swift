@@ -233,9 +233,7 @@ class OdpEventManagerTests: XCTestCase {
     // MARK: - batch
 
     func testFlush_batch_1() {
-        let events = [
-            OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
-        ]
+        let events = [event]
         manager.dispatch(events[0])
         
         _ = odpConfig.update(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
@@ -268,7 +266,6 @@ class OdpEventManagerTests: XCTestCase {
     }
 
     func testFlush_batch_moreThanBatchSize() {
-        let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
         let events = [OdpEvent](repeating: event, count: 11)
         
         for e in events {
@@ -340,50 +337,187 @@ class OdpEventManagerTests: XCTestCase {
 
     // MARK: - errors
 
-    func testFlushError_retry() {
-        let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
+    func testFlushError_noRetryOnClientError() {
         manager.dispatch(event)
-
-        _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
-        manager.flush()
-        sleep(1)
-        
-        XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should be retried max 3 times")
-        XCTAssertEqual(0, manager.eventQueue.count, "the events should be removed after 3 retries")
-    }
-    
-    func testFlushError_noRetryAndDropIfNetworkIsDown() {
-        let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
-        manager.dispatch(event)
-
-        _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
-        manager.flush()
-        sleep(1)
-        
-        XCTAssertEqual(0, apiManager.dispatchedBatchEvents.count, "should not try to send/discard if network is down")
-        XCTAssertEqual(1, manager.eventQueue.count, "the events should stay in the queue")
-    }
-    
-    func testFlushError_noRetry() {
-        let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
-        let events = [OdpEvent](repeating: event, count: 15)
-
-        for e in events {
-            manager.dispatch(e)
-        }
         
         _ = odpConfig.update(apiKey: "invalid-key-no-retry", apiHost: "host", segmentsToCheck: [])
         manager.flush()
         sleep(1)
         
-        XCTAssertEqual(2, apiManager.dispatchedBatchEvents.count, "should not be retried (only once for each of batch events)")
-        XCTAssertEqual(10, apiManager.dispatchedBatchEvents[0].count)
-        XCTAssertEqual(5, apiManager.dispatchedBatchEvents[1].count)
-        XCTAssertEqual(0, manager.eventQueue.count, "all the events should be discarded")
+        XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count, "should not be retried for 4xx error")
+        XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded")
     }
     
+    func testFlushError_retryWhenFailedOnceOnServerError() {
+        _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
+        
+        let failCnt = 1
+        apiManager.maxCountWithErrorResponse = failCnt
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+        
+        XCTAssertEqual(failCnt + 1, apiManager.dispatchedBatchEvents.count, "should be retried max for 5xx error")
+        XCTAssertEqual(0, manager.eventQueue.count, "the events should be removed after success")
+    }
+    
+    func testFlushError_retryWhenFailedTwiceOnServerError() {
+        _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
+        
+        let failCnt = 2
+        apiManager.maxCountWithErrorResponse = failCnt
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+        
+        XCTAssertEqual(failCnt + 1, apiManager.dispatchedBatchEvents.count, "should be retried for 5xx error")
+        XCTAssertEqual(0, manager.eventQueue.count, "the events should be removed after success")
+    }
+
+    func testFlushError_retryWhenFailedMoreThan3TimesAndGiveupOnServerError() {
+        _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
+        
+        let failCnt = 10
+        apiManager.maxCountWithErrorResponse = failCnt
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+        
+        XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should be retried max 3 times for 5xx error")
+        XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded after 3 retries")
+    }
+
+    // MARK: - reachability
+
+    func testFlushError_reachability_connectedAndNoPreviousError() {
+        _ = odpConfig.update(apiKey: "valid-key", apiHost: "host", segmentsToCheck: [])
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+        
+        XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count)
+        XCTAssertEqual(0, manager.eventQueue.count)
+
+        // connected. should not block.
+
+        manager.reachability.isConnected = true
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+
+        XCTAssertEqual(2, apiManager.dispatchedBatchEvents.count, "should not block event dispatch")
+        XCTAssertEqual(0, manager.eventQueue.count)
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+    }
+    
+    func testFlushError_reachability_connectedAndPreviousError() {
+        _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+        
+        XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should be retried max 3 times for 5xx error")
+        XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded after max retries")
+
+        // connected. should not block even if there is a previous error.
+
+        manager.reachability.isConnected = true
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+
+        XCTAssertEqual(6, apiManager.dispatchedBatchEvents.count, "should dispatch if connected even if previous event discarded")
+        XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded after max retries")
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+    }
+
+    func testFlushError_reachability_disconnectedAndNoPreviousError() {
+        _ = odpConfig.update(apiKey: "valid-key", apiHost: "host", segmentsToCheck: [])
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+        
+        XCTAssertEqual(1, apiManager.dispatchedBatchEvents.count)
+        XCTAssertEqual(0, manager.eventQueue.count)
+
+        // disconnected. should not block because there is no previous error.
+        
+        manager.reachability.isConnected = false
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+
+        XCTAssertEqual(2, apiManager.dispatchedBatchEvents.count)
+        XCTAssertEqual(0, manager.eventQueue.count)
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+    }
+    
+    func testFlushError_reachability_disconnectedAndPreviousError() {
+        _ = odpConfig.update(apiKey: "valid-key-retry-error", apiHost: "host", segmentsToCheck: [])
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+        
+        XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should be retried max 3 times for 5xx error")
+        XCTAssertEqual(0, manager.eventQueue.count, "the events should be discarded after max retries")
+
+        // disconnected. should block because there is a previous error and disconnected.
+        
+        manager.reachability.isConnected = false
+        XCTAssertTrue(manager.reachability.shouldBlockNetworkAccess())
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+
+        XCTAssertEqual(3, apiManager.dispatchedBatchEvents.count, "should not dispatch any more when not connected and previous event discarded")
+        XCTAssertEqual(1, manager.eventQueue.count, "the events should stay in the queue")
+        
+        // connected again. should not block any more even if there is a previous error.
+        
+        manager.reachability.isConnected = true
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        _ = odpConfig.update(apiKey: "valid-key", apiHost: "host", segmentsToCheck: [])
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+
+        XCTAssertEqual(4, apiManager.dispatchedBatchEvents.count)
+        XCTAssertEqual(0, manager.eventQueue.count)
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        // disconnected. should not block any more since previous error was cleared.
+        
+        manager.reachability.isConnected = false
+        XCTAssertFalse(manager.reachability.shouldBlockNetworkAccess())
+
+        manager.dispatch(event)
+        manager.flush()
+        sleep(1)
+
+        XCTAssertEqual(5, apiManager.dispatchedBatchEvents.count)
+        XCTAssertEqual(0, manager.eventQueue.count)
+    }
+    
+    // MARK: - reset
+
     func testReset() {
-        let event = OdpEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
         let events = [OdpEvent](repeating: event, count: 3)
 
         manager.reset()
@@ -478,6 +612,9 @@ class OdpEventManagerTests: XCTestCase {
         var receivedApiHost: String!
         var dispatchedBatchEvents = [[OdpEvent]]()
         
+        var countWithErrorResponse = 0
+        var maxCountWithErrorResponse = Int.max
+        
         var totalDispatchedEvents: Int {
             return dispatchedBatchEvents.reduce(0) { $0 + $1.count }
         }
@@ -491,13 +628,20 @@ class OdpEventManagerTests: XCTestCase {
             dispatchedBatchEvents.append(events)
 
             DispatchQueue.global().async {
-                if apiKey == "invalid-key-no-retry" {
-                    completionHandler(OptimizelyError.odpEventFailed("403", false))
-                } else if apiKey == "valid-key-retry-error" {
-                        completionHandler(OptimizelyError.odpEventFailed("network error", true))
-                } else {
-                    completionHandler(nil)
+                if apiKey == "invalid-key-no-retry" || apiKey == "valid-key-retry-error" {
+                    if self.countWithErrorResponse < self.maxCountWithErrorResponse {
+                        self.countWithErrorResponse += 1
+                        if apiKey == "invalid-key-no-retry" {
+                            completionHandler(OptimizelyError.odpEventFailed("403", false))
+                        } else {
+                            completionHandler(OptimizelyError.odpEventFailed("network error", true))
+                        }
+                        return
+                    }
                 }
+                
+                self.countWithErrorResponse = 0
+                completionHandler(nil)
             }
         }
     }

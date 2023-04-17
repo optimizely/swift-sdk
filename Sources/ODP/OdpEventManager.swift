@@ -159,17 +159,17 @@ open class OdpEventManager {
                 self.apiMgr.sendOdpEvents(apiKey: odpApiKey,
                                           apiHost: odpApiHost,
                                           events: events) { error in
+                    if let error = error {
+                        self.logger.e(error.reason)
+                    }
+
                     odpError = error
                     sync.leave()  // our send is done.
                 }
                 sync.wait()  // wait for send completed
                 
-                if let error = odpError {
-                    self.logger.e(error.reason)
-                }
-
                 // retry only for recoverable errors (connection failures or 5xx server errors)
-                if case .odpEventFailed(_, let canRetry) = odpError, canRetry {
+                if let error = odpError, case .odpEventFailed(_, let canRetry) = error, canRetry {
                     failureCount += 1
                     
                     if failureCount >= self.maxFailureCount {

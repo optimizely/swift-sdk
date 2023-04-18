@@ -19,14 +19,14 @@ jobs:
         # - see "https://github.com/actions/runner-images/blob/main/images/macos/macos-11-Readme.md" for installed macOS, xcode and simulator versions.
         include:
           - os: 15.2
-            device: "iPhone 11"
+            device: "iPhone 12"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
             simulator_xcode_version: 13.2.1
           - os: 14.5
-            device: "iPhone 8"
+            device: "iPhone 12"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
@@ -72,7 +72,7 @@ jobs:
           NAME: ${{ matrix.device }}
         run: |
           gem install coveralls-lcov
-          gem install cocoapods -v '1.9.3'
+          gem install cocoapods -v '1.11.3'
           pod repo update
           pod install
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq

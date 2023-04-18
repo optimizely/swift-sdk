@@ -7,7 +7,7 @@ env:
 
 jobs:
   unittests:
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       fail-fast: false
       matrix:
@@ -18,35 +18,35 @@ jobs:
         #   also, the xcode version (simulator_xcode_version) and simulator os versions (os) are moving target. We have to change these time to time.
         # - see "https://github.com/actions/runner-images/blob/main/images/macos/macos-11-Readme.md" for installed macOS, xcode and simulator versions.
         include:
-          - os: 15.2
+          - os: 16.1
             device: "iPhone 12"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 13.2.1
-          - os: 14.5
+            simulator_xcode_version: 14.1
+          - os: 15.5
             device: "iPhone 12"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 12.5.1
-          - os: 13.7
+            simulator_xcode_version: 13.4.1
+          - os: 15.0
             # good to have tests with older OS versions, but it looks like this is min OS+xcode versions supported by github actions
-            device: "iPad Air (3rd generation)"
+            device: "iPad Air (4th generation)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 11.7
-          - os: 13.4
-            device: "Apple TV 4K"
+            simulator_xcode_version: 13.1
+          - os: 16.0
+            device: "Apple TV"
             scheme: "OptimizelySwiftSDK-tvOS"
             test_sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode_version: 11.7
+            simulator_xcode_version: 14.1
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1

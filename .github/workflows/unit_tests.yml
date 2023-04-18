@@ -16,6 +16,7 @@ jobs:
         # - each xcode version has own simulator os versions.
         # - so to run tests with the target simulator, we have to find a proper xcode version pre-installed and support the target simulator os version.
         #   also, the xcode version (simulator_xcode_version) and simulator os versions (os) are moving target. We have to change these time to time.
+        # - see "https://github.com/actions/runner-images/blob/main/images/macos/macos-11-Readme.md" for installed macOS, xcode and simulator versions.
         include:
           - os: 15.2
             device: "iPhone 11"
@@ -23,14 +24,14 @@ jobs:
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 13.2
-          - os: 14.4
+            simulator_xcode_version: 13.2.1
+          - os: 14.5
             device: "iPhone 8"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 12.4
+            simulator_xcode_version: 12.5.1
           - os: 13.7
             # good to have tests with older OS versions, but it looks like this is min OS+xcode versions supported by github actions
             device: "iPad Air (3rd generation)"

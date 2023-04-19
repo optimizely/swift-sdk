@@ -18,12 +18,13 @@ import XCTest
 
 class OptimizelyDecisionTests: XCTestCase {
     
+    let optimizely = OptimizelyClient(sdkKey: "sdkKey")
     let variables = OptimizelyJSON(map: ["k1": "v1"])!
-    let user = OptimizelyUserContext(optimizely: OptimizelyClient(sdkKey: "sdkKey"),
-                                     userId: "userId")
+    var user: OptimizelyUserContext!
     var decision: OptimizelyDecision!
     
     override func setUpWithError() throws {
+        user = OptimizelyUserContext(optimizely: optimizely, userId: "userId")
         decision = OptimizelyDecision(variationKey: "value-variationKey",
                                       enabled: true,
                                       variables: variables,
@@ -84,8 +85,7 @@ class OptimizelyDecisionTests: XCTestCase {
                                variables: variables,
                                ruleKey: "value-ruleKey",
                                flagKey: "value-flagKey",
-                               userContext: OptimizelyUserContext(optimizely: OptimizelyClient(sdkKey: "sdkKey"),
-                                                                  userId: "wrong-user"),
+                               userContext: OptimizelyUserContext(optimizely: optimizely, userId: "wrong-user"),
                                reasons: [])
         XCTAssert(d != decision)
 
@@ -116,7 +116,7 @@ class OptimizelyDecisionTests: XCTestCase {
     
     func testOptimizelyDecision_description2() {
         let variables = OptimizelyJSON(map: ["k2": true])!
-        let user = OptimizelyUserContext(optimizely: OptimizelyClient(sdkKey: "sdkKey"),
+        let user = OptimizelyUserContext(optimizely: optimizely,
                                          userId: "userId",
                                          attributes: ["age": 18])
         

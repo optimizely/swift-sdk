@@ -20,6 +20,7 @@ import XCTest
 class OTUtils {
     
     static let testSdkKeyBasename = "testSdkKey"
+    static let dummyClient = OptimizelyClient(sdkKey: "any-key")
 
     static func isEqualWithEncodeThenDecode<T: Codable & Equatable>(_ model: T) -> Bool {
         let jsonData = try! JSONEncoder().encode(model)
@@ -324,7 +325,8 @@ class OTUtils {
     // MARK: - decide
     
     static func user(userId: String? = nil, attributes: [String: Any?]? = nil) -> OptimizelyUserContext {
-        return OptimizelyUserContext(optimizely: OptimizelyClient(sdkKey: "any-key"),
+        // use a dummyClient to hold the weak reference in the user-context
+        return OptimizelyUserContext(optimizely: dummyClient,
                                      userId: userId ?? "any-user",
                                      attributes: attributes)
     }

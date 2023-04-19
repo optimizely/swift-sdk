@@ -88,6 +88,7 @@ public enum OptimizelyError: Error {
     case odpNotIntegrated
     case odpNotEnabled
     case odpInvalidData
+    case odpInvalidAction
 }
 
 // MARK: - CustomStringConvertible
@@ -163,6 +164,7 @@ extension OptimizelyError: CustomStringConvertible, ReasonProtocol {
         case .odpNotIntegrated:                             message = "ODP is not integrated."
         case .odpNotEnabled:                                message = "ODP is not enabled."
         case .odpInvalidData:                               message = "ODP data is not valid."
+        case .odpInvalidAction:                             message = "ODP action is not valid (cannot be empty)."
         }
         
         return message

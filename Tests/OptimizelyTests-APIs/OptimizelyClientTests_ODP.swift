@@ -79,7 +79,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
         
         try? optimizely.sendOdpEvent(action: "a2")
         
-        XCTAssertEqual("fullstack", odpManager.eventType)
+        XCTAssertEqual(nil, odpManager.eventType)
         XCTAssertEqual("a2", odpManager.eventAction)
         XCTAssertEqual([:], odpManager.eventIdentifiers)
         XCTAssertEqual([:], odpManager.eventData as! [String: String])
@@ -165,7 +165,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
             XCTFail("Should accept all valid data value types.")
         }
     }
-
+    
     // MARK: - vuid
     
     func testVuid() {
@@ -223,7 +223,7 @@ extension OptimizelyClientTests_ODP {
         var apiHost: String?
         var segmentsToCheck = [String]()
 
-        override func sendEvent(type: String, action: String, identifiers: [String : String], data: [String : Any?]) {
+        override func sendEvent(type: String?, action: String, identifiers: [String : String], data: [String : Any?]) {
             self.eventType = type
             self.eventAction = action
             self.eventIdentifiers = identifiers

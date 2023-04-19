@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class OdpSegmentManager {    
+open class OdpSegmentManager {    
     var odpConfig = OdpConfig()
     var segmentsCache: LruCache<String, [String]>
     var apiMgr: OdpSegmentApiManager

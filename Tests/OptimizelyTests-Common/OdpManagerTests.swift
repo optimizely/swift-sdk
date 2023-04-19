@@ -196,6 +196,42 @@ class OdpManagerTests: XCTestCase {
 
         XCTAssertNil(eventManager.receivedType, "sendEvent requeut should be discarded if ODP disabled.")
     }
+    
+    func testSendEvent_emptyAction() {
+        do {
+            try manager.sendEvent(type: nil, action: "", identifiers: [:], data: [:])
+            XCTFail()
+        } catch OptimizelyError.odpInvalidAction {
+            XCTAssert(true)
+        } catch {
+            XCTFail("OptimizelyError expected if data has an empty action.")
+        }
+    }
+
+    func testSendEvent_emptyOrNilType() {
+        try? manager.sendEvent(type: nil, action: "a1", identifiers: [:], data: [:])
+        XCTAssertEqual(eventManager.receivedType, "fullstack")
+        
+        try? manager.sendEvent(type: "", action: "a1", identifiers: [:], data: [:])
+        XCTAssertEqual(eventManager.receivedType, "fullstack")
+    }
+
+    func testSendEvent_aliasIdentifiers() {
+        try? manager.sendEvent(type: nil, action: "a1", identifiers: ["fs_user_id": "v1"], data: [:])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": manager.vuid])
+        
+        try? manager.sendEvent(type: nil, action: "a1", identifiers: ["fs-user-id": "v1"], data: [:])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": manager.vuid])
+
+        try? manager.sendEvent(type: nil, action: "a1", identifiers: ["FS_USER_ID": "v1"], data: [:])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": manager.vuid])
+
+        try? manager.sendEvent(type: nil, action: "a1", identifiers: ["FS-USER-ID": "v1"], data: [:])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": manager.vuid])
+        
+        try? manager.sendEvent(type: nil, action: "a1", identifiers: ["email": "e1", "FS-USER-ID": "v1"], data: [:])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["email": "e1", "fs_user_id": "v1", "vuid": manager.vuid])
+    }
 
     // MARK: - updateConfig
     

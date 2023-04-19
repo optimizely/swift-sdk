@@ -7,7 +7,7 @@ env:
 
 jobs:
   unittests:
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       fail-fast: false
       matrix:
@@ -16,42 +16,43 @@ jobs:
         # - each xcode version has own simulator os versions.
         # - so to run tests with the target simulator, we have to find a proper xcode version pre-installed and support the target simulator os version.
         #   also, the xcode version (simulator_xcode_version) and simulator os versions (os) are moving target. We have to change these time to time.
+        # - see "https://github.com/actions/runner-images/blob/main/images/macos/macos-11-Readme.md" for installed macOS, xcode and simulator versions.
         include:
-          - os: 15.2
-            device: "iPhone 11"
+          - os: 16.1
+            device: "iPhone 12"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 13.2
-          - os: 14.4
-            device: "iPhone 8"
+            simulator_xcode_version: 14.1
+          - os: 15.5
+            device: "iPhone 12"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 12.4
-          - os: 13.7
+            simulator_xcode_version: 13.4.1
+          - os: 15.5
             # good to have tests with older OS versions, but it looks like this is min OS+xcode versions supported by github actions
-            device: "iPad Air (3rd generation)"
+            device: "iPad Air (4th generation)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 11.7
-          - os: 13.4
-            device: "Apple TV 4K"
+            simulator_xcode_version: 13.4.1
+          - os: 16.1
+            device: "Apple TV"
             scheme: "OptimizelySwiftSDK-tvOS"
             test_sdk: "appletvsimulator"
             platform: "tvOS Simulator"
             os_type: "tvOS"
-            simulator_xcode_version: 11.7
+            simulator_xcode_version: 14.1
     steps:
       - uses: actions/checkout@v3
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           # macos version and supported simulator_xcode_versions are all related to this xcode_version, so be careful when you upgrade this.
-          xcode-version: 12.4
+          xcode-version: 14.1
       - name: set SDK Branch if PR
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -71,16 +72,16 @@ jobs:
           NAME: ${{ matrix.device }}
         run: |
           gem install coveralls-lcov
-          gem install cocoapods -v '1.9.3'
+          gem install cocoapods -v '1.11.3'
           pod repo update
           pod install
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
 
           # github actions are very poor in supporting iOS simulators:
           # - to find pre-installed xcode version, run this:
-          # > ls /Applications/
+          ##ls /Applications/
           # - to find supported simulator os versions, run this (and find simulator with non-error "datapath")
-          # > xcrun simctl list --json devices
+          ##xcrun simctl list --json devices
 
           # switch to the target xcode version
           sudo xcode-select -switch /Applications/Xcode_$SIMULATOR_XCODE_VERSION.app

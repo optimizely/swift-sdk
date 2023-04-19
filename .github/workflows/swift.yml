@@ -47,7 +47,8 @@ jobs:
 
   unittests: 
     if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
-    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
+    ##uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
+    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@jae/empty-odp-action
 
   prepare_for_release:
     runs-on: macos-12

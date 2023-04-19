@@ -51,6 +51,7 @@ extension OptimizelyClient {
     ///   - eventDispatcher: custom EventDispatcher (optional)
     ///   - datafileHandler: custom datafile handler (optional)
     ///   - userProfileService: custom UserProfileService (optional)
+    ///   - odpManager: custom OdpManager (optional)
     ///   - periodicDownloadInterval: interval in secs for periodic background datafile download.
     ///         The recommended value is 10 * 60 secs (you can also set this to nil to use the recommended value).
     ///         Set this to 0 to disable periodic downloading.

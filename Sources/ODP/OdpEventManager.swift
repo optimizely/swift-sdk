@@ -101,6 +101,7 @@ open class OdpEventManager {
     
     // MARK: - dispatch
     
+    // open for FSC testing support
     open func dispatch(_ event: OdpEvent) {
         if eventQueue.count < maxQueueSize {
             eventQueue.save(item: event)

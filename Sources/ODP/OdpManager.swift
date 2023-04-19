@@ -116,17 +116,35 @@ public class OdpManager {
     ///   - identifiers: a dictionary for identifiers.
     ///   - data: a dictionary for associated data. The default event data will be added to this data before sending to the ODP server.
     /// - Throws: `OptimizelyError` if error is detected
-    func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any?]) throws {
+    func sendEvent(type: String?, action: String, identifiers: [String: String], data: [String: Any?]) throws {
         guard enabled else { throw OptimizelyError.odpNotEnabled }
         guard odpConfig.eventQueueingAllowed else { throw OptimizelyError.odpNotIntegrated }
         guard eventManager.isDataValidType(data) else { throw OptimizelyError.odpInvalidData }
+
+        if action.isEmpty { throw OptimizelyError.odpInvalidAction }
         
-        var identifiersWithVuid = identifiers
+        let typeUpdated = (type ?? "").isEmpty ? Constants.ODP.eventType : type!
+        
+        // add vuid to all events by default
+        
+        var identifiersUpdated = identifiers
         if identifiers[Constants.ODP.keyForVuid] == nil {
-            identifiersWithVuid[Constants.ODP.keyForVuid] = vuidManager.vuid
+            identifiersUpdated[Constants.ODP.keyForVuid] = vuidManager.vuid
         }
         
-        eventManager.sendEvent(type: type, action: action, identifiers: identifiersWithVuid, data: data)
+        // replace aliases (fs-user-id, FS_USER_ID, FS-USER-ID) with "fs_user_id".
+        
+        for (idKey, idValue) in identifiersUpdated {
+            if idKey == Constants.ODP.keyForUserId { break }
+            
+            if [Constants.ODP.keyForUserId, Constants.ODP.keyForUserIdAlias].contains(idKey.lowercased()) {
+                identifiersUpdated.removeValue(forKey: idKey)
+                identifiersUpdated[Constants.ODP.keyForUserId] = idValue
+                break
+            }
+        }
+        
+        eventManager.sendEvent(type: typeUpdated, action: action, identifiers: identifiersUpdated, data: data)
     }
     
     func updateOdpConfig(apiKey: String?, apiHost: String?, segmentsToCheck: [String]) {

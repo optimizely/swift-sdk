@@ -26,6 +26,7 @@ struct Constants {
     struct ODP {
         static let keyForVuid = "vuid"
         static let keyForUserId = "fs_user_id"
+        static let keyForUserIdAlias = "fs-user-id"   // reserved (auto-converted to "fs_user_id")
         static let eventType = "fullstack"
     }
     

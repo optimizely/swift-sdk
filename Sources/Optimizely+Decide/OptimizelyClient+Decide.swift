@@ -44,8 +44,7 @@ extension OptimizelyClient {
         return createUserContext(userId: userId,
                                  attributes: (attributes ?? [:]) as [String: Any])
     }
-    
-    
+        
     /// Create a user context to be used internally without sending an ODP identify event.
     ///
     /// - Parameters:

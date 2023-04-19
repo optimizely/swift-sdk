@@ -207,6 +207,13 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         let config = URLSessionConfiguration.ephemeral
         return URLSession(configuration: config)
     }
+    
+    // MARK: - Tests
+
+    open func close() {
+        self.flushEvents()
+        self.queueLock.sync {}
+    }
 
 }
 
@@ -256,13 +263,6 @@ extension DefaultEventDispatcher {
             timer.invalidate()
         }
         timer.property = nil
-    }
-    
-    // MARK: - Tests
-
-    open func close() {
-        self.flushEvents()
-        self.queueLock.sync {}
     }
     
 }

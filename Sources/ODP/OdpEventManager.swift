@@ -23,9 +23,11 @@ open class OdpEventManager {
 
     var maxQueueSize = 100
     let maxBatchEvents = 10
+    let maxFailureCount = 3
     let queueLock: DispatchQueue
     let eventQueue: DataStoreQueueStackImpl<OdpEvent>
     
+    let reachability = NetworkReachability(maxContiguousFails: 1)
     let logger = OPTLoggerFactory.getLogger()
     
     /// OdpEventManager init
@@ -124,6 +126,12 @@ open class OdpEventManager {
             return
         }
         
+        // check if network is down to avoid that all existing events in the queue get discarded when network is down
+        if reachability.shouldBlockNetworkAccess() {
+            logger.e(.eventDispatchFailed("NetworkReachability down for ODP events"))
+            return
+        }
+        
         queueLock.async {
             func removeStoredEvents(num: Int) {
                 if let removedItem = self.eventQueue.removeFirstItems(count: num), removedItem.count > 0 {
@@ -137,6 +145,7 @@ open class OdpEventManager {
             // sync group used to ensure that the sendEvent is synchronous.
             // used in flushEvents
             let sync = DispatchGroup()
+            var failureCount = 0
             
             while let events: [OdpEvent] = self.eventQueue.getFirstItems(count: self.maxBatchEvents) {
                 let numEvents = events.count
@@ -151,31 +160,36 @@ open class OdpEventManager {
                 self.apiMgr.sendOdpEvents(apiKey: odpApiKey,
                                           apiHost: odpApiHost,
                                           events: events) { error in
+                    if let error = error {
+                        self.logger.e(error.reason)
+                    }
+
                     odpError = error
                     sync.leave()  // our send is done.
                 }
                 sync.wait()  // wait for send completed
                 
-                if let error = odpError {
-                    self.logger.e(error.reason)
+                // retry only for recoverable errors (connection failures or 5xx server errors)
+                if let error = odpError, case .odpEventFailed(_, let canRetry) = error, canRetry {
+                    failureCount += 1
                     
-                    // retry only if needed (non-permanent)
-                    if case .odpEventFailed(_, let canRetry) = error {
-                        if canRetry {
-                            // keep the failed event queue so it can be re-sent later
-                            break
-                        } else {
-                            // permanent errors (400 response or invalid events, etc)
-                            // discard these events so that they do not block following valid events
-                        }
+                    if failureCount >= self.maxFailureCount {
+                        self.logger.e(.odpEventSendRetyFailed(failureCount))
+                        failureCount = 0
                     }
+                } else { // success or non-recoverable errors
+                    failureCount = 0
+                }
+                                
+                if failureCount == 0 {
+                    removeStoredEvents(num: numEvents)
                 }
                 
-                removeStoredEvents(num: numEvents)
+                self.reachability.updateNumContiguousFails(isError: odpError != nil)
             }
         }
     }
-    
+        
     func reset() {
         _ = eventQueue.removeFirstItems(count: self.maxQueueSize)
     }

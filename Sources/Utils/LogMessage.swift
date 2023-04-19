@@ -63,6 +63,7 @@ enum LogMessage {
     case unrecognizedAttribute(_ key: String)
     case eventBatchFailed
     case eventSendRetyFailed(_ count: Int)
+    case odpEventSendRetyFailed(_ count: Int)
     case failedToConvertMapToString
     case failedToAssignValue
     case valueForKeyNotFound(_ key: String)
@@ -123,8 +124,9 @@ extension LogMessage: CustomStringConvertible {
         case .unrecognizedAttribute(let key):                                   message = "Unrecognized attribute (\(key)) provided. Pruning before sending event to Optimizely."
         case .eventBatchFailed:                                                 message = "Failed to batch events"
         case .eventSendRetyFailed(let count):                                   message = "Event dispatch retries failed (\(count)) times"
+        case .odpEventSendRetyFailed(let count):                                message = "ODP event dispatch retries failed (\(count)) times"
         case .failedToConvertMapToString:                                       message = "Provided map could not be converted to string."
-        case .failedToAssignValue:                                      message = "Value for path could not be assigned to provided type."
+        case .failedToAssignValue:                                              message = "Value for path could not be assigned to provided type."
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
         }
         

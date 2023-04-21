@@ -264,6 +264,11 @@ class SamplesForAPI {
     // MARK: - AudienceSegments
     
     static func checkAudienceSegments(optimizely: OptimizelyClient) {
+        blockingFetchSegments()
+        nonBlockingFetchSegments()
+    }
+    
+    static func blockingFetchSegments() {
         // override the default handler if cache size and timeout need to be customized
         let optimizely = OptimizelyClient(sdkKey: "VivZyCGPHY369D4z8T9yG",    // odp-test
                                           periodicDownloadInterval: 60,
@@ -275,15 +280,44 @@ class SamplesForAPI {
             }
             
             let user = optimizely.createUserContext(userId: "user_123", attributes: ["location": "NY"])
-            user.fetchQualifiedSegments(options: [.ignoreCache]) { _, error in
-                guard error == nil else {
-                    print("[AudienceSegments] \(error!.errorDescription!)")
-                    return
-                }
             
+            do {
+                // this will block the calling thread until fetch is completed.
+                try user.fetchQualifiedSegments(options: [.ignoreCache])
+                
                 let decision = user.decide(key: "show_coupon", options: [.includeReasons])
                 print("[AudienceSegments] decision: \(decision)")
+            } catch OptimizelyError.invalidSegmentIdentifier {
+                print("[AudienceSegments] audience segments fetch failed (user id  is not registered yet or invalid)")
+            } catch {
+                print("[AudienceSegments] \(error)")
             }
+        }
+    }
+    
+    static func nonBlockingFetchSegments() {
+        // override the default handler if cache size and timeout need to be customized
+        let optimizely = OptimizelyClient(sdkKey: "VivZyCGPHY369D4z8T9yG",    // odp-test
+                                          periodicDownloadInterval: 60,
+                                          defaultLogLevel: .debug)
+        
+        guard let localDatafileUrl = Bundle.main.url(forResource: "demoTestDatafile", withExtension: "json"),
+            let localDatafile = try? Data(contentsOf: localDatafileUrl)
+        else {
+            fatalError("Local datafile cannot be found")
+        }
+
+        try? optimizely.start(datafile: localDatafile)
+            
+        let user = optimizely.createUserContext(userId: "user_123", attributes: ["location": "NY"])
+        user.fetchQualifiedSegments(options: [.ignoreCache]) { error in
+            guard error == nil else {
+                print("[AudienceSegments] \(error!)")
+                return
+            }
+            
+            let decision = user.decide(key: "show_coupon", options: [.includeReasons])
+            print("[AudienceSegments] decision: \(decision)")
         }
     }
     

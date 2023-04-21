@@ -70,6 +70,12 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         user.qualifiedSegments = []
         XCTAssertFalse(user.isQualifiedFor(segment: "a"))
     }
+    
+}
+
+// MARK: - fetchQualifiedSegments (non-blocking)
+
+extension OptimizelyUserContextTests_ODP {
         
     // MARK: - Success
     
@@ -78,10 +84,9 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         user = optimizely.createUserContext(userId: kUserId)
 
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments { segments, error in
+        user.fetchQualifiedSegments { error in
             XCTAssertNil(error)
-            XCTAssertEqual(["odp-segment-1"], segments)
-            XCTAssertEqual(self.user.qualifiedSegments, segments)
+            XCTAssertEqual(self.user.qualifiedSegments, ["odp-segment-1"])
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -95,9 +100,8 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         user.qualifiedSegments = ["dummy"]
         
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments { segments, error in
+        user.fetchQualifiedSegments { error in
             XCTAssertEqual(OptimizelyError.sdkNotReady.reason, error?.reason)
-            XCTAssertNil(segments)
             XCTAssertNil(self.user.qualifiedSegments)
             sem.signal()
         }
@@ -111,9 +115,8 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         // ODP apiKey is not available
                 
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments { segments, error in
+        user.fetchQualifiedSegments { error in
             XCTAssertNotNil(error)
-            XCTAssertNil(segments)
             XCTAssertNil(self.user.qualifiedSegments)
             sem.signal()
         }
@@ -127,7 +130,7 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         user = optimizely.createUserContext(userId: kUserId)
 
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments { _, _ in
+        user.fetchQualifiedSegments { _ in
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -141,14 +144,66 @@ class OptimizelyUserContextTests_ODP: XCTestCase {
         user = optimizely.createUserContext(userId: kUserId)
 
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments { segments, error in
+        user.fetchQualifiedSegments { error in
             XCTAssertNil(error)
-            XCTAssertEqual(segments, [])
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
     }
         
+}
+
+// MARK: - fetchQualifiedSegments (blocking)
+
+extension OptimizelyUserContextTests_ODP {
+        
+    // MARK: - Success
+    
+    func testFetchQualifiedSegments_blocking_successDefaultUser() {
+        try? optimizely.start(datafile: datafile)
+        user = optimizely.createUserContext(userId: kUserId)
+
+        do {
+            try user.fetchQualifiedSegments()
+            XCTAssertEqual(user.qualifiedSegments, ["odp-segment-1"])
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    // MARK: - Failure
+    
+    func testFetchQualifiedSegments_blocking_sdkNotReady() {
+        user = optimizely.createUserContext(userId: kUserId)
+        user.optimizely = nil
+        user.qualifiedSegments = ["dummy"]
+        
+        do {
+            try user.fetchQualifiedSegments()
+            XCTFail("expected to fail")
+        } catch OptimizelyError.sdkNotReady {
+            XCTAssertNil(user.qualifiedSegments)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testFetchQualifiedSegments_blocking_fetchFailed() {
+        user = optimizely.createUserContext(userId: kUserId)
+        user.qualifiedSegments = ["dummy"]
+
+        // ODP apiKey is not available
+          
+        do {
+            try user.fetchQualifiedSegments()
+            XCTFail("expected to fail")
+        } catch OptimizelyError.fetchSegmentsFailed {
+            XCTAssertNil(self.user.qualifiedSegments)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+            
 }
 
 // MARK: - Optional parameters
@@ -160,9 +215,9 @@ extension OptimizelyUserContextTests_ODP {
         user = optimizely.createUserContext(userId: kUserId)
 
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments(options: [.ignoreCache]) { segments, error in
+        user.fetchQualifiedSegments(options: [.ignoreCache]) { error in
             XCTAssertNil(error)
-            XCTAssertEqual(segments, ["odp-segment-1"])
+            XCTAssertEqual(self.user.qualifiedSegments, ["odp-segment-1"])
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(3)))
@@ -212,9 +267,9 @@ extension OptimizelyUserContextTests_ODP {
         let user = optimizely.createUserContext(userId: testOdpUserId)
         
         let sem = DispatchSemaphore(value: 0)
-        user.fetchQualifiedSegments { segments, error in
+        user.fetchQualifiedSegments { error in
             XCTAssertNil(error)
-            XCTAssertEqual([], segments, "none of the test segments in the live ODP server")
+            XCTAssertEqual([], user.qualifiedSegments, "none of the test segments in the live ODP server")
             sem.signal()
         }
         XCTAssertEqual(.success, sem.wait(timeout: .now() + .seconds(30)))

@@ -181,7 +181,7 @@ public class OptimizelyUserContext {
 
 extension OptimizelyUserContext {
     
-    /// Fetch all qualified segments for the user context.
+    /// Fetch (non-blocking) all qualified segments for the user context.
     ///
     /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
     /// On failure, **qualifiedSegments** will be nil and one of these errors will be returned:
@@ -190,14 +190,14 @@ extension OptimizelyUserContext {
     ///
     /// - Parameters:
     ///   - options: A set of options for fetching qualified segments (optional).
-    ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a non-nil segments array (can be empty) with a nil error. On failure, it'll pass a non-nil error with a nil segments array.
+    ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a nil error. On failure, it'll pass a non-nil error .
     public func fetchQualifiedSegments(options: [OptimizelySegmentOption] = [],
-                                       completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
+                                       completionHandler: @escaping (OptimizelyError?) -> Void) {
         // on failure, qualifiedSegments should be reset if a previous value exists.
         self.atomicQualifiedSegments.property = nil
 
         guard let optimizely = self.optimizely else {
-            completionHandler(nil, .sdkNotReady)
+            completionHandler(.sdkNotReady)
             return
         }
         
@@ -205,13 +205,36 @@ extension OptimizelyUserContext {
             guard err == nil, let segments = segments else {
                 let error = err ?? OptimizelyError.fetchSegmentsFailed("invalid segments")
                 self.logger.e(error)
-                completionHandler(nil, error)
+                completionHandler(error)
                 return
             }
                 
             self.atomicQualifiedSegments.property = segments
-            completionHandler(segments, nil)
+            completionHandler(nil)
         }
+    }
+    
+    /// Fetch (blocking) all qualified segments for the user context.
+    ///
+    /// Note that this call will block the calling thread until fetching is completed.
+    /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
+    /// On failure, **qualifiedSegments** will be nil and one of these errors will be thrown:
+    /// - OptimizelyError.invalidSegmentIdentifier
+    /// - OptimizelyError.fetchSegmentsFailed(String)
+    ///
+    /// - Parameters:
+    ///   - options: A set of options for fetching qualified segments (optional).
+    public func fetchQualifiedSegments(options: [OptimizelySegmentOption] = []) throws {
+        var error: OptimizelyError?
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        fetchQualifiedSegments(options: options) { asyncError in
+            error = asyncError
+            semaphore.signal()
+        }
+        semaphore.wait()
+        
+        if let err = error { throw err }
     }
     
     /// Check if the user is qualified for the given segment.

@@ -85,7 +85,8 @@ import Foundation
          "customer"
        ],
        "extensions": {
-         "classification": "InvalidIdentifierException"
+            "code": "INVALID_IDENTIFIER_EXCEPTION",
+            "classification": "DataFetchingException"
        }
      }
    ],
@@ -162,7 +163,7 @@ open class OdpSegmentApiManager {
             // most meaningful ODP errors are returned in 200 success JSON under {"errors": ...}
             if let odpErrors: [[String: Any]] = dict.extractComponent(keyPath: "errors") {
                 if let odpError = odpErrors.first, let errorClass: String = odpError.extractComponent(keyPath: "extensions.classification") {
-                    if errorClass == "InvalidIdentifierException" {
+                    if let errorCode: String = odpError.extractComponent(keyPath: "extensions.code"), errorCode == "INVALID_IDENTIFIER_EXCEPTION" {
                         returnError = .invalidSegmentIdentifier
                     } else {
                         returnError = .fetchSegmentsFailed(errorClass)

@@ -435,7 +435,8 @@ extension OdpSegmentApiManagerTests {
             "customer"
           ],
           "extensions": {
-            "classification": "InvalidIdentifierException"
+            "code": "INVALID_IDENTIFIER_EXCEPTION",
+            "classification": "DataFetchingException"
           }
         }
       ],

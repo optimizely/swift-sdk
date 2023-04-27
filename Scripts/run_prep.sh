@@ -20,12 +20,6 @@ function prep_workspace {
   mkdir -p ${MYREPO}
   git clone -b ${BRANCH} https://${GITHUB_TOKEN}@github.com/${REPO_SLUG} ${MYREPO}
   cd ${MYREPO}
-
-
-  pwd
-  echo ${HOME}
-  HOME=$(pwd)
-
   git checkout -b ${AUTOBRANCH}
 }
 
@@ -46,10 +40,12 @@ function do_stuff {
   trap 'error_handler' ERR
 
   # we need pod install or test_all.sh fails
-
-  gem install cocoapods -v '1.11.3'
-  pod _1.11.3_ repo update
-  pod _1.11.3_ install
+ 
+  # cocoapods requires ENV['HOME'] with absolute path
+  HOME=$(pwd)
+  gem install cocoapods -v $COCOAPODS_VERSION
+  pod _${COCOAPODS_VERSION}_ repo update
+  pod _${COCOAPODS_VERSION}_ install
 
   myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
   for i in "${myscripts[@]}"; do

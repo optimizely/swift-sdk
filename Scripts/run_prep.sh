@@ -40,8 +40,10 @@ function do_stuff {
   trap 'error_handler' ERR
 
   # we need pod install or test_all.sh fails
-  pod repo update
-  pod install
+
+  #gem install cocoapods -v '1.11.3'
+  pod _1.9.3_ repo update
+  pod _1.9.3_ install
 
   myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
   for i in "${myscripts[@]}"; do

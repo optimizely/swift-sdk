@@ -3,13 +3,13 @@
 ## 4.0.0-beta
 April 27, 2023
 
+### New Features  
+
 The 4.0.0-beta release introduces a new primary feature, [Advanced Audience Targeting]( https://docs.developers.optimizely.com/feature-experimentation/docs/optimizely-data-platform-advanced-audience-targeting) enabled through integration with [Optimizely Data Platform (ODP)](https://docs.developers.optimizely.com/optimizely-data-platform/docs) ([#455](https://github.com/optimizely/swift-sdk/pull/455), [#470](https://github.com/optimizely/swift-sdk/pull/470), [#471](https://github.com/optimizely/swift-sdk/pull/471), [#477](https://github.com/optimizely/swift-sdk/pull/477)). 
 
 You can use ODP, a high-performance [Customer Data Platform (CDP)]( https://www.optimizely.com/optimization-glossary/customer-data-platform/), to easily create complex real-time segments (RTS) using first-party and 50+ third-party data sources out of the box. You can create custom schemas that support the user attributes important for your business, and stitch together user behavior done on different devices to better understand and target your customers for personalized user experiences. ODP can be used as a single source of truth for these segments in any Optimizely or 3rd party tool.  
 
 With ODP accounts integrated into Optimizely projects, you can build audiences using segments pre-defined in ODP. The SDK will fetch the segments for given users and make decisions using the segments. For access to ODP audience targeting in your Feature Experimentation account, please contact your Customer Success Manager. 
-
-### New Features  
 
 This version includes the following changes: 
 
@@ -17,7 +17,7 @@ This version includes the following changes:
 
 	- `fetchQualifiedSegments()`: this API will retrieve user segments from the ODP server. The fetched segments will be used for audience evaluation. The fetched data will be stored in the local cache to avoid repeated network delays. 
 
-	- When an OptimizelyUserContext is created, the SDK will automatically send an identify request to the ODP server to facilitate observing user activities. 
+	- When an `OptimizelyUserContext` is created, the SDK will automatically send an identify request to the ODP server to facilitate observing user activities. 
 
 * New APIs added to `OptimizelyClient`: 
 
@@ -41,7 +41,7 @@ For details, refer to our documentation pages:
 
 ### Breaking Changes 
 
-* ODPManager in the SDK is enabled by default. Unless an ODP account is integrated into the Optimizely projects, most ODPManager functions will be ignored. If needed, ODPManager can be disabled when `OptimizelyClient` is instantiated. 
+* `ODPManager` in the SDK is enabled by default. Unless an ODP account is integrated into the Optimizely projects, most `ODPManager` functions will be ignored. If needed, `ODPManager` can be disabled when `OptimizelyClient` is instantiated. 
 
  
 

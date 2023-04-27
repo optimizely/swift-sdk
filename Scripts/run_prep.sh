@@ -47,7 +47,7 @@ function do_stuff {
 
   # we need pod install or test_all.sh fails
 
-  #gem install cocoapods -v '1.11.3'
+  gem install cocoapods -v '1.11.3'
   pod _1.11.3_ repo update
   pod _1.11.3_ install
 

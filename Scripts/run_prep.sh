@@ -20,6 +20,9 @@ function prep_workspace {
   mkdir -p ${MYREPO}
   git clone -b ${BRANCH} https://${GITHUB_TOKEN}@github.com/${REPO_SLUG} ${MYREPO}
   cd ${MYREPO}
+  pwd
+  echo ${HOME}
+  
   git checkout -b ${AUTOBRANCH}
 }
 

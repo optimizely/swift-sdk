@@ -82,7 +82,7 @@ ${TITLE}
 END
 )
 
-  git commit -m ${TITLE} ||
+  git commit -m "${TITLE}" ||
     {
       case $? in
         1 )

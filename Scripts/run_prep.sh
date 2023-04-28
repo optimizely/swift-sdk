@@ -71,15 +71,16 @@ function push_changes {
   git config user.email "optibot@users.noreply.github.com"
   git config user.name "${GITHUB_USER}"
   git add --all
-  
+
   TITLE="ci(git-action): auto release prep for $VERSION"
-  # a dummy ref (FSSDK-N/A) for required FSSDK checking
-  MESSAGE=$(cat <<-END
-    ${TITLE}\n
-    \n
-    - [FSSDK-N/A]
-  END
-  )
+  # an empty line required between title and description
+  # a dummy ref (FSSDK-N/A) for required FSSDK checking 
+  MESSAGE=$(cat <<END
+${TITLE}
+
+- [FSSDK-N/A]
+END
+)
 
   git commit -m ${TITLE} ||
     {

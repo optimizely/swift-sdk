@@ -86,7 +86,8 @@ function push_changes {
       esac
     }
   git push -f https://${GITHUB_TOKEN}@github.com/${REPO_SLUG} ${AUTOBRANCH}
-  PR_URL=$(hub pull-request --no-edit -b ${BRANCH} -h ${AUTOBRANCH}) 
+  MESSAGE='[FSSDK-N/A]'  # a dummy ref for required FSSDK checking
+  PR_URL=$(hub pull-request --no-edit -b ${BRANCH} -h ${AUTOBRANCH} -F ${MESSAGE}) 
   echo -e "${COLOR_CYAN}ATTENTION:${COLOR_RESET} review and merge ${COLOR_CYAN}${PR_URL}${COLOR_RESET}"
   echo "then to release to cocoapods use Git action's Trigger build with the following payload:"
   echo -e "${COLOR_MAGENTA}env:${COLOR_RESET}"

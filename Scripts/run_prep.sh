@@ -11,7 +11,7 @@ COLOR_RESET='\033[0m'
 COLOR_MAGENTA='\033[0;35m'
 COLOR_CYAN='\033[0;36m'
 MYREPO=${HOME}/workdir/${REPO_SLUG}
-AUTOBRANCH=${GITHUB_USER}/prepareRelease${VERSION}
+AUTOBRANCH=${GITHUB_USER}/prepareRelease-11${VERSION}
 BUILD_OUTPUT=/tmp/build.out
 touch $BUILD_OUTPUT
 
@@ -41,13 +41,21 @@ function do_stuff {
 
   # we need pod install or test_all.sh fails
  
-  # cocoapods requires ENV['HOME'] with absolute path
-  HOME=$(pwd)
-  gem install cocoapods -v $COCOAPODS_VERSION
-  pod _${COCOAPODS_VERSION}_ repo update
-  pod _${COCOAPODS_VERSION}_ install
+  # we skip "test_all.sh" until we have a good reason to repeat it heere
+  # 1. this test takes long and also flaky tests can interrupt release process
+  # 2. this "test_all.sh" is supposed to pass before starting pre-release
+  # 3. prep auto PRs will be tested in CI/CD before starting release process.
 
-  myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
+  # - cocoapods requires ENV['HOME'] with absolute path
+  #
+  # HOME=$(pwd)
+  # gem install cocoapods -v $COCOAPODS_VERSION
+  # pod _${COCOAPODS_VERSION}_ repo update
+  # pod _${COCOAPODS_VERSION}_ install
+  #
+  # myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
+  myscripts=( "update_version.sh ${VERSION}" "build_all.sh" )
+
   for i in "${myscripts[@]}"; do
     echo -n "${i} "
     echo "===== ${i} =====" >> $BUILD_OUTPUT

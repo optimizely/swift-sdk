@@ -74,11 +74,11 @@ function push_changes {
 
   TITLE="ci(git-action): auto release prep for $VERSION"
   # an empty line required between title and description
-  # a dummy ref (FSSDK-N/A) for required FSSDK checking 
+  # a dummy ref (FSSDK-1234) for required FSSDK checking 
   MESSAGE=$(cat <<END
 ${TITLE}
 
-- [FSSDK-N/A]
+- [FSSDK-1234]
 END
 )
 

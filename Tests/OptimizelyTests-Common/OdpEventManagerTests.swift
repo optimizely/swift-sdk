@@ -29,6 +29,7 @@ class OdpEventManagerTests: XCTestCase {
     let customData: [String: Any] = ["key-1": "value-1",
                                      "key-2": 12.5,
                                      "model": "overruled"]
+    var originalMaxQueueSize = 0
 
     override func setUp() {
         OTUtils.clearAllEventQueues()
@@ -40,10 +41,12 @@ class OdpEventManagerTests: XCTestCase {
         manager = OdpEventManager(sdkKey: "any",
                                   apiManager: apiManager)
         manager.odpConfig = odpConfig
+        originalMaxQueueSize = manager.maxQueueSize
     }
     
     override func tearDown() {
         OTUtils.clearAllEventQueues()
+        manager.maxQueueSize = originalMaxQueueSize
     }
     
     // MARK: - save and restore events

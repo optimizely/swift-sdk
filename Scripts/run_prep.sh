@@ -77,7 +77,7 @@ function push_changes {
           ;;
       esac
     }
-  git push https://${GITHUB_TOKEN}@github.com/${REPO_SLUG} ${AUTOBRANCH}
+  git push -f https://${GITHUB_TOKEN}@github.com/${REPO_SLUG} ${AUTOBRANCH}
   PR_URL=$(hub pull-request --no-edit -b ${BRANCH})
   echo -e "${COLOR_CYAN}ATTENTION:${COLOR_RESET} review and merge ${COLOR_CYAN}${PR_URL}${COLOR_RESET}"
   echo "then to release to cocoapods use Git action's Trigger build with the following payload:"

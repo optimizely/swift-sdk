@@ -11,7 +11,7 @@ COLOR_RESET='\033[0m'
 COLOR_MAGENTA='\033[0;35m'
 COLOR_CYAN='\033[0;36m'
 MYREPO=${HOME}/workdir/${REPO_SLUG}
-AUTOBRANCH=${GITHUB_USER}/prepareRelease-11${VERSION}
+AUTOBRANCH=${GITHUB_USER}/prepareRelease${VERSION}
 BUILD_OUTPUT=/tmp/build.out
 touch $BUILD_OUTPUT
 
@@ -86,7 +86,7 @@ function push_changes {
       esac
     }
   git push -f https://${GITHUB_TOKEN}@github.com/${REPO_SLUG} ${AUTOBRANCH}
-  PR_URL=$(hub pull-request --no-edit -b ${BRANCH})
+  PR_URL=$(hub pull-request --no-edit -b ${BRANCH} -h ${AUTOBRANCH}) 
   echo -e "${COLOR_CYAN}ATTENTION:${COLOR_RESET} review and merge ${COLOR_CYAN}${PR_URL}${COLOR_RESET}"
   echo "then to release to cocoapods use Git action's Trigger build with the following payload:"
   echo -e "${COLOR_MAGENTA}env:${COLOR_RESET}"

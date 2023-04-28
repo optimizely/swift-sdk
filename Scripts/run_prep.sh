@@ -40,8 +40,12 @@ function do_stuff {
   trap 'error_handler' ERR
 
   # we need pod install or test_all.sh fails
-  pod repo update
-  pod install
+ 
+  # cocoapods requires ENV['HOME'] with absolute path
+  HOME=$(pwd)
+  gem install cocoapods -v $COCOAPODS_VERSION
+  pod _${COCOAPODS_VERSION}_ repo update
+  pod _${COCOAPODS_VERSION}_ install
 
   myscripts=( "update_version.sh ${VERSION}" "build_all.sh" "test_all.sh" )
   for i in "${myscripts[@]}"; do

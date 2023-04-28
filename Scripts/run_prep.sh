@@ -71,8 +71,17 @@ function push_changes {
   git config user.email "optibot@users.noreply.github.com"
   git config user.name "${GITHUB_USER}"
   git add --all
-  # this is like a try/catch
-  git commit -m "ci(git-action): auto release prep for $VERSION" ||
+  
+  TITLE="ci(git-action): auto release prep for $VERSION"
+  # a dummy ref (FSSDK-N/A) for required FSSDK checking
+  MESSAGE=$(cat <<-END
+    ${TITLE}\n
+    \n
+    - [FSSDK-N/A]
+  END
+  )
+
+  git commit -m ${TITLE} ||
     {
       case $? in
         1 )
@@ -86,8 +95,8 @@ function push_changes {
       esac
     }
   git push -f https://${GITHUB_TOKEN}@github.com/${REPO_SLUG} ${AUTOBRANCH}
-  MESSAGE='[FSSDK-N/A]'  # a dummy ref for required FSSDK checking
-  PR_URL=$(hub pull-request --no-edit -b ${BRANCH} -h ${AUTOBRANCH} -m "${MESSAGE}") 
+
+  PR_URL=$(hub pull-request -b ${BRANCH} -h ${AUTOBRANCH} -m "${MESSAGE}") 
   echo -e "${COLOR_CYAN}ATTENTION:${COLOR_RESET} review and merge ${COLOR_CYAN}${PR_URL}${COLOR_RESET}"
   echo "then to release to cocoapods use Git action's Trigger build with the following payload:"
   echo -e "${COLOR_MAGENTA}env:${COLOR_RESET}"

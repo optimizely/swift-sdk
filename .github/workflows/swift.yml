@@ -46,8 +46,7 @@ jobs:
         curl -sSL https://download.sourceclear.com/ci.sh | bash
 
   unittests: 
-    # can skip for release but run for pre-release (validate upgraded version, etc.)
-    if: "${{ github.event.inputs.RELEASE == '' }}" 
+    if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
     uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
 
   prepare_for_release:

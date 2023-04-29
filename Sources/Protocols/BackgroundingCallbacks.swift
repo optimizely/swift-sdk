@@ -17,7 +17,9 @@
 import Foundation
 #if os(macOS)
 import Cocoa
-#else // iOS, tvOS
+#elseif os(watchOS)
+import WatchKit
+#else
 import UIKit
 #endif
 

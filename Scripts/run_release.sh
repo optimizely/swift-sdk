@@ -8,6 +8,12 @@ set -e
 # COCOAPODS_TRUNK_TOKEN - should be defined in job settings so that we can `pod trunk push`
 
 function release_github {
+  LAST_RELEASE=$(git describe --abbrev=0 --tags)
+  if [[ ${LAST_RELEASE} == "v${VERSION}" ]]; then
+    echo "${LAST_RELEASE} tag exists already (probably created while in the current release process). Skipping..."
+    return
+  fi
+
   CHANGELOG="CHANGELOG.md"
 
   # check that CHANGELOG.md has been updated
@@ -23,7 +29,6 @@ function release_github {
   DESCRIPTION=$(awk "/^${NEW_VERSION}$/,/^${LAST_VERSION:-nothingmatched}$/" ${CHANGELOG} | grep -v "^${LAST_VERSION:-nothingmatched}$")
 
   hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${BRANCH}"
-
 }
 
 function release_cocoapods {

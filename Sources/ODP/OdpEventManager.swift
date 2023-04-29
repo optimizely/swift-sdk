@@ -15,7 +15,6 @@
 //
 
 import Foundation
-import UIKit
 
 open class OdpEventManager {
     var odpConfig = OdpConfig()

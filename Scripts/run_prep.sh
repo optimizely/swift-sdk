@@ -7,10 +7,6 @@
 # Additionally, it needs the following environment variables:
 # VERSION - defined in swift.yml
 
-
-set -x
-
-
 COLOR_RESET='\033[0m'
 COLOR_MAGENTA='\033[0;35m'
 COLOR_CYAN='\033[0;36m'

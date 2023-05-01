@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+
+set -x
+
+
+
 # Because `hub` is used, this script expects the following environment variables:
 # GITHUB_TOKEN - github api token with repo permissions (display value in build log setting: OFF)
 # GITHUB_USER - github username that GITHUB_TOKEN is associated with (display value in build log setting: ON)
@@ -8,11 +13,15 @@ set -e
 # COCOAPODS_TRUNK_TOKEN - should be defined in job settings so that we can `pod trunk push`
 
 function release_github {
+  echo ">> ${VERSION}"
+
   LAST_RELEASE=$(git describe --abbrev=0 --tags)
   if [[ ${LAST_RELEASE} == "v${VERSION}" ]]; then
     echo "${LAST_RELEASE} tag exists already (probably created while in the current release process). Skipping..."
     return
   fi
+
+  echo ">>> ${LAST_RELEASE} :: ${VERSION}"
 
   CHANGELOG="CHANGELOG.md"
 

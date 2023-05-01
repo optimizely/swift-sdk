@@ -8,7 +8,7 @@ set -e
 # COCOAPODS_TRUNK_TOKEN - should be defined in job settings so that we can `pod trunk push`
 
 function release_github {
-  LAST_RELEASE=$(git describe --abbrev=0 --tags)
+  LAST_RELEASE=$(git describe --abbrev=0 --tags --always)
   if [[ ${LAST_RELEASE} == "v${VERSION}" ]]; then
     echo "${LAST_RELEASE} tag exists already (probably created while in the current release process). Skipping..."
     return

@@ -7,8 +7,18 @@ set -e
 
 # COCOAPODS_TRUNK_TOKEN - should be defined in job settings so that we can `pod trunk push`
 
+MYREPO=${HOME}/workdir/${REPO_SLUG}
+
+function prep_workspace {
+  rm -rf ${MYREPO}
+  mkdir -p ${MYREPO}
+  git clone -b ${BRANCH} https://${GITHUB_TOKEN}@github.com/${REPO_SLUG} ${MYREPO}
+  cd ${MYREPO}
+}
+
 function release_github {
-  LAST_RELEASE=$(git describe --abbrev=0 --tags --always)
+  LAST_RELEASE=$(git describe --abbrev=0 --tags)
+
   if [[ ${LAST_RELEASE} == "v${VERSION}" ]]; then
     echo "${LAST_RELEASE} tag exists already (probably created while in the current release process). Skipping..."
     return
@@ -32,6 +42,10 @@ function release_github {
 }
 
 function release_cocoapods {
+  
+  # - cocoapods requires ENV['HOME'] with absolute path
+  HOME=$(pwd)
+  gem install cocoapods -v $COCOAPODS_VERSION
 
   # ---- Optimizely's pods ----
   pods=(OptimizelySwiftSDK);
@@ -44,13 +58,14 @@ function release_cocoapods {
   do
     podname=${pods[i]};
     printf "Pushing the ${podname} pod to COCOAPODS.ORG .\n"
-    pod trunk push --allow-warnings ${podname}.podspec
-    pod update
+    pod _${COCOAPODS_VERSION}_ trunk push --allow-warnings ${podname}.podspec
+    pod _${COCOAPODS_VERSION}_ update
   done
 
 }
 
 function main {
+  prep_workspace
   release_github
   release_cocoapods
 }

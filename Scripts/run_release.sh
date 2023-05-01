@@ -42,6 +42,9 @@ function release_github {
 }
 
 function release_cocoapods {
+  
+  # - cocoapods requires ENV['HOME'] with absolute path
+  HOME=$(pwd)
   gem install cocoapods -v $COCOAPODS_VERSION
 
   # ---- Optimizely's pods ----

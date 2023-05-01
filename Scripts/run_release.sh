@@ -19,8 +19,6 @@ function prep_workspace {
 function release_github {
   LAST_RELEASE=$(git describe --abbrev=0 --tags)
 
-  echo ">>> $LAST_RELEASE :: $VERSION"
-
   if [[ ${LAST_RELEASE} == "v${VERSION}" ]]; then
     echo "${LAST_RELEASE} tag exists already (probably created while in the current release process). Skipping..."
     return
@@ -44,6 +42,7 @@ function release_github {
 }
 
 function release_cocoapods {
+  gem install cocoapods -v $COCOAPODS_VERSION
 
   # ---- Optimizely's pods ----
   pods=(OptimizelySwiftSDK);
@@ -56,8 +55,8 @@ function release_cocoapods {
   do
     podname=${pods[i]};
     printf "Pushing the ${podname} pod to COCOAPODS.ORG .\n"
-    pod trunk push --allow-warnings ${podname}.podspec
-    pod update
+    pod _${COCOAPODS_VERSION}_ trunk push --allow-warnings ${podname}.podspec
+    pod _${COCOAPODS_VERSION}_ update
   done
 
 }

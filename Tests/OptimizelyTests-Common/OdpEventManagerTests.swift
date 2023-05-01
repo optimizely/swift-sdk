@@ -559,8 +559,8 @@ class OdpEventManagerTests: XCTestCase {
         XCTAssert((data["idempotence_id"] as! String).count > 3)
         XCTAssert((data["data_source_type"] as! String) == "sdk")
         XCTAssert((data["data_source"] as! String) == "swift-sdk")
-        XCTAssert((data["data_source_version"] as! String).count > 3)
-        XCTAssert((data["os_version"] as! String).count > 3)
+        XCTAssert(Utils.isValidVersion(data["data_source_version"] as! String))
+        XCTAssert(Utils.isValidVersion(data["os_version"] as! String))
         
         // os-dependent
         

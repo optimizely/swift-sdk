@@ -1,7 +1,7 @@
 # Optimizely Swift SDK Changelog
 
 ## 4.0.0-beta
-April 28, 2023
+May 1, 2023
 
 ### New Features  
 

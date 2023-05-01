@@ -112,7 +112,7 @@ class Utils {
     static func isStringType(_ value: Any) -> Bool {
         return (value is String)
     }
-        
+    
     // MARK: - NSNumber
     
     static func isNSNumberBoolType(_ value: Any) -> Bool {
@@ -195,4 +195,12 @@ class Utils {
         }
         return "Invalid conditions format."
     }
+    
+    // valid versions: 3.0, 2.1.2, 1.0.0-beta, ...
+    // invalid versions: "mac os 10.3", ...
+    static func isValidVersion(_ version: String) -> Bool {
+        let comps = version.split(separator: ".")
+        return comps.count > 1 && Int(comps.first!) != nil
+    }
+
 }

@@ -15,10 +15,11 @@
 //
 
 import Foundation
-#if os(macOS)
-import Cocoa
-#elseif os(watchOS)
+
+#if os(watchOS)
 import WatchKit
+#elseif os(macOS)
+import Cocoa
 #else
 import UIKit
 #endif

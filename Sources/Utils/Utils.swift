@@ -15,10 +15,11 @@
 //
 
 import Foundation
-#if os(macOS)
-import Cocoa
-#elseif os(watchOS)
+
+#if os(watchOS)
 import WatchKit
+#elseif os(macOS)
+import Cocoa
 #else
 import UIKit
 #endif
@@ -46,6 +47,8 @@ class Utils {
     static var osVersion: String {
         #if os(watchOS)
         return WKInterfaceDevice.current().systemVersion
+        #elseif os(macOS)
+        return ProcessInfo().operatingSystemVersionString
         #else
         return UIDevice.current.systemVersion
         #endif
@@ -54,6 +57,8 @@ class Utils {
     static var deviceModel: String {
         #if os(watchOS)
         return WKInterfaceDevice.current().model
+        #elseif os(macOS)
+        return "N/A"
         #else
         return UIDevice.current.model
         #endif

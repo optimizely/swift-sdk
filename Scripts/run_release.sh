@@ -19,6 +19,8 @@ function prep_workspace {
 function release_github {
   LAST_RELEASE=$(git describe --abbrev=0 --tags)
 
+  echo ">>> $LAST_RELEASE :: $VERSION"
+
   if [[ ${LAST_RELEASE} == "v${VERSION}" ]]; then
     echo "${LAST_RELEASE} tag exists already (probably created while in the current release process). Skipping..."
     return
@@ -56,6 +58,10 @@ function release_cocoapods {
   printf "\n\nPushing podspecs to COCOAPODS.ORG .\n";
   for (( i = 0; i < ${number_pods}; i++ ));
   do
+
+    # TESTING
+    COCOAPODS_TRUNK_TOKEN=123
+
     podname=${pods[i]};
     printf "Pushing the ${podname} pod to COCOAPODS.ORG .\n"
     pod _${COCOAPODS_VERSION}_ trunk push --allow-warnings ${podname}.podspec

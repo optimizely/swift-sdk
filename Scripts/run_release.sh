@@ -58,7 +58,12 @@ function release_cocoapods {
   do
     podname=${pods[i]};
     printf "Pushing the ${podname} pod to COCOAPODS.ORG .\n"
-    pod _${COCOAPODS_VERSION}_ trunk push --allow-warnings ${podname}.podspec
+
+    # TESTING
+    COCOAPODS_TRUNK_TOKEN=123
+    pod _${COCOAPODS_VERSION}_ trunk push --allow-warnings --verbose ${podname}.podspec
+
+
     pod _${COCOAPODS_VERSION}_ update
   done
 

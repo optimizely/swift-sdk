@@ -6,6 +6,7 @@
 [![Platforms](https://img.shields.io/cocoapods/p/OptimizelySwiftSDK.svg)](https://img.shields.io/cocoapods/p/OptimizelySwiftSDK.svg)
 [![Podspec](https://img.shields.io/cocoapods/v/OptimizelySwiftSDK.svg)](https://cocoapods.org/pods/OptimizelySwiftSDK)
 
+
 This repository houses the Swift SDK for use with Optimizely Feature Experimentation and Optimizely Full Stack (legacy) for Mobile and OTT.
 
 Optimizely Feature Experimentation is an A/B testing and feature management tool for product development teams, enabling you to experiment at every step. Using Optimizely Feature Experimentation allows for every feature on your roadmap to be an opportunity to discover hidden insights. Learn more at [Optimizely.com](https://www.optimizely.com/products/experiment/feature-experimentation/), or see the [developer documentation](https://docs.developers.optimizely.com/experimentation/v4.0.0-full-stack/docs/welcome).

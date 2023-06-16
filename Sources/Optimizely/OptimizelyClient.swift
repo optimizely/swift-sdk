@@ -54,13 +54,14 @@ open class OptimizelyClient: NSObject {
     var logger: OPTLogger!
     var eventDispatcher: OPTEventDispatcher?
     public var datafileHandler: OPTDatafileHandler?
-        
+    
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
     public var odpManager: OdpManager!
     let sdkSettings: OptimizelySdkSettings
+    var clientName: String?
     
     // MARK: - Public interfaces
     
@@ -76,6 +77,7 @@ open class OptimizelyClient: NSObject {
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision options (optional)
     ///   - settings: SDK configuration (optional)
+    ///   - clientName: clientName for impression and conversion events (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
@@ -84,12 +86,13 @@ open class OptimizelyClient: NSObject {
                 odpManager: OdpManager? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
                 defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                settings: OptimizelySdkSettings? = nil) {
+                settings: OptimizelySdkSettings? = nil,
+                clientName: String? = nil) {
         
         self.sdkKey = sdkKey
         self.sdkSettings = settings ?? OptimizelySdkSettings()
         self.defaultDecideOptions = defaultDecideOptions ?? []
-
+        
         super.init()
         
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
@@ -98,6 +101,7 @@ open class OptimizelyClient: NSObject {
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
+        self.clientName = clientName
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
@@ -208,7 +212,7 @@ open class OptimizelyClient: NSObject {
     func configSDK(datafile: Data) throws {
         do {
             self.config = try ProjectConfig(datafile: datafile)
-                        
+            
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
                 self.updateConfigFromBackgroundFetch(data: data)
@@ -285,7 +289,8 @@ open class OptimizelyClient: NSObject {
                             attributes: attributes,
                             flagKey: "",
                             ruleType: Constants.DecisionSource.experiment.rawValue,
-                            enabled: true)
+                            enabled: true,
+                            clientName: clientName)
         
         return variation.key
     }
@@ -419,7 +424,8 @@ open class OptimizelyClient: NSObject {
                                 attributes: attributes,
                                 flagKey: featureKey,
                                 ruleType: source,
-                                enabled: featureEnabled)
+                                enabled: featureEnabled,
+                                clientName: clientName)
         }
         
         sendDecisionNotification(userId: userId,
@@ -744,7 +750,7 @@ open class OptimizelyClient: NSObject {
             throw OptimizelyError.eventKeyInvalid(eventKey)
         }
         
-        sendConversionEvent(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
+        sendConversionEvent(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags, clientName: self.clientName)
     }
     
     /// Read a copy of project configuration data model.
@@ -762,7 +768,7 @@ open class OptimizelyClient: NSObject {
         
         return OptimizelyConfigImp(projectConfig: config)
     }
-
+    
 }
 
 // MARK: - Send Events
@@ -780,7 +786,8 @@ extension OptimizelyClient {
                              attributes: OptimizelyAttributes? = nil,
                              flagKey: String,
                              ruleType: String,
-                             enabled: Bool) {
+                             enabled: Bool,
+                             clientName: String? = nil) {
         
         // non-blocking (event data serialization takes time)
         eventLock.async {
@@ -793,7 +800,8 @@ extension OptimizelyClient {
                                                                      attributes: attributes,
                                                                      flagKey: flagKey,
                                                                      ruleType: ruleType,
-                                                                     enabled: enabled) else {
+                                                                     enabled: enabled,
+                                                                     clientName: clientName) else {
                 self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
                 return
             }
@@ -819,7 +827,8 @@ extension OptimizelyClient {
     func sendConversionEvent(eventKey: String,
                              userId: String,
                              attributes: OptimizelyAttributes? = nil,
-                             eventTags: OptimizelyEventTags? = nil) {
+                             eventTags: OptimizelyEventTags? = nil,
+                             clientName: String? = nil) {
         
         // non-blocking (event data serialization takes time)
         eventLock.async {
@@ -829,7 +838,8 @@ extension OptimizelyClient {
                                                                      eventKey: eventKey,
                                                                      userId: userId,
                                                                      attributes: attributes,
-                                                                     eventTags: eventTags) else {
+                                                                     eventTags: eventTags,
+                                                                     clientName: clientName) else {
                 self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
                 return
             }
@@ -943,9 +953,9 @@ extension OptimizelyClient {
                              identifiers: [String: String] = [:],
                              data: [String: Any?] = [:]) throws {
         try odpManager.sendEvent(type: type,
-                             action: action,
-                             identifiers: identifiers,
-                             data: data)
+                                 action: action,
+                                 identifiers: identifiers,
+                                 data: data)
     }
     
     /// the device vuid (read only)
@@ -959,7 +969,7 @@ extension OptimizelyClient {
     
     func fetchQualifiedSegments(userId: String,
                                 options: [OptimizelySegmentOption],
-                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {        
+                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         odpManager.fetchQualifiedSegments(userId: userId,
                                           options: options,
                                           completionHandler: completionHandler)

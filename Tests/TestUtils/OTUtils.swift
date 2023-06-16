@@ -1,5 +1,5 @@
 //
-// Copyright 2019, 2021, Optimizely, Inc. and contributors
+// Copyright 2019, 2021, 2023 Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -137,7 +137,8 @@ class OTUtils {
     static func createOptimizely(datafileName: String,
                                  clearUserProfileService: Bool,
                                  eventDispatcher: OPTEventDispatcher?=nil,
-                                 logger: OPTLogger?=nil) -> OptimizelyClient? {
+                                 logger: OPTLogger?=nil,
+                                 clientName: String?=nil) -> OptimizelyClient? {
         
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
@@ -147,7 +148,8 @@ class OTUtils {
         let optimizely = OptimizelyClient(sdkKey: randomSdkKey,
                                           logger: logger,
                                           eventDispatcher: eventDispatcher,
-                                          userProfileService: userProfileService)
+                                          userProfileService: userProfileService,
+                                          clientName: clientName)
         do {
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely

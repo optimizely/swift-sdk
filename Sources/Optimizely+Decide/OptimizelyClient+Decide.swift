@@ -112,8 +112,7 @@ extension OptimizelyClient {
                                     attributes: attributes,
                                     flagKey: feature.key,
                                     ruleType: ruleType,
-                                    enabled: enabled,
-                                    clientName: clientName)
+                                    enabled: enabled)
                 decisionEventDispatched = true
             }
         }

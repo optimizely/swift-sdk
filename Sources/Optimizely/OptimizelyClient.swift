@@ -61,7 +61,6 @@ open class OptimizelyClient: NSObject {
     public var notificationCenter: OPTNotificationCenter?
     public var odpManager: OdpManager!
     let sdkSettings: OptimizelySdkSettings
-    var clientName: String?
     
     // MARK: - Public interfaces
     
@@ -86,8 +85,7 @@ open class OptimizelyClient: NSObject {
                 odpManager: OdpManager? = nil,
                 defaultLogLevel: OptimizelyLogLevel? = nil,
                 defaultDecideOptions: [OptimizelyDecideOption]? = nil,
-                settings: OptimizelySdkSettings? = nil,
-                clientName: String? = nil) {
+                settings: OptimizelySdkSettings? = nil) {
         
         self.sdkKey = sdkKey
         self.sdkSettings = settings ?? OptimizelySdkSettings()
@@ -101,7 +99,6 @@ open class OptimizelyClient: NSObject {
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
-        self.clientName = clientName
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
@@ -289,8 +286,7 @@ open class OptimizelyClient: NSObject {
                             attributes: attributes,
                             flagKey: "",
                             ruleType: Constants.DecisionSource.experiment.rawValue,
-                            enabled: true,
-                            clientName: clientName)
+                            enabled: true)
         
         return variation.key
     }
@@ -424,8 +420,7 @@ open class OptimizelyClient: NSObject {
                                 attributes: attributes,
                                 flagKey: featureKey,
                                 ruleType: source,
-                                enabled: featureEnabled,
-                                clientName: clientName)
+                                enabled: featureEnabled)
         }
         
         sendDecisionNotification(userId: userId,
@@ -750,7 +745,7 @@ open class OptimizelyClient: NSObject {
             throw OptimizelyError.eventKeyInvalid(eventKey)
         }
         
-        sendConversionEvent(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags, clientName: self.clientName)
+        sendConversionEvent(eventKey: eventKey, userId: userId, attributes: attributes, eventTags: eventTags)
     }
     
     /// Read a copy of project configuration data model.
@@ -786,8 +781,7 @@ extension OptimizelyClient {
                              attributes: OptimizelyAttributes? = nil,
                              flagKey: String,
                              ruleType: String,
-                             enabled: Bool,
-                             clientName: String? = nil) {
+                             enabled: Bool) {
         
         // non-blocking (event data serialization takes time)
         eventLock.async {
@@ -800,8 +794,7 @@ extension OptimizelyClient {
                                                                      attributes: attributes,
                                                                      flagKey: flagKey,
                                                                      ruleType: ruleType,
-                                                                     enabled: enabled,
-                                                                     clientName: clientName) else {
+                                                                     enabled: enabled) else {
                 self.logger.e(OptimizelyError.eventBuildFailure(DispatchEvent.activateEventKey))
                 return
             }
@@ -827,8 +820,7 @@ extension OptimizelyClient {
     func sendConversionEvent(eventKey: String,
                              userId: String,
                              attributes: OptimizelyAttributes? = nil,
-                             eventTags: OptimizelyEventTags? = nil,
-                             clientName: String? = nil) {
+                             eventTags: OptimizelyEventTags? = nil) {
         
         // non-blocking (event data serialization takes time)
         eventLock.async {
@@ -838,8 +830,7 @@ extension OptimizelyClient {
                                                                      eventKey: eventKey,
                                                                      userId: userId,
                                                                      attributes: attributes,
-                                                                     eventTags: eventTags,
-                                                                     clientName: clientName) else {
+                                                                     eventTags: eventTags) else {
                 self.logger.e(OptimizelyError.eventBuildFailure(eventKey))
                 return
             }

@@ -28,8 +28,7 @@ class BatchEventBuilder {
                                       attributes: OptimizelyAttributes?,
                                       flagKey: String,
                                       ruleType: String,
-                                      enabled: Bool,
-                                      clientName: String? = nil) -> Data? {
+                                      enabled: Bool) -> Data? {
         
         let metaData = DecisionMetadata(ruleType: ruleType, ruleKey: experiment?.key ?? "", flagKey: flagKey, variationKey: variation?.key ?? "", enabled: enabled)
         
@@ -47,8 +46,7 @@ class BatchEventBuilder {
                                 userId: userId,
                                 attributes: attributes,
                                 decisions: [decision],
-                                dispatchEvents: [dispatchEvent],
-                                clientName: clientName)
+                                dispatchEvents: [dispatchEvent])
     }
     
     // MARK: - Converison Event
@@ -57,8 +55,7 @@ class BatchEventBuilder {
                                       eventKey: String,
                                       userId: String,
                                       attributes: OptimizelyAttributes?,
-                                      eventTags: [String: Any]?,
-                                      clientName: String? = nil) -> Data? {
+                                      eventTags: [String: Any]?) -> Data? {
         
         guard let event = config.getEvent(key: eventKey) else {
             return nil
@@ -79,8 +76,7 @@ class BatchEventBuilder {
                                 userId: userId,
                                 attributes: attributes,
                                 decisions: nil,
-                                dispatchEvents: [dispatchEvent],
-                                clientName: clientName)
+                                dispatchEvents: [dispatchEvent])
     }
     
     // MARK: - Create Event
@@ -89,22 +85,19 @@ class BatchEventBuilder {
                                  userId: String,
                                  attributes: OptimizelyAttributes?,
                                  decisions: [Decision]?,
-                                 dispatchEvents: [DispatchEvent],
-                                 clientName: String? = nil) -> Data? {
+                                 dispatchEvents: [DispatchEvent]) -> Data? {
         let snapShot = Snapshot(decisions: decisions, events: dispatchEvents)
         
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
-        
-        let fClientName = clientName ?? Utils.swiftSdkClientName
-        
+                
         let batchEvent = BatchEvent(revision: config.project.revision,
                                     accountID: config.project.accountId,
                                     clientVersion: Utils.sdkVersion,
                                     visitors: [visitor],
                                     projectID: config.project.projectId,
-                                    clientName: fClientName,
+                                    clientName: Utils.swiftSdkClientName,
                                     anonymizeIP: config.project.anonymizeIP,
                                     enrichDecisions: true)
         

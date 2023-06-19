@@ -28,6 +28,8 @@ class BatchEventBuilderTests_Events: XCTestCase {
     let datafile = OTUtils.loadJSONDatafile("api_datafile")!
     
     override func setUp() {
+        Utils.sdkVersion = OPTIMIZELYSDKVERSION
+        Utils.swiftSdkClientName = "swift-sdk"
         eventDispatcher = MockEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
@@ -99,13 +101,13 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertNil(de["value"])
     }
     
-    func testCreateImpressionEventCustomClientName() {
+    func testCreateImpressionEventCustomClientNameAndVersion() {
         // Needed custom instances to avoid breaking original tests
         let eventDispatcher = MockEventDispatcher()
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true,
                                                   eventDispatcher: eventDispatcher,
-                                                  clientName: "flutter-sdk")!
+                                                  settings: OptimizelySdkSettings(sdkName: "flutter-sdk", sdkVersion: "1234"))!
         
         let expVariationId = "10416523162"
         let expCampaignId = "10420273929"
@@ -129,7 +131,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
         
         XCTAssertEqual((event["revision"] as! String), project.revision)
         XCTAssertEqual((event["account_id"] as! String), project.accountId)
-        XCTAssertEqual(event["client_version"] as! String, Utils.sdkVersion)
+        XCTAssertEqual(event["client_version"] as! String, "1234")
         XCTAssertEqual(event["project_id"] as! String, project.projectId)
         XCTAssertEqual(event["client_name"] as! String, "flutter-sdk")
         XCTAssertEqual(event["anonymize_ip"] as! Bool, project.anonymizeIP)
@@ -270,13 +272,14 @@ class BatchEventBuilderTests_Events: XCTestCase {
         XCTAssertNil(de["value"])
     }
     
-    func testCreateConversionEventCustomClientName() {
+    func testCreateConversionEventCustomClientNameAndVersion() {
         // Needed custom instances to avoid breaking original tests
         let eventDispatcher = MockEventDispatcher()
         let optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                                   clearUserProfileService: true,
                                                   eventDispatcher: eventDispatcher,
-                                                  clientName: "flutter-sdk")!
+                                                  settings: OptimizelySdkSettings(sdkName: "flutter-sdk", sdkVersion: "1234"))!
+
         let eventKey = "event_single_targeted_exp"
         let eventId = "10404198135"
         
@@ -295,7 +298,7 @@ class BatchEventBuilderTests_Events: XCTestCase {
                 
         XCTAssertEqual(event["revision"] as! String, project.revision)
         XCTAssertEqual(event["account_id"] as! String, project.accountId)
-        XCTAssertEqual(event["client_version"] as! String, Utils.sdkVersion)
+        XCTAssertEqual(event["client_version"] as! String, "1234")
         XCTAssertEqual(event["project_id"] as! String, project.projectId)
         XCTAssertEqual(event["client_name"] as! String, "flutter-sdk")
         XCTAssertEqual(event["anonymize_ip"] as! Bool, project.anonymizeIP)

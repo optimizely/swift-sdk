@@ -28,7 +28,7 @@ class Utils {
     
     // from auto-generated variable OPTIMIZELYSDKVERSION
     static var sdkVersion: String = OPTIMIZELYSDKVERSION
-    static let swiftSdkClientName = "swift-sdk"
+    static var swiftSdkClientName = "swift-sdk"
     
     static var os: String {
         #if os(iOS)

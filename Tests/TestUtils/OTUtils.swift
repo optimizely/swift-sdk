@@ -138,7 +138,7 @@ class OTUtils {
                                  clearUserProfileService: Bool,
                                  eventDispatcher: OPTEventDispatcher?=nil,
                                  logger: OPTLogger?=nil,
-                                 clientName: String?=nil) -> OptimizelyClient? {
+                                 settings: OptimizelySdkSettings?=nil) -> OptimizelyClient? {
         
         guard let datafile = OTUtils.loadJSONDatafile(datafileName) else { return nil }
         let userProfileService = clearUserProfileService ? createClearUserProfileService() : nil
@@ -149,7 +149,7 @@ class OTUtils {
                                           logger: logger,
                                           eventDispatcher: eventDispatcher,
                                           userProfileService: userProfileService,
-                                          clientName: clientName)
+                                          settings: settings)
         do {
             try optimizely.start(datafile: datafile, doFetchDatafileBackground: false)
             return optimizely

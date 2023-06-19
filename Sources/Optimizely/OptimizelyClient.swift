@@ -54,7 +54,7 @@ open class OptimizelyClient: NSObject {
     var logger: OPTLogger!
     var eventDispatcher: OPTEventDispatcher?
     public var datafileHandler: OPTDatafileHandler?
-    
+        
     // MARK: - Default Services
     
     var decisionService: OPTDecisionService!
@@ -76,7 +76,6 @@ open class OptimizelyClient: NSObject {
     ///   - defaultLogLevel: default log level (optional. default = .info)
     ///   - defaultDecisionOptions: default decision options (optional)
     ///   - settings: SDK configuration (optional)
-    ///   - clientName: clientName for impression and conversion events (optional)
     public init(sdkKey: String,
                 logger: OPTLogger? = nil,
                 eventDispatcher: OPTEventDispatcher? = nil,
@@ -90,7 +89,7 @@ open class OptimizelyClient: NSObject {
         self.sdkKey = sdkKey
         self.sdkSettings = settings ?? OptimizelySdkSettings()
         self.defaultDecideOptions = defaultDecideOptions ?? []
-        
+
         super.init()
         
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
@@ -209,7 +208,7 @@ open class OptimizelyClient: NSObject {
     func configSDK(datafile: Data) throws {
         do {
             self.config = try ProjectConfig(datafile: datafile)
-            
+                        
             datafileHandler?.startUpdates(sdkKey: self.sdkKey) { data in
                 // new datafile came in
                 self.updateConfigFromBackgroundFetch(data: data)
@@ -763,7 +762,7 @@ open class OptimizelyClient: NSObject {
         
         return OptimizelyConfigImp(projectConfig: config)
     }
-    
+
 }
 
 // MARK: - Send Events
@@ -944,9 +943,9 @@ extension OptimizelyClient {
                              identifiers: [String: String] = [:],
                              data: [String: Any?] = [:]) throws {
         try odpManager.sendEvent(type: type,
-                                 action: action,
-                                 identifiers: identifiers,
-                                 data: data)
+                             action: action,
+                             identifiers: identifiers,
+                             data: data)
     }
     
     /// the device vuid (read only)

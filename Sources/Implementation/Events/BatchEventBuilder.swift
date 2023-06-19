@@ -1,5 +1,5 @@
 //
-// Copyright 2019, 2021-2023, Optimizely, Inc. and contributors
+// Copyright 2019, 2021-2022, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import Foundation
 
-class BatchEventBuilder {    
+class BatchEventBuilder {
     static private var logger = OPTLoggerFactory.getLogger()
     
     // MARK: - Impression Event
@@ -91,7 +91,7 @@ class BatchEventBuilder {
         let eventAttributes = getEventAttributes(config: config, attributes: attributes)
         
         let visitor = Visitor(attributes: eventAttributes, snapshots: [snapShot], visitorID: userId)
-                
+        
         let batchEvent = BatchEvent(revision: config.project.revision,
                                     accountID: config.project.accountId,
                                     clientVersion: Utils.sdkVersion,

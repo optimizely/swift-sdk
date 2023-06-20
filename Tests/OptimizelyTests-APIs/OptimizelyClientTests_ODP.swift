@@ -96,7 +96,6 @@ class OptimizelyClientTests_ODP: XCTestCase {
         
         try? tmpOptimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k21": "v2", "k22": true, "k23": 3.5, "k24": nil])
 
-        // swift handles <nil> in Any type in a weird way. It's a nil but cannot be AssertNil. Use stringify to validate nil.
         XCTAssertEqual(odpEventManager.receivedData["data_source_version"] as! String, "1234")
         XCTAssertEqual(odpEventManager.receivedData["data_source"] as! String, "flutter-sdk")
     }

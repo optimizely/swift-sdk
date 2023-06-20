@@ -28,13 +28,16 @@ class BatchEventBuilderTests_Events: XCTestCase {
     let datafile = OTUtils.loadJSONDatafile("api_datafile")!
     
     override func setUp() {
-        Utils.sdkVersion = OPTIMIZELYSDKVERSION
-        Utils.swiftSdkClientName = "swift-sdk"
         eventDispatcher = MockEventDispatcher()
         optimizely = OTUtils.createOptimizely(datafileName: "audience_targeting",
                                               clearUserProfileService: true,
                                               eventDispatcher: eventDispatcher)!
         project = optimizely.config!.project!
+    }
+    
+    override func tearDown() {
+        Utils.sdkVersion = OPTIMIZELYSDKVERSION
+        Utils.swiftSdkClientName = "swift-sdk"
     }
     
     func testCreateImpressionEvent() {

@@ -22,11 +22,15 @@ class OptimizelyClientTests_ODP: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        Utils.sdkVersion = OPTIMIZELYSDKVERSION
-        Utils.swiftSdkClientName = "swift-sdk"
+        
         let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         try! optimizely.start(datafile: datafile)
+    }
+    
+    override func tearDown() {
+        Utils.sdkVersion = OPTIMIZELYSDKVERSION
+        Utils.swiftSdkClientName = "swift-sdk"
     }
     
     // MARK: - ODP configuration

@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2021, 2023 Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ class Utils {
     
     // from auto-generated variable OPTIMIZELYSDKVERSION
     static var sdkVersion: String = OPTIMIZELYSDKVERSION
-    static let swiftSdkClientName = "swift-sdk"
+    static var swiftSdkClientName = "swift-sdk"
     
     static var os: String {
         #if os(iOS)

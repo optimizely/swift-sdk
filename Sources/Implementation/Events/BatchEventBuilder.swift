@@ -16,7 +16,7 @@
 
 import Foundation
 
-class BatchEventBuilder {    
+class BatchEventBuilder {
     static private var logger = OPTLoggerFactory.getLogger()
     
     // MARK: - Impression Event

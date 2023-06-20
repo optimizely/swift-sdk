@@ -163,7 +163,7 @@ open class OptimizelyClient: NSObject {
     ///   - resourceTimeout: timeout for datafile download (optional)
     /// - Returns: Project Data file
     /// - Throws: `OptimizelyError` if error is detected
-    @available(iOS 13.0, *)
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     public func start(resourceTimeout: Double? = nil) async throws  -> Data {
         return try await withCheckedThrowingContinuation { continuation in
             datafileHandler?.downloadDatafile(sdkKey: sdkKey,

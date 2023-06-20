@@ -1,5 +1,5 @@
 //
-// Copyright 2021, Optimizely, Inc. and contributors
+// Copyright 2021, 2023 Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,8 @@ class OptimizelyClientTests_ODP: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        
+        Utils.sdkVersion = OPTIMIZELYSDKVERSION
+        Utils.swiftSdkClientName = "swift-sdk"
         let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
         try! optimizely.start(datafile: datafile)
@@ -83,6 +84,21 @@ class OptimizelyClientTests_ODP: XCTestCase {
         XCTAssertEqual("a2", odpManager.eventAction)
         XCTAssertEqual([:], odpManager.eventIdentifiers)
         XCTAssertEqual([:], odpManager.eventData as! [String: String])
+    }
+    
+    func testSendOdpEvent_customClientNameAndVersion() {
+        let odpEventManager = MockOdpEventManager(sdkKey: "any")
+        let odpManager = OdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123, eventManager: odpEventManager)
+        
+        let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
+        let tmpOptimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, odpManager: odpManager, settings: OptimizelySdkSettings(sdkName: "flutter-sdk", sdkVersion: "1234"))
+        try! tmpOptimizely.start(datafile: datafile)
+        
+        try? tmpOptimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k21": "v2", "k22": true, "k23": 3.5, "k24": nil])
+
+        // swift handles <nil> in Any type in a weird way. It's a nil but cannot be AssertNil. Use stringify to validate nil.
+        XCTAssertEqual(odpEventManager.receivedData["data_source_version"] as! String, "1234")
+        XCTAssertEqual(odpEventManager.receivedData["data_source"] as! String, "flutter-sdk")
     }
     
     func testSendOdpEvent_error() {
@@ -234,6 +250,14 @@ extension OptimizelyClientTests_ODP {
             self.apiKey = apiKey
             self.apiHost = apiHost
             self.segmentsToCheck = segmentsToCheck
+        }
+    }
+    
+    class MockOdpEventManager: OdpEventManager {
+        var receivedData: [String: Any?]!
+
+        override func dispatch(_ event: OdpEvent) {
+            self.receivedData = event.data
         }
     }
     

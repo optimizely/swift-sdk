@@ -161,32 +161,14 @@ open class OptimizelyClient: NSObject {
     ///
     /// - Parameters:
     ///   - resourceTimeout: timeout for datafile download (optional)
-    /// - Returns: Project Data file
     /// - Throws: `OptimizelyError` if error is detected
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    public func start(resourceTimeout: Double? = nil) async throws  -> Data {
+    public func start(resourceTimeout: Double? = nil) async throws {
         return try await withCheckedThrowingContinuation { continuation in
-            datafileHandler?.downloadDatafile(sdkKey: sdkKey,
-                                              returnCacheIfNoChange: true,
-                                              resourceTimeoutInterval: resourceTimeout) { [weak self] result in
-                guard let self = self else {
-                    continuation.resume(throwing: OptimizelyError.sdkNotReady)
-                    return
-                }
-                
+            start(resourceTimeout: resourceTimeout) { result in
                 switch result {
-                case .success(let datafile):
-                    guard let datafile = datafile else {
-                        continuation.resume(throwing: OptimizelyError.datafileSavingFailed(self.sdkKey))
-                        return
-                    }
-                    
-                    do {
-                        try self.configSDK(datafile: datafile)
-                        continuation.resume(returning: datafile)
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
+                case .success:
+                    continuation.resume()
                 case .failure(let error):
                     continuation.resume(throwing: error)
                 }

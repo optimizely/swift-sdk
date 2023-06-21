@@ -124,7 +124,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Task {
                 
                 do {
-                    let result = try await optimizely.start()
+                    try await optimizely.start()
                     print("Optimizely SDK initialized successfully!")
                     self.startWithRootViewController()
                 } catch {

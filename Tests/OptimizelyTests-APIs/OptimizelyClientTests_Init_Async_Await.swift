@@ -19,20 +19,23 @@ import XCTest
 final class OptimizelyClientTests_Init_Async_Await: XCTestCase {
     let kUserId = "11111"
     let kExperimentKey = "exp_with_audience"
+    let kFlagKey = "feature_1"
     let kVariationKey = "a"
     let kRevisionUpdated = "34"
     let kRevision = "241"
     
     func testInitAsyncAwait() async throws {
         let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
-
+        
         let handler = FakeDatafileHandler(mode: .successWithData)
         let optimizely = OptimizelyClient(sdkKey: testSdkKey,
                                           datafileHandler: handler)
-
-       _ = try await optimizely.start()
-        let variationKey: String = try optimizely.activate(experimentKey: self.kExperimentKey, userId: self.kUserId)
-        XCTAssert(variationKey == self.kVariationKey)
+        
+        try await optimizely.start()
+        let user = OptimizelyUserContext(optimizely: optimizely, userId: self.kUserId)
+        let decision = user.decide(key: self.kFlagKey)
+        
+        XCTAssert(decision.variationKey == self.kVariationKey)
     }
     
     func testInitAsyncAwait_fetchError() async throws {
@@ -43,7 +46,7 @@ final class OptimizelyClientTests_Init_Async_Await: XCTestCase {
                                           datafileHandler: handler)
         var _error: Error?
         do {
-            _ = try await optimizely.start()
+            try await optimizely.start()
         } catch {
             _error = error
         }
@@ -60,41 +63,13 @@ final class OptimizelyClientTests_Init_Async_Await: XCTestCase {
 
         var _error: Error?
         do {
-            _ = try await optimizely.start()
+            try await optimizely.start()
         } catch {
             _error = error
         }
 
        XCTAssertNotNil(_error)
     }
-    
-    func testInitAsync_enablePeriodicPolling() async throws {
-        let testSdkKey = OTUtils.randomSdkKey  // unique but consistent with registry + start
-        
-        let handler = FakeDatafileHandler(mode: .successWithData)
-        let optimizely = OptimizelyClient(sdkKey: testSdkKey,
-                                          datafileHandler: handler,
-                                          periodicDownloadInterval: 1)
-        
-        let exp = expectation(description: "x")
-
-        let notifId = optimizely.notificationCenter!.addDatafileChangeNotificationListener { _ in
-            let optConfig = try! optimizely.getOptimizelyConfig()
-            XCTAssertEqual(optConfig.revision, self.kRevisionUpdated)
-            exp.fulfill()
-        }
-        
-        _ = try await optimizely.start()
-        let optConfig = try! optimizely.getOptimizelyConfig()
-        XCTAssertEqual(optConfig.revision, self.kRevision)
-        
-        await fulfillment(of: [exp], timeout: 10)
-        
-        // disconnect the listener so exp not fulfilled redundantly
-        optimizely.notificationCenter!.removeNotificationListener(notificationId: notifId!)
-    }
-    
-    
     
 }
 

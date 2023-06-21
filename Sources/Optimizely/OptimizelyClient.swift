@@ -1005,6 +1005,13 @@ extension OptimizelyClient {
                                           completionHandler: completionHandler)
     }
     
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+    func fetchQualifiedSegments(userId: String,
+                                options: [OptimizelySegmentOption]) async throws -> [String]? {
+        return try await odpManager.fetchQualifiedSegments(userId: userId,
+                                                           options: options)
+    }
+    
 }
 
 // MARK: - For test support

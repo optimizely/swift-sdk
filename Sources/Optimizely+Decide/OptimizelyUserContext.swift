@@ -214,6 +214,34 @@ extension OptimizelyUserContext {
         }
     }
     
+    /// Fetch (non-blocking) all qualified segments for the user context.
+    ///
+    /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
+    /// On failure, **qualifiedSegments** will be nil and one of these errors will be returned:
+    /// - OptimizelyError.invalidSegmentIdentifier
+    /// - OptimizelyError.fetchSegmentsFailed(String)
+    ///
+    /// - Parameters:
+    ///   - options: A set of options for fetching qualified segments (optional).
+    ///   - completionHandler: A completion handler to be called with the fetch result. On success, it'll pass a nil error. On failure, it'll pass a non-nil error .
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+    public func fetchQualifiedSegments(options: [OptimizelySegmentOption] = []) async throws {
+        // on failure, qualifiedSegments should be reset if a previous value exists.
+        self.atomicQualifiedSegments.property = nil
+        
+        guard let optimizely = self.optimizely else {
+            throw OptimizelyError.sdkNotReady
+        }
+        do {
+            let segments = try await optimizely.fetchQualifiedSegments(userId: userId, options: options)
+            self.qualifiedSegments = segments
+        } catch {
+            self.logger.e(error as? OptimizelyError)
+            throw error
+        }
+        
+    }
+    
     /// Fetch (blocking) all qualified segments for the user context.
     ///
     /// Note that this call will block the calling thread until fetching is completed.

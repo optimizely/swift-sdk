@@ -319,6 +319,37 @@ class SamplesForAPI {
             let decision = user.decide(key: "show_coupon", options: [.includeReasons])
             print("[AudienceSegments] decision: \(decision)")
         }
+        
+        if #available(iOS 13, *) {
+            Task { [user] in
+                do {
+                    try await user.fetchQualifiedSegments(options: [.ignoreCache])
+                    let decision = user.decide(key: "show_coupon", options: [.includeReasons])
+                    print("[AudienceSegments] decision: \(decision)")
+                } catch {
+                    print("[AudienceSegments] \(error)")
+                }
+                
+                // Without segment option
+                do {
+                    try await user.fetchQualifiedSegments()
+                    let decision = user.decide(key: "flag1")
+                    try? user.trackEvent(eventKey: "purchase_event")
+                }
+                
+                // With segment options
+                var odpSegmentOptions: [OptimizelySegmentOption] = [.ignoreCache, .resetCache]
+                do {
+                    try await user.fetchQualifiedSegments(options: odpSegmentOptions)
+                    let decision = user.decide(key: "flag1")
+                    try? user.trackEvent(eventKey: "purchase_event")
+                }
+            }
+            
+        }
+      
+        
+        
     }
     
     // MARK: - Initializations
@@ -386,6 +417,23 @@ class SamplesForAPI {
         }
         
         print("activated variation: \(String(describing: variationKey))")
+        
+        // [A3] Asynchronous initialization (aync-await)
+        //      1. A datafile is downloaded from the server and the SDK is initialized with the datafile
+        //      2. Polling datafile periodically.
+        //         The cached datafile is used immediately to update the SDK project config.
+        optimizely = OptimizelyClient(sdkKey: "<Your_SDK_Key>",
+                                      periodicDownloadInterval: 60)
+        if #available(iOS 13, *) {
+            Task { [optimizely] in
+                do {
+                    try await optimizely.start()
+                } catch {
+                    print("Optimizely SDK initiliazation failed: \(error)")
+                }
+            }
+        }
+      
     }
 
 }

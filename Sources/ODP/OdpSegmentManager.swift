@@ -90,50 +90,17 @@ open class OdpSegmentManager {
     func fetchQualifiedSegments(userKey: String,
                                 userValue: String,
                                 options: [OptimizelySegmentOption]) async throws -> [String]? {
-        guard let odpApiKey = odpConfig.apiKey, let odpApiHost = odpConfig.apiHost else {
-            throw OptimizelyError.fetchSegmentsFailed("apiKey/apiHost not defined")
-        }
-        
-        return await withCheckedContinuation { coninuation in
-            // empty segmentsToCheck (no ODP audiences found in datafile) is not an error. return immediately without checking with the ODP server.
-            let segmentsToCheck = odpConfig.segmentsToCheck
-            guard segmentsToCheck.count > 0 else {
-                coninuation.resume(returning: [])
-                return
-            }
-            
-            let cacheKey = makeCacheKey(userKey, userValue)
-            
-            let ignoreCache = options.contains(.ignoreCache)
-            let resetCache = options.contains(.resetCache)
-            
-            if resetCache {
-                reset()
-            }
-            
-            if !ignoreCache {
-                if let segments = segmentsCache.lookup(key: cacheKey) {
-                    coninuation.resume(returning: segments)
-                    return
+        return try await withCheckedThrowingContinuation { continuation in
+            fetchQualifiedSegments(userKey: userKey,
+                                   userValue: userValue,
+                                   options: options) { segments, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: segments)
                 }
             }
-            
-            apiMgr.fetchSegments(apiKey: odpApiKey,
-                                 apiHost: odpApiHost,
-                                 userKey: userKey,
-                                 userValue: userValue,
-                                 segmentsToCheck: segmentsToCheck) { segments, err in
-                if err == nil, let segments = segments {
-                    if !ignoreCache {
-                        self.segmentsCache.save(key: cacheKey, value: segments)
-                    }
-                }
-                
-                coninuation.resume(returning: segments)
-            }
         }
-        
-        
     }
     
     func reset() {

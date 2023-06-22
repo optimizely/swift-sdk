@@ -146,6 +146,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.startWithRootViewController()
             }
         }
+        
+        // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
+        //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
+        //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
+        //SamplesForAPI.chgiteckAudienceSegments(optimizely: self.optimizely)
+        
     }
     
     func addNotificationListeners() {

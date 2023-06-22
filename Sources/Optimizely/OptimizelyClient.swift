@@ -981,7 +981,7 @@ extension OptimizelyClient {
     
     func fetchQualifiedSegments(userId: String,
                                 options: [OptimizelySegmentOption],
-                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {        
+                                completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
         odpManager.fetchQualifiedSegments(userId: userId,
                                           options: options,
                                           completionHandler: completionHandler)

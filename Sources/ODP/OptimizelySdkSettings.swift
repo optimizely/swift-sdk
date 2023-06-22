@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2022-2023, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -36,15 +36,25 @@ public struct OptimizelySdkSettings {
     ///   - timeoutForSegmentFetchInSecs: The timeout in seconds of odp segment fetch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - timeoutForOdpEventInSecs: The timeout in seconds of odp event dispatch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - disableOdp: Set this flag to true (default = false) to disable ODP features
+    ///   - sdkName: Set this flag to override sdkName included in events
+    ///   - sdkVersion: Set this flag to override sdkVersion included in events
     public init(segmentsCacheSize: Int = 100,
                 segmentsCacheTimeoutInSecs: Int = 600,
                 timeoutForSegmentFetchInSecs: Int = 10,
                 timeoutForOdpEventInSecs: Int = 10,
-                disableOdp: Bool = false) {
+                disableOdp: Bool = false,
+                sdkName: String? = nil,
+                sdkVersion: String? = nil) {
         self.segmentsCacheSize = segmentsCacheSize
         self.segmentsCacheTimeoutInSecs = segmentsCacheTimeoutInSecs
         self.timeoutForSegmentFetchInSecs = timeoutForSegmentFetchInSecs
         self.timeoutForOdpEventInSecs = timeoutForOdpEventInSecs
         self.disableOdp = disableOdp
+        if let _sdkName = sdkName, _sdkName != "" {
+            Utils.swiftSdkClientName = _sdkName
+        }
+        if let _sdkVersion = sdkVersion, _sdkVersion != "" {
+            Utils.sdkVersion = _sdkVersion
+        }
     }
 }

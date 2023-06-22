@@ -120,7 +120,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         addNotificationListeners()
         
-        if #available(iOS 13, *) {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)  {
             Task {
                 
                 do {
@@ -146,27 +146,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.startWithRootViewController()
             }
         }
-        
-        
-//
-//        // initialize SDK
-//        optimizely!.start { result in
-//            switch result {
-//            case .failure(let error):
-//                print("Optimizely SDK initiliazation failed: \(error)")
-//            case .success:
-//                print("Optimizely SDK initialized successfully!")
-//            @unknown default:
-//                print("Optimizely SDK initiliazation failed with unknown result")
-//            }
-//
-//            self.startWithRootViewController()
-//
-//            // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
-//            //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
-//            //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
-//            //SamplesForAPI.checkAudienceSegments(optimizely: self.optimizely)
-//        }
     }
     
     func addNotificationListeners() {

@@ -302,14 +302,15 @@ class SamplesForAPI {
                                           defaultLogLevel: .debug)
         
         guard let localDatafileUrl = Bundle.main.url(forResource: "demoTestDatafile", withExtension: "json"),
-            let localDatafile = try? Data(contentsOf: localDatafileUrl)
+              let localDatafile = try? Data(contentsOf: localDatafileUrl)
         else {
             fatalError("Local datafile cannot be found")
         }
-
+        
         try? optimizely.start(datafile: localDatafile)
-            
+        
         let user = optimizely.createUserContext(userId: "user_123", attributes: ["location": "NY"])
+        
         user.fetchQualifiedSegments(options: [.ignoreCache]) { error in
             guard error == nil else {
                 print("[AudienceSegments] \(error!)")
@@ -320,7 +321,7 @@ class SamplesForAPI {
             print("[AudienceSegments] decision: \(decision)")
         }
         
-        if #available(iOS 13, *) {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             Task { [user] in
                 do {
                     try await user.fetchQualifiedSegments(options: [.ignoreCache])
@@ -333,23 +334,13 @@ class SamplesForAPI {
                 // Without segment option
                 do {
                     try await user.fetchQualifiedSegments()
-                    let decision = user.decide(key: "flag1")
-                    try? user.trackEvent(eventKey: "purchase_event")
-                }
-                
-                // With segment options
-                var odpSegmentOptions: [OptimizelySegmentOption] = [.ignoreCache, .resetCache]
-                do {
-                    try await user.fetchQualifiedSegments(options: odpSegmentOptions)
-                    let decision = user.decide(key: "flag1")
-                    try? user.trackEvent(eventKey: "purchase_event")
+                    let decision = user.decide(key: "show_coupon")
+                    print("[AudienceSegments] decision: \(decision)")
+                }  catch {
+                    print("[AudienceSegments] \(error)")
                 }
             }
-            
         }
-      
-        
-        
     }
     
     // MARK: - Initializations

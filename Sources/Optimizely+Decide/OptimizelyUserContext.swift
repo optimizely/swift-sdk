@@ -217,7 +217,7 @@ extension OptimizelyUserContext {
     /// Fetch (non-blocking) all qualified segments for the user context.
     ///
     /// The segments fetched will be saved in **qualifiedSegments** and can be accessed any time.
-    /// On failure, **qualifiedSegments** will be nil and one of these errors will be returned:
+    /// On failure, **qualifiedSegments** will be nil and one of these errors will be thrown:
     /// - OptimizelyError.invalidSegmentIdentifier
     /// - OptimizelyError.fetchSegmentsFailed(String)
     ///

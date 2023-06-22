@@ -154,6 +154,28 @@ open class OptimizelyClient: NSObject {
         }
     }
     
+    /// Start Optimizely SDK (async-await)
+    ///
+    /// If an updated datafile is available in the server, it's downloaded and the SDK is configured with
+    /// the updated datafile.
+    ///
+    /// - Parameters:
+    ///   - resourceTimeout: timeout for datafile download (optional)
+    /// - Throws: `OptimizelyError` if error is detected
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+    public func start(resourceTimeout: Double? = nil) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            start(resourceTimeout: resourceTimeout) { result in
+                switch result {
+                case .success:
+                    continuation.resume()
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
     /// Start Optimizely SDK (Synchronous)
     ///
     /// - Parameters:

@@ -132,10 +132,12 @@ extension OptimizelyUserContextTests_ODP_Aync_Await {
             self.segmentManager?.apiMgr = MockOdpSegmentApiManager()
         }
         
-        override func fetchQualifiedSegments(userId: String, options: [OptimizelySegmentOption]) async throws -> [String]? {
+        override func fetchQualifiedSegments(userId: String,
+                                             options: [OptimizelySegmentOption],
+                                             completionHandler: @escaping ([String]?, OptimizelyError?) -> Void) {
             self.userId = userId
             self.options = options
-            return try await super.fetchQualifiedSegments(userId: userId, options: options)
+            super.fetchQualifiedSegments(userId: userId, options: options, completionHandler: completionHandler)
         }
        
         override func identifyUser(userId: String) {

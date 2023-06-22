@@ -81,36 +81,6 @@ class OdpManagerTests: XCTestCase {
         XCTAssertNil(manager.segmentManager)
     }
     
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    func testConfigurations_disableOdp_aync_await() async throws {
-        let manager = OdpManager(sdkKey: sdkKey,
-                                 disable: true,
-                                 cacheSize: cacheSize,
-                                 cacheTimeoutInSecs: cacheTimeout)
-        XCTAssertTrue(manager.vuid.starts(with: "vuid_"), "vuid should be serverved even when ODP is disabled.")
-        
-        var _error: OptimizelyError?
-        
-        do {
-            let segments = try await manager.fetchQualifiedSegments(userId: "user1", options: [])
-            XCTAssertNil(segments)
-        } catch {
-          _error = error as? OptimizelyError
-        }
-        XCTAssertEqual(_error?.reason, OptimizelyError.odpNotEnabled.reason)
-        
-        manager.updateOdpConfig(apiKey: "valid", apiHost: "host", segmentsToCheck: [])
-        XCTAssertNil(manager.odpConfig)
-        
-        // these calls should be dropped gracefully with nil
-        
-        manager.identifyUser(userId: "user1")
-        try? manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
-        
-        XCTAssertNil(manager.eventManager)
-        XCTAssertNil(manager.segmentManager)
-    }
-    
     // MARK: - fetchQualifiedSegments
     
     func testFetchQualifiedSegments() {
@@ -123,23 +93,6 @@ class OdpManagerTests: XCTestCase {
 
         let userId = "user-1"
         manager.fetchQualifiedSegments(userId: userId, options: []) { _, _ in }
-
-        XCTAssertEqual(segmentManager.receivedUserKey, "fs_user_id")
-        XCTAssertEqual(segmentManager.receivedUserValue, "user-1")
-        XCTAssertEqual(segmentManager.receivedOptions, [])
-    }
-    
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    func testFetchQualifiedSegments_async_await() async throws {
-        let vuid = "vuid_123"
-       _ = try await manager.fetchQualifiedSegments(userId: vuid, options: [.ignoreCache])
-        
-        XCTAssertEqual(segmentManager.receivedUserKey, "vuid")
-        XCTAssertEqual(segmentManager.receivedUserValue, vuid)
-        XCTAssertEqual(segmentManager.receivedOptions, [.ignoreCache])
-
-        let userId = "user-1"
-        _ = try await manager.fetchQualifiedSegments(userId: userId, options: [])
 
         XCTAssertEqual(segmentManager.receivedUserKey, "fs_user_id")
         XCTAssertEqual(segmentManager.receivedUserValue, "user-1")

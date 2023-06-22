@@ -86,23 +86,6 @@ open class OdpSegmentManager {
         }
     }
     
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    func fetchQualifiedSegments(userKey: String,
-                                userValue: String,
-                                options: [OptimizelySegmentOption]) async throws -> [String]? {
-        return try await withCheckedThrowingContinuation { continuation in
-            fetchQualifiedSegments(userKey: userKey,
-                                   userValue: userValue,
-                                   options: options) { segments, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: segments)
-                }
-            }
-        }
-    }
-    
     func reset() {
         segmentsCache.reset()
     }

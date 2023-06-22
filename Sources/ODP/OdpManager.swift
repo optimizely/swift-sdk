@@ -86,21 +86,6 @@ public class OdpManager {
                                                completionHandler: completionHandler)
     }
     
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    func fetchQualifiedSegments(userId: String,
-                                options: [OptimizelySegmentOption]) async throws -> [String]? {
-        guard enabled else {
-            throw OptimizelyError.odpNotEnabled
-        }
-        
-        let userKey = OdpVuidManager.isVuid(userId) ? Constants.ODP.keyForVuid : Constants.ODP.keyForUserId
-        let userValue = userId
-        
-        return try await segmentManager.fetchQualifiedSegments(userKey: userKey,
-                                                               userValue: userValue,
-                                                               options: options)
-    }
-    
     func identifyUser(userId: String) {
         guard enabled else {
             logger.d("ODP identify event is not dispatched (ODP disabled).")

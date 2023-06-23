@@ -168,7 +168,7 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
                 }
                 return data
             } catch {
-                print("Error deserializing datafile: \(error.localizedDescription)")
+                self.logger.w("Error deserializing datafile: \(error.localizedDescription)")
             }
         }
         

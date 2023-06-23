@@ -1,5 +1,5 @@
 //
-// Copyright 2019, 2021, Optimizely, Inc. and contributors
+// Copyright 2019, 2021, 2023, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,7 +65,65 @@ class DatafileHandlerTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
+    
+    func testDatafileDownloadWith200AndValidDatafile() {
+        // Datafile and last updated should not be saved in this case
+        let handler = MockDatafileHandler(statusCode: 200, localResponseData:"{}")
+        let expectation = XCTestExpectation(description: "no-nil data")
+        
+        handler.downloadDatafile(sdkKey: sdkKey) { (result) in
+            if case let .success(data) = result  {
+                XCTAssert(data != nil)
+                expectation.fulfill()
+            }
+        }
+        
+        wait(for: [expectation], timeout: 3)
+        XCTAssertTrue(handler.isDatafileSaved(sdkKey: sdkKey))
+        XCTAssertNotNil(handler.sharedDataStore.getLastModified(sdkKey: sdkKey))
+    }
 
+
+    func testDatafileDownloadWith200AndInvalidDatafile() {
+        // Datafile and last updated should not be saved in this case
+        let handler = MockDatafileHandler(statusCode: 200, localResponseData: "1231")
+        let expectation = XCTestExpectation(description: "wait to get failure")
+        
+        handler.downloadDatafile(sdkKey: sdkKey) { (result) in
+            if case .success(_) = result  {
+                XCTFail()
+            }
+            if case .failure(_) = result  {
+                expectation.fulfill()
+            }
+        }
+        
+        wait(for: [expectation], timeout: 3)
+        XCTAssertFalse(handler.isDatafileSaved(sdkKey: sdkKey))
+        XCTAssertNil(handler.sharedDataStore.getLastModified(sdkKey: sdkKey))
+    }
+    
+    func testStartWith200AndInvalidDatafile() {
+        let handler = MockDatafileHandler(statusCode: 200, localResponseData: "1231")
+        let expectation = XCTestExpectation(description: "wait to get failure")
+        
+        let optimizely = OptimizelyClient(sdkKey: sdkKey,
+                                          datafileHandler: handler,
+                                          periodicDownloadInterval: 1)
+        
+        optimizely.start(completion: { result in
+            if case let .failure(error) = result  {
+                print(error)
+                XCTAssert(true)
+                expectation.fulfill()
+            }
+        })
+        
+        wait(for: [expectation], timeout: 3)
+        XCTAssertFalse(handler.isDatafileSaved(sdkKey: sdkKey))
+        XCTAssertNil(handler.sharedDataStore.getLastModified(sdkKey: sdkKey))
+    }
+    
     func testDatafileDownload500() {
         OTUtils.createDatafileCache(sdkKey: sdkKey)
 

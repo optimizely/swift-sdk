@@ -242,7 +242,7 @@ class DatafileHandlerTests: XCTestCase {
 
     func testPeriodicDownload() {
         let expection = XCTestExpectation(description: "Expect 10 periodic downloads")
-        let handler = MockDatafileHandler(statusCode: 200)
+        let handler = MockDatafileHandler(statusCode: 200, localResponseData: "{}")
         let now = Date()
         var count = 0
         var seconds = 0
@@ -263,7 +263,7 @@ class DatafileHandlerTests: XCTestCase {
     
     func testPeriodicDownload_PollingShouldNotBeAccumulatedWhileInBackground() {
         let expectation = XCTestExpectation(description: "polling")
-        let handler = MockDatafileHandler(statusCode: 200)
+        let handler = MockDatafileHandler(statusCode: 200, localResponseData: "{}")
         let now = Date()
         
         let updateInterval = 1
@@ -394,7 +394,7 @@ class DatafileHandlerTests: XCTestCase {
                 // will return 500
                 return MockUrlSession(withError: true)
             } else {
-                return MockUrlSession(statusCode: 200)
+                return MockUrlSession(statusCode: 200, localResponseData: "{}")
             }
         }
     }

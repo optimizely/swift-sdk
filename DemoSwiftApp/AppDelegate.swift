@@ -120,24 +120,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         addNotificationListeners()
         
-        // initialize SDK
-        optimizely!.start { result in
-            switch result {
-            case .failure(let error):
-                print("Optimizely SDK initiliazation failed: \(error)")
-            case .success:
-                print("Optimizely SDK initialized successfully!")
-            @unknown default:
-                print("Optimizely SDK initiliazation failed with unknown result")
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)  {
+            Task {
+                
+                do {
+                    try await optimizely.start()
+                    print("Optimizely SDK initialized successfully!")
+                    self.startWithRootViewController()
+                } catch {
+                    print("Optimizely SDK initiliazation failed: \(error)")
+                }
+                
             }
-        
-            self.startWithRootViewController()
-            
-            // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
-            //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
-            //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
-            //SamplesForAPI.checkAudienceSegments(optimizely: self.optimizely)
+        } else {
+            optimizely.start { result in
+                switch result {
+                case .failure(let error):
+                    print("Optimizely SDK initiliazation failed: \(error)")
+                case .success:
+                    print("Optimizely SDK initialized successfully!")
+                @unknown default:
+                    print("Optimizely SDK initiliazation failed with unknown result")
+                }
+                
+                self.startWithRootViewController()
+            }
         }
+        
+        // For sample codes for APIs, see "Samples/SamplesForAPI.swift"
+        //SamplesForAPI.checkOptimizelyConfig(optimizely: self.optimizely)
+        //SamplesForAPI.checkOptimizelyUserContext(optimizely: self.optimizely)
+        //SamplesForAPI.chgiteckAudienceSegments(optimizely: self.optimizely)
+        
     }
     
     func addNotificationListeners() {

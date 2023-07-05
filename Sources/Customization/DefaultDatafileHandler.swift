@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2022, Optimizely, Inc. and contributors
+// Copyright 2019-2023, Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -158,12 +158,18 @@ open class DefaultDatafileHandler: OPTDatafileHandler {
     open func getResponseData(sdkKey: String, response: HTTPURLResponse, url: URL?) -> Data? {
         if let url = url, let data = try? Data(contentsOf: url) {
             self.logger.d { String(data: data, encoding: .utf8) ?? "" }
-            self.saveDatafile(sdkKey: sdkKey, dataFile: data)
-            if let lastModified = response.getLastModified() {
-                self.sharedDataStore.setLastModified(sdkKey: sdkKey, lastModified: lastModified)
+            // Check datafile is valid json
+            do {
+                // Try deserializing datafile, isValidJSONObject is not applicable here
+                _ = try JSONSerialization.jsonObject(with: data)
+                self.saveDatafile(sdkKey: sdkKey, dataFile: data)
+                if let lastModified = response.getLastModified() {
+                    self.sharedDataStore.setLastModified(sdkKey: sdkKey, lastModified: lastModified)
+                }
+                return data
+            } catch {
+                self.logger.w("Error deserializing datafile: \(error.localizedDescription)")
             }
-            
-            return data
         }
         
         return nil

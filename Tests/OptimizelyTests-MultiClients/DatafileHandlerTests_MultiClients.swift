@@ -1,5 +1,5 @@
 //
-// Copyright 2021, Optimizely, Inc. and contributors 
+// Copyright 2021, 2023, Optimizely, Inc. and contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     
     func testConcurrentDownloadDatafiles() {
         // use a shared DatafileHandler instance
-        let mockHandler = MockDatafileHandler(statusCode: 200)
+        let mockHandler = MockDatafileHandler(statusCode: 200, localResponseData: "{}")
         
         sdkKeys = OTUtils.makeRandomSdkKeys(100)
 
@@ -153,7 +153,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
     
     func testConcurrentAccessLastModified() {
         // use a shared DatafileHandler instance
-        let mockHandler = MockDatafileHandler(statusCode: 200)
+        let mockHandler = MockDatafileHandler(statusCode: 200, localResponseData: "{}")
 
         sdkKeys = OTUtils.makeRandomSdkKeys(100)
 
@@ -241,7 +241,7 @@ class DatafileHandlerTests_MultiClients: XCTestCase {
         }
         
         // use a shared DatafileHandler instance
-        let mockHandler = MockDatafileHandler(statusCode: 200)
+        let mockHandler = MockDatafileHandler(statusCode: 200, localResponseData: "{}")
         
         let numSdks = 50
         sdkKeys = OTUtils.makeRandomSdkKeys(numSdks)

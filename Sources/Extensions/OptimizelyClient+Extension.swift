@@ -81,6 +81,9 @@ extension OptimizelyClient {
         
         let interval = periodicDownloadInterval ?? 10 * 60
         if interval > 0 {
+            if interval < 30 {
+                logger?.w(.lowPeriodicDownloadInterval)
+            }
             self.datafileHandler?.setPeriodicInterval(sdkKey: sdkKey, interval: interval)
         }
     }

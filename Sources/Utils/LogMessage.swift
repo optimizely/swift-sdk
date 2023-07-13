@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2021, Optimizely, Inc. and contributors
+// Copyright 2019-2021, 2023 Optimizely, Inc. and contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ enum LogMessage {
     case failedToConvertMapToString
     case failedToAssignValue
     case valueForKeyNotFound(_ key: String)
+    case lowPeriodicDownloadInterval
 }
 
 extension LogMessage: CustomStringConvertible {
@@ -128,6 +129,7 @@ extension LogMessage: CustomStringConvertible {
         case .failedToConvertMapToString:                                       message = "Provided map could not be converted to string."
         case .failedToAssignValue:                                              message = "Value for path could not be assigned to provided type."
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
+        case .lowPeriodicDownloadInterval:                                      message = "Polling interval below 30s can create high number of requests."
         }
         
         return message

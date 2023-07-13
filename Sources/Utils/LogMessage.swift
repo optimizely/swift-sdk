@@ -129,7 +129,7 @@ extension LogMessage: CustomStringConvertible {
         case .failedToConvertMapToString:                                       message = "Provided map could not be converted to string."
         case .failedToAssignValue:                                              message = "Value for path could not be assigned to provided type."
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
-        case .lowPeriodicDownloadInterval:                                      message = "Polling interval below 30s can create high number of requests."
+        case .lowPeriodicDownloadInterval:                                      message = "Polling intervals below 30 seconds are not recommended."
         }
         
         return message

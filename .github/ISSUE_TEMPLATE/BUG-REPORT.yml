@@ -18,6 +18,12 @@ body:
     required: true
 - type: textarea
   attributes:
+    label: iOS Version
+    description: Version of iOS in use?
+  validations:
+    required: true
+- type: textarea
+  attributes:
     label: Current Behavior
     description: A concise description of what you're experiencing.
   validations:

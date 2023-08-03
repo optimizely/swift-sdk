@@ -53,7 +53,7 @@ body:
     required: false
 - type: textarea
   attributes:
-    label: Logs
+    label: Logs / Stacktraces
     description: Logs/stack traces related to the problem (⚠️do not include sensitive information).
   validations:
     required: false

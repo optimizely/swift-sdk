@@ -21,27 +21,21 @@ class AtomicProperty<T> {
     var property: T? {
         get {
             var retVal: T?
-            lock.sync {
+            lock.withLock {
                 retVal = _property
             }
             return retVal
         }
         set {
-            lock.async(flags: DispatchWorkItemFlags.barrier) {
+            lock.withLock {
                 self._property = newValue
             }
         }
     }
-    private let lock: DispatchQueue
+    private let lock = NSRecursiveLock()
 
     init(property: T?, lock: DispatchQueue? = nil) {
         self._property = property
-        self.lock = lock ?? {
-            var name = "AtomicProperty" + String(Int.random(in: 0...100000))
-            let className = String(describing: T.self)
-            name += className
-            return DispatchQueue(label: name, attributes: .concurrent)
-        }()
     }
 
     convenience init() {
@@ -51,7 +45,7 @@ class AtomicProperty<T> {
     // perform an atomic operation on the atomic property
     // the operation will not run if the property is nil.
     func performAtomic(atomicOperation: (_ prop:inout T) -> Void) {
-        lock.sync(flags: DispatchWorkItemFlags.barrier) {
+        lock.withLock {
             if var prop = _property {
                 atomicOperation(&prop)
                 _property = prop

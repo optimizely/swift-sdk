@@ -14,4 +14,34 @@
 // limitations under the License.
 //
 
-import Foundation
+import XCTest
+
+@available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+class AtomicPropertyTests: XCTestCase {
+    private var subject = AtomicProperty<Int>()
+    
+    func test_atomicPropertyDeadlocks() async {
+        let operationQueue = OperationQueue()
+        let expectations = (0..<80).map { id in
+            let expectation = expectation(description: "Queue Test \(id)")
+            operationQueue.addOperation {
+                self.subject.property = (self.subject.property ?? 0) + 1
+                Thread.sleep(forTimeInterval: 0.1)
+                self.subject.property = (self.subject.property ?? 0) + 1
+                expectation.fulfill()
+            }
+            return expectation
+        }
+
+        let finalExpectation = expectation(description: "Final")
+        operationQueue.addBarrierBlock {
+            finalExpectation.fulfill()
+        }
+
+        await fulfillment(of: expectations + CollectionOfOne(finalExpectation), timeout: 10.0)
+
+        self.subject.property = 0
+    }
+    
+    
+}

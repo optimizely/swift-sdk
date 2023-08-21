@@ -20,7 +20,7 @@ import XCTest
 class AtomicPropertyTests: XCTestCase {
     private var subject = AtomicProperty<Int>()
     
-    func test_atomicPropertyDeadlocks() async {
+    func test_atomicPropertyDeadlocks() {
         let operationQueue = OperationQueue()
         let expectations = (0..<80).map { id in
             let expectation = expectation(description: "Queue Test \(id)")
@@ -37,8 +37,8 @@ class AtomicPropertyTests: XCTestCase {
         operationQueue.addBarrierBlock {
             finalExpectation.fulfill()
         }
-
-        await fulfillment(of: expectations + CollectionOfOne(finalExpectation), timeout: 10.0)
+        
+        wait(for:  expectations + CollectionOfOne(finalExpectation), timeout: 10.0)
 
         self.subject.property = 0
     }

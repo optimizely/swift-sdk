@@ -21,13 +21,13 @@ class AtomicProperty<T> {
     var property: T? {
         get {
             var retVal: T?
-            lock.withLock {
+            withLock {
                 retVal = _property
             }
             return retVal
         }
         set {
-            lock.withLock {
+            withLock {
                 self._property = newValue
             }
         }
@@ -45,12 +45,18 @@ class AtomicProperty<T> {
     // perform an atomic operation on the atomic property
     // the operation will not run if the property is nil.
     func performAtomic(atomicOperation: (_ prop:inout T) -> Void) {
-        lock.withLock {
+        withLock {
             if var prop = _property {
                 atomicOperation(&prop)
                 _property = prop
             }
         }
+    }
+    
+    private func withLock(callBack: () -> Void) {
+        lock.lock()
+        callBack()
+        lock.unlock()
     }
 
 }

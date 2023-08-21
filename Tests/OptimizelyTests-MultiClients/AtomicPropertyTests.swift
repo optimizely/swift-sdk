@@ -22,7 +22,7 @@ class AtomicPropertyTests: XCTestCase {
     
     func test_atomicPropertyDeadlocks() {
         let operationQueue = OperationQueue()
-        let expectations = (0..<80).map { id in
+        let expectations = (0..<80).map { id -> XCTestExpectation in
             let expectation = expectation(description: "Queue Test \(id)")
             operationQueue.addOperation {
                 self.subject.property = (self.subject.property ?? 0) + 1

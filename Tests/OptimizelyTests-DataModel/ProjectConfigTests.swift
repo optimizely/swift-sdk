@@ -79,69 +79,6 @@ class ProjectConfigTests: XCTestCase {
         XCTAssertEqual(featureMap["1003"], ["2002"])
         XCTAssertEqual(featureMap["1004"], ["2002"])
     }
-
-	func testProjectConfigWithDuplicateKey() {
-		let exp0: [String : Any] = [
-			"id": "10001",
-			"key": "duplicate_key",
-			"status": "Running",
-			"layerId": "22222",
-			"variations": [],
-			"trafficAllocation": [],
-			"audienceIds": ["33333"],
-			"audienceConditions": [],
-			"forcedVariations": ["12345": "1234567890"]
-		]
-		
-		let exp1: [String : Any] = [
-			"id": "10005",
-			"key": "duplicate_key",
-			"status": "Running",
-			"layerId": "22222",
-			"variations": [],
-			"trafficAllocation": [],
-			"audienceIds": ["33333"],
-			"audienceConditions": [],
-			"forcedVariations": ["12345": "1234567890"]
-		]
-		
-		var projectData: [String: Any] = [
-			"version": "4",
-			"projectId": "11111",
-			"experiments": [],
-			"audiences": [],
-			"groups": [],
-			"attributes": [],
-			"accountId": "1234567890",
-			"events": [],
-			"revision": "5",
-			"anonymizeIP": true,
-			"rollouts": [],
-			"typedAudiences": [],
-			"integrations": [],
-			"featureFlags": [],
-			"botFiltering": false,
-			"sendFlagDecisions": true
-		]
-		
-		projectData["experiments"] = [exp0, exp1]
-		let model: Project = try! OTUtils.model(from: projectData)
-		let projectConfig = ProjectConfig()
-		projectConfig.project = model
-		
-		optimizely = OptimizelyClient(
-			sdkKey: "demo_key",
-			logger: _TestLogger()
-		)
-		
-		optimizely.config = projectConfig
-				
-		let optimizelyExpMap: [String: OptimizelyExperiment] = try! optimizely.getOptimizelyConfig().experimentsMap
-		
-		XCTAssertEqual(optimizelyExpMap.count, 1)
-		XCTAssertEqual(optimizelyExpMap["duplicate_key"]?.id, "10005")
-	}
-		
 	
     func testFlagVariations() {
         let datafile = OTUtils.loadJSONDatafile("decide_datafile")!

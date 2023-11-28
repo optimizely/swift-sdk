@@ -95,7 +95,7 @@ struct OptimizelyConfigImp: OptimizelyConfig {
     var attributes: [OptimizelyAttribute] = []
     var audiences: [OptimizelyAudience] = []
     var events: [OptimizelyEvent] = []
-	private var logger = OPTLoggerFactory.getLogger()
+	var logger = OPTLoggerFactory.getLogger()
 	
     init(projectConfig: ProjectConfig) {
         guard let project = projectConfig.project else { return }

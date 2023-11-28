@@ -26,6 +26,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let datafile = OTUtils.loadJSONDatafile("optimizely_config_datafile")!
 
         self.optimizely = OptimizelyClient(sdkKey: "12345",
+										   logger: TestLogger(),
                                            userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.start(datafile: datafile)
     }
@@ -307,13 +308,13 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
 		let projectConfig = ProjectConfig()
 		projectConfig.project = model
 		
-		optimizely = OptimizelyClient(
-			sdkKey: "demo_key"
-		)
-		
 		optimizely.config = projectConfig
-				
-		let optimizelyExpMap: [String: OptimizelyExperiment] = try! optimizely.getOptimizelyConfig().experimentsMap
+		
+		let optiConfig = try! optimizely.getOptimizelyConfig()
+		let optimizelyExpMap: [String: OptimizelyExperiment] = optiConfig.experimentsMap
+		
+		let logger = (optiConfig as! OptimizelyConfigImp).logger as! TestLogger
+		XCTAssertEqual(logger.getMessages(.warning), ["Duplicate experiment keys found in datafile: duplicate_key"])
 		
 		XCTAssertEqual(optimizelyExpMap.count, 1)
 		XCTAssertEqual(optimizelyExpMap["duplicate_key"]?.id, "10005")
@@ -426,3 +427,41 @@ extension OptimizelyEvent {
     }
 }
 
+// MARK: - Mock Loggers
+
+fileprivate class TestLogger: OPTLogger {
+	private static var _logLevel: OptimizelyLogLevel?
+	public static var logLevel: OptimizelyLogLevel {
+		get {
+			return _logLevel ?? .info
+		}
+		set (newLevel) {
+			_logLevel = newLevel
+		}
+	}
+	
+	required public init() {
+		clearMessages()
+	}
+	
+	func log(level: OptimizelyLogLevel, message: String) {
+		logMessages[level.rawValue].append(message)
+	}
+	
+	// Utils
+	
+	var logMessages = [[String]]()
+	
+	var logCount: Int {
+		return logMessages.reduce(0) { $0 + $1.count }
+	}
+	
+	func getMessages(_ level: OptimizelyLogLevel) -> [String] {
+		return logMessages[level.rawValue]
+	}
+	
+	func clearMessages() {
+		logMessages = [[String]](repeating: [], count: OptimizelyLogLevel.debug.rawValue + 1)
+	}
+	
+}

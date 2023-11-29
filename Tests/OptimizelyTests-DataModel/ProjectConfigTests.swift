@@ -79,7 +79,7 @@ class ProjectConfigTests: XCTestCase {
         XCTAssertEqual(featureMap["1003"], ["2002"])
         XCTAssertEqual(featureMap["1004"], ["2002"])
     }
-	
+    
     func testFlagVariations() {
         let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
         let optimizely = OptimizelyClient(sdkKey: "12345",

@@ -26,7 +26,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let datafile = OTUtils.loadJSONDatafile("optimizely_config_datafile")!
 
         self.optimizely = OptimizelyClient(sdkKey: "12345",
-										   logger: TestLogger(),
+                                           logger: TestLogger(),
                                            userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.start(datafile: datafile)
     }

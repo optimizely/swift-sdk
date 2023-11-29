@@ -96,7 +96,7 @@ struct OptimizelyConfigImp: OptimizelyConfig {
     var audiences: [OptimizelyAudience] = []
     var events: [OptimizelyEvent] = []
     var logger = OPTLoggerFactory.getLogger()
-	
+
     init(projectConfig: ProjectConfig) {
         guard let project = projectConfig.project else { return }
         
@@ -151,11 +151,10 @@ extension OptimizelyConfigImp {
     
     func makeExperimentsMap(project: Project, experiments: [Experiment]) -> [String: Experiment] {
         var map = [String: Experiment]()
-		
         experiments.forEach {
-			if map.keys.contains($0.key) {
-				logger.w("Duplicate experiment keys found in datafile: \($0.key)")
-			}
+            if map.keys.contains($0.key) {
+                logger.w("Duplicate experiment keys found in datafile: \($0.key)")
+            }
             map[$0.key] = $0
         }
         return map

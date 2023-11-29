@@ -183,7 +183,6 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         
         var request = URLRequest(url: event.url)
         request.httpMethod = "POST"
-        request.httpBody = event.body
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // send notification BEFORE sending event to the server

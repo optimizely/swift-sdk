@@ -782,7 +782,7 @@ open class OptimizelyClient: NSObject {
     public func getOptimizelyConfig() throws -> OptimizelyConfig {
         guard let config = self.config else { throw OptimizelyError.sdkNotReady }
         
-        return OptimizelyConfigImp(projectConfig: config)
+        return OptimizelyConfigImp(projectConfig: config, logger: logger)
     }
 
 }

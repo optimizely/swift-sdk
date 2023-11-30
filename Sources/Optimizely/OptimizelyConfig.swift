@@ -95,9 +95,8 @@ struct OptimizelyConfigImp: OptimizelyConfig {
     var attributes: [OptimizelyAttribute] = []
     var audiences: [OptimizelyAudience] = []
     var events: [OptimizelyEvent] = []
-    var logger = OPTLoggerFactory.getLogger()
-
-    init(projectConfig: ProjectConfig) {
+    
+    init(projectConfig: ProjectConfig, logger: OPTLogger = DefaultLogger()) {
         guard let project = projectConfig.project else { return }
         
         self.environmentKey = project.environmentKey ?? ""
@@ -140,7 +139,7 @@ struct OptimizelyConfigImp: OptimizelyConfig {
             return updatedRollout
         }
         
-        self.experimentsMap = makeExperimentsMap(project: project, experiments: updatedExperiments)
+        self.experimentsMap = makeExperimentsMap(project: project, experiments: updatedExperiments, logger: logger)
         self.featuresMap = makeFeaturesMap(project: project, experiments: updatedExperiments, rollouts: updatedRollouts)
     }
 }
@@ -149,7 +148,7 @@ struct OptimizelyConfigImp: OptimizelyConfig {
 
 extension OptimizelyConfigImp {
     
-    func makeExperimentsMap(project: Project, experiments: [Experiment]) -> [String: Experiment] {
+    func makeExperimentsMap(project: Project, experiments: [Experiment], logger: OPTLogger) -> [String: Experiment] {
         var map = [String: Experiment]()
         experiments.forEach {
             if map.keys.contains($0.key) {

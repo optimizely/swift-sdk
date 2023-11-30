@@ -313,7 +313,7 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let optiConfig = try! optimizely.getOptimizelyConfig()
         let optimizelyExpMap: [String: OptimizelyExperiment] = optiConfig.experimentsMap
         
-        let logger = (optiConfig as! OptimizelyConfigImp).logger as! TestLogger
+        let logger = optimizely.logger as! TestLogger
         XCTAssertEqual(logger.getMessages(.warning), ["Duplicate experiment keys found in datafile: duplicate_key"])
         
         XCTAssertEqual(optimizelyExpMap.count, 1)

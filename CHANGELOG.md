@@ -1,5 +1,15 @@
 # Optimizely Swift SDK Changelog
 
+## 3.10.3
+November 30, 2023
+
+### Bug Fixes
+* Remove redundant post request body in upload task. ([#521](https://github.com/optimizely/swift-sdk/pull/521/)).
+
+### Ehancement
+* Add privacy manifest file ([#522](https://github.com/optimizely/swift-sdk/pull/522/)).
+* Handle duplicate keys in experiment ([#9776](https://github.com/optimizely/swift-sdk/pull/9776/)).
+
 ## 3.10.2
 March 14, 2023
 

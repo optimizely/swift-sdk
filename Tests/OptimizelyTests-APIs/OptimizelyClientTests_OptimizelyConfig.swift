@@ -26,7 +26,6 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let datafile = OTUtils.loadJSONDatafile("optimizely_config_datafile")!
 
         self.optimizely = OptimizelyClient(sdkKey: "12345",
-                                           logger: TestLogger(),
                                            userProfileService: OTUtils.createClearUserProfileService())
         try! self.optimizely.start(datafile: datafile)
     }
@@ -308,12 +307,9 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let projectConfig = ProjectConfig()
         projectConfig.project = model
         
-        optimizely.config = projectConfig
-        
-        let optiConfig = try! optimizely.getOptimizelyConfig()
-        let optimizelyExpMap: [String: OptimizelyExperiment] = optiConfig.experimentsMap
-        
-        let logger = optimizely.logger as! TestLogger
+        let logger = TestLogger()
+        let optiConfigImpl = OptimizelyConfigImp(projectConfig: projectConfig, logger: logger)
+        let optimizelyExpMap: [String: OptimizelyExperiment] = optiConfigImpl.experimentsMap
         XCTAssertEqual(logger.getMessages(.warning), ["Duplicate experiment keys found in datafile: duplicate_key"])
         
         XCTAssertEqual(optimizelyExpMap.count, 1)

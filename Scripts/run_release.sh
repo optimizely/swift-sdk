@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
 set -e
 
-# Because `hub` is used, this script expects the following environment variables defined in travis job settings:
+# Because `hub` is used, this script expects the following environment variables:
 # GITHUB_TOKEN - github api token with repo permissions (display value in build log setting: OFF)
 # GITHUB_USER - github username that GITHUB_TOKEN is associated with (display value in build log setting: ON)
 
 # COCOAPODS_TRUNK_TOKEN - should be defined in job settings so that we can `pod trunk push`
 
+MYREPO=${HOME}/workdir/${REPO_SLUG}
+
+function prep_workspace {
+  rm -rf ${MYREPO}
+  mkdir -p ${MYREPO}
+  git clone -b ${BRANCH} https://${GITHUB_TOKEN}@github.com/${REPO_SLUG} ${MYREPO}
+  cd ${MYREPO}
+}
+
 function release_github {
+  LAST_RELEASE=$(git describe --abbrev=0 --tags)
+
+  if [[ ${LAST_RELEASE} == "v${VERSION}" ]]; then
+    echo "${LAST_RELEASE} tag exists already (probably created while in the current release process). Skipping..."
+    return
+  fi
+
   CHANGELOG="CHANGELOG.md"
 
   # check that CHANGELOG.md has been updated
@@ -22,11 +38,14 @@ function release_github {
 
   DESCRIPTION=$(awk "/^${NEW_VERSION}$/,/^${LAST_VERSION:-nothingmatched}$/" ${CHANGELOG} | grep -v "^${LAST_VERSION:-nothingmatched}$")
 
-  hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${TRAVIS_BRANCH}"
-
+  hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${BRANCH}"
 }
 
 function release_cocoapods {
+  
+  # - cocoapods requires ENV['HOME'] with absolute path
+  HOME=$(pwd)
+  gem install cocoapods -v $COCOAPODS_VERSION
 
   # ---- Optimizely's pods ----
   pods=(OptimizelySwiftSDK);
@@ -39,13 +58,14 @@ function release_cocoapods {
   do
     podname=${pods[i]};
     printf "Pushing the ${podname} pod to COCOAPODS.ORG .\n"
-    pod trunk push --allow-warnings ${podname}.podspec
-    pod update
+    pod _${COCOAPODS_VERSION}_ trunk push --allow-warnings ${podname}.podspec
+    pod _${COCOAPODS_VERSION}_ update
   done
 
 }
 
 function main {
+  prep_workspace
   release_github
   release_cocoapods
 }

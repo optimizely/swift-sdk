@@ -2,9 +2,9 @@ name: Swift
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '*' ]
   pull_request:
-    branches: [ master ]
+    branches: [ '*' ]
   workflow_dispatch:
     inputs:
       PREP:
@@ -17,7 +17,7 @@ on:
         description: release
 
 env:
-  VERSION: 4.0.0-beta
+  VERSION: 3.10.2
 
 jobs:
 

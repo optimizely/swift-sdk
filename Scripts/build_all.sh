@@ -32,7 +32,8 @@ main() {
 
   xcodebuild -workspace OptimizelySwiftSDK.xcworkspace -scheme OptimizelySwiftSDK-iOS -configuration Release "${action}"
   xcodebuild -workspace OptimizelySwiftSDK.xcworkspace -scheme OptimizelySwiftSDK-tvOS -configuration Release "${action}"
+  xcodebuild -workspace OptimizelySwiftSDK.xcworkspace -scheme OptimizelySwiftSDK-macOS -configuration Release "${action}"
+  xcodebuild -workspace OptimizelySwiftSDK.xcworkspace -scheme OptimizelySwiftSDK-watchOS -configuration Release "${action}"
 }
 
 main
-

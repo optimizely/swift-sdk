@@ -1,0 +1,94 @@
+name: Swift
+
+on:
+  push:
+    branches: [ 'master' ]
+  pull_request:
+    branches: [ '*' ]
+  workflow_dispatch:
+    inputs:
+      PREP:
+        required: false
+        type: boolean
+        description: prepare to release
+      RELEASE:
+        required: false
+        type: boolean
+        description: release
+
+env:
+  VERSION: 3.10.2
+
+jobs:
+
+  lint_markdown_files:
+    uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@master
+
+  integration_tests:
+    if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}"
+    uses: optimizely/swift-sdk/.github/workflows/integration_tests.yml@master
+    secrets:
+      CI_USER_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+      TRAVIS_COM_TOKEN: ${{ secrets.TRAVIS_COM_TOKEN }}
+
+  lint: 
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 14.1.0
+    - env:
+        SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
+      run: |
+        gem install cocoapods -v '1.9.3'
+        pod spec lint --quick
+        curl -sSL https://download.sourceclear.com/ci.sh | bash
+
+  unittests: 
+    if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
+    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
+
+  prepare_for_release:
+    runs-on: macos-12
+    if: "${{ github.event.inputs.PREP == 'true' && github.event_name == 'workflow_dispatch' }}" 
+    steps:
+    - uses: actions/checkout@v3
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 14.1.0
+    - id: prepare_for_release
+      name: Prepare for release
+      env:
+        HOME: 'home/runner'
+        REPO_SLUG: ${{ github.repository }}
+        BRANCH: ${{ github.ref_name }}
+        GITHUB_USER: optibot
+        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+        COCOAPODS_VERSION: '1.12.1'
+      run: |
+        gem install cocoapods -v $COCOAPODS_VERSION
+        Scripts/run_prep.sh
+    - name: Check prepare for release failure
+      if: steps.prepare_for_release.conclusion == 'failure'
+      run: cat /tmp/build.out
+
+  release:
+    if: "${{github.event.inputs.RELEASE == 'true' && github.event_name == 'workflow_dispatch' }}"
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 14.1.0
+    - name: Push to cocoapods.org
+      env:
+        HOME: 'home/runner'
+        REPO_SLUG: ${{ github.repository }}
+        BRANCH: ${{ github.ref_name }}
+        GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        COCOAPODS_VERSION: '1.12.1'
+      run: |
+        gem install cocoapods -v $COCOAPODS_VERSION
+        Scripts/run_release.sh

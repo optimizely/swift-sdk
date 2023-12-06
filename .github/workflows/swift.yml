@@ -68,6 +68,7 @@ jobs:
         COCOAPODS_VERSION: '1.12.1'
       run: |
         gem install cocoapods -v $COCOAPODS_VERSION
+        brew install hub 
         Scripts/run_prep.sh
     - name: Check prepare for release failure
       if: steps.prepare_for_release.conclusion == 'failure'
@@ -91,4 +92,5 @@ jobs:
         COCOAPODS_VERSION: '1.12.1'
       run: |
         gem install cocoapods -v $COCOAPODS_VERSION
+        brew install hub 
         Scripts/run_release.sh

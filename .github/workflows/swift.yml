@@ -119,5 +119,5 @@ jobs:
         COCOAPODS_VERSION: '1.12.1'
       run: |
         gem install cocoapods -v $COCOAPODS_VERSION
-        hub version
+        whereis hub
         Scripts/run_release.sh

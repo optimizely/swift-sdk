@@ -57,7 +57,7 @@ function install_binary {
 	chmod +x ~/bin/hub${windows:+.exe}
   pwd
   # verify
-  # ~/bin/hub${windows:+.exe} version
+  ~/bin/hub${windows:+.exe} version
 
   # cleanup
   rm -rf $tmp_dir

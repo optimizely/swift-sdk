@@ -38,29 +38,27 @@ download() {
 }
 
 function install_binary {
-	mkdir -p ~/bin
+	# mkdir -p ~/bin
 
-  # https://code-maven.com/create-temporary-directory-on-linux-using-bash
-  tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX)
+  # # https://code-maven.com/create-temporary-directory-on-linux-using-bash
+  # tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX)
   
-  cd $tmp_dir
+  # cd $tmp_dir
 
   download $1 $2
 
-	if [ ! -f "$tmp_dir/bin/hub${windows:+.exe}" ]; then
-		echo "Failed to obtain $tmp_dir/bin/hub${windows:+.exe}"
-		exit 1	
-	fi
-  mkdir -p ~/bin/
-  mv $tmp_dir/bin/hub${windows:+.exe} ~/bin/
+	# if [ ! -f "$tmp_dir/bin/hub${windows:+.exe}" ]; then
+	# 	echo "Failed to obtain $tmp_dir/bin/hub${windows:+.exe}"
+	# 	exit 1	
+	# fi
+  # mkdir -p ~/bin/
+  # mv $tmp_dir/bin/hub${windows:+.exe} ~/bin/
 
-	chmod +x ~/bin/hub${windows:+.exe}
+	# chmod +x ~/bin/hub${windows:+.exe}
+  chmod +x ./hub
 
   # verify
-  ~/bin/hub${windows:+.exe} version
-
-  # cleanup
-  rm -rf $tmp_dir
+  hub version
 }
 
 

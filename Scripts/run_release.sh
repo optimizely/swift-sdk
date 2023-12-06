@@ -57,12 +57,12 @@ function install_binary {
 	chmod +x ~/bin/hub${windows:+.exe}
 
   # verify
-  ~/bin/hub${windows:+.exe} version
+  # ~/bin/hub${windows:+.exe} version
 
   # cleanup
   rm -rf $tmp_dir
 
-  cp ~/bin/hub .
+  # cp ~/bin/hub .
 }
 
 function prep_workspace {
@@ -94,7 +94,7 @@ function release_github {
 
   DESCRIPTION=$(awk "/^${NEW_VERSION}$/,/^${LAST_VERSION:-nothingmatched}$/" ${CHANGELOG} | grep -v "^${LAST_VERSION:-nothingmatched}$")
   install_binary mislav hub
-  hub version
+  ~/bin/hub version
   hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${BRANCH}"
 }
 

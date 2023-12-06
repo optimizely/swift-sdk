@@ -62,8 +62,6 @@ function install_binary {
   # cleanup
   rm -rf $tmp_dir
   echo "hub installed"
-  whereis hub
-  which hub
   # cp ~/bin/hub .
 }
 

@@ -263,6 +263,64 @@ class OptimizelyClientTests_OptimizelyConfig: XCTestCase {
         let result = try? self.optimizely.getOptimizelyConfig()
         XCTAssertNil(result)
     }
+	
+    func testOptimizelyConfigWithDuplicateKeys() {
+        let exp0: [String : Any] = [
+            "id": "10001",
+            "key": "duplicate_key",
+            "status": "Running",
+            "layerId": "22222",
+            "variations": [],
+            "trafficAllocation": [],
+            "audienceIds": ["33333"],
+            "audienceConditions": [],
+            "forcedVariations": ["12345": "1234567890"]
+        ]
+        
+        let exp1: [String : Any] = [
+            "id": "10005",
+            "key": "duplicate_key",
+            "status": "Running",
+            "layerId": "22222",
+            "variations": [],
+            "trafficAllocation": [],
+            "audienceIds": ["33333"],
+            "audienceConditions": [],
+            "forcedVariations": ["12345": "1234567890"]
+        ]
+        
+        var projectData: [String: Any] = [
+            "version": "4",
+            "projectId": "11111",
+            "experiments": [],
+            "audiences": [],
+            "groups": [],
+            "attributes": [],
+            "accountId": "1234567890",
+            "events": [],
+            "revision": "5",
+            "anonymizeIP": true,
+            "rollouts": [],
+            "typedAudiences": [],
+            "integrations": [],
+            "featureFlags": [],
+            "botFiltering": false,
+            "sendFlagDecisions": true
+        ]
+        
+        projectData["experiments"] = [exp0, exp1]
+        let model: Project = try! OTUtils.model(from: projectData)
+        let projectConfig = ProjectConfig()
+        projectConfig.project = model
+        
+        let logger = TestLogger()
+        let optiConfigImpl = OptimizelyConfigImp(projectConfig: projectConfig, logger: logger)
+        let optimizelyExpMap: [String: OptimizelyExperiment] = optiConfigImpl.experimentsMap
+        XCTAssertEqual(logger.getMessages(.warning), ["Duplicate experiment keys found in datafile: duplicate_key"])
+        
+        XCTAssertEqual(optimizelyExpMap.count, 1)
+        XCTAssertEqual(optimizelyExpMap["duplicate_key"]?.id, "10005")
+    }
     
 }
 
@@ -371,3 +429,41 @@ extension OptimizelyEvent {
     }
 }
 
+// MARK: - Mock Loggers
+
+fileprivate class TestLogger: OPTLogger {
+    private static var _logLevel: OptimizelyLogLevel?
+    public static var logLevel: OptimizelyLogLevel {
+        get {
+            return _logLevel ?? .info
+        }
+        set (newLevel) {
+            _logLevel = newLevel
+        }
+    }
+    
+    required public init() {
+        clearMessages()
+    }
+    
+    func log(level: OptimizelyLogLevel, message: String) {
+        logMessages[level.rawValue].append(message)
+    }
+    
+    // Utils
+    
+    var logMessages = [[String]]()
+    
+    var logCount: Int {
+        return logMessages.reduce(0) { $0 + $1.count }
+    }
+    
+    func getMessages(_ level: OptimizelyLogLevel) -> [String] {
+        return logMessages[level.rawValue]
+    }
+    
+    func clearMessages() {
+        logMessages = [[String]](repeating: [], count: OptimizelyLogLevel.debug.rawValue + 1)
+    }
+    
+}

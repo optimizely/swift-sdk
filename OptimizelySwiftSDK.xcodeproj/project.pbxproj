@@ -2457,6 +2457,7 @@
 			children = (
 				6E75167A22C520D400B2B157 /* Optimizely.h */,
 				6E75167B22C520D400B2B157 /* Info.plist */,
+				987F11D92AF3F56F0083D3F9 /* PrivacyInfo.xcprivacy */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";

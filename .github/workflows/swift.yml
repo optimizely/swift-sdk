@@ -119,4 +119,5 @@ jobs:
         COCOAPODS_VERSION: '1.12.1'
       run: |
         gem install cocoapods -v $COCOAPODS_VERSION
+        $HOME/travisci-tools/release_github/install_hub.sh
         Scripts/run_release.sh

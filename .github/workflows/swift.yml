@@ -95,20 +95,6 @@ jobs:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: 14.1.0
-    - uses: actions/checkout@v2
-      with:
-        # You should create a personal access token and store it in your repository
-        token: ${{ secrets.CI_USER_TOKEN }}
-        repository: 'optimizely/travisci-tools'
-        path: 'home/runner/travisci-tools'
-        ref: 'master'
-    - name: Install hub
-      shell: bash
-      env:
-        HOME: 'home/runner'
-      run: |
-        # installs hub to ~/bin
-        $HOME/travisci-tools/release_github/install_hub.sh
     - name: Push to cocoapods.org
       env:
         HOME: 'home/runner'
@@ -119,5 +105,4 @@ jobs:
         COCOAPODS_VERSION: '1.12.1'
       run: |
         gem install cocoapods -v $COCOAPODS_VERSION
-        $HOME/travisci-tools/release_github/install_hub.sh
         Scripts/run_release.sh

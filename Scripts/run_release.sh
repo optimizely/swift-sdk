@@ -9,6 +9,61 @@ set -e
 
 MYREPO=${HOME}/workdir/${REPO_SLUG}
 
+ARCH="amd64"
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+case "$OS" in
+mingw* | msys* ) OS=windows ;;
+esac
+
+[[ $OS == 'windows' ]] && windows=1
+
+download() {
+  case "$OS" in
+  windows )
+    WINDOWS_URL=$(curl -u $GITHUB_USER:$GITHUB_TOKEN https://api.github.com/repos/$1/$2/releases/latest 2>/dev/null |  jq -r '.assets[] | select(.browser_download_url | contains("windows-amd64")) | .browser_download_url')
+    echo "$WINDOWS_URL"
+    curl -fsSLO "$WINDOWS_URL"
+    unzip "$(basename "$WINDOWS_URL")" bin/hub.exe
+    rm -f "$(basename "$WINDOWS_URL")"
+    ;;
+  darwin )
+    DARWIN_URL=$(curl -u $GITHUB_USER:$GITHUB_TOKEN https://api.github.com/repos/$1/$2/releases/latest 2>/dev/null |  jq -r '.assets[] | select(.browser_download_url | contains("darwin-amd64")) | .browser_download_url')
+    curl -fsSL "$DARWIN_URL" -o - | tar xz --strip-components=1 '*/bin/hub'
+    ;;
+  * )
+    LINUX_URL=$(curl -u $GITHUB_USER:$GITHUB_TOKEN https://api.github.com/repos/$1/$2/releases/latest 2>/dev/null |  jq -r '.assets[] | select(.browser_download_url | contains("linux-amd64")) | .browser_download_url')
+    curl -fsSL "$LINUX_URL" | tar xz --strip-components=1 --wildcards '*/bin/hub'
+    ;;
+  esac
+}
+
+function install_binary {
+	mkdir -p ~/bin
+
+  # https://code-maven.com/create-temporary-directory-on-linux-using-bash
+  tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX)
+  
+  cd $tmp_dir
+
+  download $1 $2
+
+	if [ ! -f "$tmp_dir/bin/hub${windows:+.exe}" ]; then
+		echo "Failed to obtain $tmp_dir/bin/hub${windows:+.exe}"
+		exit 1	
+	fi
+  mkdir -p ~/bin/
+  mv $tmp_dir/bin/hub${windows:+.exe} ~/bin/
+
+	chmod +x ~/bin/hub${windows:+.exe}
+
+  # verify
+  ~/bin/hub${windows:+.exe} version
+
+  # cleanup
+  rm -rf $tmp_dir
+}
+
+
 function prep_workspace {
   rm -rf ${MYREPO}
   mkdir -p ${MYREPO}
@@ -37,7 +92,8 @@ function release_github {
   LAST_VERSION=$(grep '^## \d\+\.\d\+.\d\+' ${CHANGELOG} | awk 'NR==2')
 
   DESCRIPTION=$(awk "/^${NEW_VERSION}$/,/^${LAST_VERSION:-nothingmatched}$/" ${CHANGELOG} | grep -v "^${LAST_VERSION:-nothingmatched}$")
-
+  install_binary mislav hub
+  hub version
   hub release create v${VERSION} -m "Release ${VERSION}" -m "${DESCRIPTION}" -t "${BRANCH}"
 }
 

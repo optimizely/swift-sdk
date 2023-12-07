@@ -1739,6 +1739,10 @@
 		84E7ABC827D2A1F100447CAE /* ThreadSafeLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E7ABBA27D2A1F100447CAE /* ThreadSafeLogger.swift */; };
 		84E7ABC927D2A1F100447CAE /* ThreadSafeLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E7ABBA27D2A1F100447CAE /* ThreadSafeLogger.swift */; };
 		84E7ABCA27D2A1F100447CAE /* ThreadSafeLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E7ABBA27D2A1F100447CAE /* ThreadSafeLogger.swift */; };
+		98D47DAB2B224627001D38AC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 98D47DAA2B224627001D38AC /* PrivacyInfo.xcprivacy */; };
+		98D47DAC2B224627001D38AC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 98D47DAA2B224627001D38AC /* PrivacyInfo.xcprivacy */; };
+		98D47DAD2B224627001D38AC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 98D47DAA2B224627001D38AC /* PrivacyInfo.xcprivacy */; };
+		98D47DAE2B224627001D38AC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 98D47DAA2B224627001D38AC /* PrivacyInfo.xcprivacy */; };
 		BD1C3E8524E4399C0084B4DA /* SemanticVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B97DD93249D327F003DE606 /* SemanticVersion.swift */; };
 		BD64853C2491474500F30986 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E75167A22C520D400B2B157 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BD64853E2491474500F30986 /* Audience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169822C520D400B2B157 /* Audience.swift */; };
@@ -2149,6 +2153,7 @@
 		75C719BB25E4519B0084187E /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		75C71C3825E45A2B0084187E /* WatchBackgroundNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchBackgroundNotifier.swift; sourceTree = "<group>"; };
 		84E7ABBA27D2A1F100447CAE /* ThreadSafeLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSafeLogger.swift; sourceTree = "<group>"; };
+		98D47DAA2B224627001D38AC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		BD6485812491474500F30986 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C78CAF572445AD8D009FE876 /* OptimizelyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyJSON.swift; sourceTree = "<group>"; };
 		C78CAF652446DB91009FE876 /* OptimizelyClientTests_OptimizelyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_OptimizelyJSON.swift; sourceTree = "<group>"; };
@@ -2455,9 +2460,9 @@
 		6E75167922C520D400B2B157 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				98D47DAA2B224627001D38AC /* PrivacyInfo.xcprivacy */,
 				6E75167A22C520D400B2B157 /* Optimizely.h */,
 				6E75167B22C520D400B2B157 /* Info.plist */,
-				987F11D92AF3F56F0083D3F9 /* PrivacyInfo.xcprivacy */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -3293,6 +3298,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98D47DAC2B224627001D38AC /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3658,6 +3664,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98D47DAB2B224627001D38AC /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3704,6 +3711,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98D47DAE2B224627001D38AC /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3711,6 +3719,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98D47DAD2B224627001D38AC /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

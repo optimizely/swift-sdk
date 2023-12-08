@@ -1,7 +1,7 @@
 # Optimizely Swift SDK Changelog
 
 ## 3.10.3
-December 5, 2023
+December 7, 2023
 
 ### Bug Fixes
 * Remove redundant post request body in upload task. ([#521](https://github.com/optimizely/swift-sdk/pull/521/)).

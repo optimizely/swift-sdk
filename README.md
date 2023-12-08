@@ -39,7 +39,7 @@ If you have a name conflict with other swift packages when you add the Optimizel
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 ```use_frameworks!```
-```pod 'OptimizelySwiftSDK', '~> 3.10.3'```
+```pod 'OptimizelySwiftSDK', '~> 3.10.4'```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -47,7 +47,7 @@ If you have a name conflict with other swift packages when you add the Optimizel
 Further installation instructions for Cocoapods: https://guides.cocoapods.org/using/getting-started.html
 
 #### Carthage
-1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.10.3```</pre>
+1. Add the following lines to the _Cartfile_:<pre>```github "optimizely/swift-sdk" ~> 3.10.4```</pre>
 
 2. Run the following command:<pre>```carthage update```</pre>
 

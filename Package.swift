@@ -1,4 +1,8 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.3
+// The Swift tools version declares the version of the PackageDescription library,
+// the minimum version of the Swift tools and Swift language compatibility version to process the manifest,
+// and the minimum version of the Swift tools that are needed to use the Swift package.
+
 import PackageDescription
 
 let package = Package(
@@ -14,7 +18,11 @@ let package = Package(
                  targets: ["Optimizely"])
     ],
     targets: [
-        .target(name: "Optimizely", path: "Sources")
+        .target(
+            name: "Optimizely",
+            path: "Sources",
+            resources: [.copy("Supporting Files/PrivacyInfo.xcprivacy")]
+        )
     ],
     swiftLanguageVersions: [.v5]
 )

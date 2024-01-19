@@ -1,5 +1,13 @@
 # Optimizely Swift SDK Changelog
 
+## 3.10.5
+Jan 19, 2024
+
+### Bug Fixes
+* Value for required reason API fixed at privacy manifest file. ([#541](https://github.com/optimizely/swift-sdk/pull/541))
+* Add coccoapods support to bundle privacy manifest file. ([#542](https://github.com/optimizely/swift-sdk/pull/542))
+* Add SPM support to bundle privacy manifest file. ([#544](https://github.com/optimizely/swift-sdk/pull/544))
+
 ## 3.10.4
 December 8, 2023
 

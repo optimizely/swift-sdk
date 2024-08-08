@@ -8,6 +8,9 @@ on:
       TRAVIS_COM_TOKEN:
         required: true
 
+env:
+  HEAD_REF: ${{ github.head_ref }}
+
 jobs:
   integration_tests:
     runs-on: ubuntu-latest
@@ -22,7 +25,7 @@ jobs:
     - name: set SDK Branch if PR
       if: ${{ github.event_name == 'pull_request' }}
       run: |
-        echo "SDK_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+        echo "SDK_BRANCH=$HEAD_REF" >> $GITHUB_ENV
     - name: set SDK Branch if not pull request
       if: ${{ github.event_name != 'pull_request' }}
       run: |

@@ -54,13 +54,17 @@ jobs:
           # macos version and supported simulator_xcode_versions are all related to this xcode_version, so be careful when you upgrade this.
           xcode-version: 14.1
       - name: set SDK Branch if PR
+        env:
+          BASE_REF: ${{ github.base_ref }}
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          echo "BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV
+          echo "BRANCH=$BASE_REF" >> $GITHUB_ENV
       - name: set SDK Branch if not pull request
+        env:
+          REF_NAME: ${{ github.ref_name }}
         if: ${{ github.event_name != 'pull_request' }}
         run: |
-          echo "BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "BRANCH=$REF_NAME" >> $GITHUB_ENV
       - id: unit_tests
         env:
           SCHEME: ${{ matrix.scheme }}

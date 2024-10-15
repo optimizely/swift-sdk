@@ -17,14 +17,17 @@
 import Foundation
 
 class OdpVuidManager {
-    var vuid: String = ""
+    private var _vuid: String = ""
+    var enabled: Bool
     let logger = OPTLoggerFactory.getLogger()
-
-    // a single vuid should be shared for all SDK instances
-    static let shared = OdpVuidManager()
     
-    init() {
-        self.vuid = load()
+    init(enabled: Bool) {
+        self.enabled = enabled
+        if enabled {
+            self._vuid = load()
+        } else {
+            self.remove()
+        }
     }
     
     static var newVuid: String {
@@ -45,6 +48,13 @@ class OdpVuidManager {
 // MARK: - VUID Store
 
 extension OdpVuidManager {
+    var vuid: String {
+        if enabled {
+            return _vuid
+        } else {
+            return ""
+        }
+    }
     
     private var keyForVuid: String {
         return "optimizely-vuid"
@@ -59,7 +69,12 @@ extension OdpVuidManager {
         save(vuid: vuid)
         return vuid
     }
-
+    
+    private func remove() {
+        UserDefaults.standard.set(nil, forKey: keyForVuid)
+        UserDefaults.standard.synchronize()
+    }
+    
     private func save(vuid: String) {
         UserDefaults.standard.set(vuid, forKey: keyForVuid)
         UserDefaults.standard.synchronize()

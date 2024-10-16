@@ -27,6 +27,7 @@ enum LogMessage {
     case failedToExtractRevenueFromEventTags(_ val: String)
     case failedToExtractValueFromEventTags(_ val: String)
     case gotVariationFromUserProfile(_ varKey: String, _ expKey: String, _ userId: String)
+    case unableToGetUserProfile(_ expKey: String, _ userId: String)
     case rolloutHasNoExperiments(_ id: String)
     case forcedVariationFound(_ key: String, _ userId: String)
     case forcedVariationFoundButInvalid(_ key: String, _ userId: String)
@@ -85,6 +86,7 @@ extension LogMessage: CustomStringConvertible {
         case .failedToExtractRevenueFromEventTags(let val):                     message = "Failed to parse revenue (\(val)) from event tags."
         case .failedToExtractValueFromEventTags(let val):                       message = "Failed to parse value (\(val)) from event tags."
         case .gotVariationFromUserProfile(let varKey, let expKey, let userId):  message = "Returning previously activated variation (\(varKey)) of experiment (\(expKey)) for user (\(userId)) from user profile."
+        case .unableToGetUserProfile(let expKey, let userId):                   message = "Unable to get user profile for user (\(userId))."
         case .rolloutHasNoExperiments(let id):                                  message = "Rollout of feature (\(id)) has no experiments"
         case .forcedVariationFound(let key, let userId):                        message = "Forced variation (\(key)) is found for user (\(userId))"
         case .forcedVariationFoundButInvalid(let key, let userId):              message = "Forced variation (\(key)) is found for user (\(userId)), but it's not in datafile."

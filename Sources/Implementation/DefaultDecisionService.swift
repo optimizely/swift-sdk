@@ -23,9 +23,26 @@ struct FeatureDecision {
 }
 
 class DefaultDecisionService: OPTDecisionService {
+    typealias UserProfile = OPTUserProfileService.UPProfile
     
+    private var _decisionBatchInProgress: Bool = false
+    
+    var decisionBatchInProgress: Bool {
+        get {
+            return _decisionBatchInProgress
+        }
+        set {
+            // Only save if the value is changing from true to false
+            if _decisionBatchInProgress && !newValue {
+                saveProfile()
+            }
+            _decisionBatchInProgress = newValue
+        }
+    }
+
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
+    private var userProfile: UserProfile?
     
     // thread-safe lazy logger load (after HandlerRegisterService ready)
     private let threadSafeLogger = ThreadSafeLogger()
@@ -88,16 +105,26 @@ class DefaultDecisionService: OPTDecisionService {
         // ---- check if a valid variation is stored in the user profile ----
         let ignoreUPS = (options ?? []).contains(.ignoreUserProfileService)
         
-        if !ignoreUPS,
-           let variationId = getVariationIdFromProfile(userId: userId, experimentId: experimentId),
-           let variation = experiment.getVariation(id: variationId) {
+        if !ignoreUPS {
+            if userProfile == nil {
+                userProfile = userProfileService.lookup(userId: userId)
+            }
             
-            let info = LogMessage.gotVariationFromUserProfile(variation.key, experiment.key, userId)
-            logger.i(info)
-            reasons.addInfo(info)
-            return DecisionResponse(result: variation, reasons: reasons)
+            if let profile = userProfile {
+               if let variationId = getVariationIdFromProfile(userId: userId, profile: profile, experimentId: experimentId),
+                  let variation = experiment.getVariation(id: variationId) {
+                   let info = LogMessage.gotVariationFromUserProfile(variation.key, experiment.key, userId)
+                   logger.i(info)
+                   reasons.addInfo(info)
+                   return DecisionResponse(result: variation, reasons: reasons)
+               }
+            } else {
+                let info = LogMessage.unableToGetUserProfile(experiment.key, userId)
+                logger.i(info)
+            }
+            
         }
-        
+             
         var bucketedVariation: Variation?
         // ---- check if the user passes audience targeting before bucketing ----
         let audienceResponse = doesMeetAudienceConditions(config: config,
@@ -118,7 +145,8 @@ class DefaultDecisionService: OPTDecisionService {
                 reasons.addInfo(info)
                 // save to user profile
                 if !ignoreUPS {
-                    self.saveProfile(userId: userId, experimentId: experimentId, variationId: variation.id)
+                    let buckerUserProfile = userProfile ?? UserProfile()
+                    updateVariation(userId: userId, profile: buckerUserProfile, experimentId: experimentId, variationId: variation.key)
                 }
             } else {
                 let info = LogMessage.userNotBucketedIntoVariation(userId)
@@ -454,9 +482,9 @@ class DefaultDecisionService: OPTDecisionService {
 extension DefaultDecisionService {
     
     func getVariationIdFromProfile(userId: String,
+                                   profile: UserProfile,
                                    experimentId: String) -> String? {
-        if let profile = userProfileService.lookup(userId: userId),
-           let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+        if let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
            let experimentMap = bucketMap[experimentId],
            let variationId = experimentMap[UserProfileKeys.kVariationId] {
             return variationId
@@ -465,22 +493,33 @@ extension DefaultDecisionService {
         }
     }
     
-    func saveProfile(userId: String,
-                     experimentId: String,
-                     variationId: String) {
+    func updateVariation(userId: String,
+                         profile: UserProfile,
+                         experimentId: String,
+                         variationId: String) {
         DefaultDecisionService.upsRMWLock.sync {
-            var profile = self.userProfileService.lookup(userId: userId) ?? OPTUserProfileService.UPProfile()
-            
-            var bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
+            var _profile = profile
+            var bucketMap = _profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap ?? OPTUserProfileService.UPBucketMap()
             bucketMap[experimentId] = [UserProfileKeys.kVariationId: variationId]
             
-            profile[UserProfileKeys.kBucketMap] = bucketMap
-            profile[UserProfileKeys.kUserId] = userId
+            _profile[UserProfileKeys.kBucketMap] = bucketMap
+            _profile[UserProfileKeys.kUserId] = userId
             
-            self.userProfileService.save(userProfile: profile)
+            /// Update user profile
+            userProfile = _profile
             
-            self.logger.i(.savedVariationInUserProfile(variationId, experimentId, userId))
+            if !_decisionBatchInProgress {
+                saveProfile(userId: userId, experimentId: experimentId, variationId: variationId)
+            }
         }
+    }
+    
+    func saveProfile(userId: String? = nil, experimentId: String? = nil, variationId: String? = nil) {
+        guard let profile = userProfile else { return }
+        
+        self.userProfileService.save(userProfile: profile)
+        
+        self.logger.i(.savedVariationInUserProfile(variationId ?? "", experimentId ?? "", userId ?? ""))
     }
     
 }

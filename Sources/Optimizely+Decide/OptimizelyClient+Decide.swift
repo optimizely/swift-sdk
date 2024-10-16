@@ -173,13 +173,14 @@ extension OptimizelyClient {
         var decisions = [String: OptimizelyDecision]()
         
         let enabledFlagsOnly = allOptions.contains(.enabledFlagsOnly)
+        (decisionService as? DefaultDecisionService)?.decisionBatchInProgress = true
         keys.forEach { key in
             let decision = decide(user: user, key: key, options: options)
             if !enabledFlagsOnly || decision.enabled {
                 decisions[key] = decision
             }
         }
-        
+        (decisionService as? DefaultDecisionService)?.decisionBatchInProgress = false
         return decisions
     }
     

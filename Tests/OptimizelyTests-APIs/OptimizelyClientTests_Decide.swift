@@ -24,7 +24,9 @@ class OptimizelyClientTests_Decide: XCTestCase {
         super.setUp()
         
         let datafile = OTUtils.loadJSONDatafile("api_datafile")!
-        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey)
+        let settings = OptimizelySdkSettings(enabledVuid: true)
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: settings)
+        
         try! optimizely.start(datafile: datafile)
     }
    
@@ -54,11 +56,11 @@ class OptimizelyClientTests_Decide: XCTestCase {
         
         let user = optimizely.createUserContext(attributes: attributes)
         
-        XCTAssert(user.optimizely == optimizely)
-        XCTAssert(user.userId == optimizely.vuid, "vuid should be used as the default userId when not given")
-        XCTAssert(user.attributes["country"] as! String == "us")
-        XCTAssert(user.attributes["age"] as! Int == 100)
-        XCTAssert(user.attributes["old"] as! Bool == true)
+        XCTAssert(user?.optimizely == optimizely)
+        XCTAssert(user?.userId == optimizely.vuid, "vuid should be used as the default userId when not given")
+        XCTAssert(user?.attributes["country"] as! String == "us")
+        XCTAssert(user?.attributes["age"] as! Int == 100)
+        XCTAssert(user?.attributes["old"] as! Bool == true)
     }
     
     func testCreateUserContext_multiple() {

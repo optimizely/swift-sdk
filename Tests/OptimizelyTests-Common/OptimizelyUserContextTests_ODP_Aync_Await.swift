@@ -128,7 +128,7 @@ extension OptimizelyUserContextTests_ODP_Aync_Await {
         var identifyCalled = false
         
         init(sdkKey: String, disable: Bool, cacheSize: Int, cacheTimeoutInSecs: Int) {
-            super.init(sdkKey: sdkKey, disable: disable, cacheSize: cacheSize, cacheTimeoutInSecs: cacheTimeoutInSecs)
+            super.init(sdkKey: sdkKey, disable: disable, enableVuid: true, cacheSize: cacheSize, cacheTimeoutInSecs: cacheTimeoutInSecs)
             self.segmentManager?.apiMgr = MockOdpSegmentApiManager()
         }
         

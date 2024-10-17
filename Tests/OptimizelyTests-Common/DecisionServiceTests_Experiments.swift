@@ -486,6 +486,7 @@ extension DecisionServiceTests_Experiments {
     
     func testDoesMeetAudienceConditionsWithInvalidMatchType() {
         MockLogger.expectedLog = OptimizelyError.userAttributeInvalidMatch("{\"match\":\"\",\"value\":17,\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+//        "{\"match\":\"\",\"type\":\"custom_attribute\",\"name\":\"age\",\"value\":17}"
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)

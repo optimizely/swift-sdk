@@ -104,10 +104,24 @@ class OdpManagerTests: XCTestCase {
     
     // MARK: - registerVuid
     
-//    func testRegisterVUIDCalledAutomatically() {
-//        XCTAssertEqual(eventManager.receivedRegisterVuid, manager.vuid, "registerVUID is implicitly called on OdpManager init")
-//    }
-
+    func testRegisterVUIDCalledAutomatically() {
+        XCTAssertEqual(eventManager.receivedRegisterVuid, manager.vuid, "registerVUID is implicitly called on OdpManager init")
+    }
+    
+    func testRegisterVUIDDoesNotCallAutomatically_vuidDisabled() {
+        let newEventManager = MockOdpEventManager(sdkKey: sdkKey)
+        
+        _ = OdpManager(sdkKey: sdkKey,
+                       disable: false,
+                       enableVuid: false,
+                       cacheSize: cacheSize,
+                       cacheTimeoutInSecs: cacheTimeout,
+                       segmentManager: segmentManager,
+                       eventManager: newEventManager)
+        
+        XCTAssertNil(newEventManager.receivedRegisterVuid)
+    }
+    
     func testRegisterVUIDCalledAutomatically_odpDisabled() {
         let newEventManager = MockOdpEventManager(sdkKey: sdkKey)
         

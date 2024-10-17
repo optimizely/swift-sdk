@@ -21,7 +21,7 @@ class OdpVuidManager {
     private(set) var enabled: Bool
     let logger = OPTLoggerFactory.getLogger()
     
-    init(enabled: Bool = false) {
+    init(enabled: Bool) {
         self.enabled = enabled
         if enabled {
             self._vuid = load()

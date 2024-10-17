@@ -106,35 +106,53 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         XCTAssert(decision.reasons.contains(OptimizelyError.conditionInvalidFormat("Empty condition array").reason))
     }
     
-//    func testDecideReasons_evaluateAttributeInvalidCondition() {
-//        let featureKey = "feature_1"
-//        let audienceId = "invalid_condition"
-//        setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-//
-//        let condition = "{\"match\":\"gt\",\"value\":\"US\",\"name\":\"age\",\"type\":\"custom_attribute\"}"
-//        user.setAttribute(key: "age", value: 25)
-//
-//        var decision = user.decide(key: featureKey)
-//        XCTAssert(decision.reasons.isEmpty)
-//        decision = user.decide(key: featureKey, options: [.includeReasons])
-//        XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeInvalidCondition(condition).reason))
-//    }
+    func testDecideReasons_evaluateAttributeInvalidCondition() {
+        let featureKey = "feature_1"
+        let audienceId = "invalid_condition"
+        setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
+
+        let condition = "{\"match\":\"gt\",\"value\":\"US\",\"name\":\"age\",\"type\":\"custom_attribute\"}"
+        user.setAttribute(key: "age", value: 25)
+
+        var decision = user.decide(key: featureKey)
+        XCTAssert(decision.reasons.isEmpty)
+        decision = user.decide(key: featureKey, options: [.includeReasons])
+        
+        let expectedReason = OptimizelyError.evaluateAttributeInvalidCondition(condition).reason
+        
+        // Look for a matching reason in the decision.reasons array
+        let foundMatchingReason = matchReason(expectedReason: expectedReason, in: decision.reasons)
+        
+        XCTAssert(foundMatchingReason, "Expected reason with matching condition not found in decision reasons")
+        
+        //XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeInvalidCondition(condition).reason))
+    }
     
-//    func testDecideReasons_evaluateAttributeInvalidType() {
-//        let featureKey = "feature_1"
-//        let audienceId = "13389130056"
-//        setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
-//
-//        let condition = "{\"match\":\"exact\",\"value\":\"US\",\"name\":\"country\",\"type\":\"custom_attribute\"}"
-//        let attributeKey = "country"
-//        let attributeValue = 25
-//        user.setAttribute(key: attributeKey, value: attributeValue)
-//        
-//        var decision = user.decide(key: featureKey)
-//        XCTAssert(decision.reasons.isEmpty)
+    func testDecideReasons_evaluateAttributeInvalidType() {
+        let featureKey = "feature_1"
+        let audienceId = "13389130056"
+        setAudienceForFeatureTest(featureKey: featureKey, audienceId: audienceId)
+
+        let condition = "{\"match\":\"exact\",\"value\":\"US\",\"name\":\"country\",\"type\":\"custom_attribute\"}"
+        let attributeKey = "country"
+        let attributeValue = 25
+        user.setAttribute(key: attributeKey, value: attributeValue)
+        
+        var decision = user.decide(key: featureKey)
+        XCTAssert(decision.reasons.isEmpty)
+        
+        decision = user.decide(key: featureKey, options: [.includeReasons])
+        
+        let expectedReason = OptimizelyError.evaluateAttributeInvalidType(condition, attributeValue, attributeKey).reason
+        
+        // Look for a matching reason in the decision.reasons array
+        let foundMatchingReason = matchReason(expectedReason: expectedReason, in: decision.reasons)
+        
+        XCTAssert(foundMatchingReason, "Expected reason with matching condition not found in decision reasons")
+        
 //        decision = user.decide(key: featureKey, options: [.includeReasons])
 //        XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeInvalidType(condition, attributeValue, attributeKey).reason))
-//    }
+    }
     
     func testDecideReasons_evaluateAttributeValueOutOfRange() {
         let featureKey = "feature_1"
@@ -146,8 +164,17 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         
         var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
+        
         decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeValueOutOfRange(condition, "age").reason))
+        
+        let expectedReason = OptimizelyError.evaluateAttributeValueOutOfRange(condition, "age").reason
+        
+        // Look for a matching reason in the decision.reasons array
+        let foundMatchingReason = matchReason(expectedReason: expectedReason, in: decision.reasons)
+        
+        XCTAssert(foundMatchingReason, "Expected reason with matching condition not found in decision reasons")
+        
+        //XCTAssert(decision.reasons.contains(OptimizelyError.evaluateAttributeValueOutOfRange(condition, "age").reason))
     }
     
     func testDecideReasons_userAttributeInvalidType() {
@@ -161,7 +188,15 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
         decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidType(condition).reason))
+        
+        let expectedReason = OptimizelyError.userAttributeInvalidType(condition).reason
+        
+        // Look for a matching reason in the decision.reasons array
+        let foundMatchingReason = matchReason(expectedReason: expectedReason, in: decision.reasons)
+        
+        XCTAssert(foundMatchingReason, "Expected reason with matching condition not found in decision reasons")
+        
+        //XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidType(condition).reason))
     }
     
     func testDecideReasons_userAttributeInvalidMatch() {
@@ -175,7 +210,15 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
         decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidMatch(condition).reason))
+        
+        let expectedReason = OptimizelyError.userAttributeInvalidMatch(condition).reason
+        
+        // Look for a matching reason in the decision.reasons array
+        let foundMatchingReason = matchReason(expectedReason: expectedReason, in: decision.reasons)
+        
+        XCTAssert(foundMatchingReason, "Expected reason with matching condition not found in decision reasons")
+        
+        //XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidMatch(condition).reason))
     }
     
     func testDecideReasons_userAttributeNilValue() {
@@ -188,8 +231,17 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         
         var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
+        
         decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeNilValue(condition).reason))
+        
+        let expectedReason = OptimizelyError.userAttributeNilValue(condition).reason
+        
+        // Look for a matching reason in the decision.reasons array
+        let foundMatchingReason = matchReason(expectedReason: expectedReason, in: decision.reasons)
+        
+        XCTAssert(foundMatchingReason, "Expected reason with matching condition not found in decision reasons")
+        
+//        XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeNilValue(condition).reason))
     }
     
     func testDecideReasons_userAttributeInvalidName() {
@@ -202,8 +254,17 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         
         var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
+        
         decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidName(condition).reason))
+        
+        let expectedReason = OptimizelyError.userAttributeInvalidName(condition).reason
+        
+        // Look for a matching reason in the decision.reasons array
+        let foundMatchingReason = matchReason(expectedReason: expectedReason, in: decision.reasons)
+        
+        XCTAssert(foundMatchingReason, "Expected reason with matching condition not found in decision reasons")
+        
+        //XCTAssert(decision.reasons.contains(OptimizelyError.userAttributeInvalidName(condition).reason))
     }
     
     func testDecideReasons_missingAttributeValue() {
@@ -215,8 +276,17 @@ extension OptimizelyUserContextTests_Decide_Reasons {
         
         var decision = user.decide(key: featureKey)
         XCTAssert(decision.reasons.isEmpty)
+        
         decision = user.decide(key: featureKey, options: [.includeReasons])
-        XCTAssert(decision.reasons.contains(OptimizelyError.missingAttributeValue(condition, "age").reason))
+        
+        let expectedReason = OptimizelyError.missingAttributeValue(condition, "age").reason
+        
+        // Look for a matching reason in the decision.reasons array
+        let foundMatchingReason = matchReason(expectedReason: expectedReason, in: decision.reasons)
+        
+        XCTAssert(foundMatchingReason, "Expected reason with matching condition not found in decision reasons")
+       
+        //XCTAssert(decision.reasons.contains(OptimizelyError.missingAttributeValue(condition, "age").reason))
     }
      
 }
@@ -462,7 +532,46 @@ extension OptimizelyUserContextTests_Decide_Reasons {
 // Utils
 
 extension OptimizelyUserContextTests_Decide_Reasons {
-
+    func matchReason(expectedReason: String, in reasons: [String]) -> Bool {
+        // Extract the condition JSON and remaining strings from expectedReason
+        let (expectedPrefix, expectedJsonCondition, expectedSuffix) = extractComponents(from: expectedReason) ?? ("", [:], "")
+        
+        // Look for a matching reason in the decision.reasons array
+        let foundMatchingReason = reasons.contains { reason in
+            guard let (actualPrefix, actualJsonCondition, actualSuffix) = extractComponents(from: reason) else {
+                return false
+            }
+            
+            // Check if the prefix and suffix match exactly and the JSON conditions match ignoring key order
+            return expectedPrefix == actualPrefix &&
+            expectedSuffix == actualSuffix &&
+            NSDictionary(dictionary: expectedJsonCondition) == NSDictionary(dictionary: actualJsonCondition)
+        }
+        return foundMatchingReason
+    }
+    
+    // Helper function to extract prefix, JSON condition, and suffix from the reason string
+    func extractComponents(from reason: String) -> (String, [String: Any], String)? {
+        // Use regular expression to extract the parts of the string before, inside, and after the parentheses
+        let pattern = "^(.*?)\\((.*?)\\)(.*?)$"
+        let regex = try? NSRegularExpression(pattern: pattern)
+        let nsString = reason as NSString
+        if let match = regex?.firstMatch(in: reason, range: NSRange(location: 0, length: nsString.length)) {
+            let prefix = nsString.substring(with: match.range(at: 1)) // Part before the parentheses
+            let jsonString = nsString.substring(with: match.range(at: 2)) // JSON inside parentheses
+            let suffix = nsString.substring(with: match.range(at: 3)) // Part after the parentheses
+            
+            // Convert the JSON string into a dictionary
+            if let data = jsonString.data(using: .utf8),
+               let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
+               let jsonDict = jsonObject as? [String: Any] {
+                return (prefix, jsonDict, suffix)
+            }
+        }
+        
+        return nil
+    }
+    
     func setAudienceForFeatureTest(featureKey: String, audienceId: String) {
         let experimentId = "10390977673"    // "exp_with_audience"
         var experiment = optimizely.config!.getExperiment(id: experimentId)!

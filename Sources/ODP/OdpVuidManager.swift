@@ -18,10 +18,10 @@ import Foundation
 
 class OdpVuidManager {
     private var _vuid: String = ""
-    var enabled: Bool
+    private(set) var enabled: Bool
     let logger = OPTLoggerFactory.getLogger()
     
-    init(enabled: Bool) {
+    init(enabled: Bool = false) {
         self.enabled = enabled
         if enabled {
             self._vuid = load()
@@ -52,6 +52,7 @@ extension OdpVuidManager {
         if enabled {
             return _vuid
         } else {
+            logger.w("VUID is not enabled.")
             return ""
         }
     }

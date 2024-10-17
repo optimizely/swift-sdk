@@ -99,6 +99,10 @@ open class OptimizelyClient: NSObject {
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
+        
+        if self.odpManager.enableVuid {
+            self.odpManager.eventManager.registerVUID(vuid: self.odpManager.vuid)
+        }
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
@@ -974,6 +978,10 @@ extension OptimizelyClient {
     /// the device vuid (read only)
     public var vuid: String {
         return odpManager.vuid
+    }
+    
+    public var enableVuid: Bool {
+        return odpManager.enableVuid
     }
     
     func identifyUserToOdp(userId: String) {

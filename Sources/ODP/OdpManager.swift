@@ -68,10 +68,6 @@ public class OdpManager {
         self.odpConfig = OdpConfig()
         self.segmentManager.odpConfig = odpConfig
         self.eventManager.odpConfig = odpConfig
-        if enableVuid {
-            self.eventManager.registerVUID(vuid: self.vuidManager.vuid)
-        }
-        
     }
     
     func fetchQualifiedSegments(userId: String,
@@ -102,17 +98,14 @@ public class OdpManager {
             return
         }
 
-        if enableVuid {
-            var vuid = vuidManager.vuid
-            var fsUserId: String? = userId
-            if OdpVuidManager.isVuid(userId) {
-                // overwrite if userId is vuid (when userContext is created with vuid)
-                vuid = userId
-                fsUserId = nil
-            }
-            eventManager.identifyUser(vuid: vuid, userId: fsUserId)
+        var vuid = vuidManager.vuid
+        var fsUserId: String? = userId
+        if OdpVuidManager.isVuid(userId) {
+            // overwrite if userId is vuid (when userContext is created with vuid)
+            vuid = userId
+            fsUserId = nil
         }
-        
+        eventManager.identifyUser(vuid: vuid, userId: fsUserId)
     }
     
     /// Send an event to the ODP server.
@@ -134,19 +127,11 @@ public class OdpManager {
         
         var identifiersUpdated = identifiers
         
-        if enableVuid {
-            // add vuid to all events by default
-            if identifiers[Constants.ODP.keyForVuid] == nil {
-                identifiersUpdated[Constants.ODP.keyForVuid] = vuidManager.vuid
-            }
-        } else {
-            // remove vuid events
-            identifiersUpdated[Constants.ODP.keyForVuid] = nil
+        if identifiers[Constants.ODP.keyForVuid] == nil {
+            identifiersUpdated[Constants.ODP.keyForVuid] = vuidManager.vuid
         }
         
-        
         // replace aliases (fs-user-id, FS_USER_ID, FS-USER-ID) with "fs_user_id".
-        
         for (idKey, idValue) in identifiersUpdated {
             if idKey == Constants.ODP.keyForUserId { break }
             

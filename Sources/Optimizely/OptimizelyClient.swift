@@ -95,7 +95,6 @@ open class OptimizelyClient: NSObject {
         
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
-                                                   enableVuid: sdkSettings.enableVuid,
                                                    cacheSize: sdkSettings.segmentsCacheSize,
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
@@ -120,9 +119,24 @@ open class OptimizelyClient: NSObject {
         
         self.vuidManager = OdpVuidManager(enabled: sdkSettings.enableVuid)
         if self.vuidManager.enabled {
+            self.odpManager.vuid = vuidManager.vuid
+            // Cushes due to odpManager didn't initialize yet.
+           // self.odpManager.eventManager.registerVUID(vuid: vuidManager.vuid)
+        }
+        
+        // FIXME: Need a better solution
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            self.registerVUID()
+        }
+        
+        
+        logger.d("SDK Version: \(version)")
+    }
+    
+    private func registerVUID() {
+        if self.vuidManager.enabled {
             self.odpManager.eventManager.registerVUID(vuid: self.vuidManager.vuid)
         }
-        logger.d("SDK Version: \(version)")
     }
     
     /// Start Optimizely SDK (Asynchronous)

@@ -18,18 +18,13 @@ import Foundation
 
 public class OdpManager {
     var enabled: Bool
-//    var enableVuid: Bool
-    var vuidManager: OdpVuidManager
-
     var odpConfig: OdpConfig!
     var segmentManager: OdpSegmentManager!
     var eventManager: OdpEventManager!
     
     let logger = OPTLoggerFactory.getLogger()
 
-//    var vuid: String {
-//        return vuidManager.vuid
-//    }
+    var vuid: String?
     
     /// OdpManager init
     /// - Parameters:
@@ -43,7 +38,6 @@ public class OdpManager {
     ///   - eventManager: ODPEventManager
     public init(sdkKey: String,
                 disable: Bool,
-                enableVuid: Bool,
                 cacheSize: Int,
                 cacheTimeoutInSecs: Int,
                 timeoutForSegmentFetchInSecs: Int? = nil,
@@ -52,8 +46,6 @@ public class OdpManager {
                 eventManager: OdpEventManager? = nil) {
         
         self.enabled = !disable
-//        self.enableVuid = enableVuid
-        self.vuidManager = OdpVuidManager(enabled: enableVuid)
         
         guard enabled else {
             logger.i(.odpNotEnabled)
@@ -68,10 +60,6 @@ public class OdpManager {
         self.odpConfig = OdpConfig()
         self.segmentManager.odpConfig = odpConfig
         self.eventManager.odpConfig = odpConfig
-        
-//        if enableVuid {
-//            self.eventManager.registerVUID(vuid: vuidManager.vuid)
-//        }
     }
     
     func fetchQualifiedSegments(userId: String,
@@ -130,9 +118,9 @@ public class OdpManager {
         let typeUpdated = (type ?? "").isEmpty ? Constants.ODP.eventType : type!
         
         var identifiersUpdated = identifiers
-        
-        if identifiers[Constants.ODP.keyForVuid] == nil {
-            identifiersUpdated[Constants.ODP.keyForVuid] = vuidManager.vuid
+        let _vuid = vuid ?? ""
+        if identifiers[Constants.ODP.keyForVuid] == nil, OdpVuidManager.isVuid(_vuid) {
+            identifiersUpdated[Constants.ODP.keyForVuid] = _vuid
         }
         
         // replace aliases (fs-user-id, FS_USER_ID, FS-USER-ID) with "fs_user_id".

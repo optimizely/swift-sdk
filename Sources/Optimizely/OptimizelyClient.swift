@@ -125,8 +125,8 @@ open class OptimizelyClient: NSObject {
         }
         
         // FIXME: Need a better solution
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
-            self.registerVUID()
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.registerVUID()
         }
         
         

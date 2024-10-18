@@ -18,17 +18,13 @@ import Foundation
 
 public class OdpManager {
     var enabled: Bool
-    var vuidManager: OdpVuidManager
-
     var odpConfig: OdpConfig!
     var segmentManager: OdpSegmentManager!
     var eventManager: OdpEventManager!
     
     let logger = OPTLoggerFactory.getLogger()
 
-    var vuid: String {
-        return vuidManager.vuid
-    }
+    var vuid: String?
     
     /// OdpManager init
     /// - Parameters:
@@ -50,7 +46,6 @@ public class OdpManager {
                 eventManager: OdpEventManager? = nil) {
         
         self.enabled = !disable
-        self.vuidManager = OdpVuidManager.shared
         
         guard enabled else {
             logger.i(.odpNotEnabled)
@@ -65,8 +60,6 @@ public class OdpManager {
         self.odpConfig = OdpConfig()
         self.segmentManager.odpConfig = odpConfig
         self.eventManager.odpConfig = odpConfig
-        
-        self.eventManager.registerVUID(vuid: self.vuidManager.vuid)
     }
     
     func fetchQualifiedSegments(userId: String,
@@ -86,7 +79,7 @@ public class OdpManager {
                                                completionHandler: completionHandler)
     }
     
-    func identifyUser(userId: String) {
+    func identifyUser(userId: String, vuid: String) {
         guard enabled else {
             logger.d("ODP identify event is not dispatched (ODP disabled).")
             return
@@ -97,15 +90,14 @@ public class OdpManager {
             return
         }
 
-        var vuid = vuidManager.vuid
+        var _vuid = vuid
         var fsUserId: String? = userId
         if OdpVuidManager.isVuid(userId) {
             // overwrite if userId is vuid (when userContext is created with vuid)
-            vuid = userId
+            _vuid = userId
             fsUserId = nil
         }
-        
-        eventManager.identifyUser(vuid: vuid, userId: fsUserId)
+        eventManager.identifyUser(vuid: _vuid, userId: fsUserId)
     }
     
     /// Send an event to the ODP server.
@@ -125,15 +117,13 @@ public class OdpManager {
         
         let typeUpdated = (type ?? "").isEmpty ? Constants.ODP.eventType : type!
         
-        // add vuid to all events by default
-        
         var identifiersUpdated = identifiers
-        if identifiers[Constants.ODP.keyForVuid] == nil {
-            identifiersUpdated[Constants.ODP.keyForVuid] = vuidManager.vuid
+        let _vuid = vuid ?? ""
+        if identifiers[Constants.ODP.keyForVuid] == nil, OdpVuidManager.isVuid(_vuid) {
+            identifiersUpdated[Constants.ODP.keyForVuid] = _vuid
         }
         
         // replace aliases (fs-user-id, FS_USER_ID, FS-USER-ID) with "fs_user_id".
-        
         for (idKey, idValue) in identifiersUpdated {
             if idKey == Constants.ODP.keyForUserId { break }
             

@@ -60,6 +60,7 @@ open class OptimizelyClient: NSObject {
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
     public var odpManager: OdpManager!
+    private var vuidManager: OdpVuidManager!
     let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
@@ -98,6 +99,7 @@ open class OptimizelyClient: NSObject {
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
+
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
@@ -115,7 +117,26 @@ open class OptimizelyClient: NSObject {
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
         
+        self.vuidManager = OdpVuidManager(enabled: sdkSettings.enableVuid)
+        if self.vuidManager.enabled {
+            self.odpManager.vuid = vuidManager.vuid
+            // Cushes due to odpManager didn't initialize yet.
+           // self.odpManager.eventManager.registerVUID(vuid: vuidManager.vuid)
+        }
+        
+        // FIXME: Need a better solution
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.registerVUID()
+        }
+        
+        
         logger.d("SDK Version: \(version)")
+    }
+    
+    private func registerVUID() {
+        if self.vuidManager.enabled {
+            self.odpManager.eventManager.registerVUID(vuid: self.vuidManager.vuid)
+        }
     }
     
     /// Start Optimizely SDK (Asynchronous)
@@ -972,11 +993,15 @@ extension OptimizelyClient {
     
     /// the device vuid (read only)
     public var vuid: String {
-        return odpManager.vuid
+        return self.vuidManager.vuid
     }
     
-    func identifyUserToOdp(userId: String) {
-        odpManager.identifyUser(userId: userId)
+    public var enableVuid: Bool {
+        return self.vuidManager.enabled
+    }
+    
+    func identifyUserToOdp(userId: String, vuid: String) {
+        odpManager.identifyUser(userId: userId, vuid: self.vuid)
     }
     
     func fetchQualifiedSegments(userId: String,

@@ -60,6 +60,7 @@ open class OptimizelyClient: NSObject {
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
     public var odpManager: OdpManager!
+    private var vuidManager: OdpVuidManager!
     let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
@@ -117,6 +118,10 @@ open class OptimizelyClient: NSObject {
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
         
+        self.vuidManager = OdpVuidManager(enabled: sdkSettings.enableVuid)
+        if self.vuidManager.enabled {
+            self.odpManager.eventManager.registerVUID(vuid: self.vuidManager.vuid)
+        }
         logger.d("SDK Version: \(version)")
     }
     
@@ -974,15 +979,15 @@ extension OptimizelyClient {
     
     /// the device vuid (read only)
     public var vuid: String {
-        return odpManager.vuid
+        return self.vuidManager.vuid
     }
     
     public var enableVuid: Bool {
-        return odpManager.enableVuid
+        return self.vuidManager.enabled
     }
     
-    func identifyUserToOdp(userId: String) {
-        odpManager.identifyUser(userId: userId)
+    func identifyUserToOdp(userId: String, vuid: String) {
+        odpManager.identifyUser(userId: userId, vuid: self.vuid)
     }
     
     func fetchQualifiedSegments(userId: String,

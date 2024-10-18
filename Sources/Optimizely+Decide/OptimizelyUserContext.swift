@@ -88,7 +88,7 @@ public class OptimizelyUserContext {
         if identify {
             // async call so event building overhead is not blocking context creation
             lock.async {
-                self.optimizely?.identifyUserToOdp(userId: userId)
+                self.optimizely?.identifyUserToOdp(userId: userId, vuid: optimizely.vuid)
             }
         }
     }

@@ -18,7 +18,7 @@ import Foundation
 
 public class OdpManager {
     var enabled: Bool
-    var enableVuid: Bool
+//    var enableVuid: Bool
     var vuidManager: OdpVuidManager
 
     var odpConfig: OdpConfig!
@@ -27,9 +27,9 @@ public class OdpManager {
     
     let logger = OPTLoggerFactory.getLogger()
 
-    var vuid: String {
-        return vuidManager.vuid
-    }
+//    var vuid: String {
+//        return vuidManager.vuid
+//    }
     
     /// OdpManager init
     /// - Parameters:
@@ -52,7 +52,7 @@ public class OdpManager {
                 eventManager: OdpEventManager? = nil) {
         
         self.enabled = !disable
-        self.enableVuid = enableVuid
+//        self.enableVuid = enableVuid
         self.vuidManager = OdpVuidManager(enabled: enableVuid)
         
         guard enabled else {
@@ -69,9 +69,9 @@ public class OdpManager {
         self.segmentManager.odpConfig = odpConfig
         self.eventManager.odpConfig = odpConfig
         
-        if enableVuid {
-            self.eventManager.registerVUID(vuid: vuidManager.vuid)
-        }
+//        if enableVuid {
+//            self.eventManager.registerVUID(vuid: vuidManager.vuid)
+//        }
     }
     
     func fetchQualifiedSegments(userId: String,
@@ -91,7 +91,7 @@ public class OdpManager {
                                                completionHandler: completionHandler)
     }
     
-    func identifyUser(userId: String) {
+    func identifyUser(userId: String, vuid: String) {
         guard enabled else {
             logger.d("ODP identify event is not dispatched (ODP disabled).")
             return
@@ -102,14 +102,14 @@ public class OdpManager {
             return
         }
 
-        var vuid = vuidManager.vuid
+        var _vuid = vuid
         var fsUserId: String? = userId
         if OdpVuidManager.isVuid(userId) {
             // overwrite if userId is vuid (when userContext is created with vuid)
-            vuid = userId
+            _vuid = userId
             fsUserId = nil
         }
-        eventManager.identifyUser(vuid: vuid, userId: fsUserId)
+        eventManager.identifyUser(vuid: _vuid, userId: fsUserId)
     }
     
     /// Send an event to the ODP server.

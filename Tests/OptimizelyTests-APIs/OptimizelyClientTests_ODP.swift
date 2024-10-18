@@ -66,7 +66,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     // MARK: - sendOdpEvent
     
     func testSendOdpEvent_success() {
-        let odpManager = MockOdpManager(sdkKey: "any", disable: false, enableVuid: true, cacheSize: 12, cacheTimeoutInSecs: 123)
+        let odpManager = MockOdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
         
         try? optimizely.sendOdpEvent(type: "t1", action: "a1", identifiers: ["k1": "v1"], data: ["k21": "v2", "k22": true, "k23": 3.5, "k24": nil])
@@ -92,7 +92,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     
     func testSendOdpEvent_customClientNameAndVersion() {
         let odpEventManager = MockOdpEventManager(sdkKey: "any")
-        let odpManager = OdpManager(sdkKey: "any", disable: false, enableVuid: true, cacheSize: 12, cacheTimeoutInSecs: 123, eventManager: odpEventManager)
+        let odpManager = OdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123, eventManager: odpEventManager)
         
         let datafile = OTUtils.loadJSONDatafile("decide_audience_segments")!
         let tmpOptimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, odpManager: odpManager, settings: OptimizelySdkSettings(sdkName: "flutter-sdk", sdkVersion: "1234"))
@@ -203,7 +203,7 @@ class OptimizelyClientTests_ODP: XCTestCase {
     // MARK: - OdpConfig Update
     
     func testUpdateOpdConfigCalled_wheneverProjectConfigUpdated_initialOrPolling() {
-        let odpManager = MockOdpManager(sdkKey: "any", disable: false, enableVuid: true, cacheSize: 12, cacheTimeoutInSecs: 123)
+        let odpManager = MockOdpManager(sdkKey: "any", disable: false, cacheSize: 12, cacheTimeoutInSecs: 123)
         optimizely.odpManager = odpManager
         
         XCTAssertNil(odpManager.apiKey)

@@ -52,4 +52,17 @@ class OdpVuidManagerTests: XCTestCase {
 
         XCTAssertTrue(vuid1 != vuid3)
     }
+    
+    func testRemoveOldVuid() {
+        manager = OdpVuidManager(enabled: true)
+        let cahcedVuid1 = UserDefaults.standard.string(forKey: "optimizely-vuid")
+        XCTAssertNotNil(cahcedVuid1)
+        XCTAssertTrue(cahcedVuid1 == manager.vuid)
+        
+        _  = OdpVuidManager(enabled: false)
+        let cahcedVuid2 = UserDefaults.standard.string(forKey: "optimizely-vuid")
+        XCTAssertNil(cahcedVuid2)
+        
+    }
+    
 }

@@ -23,7 +23,6 @@ class OdpManagerTests: XCTestCase {
     var segmentManager: MockOdpSegmentManager!
     var eventManager: MockOdpEventManager!
     var manager: OdpManager!
-
     override func setUp() {
         OTUtils.clearAllEventQueues()
         segmentManager = MockOdpSegmentManager(cacheSize: cacheSize,
@@ -31,11 +30,11 @@ class OdpManagerTests: XCTestCase {
         eventManager = MockOdpEventManager(sdkKey: sdkKey)
         manager = OdpManager(sdkKey: sdkKey,
                              disable: false,
-                             enableVuid: true,
                              cacheSize: cacheSize,
                              cacheTimeoutInSecs: cacheTimeout,
                              segmentManager: segmentManager,
                              eventManager: eventManager)
+        manager.vuid = nil
     }
     
     override func tearDown() {
@@ -47,7 +46,7 @@ class OdpManagerTests: XCTestCase {
     func testConfigurations_cache() {
         let manager = OdpManager(sdkKey: sdkKey,
                                  disable: false,
-                                 enableVuid: true,
+                                 
                                  cacheSize: cacheSize,
                                  cacheTimeoutInSecs: cacheTimeout)
         XCTAssertEqual(manager.segmentManager?.segmentsCache.maxSize, cacheSize)
@@ -59,10 +58,8 @@ class OdpManagerTests: XCTestCase {
     func testConfigurations_disableOdp() {
         let manager = OdpManager(sdkKey: sdkKey,
                                  disable: true,
-                                 enableVuid: true,
                                  cacheSize: cacheSize,
                                  cacheTimeoutInSecs: cacheTimeout)
-        XCTAssertTrue(manager.vuid.starts(with: "vuid_"), "vuid should be serverved even when ODP is disabled.")
 
         let sem = DispatchSemaphore(value: 0)
         manager.fetchQualifiedSegments(userId: "user1", options: []) { segments, error in
@@ -76,8 +73,8 @@ class OdpManagerTests: XCTestCase {
         XCTAssertNil(manager.odpConfig)
 
         // these calls should be dropped gracefully with nil
-        
-        manager.identifyUser(userId: "user1")
+        let vuid = "vuid_123"
+        manager.identifyUser(userId: "user1", vuid: vuid)
         try? manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
         
         XCTAssertNil(manager.eventManager)
@@ -102,18 +99,12 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(segmentManager.receivedOptions, [])
     }
     
-    // MARK: - registerVuid
-    
-    func testRegisterVUIDCalledAutomatically() {
-        XCTAssertEqual(eventManager.receivedRegisterVuid, manager.vuid, "registerVUID is implicitly called on OdpManager init")
-    }
     
     func testRegisterVUIDDoesNotCallAutomatically_vuidDisabled() {
         let newEventManager = MockOdpEventManager(sdkKey: sdkKey)
         
         _ = OdpManager(sdkKey: sdkKey,
                        disable: false,
-                       enableVuid: false,
                        cacheSize: cacheSize,
                        cacheTimeoutInSecs: cacheTimeout,
                        segmentManager: segmentManager,
@@ -127,7 +118,6 @@ class OdpManagerTests: XCTestCase {
         
         _ = OdpManager(sdkKey: sdkKey,
                        disable: true,
-                       enableVuid: true,
                        cacheSize: cacheSize,
                        cacheTimeoutInSecs: cacheTimeout,
                        segmentManager: segmentManager,
@@ -139,14 +129,17 @@ class OdpManagerTests: XCTestCase {
     // MARK: - identifyUser
 
     func testIdentifyUser_datafileNotReady() {
-        manager.identifyUser(userId: "user-1")
+        let vuid = "vuid_123"
+        manager.identifyUser(userId: "user-1", vuid: vuid)
         
         XCTAssertEqual(eventManager.receivedIdentifyUserId, "user-1")
     }
     
     func testIdentifyUser_odpIntegrated() {
+        let vuid = "vuid_123"
+        manager.vuid = vuid
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
-        manager.identifyUser(userId: "user-1")
+        manager.identifyUser(userId: "user-1", vuid: "vuid_123")
         
         XCTAssert(OdpVuidManager.isVuid(eventManager.receivedIdentifyVuid))
         XCTAssertEqual(eventManager.receivedIdentifyUserId, "user-1")
@@ -156,7 +149,7 @@ class OdpManagerTests: XCTestCase {
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
         
         let vuidAsUserId = OdpVuidManager.newVuid
-        manager.identifyUser(userId: vuidAsUserId)
+        manager.identifyUser(userId: vuidAsUserId, vuid: "")
         
         XCTAssertEqual(eventManager.receivedIdentifyVuid, vuidAsUserId)
         XCTAssertNil(eventManager.receivedIdentifyUserId)
@@ -164,14 +157,14 @@ class OdpManagerTests: XCTestCase {
     
     func testIdentifyUser_odpNotIntegrated() {
         manager.updateOdpConfig(apiKey: nil, apiHost: nil, segmentsToCheck: [])
-        manager.identifyUser(userId: "user-1")
+        manager.identifyUser(userId: "user-1", vuid: "")
         
         XCTAssertNil(eventManager.receivedIdentifyUserId, "identifyUser event requeut should be discarded if ODP not integrated.")
     }
 
     func testIdentifyUser_odpDisabled() {
         manager.enabled = false
-        manager.identifyUser(userId: "user-1")
+        manager.identifyUser(userId: "user-1", vuid: "")
         
         XCTAssertNil(eventManager.receivedIdentifyUserId, "identifyUser event requeut should be discarded if ODP disabled.")
     }
@@ -179,11 +172,14 @@ class OdpManagerTests: XCTestCase {
     // MARK: - sendEvent
     
     func testSendEvent_datafileNotReady() {
+        let vuid = "vuid_123"
+        manager.vuid = vuid
+        
         try? manager.sendEvent(type: "t1", action: "a1", identifiers: ["id-key1": "id-val-1"], data: ["key1" : "val1"])
         
         XCTAssertEqual(eventManager.receivedType, "t1")
         XCTAssertEqual(eventManager.receivedAction, "a1")
-        XCTAssertEqual(eventManager.receivedIdentifiers, ["vuid": manager.vuid,"id-key1": "id-val-1"])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["vuid": "vuid_123","id-key1": "id-val-1"])
         XCTAssert(eventManager.receivedData.count == 1)
         XCTAssert((eventManager.receivedData["key1"] as! String) == "val1")
         
@@ -235,20 +231,23 @@ class OdpManagerTests: XCTestCase {
     }
 
     func testSendEvent_aliasIdentifiers() {
+        let vuid = "vuid_123"
+        manager.vuid = vuid
+        
         try? manager.sendEvent(type: nil, action: "a1", identifiers: ["fs_user_id": "v1"], data: [:])
-        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": manager.vuid])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": vuid])
         
         try? manager.sendEvent(type: nil, action: "a1", identifiers: ["fs-user-id": "v1"], data: [:])
-        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": manager.vuid])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": vuid])
 
         try? manager.sendEvent(type: nil, action: "a1", identifiers: ["FS_USER_ID": "v1"], data: [:])
-        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": manager.vuid])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": vuid])
 
         try? manager.sendEvent(type: nil, action: "a1", identifiers: ["FS-USER-ID": "v1"], data: [:])
-        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": manager.vuid])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["fs_user_id": "v1", "vuid": vuid])
         
         try? manager.sendEvent(type: nil, action: "a1", identifiers: ["email": "e1", "FS-USER-ID": "v1"], data: [:])
-        XCTAssertEqual(eventManager.receivedIdentifiers, ["email": "e1", "fs_user_id": "v1", "vuid": manager.vuid])
+        XCTAssertEqual(eventManager.receivedIdentifiers, ["email": "e1", "fs_user_id": "v1", "vuid": vuid])
     }
 
     // MARK: - updateConfig
@@ -338,7 +337,6 @@ class OdpManagerTests: XCTestCase {
     func testUpdateOdpConfig_odpConfigPropagatedProperly() {
         let manager = OdpManager(sdkKey: sdkKey,
                                  disable: false,
-                                 enableVuid: true,
                                  cacheSize: cacheSize,
                                  cacheTimeoutInSecs: cacheTimeout)
 
@@ -371,11 +369,6 @@ class OdpManagerTests: XCTestCase {
         XCTAssertEqual(eventManager.flushApiKeys.count, 1, "flush called when app goes to background")
     }
 
-    // MARK: - vuid
-    
-    func testVuid() {
-        XCTAssertEqual(manager.vuid, manager.vuidManager.vuid)
-    }
 
     // MARK: - Helpers
     

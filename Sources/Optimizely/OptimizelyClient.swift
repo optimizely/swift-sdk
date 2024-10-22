@@ -60,6 +60,7 @@ open class OptimizelyClient: NSObject {
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
     public var odpManager: OdpManager!
+    private var vuidManager: OdpVuidManager!
     let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
@@ -91,13 +92,15 @@ open class OptimizelyClient: NSObject {
         self.defaultDecideOptions = defaultDecideOptions ?? []
 
         super.init()
-        
+        self.vuidManager = OdpVuidManager(enabled: sdkSettings.enableVuid) 
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
+                                                   vuid: vuidManager.vuid,
                                                    cacheSize: sdkSettings.segmentsCacheSize,
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
+
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
@@ -972,7 +975,11 @@ extension OptimizelyClient {
     
     /// the device vuid (read only)
     public var vuid: String {
-        return odpManager.vuid
+        return self.vuidManager.vuid
+    }
+    
+    public var enableVuid: Bool {
+        return self.vuidManager.enabled
     }
     
     func identifyUserToOdp(userId: String) {

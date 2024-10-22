@@ -49,7 +49,7 @@ open class OdpEventManager {
     
     // MARK: - events
     
-    func registerVUID(vuid: String) {
+    func sendInitializedEvent(vuid: String) {
         sendEvent(type: Constants.ODP.eventType,
                   action: "client_initialized",
                   identifiers: [

@@ -140,7 +140,7 @@ extension OptimizelyUserContextTests_ODP_Aync_Await {
             super.fetchQualifiedSegments(userId: userId, options: options, completionHandler: completionHandler)
         }
        
-        override func identifyUser(userId: String, vuid: String) {
+        override func identifyUser(userId: String) {
             self.userId = userId
             self.identifyCalled = true
         }

@@ -327,7 +327,7 @@ class MockOdpManager: OdpManager {
         super.fetchQualifiedSegments(userId: userId, options: options, completionHandler: completionHandler)
     }
         
-    override func identifyUser(userId: String, vuid: String) {
+    override func identifyUser(userId: String) {
         self.userId = userId
         self.identifyCalled = true
     }

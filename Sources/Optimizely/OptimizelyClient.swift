@@ -92,9 +92,10 @@ open class OptimizelyClient: NSObject {
         self.defaultDecideOptions = defaultDecideOptions ?? []
 
         super.init()
-        
+        self.vuidManager = OdpVuidManager(enabled: sdkSettings.enableVuid) 
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
+                                                   vuid: vuidManager.vuid,
                                                    cacheSize: sdkSettings.segmentsCacheSize,
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
@@ -117,26 +118,7 @@ open class OptimizelyClient: NSObject {
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
         
-        self.vuidManager = OdpVuidManager(enabled: sdkSettings.enableVuid)
-        if self.vuidManager.enabled {
-            self.odpManager.vuid = vuidManager.vuid
-            // Cushes due to odpManager didn't initialize yet.
-           // self.odpManager.eventManager.registerVUID(vuid: vuidManager.vuid)
-        }
-        
-        // FIXME: Need a better solution
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            self?.registerVUID()
-        }
-        
-        
         logger.d("SDK Version: \(version)")
-    }
-    
-    private func registerVUID() {
-        if self.vuidManager.enabled {
-            self.odpManager.eventManager.registerVUID(vuid: self.vuidManager.vuid)
-        }
     }
     
     /// Start Optimizely SDK (Asynchronous)
@@ -1000,8 +982,8 @@ extension OptimizelyClient {
         return self.vuidManager.enabled
     }
     
-    func identifyUserToOdp(userId: String, vuid: String) {
-        odpManager.identifyUser(userId: userId, vuid: self.vuid)
+    func identifyUserToOdp(userId: String) {
+        odpManager.identifyUser(userId: userId)
     }
     
     func fetchQualifiedSegments(userId: String,

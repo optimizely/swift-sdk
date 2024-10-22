@@ -38,7 +38,7 @@ class OdpVuidManager {
         let vuid = (vuidFull.count <= maxLength) ? vuidFull : String(vuidFull.prefix(maxLength))
         return vuid
     }
-    
+
     static func isVuid(_ visitorId: String) -> Bool {
         return visitorId.starts(with: "vuid_")
     }

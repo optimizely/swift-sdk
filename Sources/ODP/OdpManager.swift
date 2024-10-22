@@ -38,6 +38,7 @@ public class OdpManager {
     ///   - eventManager: ODPEventManager
     public init(sdkKey: String,
                 disable: Bool,
+                vuid: String? = nil,
                 cacheSize: Int,
                 cacheTimeoutInSecs: Int,
                 timeoutForSegmentFetchInSecs: Int? = nil,
@@ -46,7 +47,7 @@ public class OdpManager {
                 eventManager: OdpEventManager? = nil) {
         
         self.enabled = !disable
-        
+        self.vuid = vuid
         guard enabled else {
             logger.i(.odpNotEnabled)
             return
@@ -60,6 +61,9 @@ public class OdpManager {
         self.odpConfig = OdpConfig()
         self.segmentManager.odpConfig = odpConfig
         self.eventManager.odpConfig = odpConfig
+        if let vuid = vuid, OdpVuidManager.isVuid(vuid) {
+            self.eventManager.sendInitializedEvent(vuid: vuid)
+        }
     }
     
     func fetchQualifiedSegments(userId: String,
@@ -79,7 +83,7 @@ public class OdpManager {
                                                completionHandler: completionHandler)
     }
     
-    func identifyUser(userId: String, vuid: String) {
+    func identifyUser(userId: String) {
         guard enabled else {
             logger.d("ODP identify event is not dispatched (ODP disabled).")
             return
@@ -90,14 +94,13 @@ public class OdpManager {
             return
         }
 
-        var _vuid = vuid
-        var fsUserId: String? = userId
         if OdpVuidManager.isVuid(userId) {
             // overwrite if userId is vuid (when userContext is created with vuid)
-            _vuid = userId
-            fsUserId = nil
+            eventManager.identifyUser(vuid: userId, userId: nil)
+        } else if let _vuid = vuid {
+            eventManager.identifyUser(vuid: _vuid, userId: userId)
         }
-        eventManager.identifyUser(vuid: _vuid, userId: fsUserId)
+        
     }
     
     /// Send an event to the ODP server.

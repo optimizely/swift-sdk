@@ -54,12 +54,12 @@ class UserProfileTracker {
                 return
             }
             
-            guard let userProfile else {
+            guard let profile = userProfile else {
                 logger.e("Failed to save user profile for \(userId)")
                 return
             }
             
-            userProfileService.save(userProfile: userProfile)
+            userProfileService.save(userProfile: profile)
             logger.i("Saved user profile for \(userId)")
         }
         

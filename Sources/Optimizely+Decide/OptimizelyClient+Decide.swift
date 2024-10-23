@@ -123,17 +123,16 @@ extension OptimizelyClient {
         let decisionList = (decisionService as? DefaultDecisionService)?.getVariationForFeatureList(config: config, featureFlags: flagsWithoutForceDecision, user: user, options: allOptions)
         
         for index in 0..<flagsWithoutForceDecision.count {
-            if decisionList?.indices.contains(index) ?? false,
-               let decision = decisionList?[index],
-               let result = decision.result {
+            if decisionList?.indices.contains(index) ?? false {
+                let decision = decisionList?[index]
+                let result = decision?.result
                 let flagKey = flagsWithoutForceDecision[index].key
                 flagDecisions[flagKey] = result
                 let _reasons = decisionReasonMap[flagKey]
-                _reasons?.merge(decision.reasons)
-                decisionReasonMap[flagKey] = _reasons
-                
-            } else {
-                logger.e("Decsion not found in decisionList")
+                if decision?.reasons != nil {
+                    _reasons?.merge(decision!.reasons)
+                    decisionReasonMap[flagKey] = _reasons
+                }
             }
         }
         

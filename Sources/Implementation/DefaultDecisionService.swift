@@ -218,12 +218,16 @@ class DefaultDecisionService: OPTDecisionService {
                                 user: OptimizelyUserContext,
                                 options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         
-        guard let response = getVariationForFeatureList(config: config, featureFlags: [featureFlag], user: user, options: options).first else {
-            let reasons = DecisionReasons(options: options)
+        let response = getVariationForFeatureList(config: config, featureFlags: [featureFlag], user: user, options: options).first
+        
+        guard response?.result != nil else {
+            let reasons = response?.reasons ?? DecisionReasons(options: options)
             return DecisionResponse(result: nil, reasons: reasons)
         }
         
-        return response
+        return response!
+        
+        
         
 //        // Evaluate in this order:
 //        
@@ -285,6 +289,8 @@ class DefaultDecisionService: OPTDecisionService {
             
             if let decision = decisionResponse.result {
                 decisions.append(DecisionResponse(result: decision, reasons: reasons))
+            } else {
+                decisions.append(DecisionResponse(result: nil, reasons: reasons))
             }
         }
         

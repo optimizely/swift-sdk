@@ -47,7 +47,7 @@ class DefaultDecisionService: OPTDecisionService {
                       experiment: Experiment,
                       user: OptimizelyUserContext,
                       options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
-        let reasons = DecisionReasons(options: options)
+//        let reasons = DecisionReasons(options: options)
         
         let userId = user.userId
         let ignoreUPS = (options ?? []).contains(.ignoreUserProfileService)
@@ -57,7 +57,7 @@ class DefaultDecisionService: OPTDecisionService {
             profileTracker?.loadUserProfile()
         }
         
-        let response = getVariation(config: config, experiment: experiment, user: user, userProfileTracker: profileTracker, reasons: reasons)
+        let response = getVariation(config: config, experiment: experiment, user: user, userProfileTracker: profileTracker)
         
         if (!ignoreUPS) {
             profileTracker?.save()
@@ -70,9 +70,9 @@ class DefaultDecisionService: OPTDecisionService {
                       experiment: Experiment,
                       user: OptimizelyUserContext,
                       options: [OptimizelyDecideOption]? = nil,
-                      userProfileTracker: UserProfileTracker?,
-                      reasons: DecisionReasons) -> DecisionResponse<Variation> {
-        var decisionReasons = reasons
+                      userProfileTracker: UserProfileTracker?) -> DecisionResponse<Variation> {
+//        var decisionReasons = reasons
+        var decisionReasons = DecisionReasons(options: options)
         let userId = user.userId
         let attributes = user.attributes
         let experimentId = experiment.id
@@ -396,9 +396,7 @@ class DefaultDecisionService: OPTDecisionService {
                                         userProfileTracker: UserProfileTracker?,
                                         options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
         var reasons = DecisionReasons(options: options)
-        
         // check forced-decision first
-        
         let forcedDecisionResponse = findValidatedForcedDecision(config: config,
                                                                  user: user,
                                                                  context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: rule.key))
@@ -411,11 +409,9 @@ class DefaultDecisionService: OPTDecisionService {
         let decisionResponse = getVariation(config: config,
                                             experiment: rule,
                                             user: user,
-                                            userProfileTracker: userProfileTracker,
-                                            reasons: reasons)
-        reasons.merge(decisionResponse.reasons)
+                                            userProfileTracker: userProfileTracker)
         let variation = decisionResponse.result
-        
+        reasons.merge(decisionResponse.reasons)
         return DecisionResponse(result: variation, reasons: reasons)
     }
     

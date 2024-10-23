@@ -62,18 +62,23 @@ extension OptimizelyClient {
                 key: String,
                 options: [OptimizelyDecideOption]? = nil) -> OptimizelyDecision {
         
-        guard config != nil else {
+        guard let config = self.config else {
             return OptimizelyDecision.errorDecision(key: key, user: user, error: .sdkNotReady)
+        }
+        
+        guard let _ = config.getFeatureFlag(key: key) else {
+            return OptimizelyDecision.errorDecision(key: key, user: user, error: .featureKeyInvalid(key))
         }
 
         let allOptions = defaultDecideOptions + (options ?? [])
+        /// Need to remove enable flags
         let decisionMap = decide(user: user, keys: [key], options: allOptions)
         return decisionMap[key] ?? OptimizelyDecision.errorDecision(key: key, user: user, error: .generic)
     }
     
     func decide(user: OptimizelyUserContext,
-                 keys: [String],
-                 options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+                keys: [String],
+                options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         guard let config = self.config else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
@@ -85,7 +90,7 @@ extension OptimizelyClient {
         
         var validKeys = [String]()
         var flagsWithoutForceDecision = [FeatureFlag]()
-        var flagDecisions = [String: FeatureDecision]()
+        var flagDecisions = [String : FeatureDecision]()
         var decisionReasonMap = [String : DecisionReasons]()
         
         let allOptions = options ?? []
@@ -95,14 +100,15 @@ extension OptimizelyClient {
                 decisionMap[key] = OptimizelyDecision.errorDecision(key: key, user: user, error: .featureKeyInvalid(key))
                 continue
             }
+            
             validKeys.append(key)
             
             // check forced-decisions first
-            let decisionReasons = DecisionReasons(options: allOptions)
             let forcedDecisionResponse = decisionService.findValidatedForcedDecision(config: config,
                                                                                      user: user,
                                                                                      context: OptimizelyDecisionContext(flagKey: key))
             
+            let decisionReasons = DecisionReasons(options: allOptions)
             decisionReasons.merge(forcedDecisionResponse.reasons)
             decisionReasonMap[key] = decisionReasons
             

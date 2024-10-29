@@ -289,6 +289,61 @@ extension DecisionServiceTests_Features {
     
 }
 
+// MARK: - Test getVariationForFeatureList()
+
+extension DecisionServiceTests_Features {
+    func testGetVariationForFeatureListBatchUPSLoadAndSave() {
+        let mockProfileService = MocProfileService()
+        
+        let ups_service = DefaultDecisionService(userProfileService: mockProfileService)
+        
+        let flag1: FeatureFlag = try! OTUtils.model(
+            from:[
+                "id": "553339214",
+                "key": "house",
+                "experimentIds": [kExperimentId],
+                "rolloutId": "",
+                "variables": []
+            ]
+        )
+        
+        let flag2: FeatureFlag = try! OTUtils.model(
+            from:[
+                "id": "553339215",
+                "key": "house",
+                "experimentIds": [kExperimentId],
+                "rolloutId": "",
+                "variables": []
+            ]
+        )
+        
+        let flag3: FeatureFlag = try! OTUtils.model(
+            from:[
+                "id": "553339216",
+                "key": "house",
+                "experimentIds": [kExperimentId],
+                "rolloutId": "",
+                "variables": []
+            ]
+        )
+        
+        let pair = ups_service.getVariationForFeatureList(
+            config: config,
+            featureFlags: [flag1, flag2, flag3],
+            user:  optimizely.createUserContext(userId: kUserId,
+                                                attributes: kAttributesCountryMatch)
+        )
+        
+       
+        XCTAssertEqual(mockProfileService.lookupCount, 1)
+        XCTAssertEqual(mockProfileService.saveCount, 1)
+        XCTAssertEqual(pair.count, 3)
+        XCTAssert(pair[0].result?.experiment?.key == kExperimentKey)
+        XCTAssert(pair[0].result?.variation.key == kVariationKeyD)
+        XCTAssert(pair[0].result?.source == Constants.DecisionSource.featureTest.rawValue)
+    }
+}
+
 // MARK: - Test getVariationForFeatureRollout()
 
 extension DecisionServiceTests_Features {
@@ -463,6 +518,22 @@ extension DecisionServiceTests_Features {
         } else {
             XCTFail()
         }
+    }
+    
+}
+
+class MocProfileService: DefaultUserProfileService {
+    var lookupCount = 0
+    var saveCount = 0
+    
+    override func lookup(userId: String) -> DefaultUserProfileService.UPProfile? {
+        lookupCount += 1
+        return super.lookup(userId: userId)
+    }
+    
+    override func save(userProfile: DefaultUserProfileService.UPProfile) {
+        super.save(userProfile: userProfile)
+        saveCount += 1
     }
     
 }

@@ -111,8 +111,8 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         /// Load variation from tracker
-        if let _userId = userProfileTracker?.userId,
-           let variationId = getVariationIdFromProfile(userId: _userId, experimentId: experimentId),
+        if let profile = userProfileTracker?.userProfile,
+           let variationId = getVariationIdFromProfile(profile: profile, experimentId: experimentId),
            let variation = experiment.getVariation(id: variationId) {
             
             let info = LogMessage.gotVariationFromUserProfile(variation.key, experiment.key, userId)
@@ -226,35 +226,6 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         return response!
-        
-        
-        
-//        // Evaluate in this order:
-//        
-//        // 1. Attempt to bucket user into experiment using feature flag.
-//        // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
-//        var decisionResponse = getVariationForFeatureExperiment(config: config,
-//                                                                featureFlag: featureFlag,
-//                                                                user: user,
-//                                                                userProfileTracker: nil,
-//                                                                options: options)
-//        reasons.merge(decisionResponse.reasons)
-//        if let decision = decisionResponse.result {
-//            return DecisionResponse(result: decision, reasons: reasons)
-//        }
-//        
-//        // 2. Attempt to bucket user into rollout using the feature flag.
-//        // Check if the feature flag has rollout and the user is bucketed into one of it's rules
-//        decisionResponse = getVariationForFeatureRollout(config: config,
-//                                                         featureFlag: featureFlag,
-//                                                         user: user,
-//                                                         options: options)
-//        reasons.merge(decisionResponse.reasons)
-//        if let decision = decisionResponse.result {
-//            return DecisionResponse(result: decision, reasons: reasons)
-//        }
-//        
-//        return DecisionResponse(result: nil, reasons: reasons)
     }
     
     func getVariationForFeatureList(config: ProjectConfig,
@@ -536,6 +507,18 @@ extension DefaultDecisionService {
                                    experimentId: String) -> String? {
         if let profile = userProfileService.lookup(userId: userId),
            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+           let experimentMap = bucketMap[experimentId],
+           let variationId = experimentMap[UserProfileKeys.kVariationId] {
+            return variationId
+        } else {
+            return nil
+        }
+    }
+    
+    func getVariationIdFromProfile(profile: UserProfile?,
+                                   experimentId: String) -> String? {
+        if let _profile = profile,
+           let bucketMap = _profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
            let experimentMap = bucketMap[experimentId],
            let variationId = experimentMap[UserProfileKeys.kVariationId] {
             return variationId

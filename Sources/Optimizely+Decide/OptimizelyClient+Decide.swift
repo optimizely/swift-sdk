@@ -236,32 +236,6 @@ extension OptimizelyClient {
                                   reasons: reasonsToReport)
     }
     
-    
-//    func decide(user: OptimizelyUserContext,
-//                keys: [String],
-//                options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-//        guard config != nil else {
-//            logger.e(OptimizelyError.sdkNotReady)
-//            return [:]
-//        }
-//        
-//        guard keys.count > 0 else { return [:] }
-//        
-//        let allOptions = defaultDecideOptions + (options ?? [])
-//        
-//        var decisions = [String: OptimizelyDecision]()
-//        
-//        let enabledFlagsOnly = allOptions.contains(.enabledFlagsOnly)
-//        keys.forEach { key in
-//            let decision = decide(user: user, key: key, options: options)
-//            if !enabledFlagsOnly || decision.enabled {
-//                decisions[key] = decision
-//            }
-//        }
-//        
-//        return decisions
-//    }
-    
     func decideAll(user: OptimizelyUserContext,
                    options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
         guard let config = self.config else {

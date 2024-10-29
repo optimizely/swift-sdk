@@ -70,15 +70,23 @@ extension OptimizelyClient {
             return OptimizelyDecision.errorDecision(key: key, user: user, error: .featureKeyInvalid(key))
         }
 
-        let allOptions = defaultDecideOptions + (options ?? [])
-        /// Need to remove enable flags
-        let decisionMap = decide(user: user, keys: [key], options: allOptions)
+        var allOptions = defaultDecideOptions + (options ?? [])
+        allOptions.removeAll(where: { $0 == .enabledFlagsOnly })
+        
+        let decisionMap = decide(user: user, keys: [key], options: allOptions, ignoreDefaultOptions: true)
         return decisionMap[key] ?? OptimizelyDecision.errorDecision(key: key, user: user, error: .generic)
     }
     
     func decide(user: OptimizelyUserContext,
                 keys: [String],
                 options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+        return decide(user: user, keys: keys, options: options, ignoreDefaultOptions: false)
+    }
+    
+    func decide(user: OptimizelyUserContext,
+                keys: [String],
+                options: [OptimizelyDecideOption]? = nil,
+                ignoreDefaultOptions: Bool) -> [String: OptimizelyDecision] {
         guard let config = self.config else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
@@ -93,7 +101,7 @@ extension OptimizelyClient {
         var flagDecisions = [String : FeatureDecision]()
         var decisionReasonMap = [String : DecisionReasons]()
         
-        let allOptions = options ?? []
+        let allOptions = ignoreDefaultOptions ? (options ?? []) : defaultDecideOptions + (options ?? [])
         
         for key in keys {
             guard let flags = config.getFeatureFlag(key: key) else {

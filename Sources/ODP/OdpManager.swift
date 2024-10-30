@@ -97,8 +97,8 @@ public class OdpManager {
         if VuidManager.isVuid(userId) {
             // overwrite if userId is vuid (when userContext is created with vuid)
             eventManager.identifyUser(vuid: userId, userId: nil)
-        } else if let _vuid = vuid {
-            eventManager.identifyUser(vuid: _vuid, userId: userId)
+        } else {
+            eventManager.identifyUser(vuid: self.vuid, userId: userId)
         }
         
     }

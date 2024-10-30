@@ -34,7 +34,6 @@ class OdpManagerTests: XCTestCase {
                              cacheTimeoutInSecs: cacheTimeout,
                              segmentManager: segmentManager,
                              eventManager: eventManager)
-        manager.vuid = nil
     }
     
     override func tearDown() {
@@ -139,14 +138,14 @@ class OdpManagerTests: XCTestCase {
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
         manager.identifyUser(userId: "user-1")
         
-        XCTAssert(OdpVuidManager.isVuid(eventManager.receivedIdentifyVuid))
+        XCTAssert(VuidManager.isVuid(eventManager.receivedIdentifyVuid))
         XCTAssertEqual(eventManager.receivedIdentifyUserId, "user-1")
     }
     
     func testIdentifyUser_odpIntegrated_vuidAsUserId() {
         manager.updateOdpConfig(apiKey: "key-1", apiHost: "host-1", segmentsToCheck: [])
         
-        let vuidAsUserId = OdpVuidManager.newVuid
+        let vuidAsUserId = VuidManager.newVuid
         manager.identifyUser(userId: vuidAsUserId)
         
         XCTAssertEqual(eventManager.receivedIdentifyVuid, vuidAsUserId)
@@ -389,7 +388,7 @@ class OdpManagerTests: XCTestCase {
             self.receivedRegisterVuid = vuid
         }
         
-        override func identifyUser(vuid: String, userId: String?) {
+        override func identifyUser(vuid: String?, userId: String?) {
             self.receivedIdentifyVuid = vuid
             self.receivedIdentifyUserId = userId
         }

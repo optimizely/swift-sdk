@@ -36,6 +36,7 @@ class OptimizelyUserContextTests_ODP_2: XCTestCase {
         let odpEventApiManager = MockOdpEventApiManager()
         optimizely.odpManager = OdpManager(sdkKey: sdkKey,
                                     disable: false,
+                                    vuid: "vuid_123",
                                     cacheSize: 10,
                                     cacheTimeoutInSecs: 10,
                                     eventManager: OdpEventManager(sdkKey: sdkKey,

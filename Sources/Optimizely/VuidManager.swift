@@ -24,7 +24,7 @@ class VuidManager {
     // a single vuid should be shared for all SDK instances
     static let shared = VuidManager()
     
-    func intiazialize(enabled: Bool) {
+    func initialize(enabled: Bool) {
         self.enabled = enabled
         if enabled {
             self._vuid = load()

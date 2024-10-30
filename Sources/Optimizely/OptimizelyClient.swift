@@ -93,7 +93,7 @@ open class OptimizelyClient: NSObject {
 
         super.init()
         self.vuidManager = VuidManager.shared
-        self.vuidManager.intiazialize(enabled: self.sdkSettings.enableVuid)
+        self.vuidManager.initialize(enabled: self.sdkSettings.enableVuid)
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
                                                    vuid: vuidManager.vuid,

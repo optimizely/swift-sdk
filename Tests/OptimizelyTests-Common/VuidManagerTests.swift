@@ -21,7 +21,7 @@ class VuidManagerTests: XCTestCase {
     
     
     func testNewVuid() {
-        manager.intiazialize(enabled: true)
+        manager.initialize(enabled: true)
         
         let vuid = VuidManager.newVuid
         
@@ -30,7 +30,7 @@ class VuidManagerTests: XCTestCase {
     }
     
     func testIsVuid() {
-        manager.intiazialize(enabled: true)
+        manager.initialize(enabled: true)
         XCTAssertTrue(VuidManager.isVuid("vuid_123"))
         XCTAssertFalse(VuidManager.isVuid("vuid-123"))
         XCTAssertFalse(VuidManager.isVuid("123"))
@@ -39,7 +39,7 @@ class VuidManagerTests: XCTestCase {
     func testAutoSaveAndLoad() {
         UserDefaults.standard.removeObject(forKey: "optimizely-vuid")
         
-        manager.intiazialize(enabled: true)
+        manager.initialize(enabled: true)
         let vuid1 = manager.vuid
         
         let vuid2 = manager.vuid
@@ -50,19 +50,19 @@ class VuidManagerTests: XCTestCase {
         
         UserDefaults.standard.removeObject(forKey: "optimizely-vuid")
         
-        manager.intiazialize(enabled: true)
+        manager.initialize(enabled: true)
         let vuid3 = manager.vuid
 
         XCTAssertTrue(vuid1 != vuid3)
     }
     
     func testRemoveOldVuid() {
-        manager.intiazialize(enabled: true)
+        manager.initialize(enabled: true)
         let cahcedVuid1 = UserDefaults.standard.string(forKey: "optimizely-vuid")
         XCTAssertNotNil(cahcedVuid1)
         XCTAssertTrue(cahcedVuid1 == manager.vuid)
         
-        manager.intiazialize(enabled: false)
+        manager.initialize(enabled: false)
         let cahcedVuid2 = UserDefaults.standard.string(forKey: "optimizely-vuid")
         XCTAssertNil(cahcedVuid2)
         

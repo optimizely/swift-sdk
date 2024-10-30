@@ -60,7 +60,7 @@ open class OptimizelyClient: NSObject {
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
     public var odpManager: OdpManager!
-    private var vuidManager: OdpVuidManager!
+    private var vuidManager: VuidManager!
     let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
@@ -92,7 +92,7 @@ open class OptimizelyClient: NSObject {
         self.defaultDecideOptions = defaultDecideOptions ?? []
 
         super.init()
-        self.vuidManager = OdpVuidManager.shared
+        self.vuidManager = VuidManager.shared
         self.vuidManager.intiazialize(enabled: self.sdkSettings.enableVuid)
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,

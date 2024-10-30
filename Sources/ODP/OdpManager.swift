@@ -61,7 +61,7 @@ public class OdpManager {
         self.odpConfig = OdpConfig()
         self.segmentManager.odpConfig = odpConfig
         self.eventManager.odpConfig = odpConfig
-        if let vuid = vuid, OdpVuidManager.isVuid(vuid) {
+        if let vuid = vuid, VuidManager.isVuid(vuid) {
             self.eventManager.sendInitializedEvent(vuid: vuid)
         }
     }
@@ -74,7 +74,7 @@ public class OdpManager {
             return
         }
         
-        let userKey = OdpVuidManager.isVuid(userId) ? Constants.ODP.keyForVuid : Constants.ODP.keyForUserId
+        let userKey = VuidManager.isVuid(userId) ? Constants.ODP.keyForVuid : Constants.ODP.keyForUserId
         let userValue = userId
     
         segmentManager.fetchQualifiedSegments(userKey: userKey,
@@ -94,7 +94,7 @@ public class OdpManager {
             return
         }
 
-        if OdpVuidManager.isVuid(userId) {
+        if VuidManager.isVuid(userId) {
             // overwrite if userId is vuid (when userContext is created with vuid)
             eventManager.identifyUser(vuid: userId, userId: nil)
         } else if let _vuid = vuid {

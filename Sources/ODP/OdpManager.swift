@@ -121,8 +121,8 @@ public class OdpManager {
         let typeUpdated = (type ?? "").isEmpty ? Constants.ODP.eventType : type!
         
         var identifiersUpdated = identifiers
-        let _vuid = vuid ?? ""
-        if identifiers[Constants.ODP.keyForVuid] == nil, OdpVuidManager.isVuid(_vuid) {
+        
+        if identifiers[Constants.ODP.keyForVuid] == nil, let _vuid = vuid {
             identifiersUpdated[Constants.ODP.keyForVuid] = _vuid
         }
         

@@ -92,7 +92,8 @@ open class OptimizelyClient: NSObject {
         self.defaultDecideOptions = defaultDecideOptions ?? []
 
         super.init()
-        self.vuidManager = OdpVuidManager(enabled: sdkSettings.enableVuid) 
+        self.vuidManager = OdpVuidManager.shared
+        self.vuidManager.intiazialize(enabled: self.sdkSettings.enableVuid)
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
                                                    vuid: vuidManager.vuid,
@@ -974,7 +975,7 @@ extension OptimizelyClient {
     }
     
     /// the device vuid (read only)
-    public var vuid: String {
+    public var vuid: String? {
         return self.vuidManager.vuid
     }
     

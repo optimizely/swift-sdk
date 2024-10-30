@@ -188,16 +188,16 @@ class OptimizelyClientTests_ODP: XCTestCase {
     // MARK: - vuid
     
     func testVuidEnabled() {
-        let settings = OptimizelySdkSettings(enabledVuid: true)
+        let settings = OptimizelySdkSettings(enableVuid: true)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: settings)
         XCTAssertTrue(optimizely.enableVuid)
-        XCTAssert(optimizely.vuid.starts(with: "vuid_"))
+        XCTAssert(optimizely.vuid!.starts(with: "vuid_"))
     }
     
     func testVuidDiabled() {
         // Default client vuid diabled
         XCTAssertFalse(optimizely.enableVuid)
-        XCTAssert(optimizely.vuid.isEmpty)
+        XCTAssertNil(optimizely.vuid)
     }
         
     // MARK: - OdpConfig Update

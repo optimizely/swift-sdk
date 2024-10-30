@@ -18,10 +18,13 @@ import Foundation
 
 class OdpVuidManager {
     private var _vuid: String = ""
-    private(set) var enabled: Bool
+    private(set) var enabled: Bool = false
     let logger = OPTLoggerFactory.getLogger()
     
-    init(enabled: Bool) {
+    // a single vuid should be shared for all SDK instances
+    static let shared = OdpVuidManager()
+    
+    func intiazialize(enabled: Bool) {
         self.enabled = enabled
         if enabled {
             self._vuid = load()
@@ -48,12 +51,12 @@ class OdpVuidManager {
 // MARK: - VUID Store
 
 extension OdpVuidManager {
-    var vuid: String {
+    var vuid: String? {
         if enabled {
             return _vuid
         } else {
             logger.w("VUID is not enabled.")
-            return ""
+            return nil
         }
     }
     

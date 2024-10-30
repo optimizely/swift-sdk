@@ -27,7 +27,7 @@ class OptimizelyUserContextTests_ODP_2: XCTestCase {
         // odp disabled to avoid initial noise
         
         let optimizely = OptimizelyClient(sdkKey: sdkKey,
-                                          settings: OptimizelySdkSettings(disableOdp: true, enabledVuid: true))
+                                          settings: OptimizelySdkSettings(disableOdp: true, enableVuid: true))
         
         // override with a custom enabled odpManager.
         // - client_inializatied event will be sent automatically

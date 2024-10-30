@@ -24,7 +24,7 @@ class OptimizelyClientTests_Decide: XCTestCase {
         super.setUp()
         
         let datafile = OTUtils.loadJSONDatafile("api_datafile")!
-        let settings = OptimizelySdkSettings(enabledVuid: true)
+        let settings = OptimizelySdkSettings(enableVuid: true)
         optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: settings)
         
         try! optimizely.start(datafile: datafile)

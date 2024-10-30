@@ -254,18 +254,15 @@ class DefaultDecisionService: OPTDecisionService {
                 continue
             }
             
-            if ignoreUPS {
-                decisionResponse = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user)
-                
-                reasons.merge(decisionResponse.reasons)
-                
-                if let decision = decisionResponse.result {
-                    decisions.append(DecisionResponse(result: decision, reasons: reasons))
-                } else {
-                    decisions.append(DecisionResponse(result: nil, reasons: reasons))
-                }
-            }
+            decisionResponse = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user)
             
+            reasons.merge(decisionResponse.reasons)
+            
+            if let decision = decisionResponse.result {
+                decisions.append(DecisionResponse(result: decision, reasons: reasons))
+            } else {
+                decisions.append(DecisionResponse(result: nil, reasons: reasons))
+            }
         }
         
         // save profile

@@ -93,7 +93,7 @@ open class OptimizelyClient: NSObject {
 
         super.init()
         self.vuidManager = VuidManager.shared
-        self.vuidManager.initialize(enabled: self.sdkSettings.enableVuid)
+        self.vuidManager.configure(enable: self.sdkSettings.enableVuid)
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
                                                    vuid: vuidManager.vuid,
@@ -980,7 +980,7 @@ extension OptimizelyClient {
     }
     
     public var enableVuid: Bool {
-        return self.vuidManager.enabled
+        return self.vuidManager.enable
     }
     
     func identifyUserToOdp(userId: String) {

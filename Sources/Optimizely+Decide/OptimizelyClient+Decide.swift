@@ -70,53 +70,131 @@ extension OptimizelyClient {
             return OptimizelyDecision.errorDecision(key: key, user: user, error: .sdkNotReady)
         }
         
-        guard let feature = config.getFeatureFlag(key: key) else {
+        guard let _ = config.getFeatureFlag(key: key) else {
             return OptimizelyDecision.errorDecision(key: key, user: user, error: .featureKeyInvalid(key))
+        }
+
+        var allOptions = defaultDecideOptions + (options ?? [])
+        allOptions.removeAll(where: { $0 == .enabledFlagsOnly })
+        
+        let decisionMap = decide(user: user, keys: [key], options: allOptions, ignoreDefaultOptions: true)
+        return decisionMap[key] ?? OptimizelyDecision.errorDecision(key: key, user: user, error: .generic)
+    }
+    
+    func decide(user: OptimizelyUserContext,
+                keys: [String],
+                options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+        return decide(user: user, keys: keys, options: options, ignoreDefaultOptions: false)
+    }
+    
+    func decide(user: OptimizelyUserContext,
+                keys: [String],
+                options: [OptimizelyDecideOption]? = nil,
+                ignoreDefaultOptions: Bool) -> [String: OptimizelyDecision] {
+        guard let config = self.config else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return [:]
+        }
+        
+        var decisionMap = [String : OptimizelyDecision]()
+        
+        guard keys.count > 0 else { return decisionMap }
+        
+        var validKeys = [String]()
+        var flagsWithoutForceDecision = [FeatureFlag]()
+        var flagDecisions = [String : FeatureDecision]()
+        var decisionReasonMap = [String : DecisionReasons]()
+        
+        let allOptions = ignoreDefaultOptions ? (options ?? []) : defaultDecideOptions + (options ?? [])
+        
+        for key in keys {
+            guard let flags = config.getFeatureFlag(key: key) else {
+                decisionMap[key] = OptimizelyDecision.errorDecision(key: key, user: user, error: .featureKeyInvalid(key))
+                continue
+            }
+            
+            validKeys.append(key)
+            
+            // check forced-decisions first
+            let forcedDecisionResponse = decisionService.findValidatedForcedDecision(config: config,
+                                                                                     user: user,
+                                                                                     context: OptimizelyDecisionContext(flagKey: key))
+            
+            let decisionReasons = DecisionReasons(options: allOptions)
+            decisionReasons.merge(forcedDecisionResponse.reasons)
+            decisionReasonMap[key] = decisionReasons
+            
+            if let variation = forcedDecisionResponse.result {
+                let featureDecision = FeatureDecision(experiment: nil, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
+                flagDecisions[key] = featureDecision
+            } else {
+                flagsWithoutForceDecision.append(flags)
+            }
+        }
+        
+        let decisionList = (decisionService as? DefaultDecisionService)?.getVariationForFeatureList(config: config, featureFlags: flagsWithoutForceDecision, user: user, options: allOptions)
+        
+        for index in 0..<flagsWithoutForceDecision.count {
+            if decisionList?.indices.contains(index) ?? false {
+                let decision = decisionList?[index]
+                let result = decision?.result
+                let flagKey = flagsWithoutForceDecision[index].key
+                flagDecisions[flagKey] = result
+                let _reasons = decisionReasonMap[flagKey]
+                if decision?.reasons != nil {
+                    _reasons?.merge(decision!.reasons)
+                    decisionReasonMap[flagKey] = _reasons
+                }
+            }
+        }
+        
+        for index in 0..<validKeys.count {
+            let key = validKeys[index]
+            let flagDecision = flagDecisions[key]
+            let decisionReasons = decisionReasonMap[key] ?? DecisionReasons(options: allOptions)
+            let optimizelyDecision = createOptimizelyDecision(flagKey: key,
+                                                              user: user,
+                                                              flagDecision: flagDecision,
+                                                              decisionReasons: decisionReasons,
+                                                              allOptions: allOptions,
+                                                              config: config)
+            if (!allOptions.contains(.enabledFlagsOnly) || optimizelyDecision.enabled) {
+                decisionMap[key] = optimizelyDecision
+            }
+        }
+        
+        return decisionMap
+    }
+    
+    private func createOptimizelyDecision(flagKey: String,
+                                          user: OptimizelyUserContext,
+                                          flagDecision: FeatureDecision?,
+                                          decisionReasons: DecisionReasons,
+                                          allOptions: [OptimizelyDecideOption],
+                                          config: ProjectConfig) -> OptimizelyDecision {
+        
+        guard let feature = config.getFeatureFlag(key: flagKey) else {
+            return OptimizelyDecision.errorDecision(key: flagKey, user: user, error: .featureKeyInvalid(flagKey))
         }
         
         let userId = user.userId
         let attributes = user.attributes
-        let allOptions = defaultDecideOptions + (options ?? [])
-        let reasons = DecisionReasons(options: allOptions)
+        let flagEnabled = flagDecision?.variation.featureEnabled ?? false
+        
+        logger.i("Feature \(flagKey) is enabled for user \(userId) \(flagEnabled)")
+        
         var decisionEventDispatched = false
-        var enabled = false
-        
-        var decision: FeatureDecision?
-        
-        // check forced-decisions first
-        
-        let forcedDecisionResponse = decisionService.findValidatedForcedDecision(config: config,
-                                                                                 user: user,
-                                                                                 context: OptimizelyDecisionContext(flagKey: key))
-        reasons.merge(forcedDecisionResponse.reasons)
-        
-        if let variation = forcedDecisionResponse.result {
-            decision = FeatureDecision(experiment: nil, variation: variation, source: Constants.DecisionSource.featureTest.rawValue)
-        } else {
-            // regular decision
-
-            let decisionResponse = decisionService.getVariationForFeature(config: config,
-                                                                          featureFlag: feature,
-                                                                          user: user,
-                                                                          options: allOptions)
-            reasons.merge(decisionResponse.reasons)
-            decision = decisionResponse.result
-       }
-        
-        if let featureEnabled = decision?.variation.featureEnabled {
-            enabled = featureEnabled
-        }
         
         if !allOptions.contains(.disableDecisionEvent) {
-            let ruleType = decision?.source ?? Constants.DecisionSource.rollout.rawValue
-            if shouldSendDecisionEvent(source: ruleType, decision: decision) {
-                sendImpressionEvent(experiment: decision?.experiment,
-                                    variation: decision?.variation,
+            let ruleType = flagDecision?.source ?? Constants.DecisionSource.rollout.rawValue
+            if shouldSendDecisionEvent(source: ruleType, decision: flagDecision) {
+                sendImpressionEvent(experiment: flagDecision?.experiment,
+                                    variation: flagDecision?.variation,
                                     userId: userId,
                                     attributes: attributes,
                                     flagKey: feature.key,
                                     ruleType: ruleType,
-                                    enabled: enabled)
+                                    enabled: flagEnabled)
                 decisionEventDispatched = true
             }
         }
@@ -124,9 +202,9 @@ extension OptimizelyClient {
         var variableMap = [String: Any]()
         if !allOptions.contains(.excludeVariables) {
             let decisionResponse = getDecisionVariableMap(feature: feature,
-                                                          variation: decision?.variation,
-                                                          enabled: enabled)
-            reasons.merge(decisionResponse.reasons)
+                                                          variation: flagDecision?.variation,
+                                                          enabled: flagEnabled)
+            decisionReasons.merge(decisionResponse.reasons)
             variableMap = decisionResponse.result ?? [:]
         }
         
@@ -134,57 +212,32 @@ extension OptimizelyClient {
         if let opt = OptimizelyJSON(map: variableMap) {
             optimizelyJSON = opt
         } else {
-            reasons.addError(OptimizelyError.invalidJSONVariable)
+            decisionReasons.addError(OptimizelyError.invalidJSONVariable)
             optimizelyJSON = OptimizelyJSON.createEmpty()
         }
         
-        let ruleKey = decision?.experiment?.key
-        let reasonsToReport = reasons.toReport()
+        let ruleKey = flagDecision?.experiment?.key
+        let reasonsToReport = decisionReasons.toReport()
         
         sendDecisionNotification(userId: userId,
                                  attributes: attributes,
                                  decisionInfo: DecisionInfo(decisionType: .flag,
-                                                            experiment: decision?.experiment,
-                                                            variation: decision?.variation,
+                                                            experiment: flagDecision?.experiment,
+                                                            variation: flagDecision?.variation,
                                                             feature: feature,
-                                                            featureEnabled: enabled,
+                                                            featureEnabled: flagEnabled,
                                                             variableValues: variableMap,
                                                             ruleKey: ruleKey,
                                                             reasons: reasonsToReport,
                                                             decisionEventDispatched: decisionEventDispatched))
         
-        return OptimizelyDecision(variationKey: decision?.variation.key,
-                                  enabled: enabled,
+        return OptimizelyDecision(variationKey: flagDecision?.variation.key,
+                                  enabled: flagEnabled,
                                   variables: optimizelyJSON,
                                   ruleKey: ruleKey,
                                   flagKey: feature.key,
                                   userContext: user,
                                   reasons: reasonsToReport)
-    }
-    
-    func decide(user: OptimizelyUserContext,
-                keys: [String],
-                options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        guard config != nil else {
-            logger.e(OptimizelyError.sdkNotReady)
-            return [:]
-        }
-        
-        guard keys.count > 0 else { return [:] }
-        
-        let allOptions = defaultDecideOptions + (options ?? [])
-        
-        var decisions = [String: OptimizelyDecision]()
-        
-        let enabledFlagsOnly = allOptions.contains(.enabledFlagsOnly)
-        keys.forEach { key in
-            let decision = decide(user: user, key: key, options: options)
-            if !enabledFlagsOnly || decision.enabled {
-                decisions[key] = decision
-            }
-        }
-        
-        return decisions
     }
     
     func decideAll(user: OptimizelyUserContext,

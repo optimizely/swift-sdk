@@ -1,5 +1,11 @@
 # Optimizely Swift SDK Changelog
 
+## 4.1.0
+November 8, 2024
+
+### New Features
+* Batch UPS lookup and save calls in decideAll and decideForKeys methods ([#559](https://github.com/optimizely/swift-sdk/pull/559/)).
+
 ## 4.0.0
 Jan 18, 2024
 

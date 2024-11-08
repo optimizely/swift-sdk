@@ -22,31 +22,54 @@ struct FeatureDecision {
     let source: String
 }
 
+typealias UserProfile = OPTUserProfileService.UPProfile
+
 class DefaultDecisionService: OPTDecisionService {
-    
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
-    
     // thread-safe lazy logger load (after HandlerRegisterService ready)
     private let threadSafeLogger = ThreadSafeLogger()
-    var logger: OPTLogger {
-        return threadSafeLogger.logger
-    }
     
     // user-profile-service read-modify-write lock for supporting multiple clients
     static let upsRMWLock = DispatchQueue(label: "ups-rmw")
     
+    var logger: OPTLogger {
+        return threadSafeLogger.logger
+    }
+        
     init(userProfileService: OPTUserProfileService) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
     }
     
+    /// Public Method
     func getVariation(config: ProjectConfig,
                       experiment: Experiment,
                       user: OptimizelyUserContext,
                       options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
-        let reasons = DecisionReasons(options: options)
+        let userId = user.userId
+        let ignoreUPS = (options ?? []).contains(.ignoreUserProfileService)
+        var profileTracker: UserProfileTracker?
+        if !ignoreUPS {
+            profileTracker = UserProfileTracker(userId: userId, userProfileService: self.userProfileService, logger: self.logger)
+            profileTracker?.loadUserProfile()
+        }
         
+        let response = getVariation(config: config, experiment: experiment, user: user, userProfileTracker: profileTracker)
+        
+        if (!ignoreUPS) {
+            profileTracker?.save()
+        }
+        
+        return response
+    }
+    
+    func getVariation(config: ProjectConfig,
+                      experiment: Experiment,
+                      user: OptimizelyUserContext,
+                      options: [OptimizelyDecideOption]? = nil,
+                      userProfileTracker: UserProfileTracker?) -> DecisionResponse<Variation> {
+        let reasons = DecisionReasons(options: options)
         let userId = user.userId
         let attributes = user.attributes
         let experimentId = experiment.id
@@ -64,7 +87,9 @@ class DefaultDecisionService: OPTDecisionService {
         
         // ---- check if the user is forced into a variation ----
         let decisionResponse = config.getForcedVariation(experimentKey: experiment.key, userId: userId)
+        
         reasons.merge(decisionResponse.reasons)
+        
         if let variationId = decisionResponse.result?.id,
            let variation = experiment.getVariation(id: variationId) {
             return DecisionResponse(result: variation, reasons: reasons)
@@ -85,11 +110,9 @@ class DefaultDecisionService: OPTDecisionService {
             reasons.addInfo(info)
         }
         
-        // ---- check if a valid variation is stored in the user profile ----
-        let ignoreUPS = (options ?? []).contains(.ignoreUserProfileService)
-        
-        if !ignoreUPS,
-           let variationId = getVariationIdFromProfile(userId: userId, experimentId: experimentId),
+        /// Load variation from tracker
+        if let profile = userProfileTracker?.userProfile,
+           let variationId = getVariationIdFromProfile(profile: profile, experimentId: experimentId),
            let variation = experiment.getVariation(id: variationId) {
             
             let info = LogMessage.gotVariationFromUserProfile(variation.key, experiment.key, userId)
@@ -104,22 +127,21 @@ class DefaultDecisionService: OPTDecisionService {
                                                           experiment: experiment,
                                                           user: user)
         reasons.merge(audienceResponse.reasons)
+        
         if audienceResponse.result ?? false {
             // bucket user into a variation
             let decisionResponse = bucketer.bucketExperiment(config: config,
                                                              experiment: experiment,
                                                              bucketingId: bucketingId)
             reasons.merge(decisionResponse.reasons)
+            
             bucketedVariation = decisionResponse.result
             
             if let variation = bucketedVariation {
                 let info = LogMessage.userBucketedIntoVariationInExperiment(userId, experiment.key, variation.key)
                 logger.i(info)
                 reasons.addInfo(info)
-                // save to user profile
-                if !ignoreUPS {
-                    self.saveProfile(userId: userId, experimentId: experimentId, variationId: variation.id)
-                }
+                userProfileTracker?.updateProfile(experiment: experiment, variation: variation)
             } else {
                 let info = LogMessage.userNotBucketedIntoVariation(userId)
                 logger.i(info)
@@ -190,42 +212,72 @@ class DefaultDecisionService: OPTDecisionService {
         return DecisionResponse(result: result, reasons: reasons)
     }
     
+    /// Public Method
     func getVariationForFeature(config: ProjectConfig,
                                 featureFlag: FeatureFlag,
                                 user: OptimizelyUserContext,
                                 options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
-        let reasons = DecisionReasons(options: options)
         
-        // Evaluate in this order:
+        let response = getVariationForFeatureList(config: config, featureFlags: [featureFlag], user: user, options: options).first
         
-        // 1. Attempt to bucket user into experiment using feature flag.
-        // Check if the feature flag is under an experiment and the the user is bucketed into one of these experiments
-        var decisionResponse = getVariationForFeatureExperiment(config: config,
-                                                                featureFlag: featureFlag,
-                                                                user: user,
-                                                                options: options)
-        reasons.merge(decisionResponse.reasons)
-        if let decision = decisionResponse.result {
-            return DecisionResponse(result: decision, reasons: reasons)
+        guard response?.result != nil else {
+            let reasons = response?.reasons ?? DecisionReasons(options: options)
+            return DecisionResponse(result: nil, reasons: reasons)
         }
         
-        // 2. Attempt to bucket user into rollout using the feature flag.
-        // Check if the feature flag has rollout and the user is bucketed into one of it's rules
-        decisionResponse = getVariationForFeatureRollout(config: config,
-                                                         featureFlag: featureFlag,
-                                                         user: user,
-                                                         options: options)
-        reasons.merge(decisionResponse.reasons)
-        if let decision = decisionResponse.result {
-            return DecisionResponse(result: decision, reasons: reasons)
-        }
-        
-        return DecisionResponse(result: nil, reasons: reasons)
+        return response!
     }
+    
+    func getVariationForFeatureList(config: ProjectConfig,
+                                    featureFlags: [FeatureFlag],
+                                    user: OptimizelyUserContext,
+                                    options: [OptimizelyDecideOption]? = nil) -> [DecisionResponse<FeatureDecision>] {
+        
+        let reasons = DecisionReasons(options: options)
+        let userId = user.userId
+        let ignoreUPS = (options ?? []).contains(.ignoreUserProfileService)
+        var profileTracker: UserProfileTracker?
+        if !ignoreUPS {
+            profileTracker = UserProfileTracker(userId: userId, userProfileService: self.userProfileService, logger: self.logger)
+            profileTracker?.loadUserProfile()
+        }
+        
+        var decisions = [DecisionResponse<FeatureDecision>]()
+        
+        for featureFlag in featureFlags {
+            var decisionResponse = getVariationForFeatureExperiment(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker)
+            
+            reasons.merge(decisionResponse.reasons)
+            
+            if let decision = decisionResponse.result {
+                decisions.append(DecisionResponse(result: decision, reasons: reasons))
+                continue
+            }
+            
+            decisionResponse = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user)
+            
+            reasons.merge(decisionResponse.reasons)
+            
+            if let decision = decisionResponse.result {
+                decisions.append(DecisionResponse(result: decision, reasons: reasons))
+            } else {
+                decisions.append(DecisionResponse(result: nil, reasons: reasons))
+            }
+        }
+        
+        // save profile
+        if !ignoreUPS {
+            profileTracker?.save()
+        }
+        
+        return decisions
+    }
+
     
     func getVariationForFeatureExperiment(config: ProjectConfig,
                                           featureFlag: FeatureFlag,
                                           user: OptimizelyUserContext,
+                                          userProfileTracker: UserProfileTracker? = nil,
                                           options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
         
@@ -244,6 +296,7 @@ class DefaultDecisionService: OPTDecisionService {
                                                                       flagKey: featureFlag.key,
                                                                       rule: experiment,
                                                                       user: user,
+                                                                      userProfileTracker: userProfileTracker,
                                                                       options: options)
                 reasons.merge(decisionResponse.reasons)
                 if let variation = decisionResponse.result {
@@ -314,11 +367,10 @@ class DefaultDecisionService: OPTDecisionService {
                                         flagKey: String,
                                         rule: Experiment,
                                         user: OptimizelyUserContext,
+                                        userProfileTracker: UserProfileTracker?,
                                         options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
         let reasons = DecisionReasons(options: options)
-        
         // check forced-decision first
-        
         let forcedDecisionResponse = findValidatedForcedDecision(config: config,
                                                                  user: user,
                                                                  context: OptimizelyDecisionContext(flagKey: flagKey, ruleKey: rule.key))
@@ -328,17 +380,15 @@ class DefaultDecisionService: OPTDecisionService {
             return DecisionResponse(result: variation, reasons: reasons)
         }
         
-        // regular decision
-        
         let decisionResponse = getVariation(config: config,
                                             experiment: rule,
                                             user: user,
-                                            options: options)
-        reasons.merge(decisionResponse.reasons)
+                                            userProfileTracker: userProfileTracker)
         let variation = decisionResponse.result
-        
+        reasons.merge(decisionResponse.reasons)
         return DecisionResponse(result: variation, reasons: reasons)
     }
+    
     
     func getVariationFromDeliveryRule(config: ProjectConfig,
                                       flagKey: String,
@@ -424,6 +474,7 @@ class DefaultDecisionService: OPTDecisionService {
         return bucketingId
     }
     
+    /// Public Method
     func findValidatedForcedDecision(config: ProjectConfig,
                                      user: OptimizelyUserContext,
                                      context: OptimizelyDecisionContext) -> DecisionResponse<Variation> {
@@ -452,11 +503,22 @@ class DefaultDecisionService: OPTDecisionService {
 // MARK: - UserProfileService Helpers
 
 extension DefaultDecisionService {
-    
     func getVariationIdFromProfile(userId: String,
                                    experimentId: String) -> String? {
         if let profile = userProfileService.lookup(userId: userId),
            let bucketMap = profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
+           let experimentMap = bucketMap[experimentId],
+           let variationId = experimentMap[UserProfileKeys.kVariationId] {
+            return variationId
+        } else {
+            return nil
+        }
+    }
+    
+    func getVariationIdFromProfile(profile: UserProfile?,
+                                   experimentId: String) -> String? {
+        if let _profile = profile,
+           let bucketMap = _profile[UserProfileKeys.kBucketMap] as? OPTUserProfileService.UPBucketMap,
            let experimentMap = bucketMap[experimentId],
            let variationId = experimentMap[UserProfileKeys.kVariationId] {
             return variationId
@@ -482,5 +544,4 @@ extension DefaultDecisionService {
             self.logger.i(.savedVariationInUserProfile(variationId, experimentId, userId))
         }
     }
-    
 }

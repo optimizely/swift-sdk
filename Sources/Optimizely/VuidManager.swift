@@ -16,15 +16,15 @@
 
 import Foundation
 
-class VuidManager {
+public class VuidManager {
     private var _vuid: String = ""
     private(set) var enable: Bool = false
     let logger = OPTLoggerFactory.getLogger()
     
     // a single vuid should be shared for all SDK instances
-    static let shared = VuidManager()
+    public static let shared = VuidManager()
     
-    func configure(enable: Bool) {
+    public func configure(enable: Bool) {
         self.enable = enable
         if enable {
             self._vuid = load()
@@ -52,7 +52,7 @@ class VuidManager {
 // MARK: - VUID Store
 
 extension VuidManager {
-    var vuid: String? {
+    public var vuid: String? {
         if self.enable {
             return _vuid
         } else {

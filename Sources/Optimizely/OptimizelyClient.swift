@@ -101,7 +101,7 @@ open class OptimizelyClient: NSObject {
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
-
+        
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
@@ -118,7 +118,14 @@ open class OptimizelyClient: NSObject {
         self.datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
-        
+        if VuidManager.shared.enable {
+            try? sendOdpEvent(type: Constants.ODP.eventType,
+                              action: "client_initialized",
+                              identifiers: [
+                                Constants.ODP.keyForVuid: VuidManager.shared.vuid!
+                              ],
+                              data: [:])
+        }
         logger.d("SDK Version: \(version)")
     }
     

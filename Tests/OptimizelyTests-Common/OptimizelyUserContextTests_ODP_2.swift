@@ -26,21 +26,28 @@ class OptimizelyUserContextTests_ODP_2: XCTestCase {
         
         // odp disabled to avoid initial noise
         
-        let optimizely = OptimizelyClient(sdkKey: sdkKey,
-                                          settings: OptimizelySdkSettings(disableOdp: true, enableVuid: true))
         
         // override with a custom enabled odpManager.
         // - client_inializatied event will be sent automatically
         // - will wait in the queue until project config is ready
         
         let odpEventApiManager = MockOdpEventApiManager()
-        optimizely.odpManager = OdpManager(sdkKey: sdkKey,
-                                    disable: false,
-                                    vuid: "vuid_123",
-                                    cacheSize: 10,
-                                    cacheTimeoutInSecs: 10,
-                                    eventManager: OdpEventManager(sdkKey: sdkKey,
-                                                                  apiManager: odpEventApiManager))
+//        optimizely.odpManager = OdpManager(sdkKey: sdkKey,
+//                                    disable: false,
+//                                    vuid: "vuid_123",
+//                                    cacheSize: 10,
+//                                    cacheTimeoutInSecs: 10,
+//                                    eventManager: OdpEventManager(sdkKey: sdkKey,
+//                                                                  apiManager: odpEventApiManager))
+        let optimizely = OptimizelyClient(sdkKey: sdkKey,
+                                          odpManager: OdpManager(sdkKey: sdkKey,
+                                                                 disable: false,
+                                                                 vuid: "vuid_123",
+                                                                 cacheSize: 10,
+                                                                 cacheTimeoutInSecs: 10,
+                                                                 eventManager: OdpEventManager(sdkKey: sdkKey,
+                                                                                               apiManager: odpEventApiManager)), settings: OptimizelySdkSettings(disableOdp: true, enableVuid: true))
+        
         
         // identified event will sent but wait in the queue until project config is ready
         _ = optimizely.createUserContext(userId: "tester")

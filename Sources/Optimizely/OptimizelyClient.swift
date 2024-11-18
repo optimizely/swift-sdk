@@ -96,11 +96,11 @@ open class OptimizelyClient: NSObject {
         self.vuidManager.configure(enable: self.sdkSettings.enableVuid)
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
-                                                   vuid: vuidManager.vuid,
                                                    cacheSize: sdkSettings.segmentsCacheSize,
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
+        self.odpManager.vuid = VuidManager.shared.vuid
         
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()

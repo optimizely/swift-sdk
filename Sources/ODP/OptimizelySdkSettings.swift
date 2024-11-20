@@ -27,6 +27,8 @@ public struct OptimizelySdkSettings {
     let timeoutForOdpEventInSecs: Int
     /// ODP features are disabled if this is set to true.
     let disableOdp: Bool
+    /// VUID is enabled if this is set to true.
+    let enableVuid: Bool
     
     /// Optimizely SDK Settings
     ///
@@ -36,6 +38,7 @@ public struct OptimizelySdkSettings {
     ///   - timeoutForSegmentFetchInSecs: The timeout in seconds of odp segment fetch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - timeoutForOdpEventInSecs: The timeout in seconds of odp event dispatch (optional. default = 10) - OS default timeout will be used if this is set to zero.
     ///   - disableOdp: Set this flag to true (default = false) to disable ODP features
+    ///   - enableVuid: Set this flag to true (default = false) to enable vuid.
     ///   - sdkName: Set this flag to override sdkName included in events
     ///   - sdkVersion: Set this flag to override sdkVersion included in events
     public init(segmentsCacheSize: Int = 100,
@@ -43,6 +46,7 @@ public struct OptimizelySdkSettings {
                 timeoutForSegmentFetchInSecs: Int = 10,
                 timeoutForOdpEventInSecs: Int = 10,
                 disableOdp: Bool = false,
+                enableVuid: Bool = false,
                 sdkName: String? = nil,
                 sdkVersion: String? = nil) {
         self.segmentsCacheSize = segmentsCacheSize
@@ -50,6 +54,7 @@ public struct OptimizelySdkSettings {
         self.timeoutForSegmentFetchInSecs = timeoutForSegmentFetchInSecs
         self.timeoutForOdpEventInSecs = timeoutForOdpEventInSecs
         self.disableOdp = disableOdp
+        self.enableVuid = enableVuid
         if let _sdkName = sdkName, _sdkName != "" {
             Utils.swiftSdkClientName = _sdkName
         }

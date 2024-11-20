@@ -89,7 +89,7 @@ class OdpEventManagerTests: XCTestCase {
     }
     
     func testRegisterVUID_noApiKey() {
-        manager.registerVUID(vuid: "v1")
+        manager.sendInitializedEvent(vuid: "v1")
         
         XCTAssertEqual(1, manager.eventQueue.count)
         
@@ -149,7 +149,7 @@ class OdpEventManagerTests: XCTestCase {
         
         XCTAssertTrue(manager.odpConfig.eventQueueingAllowed, "initially datafile not ready and assumed queueing is allowed")
 
-        manager.registerVUID(vuid: "v1")    // each of these will try to flush
+        manager.sendInitializedEvent(vuid: "v1")    // each of these will try to flush
         manager.identifyUser(vuid: "v1", userId: "u1")
         manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
 
@@ -184,7 +184,7 @@ class OdpEventManagerTests: XCTestCase {
         
         XCTAssertTrue(manager.odpConfig.eventQueueingAllowed, "initially datafile not ready and assumed queueing is allowed")
 
-        manager.registerVUID(vuid: "v1")    // each of these will try to flush
+        manager.sendInitializedEvent(vuid: "v1")    // each of these will try to flush
         manager.identifyUser(vuid: "v1", userId: "u1")
         manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
 
@@ -215,7 +215,7 @@ class OdpEventManagerTests: XCTestCase {
     func testFlush_maxSize() {
         manager.maxQueueSize = 2
         
-        manager.registerVUID(vuid: "v1")    // each of these will try to flush
+        manager.sendInitializedEvent(vuid: "v1")    // each of these will try to flush
         manager.identifyUser(vuid: "v1", userId: "u1")
         manager.sendEvent(type: "t1", action: "a1", identifiers: [:], data: [:])
 

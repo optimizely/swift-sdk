@@ -61,9 +61,6 @@ public class OdpManager {
         self.odpConfig = OdpConfig()
         self.segmentManager.odpConfig = odpConfig
         self.eventManager.odpConfig = odpConfig
-        if let vuid = vuid, VuidManager.isVuid(vuid) {
-            self.eventManager.sendInitializedEvent(vuid: vuid)
-        }
     }
     
     func fetchQualifiedSegments(userId: String,

@@ -16,15 +16,22 @@
 
 import Foundation
 
-class OdpVuidManager {
-    var vuid: String = ""
+public class VuidManager {
+    private var _vuid: String = ""
+    private(set) var enable: Bool = false
     let logger = OPTLoggerFactory.getLogger()
-
-    // a single vuid should be shared for all SDK instances
-    static let shared = OdpVuidManager()
     
-    init() {
-        self.vuid = load()
+    // a single vuid should be shared for all SDK instances
+    public static let shared = VuidManager()
+    
+    public func configure(enable: Bool) {
+        self.enable = enable
+        if enable {
+            self._vuid = load()
+        } else {
+            self.remove()
+            self._vuid = ""
+        }
     }
     
     static var newVuid: String {
@@ -35,16 +42,24 @@ class OdpVuidManager {
         let vuid = (vuidFull.count <= maxLength) ? vuidFull : String(vuidFull.prefix(maxLength))
         return vuid
     }
-    
+
     static func isVuid(_ visitorId: String) -> Bool {
-        return visitorId.starts(with: "vuid_")
+        return visitorId.lowercased().starts(with: "vuid_")
     }
     
 }
 
 // MARK: - VUID Store
 
-extension OdpVuidManager {
+extension VuidManager {
+    public var vuid: String? {
+        if self.enable {
+            return _vuid
+        } else {
+            logger.w("VUID is not enabled.")
+            return nil
+        }
+    }
     
     private var keyForVuid: String {
         return "optimizely-vuid"
@@ -55,11 +70,16 @@ extension OdpVuidManager {
             return oldVuid
         }
         
-        let vuid = OdpVuidManager.newVuid
+        let vuid = VuidManager.newVuid
         save(vuid: vuid)
         return vuid
     }
-
+    
+    private func remove() {
+        UserDefaults.standard.set(nil, forKey: keyForVuid)
+        UserDefaults.standard.synchronize()
+    }
+    
     private func save(vuid: String) {
         UserDefaults.standard.set(vuid, forKey: keyForVuid)
         UserDefaults.standard.synchronize()

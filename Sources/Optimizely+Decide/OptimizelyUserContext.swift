@@ -85,10 +85,11 @@ public class OptimizelyUserContext {
         self.atomicForcedDecisions = AtomicProperty(property: nil, lock: lock)
         self.atomicQualifiedSegments = AtomicProperty(property: nil, lock: lock)
         if identify {
+            self.optimizely?.identifyUserToOdp(userId: userId)
             // async call so event building overhead is not blocking context creation
-            lock.async {
-                self.optimizely?.identifyUserToOdp(userId: userId)
-            }
+//            lock.async {
+//                self.optimizely?.identifyUserToOdp(userId: userId)
+//            }
         }
     }
         

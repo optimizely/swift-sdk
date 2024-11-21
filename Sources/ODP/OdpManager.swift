@@ -57,13 +57,11 @@ public class OdpManager {
                                                                   cacheTimeoutInSecs: cacheTimeoutInSecs,
                                                                   resourceTimeoutInSecs: timeoutForSegmentFetchInSecs)
         self.eventManager = eventManager ?? OdpEventManager(sdkKey: sdkKey,
-                                                            resourceTimeoutInSecs: timeoutForEventDispatchInSecs)        
+                                                            resourceTimeoutInSecs: timeoutForEventDispatchInSecs)
+        
         self.odpConfig = OdpConfig()
         self.segmentManager.odpConfig = odpConfig
         self.eventManager.odpConfig = odpConfig
-        if let vuid = vuid, VuidManager.isVuid(vuid) {
-            self.eventManager.sendInitializedEvent(vuid: vuid)
-        }
     }
     
     func fetchQualifiedSegments(userId: String,
@@ -122,7 +120,7 @@ public class OdpManager {
         
         var identifiersUpdated = identifiers
         
-        if identifiers[Constants.ODP.keyForVuid] == nil, let _vuid = vuid {
+        if identifiers[Constants.ODP.keyForVuid] == nil, let _vuid = vuid, VuidManager.isVuid(_vuid) {
             identifiersUpdated[Constants.ODP.keyForVuid] = _vuid
         }
         

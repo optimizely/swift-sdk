@@ -96,11 +96,11 @@ open class OptimizelyClient: NSObject {
         self.vuidManager.configure(enable: self.sdkSettings.enableVuid)
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
-                                                   vuid: VuidManager.shared.vuid,
                                                    cacheSize: sdkSettings.segmentsCacheSize,
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
+        self.odpManager.vuid = self.vuidManager.vuid
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
@@ -118,15 +118,15 @@ open class OptimizelyClient: NSObject {
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
         
-//        if self.enableVuid { 
-//            try? sendOdpEvent(type: Constants.ODP.eventType,
-//                              action: "client_initialized",
-//                              identifiers: [
-//                                Constants.ODP.keyForVuid: self.vuid
-//                              ],
-//                              data: [:])
-//            
-//        }
+        if self.enableVuid {
+            try? sendOdpEvent(type: Constants.ODP.eventType,
+                              action: "client_initialized",
+                              identifiers: [
+                                Constants.ODP.keyForVuid: self.vuid
+                              ],
+                              data: [:])
+            
+        }
         
         logger.d("SDK Version: \(version)")
     }

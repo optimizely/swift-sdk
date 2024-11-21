@@ -20,17 +20,19 @@ public class VuidManager {
     private var _vuid: String = ""
     private(set) var enable: Bool = false
     let logger = OPTLoggerFactory.getLogger()
-    
+    let lock = DispatchQueue(label: "vuid-manager")
     // a single vuid should be shared for all SDK instances
     public static let shared = VuidManager()
     
     public func configure(enable: Bool) {
-        self.enable = enable
-        if enable {
-            self._vuid = load()
-        } else {
-            self.remove()
-            self._vuid = ""
+        lock.async {
+            self.enable = enable
+            if enable {
+                self._vuid = self.load()
+            } else {
+                self.remove()
+                self._vuid = ""
+            }
         }
     }
     
@@ -53,11 +55,8 @@ public class VuidManager {
 
 extension VuidManager {
     public var vuid: String {
-        if self.enable {
-            return _vuid
-        } else {
-            logger.w("VUID is not enabled.")
-            return ""
+        lock.sync {
+            return self._vuid
         }
     }
     

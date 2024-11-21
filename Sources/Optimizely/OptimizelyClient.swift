@@ -118,14 +118,14 @@ open class OptimizelyClient: NSObject {
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
         
-        if let _vuid = self.vuidManager.vuid {
-            try? sendOdpEvent(type: Constants.ODP.eventType,
-                              action: "client_initialized",
-                              identifiers: [
-                                Constants.ODP.keyForVuid: _vuid
-                              ],
-                              data: [:])
-        }
+        
+        try? sendOdpEvent(type: Constants.ODP.eventType,
+                          action: "client_initialized",
+                          identifiers: [
+                            Constants.ODP.keyForVuid: self.vuid
+                          ],
+                          data: [:])
+    
 
         
         logger.d("SDK Version: \(version)")
@@ -984,7 +984,7 @@ extension OptimizelyClient {
     }
     
     /// the device vuid (read only)
-    public var vuid: String? {
+    public var vuid: String {
         return self.vuidManager.vuid
     }
     

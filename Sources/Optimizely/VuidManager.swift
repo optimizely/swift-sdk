@@ -52,12 +52,12 @@ public class VuidManager {
 // MARK: - VUID Store
 
 extension VuidManager {
-    public var vuid: String? {
+    public var vuid: String {
         if self.enable {
             return _vuid
         } else {
             logger.w("VUID is not enabled.")
-            return nil
+            return ""
         }
     }
     

@@ -52,8 +52,8 @@ class VuidManagerTests: XCTestCase {
         let vuid2 = manager.vuid
 
         XCTAssertTrue(vuid1 == vuid2)
-        XCTAssert(VuidManager.isVuid(vuid1!))
-        XCTAssert(VuidManager.isVuid(vuid2!))
+        XCTAssert(VuidManager.isVuid(vuid1))
+        XCTAssert(VuidManager.isVuid(vuid2))
         
         UserDefaults.standard.removeObject(forKey: "optimizely-vuid")
         

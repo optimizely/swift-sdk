@@ -60,7 +60,8 @@ open class OptimizelyClient: NSObject {
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
     public var odpManager: OdpManager!
-    private var vuidManager: VuidManager!
+//    private var vuidManager: VuidManager!
+    public var vuid: String?
     let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
@@ -92,15 +93,18 @@ open class OptimizelyClient: NSObject {
         self.defaultDecideOptions = defaultDecideOptions ?? []
         
         super.init()
-        self.vuidManager = VuidManager.shared
-        self.vuidManager.configure(enable: self.sdkSettings.enableVuid)
+        VuidManager.shared.configure(enable: self.sdkSettings.enableVuid)
+        if VuidManager.shared.enable {
+            self.vuid = VuidManager.shared.vuid
+        }
+        
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
                                                    cacheSize: sdkSettings.segmentsCacheSize,
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
-        self.odpManager.vuid = self.vuidManager.vuid
+        
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
@@ -118,11 +122,11 @@ open class OptimizelyClient: NSObject {
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
         
-        if vuidManager.enable {
+        if let _vuid = vuid {
             try? sendOdpEvent(type: Constants.ODP.eventType,
                               action: "client_initialized",
                               identifiers: [
-                                Constants.ODP.keyForVuid: vuidManager.vuid
+                                Constants.ODP.keyForVuid: _vuid
                               ],
                               data: [:])
             
@@ -983,15 +987,15 @@ extension OptimizelyClient {
                              data: data)
     }
     
-    /// the device vuid (read only)
-    public var vuid: String? {
-        return self.vuidManager.vuid
-    }
-    
-    public var enableVuid: Bool {
-        return self.vuidManager.enable
-    }
-    
+//    /// the device vuid (read only)
+//    public var vuid: String? {
+//        return self.vuidManager.vuid
+//    }
+//    
+//    public var enableVuid: Bool {
+//        return self.vuidManager.enable
+//    }
+//    
     func identifyUserToOdp(userId: String) {
         odpManager.identifyUser(userId: userId)
     }

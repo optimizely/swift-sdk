@@ -58,8 +58,11 @@ open class OdpEventManager {
                   data: [:])
     }
     
-    func identifyUser(vuid: String, userId: String?) {
-        var identifiers = [Constants.ODP.keyForVuid: vuid]
+    func identifyUser(vuid: String?, userId: String?) {
+        var identifiers = [String: String]()
+        if let _vuid = vuid, VuidManager.isVuid(_vuid) {
+            identifiers[Constants.ODP.keyForVuid] = _vuid
+        }
         if let userId = userId {
             identifiers[Constants.ODP.keyForUserId] = userId
         }
@@ -69,7 +72,7 @@ open class OdpEventManager {
                   identifiers: identifiers,
                   data: [:])
     }
-
+    
     func sendEvent(type: String, action: String, identifiers: [String: String], data: [String: Any?]) {
         let event = OdpEvent(type: type,
                              action: action,

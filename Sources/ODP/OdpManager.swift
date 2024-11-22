@@ -91,16 +91,14 @@ public class OdpManager {
             logger.d("ODP identify event is not dispatched (ODP not integrated).")
             return
         }
-        
-        var vuid = VuidManager.shared.vuid
-        var fsUserId: String? = userId
+
         if VuidManager.isVuid(userId) {
             // overwrite if userId is vuid (when userContext is created with vuid)
-            vuid = userId
-            fsUserId = nil
+            eventManager.identifyUser(vuid: userId, userId: nil)
+        } else {
+            eventManager.identifyUser(vuid: self.vuid, userId: userId)
         }
         
-        eventManager.identifyUser(vuid: vuid, userId: fsUserId)
     }
     
     /// Send an event to the ODP server.

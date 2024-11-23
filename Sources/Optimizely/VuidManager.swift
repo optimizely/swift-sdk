@@ -25,14 +25,12 @@ public class VuidManager {
     public static let shared = VuidManager()
     
     public func configure(enable: Bool) {
-        lock.async {
-            self.enable = enable
-            if enable {
-                self._vuid = self.load()
-            } else {
-                self.remove()
-                self._vuid = ""
-            }
+        self.enable = enable
+        if enable {
+            self._vuid = self.load()
+        } else {
+            self.remove()
+            self._vuid = ""
         }
     }
     
@@ -54,9 +52,12 @@ public class VuidManager {
 // MARK: - VUID Store
 
 extension VuidManager {
-    public var vuid: String {
-        lock.sync {
-            return self._vuid
+    public var vuid: String? {
+        if self.enable {
+            return _vuid
+        } else {
+            logger.w("VUID is not enabled.")
+            return nil
         }
     }
     

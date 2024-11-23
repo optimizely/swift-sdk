@@ -122,6 +122,7 @@ open class OptimizelyClient: NSObject {
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
         if vuid != nil {
+            self.odpManager.vuid = vuid
             self.odpManager.sendInitializedEvent()
         }
         logger.d("SDK Version: \(version)")

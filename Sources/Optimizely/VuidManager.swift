@@ -20,7 +20,6 @@ public class VuidManager {
     private var _vuid: String = ""
     private(set) var enable: Bool = false
     let logger = OPTLoggerFactory.getLogger()
-    let lock = DispatchQueue(label: "vuid-manager")
     // a single vuid should be shared for all SDK instances
     public static let shared = VuidManager()
     

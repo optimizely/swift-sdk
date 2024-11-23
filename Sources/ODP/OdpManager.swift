@@ -127,7 +127,7 @@ public class OdpManager {
         
         var identifiersUpdated = identifiers
         
-        if identifiers[Constants.ODP.keyForVuid] == nil, let _vuid = vuid, VuidManager.isVuid(_vuid) {
+        if identifiers[Constants.ODP.keyForVuid] == nil, let _vuid = vuid {
             identifiersUpdated[Constants.ODP.keyForVuid] = _vuid
         }
         

@@ -81,13 +81,6 @@ public class OdpManager {
                                                completionHandler: completionHandler)
     }
     
-    func sendInitializedEvent() {
-        guard let vuid = self.vuid else {
-            return
-        }
-        eventManager?.sendInitializedEvent(vuid: vuid)
-    }
-    
     func identifyUser(userId: String) {
         guard enabled else {
             logger.d("ODP identify event is not dispatched (ODP disabled).")

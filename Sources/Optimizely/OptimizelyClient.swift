@@ -100,7 +100,6 @@ open class OptimizelyClient: NSObject {
         
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
-                                                   vuid: self.vuid,
                                                    cacheSize: sdkSettings.segmentsCacheSize,
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
@@ -121,9 +120,15 @@ open class OptimizelyClient: NSObject {
         self.datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
-        if vuid != nil {
-            self.odpManager.vuid = vuid
-            self.odpManager.sendInitializedEvent()
+        if let _vuid = vuid {
+            self.odpManager.vuid = _vuid
+            try? sendOdpEvent(type: Constants.ODP.eventType,
+                              action: "client_initialized",
+                              identifiers: [
+                                Constants.ODP.keyForVuid: _vuid
+                              ],
+                              data: [:])
+            
         }
         logger.d("SDK Version: \(version)")
     }

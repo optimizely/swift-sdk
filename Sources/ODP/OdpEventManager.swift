@@ -60,7 +60,7 @@ open class OdpEventManager {
     
     func identifyUser(vuid: String?, userId: String?) {
         var identifiers = [String: String]()
-        if let _vuid = vuid, VuidManager.isVuid(_vuid) {
+        if let _vuid = vuid {
             identifiers[Constants.ODP.keyForVuid] = _vuid
         }
         if let userId = userId {

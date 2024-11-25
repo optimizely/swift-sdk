@@ -121,13 +121,7 @@ open class OptimizelyClient: NSObject {
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
         if let _vuid = vuid {
             self.odpManager.vuid = _vuid
-            try? sendOdpEvent(type: Constants.ODP.eventType,
-                              action: "client_initialized",
-                              identifiers: [
-                                Constants.ODP.keyForVuid: _vuid
-                              ],
-                              data: [:])
-            
+            sendInitializedEvent(vuid: _vuid)
         }
         logger.d("SDK Version: \(version)")
     }
@@ -982,6 +976,10 @@ extension OptimizelyClient {
                              action: action,
                              identifiers: identifiers,
                              data: data)
+    }
+    
+    func sendInitializedEvent(vuid: String) {
+        try? odpManager.sendInitializedEvent(vuid: vuid)
     }
     
     func identifyUserToOdp(userId: String) {

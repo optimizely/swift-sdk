@@ -194,9 +194,24 @@ class OptimizelyClientTests_ODP: XCTestCase {
         XCTAssert(optimizely.vuid!.starts(with: "vuid_"))
     }
     
-    func testVuidDiabled() {
-        // Default client vuid diabled
-        XCTAssertNil(optimizely.vuid)
+    func test_register_vuid_autometically_when_enabled() {
+        let settings = OptimizelySdkSettings(enableVuid: true)
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: settings)
+        let eventManager = optimizely.odpManager.eventManager!
+        let evt = eventManager.eventQueue.getFirstItem()!
+        
+        XCTAssertEqual("fullstack", evt.type)
+        XCTAssertEqual("client_initialized", evt.action)
+        XCTAssertEqual(["vuid": optimizely.vuid], evt.identifiers)
+        XCTAssertNotNil(optimizely.vuid)
+    }
+    
+    func test_vuid_does_not_register_autometically_when_enabled_but_odp_disabled() {
+        let settings = OptimizelySdkSettings(disableOdp: true, enableVuid: true)
+        optimizely = OptimizelyClient(sdkKey: OTUtils.randomSdkKey, settings: settings)
+        XCTAssertNotNil(optimizely.vuid)
+        let eventManager = optimizely.odpManager.eventManager
+        XCTAssertNil(eventManager)
     }
         
     // MARK: - OdpConfig Update

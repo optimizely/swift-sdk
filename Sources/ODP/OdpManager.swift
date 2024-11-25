@@ -81,6 +81,12 @@ public class OdpManager {
                                                completionHandler: completionHandler)
     }
     
+    func sendInitializedEvent(vuid: String) throws {
+        guard enabled else { throw OptimizelyError.odpNotEnabled }
+        guard odpConfig.eventQueueingAllowed else { throw OptimizelyError.odpNotIntegrated }
+        eventManager.sendInitializedEvent(vuid: vuid)
+    }
+    
     func identifyUser(userId: String) {
         guard enabled else {
             logger.d("ODP identify event is not dispatched (ODP disabled).")

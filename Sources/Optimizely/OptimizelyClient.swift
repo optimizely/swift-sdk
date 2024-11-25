@@ -60,7 +60,6 @@ open class OptimizelyClient: NSObject {
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
     public var odpManager: OdpManager!
-//    private var vuidManager: VuidManager!
     public var vuid: String?
     let sdkSettings: OptimizelySdkSettings
     

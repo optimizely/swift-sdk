@@ -26,7 +26,7 @@ public class VuidManager {
     public func configure(enable: Bool) {
         self.enable = enable
         if enable {
-            self._vuid = self.load()
+            self._vuid = load()
         } else {
             self.remove()
             self._vuid = ""

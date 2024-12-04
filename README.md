@@ -128,7 +128,6 @@ Used to enforce Swift style and conventions.
 - Python - https://github.com/optimizely/python-sdk
 
 - React - https://github.com/optimizely/react-sdk
-  
 
 - Ruby - https://github.com/optimizely/ruby-sdk
 - 

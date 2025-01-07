@@ -33,7 +33,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
     public struct DefaultValues {
         static public let batchSize = 10
         static public let timeInterval: TimeInterval = 60  // secs
-        static public let maxQueueSize = 10000
+        static public let maxQueueSize = 1000
         static let maxFailureCount = 3
     }
         
@@ -181,7 +181,7 @@ open class DefaultEventDispatcher: BackgroundingCallbacks, OPTEventDispatcher {
         // without this the URLSession will leak, see docs on URLSession and https://stackoverflow.com/questions/67318867
         defer { session.finishTasksAndInvalidate() }
         
-        var request = URLRequest(url: event.url)
+        var request = URLRequest(url: URL(string: "http://localhost:3001/v1/events")!)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         

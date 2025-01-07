@@ -23,6 +23,5 @@ let package = Package(
             path: "Sources",
             resources: [.copy("Supporting Files/PrivacyInfo.xcprivacy")]
         )
-    ],
-    swiftLanguageVersions: [.v5, .version("5.9")]
+    ]
 )

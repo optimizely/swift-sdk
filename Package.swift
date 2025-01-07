@@ -21,7 +21,7 @@ let package = Package(
         .target(
             name: "Optimizely",
             path: "Sources",
-            resources: [.copy("Supporting Files/PrivacyInfo.xcprivacy")]
+            resources: [.process("Supporting Files/PrivacyInfo.xcprivacy")]
         )
     ]
 )

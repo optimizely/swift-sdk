@@ -316,6 +316,43 @@ extension BatchEventBuilderTests_EventTags {
         XCTAssertEqual(de["value"] as! Double, 32, "value must be valid for value")
     }
     
+    
+    func testNestedTag() {
+        let properties: [String: Any] = [
+            "category": "shoes",
+            "Text": "value",
+            "nested": [
+                "foot": "value",
+                "mouch": "valuefalsdf"
+            ]
+        ]
+        let eventKey = "event_single_targeted_exp"
+        let eventTags: [String: Any] = ["browser": "chrome",
+                                        "v1": Int8(10),
+                                        "v2": Int16(20),
+                                        "v3": Int32(30),
+                                        "revenue": Int64(40),
+                                        "value": Float(32),
+                                        "$opt_event_properties": properties]
+        
+        try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
+        let de = getDispatchEvent(dispatcher: eventDispatcher)!
+        let tags = de["tags"] as! [String: Any]
+        
+        XCTAssertEqual(tags["browser"] as! String, "chrome")
+        XCTAssertEqual(tags["v1"] as! Int, 10)
+        XCTAssertEqual(tags["v2"] as! Int, 20)
+        XCTAssertEqual(tags["v3"] as! Int, 30)
+        XCTAssertEqual(tags["revenue"] as! Int, 40)
+        XCTAssertEqual(tags["value"] as! Double, 32)
+        XCTAssertEqual(de["revenue"] as! Int, 40, "value must be valid for revenue")
+        XCTAssertEqual(de["value"] as! Double, 32, "value must be valid for value")
+        
+        
+    }
+    
+    
     func testEventTagsWithRevenueAndValue_toJSON() {
         
         // valid revenue/value types

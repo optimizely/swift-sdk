@@ -21,7 +21,7 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
     case int(Int64)         // supported value range [-2^53, 2^53]
     case double(Double)
     case bool(Bool)
-    // not defined in datafile schema, but required for forward compatiblity (see Nikhil's doc)
+    case custom([String : AttributeValue])
     case others
     
     var description: String {
@@ -34,6 +34,8 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             return "int(\(value))"
         case .bool(let value):
             return "bool(\(value))"
+        case .custom(let value):
+                return "custom(\(value))"
         case .others:
             return "others"
         }
@@ -63,6 +65,12 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             self = .bool(boolValue)
             return
         }
+        
+        if let custom = value as? [String : Any] {
+            let attr = custom.compactMapValues { AttributeValue(value: $0) }
+            self = .custom(attr)
+            return
+        }
 
         return nil
     }
@@ -87,6 +95,12 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             return
         }
         
+        if let value = try? container.decode([String: AttributeValue].self) {
+            self = .custom(value)
+            return
+        }
+        
+        
         // accept all other types (null, {}, []) for forward compatibility support
         self = .others
     }
@@ -103,6 +117,8 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             try container.encode(value)
         case .bool(let value):
             try container.encode(value)
+        case .custom(let value):
+            try container.encode(value.mapValues { $0 })
         case .others:
             return
         }
@@ -133,6 +149,10 @@ extension AttributeValue {
         // allow int value compared to double as extra evaluation
         if let doubleValue = self.doubleValue, doubleValue == targetValue.doubleValue {
             return true
+        }
+        
+        if case .custom(let selfDict) = self, case .custom(let targetDict) = targetValue {
+            return selfDict == targetDict
         }
         
         return false
@@ -227,6 +247,8 @@ extension AttributeValue {
             return String(value)
         case .bool(let value):
             return String(value)
+        case .custom(let value):
+            return String(describing: value)
         case .others:
             return "UNKNOWN"
         }
@@ -240,6 +262,7 @@ extension AttributeValue {
         case (.double, .int): return true
         case (.double, .double): return true
         case (.bool, .bool): return true
+        case (.custom, .custom): return true
         default: return false
         }
     }

@@ -25,21 +25,21 @@ jobs:
             platform: "iOS Simulator"
             os_type: "iOS"
             simulator_xcode_version: 14.1
-          - os: 15.5
+          - os: 16.2
             device: "iPhone 12"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 13.4.1
-          - os: 15.5
+            simulator_xcode_version: 14.2
+          - os: 16.4
             # good to have tests with older OS versions, but it looks like this is min OS+xcode versions supported by github actions
             device: "iPad Air (4th generation)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 13.4.1
+            simulator_xcode_version: 14.3.1
           - os: 16.1
             device: "Apple TV"
             scheme: "OptimizelySwiftSDK-tvOS"

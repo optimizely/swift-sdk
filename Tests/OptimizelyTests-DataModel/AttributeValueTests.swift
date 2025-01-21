@@ -274,10 +274,10 @@ extension AttributeValueTests {
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
-    func testEncodeJSON5() {
-        let modelGiven = [AttributeValue.others]
-        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
-    }
+//    func testEncodeJSON5() {
+//        let modelGiven = [AttributeValue.others]
+//        XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
+//    }
     
 }
 

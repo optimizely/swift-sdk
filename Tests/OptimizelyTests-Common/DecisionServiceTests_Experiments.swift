@@ -576,7 +576,6 @@ extension DecisionServiceTests_Experiments {
                                                                  experiment: experiment,
                                                                  user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
         
-        XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
     }
     

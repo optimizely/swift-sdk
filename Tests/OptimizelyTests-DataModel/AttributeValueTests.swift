@@ -137,6 +137,20 @@ class AttributeValueTests: XCTestCase {
         XCTAssertEqual(model, model2)
     }
     
+    func testEncodeDecodeWithDictionaryType() {
+        let value: [String: Any] = [
+            "string": "stringvalue",
+            "double": 13.0,
+            "bool": true,
+            "array": ["a", "b", "c"]
+        ]
+        let model = AttributeValue(value: value)
+        
+        let encoded = try! OTUtils.getAttributeValueFromNative(value)
+        print("hello")
+        XCTAssertEqual(encoded, model)
+    }
+    
     func testDecodeSuccessWithInvalidTypeNil() {
         let anyNil: Any? = nil
         let model = try! OTUtils.getAttributeValueFromNative(anyNil)

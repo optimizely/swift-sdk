@@ -76,7 +76,7 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
 
 extension BatchEventBuilderTests_EventTags {
 
-    func testEventTagsWhenInvalidType() {
+    func testEventTagsWhenArrayType() {
         let eventKey = "event_single_targeted_exp"
         let eventTags: [String: Any] = ["browser": "chrome",
                                         "future": [1, 2, 3]]
@@ -87,7 +87,8 @@ extension BatchEventBuilderTests_EventTags {
         let tags = de["tags"] as! [String: Any]
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
-        XCTAssertNil(tags["future"])
+        XCTAssertNotNil(tags["future"])
+        XCTAssertEqual(tags["future"] as? [Int], [1, 2, 3])
     }
 
     func testEventTagsWhenTooBigNumbers() {

@@ -158,17 +158,17 @@ class DecisionServiceTests_Experiments: XCTestCase {
             ],
             [
                 "id": kAudienceIdExactInvalidValue,
-                "conditions": [ "type": "custom_attribute", "name": "age", "match": "exact", "value": ["invalid"] ],
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "exact", "value": ["invalid" : nil] ],
                 "name": "age"
             ],
             [
                 "id": kAudienceIdGtInvalidValue,
-                "conditions": [ "type": "custom_attribute", "name": "age", "match": "gt", "value": ["invalid"] ],
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "gt", "value": ["invalid" : nil] ],
                 "name": "age"
             ],
             [
                 "id": kAudienceIdLtInvalidValue,
-                "conditions": [ "type": "custom_attribute", "name": "age", "match": "lt", "value": ["invalid"] ],
+                "conditions": [ "type": "custom_attribute", "name": "age", "match": "lt", "value": ["invalid" : nil] ],
                 "name": "age"
             ],
             [
@@ -565,7 +565,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithExactMatchAndInvalidValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"exact\",\"value\":{},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"exact\",\"value\":{\"invalid\":{}},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -575,7 +575,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
-        
+        XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
     }
     
@@ -612,7 +612,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithGreaterMatchAndInvalidValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"gt\",\"value\":{},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"gt\",\"value\":{\"invalid\":{}},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -622,7 +622,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
-        
+        XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
     }
     
@@ -643,7 +643,7 @@ extension DecisionServiceTests_Experiments {
     }
     
     func testDoesMeetAudienceConditionsWithLessMatchAndInvalidValue() {
-        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"lt\",\"value\":{},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
+        MockLogger.expectedLog = OptimizelyError.evaluateAttributeInvalidCondition("{\"match\":\"lt\",\"value\":{\"invalid\":{}},\"name\":\"age\",\"type\":\"custom_attribute\"}").localizedDescription
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         
         experiment = try! OTUtils.model(from: sampleExperimentData)
@@ -653,7 +653,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
-        
+        XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
     }
     

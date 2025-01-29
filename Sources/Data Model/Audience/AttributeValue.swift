@@ -118,7 +118,7 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
         }
         
         
-        // accept all other types (null, {}, []) for forward compatibility support
+        // accept all other types (null) for forward compatibility support
         self = .others
     }
     
@@ -321,6 +321,7 @@ extension AttributeValue {
         case (.double): return true
         case (.bool): return true
         case (.array): return true
+        case (.dictionary): return true
         default: return false
         }
     }

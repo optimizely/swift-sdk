@@ -324,8 +324,12 @@ extension BatchEventBuilderTests_EventTags {
             "Text": "value",
             "nested": [
                 "foot": "value",
-                "mouch": "valuefalsdf"
-            ]
+                "mouth": "mouth_value"
+            ],
+            "stringArray": ["a", "b", "c"],
+            "intArray": [1, 2, 3],
+            "doubleArray": [1.0, 2.0, 3.0],
+            "boolAray": [false, true, false, true],
         ]
         let eventKey = "event_single_targeted_exp"
         let eventTags: [String: Any] = ["browser": "chrome",
@@ -349,6 +353,14 @@ extension BatchEventBuilderTests_EventTags {
         XCTAssertEqual(tags["value"] as! Double, 32)
         XCTAssertEqual(de["revenue"] as! Int, 40, "value must be valid for revenue")
         XCTAssertEqual(de["value"] as! Double, 32, "value must be valid for value")
+        
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["category"] as! String, "shoes")
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["nested"] as! [String : String], ["foot": "value", "mouth": "mouth_value"])
+        
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["stringArray"] as! [String], ["a", "b", "c"])
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["intArray"] as! [Int], [1, 2, 3])
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["doubleArray"] as! [Double], [1, 2, 3])
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["boolAray"] as! [Bool], [false, true, false, true])
         
         
     }

@@ -575,7 +575,6 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
-        XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
     }
     
@@ -653,7 +652,7 @@ extension DecisionServiceTests_Experiments {
         result = self.decisionService.doesMeetAudienceConditions(config: config,
                                                                  experiment: experiment,
                                                                  user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
-        
+        XCTAssert(MockLogger.logFound)
         XCTAssertFalse(result)
     }
     

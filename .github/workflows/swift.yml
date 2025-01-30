@@ -22,7 +22,7 @@ env:
 jobs:
 
   lint_markdown_files:
-    uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@muzahid/remove-travis-repo
+    uses: optimizely/swift-sdk/.github/workflows/lint_markdown.yml@master
 
   integration_tests:
     if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}"
@@ -47,7 +47,7 @@ jobs:
 
   unittests: 
     if: "${{ github.event.inputs.PREP == '' && github.event.inputs.RELEASE == '' }}" 
-    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@master
+    uses: optimizely/swift-sdk/.github/workflows/unit_tests.yml@muzahid/remove-travis-repo
 
   prepare_for_release:
     runs-on: macos-13

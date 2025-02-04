@@ -1,5 +1,11 @@
 # Optimizely Swift SDK Changelog
 
+## 5.0.1
+February 4th, 2025
+
+### Bug Fixes
+* Nested event tags support ([#570](https://github.com/optimizely/swift-sdk/pull/570)).
+
 ## 5.0.0
 November 25th, 2024
 

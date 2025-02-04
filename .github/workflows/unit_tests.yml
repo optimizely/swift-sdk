@@ -25,7 +25,7 @@ jobs:
             platform: "iOS Simulator"
             os_type: "iOS"
             simulator_xcode_version: 14.1
-          - os: 15.2
+          - os: 16.2
             device: "iPhone 14"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
@@ -34,7 +34,7 @@ jobs:
             simulator_xcode_version: 14.2
           - os: 16.4
             # good to have tests with older OS versions, but it looks like this is min OS+xcode versions supported by github actions
-            device: "iPad Air (4th generation)"
+            device: "iPad Air (5th generation)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
@@ -85,7 +85,7 @@ jobs:
           # - to find pre-installed xcode version, run this:
           ##ls /Applications/
           # - to find supported simulator os versions, run this (and find simulator with non-error "datapath")
-          ##xcrun simctl list --json devices
+          # xcrun simctl list --json devices
 
           # switch to the target xcode version
           sudo xcode-select -switch /Applications/Xcode_$SIMULATOR_XCODE_VERSION.app

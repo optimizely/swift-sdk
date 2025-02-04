@@ -1,6 +1,6 @@
 # Optimizely Swift SDK Changelog
 
-## 5.0.1
+## 5.1.0
 February 4th, 2025
 
 ### Bug Fixes

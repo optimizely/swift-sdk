@@ -76,7 +76,7 @@ jobs:
           NAME: ${{ matrix.device }}
         run: |
           gem install coveralls-lcov
-          gem install cocoapods -v '1.11.3'
+          gem install cocoapods -v '1.15.2'
           pod repo update
           pod install
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq

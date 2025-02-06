@@ -5,8 +5,8 @@ on:
     secrets:
       CI_USER_TOKEN:
         required: true
-      # TRAVIS_COM_TOKEN:
-      #   required: true
+      TRAVIS_COM_TOKEN:
+        required: true
 
 jobs:
   integration_tests:

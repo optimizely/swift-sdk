@@ -18,7 +18,7 @@ jobs:
         token: ${{ secrets.CI_USER_TOKEN }}
         repository: 'optimizely/ci-helper-tools'
         path: 'home/runner/ci-helper-tools'
-        ref: 'master'
+        ref: 'remove-travis'
     - name: set SDK Branch if PR
       env: 
         HEAD_REF: ${{ github.head_ref }}
@@ -40,7 +40,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
         EVENT_TYPE: ${{ github.event_name }}
         GITHUB_CONTEXT: ${{ toJson(github) }}
-        #REPO_SLUG: ${{ github.repository }}
         PULL_REQUEST_SLUG: ${{ github.repository }}
         UPSTREAM_REPO: ${{ github.repository }}
         PULL_REQUEST_SHA: ${{ github.event.pull_request.head.sha }}

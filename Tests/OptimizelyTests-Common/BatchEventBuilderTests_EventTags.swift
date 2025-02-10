@@ -76,7 +76,7 @@ class BatchEventBuilderTests_EventTags: XCTestCase {
 
 extension BatchEventBuilderTests_EventTags {
 
-    func testEventTagsWhenInvalidType() {
+    func testEventTagsWhenArrayType() {
         let eventKey = "event_single_targeted_exp"
         let eventTags: [String: Any] = ["browser": "chrome",
                                         "future": [1, 2, 3]]
@@ -87,7 +87,8 @@ extension BatchEventBuilderTests_EventTags {
         let tags = de["tags"] as! [String: Any]
         
         XCTAssertEqual(tags["browser"] as! String, "chrome")
-        XCTAssertNil(tags["future"])
+        XCTAssertNotNil(tags["future"])
+        XCTAssertEqual(tags["future"] as? [Int], [1, 2, 3])
     }
 
     func testEventTagsWhenTooBigNumbers() {
@@ -315,6 +316,55 @@ extension BatchEventBuilderTests_EventTags {
         XCTAssertEqual(de["revenue"] as! Int, 40, "value must be valid for revenue")
         XCTAssertEqual(de["value"] as! Double, 32, "value must be valid for value")
     }
+    
+    
+    func testNestedTag() {
+        let properties: [String: Any] = [
+            "category": "shoes",
+            "Text": "value",
+            "nested": [
+                "foot": "value",
+                "mouth": "mouth_value"
+            ],
+            "stringArray": ["a", "b", "c"],
+            "intArray": [1, 2, 3],
+            "doubleArray": [1.0, 2.0, 3.0],
+            "boolAray": [false, true, false, true],
+        ]
+        let eventKey = "event_single_targeted_exp"
+        let eventTags: [String: Any] = ["browser": "chrome",
+                                        "v1": Int8(10),
+                                        "v2": Int16(20),
+                                        "v3": Int32(30),
+                                        "revenue": Int64(40),
+                                        "value": Float(32),
+                                        "$opt_event_properties": properties]
+        
+        try! optimizely.track(eventKey: eventKey, userId: userId, attributes: nil, eventTags: eventTags)
+        
+        let de = getDispatchEvent(dispatcher: eventDispatcher)!
+        let tags = de["tags"] as! [String: Any]
+        
+        XCTAssertEqual(tags["browser"] as! String, "chrome")
+        XCTAssertEqual(tags["v1"] as! Int, 10)
+        XCTAssertEqual(tags["v2"] as! Int, 20)
+        XCTAssertEqual(tags["v3"] as! Int, 30)
+        XCTAssertEqual(tags["revenue"] as! Int, 40)
+        XCTAssertEqual(tags["value"] as! Double, 32)
+        XCTAssertEqual(de["revenue"] as! Int, 40, "value must be valid for revenue")
+        XCTAssertEqual(de["value"] as! Double, 32, "value must be valid for value")
+        
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["category"] as! String, "shoes")
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["nested"] as! [String : String], ["foot": "value", "mouth": "mouth_value"])
+        
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["stringArray"] as! [String], ["a", "b", "c"])
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["intArray"] as! [Int], [1, 2, 3])
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["doubleArray"] as! [Double], [1, 2, 3])
+        XCTAssertEqual((tags["$opt_event_properties"] as! [String : Any])["boolAray"] as! [Bool], [false, true, false, true])
+        
+        
+    }
+    
     
     func testEventTagsWithRevenueAndValue_toJSON() {
         

@@ -17,11 +17,15 @@
 import Foundation
 
 enum AttributeValue: Codable, Equatable, CustomStringConvertible {
+    typealias AttrArray = Array<AttributeValue>
+    typealias AttrDictionary = [String : AttributeValue]
+    
     case string(String)
     case int(Int64)         // supported value range [-2^53, 2^53]
     case double(Double)
     case bool(Bool)
-    // not defined in datafile schema, but required for forward compatiblity (see Nikhil's doc)
+    case array(AttrArray)
+    case dictionary(AttrDictionary)
     case others
     
     var description: String {
@@ -34,6 +38,10 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             return "int(\(value))"
         case .bool(let value):
             return "bool(\(value))"
+        case .array(let value):
+            return "array(\(value))"
+        case .dictionary(let value):
+            return "dictionary(\(value))"
         case .others:
             return "others"
         }
@@ -63,6 +71,18 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             self = .bool(boolValue)
             return
         }
+        
+        if let arrValue = value as? [Any] {
+            let attr = arrValue.compactMap { AttributeValue(value: $0) }
+            self = .array(attr)
+            return
+        }
+        
+        if let dicValue = value as? [String : Any] {
+            let attr = dicValue.compactMapValues { AttributeValue(value: $0) }
+            self = .dictionary(attr)
+            return
+        }
 
         return nil
     }
@@ -87,7 +107,18 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             return
         }
         
-        // accept all other types (null, {}, []) for forward compatibility support
+        if let value = try? container.decode(AttrArray.self) {
+            self = .array(value)
+            return
+        }
+        
+        if let value = try? container.decode(AttrDictionary.self) {
+            self = .dictionary(value)
+            return
+        }
+        
+        
+        // accept all other types (null) for forward compatibility support
         self = .others
     }
     
@@ -103,6 +134,10 @@ enum AttributeValue: Codable, Equatable, CustomStringConvertible {
             try container.encode(value)
         case .bool(let value):
             try container.encode(value)
+        case .array(let value):
+            try container.encode(value)
+        case .dictionary(let value):
+            try container.encode(value.mapValues { $0 })
         case .others:
             return
         }
@@ -133,6 +168,14 @@ extension AttributeValue {
         // allow int value compared to double as extra evaluation
         if let doubleValue = self.doubleValue, doubleValue == targetValue.doubleValue {
             return true
+        }
+        
+        if case .array(let selfArr) = self, case .array(let targetArr) = targetValue {
+            return selfArr == targetArr
+        }
+        
+        if case .dictionary(let selfDict) = self, case .dictionary(let targetDict) = targetValue {
+            return selfDict == targetDict
         }
         
         return false
@@ -227,6 +270,10 @@ extension AttributeValue {
             return String(value)
         case .bool(let value):
             return String(value)
+        case .array(let value):
+            return String(describing: value)
+        case .dictionary(let value):
+            return String(describing: value)
         case .others:
             return "UNKNOWN"
         }
@@ -240,6 +287,8 @@ extension AttributeValue {
         case (.double, .int): return true
         case (.double, .double): return true
         case (.bool, .bool): return true
+        case (.array, .array): return true
+        case (.dictionary, .dictionary): return true
         default: return false
         }
     }
@@ -271,6 +320,8 @@ extension AttributeValue {
         case (.int): return true
         case (.double): return true
         case (.bool): return true
+        case (.array): return true
+        case (.dictionary): return true
         default: return false
         }
     }

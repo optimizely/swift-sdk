@@ -1,5 +1,22 @@
 # Optimizely Swift SDK Changelog
 
+## 5.1.0
+February 4th, 2025
+
+### Functionality Enhancement
+* Add support for nested event tags ([#570](https://github.com/optimizely/swift-sdk/pull/570)).
+
+## 5.0.0
+November 25th, 2024
+
+### Breaking Changes
+* VUID configuration is now independent of ODP ([#456](https://github.com/optimizely/swift-sdk/pull/556))
+* When VUID is disabled:
+    * `vuid` is not generated or saved.
+    * `client-initialized` event will not auto fired on SDK init.
+    * `vuid` is not included in the odp events as a default attribute.
+    * `createUserContext()` will be rejected if `userId` is not provided.
+
 ## 4.1.0
 November 8, 2024
 

@@ -57,7 +57,8 @@ public class OdpManager {
                                                                   cacheTimeoutInSecs: cacheTimeoutInSecs,
                                                                   resourceTimeoutInSecs: timeoutForSegmentFetchInSecs)
         self.eventManager = eventManager ?? OdpEventManager(sdkKey: sdkKey,
-                                                            resourceTimeoutInSecs: timeoutForEventDispatchInSecs)        
+                                                            resourceTimeoutInSecs: timeoutForEventDispatchInSecs)
+        
         self.odpConfig = OdpConfig()
         self.segmentManager.odpConfig = odpConfig
         self.eventManager.odpConfig = odpConfig
@@ -78,6 +79,12 @@ public class OdpManager {
                                                userValue: userValue,
                                                options: options,
                                                completionHandler: completionHandler)
+    }
+    
+    func sendInitializedEvent(vuid: String) throws {
+        guard enabled else { throw OptimizelyError.odpNotEnabled }
+        guard odpConfig.eventQueueingAllowed else { throw OptimizelyError.odpNotIntegrated }
+        eventManager.sendInitializedEvent(vuid: vuid)
     }
     
     func identifyUser(userId: String) {

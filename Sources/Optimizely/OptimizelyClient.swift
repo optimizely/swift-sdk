@@ -60,7 +60,7 @@ open class OptimizelyClient: NSObject {
     var decisionService: OPTDecisionService!
     public var notificationCenter: OPTNotificationCenter?
     public var odpManager: OdpManager!
-    private var vuidManager: VuidManager!
+    public var vuid: String?
     let sdkSettings: OptimizelySdkSettings
     
     // MARK: - Public interfaces
@@ -90,17 +90,19 @@ open class OptimizelyClient: NSObject {
         self.sdkKey = sdkKey
         self.sdkSettings = settings ?? OptimizelySdkSettings()
         self.defaultDecideOptions = defaultDecideOptions ?? []
-
+        
         super.init()
-        self.vuidManager = VuidManager.shared
-        self.vuidManager.configure(enable: self.sdkSettings.enableVuid)
+        VuidManager.shared.configure(enable: self.sdkSettings.enableVuid)
+        if self.sdkSettings.enableVuid {
+            self.vuid = VuidManager.shared.vuid
+        }
+        
         self.odpManager = odpManager ?? OdpManager(sdkKey: sdkKey,
                                                    disable: sdkSettings.disableOdp,
                                                    cacheSize: sdkSettings.segmentsCacheSize,
                                                    cacheTimeoutInSecs: sdkSettings.segmentsCacheTimeoutInSecs,
                                                    timeoutForSegmentFetchInSecs: sdkSettings.timeoutForSegmentFetchInSecs,
                                                    timeoutForEventDispatchInSecs: sdkSettings.timeoutForOdpEventInSecs)
-        self.odpManager.vuid = vuidManager.vuid
         let userProfileService = userProfileService ?? DefaultUserProfileService()
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
@@ -117,17 +119,10 @@ open class OptimizelyClient: NSObject {
         self.datafileHandler = HandlerRegistryService.shared.injectDatafileHandler(sdkKey: self.sdkKey)
         self.decisionService = HandlerRegistryService.shared.injectDecisionService(sdkKey: self.sdkKey)
         self.notificationCenter = HandlerRegistryService.shared.injectNotificationCenter(sdkKey: self.sdkKey)
-        
-        if let _vuid = self.vuidManager.vuid {
-            try? sendOdpEvent(type: Constants.ODP.eventType,
-                              action: "client_initialized",
-                              identifiers: [
-                                Constants.ODP.keyForVuid: _vuid
-                              ],
-                              data: [:])
+        if let _vuid = vuid {
+            self.odpManager.vuid = _vuid
+            sendInitializedEvent(vuid: _vuid)
         }
-
-        
         logger.d("SDK Version: \(version)")
     }
     
@@ -983,13 +978,8 @@ extension OptimizelyClient {
                              data: data)
     }
     
-    /// the device vuid (read only)
-    public var vuid: String? {
-        return self.vuidManager.vuid
-    }
-    
-    public var enableVuid: Bool {
-        return self.vuidManager.enable
+    func sendInitializedEvent(vuid: String) {
+        try? odpManager.sendInitializedEvent(vuid: vuid)
     }
     
     func identifyUserToOdp(userId: String) {

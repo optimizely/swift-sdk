@@ -36,7 +36,7 @@ extension OptimizelyClient {
     /// - Parameter attributes: A map of attribute names to current user attribute values.
     /// - Returns: An OptimizelyUserContext associated with this OptimizelyClient
     public func createUserContext(attributes: [String: Any]? = nil) -> OptimizelyUserContext? {
-        guard enableVuid, let vuid = self.vuid else {
+        guard let vuid = self.vuid else {
             logger.e("Vuid is not enabled or invalid VUID. User context not created.")
             return nil
         }

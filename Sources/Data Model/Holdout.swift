@@ -18,10 +18,10 @@ import Foundation
 
 struct Holdout: Codable, ExperimentCore {
     enum Status: String, Codable {
-        case running = "Running"
-        case archived = "Archived"
         case draft = "Draft"
+        case running = "Running"
         case concluded = "Concluded"
+        case archived = "Archived"
     }
     
     var id: String
@@ -32,8 +32,8 @@ struct Holdout: Codable, ExperimentCore {
     var trafficAllocation: [TrafficAllocation]
     var audienceIds: [String]
     var audienceConditions: ConditionHolder?
-    var excludedFlags: [String]
-    var includedFlags: [String]
+    var includedFlags: [String]?
+    var excludedFlags: [String]?
     
     enum CodingKeys: String, CodingKey {
         case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, includedFlags, excludedFlags
@@ -41,6 +41,21 @@ struct Holdout: Codable, ExperimentCore {
     
     // replace with serialized string representation with audience names when ProjectConfig is ready
     var audiences: String = ""
+}
+
+extension Holdout: Equatable {
+    static func == (lhs: Holdout, rhs: Holdout) -> Bool {
+        return lhs.id == rhs.id &&
+        lhs.key == rhs.key &&
+        lhs.status == rhs.status &&
+        lhs.layerId == rhs.layerId &&
+        lhs.variations == rhs.variations &&
+        lhs.trafficAllocation == rhs.trafficAllocation &&
+        lhs.audienceIds == rhs.audienceIds &&
+        lhs.audienceConditions == rhs.audienceConditions &&
+        lhs.includedFlags == rhs.includedFlags &&
+        lhs.excludedFlags == rhs.excludedFlags
+    }
 }
 
 

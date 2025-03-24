@@ -32,8 +32,8 @@ struct Holdout: Codable, ExperimentCore {
     var trafficAllocation: [TrafficAllocation]
     var audienceIds: [String]
     var audienceConditions: ConditionHolder?
-    var includedFlags: [String]?
-    var excludedFlags: [String]?
+    var includedFlags: [String]
+    var excludedFlags: [String]
     
     enum CodingKeys: String, CodingKey {
         case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, includedFlags, excludedFlags
@@ -41,6 +41,23 @@ struct Holdout: Codable, ExperimentCore {
     
     // replace with serialized string representation with audience names when ProjectConfig is ready
     var audiences: String = ""
+    
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        key = try container.decode(String.self, forKey: .key)
+        status = try container.decode(Status.self, forKey: .status)
+        layerId = try container.decode(String.self, forKey: .layerId)
+        variations = try container.decode([Variation].self, forKey: .variations)
+        trafficAllocation = try container.decode([TrafficAllocation].self, forKey: .trafficAllocation)
+        audienceIds = try container.decode([String].self, forKey: .audienceIds)
+        audienceConditions = try container.decodeIfPresent(ConditionHolder.self, forKey: .audienceConditions)
+        
+        includedFlags = try container.decodeIfPresent([String].self, forKey: .includedFlags) ?? []
+        excludedFlags = try container.decodeIfPresent([String].self, forKey: .excludedFlags) ?? []
+    }
 }
 
 extension Holdout: Equatable {

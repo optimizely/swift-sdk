@@ -80,6 +80,97 @@ class ProjectConfigTests: XCTestCase {
         XCTAssertEqual(featureMap["1004"], ["2002"])
     }
     
+    func testHoldoutIdMapIsBuiltFromProject() {
+        var exp0 = ExperimentTests.sampleData
+        var exp1 = ExperimentTests.sampleData
+        var exp2 = ExperimentTests.sampleData
+        var exp3 = ExperimentTests.sampleData
+        var exp4 = ExperimentTests.sampleData
+        exp0["id"] = "1000"
+        exp1["id"] = "1001"
+        exp2["id"] = "1002"
+        exp3["id"] = "1003"
+        exp4["id"] = "1004"
+       
+        
+        var holdout0 = HoldoutTests.sampleData
+        var holdout1 = HoldoutTests.sampleData
+        var holdout2 = HoldoutTests.sampleData
+        var holdout3 = HoldoutTests.sampleData
+        var holdout4 = HoldoutTests.sampleData
+        holdout0["id"] = "3000" // Global holdout (no included or excluded flags)
+        holdout1["id"] = "3001" // Global holdout (no included or excluded flags)
+        holdout2["id"] = "3002" // Global holdout (no included or excluded flags)
+        holdout3["id"] = "3003" // Included flagids ["2000", "2002"]
+        holdout4["id"] = "3004" // Excluded flagids ["2001"]
+        
+        holdout3["includedFlags"] = ["2000", "2002"]
+        holdout4["excludedFlags"] = ["2001"]
+        
+        var feature0 = FeatureFlagTests.sampleData
+        var feature1 = FeatureFlagTests.sampleData
+        var feature2 = FeatureFlagTests.sampleData
+        var feature3 = FeatureFlagTests.sampleData
+        
+        feature0["id"] = "2000"
+        feature0["key"] = "key_2000"
+        
+        feature1["id"] = "2001"
+        feature1["key"] = "key_2001"
+        
+        feature2["id"] = "2002"
+        feature2["key"] = "key_2002"
+        
+        feature2["id"] = "2003"
+        feature2["key"] = "key_2003"
+        
+        feature0["experimentIds"] = ["1000"]
+        feature1["experimentIds"] = ["1000", "1001", "1002"]
+        feature2["experimentIds"] = ["1000", "1003", "1004"]
+        feature3["experimentIds"] = ["1000", "1003", "1004"]
+        
+        var projectData = ProjectTests.sampleData
+        projectData["experiments"] = [exp0, exp1, exp2, exp3, exp4]
+        projectData["featureFlags"] = [feature0, feature1, feature2]
+        projectData["holdouts"] = [holdout0, holdout1, holdout2, holdout3, holdout4]
+        
+        // check experimentFeatureMap extracted properly
+        
+        let model: Project = try! OTUtils.model(from: projectData)
+        let projectConfig = ProjectConfig()
+        projectConfig.project = model
+        
+        let holdoutIdMap = projectConfig.holdoutIdMap
+        
+        XCTAssertEqual(holdoutIdMap["3000"]?.includedFlags, nil)
+        XCTAssertEqual(holdoutIdMap["3000"]?.excludedFlags, nil)
+        
+        XCTAssertEqual(holdoutIdMap["3001"]?.includedFlags, nil)
+        XCTAssertEqual(holdoutIdMap["3001"]?.excludedFlags, nil)
+        
+        XCTAssertEqual(holdoutIdMap["3002"]?.includedFlags, nil)
+        XCTAssertEqual(holdoutIdMap["3002"]?.excludedFlags, nil)
+        
+        XCTAssertEqual(holdoutIdMap["3003"]?.includedFlags, ["2000", "2002"])
+        XCTAssertEqual(holdoutIdMap["3003"]?.excludedFlags, nil)
+        
+        
+        XCTAssertEqual(holdoutIdMap["3004"]?.includedFlags, nil)
+        XCTAssertEqual(holdoutIdMap["3004"]?.excludedFlags, ["2001"])
+
+        let featureFlagKeyMap = projectConfig.featureFlagKeyMap
+        
+        /// Test Global holdout + included
+        XCTAssertEqual(featureFlagKeyMap["key_2000"]?.holdoutIds, ["3000", "3001", "3002", "3003", "3004"])
+        XCTAssertEqual(featureFlagKeyMap["key_2002"]?.holdoutIds, ["3000", "3001", "3002", "3003", "3004"])
+        
+        /// Test Global holdout - excluded
+        XCTAssertEqual(featureFlagKeyMap["key_2001"]?.holdoutIds, ["3000", "3001", "3002"])
+        
+        /// Test Global holdout
+        XCTAssertEqual(featureFlagKeyMap["key_2003"]?.holdoutIds, ["3000", "3001", "3002", "3003", "3004"])
+    }
+    
     func testFlagVariations() {
         let datafile = OTUtils.loadJSONDatafile("decide_datafile")!
         let optimizely = OptimizelyClient(sdkKey: "12345",

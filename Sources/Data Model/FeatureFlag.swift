@@ -41,6 +41,7 @@ struct FeatureFlag: Codable, Equatable, OptimizelyFeature {
     var variablesMap: [String: OptimizelyVariable] = [:]
     var experimentRules: [OptimizelyExperiment] = []
     var deliveryRules: [OptimizelyExperiment] = []
+    var holdoutIds: [String] = []
 }
 
 // MARK: - Utils

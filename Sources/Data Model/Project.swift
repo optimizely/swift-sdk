@@ -46,7 +46,9 @@ struct Project: Codable, Equatable {
     var sendFlagDecisions: Bool?
     var sdkKey: String?
     var environmentKey: String?
-    
+    // Holdouts
+    // This would be non optional once API is completed
+    var holdouts: [Holdout]?
     let logger = OPTLoggerFactory.getLogger()
     
     // Required since logger is not decodable
@@ -57,11 +59,13 @@ struct Project: Codable, Equatable {
         case anonymizeIP
         // V4
         case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey
+        // holdouts
+        case holdouts
     }
     
     // Required since logger is not equatable
     static func == (lhs: Project, rhs: Project) -> Bool {
-        return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments &&
+        return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments && lhs.holdouts == rhs.holdouts &&
             lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes &&
             lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision &&
             lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts &&

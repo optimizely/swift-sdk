@@ -121,8 +121,8 @@ class ProjectConfigTests: XCTestCase {
         feature2["id"] = "2002"
         feature2["key"] = "key_2002"
         
-        feature2["id"] = "2003"
-        feature2["key"] = "key_2003"
+        feature3["id"] = "2003"
+        feature3["key"] = "key_2003"
         
         feature0["experimentIds"] = ["1000"]
         feature1["experimentIds"] = ["1000", "1001", "1002"]
@@ -131,7 +131,7 @@ class ProjectConfigTests: XCTestCase {
         
         var projectData = ProjectTests.sampleData
         projectData["experiments"] = [exp0, exp1, exp2, exp3, exp4]
-        projectData["featureFlags"] = [feature0, feature1, feature2]
+        projectData["featureFlags"] = [feature0, feature1, feature2, feature3]
         projectData["holdouts"] = [holdout0, holdout1, holdout2, holdout3, holdout4]
         
         // check experimentFeatureMap extracted properly
@@ -142,20 +142,20 @@ class ProjectConfigTests: XCTestCase {
         
         let holdoutIdMap = projectConfig.holdoutIdMap
         
-        XCTAssertEqual(holdoutIdMap["3000"]?.includedFlags, nil)
-        XCTAssertEqual(holdoutIdMap["3000"]?.excludedFlags, nil)
+        XCTAssertEqual(holdoutIdMap["3000"]?.includedFlags, [])
+        XCTAssertEqual(holdoutIdMap["3000"]?.excludedFlags, [])
         
-        XCTAssertEqual(holdoutIdMap["3001"]?.includedFlags, nil)
-        XCTAssertEqual(holdoutIdMap["3001"]?.excludedFlags, nil)
+        XCTAssertEqual(holdoutIdMap["3001"]?.includedFlags, [])
+        XCTAssertEqual(holdoutIdMap["3001"]?.excludedFlags, [])
         
-        XCTAssertEqual(holdoutIdMap["3002"]?.includedFlags, nil)
-        XCTAssertEqual(holdoutIdMap["3002"]?.excludedFlags, nil)
+        XCTAssertEqual(holdoutIdMap["3002"]?.includedFlags, [])
+        XCTAssertEqual(holdoutIdMap["3002"]?.excludedFlags, [])
         
         XCTAssertEqual(holdoutIdMap["3003"]?.includedFlags, ["2000", "2002"])
-        XCTAssertEqual(holdoutIdMap["3003"]?.excludedFlags, nil)
+        XCTAssertEqual(holdoutIdMap["3003"]?.excludedFlags, [])
         
         
-        XCTAssertEqual(holdoutIdMap["3004"]?.includedFlags, nil)
+        XCTAssertEqual(holdoutIdMap["3004"]?.includedFlags, [])
         XCTAssertEqual(holdoutIdMap["3004"]?.excludedFlags, ["2001"])
 
         let featureFlagKeyMap = projectConfig.featureFlagKeyMap
@@ -168,7 +168,7 @@ class ProjectConfigTests: XCTestCase {
         XCTAssertEqual(featureFlagKeyMap["key_2001"]?.holdoutIds, ["3000", "3001", "3002"])
         
         /// Test Global holdout
-        XCTAssertEqual(featureFlagKeyMap["key_2003"]?.holdoutIds, ["3000", "3001", "3002", "3003", "3004"])
+        XCTAssertEqual(featureFlagKeyMap["key_2003"]?.holdoutIds, ["3000", "3001", "3002", "3004"])
     }
     
     func testFlagVariations() {

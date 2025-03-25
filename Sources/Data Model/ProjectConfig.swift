@@ -176,12 +176,12 @@ class ProjectConfig {
             var updatedFlag = flag
             var holdoutIds = [String]()
             for holdout in project.holdouts ?? [] {
-                if let includedFlags = holdout.includedFlags, !includedFlags.isEmpty {
-                    if includedFlags.contains(flag.id) {
+                if !holdout.includedFlags.isEmpty {
+                    if holdout.includedFlags.contains(flag.id) {
                         holdoutIds.append(holdout.id)
                     }
-                } else if let excludedFlags = holdout.excludedFlags, !excludedFlags.isEmpty {
-                    if !excludedFlags.contains(flag.id) {
+                } else if !holdout.excludedFlags.isEmpty {
+                    if !holdout.excludedFlags.contains(flag.id) {
                         holdoutIds.append(holdout.id)
                     }
                 } else {

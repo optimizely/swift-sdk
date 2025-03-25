@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Experiment: Codable, OptimizelyExperiment, ExperimentCore {
+struct Experiment: Codable, ExperimentCore {
     enum Status: String, Codable {
         case running = "Running"
         case launched = "Launched"

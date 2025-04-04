@@ -42,9 +42,6 @@ public protocol OptimizelyExperiment {
     var variationsMap: [String: OptimizelyVariation] { get }
 }
 
-// Experiment compliances OptimizelyExperiment
-extension Experiment: OptimizelyExperiment { }
-
 public protocol OptimizelyFeature {
     var id: String { get }
     var key: String { get }

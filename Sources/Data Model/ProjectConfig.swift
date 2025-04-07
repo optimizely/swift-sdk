@@ -78,7 +78,7 @@ class ProjectConfig {
         
         holdoutIdMap = {
             var map = [String : Holdout]()
-            project.holdouts?.forEach { map[$0.id] = $0 }
+            project.holdouts.forEach { map[$0.id] = $0 }
             return map
         }()
         

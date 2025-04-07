@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Experiment: Codable, ExperimentCore {
+struct Experiment: Codable, OptimizelyExperiment {
     enum Status: String, Codable {
         case running = "Running"
         case launched = "Launched"
@@ -64,9 +64,74 @@ extension Experiment: Equatable {
 // MARK: - Utils
 
 extension Experiment {
+    func getVariation(id: String) -> Variation? {
+        return variations.filter { $0.id == id }.first
+    }
+    
+    func getVariation(key: String) -> Variation? {
+        return variations.filter { $0.key == key }.first
+    }
     
     var isActivated: Bool {
         return status == .running
     }
     
+    mutating func serializeAudiences(with audiencesMap: [String: String]) {
+        guard let conditions = audienceConditions else { return }
+        
+        let serialized = conditions.serialized
+        audiences = replaceAudienceIdsWithNames(string: serialized, audiencesMap: audiencesMap)
+    }
+    
+    /// Replace audience ids with audience names
+    ///
+    /// example:
+    /// - string: "(AUDIENCE(1) OR AUDIENCE(2)) AND AUDIENCE(3)"
+    /// - replaced: "(\"us\" OR \"female\") AND \"adult\""
+    ///
+    /// - Parameter string: before replacement
+    /// - Returns: string after replacement
+    func replaceAudienceIdsWithNames(string: String, audiencesMap: [String: String]) -> String {
+        let beginWord = "AUDIENCE("
+        let endWord = ")"
+        var keyIdx = 0
+        var audienceId = ""
+        var collect = false
+        
+        var replaced = ""
+        for ch in string {
+            // extract audience id in parenthesis (example: AUDIENCE("35") => "35")
+            if collect {
+                if String(ch) == endWord {
+                    // output the extracted audienceId
+                    replaced += "\"\(audiencesMap[audienceId] ?? audienceId)\""
+                    collect = false
+                    audienceId = ""
+                } else {
+                    audienceId += String(ch)
+                }
+                continue
+            }
+            
+            // walk-through until finding a matching keyword "AUDIENCE("
+            if ch == Array(beginWord)[keyIdx] {
+                keyIdx += 1
+                if keyIdx == beginWord.count {
+                    keyIdx = 0
+                    collect = true
+                }
+                continue
+            } else {
+                if keyIdx > 0 {
+                    replaced += Array(beginWord)[..<keyIdx]
+                }
+                keyIdx = 0
+            }
+            
+            // pass through other characters
+            replaced += String(ch)
+        }
+        
+        return replaced
+    }
 }

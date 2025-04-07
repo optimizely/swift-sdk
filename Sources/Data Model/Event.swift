@@ -21,3 +21,6 @@ struct Event: Codable, Equatable, OptimizelyEvent {
     var key: String
     var experimentIds: [String]
 }
+
+
+

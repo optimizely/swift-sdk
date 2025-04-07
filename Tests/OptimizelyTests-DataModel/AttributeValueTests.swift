@@ -128,15 +128,27 @@ class AttributeValueTests: XCTestCase {
         XCTAssert(model2 == AttributeValue.int(Int64(value)))
     }
 
-    func testDecodeSuccessWithInvalidType() {
-        let value = ["invalid type"]
+    func testDecodeSuccessWithArrayType() {
+        let value = ["array type"]
 
         let model = try! OTUtils.getAttributeValueFromNative(value)
         
-        XCTAssert(model == AttributeValue.others)
-        
         let model2 = AttributeValue(value: value)
-        XCTAssertNil(model2)
+        XCTAssertEqual(model, model2)
+    }
+    
+    func testEncodeDecodeWithDictionaryType() {
+        let value: [String: Any] = [
+            "string": "stringvalue",
+            "double": 13.0,
+            "bool": true,
+            "array": ["a", "b", "c"]
+        ]
+        let model = AttributeValue(value: value)
+        
+        let encoded = try! OTUtils.getAttributeValueFromNative(value)
+        print("hello")
+        XCTAssertEqual(encoded, model)
     }
     
     func testDecodeSuccessWithInvalidTypeNil() {
@@ -275,7 +287,7 @@ extension AttributeValueTests {
     }
     
     func testEncodeJSON5() {
-        let modelGiven = [AttributeValue.others]
+        let modelGiven = [AttributeValue.array([AttributeValue.bool(true), AttributeValue.string("us"), AttributeValue.double(4.7)])]
         XCTAssert(OTUtils.isEqualWithEncodeThenDecode(modelGiven))
     }
     
@@ -301,18 +313,17 @@ extension AttributeValueTests {
         XCTAssert(model == AttributeValue.bool(valueBool))
         XCTAssert(model.description == "bool(\(valueBool))")
 
-        let valueOther = [3]
-        model = try! OTUtils.getAttributeValueFromNative(valueOther)
-        XCTAssert(model == AttributeValue.others)
-        XCTAssert(model.description == "others")
-        
+        let values = [3.0]
+        model = try! OTUtils.getAttributeValueFromNative(values)
+        XCTAssert(model == AttributeValue(value: values))
+        XCTAssert(model.description == "array([double(3.0)])")
         
         let valueInteger = Int64(100)
         model = AttributeValue(value: valueInteger)!
         XCTAssert(model.description == "int(\(valueInteger))")
         
-        let modelOptional = AttributeValue(value: valueOther)
-        XCTAssertNil(modelOptional)
+        let modelOptional = AttributeValue(value: values)
+        XCTAssertNotNil(modelOptional)
     }
     
     func testStringValue() {

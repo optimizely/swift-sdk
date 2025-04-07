@@ -39,7 +39,7 @@ If you have a name conflict with other swift packages when you add the Optimizel
 #### CocoaPods 
 1. Add the following lines to the _Podfile_:<pre>
 ```use_frameworks!```
-```pod 'OptimizelySwiftSDK', '~> 5.0.0'```
+```pod 'OptimizelySwiftSDK', '~> 5.1.0'```
 </pre>
 
 2. Run the following command: <pre>``` pod install ```</pre>
@@ -129,6 +129,5 @@ Used to enforce Swift style and conventions.
 
 - React - https://github.com/optimizely/react-sdk
 
-- Ruby - https://github.com/optimizely/ruby-sdk
+- Ruby - https://github.com/optimizely/ruby-sdk 
 
-- 

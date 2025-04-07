@@ -116,7 +116,7 @@ extension UserAttributeTests {
         XCTAssert(model.matchSupported == .exact)
     }
     
-    func testDecodeSuccessWithWrongValueType() {
+    func testDecodeSuccessWithArrayValueType() {
         let json: [String: Any] = ["name": "geo", "type": "custom_attribute", "match": "exact", "value": ["a1", "a2"]]
         let jsonData = try! JSONSerialization.data(withJSONObject: json, options: [])
         let model = try! JSONDecoder().decode(modelType, from: jsonData)
@@ -124,7 +124,7 @@ extension UserAttributeTests {
         XCTAssert(model.name == "geo")
         XCTAssert(model.typeSupported == .customAttribute)
         XCTAssert(model.matchSupported == .exact)
-        XCTAssert(model.value == .others)
+        XCTAssert(model.value == AttributeValue(value: ["a1", "a2"]))
     }
     
     // MARK: - Forward Compatibility

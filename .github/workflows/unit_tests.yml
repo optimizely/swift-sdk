@@ -19,27 +19,27 @@ jobs:
         # - see "https://github.com/actions/runner-images/blob/main/images/macos/macos-11-Readme.md" for installed macOS, xcode and simulator versions.
         include:
           - os: 16.1
-            device: "iPhone 12"
+            device: "iPhone 14"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
             simulator_xcode_version: 14.1
-          - os: 15.5
-            device: "iPhone 12"
+          - os: 16.2
+            device: "iPhone 14"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 13.4.1
-          - os: 15.5
+            simulator_xcode_version: 14.2
+          - os: 16.4
             # good to have tests with older OS versions, but it looks like this is min OS+xcode versions supported by github actions
-            device: "iPad Air (4th generation)"
+            device: "iPad Air (5th generation)"
             scheme: "OptimizelySwiftSDK-iOS"
             test_sdk: "iphonesimulator"
             platform: "iOS Simulator"
             os_type: "iOS"
-            simulator_xcode_version: 13.4.1
+            simulator_xcode_version: 14.3.1
           - os: 16.1
             device: "Apple TV"
             scheme: "OptimizelySwiftSDK-tvOS"
@@ -76,7 +76,7 @@ jobs:
           NAME: ${{ matrix.device }}
         run: |
           gem install coveralls-lcov
-          gem install cocoapods -v '1.11.3'
+          gem install cocoapods -v '1.15.2'
           pod repo update
           pod install
           HOMEBREW_NO_INSTALL_CLEANUP=true brew update && brew install jq
@@ -85,7 +85,7 @@ jobs:
           # - to find pre-installed xcode version, run this:
           ##ls /Applications/
           # - to find supported simulator os versions, run this (and find simulator with non-error "datapath")
-          ##xcrun simctl list --json devices
+          # xcrun simctl list --json devices
 
           # switch to the target xcode version
           sudo xcode-select -switch /Applications/Xcode_$SIMULATOR_XCODE_VERSION.app

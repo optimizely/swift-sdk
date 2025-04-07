@@ -39,6 +39,7 @@ struct Holdout: Codable, ExperimentCore {
         case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, includedFlags, excludedFlags
     }
     
+    var variationsMap: [String : OptimizelyVariation] = [:]
     // replace with serialized string representation with audience names when ProjectConfig is ready
     var audiences: String = ""
     

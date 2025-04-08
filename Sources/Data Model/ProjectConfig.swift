@@ -77,7 +77,7 @@ class ProjectConfig {
         self.allExperiments = project.experiments + project.groups.map { $0.experiments }.flatMap { $0 }
         
         holdoutIdMap = {
-            var map = [String : Holdout]()
+            var map = [String: Holdout]()
             project.holdouts.forEach { map[$0.id] = $0 }
             return map
         }()
@@ -175,7 +175,7 @@ class ProjectConfig {
         let flagsWithHoldoutIds = project.featureFlags.map { flag -> FeatureFlag in
             var updatedFlag = flag
             var holdoutIds = [String]()
-            for holdout in project.holdouts ?? [] {
+            for holdout in project.holdouts {
                 if !holdout.includedFlags.isEmpty {
                     if holdout.includedFlags.contains(flag.id) {
                         holdoutIds.append(holdout.id)

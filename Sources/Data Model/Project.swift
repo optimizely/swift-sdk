@@ -57,9 +57,7 @@ struct Project: Codable, Equatable {
         // V3
         case anonymizeIP
         // V4
-        case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey
-        // holdouts
-        case holdouts
+        case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey, holdouts
     }
     
     init(from decoder: Decoder) throws {
@@ -88,7 +86,6 @@ struct Project: Codable, Equatable {
         sendFlagDecisions = try container.decodeIfPresent(Bool.self, forKey: .sendFlagDecisions)
         sdkKey = try container.decodeIfPresent(String.self, forKey: .sdkKey)
         environmentKey = try container.decodeIfPresent(String.self, forKey: .environmentKey)
-        
         // Holdouts - defaults to empty array if key is not present
         holdouts = try container.decodeIfPresent([Holdout].self, forKey: .holdouts) ?? []
     }

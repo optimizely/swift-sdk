@@ -82,7 +82,9 @@ class ProjectConfig {
             return map
         }()
         
-        assignHoldoutIdsToFeatureFlags()
+        if !project.holdouts.isEmpty {
+            assignHoldoutIdsToFeatureFlags()
+        }
         
         self.experimentKeyMap = {
             var map = [String: Experiment]()

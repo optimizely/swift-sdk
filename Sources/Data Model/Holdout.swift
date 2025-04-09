@@ -39,11 +39,10 @@ struct Holdout: Codable, ExperimentCore {
         case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, includedFlags, excludedFlags
     }
     
-    var variationsMap: [String : OptimizelyVariation] = [:]
+    var variationsMap: [String: OptimizelyVariation] = [:]
     // replace with serialized string representation with audience names when ProjectConfig is ready
     var audiences: String = ""
     
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -75,7 +74,6 @@ extension Holdout: Equatable {
         lhs.excludedFlags == rhs.excludedFlags
     }
 }
-
 
 extension Holdout {
     var isActivated: Bool {

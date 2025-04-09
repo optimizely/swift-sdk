@@ -17,12 +17,12 @@
 import Foundation
 
 class ProjectConfig {
-    
     var project: Project! {
         didSet {
             updateProjectDependentProps()
         }
     }
+    
     let logger = OPTLoggerFactory.getLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
@@ -40,6 +40,8 @@ class ProjectConfig {
     var allExperiments = [Experiment]()
     var flagVariationsMap = [String: [Variation]]()
     var allSegments = [String]()
+    var holdoutIdMap = [String: Holdout]()
+    var flagHoldoutsMap: [String: [String]] = [:]
 
     // MARK: - Init
     
@@ -66,7 +68,17 @@ class ProjectConfig {
     init() {}
     
     func updateProjectDependentProps() {
+        
         self.allExperiments = project.experiments + project.groups.map { $0.experiments }.flatMap { $0 }
+        
+        // Reset flag holdouts mapping with the change of datafile
+        flagHoldoutsMap = [:]
+        
+        holdoutIdMap = {
+            var map = [String: Holdout]()
+            project.holdouts.forEach { map[$0.id] = $0 }
+            return map
+        }()
         
         self.experimentKeyMap = {
             var map = [String: Experiment]()
@@ -153,6 +165,42 @@ class ProjectConfig {
             return Array(Set(audiences.flatMap { $0.getSegments() }))
         }()
         
+    }
+    
+    func getHoldoutIdsForFlag(id: String) -> [String] {
+        guard !project.holdouts.isEmpty else { return [] }
+        
+        if let holdoutIds = flagHoldoutsMap[id] {
+            return holdoutIds
+        }
+        
+        updateHoldoutsMapForFlag(id: id)
+        
+        return flagHoldoutsMap[id] ?? []
+    }
+    
+    private func updateHoldoutsMapForFlag(id: String) {
+        var holdoutIds = [String]()
+        
+        for holdout in project.holdouts {
+            switch (holdout.includedFlags.isEmpty, holdout.excludedFlags.isEmpty) {
+                case (true, true):
+                    // Global holdout
+                    holdoutIds.append(holdout.id)
+                    
+                case (false, _):
+                    if holdout.includedFlags.contains(id) {
+                        holdoutIds.append(holdout.id)
+                    }
+                    
+                case (_, false):
+                    if !holdout.excludedFlags.contains(id) {
+                        holdoutIds.append(holdout.id)
+                    }
+            }
+        }
+        
+        flagHoldoutsMap[id] = holdoutIds
     }
     
     func getAllRulesForFlag(_ flag: FeatureFlag) -> [Experiment] {
@@ -268,6 +316,13 @@ extension ProjectConfig {
      */
     func getRollout(id: String) -> Rollout? {
         return rolloutIdMap[id]
+    }
+    
+    /**
+     * Get a Holdout object for an Id.
+     */
+    func getHoldout(id: String) -> Holdout? {
+        return holdoutIdMap[id]
     }
     
     /**

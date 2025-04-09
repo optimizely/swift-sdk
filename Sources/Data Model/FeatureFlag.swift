@@ -35,7 +35,7 @@ struct FeatureFlag: Codable, Equatable, OptimizelyFeature {
         case variables
     }
     
-    var holdoutIds: [String] = []
+//    var holdoutIds: [String] = []
     
     // MARK: - OptimizelyConfig
 

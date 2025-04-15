@@ -1,10 +1,10 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");  
+// Copyright 2022, Optimizely, Inc. and contributors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at   
-// 
+// You may obtain a copy of the License at
+//
 //    http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -24,10 +24,11 @@ struct HoldoutConfig {
     }
     private(set) var holdoutIdMap: [String: Holdout] = [:]
     private(set) var global: [Holdout] = []
-    private(set) var others: [Holdout] = []
     private(set) var includedHoldouts: [String: [Holdout]] = [:]
     private(set) var excludedHoldouts: [String: [Holdout]] = [:]
     private(set) var flagHoldoutsMap: [String: [Holdout]] = [:]
+    
+    let logger = OPTLoggerFactory.getLogger()
     
     init(allholdouts: [Holdout] = []) {
         self.allHoldouts = allholdouts
@@ -42,7 +43,7 @@ struct HoldoutConfig {
         }()
         flagHoldoutsMap = [:]
         global = []
-        others = []
+        
         includedHoldouts = [:]
         excludedHoldouts = [:]
         
@@ -50,7 +51,11 @@ struct HoldoutConfig {
             switch (holdout.includedFlags.isEmpty, holdout.excludedFlags.isEmpty) {
                 case (true, true):
                     global.append(holdout)
-                case (false, _):
+                    
+                case (false, false):
+                    logger.e(.holdoutToFlagMappingError)
+                    
+                case (false, true):
                     holdout.includedFlags.forEach { flagId in
                         if var existing = includedHoldouts[flagId] {
                             existing.append(holdout)
@@ -59,8 +64,10 @@ struct HoldoutConfig {
                             includedHoldouts[flagId] = [holdout]
                         }
                     }
-                case (_, false):
-                    others.append(holdout)
+                    
+                case (true, false):
+                    global.append(holdout)
+                    
                     holdout.excludedFlags.forEach { flagId in
                         if var existing = excludedHoldouts[flagId] {
                             existing.append(holdout)
@@ -76,19 +83,29 @@ struct HoldoutConfig {
     mutating func getHoldoutForFlag(id: String) -> [Holdout] {
         guard !allHoldouts.isEmpty else { return [] }
         
+        // Check cache and return if persist holdouts
         if let holdouts = flagHoldoutsMap[id] {
             return holdouts
         }
         
-        if let included = includedHoldouts[id], !included.isEmpty {
-            flagHoldoutsMap[id] = global + included
-        } else {
-            let excluded = excludedHoldouts[id] ?? []
-            let filteredHoldouts = others.filter { holdout in
+        var activeHoldouts: [Holdout] = []
+        
+        let excluded = excludedHoldouts[id] ?? []
+        
+        if !excluded.isEmpty {
+            activeHoldouts = global.filter { holdout in
                 return !excluded.contains(holdout)
             }
-            flagHoldoutsMap[id] = global + filteredHoldouts
+        } else {
+            activeHoldouts = global
         }
+        
+        let includedHoldouts = includedHoldouts[id] ?? []
+        
+        activeHoldouts += includedHoldouts
+        
+        flagHoldoutsMap[id] = activeHoldouts
+        
         return flagHoldoutsMap[id] ?? []
     }
     

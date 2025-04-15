@@ -38,8 +38,7 @@ class HoldoutConfigTests: XCTestCase {
         XCTAssertEqual(holdoutConfig.holdoutIdMap["3333"]?.excludedFlags, ["8888", "9999"])
         
         
-        XCTAssertEqual(holdoutConfig.global, [holdout0])
-        XCTAssertEqual(holdoutConfig.others, [holdout2])
+        XCTAssertEqual(holdoutConfig.global, [holdout0, holdout2])
         
         XCTAssertEqual(holdoutConfig.includedHoldouts["4444"], [holdout1])
         XCTAssertEqual(holdoutConfig.excludedHoldouts["8888"], [holdout2])
@@ -99,10 +98,12 @@ class HoldoutConfigTests: XCTestCase {
         var holdoutConfig = HoldoutConfig(allholdouts: allHoldouts)
         
         // Should maintain order. Global first then lcoal
-        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag1), [holdout3, holdout4, holdout1])
+        
+        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag1), [holdout2, holdout3, holdout4, holdout1])
         XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag2), [holdout3, holdout4])
-        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag3), [holdout3, holdout4, holdout2])
-        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag4), [holdout3, holdout4, holdout2])
+        
+        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag3), [holdout2, holdout3, holdout4])
+        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag4), [holdout2, holdout3, holdout4])
 
     }
     

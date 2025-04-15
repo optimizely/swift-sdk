@@ -140,7 +140,7 @@ class ProjectConfigTests: XCTestCase {
         let projectConfig = ProjectConfig()
         projectConfig.project = model
         
-        let holdoutIdMap = projectConfig.holdoutIdMap
+        let holdoutIdMap = projectConfig.holdoutConfig.holdoutIdMap
         
         XCTAssertEqual(holdoutIdMap["3000"]?.includedFlags, [])
         XCTAssertEqual(holdoutIdMap["3000"]?.excludedFlags, [])
@@ -158,17 +158,16 @@ class ProjectConfigTests: XCTestCase {
         XCTAssertEqual(holdoutIdMap["3004"]?.includedFlags, [])
         XCTAssertEqual(holdoutIdMap["3004"]?.excludedFlags, ["2001"])
 
-        let featureFlagKeyMap = projectConfig.featureFlagKeyMap
+        /// Test Global holdout + included
         
-//        /// Test Global holdout + included
-//        XCTAssertEqual(featureFlagKeyMap["key_2000"]?.holdoutIds, ["3000", "3001", "3002", "3003", "3004"])
-//        XCTAssertEqual(featureFlagKeyMap["key_2002"]?.holdoutIds, ["3000", "3001", "3002", "3003", "3004"])
-//        
-//        /// Test Global holdout - excluded
-//        XCTAssertEqual(featureFlagKeyMap["key_2001"]?.holdoutIds, ["3000", "3001", "3002"])
-//        
-//        /// Test Global holdout
-//        XCTAssertEqual(featureFlagKeyMap["key_2003"]?.holdoutIds, ["3000", "3001", "3002", "3004"])
+        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2000").map { $0.id }, ["3000", "3001", "3002", "3003"])
+        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2002").map { $0.id }, ["3000", "3001", "3002", "3003"])
+        
+        /// Test Global holdout - excluded
+        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2001").map { $0.id }, ["3000", "3001", "3002"])
+        
+        /// Test Global holdout + others
+        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2003").map { $0.id }, ["3000", "3001", "3002", "3004"])
     }
     
     func testFlagVariations() {

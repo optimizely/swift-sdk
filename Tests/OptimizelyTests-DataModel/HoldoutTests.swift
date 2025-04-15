@@ -52,7 +52,7 @@ class HoldoutTests: XCTestCase {
                                             "audienceConditions": HoldoutTests.conditionHolderData,
                                             "includedFlags": ["4444", "5555"]]
     
-    static var sampleDataWithIncludedAndExcludedFlags: [String: Any] = ["id": "3333",
+    static var sampleDataWithExcludedFlags: [String: Any] = ["id": "3333",
                                                              "key": "background",
                                                              "status": "Running",
                                                              "layerId": "22222",
@@ -60,7 +60,6 @@ class HoldoutTests: XCTestCase {
                                                              "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                                              "audienceIds": ["33333"],
                                                              "audienceConditions": HoldoutTests.conditionHolderData,
-                                                             "includedFlags": ["4444", "5555"],
                                                              "excludedFlags": ["8888", "9999"]]
     
     
@@ -102,11 +101,11 @@ extension HoldoutTests {
     }
     
     func testDecodeSuccessWithIncludedAndExcludedFlags() {
-        let data: [String: Any] = HoldoutTests.sampleDataWithIncludedAndExcludedFlags
+        let data: [String: Any] = HoldoutTests.sampleDataWithExcludedFlags
         
         let model: Holdout = try! OTUtils.model(from: data)
         
-        XCTAssert(model.id == "11111")
+        XCTAssert(model.id == "3333")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
         XCTAssert(model.layerId == "22222")

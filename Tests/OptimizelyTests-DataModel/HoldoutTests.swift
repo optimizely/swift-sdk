@@ -100,7 +100,7 @@ extension HoldoutTests {
         XCTAssertEqual(model.includedFlags, ["4444", "5555"])
     }
     
-    func testDecodeSuccessWithIncludedAndExcludedFlags() {
+    func testDecodeSuccessWithExcludedFlags() {
         let data: [String: Any] = HoldoutTests.sampleDataWithExcludedFlags
         
         let model: Holdout = try! OTUtils.model(from: data)
@@ -113,7 +113,7 @@ extension HoldoutTests {
         XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
         XCTAssert(model.audienceConditions == (try! OTUtils.model(from: HoldoutTests.conditionHolderData)))
-        XCTAssertEqual(model.includedFlags, ["4444", "5555"])
+        XCTAssertEqual(model.includedFlags, [])
         XCTAssertEqual(model.excludedFlags, ["8888", "9999"])
     }
     

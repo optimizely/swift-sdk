@@ -160,8 +160,8 @@ class ProjectConfigTests: XCTestCase {
 
         /// Test Global holdout + included
         
-        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2000").map { $0.id }, ["3000", "3001", "3002", "3003"])
-        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2002").map { $0.id }, ["3000", "3001", "3002", "3003"])
+        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2000").map { $0.id }, ["3000", "3001", "3002", "3004", "3003"])
+        XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2002").map { $0.id }, ["3000", "3001", "3002", "3004","3003"])
         
         /// Test Global holdout - excluded
         XCTAssertEqual(projectConfig.holdoutConfig.getHoldoutForFlag(id: "2001").map { $0.id }, ["3000", "3001", "3002"])

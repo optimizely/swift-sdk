@@ -218,7 +218,7 @@ extension ProjectTests {
         
         let model: Project = try! OTUtils.model(from: data)
         XCTAssertNotNil(model)
-        XCTAssertNil(model.holdouts)
+        XCTAssertEqual(model.holdouts, [])
         
     }
     

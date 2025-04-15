@@ -42,7 +42,7 @@ class HoldoutTests: XCTestCase {
                                             "audienceIds": ["33333"],
                                             "audienceConditions": HoldoutTests.conditionHolderData]
     
-    static var sampleDataWithIncludedFlags: [String: Any] = ["id": "11111",
+    static var sampleDataWithIncludedFlags: [String: Any] = ["id": "55555",
                                             "key": "background",
                                             "status": "Running",
                                             "layerId": "22222",
@@ -52,7 +52,7 @@ class HoldoutTests: XCTestCase {
                                             "audienceConditions": HoldoutTests.conditionHolderData,
                                             "includedFlags": ["4444", "5555"]]
     
-    static var sampleDataWithIncludedAndExcludedFlags: [String: Any] = ["id": "11111",
+    static var sampleDataWithIncludedAndExcludedFlags: [String: Any] = ["id": "3333",
                                                              "key": "background",
                                                              "status": "Running",
                                                              "layerId": "22222",
@@ -90,7 +90,7 @@ extension HoldoutTests {
         
         let model: Holdout = try! OTUtils.model(from: data)
         
-        XCTAssert(model.id == "11111")
+        XCTAssert(model.id == "55555")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
         XCTAssert(model.layerId == "22222")

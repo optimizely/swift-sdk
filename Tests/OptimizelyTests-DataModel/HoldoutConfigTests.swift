@@ -17,6 +17,14 @@
 import XCTest
 
 class HoldoutConfigTests: XCTestCase {
+    func testEmptyHoldouts_shouldHaveEmptyMaps() {
+        let config = HoldoutConfig(allholdouts: [])
+        
+        XCTAssertTrue(config.holdoutIdMap.isEmpty)
+        XCTAssertTrue(config.global.isEmpty)
+        XCTAssertTrue(config.includedHoldouts.isEmpty)
+        XCTAssertTrue(config.excludedHoldouts.isEmpty)
+    }
     
     func testHoldoutMap() {
         let holdout0: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
@@ -24,8 +32,6 @@ class HoldoutConfigTests: XCTestCase {
         let holdout2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithExcludedFlags)
         
         let allHoldouts =  [holdout0, holdout1, holdout2]
-        
-        
         let holdoutConfig = HoldoutConfig(allholdouts: allHoldouts)
         
         XCTAssertEqual(holdoutConfig.holdoutIdMap["11111"]?.includedFlags, [])
@@ -37,7 +43,6 @@ class HoldoutConfigTests: XCTestCase {
         XCTAssertEqual(holdoutConfig.holdoutIdMap["3333"]?.includedFlags, [])
         XCTAssertEqual(holdoutConfig.holdoutIdMap["3333"]?.excludedFlags, ["8888", "9999"])
         
-        
         XCTAssertEqual(holdoutConfig.global, [holdout0, holdout2])
         
         XCTAssertEqual(holdoutConfig.includedHoldouts["4444"], [holdout1])
@@ -48,16 +53,12 @@ class HoldoutConfigTests: XCTestCase {
     func testGetHoldoutById() {
         var holdout0: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
         holdout0.id = "00000"
-        
         var holdout1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithIncludedFlags)
         holdout1.id = "11111"
-        
         var holdout2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleDataWithExcludedFlags)
         holdout2.id = "22222"
         
         let allHoldouts =  [holdout0, holdout1, holdout2]
-        
-        
         let holdoutConfig = HoldoutConfig(allholdouts: allHoldouts)
         
         XCTAssertEqual(holdoutConfig.getHoldout(id: "00000"), holdout0)
@@ -66,47 +67,118 @@ class HoldoutConfigTests: XCTestCase {
         
     }
     
-    func testGetHoldoutForFlag() {
+    func testHoldoutOrdering_globalThenIncluded() {
+        var global1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        global1.id = "g1"
         
+        var global2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        global2.id = "g2"
+        
+        var included: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        included.id = "i1"
+        included.includedFlags = ["f"]
+        
+        var config = HoldoutConfig(allholdouts: [included, global1, global2])
+        
+        let result = config.getHoldoutForFlag(id: "f").map(\.id)
+        XCTAssertEqual(result, ["g1", "g2", "i1"])
+    }
+    
+    func testHoldoutOrdering_with_Both_IncludedAndExcludedFlags() {
         let flag1 = "11111"
         let flag2 = "22222"
         let flag3 = "33333"
         let flag4 = "44444"
         
-        var holdout1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
-        holdout1.id = "11"
-        holdout1.includedFlags = [flag1]
-        holdout1.excludedFlags = []
+        var inc: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        inc.id = "i1"
+        inc.includedFlags = [flag1]
         
-        var holdout2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
-        holdout2.id = "22"
-        holdout2.includedFlags = []
-        holdout2.excludedFlags = [flag2]
+        var exc: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        exc.id = "e1"
+        exc.excludedFlags = [flag2]
         
-        var holdout3: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
-        holdout3.id = "33"
-        holdout3.includedFlags = []
-        holdout3.excludedFlags = []
+        var gh1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        gh1.id = "gh1"
+        gh1.includedFlags = []
+        gh1.excludedFlags = []
         
-        var holdout4: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
-        holdout4.id = "44"
-        holdout4.includedFlags = []
-        holdout4.excludedFlags = []
+        var gh2: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        gh2.id = "gh2"
+        gh2.includedFlags = []
+        gh2.excludedFlags = []
         
         
-        let allHoldouts =  [holdout1, holdout2, holdout3, holdout4]
+        let allHoldouts =  [inc, exc, gh1, gh2]
         var holdoutConfig = HoldoutConfig(allholdouts: allHoldouts)
         
-        // Should maintain order. Global first then lcoal
+        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag1), [exc, gh1, gh2, inc])
+        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag2), [gh1, gh2])
         
-        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag1), [holdout2, holdout3, holdout4, holdout1])
-        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag2), [holdout3, holdout4])
+        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag3), [exc, gh1, gh2])
+        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag4), [exc, gh1, gh2])
         
-        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag3), [holdout2, holdout3, holdout4])
-        XCTAssertEqual(holdoutConfig.getHoldoutForFlag(id: flag4), [holdout2, holdout3, holdout4])
-
     }
     
+    func testExcludedHoldout_shouldNotAppearInGlobalForFlag() {
+        var global: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        global.id = "global"
+        
+        var excluded: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        excluded.id = "excluded"
+        excluded.excludedFlags = ["f"]
+        
+        var config = HoldoutConfig(allholdouts: [global, excluded])
+        
+        let result = config.getHoldoutForFlag(id: "f").map(\.id)
+        XCTAssertEqual(result, ["global"]) // excluded should not appear
+    }
     
+    func testGetHoldoutForFlag_shouldUseCacheOnSecondCall() {
+        var holdout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout.id = "1"
+        holdout.excludedFlags = ["f1"]
+        
+        var config = HoldoutConfig(allholdouts: [holdout])
+        
+        _ = config.getHoldoutForFlag(id: "f1")
+        let writeCountAfterFirst = config.cacheWriteCount
+        
+        _ = config.getHoldoutForFlag(id: "f1")
+        let writeCountAfterSecond = config.cacheWriteCount
+        
+        XCTAssertEqual(writeCountAfterFirst, 1)
+        XCTAssertEqual(writeCountAfterSecond, 1, "Second call should not increase cache write count")
+    }
     
+    func testHoldoutWithBothIncludedAndExcludedFlags_shouldLogError() {
+        class ConfigMockLogger: OPTLogger {
+            static var logLevel: OptimizelyLogLevel = .info
+            var expectedLog: String = ""
+            var logFound = false
+            
+            required init() {}
+            
+            func log(level: OptimizelyLogLevel, message: String) {
+                if (message == expectedLog) {
+                    logFound = true
+                }
+            }
+        }
+        
+        var holdout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        holdout.id = "invalid"
+        holdout.includedFlags = ["f1"]
+        holdout.excludedFlags = ["f2"]
+        
+        let mockLogger = ConfigMockLogger()
+        mockLogger.expectedLog = LogMessage.holdoutToFlagMappingError.description
+        
+        var config = HoldoutConfig(allholdouts: [])
+        config.logger = mockLogger
+        
+        config.allHoldouts = [holdout]
+        
+        XCTAssertTrue(mockLogger.logFound)
+    }
 }

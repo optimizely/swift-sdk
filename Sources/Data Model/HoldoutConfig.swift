@@ -19,31 +19,34 @@ import Foundation
 struct HoldoutConfig {
     var allHoldouts: [Holdout] {
         didSet {
-            updateHoldoutProperties()
+            updateHoldoutMapping()
         }
     }
-    private(set) var holdoutIdMap: [String: Holdout] = [:]
     private(set) var global: [Holdout] = []
+    private(set) var holdoutIdMap: [String: Holdout] = [:]
+    private(set) var flagHoldoutsMap: [String: [Holdout]] = [:]
     private(set) var includedHoldouts: [String: [Holdout]] = [:]
     private(set) var excludedHoldouts: [String: [Holdout]] = [:]
-    private(set) var flagHoldoutsMap: [String: [Holdout]] = [:]
     
-    let logger = OPTLoggerFactory.getLogger()
+    var cacheWriteCount = 0 // for testing purpose only
+    
+    var logger: OPTLogger = OPTLoggerFactory.getLogger()
     
     init(allholdouts: [Holdout] = []) {
         self.allHoldouts = allholdouts
-        updateHoldoutProperties()
+        updateHoldoutMapping()
     }
     
-    mutating func updateHoldoutProperties() {
+    /// Updates internal mappings of holdouts including the id map, global list, and per-flag inclusion/exclusion maps.
+    mutating func updateHoldoutMapping() {
         holdoutIdMap = {
             var map = [String: Holdout]()
             allHoldouts.forEach { map[$0.id] = $0 }
             return map
         }()
+        
         flagHoldoutsMap = [:]
         global = []
-        
         includedHoldouts = [:]
         excludedHoldouts = [:]
         
@@ -80,10 +83,14 @@ struct HoldoutConfig {
         }
     }
     
+    /// Returns the applicable holdouts for the given flag ID by combining global holdouts (excluding any specified) and included holdouts, in that order.
+    /// Caches the result for future calls.
+    /// - Parameter id: The flag identifier.
+    /// - Returns: An array of `Holdout` objects relevant to the given flag.
     mutating func getHoldoutForFlag(id: String) -> [Holdout] {
         guard !allHoldouts.isEmpty else { return [] }
         
-        // Check cache and return if persist holdouts
+        // Check cache and return persistent holdouts
         if let holdouts = flagHoldoutsMap[id] {
             return holdouts
         }
@@ -105,10 +112,12 @@ struct HoldoutConfig {
         activeHoldouts += includedHoldouts
         
         flagHoldoutsMap[id] = activeHoldouts
+        cacheWriteCount += 1
         
         return flagHoldoutsMap[id] ?? []
     }
     
+    /// Get a Holdout object for an Id.
     func getHoldout(id: String) -> Holdout? {
         return holdoutIdMap[id]
     }

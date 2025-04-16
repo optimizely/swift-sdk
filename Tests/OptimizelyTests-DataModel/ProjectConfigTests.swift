@@ -98,6 +98,7 @@ class ProjectConfigTests: XCTestCase {
         var holdout2 = HoldoutTests.sampleData
         var holdout3 = HoldoutTests.sampleData
         var holdout4 = HoldoutTests.sampleData
+        
         holdout0["id"] = "3000" // Global holdout (no included or excluded flags)
         holdout1["id"] = "3001" // Global holdout (no included or excluded flags)
         holdout2["id"] = "3002" // Global holdout (no included or excluded flags)

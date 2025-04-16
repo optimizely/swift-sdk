@@ -162,33 +162,7 @@ class ProjectConfig {
     func getHoldoutForFlag(id: String) -> [Holdout] {
         return holdoutConfig.getHoldoutForFlag(id: id)
     }
-    
-//    private func updateHoldoutsMapForFlag(id: String) {
-//        if let included = inlcudedHoldoutsMap[id] {
-//            return globalHoldouts + included
-//        }
-//        
-////        for holdout in project.holdouts {
-////            switch (holdout.includedFlags.isEmpty, holdout.excludedFlags.isEmpty) {
-////                case (true, true):
-////                    // Global holdout
-////                    global.append(holdout.id)
-////                    
-////                case (false, _):
-////                    if holdout.includedFlags.contains(id) {
-////                        others.append(holdout.id)
-////                    }
-////                    
-////                case (_, false):
-////                    if !holdout.excludedFlags.contains(id) {
-////                        others.append(holdout.id)
-////                    }
-////            }
-////        }
-////        
-//        flagHoldoutsMap[id] = globalHoldouts + others
-//    }
-    
+        
     func getAllRulesForFlag(_ flag: FeatureFlag) -> [Experiment] {
         var rules = flag.experimentIds.compactMap { experimentIdMap[$0] }
         let rollout = self.rolloutIdMap[flag.rolloutId]

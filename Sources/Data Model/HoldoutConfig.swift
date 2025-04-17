@@ -28,10 +28,6 @@ struct HoldoutConfig {
     private(set) var includedHoldouts: [String: [Holdout]] = [:]
     private(set) var excludedHoldouts: [String: [Holdout]] = [:]
     
-    var cacheWriteCount = 0 // for testing purpose only
-    
-    var logger: OPTLogger = OPTLoggerFactory.getLogger()
-    
     init(allholdouts: [Holdout] = []) {
         self.allHoldouts = allholdouts
         updateHoldoutMapping()
@@ -55,10 +51,7 @@ struct HoldoutConfig {
                 case (true, true):
                     global.append(holdout)
                     
-                case (false, false):
-                    logger.e(.holdoutToFlagMappingError)
-                    
-                case (false, true):
+                case (false, _):
                     holdout.includedFlags.forEach { flagId in
                         if var existing = includedHoldouts[flagId] {
                             existing.append(holdout)
@@ -95,6 +88,7 @@ struct HoldoutConfig {
             return holdouts
         }
         
+        // Prioritize global holdouts first 
         var activeHoldouts: [Holdout] = []
         
         let excluded = excludedHoldouts[id] ?? []
@@ -112,7 +106,6 @@ struct HoldoutConfig {
         activeHoldouts += includedHoldouts
         
         flagHoldoutsMap[id] = activeHoldouts
-        cacheWriteCount += 1
         
         return flagHoldoutsMap[id] ?? []
     }

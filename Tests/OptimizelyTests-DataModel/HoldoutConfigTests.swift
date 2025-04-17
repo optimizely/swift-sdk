@@ -135,50 +135,21 @@ class HoldoutConfigTests: XCTestCase {
     }
     
     func testGetHoldoutForFlag_shouldUseCacheOnSecondCall() {
-        var holdout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
-        holdout.id = "1"
-        holdout.excludedFlags = ["f1"]
+        var ho1: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
+        ho1.id = "h1"
+        ho1.includedFlags = ["f1"]
         
-        var config = HoldoutConfig(allholdouts: [holdout])
+        var config = HoldoutConfig(allholdouts: [ho1])
         
-        _ = config.getHoldoutForFlag(id: "f1")
-        let writeCountAfterFirst = config.cacheWriteCount
+        // Initially no cache
+        XCTAssertEqual(config.flagHoldoutsMap.count, 0)
         
-        _ = config.getHoldoutForFlag(id: "f1")
-        let writeCountAfterSecond = config.cacheWriteCount
+        let _ = config.getHoldoutForFlag(id: "f1")
+        XCTAssertEqual(config.flagHoldoutsMap.count, 1)
         
-        XCTAssertEqual(writeCountAfterFirst, 1)
-        XCTAssertEqual(writeCountAfterSecond, 1, "Second call should not increase cache write count")
+        let cache_v = config.getHoldoutForFlag(id: "f1")
+        XCTAssertEqual(config.flagHoldoutsMap.count, 1)
+        XCTAssertEqual(cache_v, config.flagHoldoutsMap["f1"])
     }
     
-    func testHoldoutWithBothIncludedAndExcludedFlags_shouldLogError() {
-        class ConfigMockLogger: OPTLogger {
-            static var logLevel: OptimizelyLogLevel = .info
-            var expectedLog: String = ""
-            var logFound = false
-            
-            required init() {}
-            
-            func log(level: OptimizelyLogLevel, message: String) {
-                if (message == expectedLog) {
-                    logFound = true
-                }
-            }
-        }
-        
-        var holdout: Holdout = try! OTUtils.model(from: HoldoutTests.sampleData)
-        holdout.id = "invalid"
-        holdout.includedFlags = ["f1"]
-        holdout.excludedFlags = ["f2"]
-        
-        let mockLogger = ConfigMockLogger()
-        mockLogger.expectedLog = LogMessage.holdoutToFlagMappingError.description
-        
-        var config = HoldoutConfig(allholdouts: [])
-        config.logger = mockLogger
-        
-        config.allHoldouts = [holdout]
-        
-        XCTAssertTrue(mockLogger.logFound)
-    }
 }

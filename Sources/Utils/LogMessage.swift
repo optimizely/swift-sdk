@@ -68,7 +68,6 @@ enum LogMessage {
     case failedToAssignValue
     case valueForKeyNotFound(_ key: String)
     case lowPeriodicDownloadInterval
-    case holdoutToFlagMappingError
 }
 
 extension LogMessage: CustomStringConvertible {
@@ -131,7 +130,6 @@ extension LogMessage: CustomStringConvertible {
         case .failedToAssignValue:                                              message = "Value for path could not be assigned to provided type."
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
         case .lowPeriodicDownloadInterval:                                      message = "Polling intervals below 30 seconds are not recommended."
-        case .holdoutToFlagMappingError:                                        message = "A holdout cannot have include and exclude flags at the same time."
         }
         
         return message

@@ -46,7 +46,8 @@ struct Project: Codable, Equatable {
     var sendFlagDecisions: Bool?
     var sdkKey: String?
     var environmentKey: String?
-    
+    // Holdouts
+    var holdouts: [Holdout]
     let logger = OPTLoggerFactory.getLogger()
     
     // Required since logger is not decodable
@@ -56,12 +57,42 @@ struct Project: Codable, Equatable {
         // V3
         case anonymizeIP
         // V4
-        case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey
+        case rollouts, integrations, typedAudiences, featureFlags, botFiltering, sendFlagDecisions, sdkKey, environmentKey, holdouts
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // V2
+        version = try container.decode(String.self, forKey: .version)
+        projectId = try container.decode(String.self, forKey: .projectId)
+        experiments = try container.decode([Experiment].self, forKey: .experiments)
+        audiences = try container.decode([Audience].self, forKey: .audiences)
+        groups = try container.decode([Group].self, forKey: .groups)
+        attributes = try container.decode([Attribute].self, forKey: .attributes)
+        accountId = try container.decode(String.self, forKey: .accountId)
+        events = try container.decode([Event].self, forKey: .events)
+        revision = try container.decode(String.self, forKey: .revision)
+        
+        // V3
+        anonymizeIP = try container.decode(Bool.self, forKey: .anonymizeIP)
+        
+        // V4
+        rollouts = try container.decode([Rollout].self, forKey: .rollouts)
+        integrations = try container.decodeIfPresent([Integration].self, forKey: .integrations)
+        typedAudiences = try container.decodeIfPresent([Audience].self, forKey: .typedAudiences)
+        featureFlags = try container.decode([FeatureFlag].self, forKey: .featureFlags)
+        botFiltering = try container.decodeIfPresent(Bool.self, forKey: .botFiltering)
+        sendFlagDecisions = try container.decodeIfPresent(Bool.self, forKey: .sendFlagDecisions)
+        sdkKey = try container.decodeIfPresent(String.self, forKey: .sdkKey)
+        environmentKey = try container.decodeIfPresent(String.self, forKey: .environmentKey)
+        // Holdouts - defaults to empty array if key is not present
+        holdouts = try container.decodeIfPresent([Holdout].self, forKey: .holdouts) ?? []
     }
     
     // Required since logger is not equatable
     static func == (lhs: Project, rhs: Project) -> Bool {
-        return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments &&
+        return lhs.version == rhs.version && lhs.projectId == rhs.projectId && lhs.experiments == rhs.experiments && lhs.holdouts == rhs.holdouts &&
             lhs.audiences == rhs.audiences && lhs.groups == rhs.groups && lhs.attributes == rhs.attributes &&
             lhs.accountId == rhs.accountId && lhs.events == rhs.events && lhs.revision == rhs.revision &&
             lhs.anonymizeIP == rhs.anonymizeIP && lhs.rollouts == rhs.rollouts &&

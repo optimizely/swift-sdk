@@ -20,15 +20,49 @@ import XCTest
 // MARK: - Sample Data
 
 class HoldoutTests: XCTestCase {
+    static var variationData: [String: Any] = ["id": "553339214",
+                                            "key": "house",
+                                            "featureEnabled": true,
+                                            "variables": [["id": "553339214", "value": "100"]]]
+    
+    static var trafficAllocationData: [String: Any] = ["entityId": "553339214", "endOfRange": 5000]
+    
+    static var conditionHolderData: [Any] = ["or", ["name": "geo",
+                                           "type": "custom_attribute",
+                                           "match": "exact",
+                                           "value": 30]]
+    
     /// Global holoout without  included and excluded key
     static var sampleData: [String: Any] = ["id": "11111",
                                             "key": "background",
                                             "status": "Running",
                                             "layerId": "22222",
-                                            "variations": [VariationTests.sampleData],
-                                            "trafficAllocation": [TrafficAllocationTests.sampleData],
+                                            "variations": [HoldoutTests.variationData],
+                                            "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                             "audienceIds": ["33333"],
-                                            "audienceConditions": ConditionHolderTests.sampleData]
+                                            "audienceConditions": HoldoutTests.conditionHolderData]
+    
+    static var sampleDataWithIncludedFlags: [String: Any] = ["id": "55555",
+                                            "key": "background",
+                                            "status": "Running",
+                                            "layerId": "22222",
+                                            "variations": [HoldoutTests.variationData],
+                                            "trafficAllocation": [HoldoutTests.trafficAllocationData],
+                                            "audienceIds": ["33333"],
+                                            "audienceConditions": HoldoutTests.conditionHolderData,
+                                            "includedFlags": ["4444", "5555"]]
+    
+    static var sampleDataWithExcludedFlags: [String: Any] = ["id": "3333",
+                                                             "key": "background",
+                                                             "status": "Running",
+                                                             "layerId": "22222",
+                                                             "variations": [HoldoutTests.variationData],
+                                                             "trafficAllocation": [HoldoutTests.trafficAllocationData],
+                                                             "audienceIds": ["33333"],
+                                                             "audienceConditions": HoldoutTests.conditionHolderData,
+                                                             "excludedFlags": ["8888", "9999"]]
+    
+    
     
 }
 
@@ -44,44 +78,43 @@ extension HoldoutTests {
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
         XCTAssert(model.layerId == "22222")
-        XCTAssert(model.variations == [try! OTUtils.model(from: VariationTests.sampleData)])
-        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: TrafficAllocationTests.sampleData)])
+        XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
+        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
-        XCTAssert(model.audienceConditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
+        XCTAssert(model.audienceConditions == (try! OTUtils.model(from: HoldoutTests.conditionHolderData)))
     }
     
     func testDecodeSuccessWithIncludedFlags() {
-        var data: [String: Any] = HoldoutTests.sampleData
-        data["includedFlags"] = ["4444", "5555"]
+        let data: [String: Any] = HoldoutTests.sampleDataWithIncludedFlags
         
         let model: Holdout = try! OTUtils.model(from: data)
         
-        XCTAssert(model.id == "11111")
+        XCTAssert(model.id == "55555")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
         XCTAssert(model.layerId == "22222")
-        XCTAssert(model.variations == [try! OTUtils.model(from: VariationTests.sampleData)])
-        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: TrafficAllocationTests.sampleData)])
+        XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
+        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
-        XCTAssert(model.audienceConditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
+        XCTAssert(model.audienceConditions == (try! OTUtils.model(from: HoldoutTests.conditionHolderData)))
         XCTAssertEqual(model.includedFlags, ["4444", "5555"])
     }
     
     func testDecodeSuccessWithExcludedFlags() {
-        var data: [String: Any] = HoldoutTests.sampleData
-        data["excludedFlags"] = ["4444", "5555"]
+        let data: [String: Any] = HoldoutTests.sampleDataWithExcludedFlags
         
         let model: Holdout = try! OTUtils.model(from: data)
         
-        XCTAssert(model.id == "11111")
+        XCTAssert(model.id == "3333")
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
         XCTAssert(model.layerId == "22222")
-        XCTAssert(model.variations == [try! OTUtils.model(from: VariationTests.sampleData)])
-        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: TrafficAllocationTests.sampleData)])
+        XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
+        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
-        XCTAssert(model.audienceConditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
-        XCTAssertEqual(model.excludedFlags, ["4444", "5555"])
+        XCTAssert(model.audienceConditions == (try! OTUtils.model(from: HoldoutTests.conditionHolderData)))
+        XCTAssertEqual(model.includedFlags, [])
+        XCTAssertEqual(model.excludedFlags, ["8888", "9999"])
     }
     
 
@@ -95,8 +128,8 @@ extension HoldoutTests {
         XCTAssert(model.key == "background")
         XCTAssert(model.status == .running)
         XCTAssert(model.layerId == "22222")
-        XCTAssert(model.variations == [try! OTUtils.model(from: VariationTests.sampleData)])
-        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: TrafficAllocationTests.sampleData)])
+        XCTAssert(model.variations == [try! OTUtils.model(from: HoldoutTests.variationData)])
+        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: HoldoutTests.trafficAllocationData)])
         XCTAssert(model.audienceIds == ["33333"])
     }
     
@@ -172,8 +205,8 @@ extension HoldoutTests {
                                          "key": "background",
                                          "status": "Running",
                                          "layerId": "22222",
-                                         "variations": [VariationTests.sampleData],
-                                         "trafficAllocation": [TrafficAllocationTests.sampleData],
+                                         "variations": [HoldoutTests.variationData],
+                                         "trafficAllocation": [HoldoutTests.trafficAllocationData],
                                          "audienceIds": [],
                                          "audienceConditions": [],
                                          "forcedVariations": ["12345": "1234567890"]]

@@ -17,7 +17,7 @@
 import Foundation
 
 struct FeatureDecision {
-    var experiment: Experiment?
+    var experiment: ExperimentCore?
     let variation: Variation
     let source: String
 }
@@ -158,7 +158,7 @@ class DefaultDecisionService: OPTDecisionService {
     }
     
     func doesMeetAudienceConditions(config: ProjectConfig,
-                                    experiment: Experiment,
+                                    experiment: ExperimentCore,
                                     user: OptimizelyUserContext,
                                     logType: Constants.EvaluationLogType = .experiment,
                                     loggingKey: String? = nil) -> DecisionResponse<Bool> {
@@ -273,13 +273,24 @@ class DefaultDecisionService: OPTDecisionService {
         return decisions
     }
 
-    
     func getVariationForFeatureExperiment(config: ProjectConfig,
                                           featureFlag: FeatureFlag,
                                           user: OptimizelyUserContext,
                                           userProfileTracker: UserProfileTracker? = nil,
                                           options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
+        let holdouts = config.getHoldoutForFlag(id: featureFlag.id)
+        for holdout in holdouts {
+            let dicisionResponse = getVariationForHoldout(config: config,
+                                                          flagKey: featureFlag.key,
+                                                          holdout: holdout,
+                                                          user: user)
+            reasons.merge(dicisionResponse.reasons)
+            if let variation = dicisionResponse.result {
+                let featureDicision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
+                return DecisionResponse(result: featureDicision, reasons: reasons)
+            }
+        }
         
         let experimentIds = featureFlag.experimentIds
         if experimentIds.isEmpty {
@@ -361,6 +372,61 @@ class DefaultDecisionService: OPTDecisionService {
         }
         
         return DecisionResponse(result: nil, reasons: reasons)
+    }
+    
+    func getVariationForHoldout(config: ProjectConfig,
+                                flagKey: String,
+                                holdout: Holdout,
+                                user: OptimizelyUserContext,
+                                options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
+        guard holdout.isActivated else {
+            return DecisionResponse(result: nil, reasons: DecisionReasons(options: options))
+        }
+        
+        let userId = user.userId
+        let attributes = user.attributes
+        let reasons = DecisionReasons(options: options)
+        
+        // ---- check if the user passes audience targeting before bucketing ----
+        let audienceResponse = doesMeetAudienceConditions(config: config,
+                                                          experiment: holdout,
+                                                          user: user)
+        
+        reasons.merge(audienceResponse.reasons)
+    
+        // Acquire bucketingId .
+        let bucketingId = getBucketingId(userId: userId, attributes: attributes)
+        var bucketedVariation: Variation?
+        
+        if audienceResponse.result ?? false {
+            let info = LogMessage.userMeetsConditionsForHoldout(userId, holdout.key)
+            logger.i(info)
+            reasons.addInfo(info)
+            
+            // bucket user into holdout variation
+            let decisionResponse = bucketer.bucketToVariation(experiment: holdout, bucketingId: bucketingId)
+            
+            reasons.merge(decisionResponse.reasons)
+            
+            bucketedVariation = decisionResponse.result
+            
+            if let variation = bucketedVariation {
+                let info = LogMessage.userBucketedIntoVariationInHoldout(userId, holdout.key, variation.key)
+                logger.i(info)
+                reasons.addInfo(info)
+            } else {
+                let info = LogMessage.userNotBucketedIntoHoldoutVariation(userId)
+                logger.i(info)
+                reasons.addInfo(info)
+            }
+            
+        } else {
+            let info = LogMessage.userDoesntMeetConditionsForHoldout(userId, holdout.key)
+            logger.i(info)
+            reasons.addInfo(info)
+        }
+        
+        return DecisionResponse(result: bucketedVariation, reasons: reasons)
     }
     
     func getVariationFromExperimentRule(config: ProjectConfig,

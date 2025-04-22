@@ -120,7 +120,7 @@ class DefaultBucketer: OPTBucketer {
         return DecisionResponse(result: nil, reasons: reasons)
     }
     
-    func bucketToVariation(experiment: Experiment,
+    func bucketToVariation(experiment: ExperimentCore,
                            bucketingId: String) -> DecisionResponse<Variation> {
         let reasons = DecisionReasons()
         

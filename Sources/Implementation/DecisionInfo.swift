@@ -22,7 +22,7 @@ struct DecisionInfo {
     let decisionType: Constants.DecisionType
     
     /// The experiment that the decision variation belongs to.
-    var experiment: Experiment?
+    var experiment: ExperimentCore?
     
     /// The variation selected by the decision.
     var variation: Variation?
@@ -58,7 +58,7 @@ struct DecisionInfo {
     var decisionEventDispatched: Bool
     
     init(decisionType: Constants.DecisionType,
-         experiment: Experiment? = nil,
+         experiment: ExperimentCore? = nil,
          variation: Variation? = nil,
          source: String? = nil,
          feature: FeatureFlag? = nil,

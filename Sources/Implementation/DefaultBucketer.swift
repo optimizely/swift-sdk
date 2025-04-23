@@ -150,6 +150,7 @@ class DefaultBucketer: OPTBucketer {
     }
     
     func allocateTraffic(trafficAllocation: [TrafficAllocation], bucketValue: Int) -> String? {
+        print("Bucketed value \(bucketValue)")
         for bucket in trafficAllocation where bucketValue < bucket.endOfRange {
             return bucket.entityId
         }

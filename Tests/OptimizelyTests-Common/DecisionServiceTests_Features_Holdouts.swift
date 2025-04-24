@@ -220,7 +220,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         // Mock bucketer to ensure user is bucketed into holdout variation
         let mockBucketer = MockBucketer(mockBucketValue: 500) // Within holdout range (0-1000)
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -237,7 +237,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 500) // Within holdout range
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryNotMatch)
@@ -252,7 +252,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 1500) // Outside holdout range (0-1000)
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -277,7 +277,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 500) // Would bucket in holdout if active
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -299,7 +299,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 500)
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -323,7 +323,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 500) // Within holdout range
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -347,7 +347,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 500) // Within holdout range
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -372,7 +372,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 500)
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -403,7 +403,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 1000) // Within all holdout ranges
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -428,7 +428,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 700) // Outside global range, within included range
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -452,7 +452,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 1500) // Outside all holdout ranges
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -476,7 +476,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 500)
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -503,7 +503,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 1500) // Outside included holdout range
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryNotMatch)
@@ -525,7 +525,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockBucketer = MockBucketer(mockBucketValue: 500)
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
-        let decision = mockDecisionService.getVariationForFeatureExperiment(
+        let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
@@ -548,14 +548,14 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
         // First call
-        let decision1 = mockDecisionService.getVariationForFeatureExperiment(
+        let decision1 = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         ).result
         
         // Second call with same inputs
-        let decision2 = mockDecisionService.getVariationForFeatureExperiment(
+        let decision2 = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
             user: optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)

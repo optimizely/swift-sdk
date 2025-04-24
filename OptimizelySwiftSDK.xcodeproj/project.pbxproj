@@ -2056,6 +2056,8 @@
 		98AC98472DB7B762001405DD /* BucketTests_HoldoutToVariation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC98452DB7B762001405DD /* BucketTests_HoldoutToVariation.swift */; };
 		98AC98492DB8FC29001405DD /* DecisionServiceTests_Features_Holdouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC98482DB8FC29001405DD /* DecisionServiceTests_Features_Holdouts.swift */; };
 		98AC984B2DB8FFE0001405DD /* DecisionServiceTests_Features_Holdouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC98482DB8FC29001405DD /* DecisionServiceTests_Features_Holdouts.swift */; };
+		98AC985E2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC985D2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift */; };
+		98AC985F2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC985D2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift */; };
 		BD1C3E8524E4399C0084B4DA /* SemanticVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B97DD93249D327F003DE606 /* SemanticVersion.swift */; };
 		BD64853C2491474500F30986 /* Optimizely.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E75167A22C520D400B2B157 /* Optimizely.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BD64853E2491474500F30986 /* Audience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75169822C520D400B2B157 /* Audience.swift */; };
@@ -2503,6 +2505,7 @@
 		98AC97F22DAE9685001405DD /* HoldoutConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldoutConfigTests.swift; sourceTree = "<group>"; };
 		98AC98452DB7B762001405DD /* BucketTests_HoldoutToVariation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketTests_HoldoutToVariation.swift; sourceTree = "<group>"; };
 		98AC98482DB8FC29001405DD /* DecisionServiceTests_Features_Holdouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionServiceTests_Features_Holdouts.swift; sourceTree = "<group>"; };
+		98AC985D2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift; sourceTree = "<group>"; };
 		BD6485812491474500F30986 /* Optimizely.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Optimizely.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C78CAF572445AD8D009FE876 /* OptimizelyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyJSON.swift; sourceTree = "<group>"; };
 		C78CAF652446DB91009FE876 /* OptimizelyClientTests_OptimizelyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptimizelyClientTests_OptimizelyJSON.swift; sourceTree = "<group>"; };
@@ -3040,6 +3043,7 @@
 				6EC6DD6824AE94820017D296 /* OptimizelyUserContextTests.swift */,
 				6E2D34B8250AD14000A0CDFE /* OptimizelyUserContextTests_Decide.swift */,
 				6E7E9B362523F8BF009E4426 /* OptimizelyUserContextTests_Decide_Reasons.swift */,
+				98AC985D2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift */,
 				6EB97BCC24C89DFB00068883 /* OptimizelyUserContextTests_Decide_Legacy.swift */,
 				6E0A72D326C5B9AE00FF92B5 /* OptimizelyUserContextTests_ForcedDecisions.swift */,
 				98137C562A42BA0F004896EB /* OptimizelyUserContextTests_ODP_Aync_Await.swift */,
@@ -4963,6 +4967,7 @@
 				6E27EC9C266EF11000B4A6D4 /* OptimizelyDecisionTests.swift in Sources */,
 				6E7518D922C520D400B2B157 /* AttributeValue.swift in Sources */,
 				6E9B116822C5487100C22D81 /* DefaultLoggerTests.swift in Sources */,
+				98AC985F2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift in Sources */,
 				C78CAF622445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E75179322C520D400B2B157 /* OptimizelyClient+Extension.swift in Sources */,
 				6E9B117122C5487100C22D81 /* DecisionServiceTests_Features.swift in Sources */,
@@ -5241,6 +5246,7 @@
 				6E7518EB22C520D400B2B157 /* ConditionHolder.swift in Sources */,
 				6E27EC9B266EF11000B4A6D4 /* OptimizelyDecisionTests.swift in Sources */,
 				6E75176922C520D400B2B157 /* Utils.swift in Sources */,
+				98AC985E2DBA6721001405DD /* OptimizelyUserContextTests_Decide_With_Holdouts_Reasons.swift in Sources */,
 				6E9B114E22C5486E00C22D81 /* DefaultLoggerTests.swift in Sources */,
 				C78CAF5B2445AD8D009FE876 /* OptimizelyJSON.swift in Sources */,
 				6E7518C722C520D400B2B157 /* Audience.swift in Sources */,

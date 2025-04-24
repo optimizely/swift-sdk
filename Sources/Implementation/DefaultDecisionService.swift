@@ -387,11 +387,14 @@ class DefaultDecisionService: OPTDecisionService {
                                 holdout: Holdout,
                                 user: OptimizelyUserContext,
                                 options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<Variation> {
-        guard holdout.isActivated else {
-            return DecisionResponse(result: nil, reasons: DecisionReasons(options: options))
-        }
-        
         let reasons = DecisionReasons(options: options)
+        
+        guard holdout.isActivated else {
+            let info = LogMessage.holdoutNotRunning(holdout.key)
+            reasons.addInfo(info)
+            logger.i(info)
+            return DecisionResponse(result: nil, reasons: reasons)
+        }
         
         // ---- check if the user passes audience targeting before bucketing ----
         let audienceResponse = doesMeetAudienceConditions(config: config,

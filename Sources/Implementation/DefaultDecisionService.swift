@@ -47,7 +47,15 @@ class DefaultDecisionService: OPTDecisionService {
         self.userProfileService = userProfileService
     }
     
-    /// Public Method
+    // MARK: - Experiment Decision
+    
+    /// Determines the variation for a user in a given experiment.
+    /// - Parameters:
+    ///   - config: The project configuration containing experiment and feature details.
+    ///   - experiment: The experiment to evaluate.
+    ///   - user: The user context containing user ID and attributes.
+    ///   - options: Optional decision options (e.g., ignore user profile service).
+    /// - Returns: A `DecisionResponse` containing the assigned variation (if any) and decision reasons.
     func getVariation(config: ProjectConfig,
                       experiment: Experiment,
                       user: OptimizelyUserContext,
@@ -69,6 +77,14 @@ class DefaultDecisionService: OPTDecisionService {
         return response
     }
     
+    /// Determines the variation for a user in an experiment, considering user profile and decision rules.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - experiment: The experiment to evaluate.
+    ///   - user: The user context.
+    ///   - options: Optional decision options.
+    ///   - userProfileTracker: Optional tracker for user profile data.
+    /// - Returns: A `DecisionResponse` with the variation (if any) and decision reasons.
     func getVariation(config: ProjectConfig,
                       experiment: Experiment,
                       user: OptimizelyUserContext,
@@ -162,62 +178,15 @@ class DefaultDecisionService: OPTDecisionService {
         return DecisionResponse(result: bucketedVariation, reasons: reasons)
     }
     
-    func doesMeetAudienceConditions(config: ProjectConfig,
-                                    experiment: ExperimentCore,
-                                    user: OptimizelyUserContext,
-                                    logType: Constants.EvaluationLogType = .experiment,
-                                    loggingKey: String? = nil) -> DecisionResponse<Bool> {
-        let reasons = DecisionReasons()
-        
-        var result = true   // success as default (no condition, etc)
-        let evType = logType.rawValue
-        let finalLoggingKey = loggingKey ?? experiment.key
-        
-        do {
-            if let conditions = experiment.audienceConditions {
-                logger.d { () -> String in
-                    return LogMessage.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: conditions)).description
-                }
-                switch conditions {
-                case .array(let arrConditions):
-                    if arrConditions.count > 0 {
-                        result = try conditions.evaluate(project: config.project, user: user)
-                    } else {
-                        // empty conditions (backward compatibility with "audienceIds" is ignored if exists even though empty
-                        result = true
-                    }
-                case .leaf:
-                    result = try conditions.evaluate(project: config.project, user: user)
-                default:
-                    result = true
-                }
-            }
-            // backward compatibility with audienceIds list
-            else if experiment.audienceIds.count > 0 {
-                var holder = [ConditionHolder]()
-                holder.append(.logicalOp(.or))
-                for id in experiment.audienceIds {
-                    holder.append(.leaf(.audienceId(id)))
-                }
-                logger.d { () -> String in
-                    return LogMessage.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: holder)).description
-                }
-                result = try holder.evaluate(project: config.project, user: user)
-            }
-        } catch {
-            if let error = error as? OptimizelyError {
-                logger.i(error)
-                reasons.addInfo(error)
-            }
-            result = false
-        }
-        
-        logger.i(.audienceEvaluationResultCombined(evType, finalLoggingKey, result.description))
-        
-        return DecisionResponse(result: result, reasons: reasons)
-    }
+    // MARK: - Feature Flag Decision
     
-    /// Public Method
+    /// Determines the feature decision for a user for a specific feature flag.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - featureFlag: The feature flag to evaluate.
+    ///   - user: The user context.
+    ///   - options: Optional decision options.
+    /// - Returns: A `DecisionResponse` with the feature decision (if any) and reasons.
     func getVariationForFeature(config: ProjectConfig,
                                 featureFlag: FeatureFlag,
                                 user: OptimizelyUserContext,
@@ -233,6 +202,13 @@ class DefaultDecisionService: OPTDecisionService {
         return response!
     }
     
+    /// Determines feature decisions for a list of feature flags.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - featureFlags: The list of feature flags to evaluate.
+    ///   - user: The user context.
+    ///   - options: Optional decision options.
+    /// - Returns: An array of `DecisionResponse` objects, each containing a feature decision and reasons.
     func getVariationForFeatureList(config: ProjectConfig,
                                     featureFlags: [FeatureFlag],
                                     user: OptimizelyUserContext,
@@ -250,7 +226,7 @@ class DefaultDecisionService: OPTDecisionService {
         var decisions = [DecisionResponse<FeatureDecision>]()
         
         for featureFlag in featureFlags {
-            var decisionResponse = getVariationForFeatureExperiment(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker)
+            var decisionResponse = getVariationForFeature(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker)
             
             reasons.merge(decisionResponse.reasons)
             
@@ -277,12 +253,20 @@ class DefaultDecisionService: OPTDecisionService {
         
         return decisions
     }
-
-    func getVariationForFeatureExperiment(config: ProjectConfig,
-                                          featureFlag: FeatureFlag,
-                                          user: OptimizelyUserContext,
-                                          userProfileTracker: UserProfileTracker? = nil,
-                                          options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
+    
+    /// Determines the feature decision for a feature flag, considering experiments and holdouts.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - featureFlag: The feature flag to evaluate.
+    ///   - user: The user context.
+    ///   - userProfileTracker: Optional tracker for user profile data.
+    ///   - options: Optional decision options.
+    /// - Returns: A `DecisionResponse` with the feature decision (if any) and reasons.
+    func getVariationForFeature(config: ProjectConfig,
+                                featureFlag: FeatureFlag,
+                                user: OptimizelyUserContext,
+                                userProfileTracker: UserProfileTracker? = nil,
+                                options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
         let holdouts = config.getHoldoutForFlag(id: featureFlag.id)
         
@@ -326,6 +310,13 @@ class DefaultDecisionService: OPTDecisionService {
         return DecisionResponse(result: nil, reasons: reasons)
     }
     
+    /// Determines the feature decision for a feature flag's rollout rules.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - featureFlag: The feature flag to evaluate.
+    ///   - user: The user context.
+    ///   - options: Optional decision options.
+    /// - Returns: A `DecisionResponse` with the feature decision (if any) and reasons.
     func getVariationForFeatureRollout(config: ProjectConfig,
                                        featureFlag: FeatureFlag,
                                        user: OptimizelyUserContext,
@@ -380,6 +371,17 @@ class DefaultDecisionService: OPTDecisionService {
         return DecisionResponse(result: nil, reasons: reasons)
     }
     
+    
+    // MARK: - Holdout and Rule Decisions
+    
+    /// Determines the variation for a holdout group.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - flagKey: The feature flag key.
+    ///   - holdout: The holdout group to evaluate.
+    ///   - user: The user context.
+    ///   - options: Optional decision options.
+    /// - Returns: A `DecisionResponse` with the variation (if any) and reasons.
     func getVariationForHoldout(config: ProjectConfig,
                                 flagKey: String,
                                 holdout: Holdout,
@@ -389,8 +391,6 @@ class DefaultDecisionService: OPTDecisionService {
             return DecisionResponse(result: nil, reasons: DecisionReasons(options: options))
         }
         
-        let userId = user.userId
-        let attributes = user.attributes
         let reasons = DecisionReasons(options: options)
         
         // ---- check if the user passes audience targeting before bucketing ----
@@ -399,6 +399,9 @@ class DefaultDecisionService: OPTDecisionService {
                                                           user: user)
         
         reasons.merge(audienceResponse.reasons)
+        
+        let userId = user.userId
+        let attributes = user.attributes
     
         // Acquire bucketingId .
         let bucketingId = getBucketingId(userId: userId, attributes: attributes)
@@ -406,8 +409,8 @@ class DefaultDecisionService: OPTDecisionService {
         
         if audienceResponse.result ?? false {
             let info = LogMessage.userMeetsConditionsForHoldout(userId, holdout.key)
-            logger.i(info)
             reasons.addInfo(info)
+            logger.i(info)
             
             // bucket user into holdout variation
             let decisionResponse = bucketer.bucketToVariation(experiment: holdout, bucketingId: bucketingId)
@@ -418,23 +421,32 @@ class DefaultDecisionService: OPTDecisionService {
             
             if let variation = bucketedVariation {
                 let info = LogMessage.userBucketedIntoVariationInHoldout(userId, holdout.key, variation.key)
-                logger.i(info)
                 reasons.addInfo(info)
+                logger.i(info)
             } else {
                 let info = LogMessage.userNotBucketedIntoHoldoutVariation(userId)
-                logger.i(info)
                 reasons.addInfo(info)
+                logger.i(info)
             }
             
         } else {
             let info = LogMessage.userDoesntMeetConditionsForHoldout(userId, holdout.key)
-            logger.i(info)
             reasons.addInfo(info)
+            logger.i(info)
         }
         
         return DecisionResponse(result: bucketedVariation, reasons: reasons)
     }
     
+    /// Determines the variation for an experiment rule within a feature flag.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - flagKey: The feature flag key.
+    ///   - rule: The experiment rule to evaluate.
+    ///   - user: The user context.
+    ///   - userProfileTracker: Optional tracker for user profile data.
+    ///   - options: Optional decision options.
+    /// - Returns: A `DecisionResponse` with the variation (if any) and reasons.
     func getVariationFromExperimentRule(config: ProjectConfig,
                                         flagKey: String,
                                         rule: Experiment,
@@ -461,7 +473,15 @@ class DefaultDecisionService: OPTDecisionService {
         return DecisionResponse(result: variation, reasons: reasons)
     }
     
-    
+    /// Determines the variation for a delivery rule in a rollout.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - flagKey: The feature flag key.
+    ///   - rules: The list of rollout rules.
+    ///   - ruleIndex: The index of the rule to evaluate.
+    ///   - user: The user context.
+    ///   - options: Optional decision options.
+    /// - Returns: A `DecisionResponse` with the variation (if any), a flag indicating whether to skip to the "Everyone Else" rule, and reasons.
     func getVariationFromDeliveryRule(config: ProjectConfig,
                                       flagKey: String,
                                       rules: [Experiment],
@@ -533,8 +553,79 @@ class DefaultDecisionService: OPTDecisionService {
         return DecisionResponse(result: (bucketedVariation, skipToEveryoneElse), reasons: reasons)
     }
     
-    func getBucketingId(userId: String, attributes: OptimizelyAttributes) -> String {
+    // MARK: - Audience Evaluation
+    
+    /// Evaluates whether a user meets the audience conditions for an experiment or rule.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - experiment: The experiment or rule to evaluate.
+    ///   - user: The user context.
+    ///   - logType: The type of evaluation for logging (e.g., experiment or rollout rule).
+    ///   - loggingKey: Optional key for logging.
+    /// - Returns: A `DecisionResponse` with a boolean indicating whether conditions are met and reasons.
+    func doesMeetAudienceConditions(config: ProjectConfig,
+                                    experiment: ExperimentCore,
+                                    user: OptimizelyUserContext,
+                                    logType: Constants.EvaluationLogType = .experiment,
+                                    loggingKey: String? = nil) -> DecisionResponse<Bool> {
+        let reasons = DecisionReasons()
         
+        var result = true   // success as default (no condition, etc)
+        let evType = logType.rawValue
+        let finalLoggingKey = loggingKey ?? experiment.key
+        
+        do {
+            if let conditions = experiment.audienceConditions {
+                logger.d { () -> String in
+                    return LogMessage.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: conditions)).description
+                }
+                switch conditions {
+                    case .array(let arrConditions):
+                        if arrConditions.count > 0 {
+                            result = try conditions.evaluate(project: config.project, user: user)
+                        } else {
+                            // empty conditions (backward compatibility with "audienceIds" is ignored if exists even though empty
+                            result = true
+                        }
+                    case .leaf:
+                        result = try conditions.evaluate(project: config.project, user: user)
+                    default:
+                        result = true
+                }
+            }
+            // backward compatibility with audienceIds list
+            else if experiment.audienceIds.count > 0 {
+                var holder = [ConditionHolder]()
+                holder.append(.logicalOp(.or))
+                for id in experiment.audienceIds {
+                    holder.append(.leaf(.audienceId(id)))
+                }
+                logger.d { () -> String in
+                    return LogMessage.evaluatingAudiencesCombined(evType, finalLoggingKey, Utils.getConditionString(conditions: holder)).description
+                }
+                result = try holder.evaluate(project: config.project, user: user)
+            }
+        } catch {
+            if let error = error as? OptimizelyError {
+                logger.i(error)
+                reasons.addInfo(error)
+            }
+            result = false
+        }
+        
+        logger.i(.audienceEvaluationResultCombined(evType, finalLoggingKey, result.description))
+        
+        return DecisionResponse(result: result, reasons: reasons)
+    }
+    
+    // MARK: - Utilities
+    
+    /// Retrieves the bucketing ID for a user, defaulting to user ID unless overridden in attributes.
+    /// - Parameters:
+    ///   - userId: The user's ID.
+    ///   - attributes: The user's attributes.
+    /// - Returns: The bucketing ID to use for variation assignment.
+    func getBucketingId(userId: String, attributes: OptimizelyAttributes) -> String {
         // By default, the bucketing ID should be the user ID .
         var bucketingId = userId
         // If the bucketing ID key is defined in attributes, then use that
@@ -546,7 +637,12 @@ class DefaultDecisionService: OPTDecisionService {
         return bucketingId
     }
     
-    /// Public Method
+    /// Finds and validates a forced decision for a given context.
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - user: The user context.
+    ///   - context: The decision context (flag and rule keys).
+    /// - Returns: A `DecisionResponse` with the forced variation (if valid) and reasons.
     func findValidatedForcedDecision(config: ProjectConfig,
                                      user: OptimizelyUserContext,
                                      context: OptimizelyDecisionContext) -> DecisionResponse<Variation> {

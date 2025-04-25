@@ -268,8 +268,8 @@ class DefaultDecisionService: OPTDecisionService {
                                 userProfileTracker: UserProfileTracker? = nil,
                                 options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
+        
         let holdouts = config.getHoldoutForFlag(id: featureFlag.id)
-        print("Holdouts \(holdouts)")
         for holdout in holdouts {
             let dicisionResponse = getVariationForHoldout(config: config,
                                                           flagKey: featureFlag.key,

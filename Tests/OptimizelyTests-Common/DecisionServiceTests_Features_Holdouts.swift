@@ -397,8 +397,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         excludedHoldout.trafficAllocation[0].endOfRange = tfAllocationRange
         
         self.config.project.holdouts = [globalHoldout, includedHoldout, excludedHoldout]
-        print("All holdouts \(self.config.holdoutConfig.allHoldouts)")
-        print("All global holdouts \(self.config.holdoutConfig.global)")
+
         // Mock bucketer to bucket into the first valid holdout (global)
         let mockBucketer = MockBucketer(mockBucketValue: 1000) // Within all holdout ranges
         let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
@@ -421,7 +420,6 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         // Setup multiple holdouts
         let globalHoldout = try! OTUtils.model(from: sampleHoldoutGlobal) as Holdout
         let includedHoldout = try! OTUtils.model(from: sampleHoldoutIncluded) as Holdout
-        print(self.config.project.featureFlags)
         self.config.project.holdouts = [globalHoldout, includedHoldout]
         
         // Mock bucketer to fail global holdout bucketing, succeed for included
@@ -586,7 +584,6 @@ class MockBucketer: DefaultBucketer {
     }
     
     override func generateBucketValue(bucketingId: String) -> Int {
-        print("Mock bucket value: \(mockBucketValue)")
         return mockBucketValue
     }
 }

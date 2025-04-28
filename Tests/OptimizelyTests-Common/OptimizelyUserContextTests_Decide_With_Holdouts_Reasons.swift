@@ -197,27 +197,3 @@ class OptimizelyUserContextTests_Decide_With_Holdouts_Reasons: XCTestCase {
         XCTAssert(decision.reasons.contains(LogMessage.userDoesntMeetConditionsForHoldout(kUserId, "key_holdout").reason))
     }
 }
-
-
-// MARK: - Helper for mocking bucketer
-
-class MockBucketer: DefaultBucketer {
-    var mockBucketValue: Int
-    
-    init(mockBucketValue: Int) {
-        self.mockBucketValue = mockBucketValue
-        super.init()
-    }
-    
-    override func generateBucketValue(bucketingId: String) -> Int {
-        return mockBucketValue
-    }
-}
-
-// MARK: - Mock Decision Service
-
-class MockDecisionService: DefaultDecisionService {
-    init(bucketer: OPTBucketer, userProfileService: OPTUserProfileService) {
-        super.init(userProfileService: userProfileService, bucketer: bucketer)
-    }
-}

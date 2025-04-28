@@ -16,11 +16,11 @@
 
 import XCTest
 
-class DecisionServiceTests_Features_Holdouts: XCTestCase {
+class DecisionServiceTests_Holdouts: XCTestCase {
     
     var optimizely: OptimizelyClient!
     var config: ProjectConfig!
-    var decisionService: DefaultDecisionService!
+    var mockDecisionService: DefaultDecisionService!
     
     var kUserId = "12345"
     var kExperimentKey = "countryExperiment"
@@ -37,8 +37,10 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
     
     var kAttributesCountryMatch: [String: Any] = ["country": "us"]
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
+    var kAttributesAgeMatch: [String: Any] = ["age": 30]
+    var kAttributesAgeNotMatch: [String: Any] = ["age": 10]
+    var kAttributesEmpty: [String: Any] = [:]
    
-    var experiment: Experiment!
     var holdout: Holdout!
     var variation: Variation!
     var featureFlag: FeatureFlag!
@@ -200,12 +202,16 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         self.optimizely = OTUtils.createOptimizely(datafileName: "empty_datafile",
                                                    clearUserProfileService: true)
         self.config = self.optimizely.config!
-        self.decisionService = (optimizely.decisionService as! DefaultDecisionService)
+        
+        // Mock bucketer to ensure user would bucket in holdout
+        let mockBucketer = MockBucketer(mockBucketValue: 500) // Within holdout range
+        self.mockDecisionService = MockDecisionService(bucketer: mockBucketer)
+        self.optimizely.decisionService = mockDecisionService
         
         // Project config
         self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
         holdout = try! OTUtils.model(from: sampleHoldout)
-        experiment = try! OTUtils.model(from: sampleExperimentData)
+        var experiment: Experiment = try! OTUtils.model(from: sampleExperimentData)
         experiment.audienceIds = [kAudienceIdCountry]
         self.config.project.experiments = [experiment]
         
@@ -214,12 +220,143 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         self.config.project.holdouts = [holdout]
     }
     
-    // MARK: - Test getVariationForFeatureExperiment
+}
+
+// MARK: - Test doesMeetAudienceConditions()
+
+extension DecisionServiceTests_Holdouts {
     
+    func testDoesMeetAudienceConditionsWithAudienceConditions() {
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        // (1) matching true
+        
+        holdout = try! OTUtils.model(from: sampleHoldout)
+        holdout.audienceConditions = try! OTUtils.model(from: ["or", kAudienceIdCountry])
+        holdout.audienceIds = [kAudienceIdAge]
+        self.config.project.holdouts = [holdout]
+        
+        var result: Bool! = mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                           experiment: holdout,
+                                                                           user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
+        XCTAssert(result, "attribute should be matched to audienceConditions")
+        
+        // (2) matching false
+        result = self.mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                     experiment: holdout,
+                                                                     user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryNotMatch)).result
+        XCTAssertFalse(result, "attribute should be matched to audienceConditions")
+        
+        // (3) other attribute
+        result = self.mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                     experiment: holdout,
+                                                                     user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
+        XCTAssertFalse(result, "no matching attribute provided")
+    }
+    
+    func testDoesMeetAudienceConditionsWithAudienceIds() {
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        
+        // (1) matching true
+        
+        holdout = try! OTUtils.model(from: sampleHoldout)
+        holdout.audienceConditions = nil
+        holdout.audienceIds = [kAudienceIdCountry]
+        self.config.project.holdouts = [holdout]
+        
+        var result: Bool! = mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                           experiment: holdout,
+                                                                           user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
+        XCTAssert(result, "attribute should be matched to audienceConditions")
+        
+        // (2) matching false
+        result = self.mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                     experiment: holdout,
+                                                                     user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryNotMatch)).result
+        XCTAssertFalse(result, "attribute should be matched to audienceConditions")
+        
+        // (3) other attribute
+        result = self.mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                     experiment: holdout,
+                                                                     user: OTUtils.user(userId: kUserId, attributes: kAttributesAgeMatch)).result
+        XCTAssertFalse(result, "no matching attribute provided")
+    }
+    
+    func testDoesMeetAudienceConditionsWithAudienceConditionsEmptyArray() {
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        holdout = try! OTUtils.model(from: sampleHoldout)
+        holdout.audienceConditions = try! OTUtils.model(from: [])
+        holdout.audienceIds = [kAudienceIdAge]
+        self.config.project.holdouts = [holdout]
+        
+        let result: Bool! = self.mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                                experiment: holdout,
+                                                                                user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
+        XCTAssert(result, "empty conditions is true always")
+    }
+    
+    func testDoesMeetAudienceConditionsWithAudienceIdsEmpty() {
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        holdout = try! OTUtils.model(from: sampleHoldout)
+        holdout.audienceConditions = nil
+        holdout.audienceIds = []
+        self.config.project.holdouts = [holdout]
+        
+        let result: Bool! = mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                           experiment: holdout,
+                                                                           user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
+        XCTAssert(result, "empty conditions is true always")
+    }
+    
+    func testDoesMeetAudienceConditionsWithCornerCases() {
+        self.config.project.typedAudiences = try! OTUtils.model(from: sampleTypedAudiencesData)
+        holdout = try! OTUtils.model(from: sampleHoldout)
+        
+        // (1) leaf (not array) in "audienceConditions" still works ok
+        
+        // JSON does not support raw string, so wrap in array for decode
+        var array: [ConditionHolder] = try! OTUtils.model(from: [kAudienceIdCountry])
+        holdout.audienceConditions = array[0]
+        holdout.audienceIds = [kAudienceIdAge]
+        self.config.project.holdouts = [holdout]
+        
+        var result: Bool! = mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                           experiment: holdout,
+                                                                           user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
+        XCTAssert(result)
+        
+        result = self.mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                     experiment: holdout,
+                                                                     user: OTUtils.user(userId: kUserId, attributes: kAttributesEmpty)).result
+        XCTAssertFalse(result)
+        
+        // (2) invalid string in "audienceConditions"
+        array = try! OTUtils.model(from: ["and"])
+        holdout.audienceConditions = array[0]
+        self.config.project.holdouts = [holdout]
+        
+        result = self.mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                     experiment: holdout,
+                                                                     user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
+        XCTAssert(result)
+        
+        // (2) invalid string in "audienceConditions"
+        holdout.audienceConditions = nil
+        holdout.audienceIds = []
+        self.config.project.holdouts = [holdout]
+        
+        result = self.mockDecisionService.doesMeetAudienceConditions(config: config,
+                                                                     experiment: holdout,
+                                                                     user: OTUtils.user(userId: kUserId, attributes: kAttributesCountryMatch)).result
+        XCTAssert(result)
+    }
+}
+
+
+// MARK: - Test getVariationForFeatureExperiment
+
+extension DecisionServiceTests_Holdouts {
     func testGetVariationForFeatureExperiment_HoldoutMatch() {
-        // Mock bucketer to ensure user is bucketed into holdout variation
-        let mockBucketer = MockBucketer(mockBucketValue: 500) // Within holdout range (0-1000)
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
@@ -233,10 +370,6 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
     }
     
     func testGetVariationForFeatureExperiment_HoldoutAudienceMismatch() {
-        // Mock bucketer to ensure user would bucket if audience matched
-        let mockBucketer = MockBucketer(mockBucketValue: 500) // Within holdout range
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
-        
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
@@ -250,7 +383,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
     func testGetVariationForFeatureExperiment_HoldoutNotBucketed() {
         // Mock bucketer to ensure user is not bucketed into holdout variation
         let mockBucketer = MockBucketer(mockBucketValue: 1500) // Outside holdout range (0-1000)
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
+        mockDecisionService = MockDecisionService(bucketer: mockBucketer)
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -273,10 +406,6 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let inactiveHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
         self.config.project.holdouts = [inactiveHoldout]
         
-        // Mock bucketer to ensure experiment bucketing
-        let mockBucketer = MockBucketer(mockBucketValue: 500) // Would bucket in holdout if active
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
-        
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
@@ -294,10 +423,6 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
     func testGetVariationForFeatureExperiment_NoHoldouts() {
         // Remove holdouts
         self.config.project.holdouts = []
-        
-        // Mock bucketer to ensure experiment bucketing
-        let mockBucketer = MockBucketer(mockBucketValue: 500)
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -319,10 +444,6 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         featureFlag = try! OTUtils.model(from: modifiedFeatureFlagData)
         self.config.project.featureFlags = [featureFlag]
         
-        // Mock bucketer to ensure user would bucket in holdout
-        let mockBucketer = MockBucketer(mockBucketValue: 500) // Within holdout range
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
-        
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
@@ -342,10 +463,6 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         modifiedFeatureFlagData["experimentIds"] = ["invalid_experiment_id"]
         featureFlag = try! OTUtils.model(from: modifiedFeatureFlagData)
         self.config.project.featureFlags = [featureFlag]
-        
-        // Mock bucketer to ensure user would bucket in holdout
-        let mockBucketer = MockBucketer(mockBucketValue: 500) // Within holdout range
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -367,10 +484,6 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         modifiedHoldoutData["excludedFlags"] = ["flag_id_1234"]
         let excludedHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
         self.config.project.holdouts = [excludedHoldout]
-        
-        // Mock bucketer to ensure experiment bucketing
-        let mockBucketer = MockBucketer(mockBucketValue: 500)
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -397,10 +510,10 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         excludedHoldout.trafficAllocation[0].endOfRange = tfAllocationRange
         
         self.config.project.holdouts = [globalHoldout, includedHoldout, excludedHoldout]
-
+        
         // Mock bucketer to bucket into the first valid holdout (global)
         let mockBucketer = MockBucketer(mockBucketValue: 1000) // Within all holdout ranges
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
+        let mockDecisionService = MockDecisionService(bucketer: mockBucketer)
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -424,7 +537,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         
         // Mock bucketer to fail global holdout bucketing, succeed for included
         let mockBucketer = MockBucketer(mockBucketValue: 700) // Outside global range, within included range
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
+        mockDecisionService = MockDecisionService(bucketer: mockBucketer)
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -448,7 +561,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         
         // Mock bucketer to fail all holdout bucketing
         let mockBucketer = MockBucketer(mockBucketValue: 1500) // Outside all holdout ranges
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
+        mockDecisionService = MockDecisionService(bucketer: mockBucketer)
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -463,16 +576,12 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         XCTAssertEqual(decision?.source, Constants.DecisionSource.featureTest.rawValue)
     }
     
-    
     func testGetVariationForFeatureExperiment_HoldoutWithNoTrafficAllocation() {
         // Setup holdout with no traffic allocation
         var modifiedHoldoutData = sampleHoldoutGlobal
         modifiedHoldoutData["trafficAllocation"] = []
         let noTrafficHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
         self.config.project.holdouts = [noTrafficHoldout]
-        
-        let mockBucketer = MockBucketer(mockBucketValue: 500)
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -499,7 +608,7 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         
         // Mock bucketer to fail included holdout bucketing
         let mockBucketer = MockBucketer(mockBucketValue: 1500) // Outside included holdout range
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
+        mockDecisionService = MockDecisionService(bucketer: mockBucketer)
         
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
@@ -520,9 +629,6 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let noVariationsHoldout = try! OTUtils.model(from: modifiedHoldoutData) as Holdout
         self.config.project.holdouts = [noVariationsHoldout]
         
-        let mockBucketer = MockBucketer(mockBucketValue: 500)
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
-        
         let decision = mockDecisionService.getVariationForFeature(
             config: config,
             featureFlag: featureFlag,
@@ -541,9 +647,6 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         let globalHoldout = try! OTUtils.model(from: sampleHoldoutGlobal) as Holdout
         let includedHoldout = try! OTUtils.model(from: sampleHoldoutIncluded) as Holdout
         self.config.project.holdouts = [globalHoldout, includedHoldout]
-        
-        let mockBucketer = MockBucketer(mockBucketValue: 500)
-        let mockDecisionService = MockDecisionService(bucketer: mockBucketer, userProfileService: decisionService.userProfileService)
         
         // First call
         let decision1 = mockDecisionService.getVariationForFeature(
@@ -569,30 +672,4 @@ class DecisionServiceTests_Features_Holdouts: XCTestCase {
         XCTAssertEqual(decision1?.source, Constants.DecisionSource.holdout.rawValue)
         XCTAssertEqual(decision2?.source, Constants.DecisionSource.holdout.rawValue)
     }
-    
-    
 }
-
-// MARK: - Helper for mocking bucketer
-
-class MockBucketer: DefaultBucketer {
-    var mockBucketValue: Int
-    
-    init(mockBucketValue: Int) {
-        self.mockBucketValue = mockBucketValue
-        super.init()
-    }
-    
-    override func generateBucketValue(bucketingId: String) -> Int {
-        return mockBucketValue
-    }
-}
-
-// MARK: - Mock Decision Service
-
-class MockDecisionService: DefaultDecisionService {
-    init(bucketer: OPTBucketer, userProfileService: OPTUserProfileService) {
-        super.init(userProfileService: userProfileService, bucketer: bucketer)
-    }
-}
-

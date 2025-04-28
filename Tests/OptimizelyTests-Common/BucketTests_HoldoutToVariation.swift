@@ -84,7 +84,7 @@ class BucketTests_HoldoutToVariation: XCTestCase {
         for (index, test) in testCases.enumerated() {
             // Mock bucket value to ensure it falls within 0-1000
             let mockBucketValue = 500 // Within 10% allocation
-            let mockBucketer = Mockbucketer(mockBucketValue: mockBucketValue)
+            let mockBucketer = MockBucketer(mockBucketValue: mockBucketValue)
             let response = mockBucketer.bucketToVariation(experiment: holdout, bucketingId: test["userId"]!)
             XCTAssertNotNil(response.result, "Variation should not be nil for test case \(index)")
             XCTAssertEqual(response.result?.key, test["expectedVariation"], "Wrong variation for test case \(index)")
@@ -101,7 +101,7 @@ class BucketTests_HoldoutToVariation: XCTestCase {
         for (index, test) in testCases.enumerated() {
             // Mock bucket value to ensure it falls outside 0-1000
             let mockBucketValue = 1500 // Outside 10% allocation
-            let mockBucketer = Mockbucketer(mockBucketValue: mockBucketValue)
+            let mockBucketer = MockBucketer(mockBucketValue: mockBucketValue)
             let response = mockBucketer.bucketToVariation(experiment: holdout, bucketingId: test["userId"]!)
             XCTAssertNil(response.result, "Variation should be nil for test case \(index) when outside allocation")
         }
@@ -134,26 +134,10 @@ class BucketTests_HoldoutToVariation: XCTestCase {
     func testBucketToVariation_EmptyBucketingId() {
         // Test with empty bucketing ID, still within allocation
         let mockBucketValue = 500
-        let mockBucketer = Mockbucketer(mockBucketValue: mockBucketValue)
+        let mockBucketer = MockBucketer(mockBucketValue: mockBucketValue)
         let response = mockBucketer.bucketToVariation(experiment: holdout, bucketingId: "")
         
         XCTAssertNotNil(response.result, "Should still bucket with empty bucketing ID")
         XCTAssertEqual(response.result?.key, kVariationKeyA, "Should bucket to variation A")
-    }
-}
-
-// MARK: - Helper for mocking bucket value
-
-class Mockbucketer: DefaultBucketer {
-    var mockBucketValue: Int
-    
-    init(mockBucketValue: Int) {
-        self.mockBucketValue = mockBucketValue
-        super.init()
-    }
-    
-    override func generateBucketValue(bucketingId: String) -> Int {
-        print(mockBucketValue)
-        return mockBucketValue
     }
 }

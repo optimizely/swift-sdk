@@ -258,7 +258,7 @@ class DecisionServiceTests_Features: XCTestCase {
 extension DecisionServiceTests_Features {
     
     func testGetVariationForFeatureExperimentWhenMatched() {
-        let pair = self.decisionService.getVariationForFeature(config: config,
+        let pair = self.decisionService.getVariationForFeatureExperiments(config: config,
                                                                          featureFlag: featureFlag,
                                                                          user: optimizely.createUserContext(userId: kUserId,
                                                                                                             attributes: kAttributesCountryMatch)).result
@@ -268,7 +268,7 @@ extension DecisionServiceTests_Features {
     }
     
     func testGetVariationForFeatureExperimentWhenNotMatched() {
-        let pair = self.decisionService.getVariationForFeature(config: config,
+        let pair = self.decisionService.getVariationForFeatureExperiments(config: config,
                                                                          featureFlag: featureFlag,
                                                                          user: optimizely.createUserContext(userId: kUserId,
                                                                                                             attributes: kAttributesCountryNotMatch)).result
@@ -280,7 +280,7 @@ extension DecisionServiceTests_Features {
         featureFlag.experimentIds = ["99999"]   // not-existing experiment
         self.config.project.featureFlags = [featureFlag]
         
-        let pair = self.decisionService.getVariationForFeature(config: config,
+        let pair = self.decisionService.getVariationForFeatureExperiments(config: config,
                                                                          featureFlag: featureFlag,
                                                                          user: optimizely.createUserContext(userId: kUserId,
                                                                                                             attributes: kAttributesCountryMatch)).result

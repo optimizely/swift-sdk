@@ -237,6 +237,14 @@ class DefaultDecisionService: OPTDecisionService {
         return decisions
     }
     
+    /// Determines the feature decision for a feature flag, considering holdout, experiment and rollout
+    /// - Parameters:
+    ///   - config: The project configuration.
+    ///   - featureFlag: The feature flag to evaluate.
+    ///   - user: The user context.
+    ///   - userProfileTracker: Optional tracker for user profile data.
+    ///   - options: Optional decision options.
+    /// - Returns: A `DecisionResponse` with the feature decision (if any) and reasons.
     func getDecisionForFlag(config: ProjectConfig,
                             featureFlag: FeatureFlag,
                             user: OptimizelyUserContext,
@@ -274,7 +282,7 @@ class DefaultDecisionService: OPTDecisionService {
         }
     }
     
-    /// Determines the feature decision for a feature flag, considering experiments and holdouts.
+    /// Determines the feature decision for a feature flag, considering experiments
     /// - Parameters:
     ///   - config: The project configuration.
     ///   - featureFlag: The feature flag to evaluate.

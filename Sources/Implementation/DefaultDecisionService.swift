@@ -226,23 +226,11 @@ class DefaultDecisionService: OPTDecisionService {
         var decisions = [DecisionResponse<FeatureDecision>]()
         
         for featureFlag in featureFlags {
-            var decisionResponse = getVariationForFeature(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker)
+            let flagDecisionResponse = getDecisionForFlag(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker)
+            reasons.merge(flagDecisionResponse.reasons)
             
-            reasons.merge(decisionResponse.reasons)
-            
-            if let decision = decisionResponse.result {
+            if let decision = flagDecisionResponse.result {
                 decisions.append(DecisionResponse(result: decision, reasons: reasons))
-                continue
-            }
-            
-            decisionResponse = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user)
-            
-            reasons.merge(decisionResponse.reasons)
-            
-            if let decision = decisionResponse.result {
-                decisions.append(DecisionResponse(result: decision, reasons: reasons))
-            } else {
-                decisions.append(DecisionResponse(result: nil, reasons: reasons))
             }
         }
         
@@ -254,6 +242,43 @@ class DefaultDecisionService: OPTDecisionService {
         return decisions
     }
     
+    func getDecisionForFlag(config: ProjectConfig,
+                            featureFlag: FeatureFlag,
+                            user: OptimizelyUserContext,
+                            userProfileTracker: UserProfileTracker? = nil,
+                            options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
+        let reasons = DecisionReasons(options: options)
+        
+        let holdouts = config.getHoldoutForFlag(id: featureFlag.id)
+        for holdout in holdouts {
+            let holdoutDecision = getVariationForHoldout(config: config,
+                                                         flagKey: featureFlag.key,
+                                                         holdout: holdout,
+                                                         user: user)
+            reasons.merge(holdoutDecision.reasons)
+            if let variation = holdoutDecision.result {
+                let featureDicision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
+                return DecisionResponse(result: featureDicision, reasons: reasons)
+            }
+        }
+        
+        let flagExpDecision = getVariationForFeatureExperiments(config: config, featureFlag: featureFlag, user: user, userProfileTracker: userProfileTracker)
+        reasons.merge(flagExpDecision.reasons)
+        
+        if let decision = flagExpDecision.result {
+            return DecisionResponse(result: decision, reasons: reasons)
+        }
+        
+        let rolloutDecision = getVariationForFeatureRollout(config: config, featureFlag: featureFlag, user: user)
+        reasons.merge(rolloutDecision.reasons)
+        
+        if let decision = rolloutDecision.result {
+            return DecisionResponse(result: decision, reasons: reasons)
+        } else {
+            return DecisionResponse(result: nil, reasons: reasons)
+        }
+    }
+    
     /// Determines the feature decision for a feature flag, considering experiments and holdouts.
     /// - Parameters:
     ///   - config: The project configuration.
@@ -262,25 +287,12 @@ class DefaultDecisionService: OPTDecisionService {
     ///   - userProfileTracker: Optional tracker for user profile data.
     ///   - options: Optional decision options.
     /// - Returns: A `DecisionResponse` with the feature decision (if any) and reasons.
-    func getVariationForFeature(config: ProjectConfig,
+    func getVariationForFeatureExperiments(config: ProjectConfig,
                                 featureFlag: FeatureFlag,
                                 user: OptimizelyUserContext,
                                 userProfileTracker: UserProfileTracker? = nil,
                                 options: [OptimizelyDecideOption]? = nil) -> DecisionResponse<FeatureDecision> {
         let reasons = DecisionReasons(options: options)
-        
-        let holdouts = config.getHoldoutForFlag(id: featureFlag.id)
-        for holdout in holdouts {
-            let dicisionResponse = getVariationForHoldout(config: config,
-                                                          flagKey: featureFlag.key,
-                                                          holdout: holdout,
-                                                          user: user)
-            reasons.merge(dicisionResponse.reasons)
-            if let variation = dicisionResponse.result {
-                let featureDicision = FeatureDecision(experiment: holdout, variation: variation, source: Constants.DecisionSource.holdout.rawValue)
-                return DecisionResponse(result: featureDicision, reasons: reasons)
-            }
-        }
         
         let experimentIds = featureFlag.experimentIds
         if experimentIds.isEmpty {

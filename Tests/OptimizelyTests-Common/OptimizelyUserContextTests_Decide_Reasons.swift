@@ -17,7 +17,6 @@
 import XCTest
 
 class OptimizelyUserContextTests_Decide_Reasons: XCTestCase {
-    /// Need to add testcases for holdout
     let kUserId = "tester"
     
     var optimizely: OptimizelyClient!

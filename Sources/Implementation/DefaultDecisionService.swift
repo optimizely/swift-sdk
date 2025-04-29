@@ -214,7 +214,6 @@ class DefaultDecisionService: OPTDecisionService {
                                     user: OptimizelyUserContext,
                                     options: [OptimizelyDecideOption]? = nil) -> [DecisionResponse<FeatureDecision>] {
         
-        let reasons = DecisionReasons(options: options)
         let userId = user.userId
         let ignoreUPS = (options ?? []).contains(.ignoreUserProfileService)
         var profileTracker: UserProfileTracker?
@@ -227,11 +226,7 @@ class DefaultDecisionService: OPTDecisionService {
         
         for featureFlag in featureFlags {
             let flagDecisionResponse = getDecisionForFlag(config: config, featureFlag: featureFlag, user: user, userProfileTracker: profileTracker)
-            reasons.merge(flagDecisionResponse.reasons)
-            
-            if let decision = flagDecisionResponse.result {
-                decisions.append(DecisionResponse(result: decision, reasons: reasons))
-            }
+            decisions.append(flagDecisionResponse)
         }
         
         // save profile

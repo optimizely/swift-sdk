@@ -26,6 +26,7 @@ class DecisionListenerTests_Holdouts: XCTestCase {
     var kAttributesCountryNotMatch: [String: Any] = ["country": "ca"]
     
     let kFeatureKey = "feature_1"
+    let kFeatureId = "4482920077"
     
     let kVariableKeyString = "s_foo"
     let kVariableKeyInt = "i_42"
@@ -115,6 +116,78 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    func testDecisionListenerDecideWithIncludedFlags() {
+        var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
+        holdout.includedFlags = [kFeatureId]
+        optimizely.config!.project.holdouts = [holdout]
+        
+        let exp = expectation(description: "x")
+        let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
+        
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(type, Constants.DecisionType.flag.rawValue)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.flagKey] as! String, self.kFeatureKey)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.enabled] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "key_holdout_variation")
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.ruleKey] as! String, "key_holdout")
+            exp.fulfill()
+        }
+        
+        _ = user.decide(key: kFeatureKey)
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func testDecisionListenerDecideWithExcludedFlags() {
+        var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
+        holdout.excludedFlags = [kFeatureId]
+        optimizely.config!.project.holdouts = [holdout]
+        
+        let exp = expectation(description: "x")
+        let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
+        
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(type, Constants.DecisionType.flag.rawValue)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.flagKey] as! String, self.kFeatureKey)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.enabled] as! Bool, true)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "3324490633")
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.ruleKey] as! String, "3332020515")
+            exp.fulfill()
+        }
+        
+        _ = user.decide(key: kFeatureKey)
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func testDecisionListenerDecideWithMultipleHoldouts() {
+        var holdout = try! OTUtils.model(from: sampleHoldout) as Holdout
+        holdout.excludedFlags = [kFeatureId]
+        
+        var holdout_2 = holdout
+        holdout_2.key = "holdout_key_2"
+        holdout_2.id = "holdout_id_2"
+        holdout_2.includedFlags = [kFeatureId]
+        
+        optimizely.config!.project.holdouts = [holdout, holdout_2]
+        
+        let exp = expectation(description: "x")
+        let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
+        
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(type, Constants.DecisionType.flag.rawValue)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.flagKey] as! String, self.kFeatureKey)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.enabled] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "key_holdout_variation")
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.ruleKey] as! String, "holdout_key_2")
+            exp.fulfill()
+        }
+        
+        _ = user.decide(key: kFeatureKey)
+        wait(for: [exp], timeout: 1)
+    }
+    
     func testDecisionListener_DecisionEventDispatched_withSendFlagDecisions() {
         let user = optimizely.createUserContext(userId: kUserId, attributes: kAttributesCountryMatch)
         
@@ -173,6 +246,27 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    func testDecisionListenerDecideForKeys() {
+        let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
+        
+        var count = 0
+        notificationCenter.clearAllNotificationListeners()
+        _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
+            XCTAssertEqual(type, Constants.DecisionType.flag.rawValue)
+            XCTAssertEqual(userId, user.userId)
+            XCTAssertEqual(attributes!["country"] as! String, "US")
+            
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.flagKey])
+            XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.enabled])
+            count += 1
+        }
+        
+        _ = user.decide(keys: [kFeatureKey, kFeatureKey, kFeatureKey, kFeatureKey])
+        sleep(1)
+        
+        XCTAssertEqual(count, 4)
+    }
+    
     func testDecisionListenerDecideAll() {
         let user = optimizely.createUserContext(userId: kUserId, attributes:["country": "US"])
         
@@ -193,10 +287,4 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         
         XCTAssertEqual(count, 3)
     }
-    
-//    func testFlagWithHoldout() {
-//        // global
-//        // include
-//        // exclude
-//    }
 }

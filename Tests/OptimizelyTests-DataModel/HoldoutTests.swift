@@ -21,9 +21,8 @@ import XCTest
 
 class HoldoutTests: XCTestCase {
     static var variationData: [String: Any] = ["id": "553339214",
-                                            "key": "house",
-                                            "featureEnabled": true,
-                                            "variables": [["id": "553339214", "value": "100"]]]
+                                               "key": "house",
+                                               "featureEnabled": true]
     
     static var trafficAllocationData: [String: Any] = ["entityId": "553339214", "endOfRange": 5000]
     

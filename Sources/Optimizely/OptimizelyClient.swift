@@ -804,7 +804,7 @@ extension OptimizelyClient {
         return (source == Constants.DecisionSource.featureTest.rawValue && decision?.variation != nil) || config.sendFlagDecisions
     }
     
-    func sendImpressionEvent(experiment: Experiment?,
+    func sendImpressionEvent(experiment: ExperimentCore?,
                              variation: Variation?,
                              userId: String,
                              attributes: OptimizelyAttributes? = nil,
@@ -892,7 +892,7 @@ extension OptimizelyClient {
 
 extension OptimizelyClient {
     
-    func sendActivateNotification(experiment: Experiment,
+    func sendActivateNotification(experiment: ExperimentCore,
                                   variation: Variation,
                                   userId: String,
                                   attributes: OptimizelyAttributes?,

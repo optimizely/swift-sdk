@@ -480,7 +480,13 @@ extension BatchEventBuilderTests_Events {
         fakeOptimizelyManager.config!.project!.sendFlagDecisions = nil
     }
     
-    func testImpressionEventWithUserInHoldout() {
+    
+}
+
+// MARK:- Holdouts
+
+extension BatchEventBuilderTests_Events {
+    func testImpressionEvent_UserInHoldout() {
         let eventDispatcher2 = MockEventDispatcher()
         let optimizely = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
         
@@ -490,9 +496,8 @@ extension BatchEventBuilderTests_Events {
         optimizely.config?.project.holdouts = [holdout]
         
         let exp = expectation(description: "Wait for event to dispatch")
-        optimizely.config!.project!.sendFlagDecisions = true
-        
-        _ = optimizely.isFeatureEnabled(featureKey: featureKey, userId: userId)
+        let user = optimizely.createUserContext(userId: userId)
+        _  = user.decide(key: featureKey)
         
         let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
         if result == XCTWaiter.Result.timedOut {
@@ -510,7 +515,107 @@ extension BatchEventBuilderTests_Events {
         } else {
             XCTFail("No event found")
         }
-        optimizely.config!.project!.sendFlagDecisions = nil
+    }
+    
+    func testImpressionEvent_UserInHoldout_IncludedFlags() {
+        let eventDispatcher2 = MockEventDispatcher()
+        let optimizely = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
+        
+        try! optimizely.start(datafile: datafile)
+        
+        var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
+        holdout.includedFlags = ["4482920077"]
+        optimizely.config?.project.holdouts = [holdout]
+        
+        let exp = expectation(description: "Wait for event to dispatch")
+        
+        let user = optimizely.createUserContext(userId: userId)
+        _  = user.decide(key: featureKey)
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
+        if result == XCTWaiter.Result.timedOut {
+            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+            let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+            let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+            let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+            
+            let metaData = decision["metadata"] as! Dictionary<String, Any>
+            XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.holdout.rawValue)
+            XCTAssertEqual(metaData["rule_key"] as! String, "holdout_key")
+            XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
+            XCTAssertEqual(metaData["variation_key"] as! String, "holdout_a")
+            XCTAssertFalse(metaData["enabled"] as! Bool)
+        } else {
+            XCTFail("No event found")
+        }
+    }
+    
+    func testImpressionEvent_UserNotInHoldout_ExcludedFlags() {
+        let eventDispatcher2 = MockEventDispatcher()
+        let optimizely = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
+        
+        try! optimizely.start(datafile: datafile)
+        
+        var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
+        holdout.excludedFlags = ["4482920077"]
+        optimizely.config?.project.holdouts = [holdout]
+        
+        let exp = expectation(description: "Wait for event to dispatch")
+        
+        let user = optimizely.createUserContext(userId: userId)
+        _  = user.decide(key: featureKey)
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
+        if result == XCTWaiter.Result.timedOut {
+            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+            let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+            let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+            let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+            
+            let metaData = decision["metadata"] as! Dictionary<String, Any>
+            XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+            XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
+            XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
+            XCTAssertEqual(metaData["variation_key"] as! String, "a")
+            XCTAssertTrue(metaData["enabled"] as! Bool)
+        } else {
+            XCTFail("No event found")
+        }
+    }
+    
+    func testImpressionEvent_UserNotInHoldout_MissesTrafficAllocation() {
+        let eventDispatcher2 = MockEventDispatcher()
+        let optimizely = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
+        
+        try! optimizely.start(datafile: datafile)
+        
+        var holdout: Holdout = try! OTUtils.model(from: sampleHoldout)
+        /// Set traffic allocation to gero
+        holdout.trafficAllocation[0].endOfRange = 0
+        holdout.includedFlags = ["4482920077"]
+        optimizely.config?.project.holdouts = [holdout]
+        
+        let exp = expectation(description: "Wait for event to dispatch")
+        
+        let user = optimizely.createUserContext(userId: userId)
+        _  = user.decide(key: featureKey)
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
+        if result == XCTWaiter.Result.timedOut {
+            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+            let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
+            let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
+            let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
+            
+            let metaData = decision["metadata"] as! Dictionary<String, Any>
+            XCTAssertEqual(metaData["rule_type"] as! String, Constants.DecisionSource.featureTest.rawValue)
+            XCTAssertEqual(metaData["rule_key"] as! String, "exp_with_audience")
+            XCTAssertEqual(metaData["flag_key"] as! String, "feature_1")
+            XCTAssertEqual(metaData["variation_key"] as! String, "a")
+            XCTAssertTrue(metaData["enabled"] as! Bool)
+        } else {
+            XCTFail("No event found")
+        }
     }
 }
 

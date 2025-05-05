@@ -38,15 +38,6 @@ protocol OPTBucketer {
                           bucketingId: String) -> DecisionResponse<Variation>
     
     /**
-     Bucket a bucketingId into an experiment.
-     - Parameter experiment: The rule in which to bucket the bucketingId.
-     - Parameter bucketingId: The ID to bucket. This must be a non-null, non-empty string.
-     - Returns: The variation the bucketingId was bucketed into.
-     */
-    func bucketToVariation(experiment: ExperimentCore,
-                           bucketingId: String) -> DecisionResponse<Variation>
-
-    /**
      Hash the bucketing ID and map it to the range [0, 10000).
      - Parameter bucketingId: The ID for which to generate the hash and bucket values.
      - Returns: A value in the range [0, 10000).

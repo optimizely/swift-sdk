@@ -2046,6 +2046,8 @@
 		989428BC2DBFA431008BA1C8 /* MockBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989428B22DBFA431008BA1C8 /* MockBucketer.swift */; };
 		989428BD2DBFA431008BA1C8 /* MockBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989428B22DBFA431008BA1C8 /* MockBucketer.swift */; };
 		989428BE2DBFA431008BA1C8 /* MockBucketer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989428B22DBFA431008BA1C8 /* MockBucketer.swift */; };
+		989428C02DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989428BF2DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift */; };
+		989428C12DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989428BF2DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift */; };
 		98AC97E22DAE4579001405DD /* HoldoutConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC97E12DAE4579001405DD /* HoldoutConfig.swift */; };
 		98AC97E32DAE4579001405DD /* HoldoutConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC97E12DAE4579001405DD /* HoldoutConfig.swift */; };
 		98AC97E42DAE4579001405DD /* HoldoutConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC97E12DAE4579001405DD /* HoldoutConfig.swift */; };
@@ -2516,6 +2518,7 @@
 		984FE5102CC8AA88004F6F41 /* UserProfileTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTracker.swift; sourceTree = "<group>"; };
 		987F11D92AF3F56F0083D3F9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		989428B22DBFA431008BA1C8 /* MockBucketer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBucketer.swift; sourceTree = "<group>"; };
+		989428BF2DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionListenerTest_Holdouts.swift; sourceTree = "<group>"; };
 		98AC97E12DAE4579001405DD /* HoldoutConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldoutConfig.swift; sourceTree = "<group>"; };
 		98AC97F22DAE9685001405DD /* HoldoutConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldoutConfigTests.swift; sourceTree = "<group>"; };
 		98AC98452DB7B762001405DD /* BucketTests_HoldoutToVariation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketTests_HoldoutToVariation.swift; sourceTree = "<group>"; };
@@ -3033,6 +3036,7 @@
 				6E75199622C5211100B2B157 /* DatafileHandlerTests.swift */,
 				6E75199822C5211100B2B157 /* DataStoreTests.swift */,
 				6E75199022C5211100B2B157 /* DecisionListenerTests.swift */,
+				989428BF2DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift */,
 				6E981FC1232C363300FADDD6 /* DecisionListenerTests_Datafile.swift */,
 				6E27ECBD266FD78600B4A6D4 /* DecisionReasonsTests.swift */,
 				6E75198022C5211100B2B157 /* DecisionServiceTests_Experiments.swift */,
@@ -4910,6 +4914,7 @@
 				6EC6DD4C24ABF89B0017D296 /* OptimizelyUserContext.swift in Sources */,
 				8464087D28130D3200CCF97D /* Integration.swift in Sources */,
 				6E7517E922C520D400B2B157 /* DefaultDecisionService.swift in Sources */,
+				989428C02DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift in Sources */,
 				6E5D12282638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E9B116A22C5487100C22D81 /* BucketTests_Base.swift in Sources */,
 				6E9B115F22C5487100C22D81 /* MurmurTests.swift in Sources */,
@@ -5192,6 +5197,7 @@
 				6E7517CB22C520D400B2B157 /* DefaultBucketer.swift in Sources */,
 				845945C1287758A000D13E11 /* OdpConfig.swift in Sources */,
 				8464087528130D3200CCF97D /* Integration.swift in Sources */,
+				989428C12DBFDCE5008BA1C8 /* DecisionListenerTest_Holdouts.swift in Sources */,
 				6E5D12202638DDF4000ABFC3 /* MockEventDispatcher.swift in Sources */,
 				6E9B115022C5486E00C22D81 /* BucketTests_Base.swift in Sources */,
 				6E9B114522C5486E00C22D81 /* MurmurTests.swift in Sources */,

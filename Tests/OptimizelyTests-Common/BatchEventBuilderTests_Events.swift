@@ -58,6 +58,10 @@ class BatchEventBuilderTests_Events: XCTestCase {
     override func tearDown() {
         Utils.sdkVersion = OPTIMIZELYSDKVERSION
         Utils.swiftSdkClientName = "swift-sdk"
+        optimizely?.close()
+        optimizely = nil
+        optimizely?.eventDispatcher = nil
+        super.tearDown()
     }
     
     func testCreateImpressionEvent() {
@@ -479,8 +483,6 @@ extension BatchEventBuilderTests_Events {
         variation.featureEnabled = false
         fakeOptimizelyManager.config!.project!.sendFlagDecisions = nil
     }
-    
-    
 }
 
 // MARK:- Holdouts
@@ -488,7 +490,7 @@ extension BatchEventBuilderTests_Events {
 extension BatchEventBuilderTests_Events {
     func testImpressionEvent_UserInHoldout() {
         let eventDispatcher2 = MockEventDispatcher()
-        let optimizely = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
+        var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
         
         try! optimizely.start(datafile: datafile)
         
@@ -499,9 +501,13 @@ extension BatchEventBuilderTests_Events {
         let user = optimizely.createUserContext(userId: userId)
         _  = user.decide(key: featureKey)
         
-        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
-        if result == XCTWaiter.Result.timedOut {
-            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            exp.fulfill()
+        }
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.2)
+        if result == XCTWaiter.Result.completed {
+            let event = getFirstEventJSON(client: optimizely)!
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
             let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
@@ -515,11 +521,12 @@ extension BatchEventBuilderTests_Events {
         } else {
             XCTFail("No event found")
         }
+        
     }
     
     func testImpressionEvent_UserInHoldout_IncludedFlags() {
         let eventDispatcher2 = MockEventDispatcher()
-        let optimizely = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
+        var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
         
         try! optimizely.start(datafile: datafile)
         
@@ -532,9 +539,15 @@ extension BatchEventBuilderTests_Events {
         let user = optimizely.createUserContext(userId: userId)
         _  = user.decide(key: featureKey)
         
-        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
-        if result == XCTWaiter.Result.timedOut {
-            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+        
+        // Add a delay before evaluating getFirstEventJSON
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            exp.fulfill() // Fulfill the expectation after the delay
+        }
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.2)
+        if result == XCTWaiter.Result.completed {
+            let event = getFirstEventJSON(client: optimizely)!
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
             let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
@@ -548,11 +561,13 @@ extension BatchEventBuilderTests_Events {
         } else {
             XCTFail("No event found")
         }
+        optimizely = nil
+        
     }
     
     func testImpressionEvent_UserNotInHoldout_ExcludedFlags() {
         let eventDispatcher2 = MockEventDispatcher()
-        let optimizely = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
+        var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: "123456", eventDispatcher: eventDispatcher2)
         
         try! optimizely.start(datafile: datafile)
         
@@ -565,9 +580,14 @@ extension BatchEventBuilderTests_Events {
         let user = optimizely.createUserContext(userId: userId)
         _  = user.decide(key: featureKey)
         
-        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
-        if result == XCTWaiter.Result.timedOut {
-            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+        // Add a delay before evaluating getFirstEventJSON
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            exp.fulfill() // Fulfill the expectation after the delay
+        }
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.2)
+        if result == XCTWaiter.Result.completed {
+            let event = getFirstEventJSON(client: optimizely)!
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
             let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
@@ -585,7 +605,7 @@ extension BatchEventBuilderTests_Events {
     
     func testImpressionEvent_UserNotInHoldout_MissesTrafficAllocation() {
         let eventDispatcher2 = MockEventDispatcher()
-        let optimizely = OptimizelyClient(sdkKey: "12345", eventDispatcher: eventDispatcher2)
+        var optimizely: OptimizelyClient! = OptimizelyClient(sdkKey: "123457", eventDispatcher: eventDispatcher2)
         
         try! optimizely.start(datafile: datafile)
         
@@ -600,9 +620,13 @@ extension BatchEventBuilderTests_Events {
         let user = optimizely.createUserContext(userId: userId)
         _  = user.decide(key: featureKey)
         
-        let result = XCTWaiter.wait(for: [exp], timeout: 0.1)
-        if result == XCTWaiter.Result.timedOut {
-            let event = getFirstEventJSON(dispatcher: eventDispatcher2)!
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            exp.fulfill() // Fulfill the expectation after the delay
+        }
+        
+        let result = XCTWaiter.wait(for: [exp], timeout: 0.2)
+        if result == XCTWaiter.Result.completed {
+            let event = getFirstEventJSON(client: optimizely)!
             let visitor = (event["visitors"] as! Array<Dictionary<String, Any>>)[0]
             let snapshot = (visitor["snapshots"] as! Array<Dictionary<String, Any>>)[0]
             let decision = (snapshot["decisions"]  as! Array<Dictionary<String, Any>>)[0]
@@ -635,7 +659,14 @@ extension BatchEventBuilderTests_Events {
         return json
     }
     
-    func  getEventJSON(data: Data) -> [String: Any]? {
+    func getFirstEventJSON(client: OptimizelyClient) -> [String: Any]? {
+        guard let event = getFirstEvent(dispatcher: client.eventDispatcher as! MockEventDispatcher) else { return nil }
+        
+        let json = try! JSONSerialization.jsonObject(with: event.body, options: .allowFragments) as! [String: Any]
+        return json
+    }
+    
+    func getEventJSON(data: Data) -> [String: Any]? {
         let json = try! JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: Any]
         return json
     }

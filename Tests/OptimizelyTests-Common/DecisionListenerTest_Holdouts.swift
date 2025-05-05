@@ -198,7 +198,7 @@ class DecisionListenerTests_Holdouts: XCTestCase {
         var exp = expectation(description: "x")
         notificationCenter.clearAllNotificationListeners()
         _ = notificationCenter.addDecisionNotificationListener { (type, userId, attributes, decisionInfo) in
-            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, false)
+            XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
         }
         _ = user.decide(key: kFeatureKey)

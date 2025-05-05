@@ -431,11 +431,12 @@ class DefaultDecisionService: OPTDecisionService {
             logger.i(info)
             
             // bucket user into holdout variation
-            let decisionResponse = bucketer.bucketToVariation(experiment: holdout, bucketingId: bucketingId)
+            let decisionResponse = (bucketer as? DefaultBucketer)?.bucketToVariation(experiment: holdout, bucketingId: bucketingId)
+            if let reason = decisionResponse?.reasons {
+                reasons.merge(reason)
+            }
             
-            reasons.merge(decisionResponse.reasons)
-            
-            bucketedVariation = decisionResponse.result
+            bucketedVariation = decisionResponse?.result
             
             if let variation = bucketedVariation {
                 let info = LogMessage.userBucketedIntoVariationInHoldout(userId, holdout.key, variation.key)

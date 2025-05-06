@@ -16,7 +16,9 @@
 
 import Foundation
 
-protocol ExperimentCore: OptimizelyExperiment {
+protocol ExperimentCore {
+    var id: String { get }
+    var key: String { get }
     var audiences: String { get set }
     var layerId: String { get }
     var variations: [Variation] { get }

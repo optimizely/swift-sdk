@@ -559,6 +559,6 @@ extension OptimizelyUserContextTests_Decide_Holdouts {
         XCTAssertEqual(decision.variationKey, "key_holdout_variation")
         XCTAssertFalse(decision.enabled)
         optimizely.eventLock.sync{}
-        XCTAssert(eventDispatcher.events.isEmpty)
+        XCTAssertFalse(eventDispatcher.events.isEmpty)
     }
 }

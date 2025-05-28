@@ -37,12 +37,16 @@ class DecisionListenerTests_Datafile: XCTestCase {
         var notificationVariation: String?
         var notificationExperiment: String?
         var notificationType: String?
+        var expId: String?
+        var varId: String?
         
         let exp = expectation(description: "x")
 
         _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
             notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
             notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
+            expId = decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] as? String
+            varId = decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] as? String
             notificationType = type
             exp.fulfill()
         })
@@ -56,6 +60,8 @@ class DecisionListenerTests_Datafile: XCTestCase {
         XCTAssertEqual(variation, "all_traffic_variation")
         XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_empty_conditions")
         XCTAssertEqual(notificationVariation, "all_traffic_variation")
+        XCTAssertEqual(expId, "10390977723")
+        XCTAssertEqual(varId, "10416523170")
         XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
     }
     
@@ -63,12 +69,18 @@ class DecisionListenerTests_Datafile: XCTestCase {
         var notificationVariation: String?
         var notificationExperiment: String?
         var notificationType: String?
+        var expId: String?
+        var varId: String?
         
         let exp = expectation(description: "x")
 
         _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
             notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
             notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
+            expId = decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] as? String
+            varId = decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] as? String
+            expId = decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] as? String
+            varId = decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] as? String
             notificationType = type
             exp.fulfill()
         })
@@ -81,6 +93,8 @@ class DecisionListenerTests_Datafile: XCTestCase {
 
         XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(notificationVariation, nil)
+        XCTAssertEqual(expId, "10390977714")
+        XCTAssertEqual(varId, nil)
         XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
         notificationCenter.clearAllNotificationListeners()
     }
@@ -93,12 +107,16 @@ class DecisionListenerTests_Datafile: XCTestCase {
         var notificationVariation: String?
         var notificationExperiment: String?
         var notificationType: String?
+        var expId: String?
+        var varId: String?
         
         let exp = expectation(description: "x")
 
         _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
             notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
             notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
+            expId = decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] as? String
+            varId = decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] as? String
             notificationType = type
             exp.fulfill()
        })
@@ -111,6 +129,8 @@ class DecisionListenerTests_Datafile: XCTestCase {
         XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_empty_conditions")
         XCTAssertEqual(notificationVariation, "all_traffic_variation")
         XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
+        XCTAssertEqual(expId, "10390977723")
+        XCTAssertEqual(varId, "10416523170")
         notificationCenter.clearAllNotificationListeners()
     }
     
@@ -118,12 +138,15 @@ class DecisionListenerTests_Datafile: XCTestCase {
         var notificationVariation: String?
         var notificationExperiment: String?
         var notificationType: String?
-        
+        var expId: String?
+        var varId: String?
         let exp = expectation(description: "x")
 
         _ = notificationCenter.addDecisionNotificationListener(decisionListener: { (type, _, _, decisionInfo) in
             notificationExperiment = decisionInfo[Constants.ExperimentDecisionInfoKeys.experiment] as? String
             notificationVariation = decisionInfo[Constants.ExperimentDecisionInfoKeys.variation] as? String
+            expId = decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] as? String
+            varId = decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] as? String
             notificationType = type
             exp.fulfill()
         })
@@ -133,6 +156,8 @@ class DecisionListenerTests_Datafile: XCTestCase {
 
         XCTAssertEqual(notificationExperiment, "ab_running_exp_audience_combo_exact_foo_or_true__and__42_or_4_2")
         XCTAssertEqual(notificationVariation, nil)
+        XCTAssertEqual(expId, "10390977714")
+        XCTAssertEqual(varId, nil)
         XCTAssertEqual(notificationType, Constants.DecisionType.abTest.rawValue)
         notificationCenter.clearAllNotificationListeners()
     }

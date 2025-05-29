@@ -18,6 +18,7 @@ import Foundation
 
 enum LogMessage {
     case experimentNotRunning(_ key: String)
+    case holdoutNotRunning(_ key: String)
     case featureEnabledForUser(_ key: String, _ userId: String)
     case featureNotEnabledForUser(_ key: String, _ userId: String)
     case featureHasNoExperiments(_ key: String)
@@ -34,7 +35,9 @@ enum LogMessage {
     case userAssignedToBucketValue(_ bucket: Int, _ userId: String)
     case userMappedToForcedVariation(_ userId: String, _ expId: String, _ varId: String)
     case userMeetsConditionsForTargetingRule(_ userId: String, _ rule: String)
+    case userMeetsConditionsForHoldout(_ userId: String, _ holdoutKey: String)
     case userDoesntMeetConditionsForTargetingRule(_ userId: String, _ rule: String)
+    case userDoesntMeetConditionsForHoldout(_ userId: String, _ holdoutKey: String)
     case userBucketedIntoTargetingRule(_ userId: String, _ rule: String)
     case userNotBucketedIntoTargetingRule(_ userId: String, _ rule: String)
     case userHasForcedDecision(_ userId: String, _ flagKey: String, _ ruleKey: String?, _ varKey: String)
@@ -44,8 +47,10 @@ enum LogMessage {
     case userHasNoForcedVariation(_ userId: String)
     case userHasNoForcedVariationForExperiment(_ userId: String, _ expKey: String)
     case userBucketedIntoVariationInExperiment(_ userId: String, _ expKey: String, _ varKey: String)
+    case userBucketedIntoVariationInHoldout(_ userId: String, _ expKey: String, _ varKey: String)
     case userNotBucketedIntoVariation(_ userId: String)
     case userBucketedIntoInvalidVariation(_ id: String)
+    case userNotBucketedIntoHoldoutVariation(_ userId: String)
     case userBucketedIntoExperimentInGroup(_ userId: String, _ expKey: String, _ group: String)
     case userNotBucketedIntoExperimentInGroup(_ userId: String, _ expKey: String, _ group: String)
     case userNotBucketedIntoAnyExperimentInGroup(_ userId: String, _ group: String)
@@ -76,6 +81,7 @@ extension LogMessage: CustomStringConvertible {
         
         switch self {
         case .experimentNotRunning(let key):                                    message = "Experiment (\(key)) is not running."
+        case .holdoutNotRunning(let key):                                       message = "Holdout (\(key)) is not running."
         case .featureEnabledForUser(let key, let userId):                       message = "Feature (\(key)) is enabled for user (\(userId))."
         case .featureNotEnabledForUser(let key, let userId):                    message = "Feature (\(key)) is not enabled for user (\(userId))."
         case .featureHasNoExperiments(let key):                                 message = "Feature (\(key)) is not attached to any experiments."
@@ -91,10 +97,12 @@ extension LogMessage: CustomStringConvertible {
         case .savedVariationInUserProfile(let varId, let expId, let userId):    message = "Saved variation (\(varId)) of experiment (\(expId)) for user (\(userId))."
         case .userAssignedToBucketValue(let bucket, let userId):                message = "Assigned bucket (\(bucket)) to user with bucketing ID (\(userId))."
         case .userMappedToForcedVariation(let userId, let expId, let varId):    message = "Set variation (\(varId)) for experiment (\(expId)) and user (\(userId)) in the forced variation map."
-        case .userMeetsConditionsForTargetingRule(let userId, let rule):       message = "User (\(userId)) meets conditions for targeting rule (\(rule))."
-        case .userDoesntMeetConditionsForTargetingRule(let userId, let rule):  message = "User (\(userId)) does not meet conditions for targeting rule (\(rule))."
-        case .userBucketedIntoTargetingRule(let userId, let rule):             message = "User (\(userId)) is in the traffic group of targeting rule (\(rule))."
-        case .userNotBucketedIntoTargetingRule(let userId, let rule):          message = "User (\(userId)) is not in the traffic group for targeting rule (\(rule)). Checking (Everyone Else) rule now."
+        case .userMeetsConditionsForTargetingRule(let userId, let rule):        message = "User (\(userId)) meets conditions for targeting rule (\(rule))."
+        case .userMeetsConditionsForHoldout(let userId, let holdoutKey):        message = "User (\(userId)) meets conditions for holdout(\(holdoutKey))."
+        case .userDoesntMeetConditionsForTargetingRule(let userId, let rule):   message = "User (\(userId)) does not meet conditions for targeting rule (\(rule))."
+        case .userDoesntMeetConditionsForHoldout(let userId, let holdoutKey):   message = "User (\(userId)) does not meet conditions for holdout (\(holdoutKey))."
+        case .userBucketedIntoTargetingRule(let userId, let rule):              message = "User (\(userId)) is in the traffic group of targeting rule (\(rule))."
+        case .userNotBucketedIntoTargetingRule(let userId, let rule):           message = "User (\(userId)) is not in the traffic group for targeting rule (\(rule)). Checking (Everyone Else) rule now."
         case .userHasForcedDecision(let userId, let flagKey, let ruleKey, let varKey):
             let target = (ruleKey != nil) ? "flag (\(flagKey)), rule (\(ruleKey!))" : "flag (\(flagKey))"
             message = "Variation (\(varKey)) is mapped to \(target) and user (\(userId)) in the forced decision map."
@@ -106,7 +114,9 @@ extension LogMessage: CustomStringConvertible {
         case .userHasNoForcedVariation(let userId):                             message = "User (\(userId)) is not in the forced variation map."
         case .userHasNoForcedVariationForExperiment(let userId, let expKey):    message = "No experiment (\(expKey)) mapped to user (\(userId)) in the forced variation map."
         case .userBucketedIntoVariationInExperiment(let userId, let expKey, let varKey): message = "User (\(userId)) is in variation (\(varKey)) of experiment (\(expKey))"
+        case .userBucketedIntoVariationInHoldout(let userId, let holdoutKey, let varKey): message = "User (\(userId)) is in variation (\(varKey)) of holdout (\(holdoutKey))"
         case .userNotBucketedIntoVariation(let userId):                         message = "User (\(userId)) is in no variation."
+        case .userNotBucketedIntoHoldoutVariation(let userId):                  message = "User (\(userId)) is in no holdout variation."
         case .userBucketedIntoInvalidVariation(let id):                         message = "Bucketed into an invalid variation id (\(id))"
         case .userBucketedIntoExperimentInGroup(let userId, let expId, let group): message = "User (\(userId)) is in experiment (\(expId)) of group (\(group))."
         case .userNotBucketedIntoExperimentInGroup(let userId, let expKey, let group): message = "User (\(userId)) is not in experiment (\(expKey)) of group (\(group))."

@@ -36,7 +36,7 @@ protocol OPTBucketer {
     func bucketExperiment(config: ProjectConfig,
                           experiment: Experiment,
                           bucketingId: String) -> DecisionResponse<Variation>
-
+    
     /**
      Hash the bucketing ID and map it to the range [0, 10000).
      - Parameter bucketingId: The ID for which to generate the hash and bucket values.

@@ -22,7 +22,7 @@ struct DecisionInfo {
     let decisionType: Constants.DecisionType
     
     /// The experiment that the decision variation belongs to.
-    var experiment: Experiment?
+    var experiment: ExperimentCore?
     
     /// The variation selected by the decision.
     var variation: Variation?
@@ -58,7 +58,7 @@ struct DecisionInfo {
     var decisionEventDispatched: Bool
     
     init(decisionType: Constants.DecisionType,
-         experiment: Experiment? = nil,
+         experiment: ExperimentCore? = nil,
          variation: Variation? = nil,
          source: String? = nil,
          feature: FeatureFlag? = nil,
@@ -140,9 +140,17 @@ struct DecisionInfo {
             decisionInfo[Constants.DecisionInfoKeys.variationKey] = variation?.key ?? NSNull()      // keep key in the map even with nil value
             decisionInfo[Constants.DecisionInfoKeys.ruleKey] = ruleKey ?? NSNull()                  //
             decisionInfo[Constants.DecisionInfoKeys.reasons] = reasons
-            decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] = decisionEventDispatched
         }
         
+        decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] = decisionEventDispatched
+        
+        if let expId = experiment?.id {
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] = expId
+        }
+        
+        if let varId = variation?.id {
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] = varId
+        }
         return decisionInfo
     }
 

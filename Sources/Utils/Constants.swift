@@ -57,6 +57,7 @@ struct Constants {
         case experiment = "experiment"
         case featureTest = "feature-test"
         case rollout = "rollout"
+        case holdout = "holdout"
     }
     
     struct DecisionInfoKeys {
@@ -88,7 +89,9 @@ struct Constants {
     }
     
     struct ExperimentDecisionInfoKeys {
+        static let experimentId = "experimentId"
         static let experiment = "experimentKey"
+        static let variationId = "variationId"
         static let variation = "variationKey"
     }
     

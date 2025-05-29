@@ -1,5 +1,11 @@
 # Optimizely Swift SDK Changelog
 
+## 5.1.1
+May 28th, 2025
+
+### Functionality Enhancement
+* Add experiment id and variation id added into decision notification payload  ([#589](https://github.com/optimizely/swift-sdk/pull/589)).
+
 ## 5.1.0
 February 4th, 2025
 

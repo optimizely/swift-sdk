@@ -17,12 +17,12 @@
 import Foundation
 
 class ProjectConfig {
-    
     var project: Project! {
         didSet {
             updateProjectDependentProps()
         }
     }
+    
     let logger = OPTLoggerFactory.getLogger()
     
     // local runtime forcedVariations [UserId: [ExperimentId: VariationId]]
@@ -40,6 +40,7 @@ class ProjectConfig {
     var allExperiments = [Experiment]()
     var flagVariationsMap = [String: [Variation]]()
     var allSegments = [String]()
+    var holdoutConfig = HoldoutConfig()
 
     // MARK: - Init
     
@@ -66,7 +67,10 @@ class ProjectConfig {
     init() {}
     
     func updateProjectDependentProps() {
+        
         self.allExperiments = project.experiments + project.groups.map { $0.experiments }.flatMap { $0 }
+        
+        holdoutConfig.allHoldouts = project.holdouts
         
         self.experimentKeyMap = {
             var map = [String: Experiment]()
@@ -155,6 +159,10 @@ class ProjectConfig {
         
     }
     
+    func getHoldoutForFlag(id: String) -> [Holdout] {
+        return holdoutConfig.getHoldoutForFlag(id: id)
+    }
+        
     func getAllRulesForFlag(_ flag: FeatureFlag) -> [Experiment] {
         var rules = flag.experimentIds.compactMap { experimentIdMap[$0] }
         let rollout = self.rolloutIdMap[flag.rolloutId]
@@ -268,6 +276,13 @@ extension ProjectConfig {
      */
     func getRollout(id: String) -> Rollout? {
         return rolloutIdMap[id]
+    }
+    
+    /**
+     * Get a Holdout object for an Id.
+     */
+    func getHoldout(id: String) -> Holdout? {
+        return holdoutConfig.getHoldout(id: id)
     }
     
     /**

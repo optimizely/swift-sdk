@@ -801,10 +801,14 @@ extension OptimizelyClient {
     
     func shouldSendDecisionEvent(source: String, decision: FeatureDecision?) -> Bool {
         guard let config = self.config else { return false }
-        return (source == Constants.DecisionSource.featureTest.rawValue && decision?.variation != nil) || config.sendFlagDecisions
+        let allowedSources: [String] = [
+            Constants.DecisionSource.featureTest.rawValue,
+            Constants.DecisionSource.holdout.rawValue
+        ]
+        return (allowedSources.contains(source) && decision?.variation != nil) || config.sendFlagDecisions
     }
     
-    func sendImpressionEvent(experiment: Experiment?,
+    func sendImpressionEvent(experiment: ExperimentCore?,
                              variation: Variation?,
                              userId: String,
                              attributes: OptimizelyAttributes? = nil,
@@ -892,7 +896,7 @@ extension OptimizelyClient {
 
 extension OptimizelyClient {
     
-    func sendActivateNotification(experiment: Experiment,
+    func sendActivateNotification(experiment: ExperimentCore,
                                   variation: Variation,
                                   userId: String,
                                   attributes: OptimizelyAttributes?,

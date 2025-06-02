@@ -22,7 +22,7 @@ class BatchEventBuilder {
     // MARK: - Impression Event
     
     static func createImpressionEvent(config: ProjectConfig,
-                                      experiment: Experiment?,
+                                      experiment: ExperimentCore?,
                                       variation: Variation?,
                                       userId: String,
                                       attributes: OptimizelyAttributes?,

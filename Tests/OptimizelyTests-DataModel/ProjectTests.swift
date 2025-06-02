@@ -22,6 +22,7 @@ class ProjectTests: XCTestCase {
     static var sampleData: [String: Any] = ["version": "4",
                                             "projectId": "11111",
                                             "experiments": [ExperimentTests.sampleData],
+                                            "holdouts": [HoldoutTests.sampleData],
                                             "audiences": [AudienceTests.sampleData],
                                             "groups": [GroupTests.sampleData],
                                             "attributes": [AttributeTests.sampleData],
@@ -49,6 +50,7 @@ extension ProjectTests {
         XCTAssert(model.version == "4")
         XCTAssert(model.projectId == "11111")
         XCTAssert(model.experiments == [try! OTUtils.model(from: ExperimentTests.sampleData)])
+        XCTAssert(model.holdouts == [try! OTUtils.model(from: HoldoutTests.sampleData)])
         XCTAssert(model.audiences == [try! OTUtils.model(from: AudienceTests.sampleData)])
         XCTAssert(model.groups == [try! OTUtils.model(from: GroupTests.sampleData)])
         XCTAssert(model.attributes == [try! OTUtils.model(from: AttributeTests.sampleData)])
@@ -208,6 +210,16 @@ extension ProjectTests {
         let model: Project = try! OTUtils.model(from: data)
         XCTAssert(model.projectId == "11111")
         XCTAssertNil(model.sendFlagDecisions)
+    }
+    
+    func testDecodeSuccessWithMissingHoldouts() {
+        var data: [String: Any] = ProjectTests.sampleData
+        data["holdouts"] = nil
+        
+        let model: Project = try! OTUtils.model(from: data)
+        XCTAssertNotNil(model)
+        XCTAssertEqual(model.holdouts, [])
+        
     }
     
 }

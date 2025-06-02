@@ -57,6 +57,7 @@ struct Constants {
         case experiment = "experiment"
         case featureTest = "feature-test"
         case rollout = "rollout"
+        case holdout = "holdout"
     }
     
     struct DecisionInfoKeys {

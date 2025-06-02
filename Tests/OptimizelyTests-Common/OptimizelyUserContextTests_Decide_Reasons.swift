@@ -17,7 +17,6 @@
 import XCTest
 
 class OptimizelyUserContextTests_Decide_Reasons: XCTestCase {
-    
     let kUserId = "tester"
     
     var optimizely: OptimizelyClient!

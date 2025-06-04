@@ -141,13 +141,8 @@ struct DecisionInfo {
             decisionInfo[Constants.DecisionInfoKeys.ruleKey] = ruleKey ?? NSNull()                  //
             decisionInfo[Constants.DecisionInfoKeys.reasons] = reasons
             decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] = decisionEventDispatched
-        
-            if let expId = experiment?.id {
-                decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] = expId
-            }
-            if let varId = variation?.id {
-                decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] = varId
-            }
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] =  experiment?.id ?? NSNull()
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] = variation?.id ?? NSNull()
         }
         
         

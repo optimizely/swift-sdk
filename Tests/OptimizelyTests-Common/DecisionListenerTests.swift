@@ -891,6 +891,8 @@ extension DecisionListenerTests {
 
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "a")  //exp = "exp_with_audience"
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.ruleKey] as! String, "exp_with_audience")
+            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] as! String, "10390977673")  //exp = "exp_with_audience"
+            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] as! String, "10389729780")
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()
@@ -925,6 +927,8 @@ extension DecisionListenerTests {
 
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.variationKey] as! String, "a")  //exp = "exp_with_audience"
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.ruleKey] as! String, "exp_with_audience")
+            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] as! String, "10390977673")  //exp = "exp_with_audience"
+            XCTAssertEqual(decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] as! String, "10389729780")
             XCTAssertNotNil(decisionInfo[Constants.DecisionInfoKeys.reasons])
             XCTAssertEqual(decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] as! Bool, true)
             exp.fulfill()

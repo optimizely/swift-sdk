@@ -140,17 +140,12 @@ struct DecisionInfo {
             decisionInfo[Constants.DecisionInfoKeys.variationKey] = variation?.key ?? NSNull()      // keep key in the map even with nil value
             decisionInfo[Constants.DecisionInfoKeys.ruleKey] = ruleKey ?? NSNull()                  //
             decisionInfo[Constants.DecisionInfoKeys.reasons] = reasons
+            decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] = decisionEventDispatched
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] =  experiment?.id ?? NSNull()
+            decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] = variation?.id ?? NSNull()
         }
         
-        decisionInfo[Constants.DecisionInfoKeys.decisionEventDispatched] = decisionEventDispatched
         
-        if let expId = experiment?.id {
-            decisionInfo[Constants.ExperimentDecisionInfoKeys.experimentId] = expId
-        }
-        
-        if let varId = variation?.id {
-            decisionInfo[Constants.ExperimentDecisionInfoKeys.variationId] = varId
-        }
         return decisionInfo
     }
 

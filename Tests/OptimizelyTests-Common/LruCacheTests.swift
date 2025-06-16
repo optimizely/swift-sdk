@@ -108,6 +108,37 @@ class LruCacheTests: XCTestCase {
         XCTAssertEqual(700, cache.peek(key: 2))
     }
 
+    func testRemoveKey() {
+        let cache = LruCache<Int, Int>(size: 3, timeoutInSecs: 1000)
+        
+        // Save a few items
+        cache.save(key: 1, value: 100)  // [1]
+        cache.save(key: 2, value: 200)  // [1, 2]
+        cache.save(key: 3, value: 300)  // [1, 2, 3]
+        
+        // Ensure they are saved
+        XCTAssertEqual(cache.peek(key: 1), 100)
+        XCTAssertEqual(cache.peek(key: 2), 200)
+        XCTAssertEqual(cache.peek(key: 3), 300)
+        
+        // Remove one key
+        cache.remove(key: 2)
+        
+        // Check it's gone
+        XCTAssertNil(cache.peek(key: 2))
+        XCTAssertNil(cache.lookup(key: 2))
+        
+        // Ensure others still exist
+        XCTAssertEqual(cache.peek(key: 1), 100)
+        XCTAssertEqual(cache.peek(key: 3), 300)
+        
+        // Remove non-existent key (should not crash or affect others)
+        cache.remove(key: 999)
+        XCTAssertEqual(cache.peek(key: 1), 100)
+        XCTAssertEqual(cache.peek(key: 3), 300)
+    }
+
+        
     func testSize_zero() {
         let cache = LruCache<Int, Int>(size: 0, timeoutInSecs: 1000)
         
@@ -132,6 +163,35 @@ class LruCacheTests: XCTestCase {
         }
         XCTAssertTrue(result, "Concurrent tasks timed out")
     }
+    
+    func testRemoveIsThreadSafe() {
+        let numThreads = 50
+        let numIterations = 100
+        
+        let cache = LruCache<Int, Int>(size: 100, timeoutInSecs: 1000)
+        
+        // Pre-fill the cache with keys
+        for i in 0..<(numThreads * numIterations) {
+            cache.save(key: i, value: i * 10)
+        }
+        
+        let result = OTUtils.runConcurrent(count: numThreads, timeoutInSecs: 10) { threadIndex in
+            let base = threadIndex * numIterations
+            for i in 0..<numIterations {
+                let key = base + i
+                cache.remove(key: key)
+                XCTAssertNil(cache.lookup(key: key))
+            }
+        }
+        
+        XCTAssertTrue(result, "Concurrent removals timed out or failed")
+        
+        // Ensure all targeted keys are removed
+        for i in 0..<(numThreads * numIterations) {
+            XCTAssertNil(cache.peek(key: i))
+        }
+    }
+
 
 }
 

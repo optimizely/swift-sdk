@@ -89,6 +89,16 @@ class LruCache<K: Hashable, V> {
         }
     }
     
+    func remove(key: K) {
+        if maxSize <= 0 { return }
+        queue.async(flags: .barrier) {
+            if var item = self.map[key] {
+                self.removeFromLink(item)
+                self.map[key] = nil
+            }
+        }
+    }
+    
     // read cache contents without order update
     func peek(key: K) -> V? {
         if maxSize <= 0 { return nil }

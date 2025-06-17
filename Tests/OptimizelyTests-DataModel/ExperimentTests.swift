@@ -56,6 +56,24 @@ extension ExperimentTests {
         XCTAssert(model.audienceIds == ["33333"])
         XCTAssert(model.audienceConditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
         XCTAssert(model.forcedVariations == ["12345": "1234567890"])
+        XCTAssert(model.cmab == nil)
+    }
+    
+    func testDecodeSuccessWithCmab() {
+        var data: [String: Any] = ExperimentTests.sampleData
+        data["cmab"] = ["trafficAllocation": 5000, "attributeIds": ["id_1", "id_2"]]
+        let model: Experiment = try! OTUtils.model(from: data)
+        
+        XCTAssert(model.id == "11111")
+        XCTAssert(model.key == "background")
+        XCTAssert(model.status == .running)
+        XCTAssert(model.layerId == "22222")
+        XCTAssert(model.variations == [try! OTUtils.model(from: VariationTests.sampleData)])
+        XCTAssert(model.trafficAllocation == [try! OTUtils.model(from: TrafficAllocationTests.sampleData)])
+        XCTAssert(model.audienceIds == ["33333"])
+        XCTAssert(model.audienceConditions == (try! OTUtils.model(from: ConditionHolderTests.sampleData)))
+        XCTAssert(model.forcedVariations == ["12345": "1234567890"])
+        XCTAssert(model.cmab == (try? OTUtils.model(from: ["trafficAllocation": 5000, "attributeIds": ["id_1", "id_2"]])))
     }
     
     func testDecodeSuccessWithMissingAudienceConditions() {

@@ -259,5 +259,22 @@ extension ProjectConfigTests {
         variation = config.getForcedVariation(experimentKey: experimentKey, userId: userId).result!
         XCTAssertEqual(variation.key, "b")
     }
-
+    
+    func testGetAttributeByKey() {
+        var projectData = ProjectTests.sampleData
+        let model: Project = try! OTUtils.model(from: projectData)
+        let projectConfig = ProjectConfig()
+        projectConfig.project = model
+        XCTAssert(projectConfig.getAttribute(key: "house") == (try? OTUtils.model(from: ["id": "553339214", "key": "house"])))
+        
+    }
+    
+    func testGetAttributeById() {
+        var projectData = ProjectTests.sampleData
+        let model: Project = try! OTUtils.model(from: projectData)
+        let projectConfig = ProjectConfig()
+        projectConfig.project = model
+        XCTAssert(projectConfig.getAttribute(id: "553339214") == (try? OTUtils.model(from: ["id": "553339214", "key": "house"])))
+        
+    }
 }

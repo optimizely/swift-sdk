@@ -34,6 +34,7 @@ class ProjectConfig {
     var experimentFeatureMap = [String: [String]]()
     var eventKeyMap = [String: Event]()
     var attributeKeyMap = [String: Attribute]()
+    var attributeIdMap = [String: Attribute]()
     var featureFlagKeyMap = [String: FeatureFlag]()
     var featureFlagKeys = [String]()
     var rolloutIdMap = [String: Rollout]()
@@ -110,6 +111,12 @@ class ProjectConfig {
         self.attributeKeyMap = {
             var map = [String: Attribute]()
             project.attributes.forEach { map[$0.key] = $0 }
+            return map
+        }()
+        
+        self.attributeIdMap = {
+            var map = [String: Attribute]()
+            project.attributes.forEach { map[$0.id] = $0 }
             return map
         }()
         
@@ -304,6 +311,13 @@ extension ProjectConfig {
      */
     func getAttribute(key: String) -> Attribute? {
         return attributeKeyMap[key]
+    }
+    
+    /**
+     * Get an attribute for a given id.
+     */
+    func getAttribute(id: String) -> Attribute? {
+        return attributeIdMap[id]
     }
     
     /**

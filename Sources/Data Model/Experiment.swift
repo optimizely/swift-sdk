@@ -35,9 +35,10 @@ struct Experiment: Codable, ExperimentCore {
     var audienceConditions: ConditionHolder?
     // datafile spec defines this as [String: Any]. Supposed to be [ExperimentKey: VariationKey]
     var forcedVariations: [String: String]
+    var cmab: Cmab?
     
     enum CodingKeys: String, CodingKey {
-        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations
+        case id, key, status, layerId, variations, trafficAllocation, audienceIds, audienceConditions, forcedVariations, cmab
     }
 
     // MARK: - OptimizelyConfig
@@ -57,7 +58,8 @@ extension Experiment: Equatable {
             lhs.trafficAllocation == rhs.trafficAllocation &&
             lhs.audienceIds == rhs.audienceIds &&
             lhs.audienceConditions == rhs.audienceConditions &&
-            lhs.forcedVariations == rhs.forcedVariations
+            lhs.forcedVariations == rhs.forcedVariations &&
+            lhs.cmab == rhs.cmab
     }
 }
 

@@ -19,7 +19,6 @@ import Foundation
 enum CmabClientError: Error, Equatable {
     case fetchFailed(String)
     case invalidResponse
-    case decodingError
     
     var message: String {
         switch self {
@@ -27,8 +26,7 @@ enum CmabClientError: Error, Equatable {
                 return message
             case .invalidResponse:
                 return "Invalid response from CMA-B server"
-            case .decodingError:
-                return "Error decoding CMA-B response"
+            
         }
     }
 }
@@ -177,7 +175,7 @@ class DefaultCmabClient: CmabClient {
                     completion(.failure(CmabClientError.invalidResponse))
                 }
             } catch {
-                completion(.failure(CmabClientError.decodingError))
+                completion(.failure(CmabClientError.invalidResponse))
             }
         }
         task.resume()

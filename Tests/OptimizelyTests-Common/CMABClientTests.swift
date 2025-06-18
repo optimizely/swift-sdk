@@ -19,212 +19,218 @@ import XCTest
 class DefaultCmabClientTests: XCTestCase {
     var client: DefaultCmabClient!
     var mockSession: MockURLSession!
+    var shortRetryConfig: CmabRetryConfig!
     
     override func setUp() {
         super.setUp()
         mockSession = MockURLSession()
-        client = DefaultCmabClient(session: mockSession)
+        shortRetryConfig = CmabRetryConfig(maxRetries: 2, initialBackoff: 0.01, maxBackoff: 0.05, backoffMultiplier: 1.0)
+        client = DefaultCmabClient(session: mockSession, retryConfig: shortRetryConfig)
     }
     
     override func tearDown() {
         client = nil
         mockSession = nil
+        shortRetryConfig = nil
         super.tearDown()
     }
     
-    func testFetchDecisionSuccess() {
-        let expectedVariationId = "variation-123"
-        let responseJSON: [String: Any] = [
+    // MARK: - Helpers
+    
+    func makeSuccessResponse(variationId: String) -> (Data, URLResponse, Error?) {
+        let json: [String: Any] = [
             "predictions": [
-                ["variation_id": expectedVariationId]
+                ["variation_id": variationId]
             ]
         ]
-        let responseData = try! JSONSerialization.data(withJSONObject: responseJSON, options: [])
-        mockSession.nextData = responseData
-        mockSession.nextResponse = HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
-                                                   statusCode: 200, httpVersion: nil, headerFields: nil)
-        mockSession.nextError = nil
-        
-        let expectation = self.expectation(description: "Completion called")
-        
-        client.fetchDecision(
-            ruleId: "abc",
-            userId: "user1",
-            attributes: ["foo": "bar"],
-            cmabUUID: "uuid"
-        ) { result in
-            switch result {
-                case .success(let variationId):
-                    XCTAssertEqual(variationId, expectedVariationId)
-                case .failure(let error):
-                    XCTFail("Expected success, got failure: \(error)")
-            }
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 2, handler: nil)
+        let data = try! JSONSerialization.data(withJSONObject: json, options: [])
+        let response = HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
+                                       statusCode: 200, httpVersion: nil, headerFields: nil)!
+        return (data, response, nil)
     }
     
-    func testFetchDecisionHttpError() {
-        mockSession.nextData = Data()
-        mockSession.nextResponse = HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
-                                                   statusCode: 500, httpVersion: nil, headerFields: nil)
-        mockSession.nextError = nil
-        
-        let expectation = self.expectation(description: "Completion called")
-        
-        client.fetchDecision(
-            ruleId: "abc",
-            userId: "user1",
-            attributes: ["foo": "bar"],
-            cmabUUID: "uuid"
-        ) { result in
-            switch result {
-                case .success(_):
-                    XCTFail("Expected failure, got success")
-                case .failure(let error):
-                    XCTAssertTrue("\(error)".contains("HTTP error code"))
-            }
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 2, handler: nil)
+    func makeFailureResponse() -> (Data, URLResponse, Error?) {
+        let response = HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
+                                       statusCode: 500, httpVersion: nil, headerFields: nil)!
+        return (Data(), response, nil)
     }
     
-    func testFetchDecisionInvalidJson() {
-        mockSession.nextData = Data("not a json".utf8)
-        mockSession.nextResponse = HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
-                                                   statusCode: 200, httpVersion: nil, headerFields: nil)
-        mockSession.nextError = nil
+    // MARK: - Test Cases
+    
+    func testFetchDecision_SuccessOnFirstTry() {
+        let (successData, successResponse, _) = makeSuccessResponse(variationId: "variation-123")
+        mockSession.responses = [(successData, successResponse, nil)]
         
         let expectation = self.expectation(description: "Completion called")
-        
         client.fetchDecision(
-            ruleId: "abc",
-            userId: "user1",
-            attributes: ["foo": "bar"],
-            cmabUUID: "uuid"
+            ruleId: "abc", userId: "user1",
+            attributes: ["foo": "bar"], cmabUUID: "uuid"
         ) { result in
-            switch result {
-                case .success(_):
-                    XCTFail("Expected failure, got success")
-                case .failure(let error):
-                    XCTAssertTrue(error is CmabClientError)
-            }
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 2, handler: nil)
-    }
-    
-    func testFetchDecisionInvalidResponseStructure() {
-        let responseJSON: [String: Any] = [
-            "not_predictions": []
-        ]
-        let responseData = try! JSONSerialization.data(withJSONObject: responseJSON, options: [])
-        mockSession.nextData = responseData
-        mockSession.nextResponse = HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
-                                                   statusCode: 200, httpVersion: nil, headerFields: nil)
-        mockSession.nextError = nil
-        
-        let expectation = self.expectation(description: "Completion called")
-        
-        client.fetchDecision(
-            ruleId: "abc",
-            userId: "user1",
-            attributes: ["foo": "bar"],
-            cmabUUID: "uuid"
-        ) { result in
-            switch result {
-                case .success(_):
-                    XCTFail("Expected failure, got success")
-                case .failure(let error):
-                    XCTAssertEqual(error as? CmabClientError, .invalidResponse)
-            }
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 2, handler: nil)
-    }
-    
-    func testFetchDecisionRetriesOnFailure() {
-        let expectedVariationId = "variation-retry"
-        var callCount = 0
-        
-        let responseJSON: [String: Any] = [
-            "predictions": [
-                ["variation_id": expectedVariationId]
-            ]
-        ]
-        let responseData = try! JSONSerialization.data(withJSONObject: responseJSON, options: [])
-        
-        mockSession.onRequest = { _ in
-            callCount += 1
-            if callCount == 1 {
-                self.mockSession.nextData = Data()
-                self.mockSession.nextResponse = HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
-                                                                statusCode: 500, httpVersion: nil, headerFields: nil)
-                self.mockSession.nextError = nil
+            if case let .success(variationId) = result {
+                XCTAssertEqual(variationId, "variation-123")
+                XCTAssertEqual(self.mockSession.callCount, 1)
             } else {
-                self.mockSession.nextData = responseData
-                self.mockSession.nextResponse = HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
-                                                                statusCode: 200, httpVersion: nil, headerFields: nil)
-                self.mockSession.nextError = nil
-            }
-        }
-        
-        let expectation = self.expectation(description: "Completion called")
-        
-        client.fetchDecision(
-            ruleId: "abc",
-            userId: "user1",
-            attributes: ["foo": "bar"],
-            cmabUUID: "uuid"
-        ) { result in
-            switch result {
-                case .success(let variationId):
-                    XCTAssertEqual(variationId, expectedVariationId)
-                    XCTAssertTrue(callCount >= 2)
-                case .failure(let error):
-                    XCTFail("Expected success, got failure: \(error)")
+                XCTFail("Expected success result")
             }
             expectation.fulfill()
         }
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testFetchDecision_SuccessOnSecondTry() {
+        let (successData, successResponse, _) = makeSuccessResponse(variationId: "variation-retry")
+        let fail = makeFailureResponse()
+        mockSession.responses = [fail, (successData, successResponse, nil)]
         
-        waitForExpectations(timeout: 3, handler: nil)
+        let expectation = self.expectation(description: "Completion called")
+        client.fetchDecision(
+            ruleId: "abc", userId: "user1",
+            attributes: ["foo": "bar"], cmabUUID: "uuid"
+        ) { result in
+            if case let .success(variationId) = result {
+                XCTAssertEqual(variationId, "variation-retry")
+                XCTAssertEqual(self.mockSession.callCount, 2)
+            } else {
+                XCTFail("Expected success after retry")
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 2)
+    }
+    
+    func testFetchDecision_SuccessOnThirdTry() {
+        let (successData, successResponse, _) = makeSuccessResponse(variationId: "success-third")
+        let fail = makeFailureResponse()
+        mockSession.responses = [fail, fail, (successData, successResponse, nil)]
+        
+        let expectation = self.expectation(description: "Completion called")
+        client.fetchDecision(
+            ruleId: "abc", userId: "user1",
+            attributes: ["foo": "bar"], cmabUUID: "uuid"
+        ) { result in
+            if case let .success(variationId) = result {
+                XCTAssertEqual(variationId, "success-third")
+                XCTAssertEqual(self.mockSession.callCount, 3)
+            } else {
+                XCTFail("Expected success after two retries")
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 2)
+    }
+    
+    func testFetchDecision_ExhaustsAllRetries() {
+        let fail = makeFailureResponse()
+        mockSession.responses = [fail, fail, fail]
+        
+        let expectation = self.expectation(description: "Completion called")
+        client.fetchDecision(
+            ruleId: "abc", userId: "user1",
+            attributes: ["foo": "bar"], cmabUUID: "uuid"
+        ) { result in
+            if case let .failure(error) = result {
+                XCTAssertTrue("\(error)".contains("Exhausted all retries"))
+                XCTAssertEqual(self.mockSession.callCount, 3)
+            } else {
+                XCTFail("Expected failure after all retries")
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 2)
+    }
+    
+    func testFetchDecision_HttpError() {
+        mockSession.responses = [
+            (Data(), HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
+                                     statusCode: 500, httpVersion: nil, headerFields: nil), nil)
+        ]
+        
+        let expectation = self.expectation(description: "Completion called")
+        client.fetchDecision(
+            ruleId: "abc", userId: "user1",
+            attributes: ["foo": "bar"], cmabUUID: "uuid"
+        ) { result in
+            if case let .failure(error) = result {
+                XCTAssertTrue("\(error)".contains("HTTP error code"))
+            } else {
+                XCTFail("Expected failure on HTTP error")
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 2)
+    }
+    
+    func testFetchDecision_InvalidJson() {
+        mockSession.responses = [
+            (Data("not a json".utf8), HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
+                                                      statusCode: 200, httpVersion: nil, headerFields: nil), nil)
+        ]
+        
+        let expectation = self.expectation(description: "Completion called")
+        client.fetchDecision(
+            ruleId: "abc", userId: "user1",
+            attributes: ["foo": "bar"], cmabUUID: "uuid"
+        ) { result in
+            if case let .failure(error) = result {
+                XCTAssertTrue(error is CmabClientError)
+                XCTAssertEqual(self.mockSession.callCount, 1)
+            } else {
+                XCTFail("Expected failure on invalid JSON")
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 2)
+    }
+    
+    func testFetchDecision_Invalid_Response_Structure() {
+        let responseJSON: [String: Any] = [ "not_predictions": [] ]
+        let responseData = try! JSONSerialization.data(withJSONObject: responseJSON, options: [])
+        mockSession.responses = [
+            (responseData, HTTPURLResponse(url: URL(string: "https://prediction.cmab.optimizely.com/predict/abc")!,
+                                           statusCode: 200, httpVersion: nil, headerFields: nil), nil)
+        ]
+        
+        let expectation = self.expectation(description: "Completion called")
+        client.fetchDecision(
+            ruleId: "abc", userId: "user1",
+            attributes: ["foo": "bar"], cmabUUID: "uuid"
+        ) { result in
+            if case let .failure(error) = result {
+                XCTAssertEqual(error as? CmabClientError, .invalidResponse)
+                XCTAssertEqual(self.mockSession.callCount, 1)
+            } else {
+                XCTFail("Expected failure on invalid response structure")
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 2)
     }
 }
+
+// MARK: - MockURLSession for ordered responses
 
 extension DefaultCmabClientTests {
     class MockURLSessionDataTask: URLSessionDataTask {
         private let closure: () -> Void
         override var state: URLSessionTask.State { .completed }
-        init(closure: @escaping () -> Void) {
-            self.closure = closure
-        }
-        
-        override func resume() {
-            closure()
-        }
+        init(closure: @escaping () -> Void) { self.closure = closure }
+        override func resume() { closure() }
     }
     
     class MockURLSession: URLSession {
         typealias CompletionHandler = (Data?, URLResponse?, Error?) -> Void
-        
-        var nextData: Data?
-        var nextResponse: URLResponse?
-        var nextError: Error?
-        var onRequest: ((URLRequest) -> Void)?
-        
+        var responses: [(Data?, URLResponse?, Error?)] = []
+        var callCount = 0
+       
         override func dataTask(
             with request: URLRequest,
             completionHandler: @escaping CompletionHandler
         ) -> URLSessionDataTask {
-            onRequest?(request)
-            return MockURLSessionDataTask {
-                completionHandler(self.nextData, self.nextResponse, self.nextError)
-            }
+            
+            let idx = callCount
+            callCount += 1
+            let tuple = idx < responses.count ? responses[idx] : (nil, nil, nil)
+            return MockURLSessionDataTask { completionHandler(tuple.0, tuple.1, tuple.2) }
         }
     }
-
 }

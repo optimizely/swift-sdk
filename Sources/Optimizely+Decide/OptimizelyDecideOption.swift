@@ -32,4 +32,13 @@ import Foundation
     
     /// exclude variable values from the decision result.
     case excludeVariables
+    
+    /// ignoreCmabCache instructs the SDK to ignore the CMAB cache and make a fresh request
+    case ignoreCmabCache
+    
+    /// resetCmabCache instructs the SDK to reset the entire CMAB cache
+    case resetCmabCache
+    
+    /// InvalidateUserCMABCache instructs the SDK to invalidate CMAB cache entries for the current user
+    case invalidateUserCmabCache
 }

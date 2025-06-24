@@ -60,17 +60,20 @@ class DefaultCmabService {
         let userId = userContext.userId
         
         if options.contains(.ignoreCmabCache) {
+            self.logger.i("Ignoring CMAB cache.")
             fetchDecision(ruleId: ruleId, userId: userId, attributes: filteredAttributes, completion: completion)
             return
         }
         
         if options.contains(.resetCmabCache) {
+            self.logger.i("Resetting CMAB cache.")
             cmabCache.reset()
         }
         
         let cacheKey = getCacheKey(userId: userId, ruleId: ruleId)
         
         if options.contains(.invalidateUserCmabCache) {
+            self.logger.i("Invalidating user CMAB cache.")
             self.cmabCache.remove(key: cacheKey)
         }
         
@@ -78,9 +81,11 @@ class DefaultCmabService {
         
         if let cachedValue = cmabCache.lookup(key: cacheKey), cachedValue.attributesHash == attributesHash {
             let decision = CmabDecision(variationId: cachedValue.variationId, cmabUUID: cachedValue.cmabUUID)
+            self.logger.i("Returning cached CMAB decision.")
             completion(.success(decision))
             return
         } else {
+            self.logger.i("CMAB decision not found in cache.")
             cmabCache.remove(key: cacheKey)
         }
         
@@ -91,6 +96,7 @@ class DefaultCmabService {
                     variationId: decision.variationId,
                     cmabUUID: decision.cmabUUID
                 )
+                self.logger.i("Featched CMAB decision and cached it.")
                 self.cmabCache.save(key: cacheKey, value: cacheValue)
             }
             completion(result)
@@ -105,9 +111,11 @@ class DefaultCmabService {
         cmabClient.fetchDecision(ruleId: ruleId, userId: userId, attributes: attributes, cmabUUID: cmabUUID) { result in
             switch result {
                 case .success(let variaitonId):
+                    self.logger.i("Fetched CMAB decision: \(variaitonId)")
                     let decision = CmabDecision(variationId: variaitonId, cmabUUID: cmabUUID)
                     completion(.success(decision))
                 case .failure(let error):
+                    self.logger.e("Failed to fetch CMAB decision: \(error)")
                     completion(.failure(error))
             }
         }

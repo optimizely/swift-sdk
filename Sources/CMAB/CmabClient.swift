@@ -42,7 +42,7 @@ protocol CmabClient {
     func fetchDecision(
         ruleId: String,
         userId: String,
-        attributes: [String: Any],
+        attributes: [String: Any?],
         cmabUUID: String,
         completion: @escaping (Result<String, Error>) -> Void
     )
@@ -67,7 +67,7 @@ class DefaultCmabClient: CmabClient {
     func fetchDecision(
         ruleId: String,
         userId: String,
-        attributes: [String: Any],
+        attributes: [String: Any?],
         cmabUUID: String,
         completion: @escaping (Result<String, Error>) -> Void
     ) {

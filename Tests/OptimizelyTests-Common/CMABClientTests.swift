@@ -1,5 +1,5 @@
 //
-// Copyright 2022, Optimizely, Inc. and contributors 
+// Copyright 2025, Optimizely, Inc. and contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");  
 // you may not use this file except in compliance with the License.
@@ -64,7 +64,8 @@ class DefaultCmabClientTests: XCTestCase {
         let expectation = self.expectation(description: "Completion called")
         client.fetchDecision(
             ruleId: "abc", userId: "user1",
-            attributes: ["foo": "bar"], cmabUUID: "uuid"
+            attributes: ["foo": "bar"], 
+            cmabUUID: "uuid"
         ) { result in
             if case let .success(variationId) = result {
                 XCTAssertEqual(variationId, "variation-123")
@@ -72,6 +73,7 @@ class DefaultCmabClientTests: XCTestCase {
             } else {
                 XCTFail("Expected success result")
             }
+            self.verifyRequest(ruleId: "abc", userId: "user1", attributes: ["foo": "bar"], cmabUUID: "uuid")
             expectation.fulfill()
         }
         waitForExpectations(timeout: 1)
@@ -85,7 +87,8 @@ class DefaultCmabClientTests: XCTestCase {
         let expectation = self.expectation(description: "Completion called")
         client.fetchDecision(
             ruleId: "abc", userId: "user1",
-            attributes: ["foo": "bar"], cmabUUID: "uuid"
+            attributes: ["foo": "bar"], 
+            cmabUUID: "uuid"
         ) { result in
             if case let .success(variationId) = result {
                 XCTAssertEqual(variationId, "variation-retry")
@@ -93,6 +96,7 @@ class DefaultCmabClientTests: XCTestCase {
             } else {
                 XCTFail("Expected success after retry")
             }
+            self.verifyRequest(ruleId: "abc", userId: "user1", attributes: ["foo": "bar"], cmabUUID: "uuid")
             expectation.fulfill()
         }
         waitForExpectations(timeout: 2)
@@ -106,7 +110,8 @@ class DefaultCmabClientTests: XCTestCase {
         let expectation = self.expectation(description: "Completion called")
         client.fetchDecision(
             ruleId: "abc", userId: "user1",
-            attributes: ["foo": "bar"], cmabUUID: "uuid"
+            attributes: ["foo": "bar"], 
+            cmabUUID: "uuid"
         ) { result in
             if case let .success(variationId) = result {
                 XCTAssertEqual(variationId, "success-third")
@@ -114,6 +119,7 @@ class DefaultCmabClientTests: XCTestCase {
             } else {
                 XCTFail("Expected success after two retries")
             }
+            self.verifyRequest(ruleId: "abc", userId: "user1", attributes: ["foo": "bar"], cmabUUID: "uuid")
             expectation.fulfill()
         }
         waitForExpectations(timeout: 2)
@@ -126,7 +132,8 @@ class DefaultCmabClientTests: XCTestCase {
         let expectation = self.expectation(description: "Completion called")
         client.fetchDecision(
             ruleId: "abc", userId: "user1",
-            attributes: ["foo": "bar"], cmabUUID: "uuid"
+            attributes: ["foo": "bar"], 
+            cmabUUID: "uuid"
         ) { result in
             if case let .failure(error) = result {
                 XCTAssertTrue("\(error)".contains("Exhausted all retries"))
@@ -134,6 +141,7 @@ class DefaultCmabClientTests: XCTestCase {
             } else {
                 XCTFail("Expected failure after all retries")
             }
+            self.verifyRequest(ruleId: "abc", userId: "user1", attributes: ["foo": "bar"], cmabUUID: "uuid")
             expectation.fulfill()
         }
         waitForExpectations(timeout: 2)
@@ -148,13 +156,15 @@ class DefaultCmabClientTests: XCTestCase {
         let expectation = self.expectation(description: "Completion called")
         client.fetchDecision(
             ruleId: "abc", userId: "user1",
-            attributes: ["foo": "bar"], cmabUUID: "uuid"
+            attributes: ["foo": "bar"], 
+            cmabUUID: "uuid"
         ) { result in
             if case let .failure(error) = result {
                 XCTAssertTrue("\(error)".contains("HTTP error code"))
             } else {
                 XCTFail("Expected failure on HTTP error")
             }
+            self.verifyRequest(ruleId: "abc", userId: "user1", attributes: ["foo": "bar"], cmabUUID: "uuid")
             expectation.fulfill()
         }
         waitForExpectations(timeout: 2)
@@ -169,7 +179,8 @@ class DefaultCmabClientTests: XCTestCase {
         let expectation = self.expectation(description: "Completion called")
         client.fetchDecision(
             ruleId: "abc", userId: "user1",
-            attributes: ["foo": "bar"], cmabUUID: "uuid"
+            attributes: ["foo": "bar"], 
+            cmabUUID: "uuid"
         ) { result in
             if case let .failure(error) = result {
                 XCTAssertTrue(error is CmabClientError)
@@ -177,6 +188,7 @@ class DefaultCmabClientTests: XCTestCase {
             } else {
                 XCTFail("Expected failure on invalid JSON")
             }
+            self.verifyRequest(ruleId: "abc", userId: "user1", attributes: ["foo": "bar"], cmabUUID: "uuid")
             expectation.fulfill()
         }
         waitForExpectations(timeout: 2)
@@ -193,7 +205,8 @@ class DefaultCmabClientTests: XCTestCase {
         let expectation = self.expectation(description: "Completion called")
         client.fetchDecision(
             ruleId: "abc", userId: "user1",
-            attributes: ["foo": "bar"], cmabUUID: "uuid"
+            attributes: ["foo": "bar"],
+            cmabUUID: "uuid-1234"
         ) { result in
             if case let .failure(error) = result {
                 XCTAssertEqual(error as? CmabClientError, .invalidResponse)
@@ -201,10 +214,37 @@ class DefaultCmabClientTests: XCTestCase {
             } else {
                 XCTFail("Expected failure on invalid response structure")
             }
+            self.verifyRequest(ruleId: "abc", userId: "user1", attributes: ["foo": "bar"], cmabUUID: "uuid-1234")
             expectation.fulfill()
         }
         waitForExpectations(timeout: 2)
     }
+    
+    private func verifyRequest(ruleId: String, userId: String, attributes: [String: Any], cmabUUID: String) {
+        // Assert request body
+        guard let request = mockSession.lastRequest else {
+            XCTFail("No request was sent")
+            return
+        }
+        guard let body = request.httpBody else {
+            XCTFail("No HTTP body in request")
+            return
+        }
+        
+        let json = try! JSONSerialization.jsonObject(with: body, options: []) as! [String: Any]
+        let instances = json["instances"] as? [[String: Any]]
+        XCTAssertNotNil(instances)
+        let instance = instances?.first
+        XCTAssertEqual(instance?["visitorId"] as? String, userId)
+        XCTAssertEqual(instance?["experimentId"] as? String, ruleId)
+        XCTAssertEqual(instance?["cmabUUID"] as? String, cmabUUID)
+        // You can add further assertions for the attributes, e.g.:
+        let payloadAttributes = instance?["attributes"] as? [[String: Any]]
+        XCTAssertEqual(payloadAttributes?.first?["id"] as? String, attributes.keys.first)
+        XCTAssertEqual(payloadAttributes?.first?["value"] as? String, attributes.values.first as? String)
+        XCTAssertEqual(payloadAttributes?.first?["type"] as? String, "custom_attribute")
+    }
+    
 }
 
 // MARK: - MockURLSession for ordered responses
@@ -221,12 +261,14 @@ extension DefaultCmabClientTests {
         typealias CompletionHandler = (Data?, URLResponse?, Error?) -> Void
         var responses: [(Data?, URLResponse?, Error?)] = []
         var callCount = 0
+        var lastRequest: URLRequest?
        
         override func dataTask(
             with request: URLRequest,
             completionHandler: @escaping CompletionHandler
         ) -> URLSessionDataTask {
-            
+
+            self.lastRequest = request
             let idx = callCount
             callCount += 1
             let tuple = idx < responses.count ? responses[idx] : (nil, nil, nil)

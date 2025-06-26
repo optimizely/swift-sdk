@@ -47,6 +47,8 @@ enum LogMessage {
     case userHasNoForcedVariation(_ userId: String)
     case userHasNoForcedVariationForExperiment(_ userId: String, _ expKey: String)
     case userBucketedIntoVariationInExperiment(_ userId: String, _ expKey: String, _ varKey: String)
+    case userBucketedIntoEntity(_ entityId: String)
+    case userNotBucketedIntoAnyEntity
     case userBucketedIntoVariationInHoldout(_ userId: String, _ expKey: String, _ varKey: String)
     case userNotBucketedIntoVariation(_ userId: String)
     case userBucketedIntoInvalidVariation(_ id: String)
@@ -73,6 +75,7 @@ enum LogMessage {
     case failedToAssignValue
     case valueForKeyNotFound(_ key: String)
     case lowPeriodicDownloadInterval
+    case cmabFetchFailed(_ expKey: String)
 }
 
 extension LogMessage: CustomStringConvertible {
@@ -114,6 +117,8 @@ extension LogMessage: CustomStringConvertible {
         case .userHasNoForcedVariation(let userId):                             message = "User (\(userId)) is not in the forced variation map."
         case .userHasNoForcedVariationForExperiment(let userId, let expKey):    message = "No experiment (\(expKey)) mapped to user (\(userId)) in the forced variation map."
         case .userBucketedIntoVariationInExperiment(let userId, let expKey, let varKey): message = "User (\(userId)) is in variation (\(varKey)) of experiment (\(expKey))"
+        case .userBucketedIntoEntity(let entityId):                             message = "User bucketed into entity (\(entityId))"
+        case .userNotBucketedIntoAnyEntity:                                     message = "User not bucketed into any entity"
         case .userBucketedIntoVariationInHoldout(let userId, let holdoutKey, let varKey): message = "User (\(userId)) is in variation (\(varKey)) of holdout (\(holdoutKey))"
         case .userNotBucketedIntoVariation(let userId):                         message = "User (\(userId)) is in no variation."
         case .userNotBucketedIntoHoldoutVariation(let userId):                  message = "User (\(userId)) is in no holdout variation."
@@ -140,6 +145,7 @@ extension LogMessage: CustomStringConvertible {
         case .failedToAssignValue:                                              message = "Value for path could not be assigned to provided type."
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
         case .lowPeriodicDownloadInterval:                                      message = "Polling intervals below 30 seconds are not recommended."
+        case .cmabFetchFailed(let key):                                         message = "Failed to fetch CMAB data for experiment: \(key)"
         }
         
         return message

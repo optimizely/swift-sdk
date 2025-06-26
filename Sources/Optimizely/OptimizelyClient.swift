@@ -48,6 +48,7 @@ open class OptimizelyClient: NSObject {
     }
     
     let eventLock = DispatchQueue(label: "com.optimizely.client")
+    let decisionQueue = DispatchQueue(label: "com.optimizely.decisionQueue")
     
     // MARK: - Customizable Services
     

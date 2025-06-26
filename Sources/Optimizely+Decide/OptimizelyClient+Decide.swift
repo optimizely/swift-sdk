@@ -16,6 +16,9 @@
 
 import Foundation
 
+typealias DecideCompletion = (OptimizelyDecision) -> Void
+typealias DecideForKeysCompletion = ([String: OptimizelyDecision]) -> Void
+
 extension OptimizelyClient {
     
     /// Create a context of the user for which decision APIs will be called.
@@ -77,20 +80,56 @@ extension OptimizelyClient {
         var allOptions = defaultDecideOptions + (options ?? [])
         allOptions.removeAll(where: { $0 == .enabledFlagsOnly })
         
-        let decisionMap = decide(user: user, keys: [key], options: allOptions, ignoreDefaultOptions: true)
+        let decisionMap = decide(user: user, keys: [key], options: allOptions, ignoreCmab: true, ignoreDefaultOptions: true)
         return decisionMap[key] ?? OptimizelyDecision.errorDecision(key: key, user: user, error: .generic)
+    }
+    
+    func decideAsync(user: OptimizelyUserContext,
+                     key: String,
+                     options: [OptimizelyDecideOption]? = nil,
+                     completion: @escaping DecideCompletion) {
+        decisionQueue.async {
+            guard let config = self.config else {
+                let decision = OptimizelyDecision.errorDecision(key: key, user: user, error: .sdkNotReady)
+                completion(decision)
+                return
+            }
+            
+            guard let _ = config.getFeatureFlag(key: key) else {
+                let decision = OptimizelyDecision.errorDecision(key: key, user: user, error: .featureKeyInvalid(key))
+                completion(decision)
+                return
+            }
+            
+            var allOptions = self.defaultDecideOptions + (options ?? [])
+            allOptions.removeAll(where: { $0 == .enabledFlagsOnly })
+            
+            let decisionMap = self.decide(user: user, keys: [key], options: allOptions, ignoreCmab: false, ignoreDefaultOptions: true)
+            let decision = decisionMap[key] ?? OptimizelyDecision.errorDecision(key: key, user: user, error: .generic)
+            completion(decision)
+        }
     }
     
     func decide(user: OptimizelyUserContext,
                 keys: [String],
                 options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        return decide(user: user, keys: keys, options: options, ignoreDefaultOptions: false)
+        return decide(user: user, keys: keys, options: options, ignoreCmab: true, ignoreDefaultOptions: false)
     }
     
-    func decide(user: OptimizelyUserContext,
+    func decideAsync(user: OptimizelyUserContext,
                 keys: [String],
-                options: [OptimizelyDecideOption]? = nil,
-                ignoreDefaultOptions: Bool) -> [String: OptimizelyDecision] {
+                options: [OptimizelyDecideOption]? = nil, completion: @escaping DecideForKeysCompletion) {
+        decisionQueue.async {
+            let decisions = self.decide(user: user, keys: keys, options: options, ignoreCmab: false, ignoreDefaultOptions: false)
+            completion(decisions)
+        }
+    }
+    
+    private func decide(user: OptimizelyUserContext,
+                        keys: [String],
+                        options: [OptimizelyDecideOption]? = nil,
+                        ignoreCmab: Bool,
+                        ignoreDefaultOptions: Bool) -> [String: OptimizelyDecision] {
         guard let config = self.config else {
             logger.e(OptimizelyError.sdkNotReady)
             return [:]
@@ -132,7 +171,7 @@ extension OptimizelyClient {
             }
         }
         
-        let decisionList = (decisionService as? DefaultDecisionService)?.getVariationForFeatureList(config: config, featureFlags: flagsWithoutForceDecision, user: user, options: allOptions)
+        let decisionList = (decisionService as? DefaultDecisionService)?.getVariationForFeatureList(config: config, featureFlags: flagsWithoutForceDecision, user: user, ignoreCmab: ignoreCmab, options: allOptions)
         
         for index in 0..<flagsWithoutForceDecision.count {
             if decisionList?.indices.contains(index) ?? false {
@@ -164,6 +203,13 @@ extension OptimizelyClient {
         }
         
         return decisionMap
+    }
+    
+    func decide(user: OptimizelyUserContext,
+                keys: [String],
+                options: [OptimizelyDecideOption]? = nil,
+                ignoreDefaultOptions: Bool) -> [String: OptimizelyDecision] {
+        return self.decide(user: user, keys: keys, options: options, ignoreCmab: true, ignoreDefaultOptions: ignoreDefaultOptions)
     }
     
     private func createOptimizelyDecision(flagKey: String,
@@ -248,6 +294,22 @@ extension OptimizelyClient {
         }
         
         return decide(user: user, keys: config.featureFlagKeys, options: options)
+    }
+    
+    func decideAllAsync(user: OptimizelyUserContext,
+                        options: [OptimizelyDecideOption]? = nil,
+                        completion: @escaping DecideForKeysCompletion)  {
+        
+        decisionQueue.async {
+            guard let config = self.config else {
+                self.logger.e(OptimizelyError.sdkNotReady)
+                completion([:])
+                return
+            }
+            
+            let decision = self.decide(user: user, keys: config.featureFlagKeys, options: options,  ignoreCmab: false, ignoreDefaultOptions: false)
+            completion(decision)
+        }
     }
     
 }

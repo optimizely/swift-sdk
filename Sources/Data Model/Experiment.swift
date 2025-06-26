@@ -71,4 +71,7 @@ extension Experiment {
         return status == .running
     }
     
+    var isCmab: Bool {
+        return cmab != nil
+    }
 }

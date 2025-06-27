@@ -87,10 +87,18 @@ class DefaultDecisionService: OPTDecisionService {
                                               experiment: Experiment,
                                               user: OptimizelyUserContext,
                                               bucketingId: String,
+                                              opType: OPType,
                                               options: [OptimizelyDecideOption]?) -> DecisionResponse<VariationDecision> {
         let reasons = DecisionReasons(options: options)
         guard let cmab = experiment.cmab else {
             logger.e("The experiment isn't a CMAB experiment")
+            return DecisionResponse(result: nil, reasons: reasons)
+        }
+        
+        guard opType == .async else {
+            let info = LogMessage.cmabNotSupportedInSyncMode
+            logger.w(info)
+            reasons.addInfo(info)
             return DecisionResponse(result: nil, reasons: reasons)
         }
         
@@ -260,13 +268,11 @@ class DefaultDecisionService: OPTDecisionService {
             let bucketingId = getBucketingId(userId: userId, attributes: attributes)
             
             if experiment.isCmab {
-                if opType == .sync {
-                    /// fixme
-                }
                 let cmabDecisionResponse = getDecisionForCmabExperiment(config: config,
                                                                         experiment: experiment,
                                                                         user: user,
                                                                         bucketingId: bucketingId,
+                                                                        opType: opType,
                                                                         options: options)
                 reasons.merge(cmabDecisionResponse.reasons)
                 variationDecision = cmabDecisionResponse.result

@@ -76,6 +76,7 @@ enum LogMessage {
     case valueForKeyNotFound(_ key: String)
     case lowPeriodicDownloadInterval
     case cmabFetchFailed(_ expKey: String)
+    case cmabNotSupportedInSyncMode
 }
 
 extension LogMessage: CustomStringConvertible {
@@ -146,6 +147,7 @@ extension LogMessage: CustomStringConvertible {
         case .valueForKeyNotFound(let key):                                     message = "Value for JSON key (\(key)) not found."
         case .lowPeriodicDownloadInterval:                                      message = "Polling intervals below 30 seconds are not recommended."
         case .cmabFetchFailed(let key):                                         message = "Failed to fetch CMAB data for experiment: \(key)"
+        case .cmabNotSupportedInSyncMode:                                       message = "CMAB is not supported in sync mode."
         }
         
         return message

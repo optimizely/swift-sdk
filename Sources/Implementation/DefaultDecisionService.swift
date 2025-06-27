@@ -104,17 +104,18 @@ class DefaultDecisionService: OPTDecisionService {
         
         let dummyEntityId = "$"
         let cmabTrafficAllocation = TrafficAllocation(entityId: dummyEntityId, endOfRange: cmab.trafficAllocation)
-        let group = config.getGroup(id: experiment.id)
-        let bucketedResponse = (bucketer as? DefaultBucketer)?.bucketToEntityId(bucketingId: bucketingId,
-                                                                                experiment: experiment,
-                                                                                trafficAllocation: [cmabTrafficAllocation],
-                                                                                group: group)
-        if let _reasons = bucketedResponse?.reasons {
-            reasons.merge(_reasons)
-        }
+        var cmabExp = experiment
+        // Replace the regular allocaion with cmab traffic allocation
+        // to reuse the experiment bucketing logic
+        cmabExp.trafficAllocation = [cmabTrafficAllocation]
         
-        let entityId = bucketedResponse?.result ?? ""
+        let bucketedResponse = bucketer.bucketExperiment(config: config, experiment: cmabExp, bucketingId: bucketingId)
         
+        reasons.merge(bucketedResponse.reasons)
+        
+        let entityId = bucketedResponse.result?.id
+        
+        // this means the user is not in the cmab experiment
         if entityId != dummyEntityId {
             return DecisionResponse(result: nil, reasons: reasons)
         }
@@ -264,7 +265,7 @@ class DefaultDecisionService: OPTDecisionService {
         reasons.merge(audienceResponse.reasons)
         
         if audienceResponse.result ?? false {
-            // Acquire bucketingId .
+            // Acquire bucketingId
             let bucketingId = getBucketingId(userId: userId, attributes: attributes)
             
             if experiment.isCmab {

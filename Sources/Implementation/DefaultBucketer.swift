@@ -120,53 +120,53 @@ class DefaultBucketer: OPTBucketer {
         return DecisionResponse(result: nil, reasons: reasons)
     }
     
-    func bucketToEntityId(bucketingId: String,
-                          experiment: Experiment,
-                          trafficAllocation: [TrafficAllocation],
-                          group: Group?) -> DecisionResponse<String> {
-        let reasons = DecisionReasons()
-        
-        if let group = group, group.policy == .random {
-            let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
-            let bucketValue = self.generateBucketValue(bucketingId: hashId)
-            
-            var matched = false
-            for allocation in group.trafficAllocation {
-                if bucketValue < allocation.endOfRange {
-                    matched = true
-                    if allocation.entityId != experiment.id {
-                        let info = LogMessage.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
-                        reasons.addInfo(info)
-                        return DecisionResponse(result: nil, reasons: reasons)
-                    }
-                    
-                    let info = LogMessage.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
-                    reasons.addInfo(info)
-                    break
-                }
-            }
-            
-            if !matched {
-                let info = LogMessage.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id)
-                reasons.addInfo(info)
-                return DecisionResponse(result: nil, reasons: reasons)
-            }
-        }
-        
-        let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
-        let bucketValue = self.generateBucketValue(bucketingId: hashId)
-        
-        for allocation in trafficAllocation {
-            if bucketValue < allocation.endOfRange {
-                let info = LogMessage.userBucketedIntoEntity(allocation.entityId)
-                reasons.addInfo(info)
-                return DecisionResponse(result: allocation.entityId, reasons: reasons)
-            }
-        }
-        let info = LogMessage.userNotBucketedIntoAnyEntity
-        reasons.addInfo(info)
-        return DecisionResponse(result: nil, reasons: reasons)
-    }
+//    func bucketToEntityId(bucketingId: String,
+//                          experiment: Experiment,
+//                          trafficAllocation: [TrafficAllocation],
+//                          group: Group?) -> DecisionResponse<String> {
+//        let reasons = DecisionReasons()
+//        
+//        if let group = group, group.policy == .random {
+//            let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: group.id)
+//            let bucketValue = self.generateBucketValue(bucketingId: hashId)
+//            
+//            var matched = false
+//            for allocation in group.trafficAllocation {
+//                if bucketValue < allocation.endOfRange {
+//                    matched = true
+//                    if allocation.entityId != experiment.id {
+//                        let info = LogMessage.userNotBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
+//                        reasons.addInfo(info)
+//                        return DecisionResponse(result: nil, reasons: reasons)
+//                    }
+//                    
+//                    let info = LogMessage.userBucketedIntoExperimentInGroup(bucketingId, experiment.key, group.id)
+//                    reasons.addInfo(info)
+//                    break
+//                }
+//            }
+//            
+//            if !matched {
+//                let info = LogMessage.userNotBucketedIntoAnyExperimentInGroup(bucketingId, group.id)
+//                reasons.addInfo(info)
+//                return DecisionResponse(result: nil, reasons: reasons)
+//            }
+//        }
+//        
+//        let hashId = makeHashIdFromBucketingId(bucketingId: bucketingId, entityId: experiment.id)
+//        let bucketValue = self.generateBucketValue(bucketingId: hashId)
+//        
+//        for allocation in trafficAllocation {
+//            if bucketValue < allocation.endOfRange {
+//                let info = LogMessage.userBucketedIntoEntity(allocation.entityId)
+//                reasons.addInfo(info)
+//                return DecisionResponse(result: allocation.entityId, reasons: reasons)
+//            }
+//        }
+//        let info = LogMessage.userNotBucketedIntoAnyEntity
+//        reasons.addInfo(info)
+//        return DecisionResponse(result: nil, reasons: reasons)
+//    }
     
     func bucketToVariation(experiment: ExperimentCore,
                            bucketingId: String) -> DecisionResponse<Variation> {

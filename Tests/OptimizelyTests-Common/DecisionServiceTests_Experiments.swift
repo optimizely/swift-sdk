@@ -704,6 +704,14 @@ extension DecisionServiceTests_Experiments {
     }
 }
 
+// MARK: - CMAB
+
+extension DecisionServiceTests_Experiments {
+    func testGetVairationWithCMAB() {
+        
+    }
+}
+
 // MARK: - Test getBucketingId()
 
 extension DecisionServiceTests_Experiments {

@@ -175,3 +175,12 @@ class DefaultCmabService: CmabService {
         return filteredUserAttributes
     }
 }
+
+extension DefaultCmabService {
+    static func createDefault() -> DefaultCmabService {
+        let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 * 1000  // 30 minutes in milliseconds
+        let DEFAULT_CMAB_CACHE_SIZE = 1000
+        let cache = LruCache<String, CmabCacheValue>(size: DEFAULT_CMAB_CACHE_SIZE, timeoutInSecs: DEFAULT_CMAB_CACHE_TIMEOUT)
+        return DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
+    }
+}

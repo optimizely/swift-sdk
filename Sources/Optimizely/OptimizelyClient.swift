@@ -108,11 +108,13 @@ open class OptimizelyClient: NSObject {
         let logger = logger ?? DefaultLogger()
         type(of: logger).logLevel = defaultLogLevel ?? .info
         
+        let cmabService = DefaultCmabService.createDefault()
+        
         self.registerServices(sdkKey: sdkKey,
                               logger: logger,
                               eventDispatcher: eventDispatcher ?? DefaultEventDispatcher.sharedInstance,
                               datafileHandler: datafileHandler ?? DefaultDatafileHandler(),
-                              decisionService: DefaultDecisionService(userProfileService: userProfileService),
+                              decisionService: DefaultDecisionService(userProfileService: userProfileService, cmabService: cmabService),
                               notificationCenter: DefaultNotificationCenter())
         
         self.logger = HandlerRegistryService.shared.injectLogger()

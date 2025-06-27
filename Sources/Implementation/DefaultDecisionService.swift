@@ -36,9 +36,6 @@ struct VariationDecision {
 
 typealias UserProfile = OPTUserProfileService.UPProfile
 
-let DEFAULT_CMAB_CACHE_TIMEOUT = 30 * 60 * 1000  // 30 minutes in milliseconds
-let DEFAULT_CMAB_CACHE_SIZE = 1000
-
 class DefaultDecisionService: OPTDecisionService {
     let bucketer: OPTBucketer
     let userProfileService: OPTUserProfileService
@@ -54,19 +51,16 @@ class DefaultDecisionService: OPTDecisionService {
         return threadSafeLogger.logger
     }
         
-    init(userProfileService: OPTUserProfileService) {
+    init(userProfileService: OPTUserProfileService, cmabService: CmabService) {
         self.bucketer = DefaultBucketer()
-        // fixme: cmab service need to inject from outside
         self.userProfileService = userProfileService
-        let cache = LruCache<String, CmabCacheValue>(size: DEFAULT_CMAB_CACHE_SIZE, timeoutInSecs: DEFAULT_CMAB_CACHE_TIMEOUT)
-        self.cmabService = DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
+        self.cmabService = cmabService
     }
     
-    init(userProfileService: OPTUserProfileService, bucketer: OPTBucketer) {
+    init(userProfileService: OPTUserProfileService, bucketer: OPTBucketer, cmabService: CmabService) {
         self.bucketer = bucketer
         self.userProfileService = userProfileService
-        let cache = LruCache<String, CmabCacheValue>(size: DEFAULT_CMAB_CACHE_SIZE, timeoutInSecs: DEFAULT_CMAB_CACHE_TIMEOUT)
-        self.cmabService = DefaultCmabService(cmabClient: DefaultCmabClient(), cmabCache: cache)
+        self.cmabService = cmabService
     }
     
     // MARK: - CMAB decision

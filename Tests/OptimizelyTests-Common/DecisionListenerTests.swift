@@ -1251,7 +1251,7 @@ class FakeDecisionService: DefaultDecisionService {
     var variation: Variation?
     var source: String!
     
-    override init(userProfileService: OPTUserProfileService) {
+    override init(userProfileService: OPTUserProfileService, cmabService: CmabService = DefaultCmabService.createDefault()) {
         super.init(userProfileService: DefaultUserProfileService())
     }
     

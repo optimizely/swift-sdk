@@ -51,13 +51,16 @@ class DefaultDecisionService: OPTDecisionService {
         return threadSafeLogger.logger
     }
         
-    init(userProfileService: OPTUserProfileService, cmabService: CmabService) {
+    init(userProfileService: OPTUserProfileService,
+         cmabService: CmabService = DefaultCmabService.createDefault()) {
         self.bucketer = DefaultBucketer()
         self.userProfileService = userProfileService
         self.cmabService = cmabService
     }
     
-    init(userProfileService: OPTUserProfileService, bucketer: OPTBucketer, cmabService: CmabService) {
+    init(userProfileService: OPTUserProfileService,
+         bucketer: OPTBucketer,
+         cmabService: CmabService = DefaultCmabService.createDefault()) {
         self.bucketer = bucketer
         self.userProfileService = userProfileService
         self.cmabService = cmabService

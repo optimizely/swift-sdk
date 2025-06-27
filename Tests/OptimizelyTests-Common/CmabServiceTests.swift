@@ -462,3 +462,198 @@ class DefaultCmabServiceTests: XCTestCase {
     }
 }
 
+extension DefaultCmabServiceTests {
+    func testSyncFetchDecision() {
+        cmabClient.fetchDecisionResult = .success("variation-123")
+        
+        let result = cmabService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        )
+        
+        switch result {
+            case .success(let decision):
+                XCTAssertEqual(decision.variationId, "variation-123")
+                XCTAssertEqual(self.cmabClient.lastRuleId, "exp-123")
+                XCTAssertEqual(self.cmabClient.lastUserId, "test-user")
+                XCTAssertEqual(self.cmabClient.lastAttributes?.count, 2)
+                XCTAssertEqual(self.cmabClient.lastAttributes?["age"] as? Int, 25)
+                XCTAssertEqual(self.cmabClient.lastAttributes?["location"] as? String, "San Francisco")
+                
+                // Verify it was cached
+                let cacheKey = "9-test-user-exp-123"
+                XCTAssertNotNil(self.cmabCache.lookup(key: cacheKey))
+                
+            case .failure(let error):
+                XCTFail("Expected success but got error: \(error)")
+        }
+    }
+    
+    func testSyncCachedDecision() {
+        // First, put something in the cache
+        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let cacheKey = "9-test-user-exp-123"
+        let cacheValue = CmabCacheValue(
+            attributesHash: attributesHash,
+            variationId: "cached-variation",
+            cmabUUID: "cached-uuid"
+        )
+        cmabCache.save(key: cacheKey, value: cacheValue)
+        
+        let result = cmabService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        )
+        
+        switch result {
+            case .success(let decision):
+                XCTAssertEqual(decision.variationId, "cached-variation")
+                XCTAssertEqual(decision.cmabUUID, "cached-uuid")
+                XCTAssertFalse(self.cmabClient.fetchDecisionCalled, "Should not call API when cache hit")
+                
+            case .failure(let error):
+                XCTFail("Expected success but got error: \(error)")
+        }
+    }
+    
+    func testSyncFailedFetch() {
+        let testError = CmabClientError.fetchFailed("Test error")
+        cmabClient.fetchDecisionResult = .failure(testError)
+        
+        let result = cmabService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: []
+        )
+        
+        switch result {
+            case .success:
+                XCTFail("Expected failure but got success")
+                
+            case .failure(let error):
+                XCTAssertEqual((error as? CmabClientError)?.message, "Test error")
+                
+                // Verify no caching of failed results
+                let cacheKey = "9-test-user-exp-123"
+                XCTAssertNil(self.cmabCache.lookup(key: cacheKey))
+        }
+    }
+    
+    func testSyncIgnoreCmabCacheOption() {
+        // First, put something in the cache
+        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let cacheKey = "9-test-user-exp-123"
+        let cacheValue = CmabCacheValue(
+            attributesHash: attributesHash,
+            variationId: "cached-variation",
+            cmabUUID: "cached-uuid"
+        )
+        cmabCache.save(key: cacheKey, value: cacheValue)
+        
+        cmabClient.fetchDecisionResult = .success("new-variation")
+        
+        let result = cmabService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: [.ignoreCmabCache]
+        )
+        
+        switch result {
+            case .success(let decision):
+                XCTAssertEqual(decision.variationId, "new-variation")
+                XCTAssertTrue(self.cmabClient.fetchDecisionCalled, "Should always call API when ignoreCmabCache option is set")
+                
+            case .failure(let error):
+                XCTFail("Expected success but got error: \(error)")
+        }
+    }
+    
+    func testSyncResetCmabCacheOption() {
+        // First, put something in the cache
+        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let cacheKey = "9-test-user-exp-123"
+        let cacheValue = CmabCacheValue(
+            attributesHash: attributesHash,
+            variationId: "cached-variation",
+            cmabUUID: "cached-uuid"
+        )
+        cmabCache.save(key: cacheKey, value: cacheValue)
+        
+        // Also add another item to verify it's cleared
+        let otherCacheKey = "other-key"
+        cmabCache.save(key: otherCacheKey, value: cacheValue)
+        
+        cmabClient.fetchDecisionResult = .success("new-variation")
+        
+        let result = cmabService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: [.resetCmabCache]
+        )
+        
+        switch result {
+            case .success(let decision):
+                XCTAssertEqual(decision.variationId, "new-variation")
+                XCTAssertTrue(self.cmabClient.fetchDecisionCalled, "Should call API after resetting cache")
+                
+                // Verify the entire cache was reset
+                XCTAssertNil(self.cmabCache.lookup(key: otherCacheKey))
+                
+                // But the new decision should be cached
+                XCTAssertNotNil(self.cmabCache.lookup(key: cacheKey))
+                
+            case .failure(let error):
+                XCTFail("Expected success but got error: \(error)")
+        }
+    }
+    
+    func testSyncInvalidateUserCmabCacheOption() {
+        // First, put something in the cache
+        let attributesHash = cmabService.hashAttributes(["age": 25, "location": "San Francisco"])
+        let userCacheKey = "9-test-user-exp-123"
+        let otherUserCacheKey = "other-user-key"
+        
+        let cacheValue = CmabCacheValue(
+            attributesHash: attributesHash,
+            variationId: "cached-variation",
+            cmabUUID: "cached-uuid"
+        )
+        
+        // Cache for both current user and another user
+        cmabCache.save(key: userCacheKey, value: cacheValue)
+        cmabCache.save(key: otherUserCacheKey, value: cacheValue)
+        
+        cmabClient.fetchDecisionResult = .success("new-variation")
+        
+        let result = cmabService.getDecision(
+            config: config,
+            userContext: userContext,
+            ruleId: "exp-123",
+            options: [.invalidateUserCmabCache]
+        )
+        
+        switch result {
+            case .success(let decision):
+                XCTAssertEqual(decision.variationId, "new-variation")
+                XCTAssertTrue(self.cmabClient.fetchDecisionCalled, "Should call API after invalidating user cache")
+                
+                // Verify only the specific user's cache was invalidated
+                XCTAssertNotNil(self.cmabCache.lookup(key: otherUserCacheKey), "Other users' cache should remain intact")
+                
+                // The new decision should be cached for the current user
+                XCTAssertNotNil(self.cmabCache.lookup(key: userCacheKey))
+                XCTAssertEqual(self.cmabCache.lookup(key: userCacheKey)?.variationId, "new-variation")
+                
+            case .failure(let error):
+                XCTFail("Expected success but got error: \(error)")
+        }
+    }
+    
+}

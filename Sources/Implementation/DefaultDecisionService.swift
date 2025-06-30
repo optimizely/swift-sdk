@@ -104,19 +104,19 @@ class DefaultDecisionService: OPTDecisionService {
         
         let dummyEntityId = "$"
         let cmabTrafficAllocation = TrafficAllocation(entityId: dummyEntityId, endOfRange: cmab.trafficAllocation)
-        var cmabExp = experiment
-        // Replace the regular allocaion with cmab traffic allocation
-        // to reuse the experiment bucketing logic
-        cmabExp.trafficAllocation = [cmabTrafficAllocation]
+        let bucketedResponse = (bucketer as? DefaultBucketer)?.bucketToEntityId(config: config, experiment: experiment, bucketingId: bucketingId, trafficAllocation: [cmabTrafficAllocation])
         
-        let bucketedResponse = bucketer.bucketExperiment(config: config, experiment: cmabExp, bucketingId: bucketingId)
-        
-        reasons.merge(bucketedResponse.reasons)
-        
-        let entityId = bucketedResponse.result?.id
+        if let _reasons = bucketedResponse?.reasons {
+            reasons.merge(_reasons)
+        }
+
+        let entityId = bucketedResponse?.result ?? ""
         
         // this means the user is not in the cmab experiment
         if entityId != dummyEntityId {
+            let info = LogMessage.userNotInCmabExperiment(user.userId, experiment.key)
+            logger.d(info)
+            reasons.addInfo(info)
             return DecisionResponse(result: nil, reasons: reasons)
         }
         
@@ -198,7 +198,7 @@ class DefaultDecisionService: OPTDecisionService {
     ///   - opType:  Operation type, either sync or async
     ///   - userProfileTracker: Optional tracker for user profile data.
     /// - Returns: A `DecisionResponse` with the variation (if any) and decision reasons.
-    private func getVariation(config: ProjectConfig,
+    func getVariation(config: ProjectConfig,
                               experiment: Experiment,
                               user: OptimizelyUserContext,
                               options: [OptimizelyDecideOption]? = nil,

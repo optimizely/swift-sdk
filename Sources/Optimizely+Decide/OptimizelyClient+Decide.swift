@@ -16,9 +16,6 @@
 
 import Foundation
 
-typealias DecideCompletion = (OptimizelyDecision) -> Void
-typealias DecideForKeysCompletion = ([String: OptimizelyDecision]) -> Void
-
 extension OptimizelyClient {
     
     /// Create a context of the user for which decision APIs will be called.
@@ -117,10 +114,29 @@ extension OptimizelyClient {
     }
     
     func decideAsync(user: OptimizelyUserContext,
-                keys: [String],
-                options: [OptimizelyDecideOption]? = nil, completion: @escaping DecideForKeysCompletion) {
+                     keys: [String],
+                     options: [OptimizelyDecideOption]? = nil,
+                     completion: @escaping DecideForKeysCompletion) {
         decisionQueue.async {
             let decisions = self.decide(user: user, keys: keys, options: options, opType: .async, ignoreDefaultOptions: false)
+            completion(decisions)
+        }
+    }
+    
+    func decide(user: OptimizelyUserContext,
+                keys: [String],
+                options: [OptimizelyDecideOption]? = nil,
+                ignoreDefaultOptions: Bool) -> [String: OptimizelyDecision] {
+        return self.decide(user: user, keys: keys, options: options, opType: .sync, ignoreDefaultOptions: ignoreDefaultOptions)
+    }
+    
+    func decideAsync(user: OptimizelyUserContext,
+                     keys: [String],
+                     options: [OptimizelyDecideOption]? = nil,
+                     ignoreDefaultOptions: Bool,
+                     completion: @escaping DecideForKeysCompletion) {
+        decisionQueue.async {
+            let decisions = self.decide(user: user, keys: keys, options: options, opType: .async, ignoreDefaultOptions: ignoreDefaultOptions)
             completion(decisions)
         }
     }
@@ -205,13 +221,32 @@ extension OptimizelyClient {
         return decisionMap
     }
     
-    func decide(user: OptimizelyUserContext,
-                keys: [String],
-                options: [OptimizelyDecideOption]? = nil,
-                ignoreDefaultOptions: Bool) -> [String: OptimizelyDecision] {
-        return self.decide(user: user, keys: keys, options: options, opType: .sync, ignoreDefaultOptions: ignoreDefaultOptions)
+    func decideAll(user: OptimizelyUserContext,
+                   options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
+        guard let config = self.config else {
+            logger.e(OptimizelyError.sdkNotReady)
+            return [:]
+        }
+        
+        return decide(user: user, keys: config.featureFlagKeys, options: options)
     }
     
+    func decideAllAsync(user: OptimizelyUserContext,
+                        options: [OptimizelyDecideOption]? = nil,
+                        completion: @escaping DecideForKeysCompletion)  {
+        
+        decisionQueue.async {
+            guard let config = self.config else {
+                self.logger.e(OptimizelyError.sdkNotReady)
+                completion([:])
+                return
+            }
+            
+            let decision = self.decide(user: user, keys: config.featureFlagKeys, options: options,  opType: .async, ignoreDefaultOptions: false)
+            completion(decision)
+        }
+    }
+
     private func createOptimizelyDecision(flagKey: String,
                                           user: OptimizelyUserContext,
                                           flagDecision: FeatureDecision?,
@@ -284,32 +319,6 @@ extension OptimizelyClient {
                                   flagKey: feature.key,
                                   userContext: user,
                                   reasons: reasonsToReport)
-    }
-    
-    func decideAll(user: OptimizelyUserContext,
-                   options: [OptimizelyDecideOption]? = nil) -> [String: OptimizelyDecision] {
-        guard let config = self.config else {
-            logger.e(OptimizelyError.sdkNotReady)
-            return [:]
-        }
-        
-        return decide(user: user, keys: config.featureFlagKeys, options: options)
-    }
-    
-    func decideAllAsync(user: OptimizelyUserContext,
-                        options: [OptimizelyDecideOption]? = nil,
-                        completion: @escaping DecideForKeysCompletion)  {
-        
-        decisionQueue.async {
-            guard let config = self.config else {
-                self.logger.e(OptimizelyError.sdkNotReady)
-                completion([:])
-                return
-            }
-            
-            let decision = self.decide(user: user, keys: config.featureFlagKeys, options: options,  opType: .async, ignoreDefaultOptions: false)
-            completion(decision)
-        }
     }
     
 }
